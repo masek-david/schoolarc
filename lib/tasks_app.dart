@@ -21,6 +21,10 @@ class _TasksAppState extends State<TasksApp> {
     });
   }
 
+  // void addHWtoList(String hwName) {
+  //   HomeworksScreen.createNewHW();
+  // }
+
   @override
   Widget build(BuildContext context) {
 
@@ -33,10 +37,10 @@ class _TasksAppState extends State<TasksApp> {
     }
 
     return MaterialApp(
-      
       home: Scaffold(
         body: screenWidget,
         floatingActionButton: const MyFAB(),
+        appBar: AppBar(title: const Text('School manager')),
         bottomNavigationBar: Navbar(onTap: switchScreen),
       ),
     );

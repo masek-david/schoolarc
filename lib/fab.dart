@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/homeworks_screen.dart';
 
 class MyFAB extends StatelessWidget {
-  const MyFAB({super.key});
+  const MyFAB({
+    super.key,
+    // required this.addHW,
+  });
+
+  // final void Function() addHW;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,22 @@ class MyFAB extends StatelessWidget {
                   ),
                   const TextField(
                     decoration: InputDecoration(hintText: 'Name of homework'),
-                  )
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(hintText: 'Subject'),
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(hintText: 'Deadline date'),
+                  ),
+                  OutlinedButton(
+                      child: const Text('choose date'),
+                      onPressed: () {
+                        showDatePicker(
+                          context: context,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.utc(2030),
+                        );
+                      }),
                 ],
               ),
             ),

@@ -19,16 +19,42 @@ class HomeworkTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: const Color.fromARGB(255, 205, 190, 230),
+        color: const Color.fromARGB(255, 243, 237, 246),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(hwSubject),
-          Text(hwText),
-          Text(hwDeadline),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.check_box_outline_blank_outlined))
+          Row(
+            children: [
+              Container(
+                // padding: EdgeInsets.all(12),
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color.fromARGB(255, 234, 221, 255),
+                ),
+                child: Center(
+                    child: Text(
+                  hwSubject,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                )),
+              ),
+              const SizedBox(width: 10),
+              Text(hwText),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(hwDeadline),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.check_box_outline_blank_outlined))
+            ],
+          ),
         ],
       ),
     );
