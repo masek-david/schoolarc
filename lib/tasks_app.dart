@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/nav_bar.dart';
+import 'package:school_manager/util/nav_bar.dart';
 import 'package:school_manager/homeworks_screen.dart';
 import 'package:school_manager/exams_screen.dart';
-import 'package:school_manager/fab.dart';
 
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
@@ -12,14 +11,8 @@ class TasksApp extends StatefulWidget {
 }
 
 class _TasksAppState extends State<TasksApp> {
-  List hwList = [
-    ["Cj", "ps 12/5", "14.5.", false],
-    ["Ma", "uc 23/34", "13.5.", false],
-    ["Ma", "uc 23/34", "13.5.", false],
-  ];
-  Widget screenWidget = HomeworksScreen(hwList: hwList);
+  Widget screenWidget = const HomeworksScreen();
   int currentScreen = 0;
-
 
   void switchScreen({required int newScreenIndex}) {
     setState(() {
@@ -27,16 +20,12 @@ class _TasksAppState extends State<TasksApp> {
     });
   }
 
-  // void addHWtoList(String hwName) {
-  //   HomeworksScreen.createNewHW();
-  // }
-
   @override
   Widget build(BuildContext context) {
 
     switch (currentScreen) {
       case 0:
-        screenWidget = HomeworksScreen();
+        screenWidget = const  HomeworksScreen();
         break;
       case 1:
         screenWidget = const ExamsScreen();
@@ -45,7 +34,6 @@ class _TasksAppState extends State<TasksApp> {
     return MaterialApp(
       home: Scaffold(
         body: screenWidget,
-        floatingActionButton: const MyFAB(),
         appBar: AppBar(title: const Text('School manager')),
         bottomNavigationBar: Navbar(onTap: switchScreen),
       ),
