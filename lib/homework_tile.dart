@@ -6,11 +6,13 @@ class HomeworkTile extends StatelessWidget {
     required this.hwText,
     required this.hwDeadline,
     required this.hwSubject,
+    required this.completion,
   });
 
   final String hwText;
   final String hwDeadline;
   final String hwSubject;
+  final bool completion;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,13 @@ class HomeworkTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(hwDeadline),
-              IconButton(
+              
+              completion ? IconButton(
+                  onPressed: () {
+                    
+                  },
+                  icon: const Icon(Icons.check_box_outlined))
+                  :IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.check_box_outline_blank_outlined))
             ],

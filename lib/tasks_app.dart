@@ -12,8 +12,14 @@ class TasksApp extends StatefulWidget {
 }
 
 class _TasksAppState extends State<TasksApp> {
-  Widget screenWidget = const HomeworksScreen();
+  List hwList = [
+    ["Cj", "ps 12/5", "14.5.", false],
+    ["Ma", "uc 23/34", "13.5.", false],
+    ["Ma", "uc 23/34", "13.5.", false],
+  ];
+  Widget screenWidget = HomeworksScreen(hwList: hwList);
   int currentScreen = 0;
+
 
   void switchScreen({required int newScreenIndex}) {
     setState(() {
@@ -30,7 +36,7 @@ class _TasksAppState extends State<TasksApp> {
 
     switch (currentScreen) {
       case 0:
-        screenWidget = const HomeworksScreen();
+        screenWidget = HomeworksScreen();
         break;
       case 1:
         screenWidget = const ExamsScreen();
