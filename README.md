@@ -1,4 +1,4 @@
-# myapp
+# schoolman
 
 A new Flutter project.
 

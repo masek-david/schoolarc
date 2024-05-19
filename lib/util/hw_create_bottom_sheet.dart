@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-// import 'package:school_manager/homeworks_screen.dart';
 
-class HwBottomSheet extends StatelessWidget {
+class HwBottomSheet extends StatefulWidget {
   const HwBottomSheet({
     super.key,
     required this.subjectController,
     required this.nameController,
-    required this.dateController,
     required this.onSave,
   });
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
-  final TextEditingController dateController;
-  final void Function() onSave;
+  final void Function({required DateTime date}) onSave;
+
+  @override
+  State<HwBottomSheet> createState() => _HwBottomSheetState();
+}
+
+class _HwBottomSheetState extends State<HwBottomSheet> {
+  DateTime pickedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -37,37 +41,91 @@ class HwBottomSheet extends StatelessWidget {
                   child: const Text('Cancel'),
                 ),
                 FilledButton(
-                  onPressed: onSave,
+                  onPressed: () {
+                    widget.onSave(date: pickedDate);
+                  },
                   child: const Text('Save'),
                 )
               ],
             ),
+            const SizedBox(height: 15),
             TextField(
-              controller: nameController,
-              decoration: const InputDecoration(hintText: 'Name of homework'),
+              controller: widget.nameController,
+              autofocus: true,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: 'Name',
+              ),
             ),
+            const SizedBox(height: 10),
             TextField(
-              controller: subjectController,
-              decoration: const InputDecoration(hintText: 'Subject'),
+              controller: widget.subjectController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: 'Subject',
+              ),
             ),
+            // const Row(
+            //   children: [
+            //     ChoiceChip(label: Text('Homework'), selected: false),
+            //     Chip(
+            //       label: Text('Homework'),
+
+            //     ),
+            //     SizedBox(
+            //       width: 10,
+            //     ),
+            //     Chip(label: Text('Test')),
+            //   ],
+            // ),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Deadline:'),
-                Text(dateController.toString()),
-              ],
+                const Text('Deadline:', ),
+                Text('${pickedDate.day}.${pickedDate.month}.${pickedDate.year}'),
+              ], // '${hwList[index][2].day}.${hwList[index][2].month}.'
             ),
-            OutlinedButton(
-              child: const Text('choose date'),
-              onPressed: () {
-                Future<DateTime?> dateController = 
-                showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now().add(const Duration(days: 1)),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.utc(2030),
-                );
-              },
+            Row(
+              children: [
+                OutlinedButton(
+                  child: const Text('Choose date'),
+                  onPressed: () async {
+                    DateTime? newDate = await showDatePicker(
+                      context: context,
+                      locale: const Locale('en', 'GB'),
+                      initialDate: pickedDate,
+                      firstDate: DateTime.utc(2000),
+                      lastDate: DateTime.utc(2040),
+                    );
+
+                    if (newDate == null) return;
+
+                    setState(() {
+                      pickedDate = newDate;
+                    });
+                  },
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      pickedDate = DateTime.now().add(const Duration(days: 1));
+                    });
+                  },
+                  child: const Text('Tommorow'),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:school_manager/data/database.dart';
 import 'package:school_manager/util/homework_tile.dart';
 import 'package:school_manager/util/hw_create_bottom_sheet.dart';
 
@@ -10,27 +12,40 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworkSscreenState extends State<HomeworksScreen> {
+  // reference hive box
+  final _myBox = Hive.box('myBox');
+  HomeworksDatabase db = HomeworksDatabase();
+  
+  @override
+  void initState() {
+
+    // if first time ever opening app, default data
+    if (_myBox.get("HOMEWORKS") == null) {
+      db.createInitialData();
+    } else {
+      // there already exist data
+      db.loadData();
+    }
+    
+    super.initState();
+  }
+  
   // text controller
   final _subjectController = TextEditingController();
   final _nameController = TextEditingController();
-  final _dateController = TextEditingController();
-
-  List hwList = [
-    ["Cj", "ps 12/5", "14.5.", false],
-    ["Ma", "uc 23/34", "13.5.", true],
-    ["Ma", "uc 23/34", "13.5.", false],
-  ];
 
   void checkBoxChange(bool? value, int index) {
     setState(() {
-      hwList[index][3] = !hwList[index][3];
+      db.hwList[index][3] = !db.hwList[index][3];
     });
+    db.updateDatabase();
   }
 
   void deleteTask(int index) {
     setState(() {
-      hwList.removeAt(index);
+      db.hwList.removeAt(index);
     });
+    db.updateDatabase();
   }
 
   void createNewHW() {
@@ -41,20 +56,20 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          dateController: _dateController,
           onSave: saveNewHW,
         );
       },
     );
   }
 
-  void saveNewHW() {
+  void saveNewHW({required DateTime date}) {
     setState(() {
-      hwList.add([_subjectController.text, _nameController.text, '99', false]);
+      db.hwList.add([_subjectController.text, _nameController.text, date, false]);
       _nameController.clear();
       _subjectController.clear();
     });
     Navigator.of(context).pop();
+    db.updateDatabase();
   }
 
   @override
@@ -65,13 +80,14 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
         child: const Icon(Icons.add),
       ),
       body: ListView.builder(
-          itemCount: hwList.length,
+          itemCount: db.hwList.length,
           itemBuilder: (context, index) {
             return HomeworkTile(
-              hwText: hwList[index][1],
-              hwDeadline: hwList[index][2],
-              hwSubject: hwList[index][0],
-              completion: hwList[index][3],
+              hwText: db.hwList[index][1],
+              hwDeadline: '${db.hwList[index][2].day}.${db.hwList[index][2].month}.',
+              // hwDeadline: db.hwList[index][2].toString(),
+              hwSubject: db.hwList[index][0],
+              completion: db.hwList[index][3],
               onChanged: (value) => checkBoxChange(value, index),
               deleteFunction: (context) => deleteTask(index),
             );

@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -31,7 +32,8 @@ class HomeworkTile extends StatelessWidget {
             SlidableAction(
               onPressed: deleteFunction,
               icon: Icons.delete,
-              backgroundColor: Colors.red,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+              backgroundColor: Theme.of(context).colorScheme.error,
               borderRadius: BorderRadius.circular(10),
               flex: 10,
             ),
@@ -41,21 +43,21 @@ class HomeworkTile extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(255, 243, 237, 246),
+            color: Theme.of(context).splashColor,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
               Row(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
-                    // padding: EdgeInsets.all(12),
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: const Color.fromARGB(255, 234, 221, 255),
+                      color: Theme.of(context).colorScheme.primaryContainer,
                     ),
                     child: Center(
                         child: Text(
@@ -65,7 +67,7 @@ class HomeworkTile extends StatelessWidget {
                     )),
                   ),
                   const SizedBox(width: 10),
-                  Text(hwText),
+                  SizedBox(width: 220, child: Text(hwText, maxLines: 2)),
                 ],
               ),
               Row(
@@ -73,6 +75,7 @@ class HomeworkTile extends StatelessWidget {
                 children: [
                   Text(hwDeadline),
                   Checkbox(
+                    // activeColor: Colors.yellow.harmonizeWith(Theme.of(context).primaryColor),
                     value: completion,
                     onChanged: onChanged,
                     shape: const CircleBorder(),
