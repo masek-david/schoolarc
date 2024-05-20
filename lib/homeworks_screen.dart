@@ -56,21 +56,21 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          priorityController: _priorityController,
+          //priorityController: _priorityController,
           onSave: saveNewHW,
         );
       },
     );
   }
 
-  void saveNewHW({required DateTime date}) {
+  void saveNewHW({required DateTime date, required int priority}) {
     setState(() {
       db.hwList.add([
         _subjectController.text,
         _nameController.text,
         date,
         false,
-        _priorityController.text
+        priority
       ]);
       _nameController.clear();
       _subjectController.clear();
@@ -96,7 +96,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                   '${db.hwList[index][2].day}.${db.hwList[index][2].month}.',
               hwSubject: db.hwList[index][0],
               completion: db.hwList[index][3],
-              hwPriority: int.parse(db.hwList[index][4]),
+              hwPriority: db.hwList[index][4],
               onChanged: (value) => checkBoxChange(value, index),
               onDeleteFunction: (context) => deleteTask(index),
             );

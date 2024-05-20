@@ -9,7 +9,7 @@ class HomeworksDatabase {
   // run this first time ever opening app
   void createInitialData() {
     hwList = [
-      // [0]predmet, [1]text, [2]deadline, [3]completion, [4]priority
+      // [0]subject, [1]text, [2]deadline, [3]completion, [4]priority
       ["predmet", "Tady je zobrazi text ukolu", DateTime(2024), false, 1],
       ["Ma", "uc 23/34", DateTime(2023), false, 2]
     ];

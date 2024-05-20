@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:school_manager/util/my_checkbox.dart';
 
 class HomeworkTile extends StatelessWidget {
@@ -45,9 +44,11 @@ class HomeworkTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).splashColor,
-          ),
+              borderRadius: BorderRadius.circular(10),
+              color: ElevationOverlay.applySurfaceTint(
+                  Theme.of(context).colorScheme.surface,
+                  Theme.of(context).colorScheme.primary,
+                  1),),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
@@ -63,11 +64,15 @@ class HomeworkTile extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primaryContainer,
                     ),
                     child: Center(
-                        child: Text(
-                      hwSubject,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
-                    )),
+                      child: Text(
+                        hwSubject,
+                        style: const TextStyle(
+                          // color: Theme.of(context).colorScheme.onPrimaryContainer,     // stejne je to bila
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
                   SizedBox(width: 220, child: Text(hwText, maxLines: 2)),
@@ -77,7 +82,11 @@ class HomeworkTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(hwDeadline),
-                  MyCheckbox(value: completion, priority: hwPriority, onChanged: onChanged),
+                  MyCheckbox(
+                    value: completion,
+                    priority: hwPriority,
+                    onChanged: onChanged,
+                  ),
                 ],
               ),
             ],

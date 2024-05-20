@@ -5,14 +5,12 @@ class HwBottomSheet extends StatefulWidget {
     super.key,
     required this.subjectController,
     required this.nameController,
-    required this.priorityController,
     required this.onSave,
   });
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
-  final TextEditingController priorityController;
-  final void Function({required DateTime date}) onSave;
+  final void Function({required DateTime date, required int priority}) onSave;
 
   @override
   State<HwBottomSheet> createState() => _HwBottomSheetState();
@@ -20,10 +18,16 @@ class HwBottomSheet extends StatefulWidget {
 
 class _HwBottomSheetState extends State<HwBottomSheet> {
   DateTime pickedDate = DateTime.now();
+  int pickedPriority = 0;
 
   @override
   Widget build(BuildContext context) {
-    // widget.priorityController = TextEditingController(text: '0');
+    const List<String> prioritiesList = [
+      'No priority',
+      'Low',
+      'medium',
+      'high'
+    ];
 
     return BottomSheet(
       enableDrag: true,
@@ -46,7 +50,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 ),
                 FilledButton(
                   onPressed: () {
-                    widget.onSave(date: pickedDate);
+                    widget.onSave(date: pickedDate, priority: pickedPriority);
                   },
                   child: const Text('Save'),
                 )
@@ -63,7 +67,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                hintText: 'Name',
+                hintText: 'Assignment',
               ),
             ),
             const SizedBox(height: 10),
@@ -80,24 +84,16 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
               ),
             ),
             const Divider(),
-            Row(
-              children: 
-                /*Text('Priority:'),*/ 
-                List<Widget>.generate(4, (int index) {
-                  return ChoiceChip(label: Text('item $index'), selected: true);
-                }).toList(),
-              
-            ),
-            TextField(
-              controller: widget.priorityController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
+            SizedBox(             // listview musi mit vysku, kterou urci sizedbox
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ChoiceChip(
+                      label: Text(prioritiesList[index]), selected: true),
                 ),
-                hintText: 'priority(0-4)',
               ),
             ),
             const Divider(),
