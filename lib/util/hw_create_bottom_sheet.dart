@@ -5,11 +5,13 @@ class HwBottomSheet extends StatefulWidget {
     super.key,
     required this.subjectController,
     required this.nameController,
+    required this.priorityController,
     required this.onSave,
   });
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
+  final TextEditingController priorityController;
   final void Function({required DateTime date}) onSave;
 
   @override
@@ -21,6 +23,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // widget.priorityController = TextEditingController(text: '0');
+
     return BottomSheet(
       enableDrag: true,
       onClosing: () {},
@@ -75,26 +79,37 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 hintText: 'Subject',
               ),
             ),
-            // const Row(
-            //   children: [
-            //     ChoiceChip(label: Text('Homework'), selected: false),
-            //     Chip(
-            //       label: Text('Homework'),
-
-            //     ),
-            //     SizedBox(
-            //       width: 10,
-            //     ),
-            //     Chip(label: Text('Test')),
-            //   ],
-            // ),
+            const Divider(),
+            Row(
+              children: 
+                /*Text('Priority:'),*/ 
+                List<Widget>.generate(4, (int index) {
+                  return ChoiceChip(label: Text('item $index'), selected: true);
+                }).toList(),
+              
+            ),
+            TextField(
+              controller: widget.priorityController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: 'priority(0-4)',
+              ),
+            ),
             const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Deadline:', ),
-                Text('${pickedDate.day}.${pickedDate.month}.${pickedDate.year}'),
-              ], // '${hwList[index][2].day}.${hwList[index][2].month}.'
+                const Text(
+                  'Deadline:',
+                ),
+                Text(
+                    '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}'),
+              ],
             ),
             Row(
               children: [

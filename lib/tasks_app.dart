@@ -51,7 +51,6 @@ class _TasksAppState extends State<TasksApp> {
           bottomNavigationBar: Navbar(onTap: switchScreen),
         ),
       );
-      ;
     });
   }
 }

@@ -2,15 +2,17 @@ import 'package:hive/hive.dart';
 
 class HomeworksDatabase {
   List hwList = [];
-  
+
   // reference box
   final _mybox = Hive.box('myBox');
 
   // run this first time ever opening app
   void createInitialData() {
-    hwList = [["Cj", "ps 12/5", DateTime(2024), false],
-     ["Ma", "uc 23/34", DateTime(2023), true],
-     ["Ma", "uc 23/34", DateTime(2022), false],];
+    hwList = [
+      // [0]predmet, [1]text, [2]deadline, [3]completion, [4]priority
+      ["predmet", "Tady je zobrazi text ukolu", DateTime(2024), false, 1],
+      ["Ma", "uc 23/34", DateTime(2023), false, 2]
+    ];
   }
 
   // load data from database

@@ -1,6 +1,7 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:school_manager/util/my_checkbox.dart';
 
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({
@@ -9,16 +10,18 @@ class HomeworkTile extends StatelessWidget {
     required this.hwDeadline,
     required this.hwSubject,
     required this.completion,
+    required this.hwPriority,
     required this.onChanged,
-    required this.deleteFunction,
+    required this.onDeleteFunction,
   });
 
+  final String hwSubject;
   final String hwText;
   final String hwDeadline;
-  final String hwSubject;
   final bool completion;
+  final int hwPriority;
   final Function(bool?) onChanged;
-  final Function(BuildContext)? deleteFunction;
+  final Function(BuildContext)? onDeleteFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class HomeworkTile extends StatelessWidget {
           extentRatio: 0.3,
           children: [
             SlidableAction(
-              onPressed: deleteFunction,
+              onPressed: onDeleteFunction,
               icon: Icons.delete,
               foregroundColor: Theme.of(context).colorScheme.onError,
               backgroundColor: Theme.of(context).colorScheme.error,
@@ -74,17 +77,11 @@ class HomeworkTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(hwDeadline),
-                  Checkbox(
-                    // activeColor: Colors.yellow.harmonizeWith(Theme.of(context).primaryColor),
-                    value: completion,
-                    onChanged: onChanged,
-                    shape: const CircleBorder(),
-                  )
+                  MyCheckbox(value: completion, priority: hwPriority, onChanged: onChanged),
                 ],
               ),
             ],
           ),
-          // ),
         ),
       ),
     );
