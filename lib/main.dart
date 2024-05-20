@@ -8,6 +8,7 @@ void main() async {
 
   // open a box
   var box = await Hive.openBox('myBox');
-  
+  // box.deleteFromDisk;
+
   runApp(const TasksApp());
 }

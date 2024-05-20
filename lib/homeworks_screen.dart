@@ -15,10 +15,9 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
   // reference hive box
   final _myBox = Hive.box('myBox');
   HomeworksDatabase db = HomeworksDatabase();
-  
+
   @override
   void initState() {
-
     // if first time ever opening app, default data
     if (_myBox.get("HOMEWORKS") == null) {
       db.createInitialData();
@@ -26,13 +25,14 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
       // there already exist data
       db.loadData();
     }
-    
+
     super.initState();
   }
-  
+
   // text controller
   final _subjectController = TextEditingController();
   final _nameController = TextEditingController();
+  final _priorityController = TextEditingController();
 
   void checkBoxChange(bool? value, int index) {
     setState(() {
@@ -56,6 +56,7 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
+          priorityController: _priorityController,
           onSave: saveNewHW,
         );
       },
@@ -64,9 +65,16 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
 
   void saveNewHW({required DateTime date}) {
     setState(() {
-      db.hwList.add([_subjectController.text, _nameController.text, date, false]);
+      db.hwList.add([
+        _subjectController.text,
+        _nameController.text,
+        date,
+        false,
+        _priorityController.text
+      ]);
       _nameController.clear();
       _subjectController.clear();
+      _priorityController.clear();
     });
     Navigator.of(context).pop();
     db.updateDatabase();
@@ -84,12 +92,13 @@ class _HomeworkSscreenState extends State<HomeworksScreen> {
           itemBuilder: (context, index) {
             return HomeworkTile(
               hwText: db.hwList[index][1],
-              hwDeadline: '${db.hwList[index][2].day}.${db.hwList[index][2].month}.',
-              // hwDeadline: db.hwList[index][2].toString(),
+              hwDeadline:
+                  '${db.hwList[index][2].day}.${db.hwList[index][2].month}.',
               hwSubject: db.hwList[index][0],
               completion: db.hwList[index][3],
+              hwPriority: int.parse(db.hwList[index][4]),
               onChanged: (value) => checkBoxChange(value, index),
-              deleteFunction: (context) => deleteTask(index),
+              onDeleteFunction: (context) => deleteTask(index),
             );
           }),
     );
