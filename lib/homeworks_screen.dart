@@ -8,10 +8,10 @@ class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
 
   @override
-  State<HomeworksScreen> createState() => _HomeworkSscreenState();
+  State<HomeworksScreen> createState() => _HomeworksScreenState();
 }
 
-class _HomeworkSscreenState extends State<HomeworksScreen> {
+class _HomeworksScreenState extends State<HomeworksScreen> {
   // reference hive box
   final _myBox = Hive.box('myBox');
   HomeworksDatabase db = HomeworksDatabase();
