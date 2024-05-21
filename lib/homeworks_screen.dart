@@ -41,6 +41,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     db.updateDatabase();
   }
 
+  void sortHwList() {
+    db.hwList.sort((b, a) => a[4].compareTo(b[4]));
+  }
+
   void deleteTask(int index) {
     setState(() {
       db.hwList.removeAt(index);
@@ -56,7 +60,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          //priorityController: _priorityController,
           onSave: saveNewHW,
         );
       },
@@ -77,7 +80,22 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       _priorityController.clear();
     });
     Navigator.of(context).pop();
+    sortHwList();
     db.updateDatabase();
+  }
+
+  void editHW(int index) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return HwBottomSheet(
+          subjectController: _subjectController,
+          nameController: _nameController,
+          onSave: saveNewHW,
+        );
+      },
+    );
   }
 
   @override
@@ -88,19 +106,20 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         child: const Icon(Icons.add),
       ),
       body: ListView.builder(
-          itemCount: db.hwList.length,
-          itemBuilder: (context, index) {
-            return HomeworkTile(
-              hwText: db.hwList[index][1],
-              hwDeadline:
-                  '${db.hwList[index][2].day}.${db.hwList[index][2].month}.',
-              hwSubject: db.hwList[index][0],
-              completion: db.hwList[index][3],
-              hwPriority: db.hwList[index][4],
-              onChanged: (value) => checkBoxChange(value, index),
-              onDeleteFunction: (context) => deleteTask(index),
-            );
-          }),
+        itemCount: db.hwList.length,
+        itemBuilder: (context, index) {
+          return HomeworkTile(
+            hwText: db.hwList[index][1],
+            hwDeadline: db.hwList[index][2],
+            hwSubject: db.hwList[index][0],
+            hwCompletion: db.hwList[index][3],
+            hwPriority: db.hwList[index][4],
+            onChangedCompletion: (value) => checkBoxChange(value, index),
+            onDelete: (context) => deleteTask(index),
+            onEdit: () => editHW(index),
+          );
+        },
+      ),
     );
   }
 }

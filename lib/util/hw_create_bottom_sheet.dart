@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/util/get_priority_color.dart';
 
 class HwBottomSheet extends StatefulWidget {
   const HwBottomSheet({
@@ -25,8 +26,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
     const List<String> prioritiesList = [
       'No priority',
       'Low',
-      'medium',
-      'high'
+      'Medium',
+      'High'
     ];
 
     return BottomSheet(
@@ -84,15 +85,34 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
               ),
             ),
             const Divider(),
-            SizedBox(             // listview musi mit vysku, kterou urci sizedbox
+            SizedBox(
+              // listview musi mit vysku, kterou urci sizedbox
               height: 40,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
                 itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(right: 10),
+                  padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
-                      label: Text(prioritiesList[index]), selected: true),
+                    label: Text(prioritiesList[index]),
+                    selected: index == pickedPriority,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color:
+                            getPriorityColor(priority: index, context: context),
+                      ),
+                    ),
+                    backgroundColor:
+                        getPriorityColor(priority: index, context: context)
+                            .withOpacity(0.10),
+                    selectedColor:
+                        getPriorityColor(priority: index, context: context)
+                            .withOpacity(0.45),
+                    onSelected: (value) => setState(() {
+                      pickedPriority = index;
+                    }),
+                  ),
                 ),
               ),
             ),
@@ -117,7 +137,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                       locale: const Locale('en', 'GB'),
                       initialDate: pickedDate,
                       firstDate: DateTime.utc(2000),
-                      lastDate: DateTime.utc(2040),
+                      lastDate: DateTime.utc(2100),
                     );
 
                     if (newDate == null) return;
@@ -131,7 +151,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 OutlinedButton(
                   onPressed: () {
                     setState(() {
-                      pickedDate = DateTime.now().add(const Duration(days: 1));
+                      pickedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).add(const Duration(days: 1));
                     });
                   },
                   child: const Text('Tommorow'),

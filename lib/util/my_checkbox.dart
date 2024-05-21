@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+import 'package:school_manager/util/get_priority_color.dart';
 
 class MyCheckbox extends StatelessWidget {
   const MyCheckbox({
@@ -15,21 +15,7 @@ class MyCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color checkboxColor;
-    switch (priority) {
-      case 3:
-        checkboxColor =
-            Colors.red.harmonizeWith(Theme.of(context).primaryColor);
-      case 2:
-        checkboxColor =
-            Colors.orange.harmonizeWith(Theme.of(context).primaryColor);
-      case 1:
-        checkboxColor =
-            Colors.green.harmonizeWith(Theme.of(context).primaryColor);
-      default:
-        checkboxColor =
-            Colors.blue.harmonizeWith(Theme.of(context).primaryColor);
-    }
+    Color checkboxColor = getPriorityColor(priority: priority, context: context);
 
     return Checkbox(
       value: value,
