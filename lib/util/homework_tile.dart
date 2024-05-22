@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/util/my_checkbox.dart';
@@ -28,16 +29,24 @@ class HomeworkTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onBackground;
     if (hwDeadline.isBefore(DateTime.now())) {
-      deadlineColor = Theme.of(context).colorScheme.error;
+      deadlineColor = Colors.red.harmonizeWith(Theme.of(context).primaryColor);
     }
     String deadlineText = '${hwDeadline.day}.${hwDeadline.month}.';
     if (hwDeadline.year != DateTime.now().year) {
       deadlineText += ' ${hwDeadline.year}';
+    }else if(deadlineText == '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
+      deadlineText = 'Tomorrow';
+    }else if(deadlineText == '${(DateTime.now().day)}.${DateTime.now().month}.') {
+      deadlineText = 'Today';
+    }else if(deadlineText == '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
+      deadlineText = 'Yesterday';
     }
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Slidable(
+        groupTag: '0',
         endActionPane: ActionPane(
           motion: const StretchMotion(),
           extentRatio: 0.3,
@@ -89,18 +98,20 @@ class HomeworkTile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    SizedBox(width: 220, child: Text(hwText, maxLines: 2)),
+                    SizedBox(width: 210, child: Text(hwText, maxLines: 2)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(
-                      width: 42,
-                      child: Text(
-                        deadlineText,
-                        maxLines: 2,
-                        style: TextStyle(color: deadlineColor),
+                      width: 57,
+                      child: Center(
+                        child: Text(
+                          deadlineText,
+                          maxLines: 2,
+                          style: TextStyle(color: deadlineColor, fontSize: 12),
+                        ),
                       ),
                     ),
                     MyCheckbox(

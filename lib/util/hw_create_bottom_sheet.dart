@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:school_manager/util/get_priority_color.dart';
 
 class HwBottomSheet extends StatefulWidget {
-  const HwBottomSheet({
-    super.key,
-    required this.subjectController,
-    required this.nameController,
-    required this.onSave,
-  });
+  const HwBottomSheet(
+      {super.key,
+      required this.subjectController,
+      required this.nameController,
+      required this.initialDate,
+      required this.initialPriority,
+      required this.onSave,
+      required this.hwIndex});
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
-  final void Function({required DateTime date, required int priority}) onSave;
+  final void Function(
+      {required DateTime date,
+      required int priority,
+      required int index}) onSave;
+  final DateTime initialDate;
+  final int initialPriority;
+  final int hwIndex;
 
   @override
   State<HwBottomSheet> createState() => _HwBottomSheetState();
@@ -20,6 +29,14 @@ class HwBottomSheet extends StatefulWidget {
 class _HwBottomSheetState extends State<HwBottomSheet> {
   DateTime pickedDate = DateTime.now();
   int pickedPriority = 0;
+
+  @override
+  void initState() {
+    pickedDate = widget.initialDate;
+    pickedPriority = widget.initialPriority;
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +48,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
     ];
 
     return BottomSheet(
-      enableDrag: true,
+      enableDrag: false,
       onClosing: () {},
       builder: (context) => Container(
         padding:
@@ -51,7 +68,10 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 ),
                 FilledButton(
                   onPressed: () {
-                    widget.onSave(date: pickedDate, priority: pickedPriority);
+                    widget.onSave(
+                        date: pickedDate,
+                        priority: pickedPriority,
+                        index: widget.hwIndex);
                   },
                   child: const Text('Save'),
                 )
@@ -61,27 +81,20 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
             TextField(
               controller: widget.nameController,
               autofocus: true,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: 'Assignment',
+              maxLines: null,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.all(15),
+                border: OutlineInputBorder(),
+                labelText: 'Assignment',
               ),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: widget.subjectController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: 'Subject',
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.all(15),
+                border: OutlineInputBorder(),
+                labelText: 'Subject',
               ),
             ),
             const Divider(),
@@ -117,44 +130,71 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
               ),
             ),
             const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Deadline:',
+            InkWell(
+              onTap: () async {
+                DateTime? newDate = await showDatePicker(
+                  context: context,
+                  locale: const Locale('en', 'GB'),
+                  initialDate: pickedDate,
+                  firstDate: DateTime.utc(2000),
+                  lastDate: DateTime.utc(2100),
+                );
+
+                if (newDate == null) return;
+
+                setState(() {
+                  pickedDate = newDate;
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Deadline:', style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
                 ),
-                Text(
-                    '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}'),
-              ],
+              ),
             ),
             Row(
               children: [
-                OutlinedButton(
-                  child: const Text('Choose date'),
-                  onPressed: () async {
-                    DateTime? newDate = await showDatePicker(
-                      context: context,
-                      locale: const Locale('en', 'GB'),
-                      initialDate: pickedDate,
-                      firstDate: DateTime.utc(2000),
-                      lastDate: DateTime.utc(2100),
-                    );
-
-                    if (newDate == null) return;
-
+                ActionChip(
+                  label: const Text('Today'),
+                  onPressed: () {
                     setState(() {
-                      pickedDate = newDate;
+                      pickedDate = DateTime(DateTime.now().year,
+                          DateTime.now().month, DateTime.now().day);
                     });
                   },
                 ),
-                const SizedBox(width: 10),
-                OutlinedButton(
+                const SizedBox(width: 8),
+                ActionChip(
+                  label: const Text('Tomorrow'),
                   onPressed: () {
                     setState(() {
-                      pickedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).add(const Duration(days: 1));
+                      pickedDate = DateTime(DateTime.now().year,
+                              DateTime.now().month, DateTime.now().day)
+                          .add(const Duration(days: 1));
                     });
                   },
-                  child: const Text('Tommorow'),
+                ),
+                const SizedBox(width: 8),
+                ActionChip(
+                  label: Text(
+                      'Next ${DateFormat('EEEE').format(DateTime.now()).toLowerCase()}'),
+                  onPressed: () {
+                    setState(() {
+                      pickedDate = DateTime(DateTime.now().year,
+                              DateTime.now().month, DateTime.now().day)
+                          .add(const Duration(days: 7));
+                    });
+                  },
                 ),
               ],
             ),

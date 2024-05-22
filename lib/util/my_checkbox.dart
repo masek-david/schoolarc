@@ -21,6 +21,7 @@ class MyCheckbox extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       activeColor: checkboxColor,
+      checkColor: Colors.white,
       side: BorderSide(color: checkboxColor, width: 2.7),
       shape: const CircleBorder(),
     );

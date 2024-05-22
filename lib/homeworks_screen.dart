@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/database.dart';
 import 'package:school_manager/util/homework_tile.dart';
@@ -30,9 +31,8 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   }
 
   // text controller
-  final _subjectController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _priorityController = TextEditingController();
+  var _subjectController = TextEditingController();
+  var _nameController = TextEditingController();
 
   void checkBoxChange(bool? value, int index) {
     setState(() {
@@ -56,17 +56,28 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
       builder: (context) {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
+          initialDate: DateTime.now(),
+          initialPriority: 0,
           onSave: saveNewHW,
+          hwIndex: 0, // index neni potreba u zakladani noveho listu
         );
+      },
+    ).then(
+      (value) => {
+        _nameController.clear(),
+        _subjectController.clear(),
       },
     );
   }
 
-  void saveNewHW({required DateTime date, required int priority}) {
+  void saveNewHW(
+      {required DateTime date, required int priority, required int index}) {
+    // index se tady nepouziva, ale je potreba u editHW
     setState(() {
       db.hwList.add([
         _subjectController.text,
@@ -77,25 +88,54 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       ]);
       _nameController.clear();
       _subjectController.clear();
-      _priorityController.clear();
+      sortHwList();
     });
     Navigator.of(context).pop();
-    sortHwList();
     db.updateDatabase();
   }
 
   void editHW(int index) {
+    _nameController = TextEditingController(text: db.hwList[index][1]);
+    _subjectController = TextEditingController(text: db.hwList[index][0]);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
       builder: (context) {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          onSave: saveNewHW,
+          initialDate: db.hwList[index][2],
+          initialPriority: db.hwList[index][4],
+          hwIndex: index,
+          onSave: saveEditedHW,
         );
       },
+    ).then(
+      (value) => {
+        _nameController.clear(),
+        _subjectController.clear(),
+      },
     );
+  }
+
+  void saveEditedHW(
+      {required DateTime date, required int priority, required int index}) {
+    setState(() {
+      db.hwList[index] = ([
+        _subjectController.text,
+        _nameController.text,
+        date,
+        false,
+        priority
+      ]);
+      _nameController.clear();
+      _subjectController.clear();
+      sortHwList();
+    });
+    Navigator.of(context).pop();
+    db.updateDatabase();
   }
 
   @override
@@ -105,20 +145,22 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         onPressed: createNewHW,
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        itemCount: db.hwList.length,
-        itemBuilder: (context, index) {
-          return HomeworkTile(
-            hwText: db.hwList[index][1],
-            hwDeadline: db.hwList[index][2],
-            hwSubject: db.hwList[index][0],
-            hwCompletion: db.hwList[index][3],
-            hwPriority: db.hwList[index][4],
-            onChangedCompletion: (value) => checkBoxChange(value, index),
-            onDelete: (context) => deleteTask(index),
-            onEdit: () => editHW(index),
-          );
-        },
+      body: SlidableAutoCloseBehavior(
+        child: ListView.builder(
+          itemCount: db.hwList.length,
+          itemBuilder: (context, index) {
+            return HomeworkTile(
+              hwSubject: db.hwList[index][0],
+              hwText: db.hwList[index][1],
+              hwDeadline: db.hwList[index][2],
+              hwCompletion: db.hwList[index][3],
+              hwPriority: db.hwList[index][4],
+              onChangedCompletion: (value) => checkBoxChange(value, index),
+              onDelete: (context) => deleteTask(index),
+              onEdit: () => editHW(index),
+            );
+          },
+        ),
       ),
     );
   }
