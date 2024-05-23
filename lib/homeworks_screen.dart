@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/data/database.dart';
 import 'package:school_manager/util/homework_tile.dart';
 import 'package:school_manager/util/hw_create_bottom_sheet.dart';
+import 'package:school_manager/data/hw_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -16,17 +17,26 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   // reference hive box
   final _myBox = Hive.box('myBox');
   HomeworksDatabase db = HomeworksDatabase();
+  Map<int, List<Homework>> sortedHw = {
+    0: <Homework>[],
+    1: <Homework>[],
+    2: <Homework>[],
+    3: <Homework>[],
+  };
 
   @override
   void initState() {
     // if first time ever opening app, default data
-    if (_myBox.get("HOMEWORKS") == null) {
-      db.createInitialData();
-    } else {
-      // there already exist data
-      db.loadData();
-    }
+    db.createInitialData();
+    db.updateDatabase();
+    // if (_myBox.get("HOMEWORKS") == null) {
+    //   db.createInitialData();
+    // } else {
+    //   // there already exist data
+    //   db.loadData();
+    // }
 
+    sortHwList();
     super.initState();
   }
 
@@ -36,20 +46,27 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
   void checkBoxChange(bool? value, int index) {
     setState(() {
-      db.hwList[index][3] = !db.hwList[index][3];
+      db.changeCompletion(index);
     });
     db.updateDatabase();
   }
 
   void sortHwList() {
-    db.hwList.sort((b, a) => a[4].compareTo(b[4]));
+    List hwList = db.getDatabase();
+    for (Homework hw in hwList) {
+      var list = sortedHw[
+          hw.priority]; // var list je odkaz na list Homework v mape sortedHw
+      if (list != null) {
+        list.add(hw);
+      }
+    }
   }
 
   void deleteTask(int index) {
     setState(() {
-      db.hwList.removeAt(index);
+      db.deleteHw(index);
     });
-    db.updateDatabase();
+    // db.updateDatabase();
   }
 
   void createNewHW() {
@@ -79,19 +96,21 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       {required DateTime date, required int priority, required int index}) {
     // index se tady nepouziva, ale je potreba u editHW
     setState(() {
-      db.hwList.add([
-        _subjectController.text,
-        _nameController.text,
-        date,
-        false,
-        priority
-      ]);
+      Homework newHomework = Homework(
+        subject: _subjectController.text,
+        text: _nameController.text,
+        deadline: date,
+        completion: false,
+        priority: priority,
+      );
+      db.addHw(newHomework);
+      sortedHw[newHomework.priority]!.add(newHomework);
       _nameController.clear();
       _subjectController.clear();
-      sortHwList();
+      // sortHwList();
     });
     Navigator.of(context).pop();
-    db.updateDatabase();
+    // db.updateDatabase();
   }
 
   void editHW(int index) {
@@ -147,17 +166,25 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       ),
       body: SlidableAutoCloseBehavior(
         child: ListView.builder(
-          itemCount: db.hwList.length,
-          itemBuilder: (context, index) {
-            return HomeworkTile(
-              hwSubject: db.hwList[index][0],
-              hwText: db.hwList[index][1],
-              hwDeadline: db.hwList[index][2],
-              hwCompletion: db.hwList[index][3],
-              hwPriority: db.hwList[index][4],
-              onChangedCompletion: (value) => checkBoxChange(value, index),
-              onDelete: (context) => deleteTask(index),
-              onEdit: () => editHW(index),
+          itemCount: 4,
+          itemBuilder: (context, priorityIndex) {
+            return ListView.builder(
+              // itemCount: sortedHw[priorityIndex]!.length,
+              itemBuilder: (context, hwIndex) {
+                Homework hw = sortedHw[priorityIndex]![hwIndex];
+                debugPrint(hw.toString());
+                return HomeworkTile(
+                  hwText: hw.text,
+                  hwDeadline: hw.deadline,
+                  hwSubject: hw.subject,
+                  hwCompletion: hw.completion,
+                  hwPriority: hw.priority,
+                  onChangedCompletion: (value) =>
+                      checkBoxChange(value, hwIndex),
+                  onDelete: (context) => deleteTask(hwIndex),
+                  onEdit: () => editHW(hwIndex),
+                );
+              },
             );
           },
         ),
