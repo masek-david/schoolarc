@@ -27,14 +27,14 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   @override
   void initState() {
     // if first time ever opening app, default data
-    db.createInitialData();
-    db.updateDatabase();
-    // if (_myBox.get("HOMEWORKS") == null) {
-    //   db.createInitialData();
-    // } else {
-    //   // there already exist data
-    //   db.loadData();
-    // }
+    // db.createInitialData();
+    // db.updateDatabase();
+    if (_myBox.get("HOMEWORKS") == null) {
+      db.createInitialData();
+    } else {
+      // there already exist data
+      db.loadData();
+    }
 
     sortHwList();
     super.initState();
@@ -48,11 +48,17 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     setState(() {
       db.changeCompletion(index);
     });
-    db.updateDatabase();
+  }
+
+  void cleanSortedHwList() {
+    for (int i = 0; i <= 3; i++) {
+      sortedHw[i]!.clear();
+    }
   }
 
   void sortHwList() {
     List hwList = db.getDatabase();
+    cleanSortedHwList();
     for (Homework hw in hwList) {
       var list = sortedHw[
           hw.priority]; // var list je odkaz na list Homework v mape sortedHw
@@ -65,8 +71,9 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void deleteTask(int index) {
     setState(() {
       db.deleteHw(index);
+      sortHwList();
     });
-    // db.updateDatabase();
+    db.updateDatabase();
   }
 
   void createNewHW() {
@@ -168,23 +175,42 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         child: ListView.builder(
           itemCount: 4,
           itemBuilder: (context, priorityIndex) {
-            return ListView.builder(
-              // itemCount: sortedHw[priorityIndex]!.length,
-              itemBuilder: (context, hwIndex) {
-                Homework hw = sortedHw[priorityIndex]![hwIndex];
-                debugPrint(hw.toString());
-                return HomeworkTile(
-                  hwText: hw.text,
-                  hwDeadline: hw.deadline,
-                  hwSubject: hw.subject,
-                  hwCompletion: hw.completion,
-                  hwPriority: hw.priority,
-                  onChangedCompletion: (value) =>
-                      checkBoxChange(value, hwIndex),
-                  onDelete: (context) => deleteTask(hwIndex),
-                  onEdit: () => editHW(hwIndex),
-                );
-              },
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Priority:'),
+                      Text(priorityIndex.toString()),
+                    ],
+                  ),
+                ),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: sortedHw[priorityIndex]!.length,
+                  itemBuilder: (context, hwIndex) {
+                    if (sortedHw[priorityIndex] != null &&
+                        sortedHw[priorityIndex]!.isEmpty) {
+                      return null;
+                    }
+                    Homework hw = sortedHw[priorityIndex]![hwIndex];
+                    return HomeworkTile(
+                      hwText: hw.text,
+                      hwDeadline: hw.deadline,
+                      hwSubject: hw.subject,
+                      hwCompletion: hw.completion,
+                      hwPriority: hw.priority,
+                      onChangedCompletion: (value) =>
+                          checkBoxChange(value, hwIndex),
+                      onDelete: (context) => deleteTask(hwIndex),
+                      onEdit: () => editHW(hwIndex),
+                    );
+                  },
+                ),
+              ],
             );
           },
         ),

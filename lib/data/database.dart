@@ -12,6 +12,8 @@ class HomeworksDatabase {
     hwList = [
       // [0]subject, [1]text, [2]deadline, [3]completion, [4]priority
       Homework(subject: 'ma', text: 'tady se zobrazi text', deadline: DateTime(2024), completion: false, priority: 1),
+      Homework(subject: 'ma', text: 'tady se zobrazi text', deadline: DateTime(2024), completion: false, priority: 3),
+      Homework(subject: 'ma', text: 'tady se zobrazi text', deadline: DateTime(2024), completion: false, priority: 0),
       Homework(subject: 'cj', text: 'uc 23/4', deadline: DateTime(2023), completion: false, priority: 2),
     ];
   }
@@ -37,10 +39,11 @@ class HomeworksDatabase {
 
   void deleteHw(int index) {
     hwList.removeAt(index);
-    updateDatabase();
+    // updateDatabase();
   }
 
   void changeCompletion(int index) {
     (hwList[index] as Homework).completion = !(hwList[index] as Homework).completion;
+    updateDatabase();
   }
 }
