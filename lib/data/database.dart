@@ -1,10 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/hw_model.dart';
-import 'package:school_manager/data/hw_dto_model.dart';
 
 class HomeworksDatabase {
   List<Homework> _hwList = [];
-  // int index = 0;
 
   // reference box
   final _mybox = Hive.box('myBox');
@@ -52,45 +50,17 @@ class HomeworksDatabase {
     _mybox.put("HOMEWORKS", _hwList);
   }
 
-  // returns list of homeworks DTOs, with indexes
-  List<HomeworkDTO> getDatabase() {
-    List<HomeworkDTO> indexedList = [];
-
-    for (int index = 0; index < _hwList.length; index++) {
-      Homework hw = _hwList[index];
-      indexedList.add(HomeworkDTO(
-          subject: hw.subject,
-          text: hw.text,
-          deadline: hw.deadline,
-          completion: hw.completion,
-          priority: hw.priority,
-          index: index));
-    }
-    return indexedList;
+  List<Homework> getDatabase() {
+    return _hwList;
   }
 
-  HomeworkDTO getHomework(int index) {
-    Homework hw = _hwList[index];
-      return HomeworkDTO(
-          subject: hw.subject,
-          text: hw.text,
-          deadline: hw.deadline,
-          completion: hw.completion,
-          priority: hw.priority,
-          index: index);
+  Homework getHomework(int index) {
+    return _hwList[index]; 
   }
 
-  HomeworkDTO addHw(Homework hw) {
+  void addHw(Homework hw) {
     _hwList.add(hw);
     updateDatabase();
-    return HomeworkDTO(
-      subject: hw.subject,
-      text: hw.text,
-      deadline: hw.deadline,
-      completion: hw.completion,
-      priority: hw.priority,
-      index: _hwList.length - 1,
-    ); // v hwlistu uz je, takze ma index: hwlist.lenght - 1
   }
 
   void editHW(int index, Homework hw) {

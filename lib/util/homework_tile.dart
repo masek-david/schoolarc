@@ -44,7 +44,7 @@ class HomeworkTile extends StatelessWidget {
 
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.only(top: 8),
       child: Slidable(
         groupTag: '0',
         endActionPane: ActionPane(
@@ -65,10 +65,7 @@ class HomeworkTile extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: ElevationOverlay.applySurfaceTint(
-                Theme.of(context).colorScheme.surface,
-                Theme.of(context).colorScheme.primary,
-                1),
+            color: Theme.of(context).colorScheme.background,
           ),
           child: InkWell(
             onTap: onEdit,
@@ -105,7 +102,7 @@ class HomeworkTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(
-                      width: 57,
+                      width: 47,
                       child: Center(
                         child: Text(
                           deadlineText,

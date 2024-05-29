@@ -10,16 +10,23 @@ class HwBottomSheet extends StatefulWidget {
       required this.initialDate,
       required this.initialPriority,
       required this.onSave,
+      required this.initialCompletion,
       required this.index});
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
-  final void Function(
-      {required DateTime date,
-      required int priority,
-      required int index}) onSave;
+  final void Function({
+    required DateTime date,
+    required int priority,
+    required int index,
+    required String text,
+    required String subject,
+    required bool completion,
+    required dynamic context,
+  }) onSave;
   final DateTime initialDate;
   final int initialPriority;
+  final bool initialCompletion;
   final int index;
 
   @override
@@ -69,9 +76,14 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 FilledButton(
                   onPressed: () {
                     widget.onSave(
-                        date: pickedDate,
-                        priority: pickedPriority,
-                        index: widget.index);
+                      subject: widget.subjectController.text,
+                      text: widget.nameController.text,
+                      context: context,
+                      date: pickedDate,
+                      priority: pickedPriority,
+                      completion: widget.initialCompletion,
+                      index: widget.index,
+                    );
                   },
                   child: const Text('Save'),
                 )
@@ -152,7 +164,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Deadline:', style: TextStyle(fontSize: 16),
+                      'Deadline:',
+                      style: TextStyle(fontSize: 16),
                     ),
                     Text(
                       '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
