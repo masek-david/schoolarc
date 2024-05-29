@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/util/nav_bar.dart';
-import 'package:school_manager/homeworks_screen.dart';
-import 'package:school_manager/exams_screen.dart';
+import 'package:school_manager/screens/homeworks_screen.dart';
+import 'package:school_manager/screens/exams_screen.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
 class TasksApp extends StatefulWidget {

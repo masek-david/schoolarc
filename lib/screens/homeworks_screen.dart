@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/data/database.dart';
 import 'package:school_manager/util/homework_tile.dart';
 import 'package:school_manager/util/hw_create_bottom_sheet.dart';
+import 'package:school_manager/data/hw_dto_model.dart';
 import 'package:school_manager/data/hw_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
@@ -17,16 +18,17 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   // reference hive box
   final _myBox = Hive.box('myBox');
   HomeworksDatabase db = HomeworksDatabase();
-  Map<int, List<Homework>> sortedHw = {
-    0: <Homework>[],
-    1: <Homework>[],
-    2: <Homework>[],
-    3: <Homework>[],
+  Map<int, List<HomeworkDTO>> sortedHw = {
+    0: <HomeworkDTO>[],
+    1: <HomeworkDTO>[],
+    2: <HomeworkDTO>[],
+    3: <HomeworkDTO>[],
   };
 
   @override
   void initState() {
     // if first time ever opening app, default data
+    // _myBox.clear();
     // db.createInitialData();
     // db.updateDatabase();
     if (_myBox.get("HOMEWORKS") == null) {
@@ -44,9 +46,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   var _subjectController = TextEditingController();
   var _nameController = TextEditingController();
 
-  void checkBoxChange(bool? value, int index) {
+  void checkBoxChange(int index) {
     setState(() {
       db.changeCompletion(index);
+      sortHwList();
     });
   }
 
@@ -57,11 +60,12 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   }
 
   void sortHwList() {
-    List hwList = db.getDatabase();
+    List<HomeworkDTO> hwList = db.getDatabase();
     cleanSortedHwList();
-    for (Homework hw in hwList) {
+    for (HomeworkDTO hw in hwList) {
       var list = sortedHw[
-          hw.priority]; // var list je odkaz na list Homework v mape sortedHw
+          // var list je odkaz na list Homework v mape sortedHw => priradi se do mapy se spravnou prioritou
+          hw.priority];
       if (list != null) {
         list.add(hw);
       }
@@ -73,7 +77,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       db.deleteHw(index);
       sortHwList();
     });
-    db.updateDatabase();
   }
 
   void createNewHW() {
@@ -88,10 +91,11 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
           initialDate: DateTime.now(),
           initialPriority: 0,
           onSave: saveNewHW,
-          hwIndex: 0, // index neni potreba u zakladani noveho listu
+          index: 0, // index neni potreba u zakladani noveho listu
         );
       },
     ).then(
+      // po zavreni bottomSheetu se smaze uzivatelem zadany text
       (value) => {
         _nameController.clear(),
         _subjectController.clear(),
@@ -103,26 +107,25 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       {required DateTime date, required int priority, required int index}) {
     // index se tady nepouziva, ale je potreba u editHW
     setState(() {
-      Homework newHomework = Homework(
+      HomeworkDTO newHomework = db.addHw(Homework(
         subject: _subjectController.text,
         text: _nameController.text,
         deadline: date,
         completion: false,
         priority: priority,
-      );
-      db.addHw(newHomework);
+      ));
       sortedHw[newHomework.priority]!.add(newHomework);
       _nameController.clear();
       _subjectController.clear();
-      // sortHwList();
     });
     Navigator.of(context).pop();
-    // db.updateDatabase();
   }
 
   void editHW(int index) {
-    _nameController = TextEditingController(text: db.hwList[index][1]);
-    _subjectController = TextEditingController(text: db.hwList[index][0]);
+    HomeworkDTO currentlyEditedTask = db.getHomework(index);
+    _nameController = TextEditingController(text: currentlyEditedTask.text);
+    _subjectController =
+        TextEditingController(text: currentlyEditedTask.subject);
 
     showModalBottomSheet(
       context: context,
@@ -132,9 +135,9 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          initialDate: db.hwList[index][2],
-          initialPriority: db.hwList[index][4],
-          hwIndex: index,
+          initialDate: currentlyEditedTask.deadline,
+          initialPriority: currentlyEditedTask.priority,
+          index: index,
           onSave: saveEditedHW,
         );
       },
@@ -149,13 +152,14 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void saveEditedHW(
       {required DateTime date, required int priority, required int index}) {
     setState(() {
-      db.hwList[index] = ([
-        _subjectController.text,
-        _nameController.text,
-        date,
-        false,
-        priority
-      ]);
+      db.editHW(
+          index,
+          Homework(
+              subject: _subjectController.text,
+              text: _nameController.text,
+              deadline: date,
+              completion: false,
+              priority: priority));
       _nameController.clear();
       _subjectController.clear();
       sortHwList();
@@ -174,7 +178,15 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       body: SlidableAutoCloseBehavior(
         child: ListView.builder(
           itemCount: 4,
-          itemBuilder: (context, priorityIndex) {
+          itemBuilder: (context, index) {
+            final priorityIndex = 4 - 1 - index; // obrati index
+            // return PriorityList(
+            //   priorityIndex: priorityIndex,
+            //   hwWithPriority: sortedHw[priorityIndex],
+            //   checkBoxChange: (context) => checkBoxChange(index),
+            //   deleteTask: (context) => deleteTask(index),
+            //   editHW: (context) => editHW(index),
+            // );
             return Column(
               children: [
                 Padding(
@@ -191,22 +203,22 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: sortedHw[priorityIndex]!.length,
-                  itemBuilder: (context, hwIndex) {
+                  itemBuilder: (context, indexInSortedList) {
                     if (sortedHw[priorityIndex] != null &&
                         sortedHw[priorityIndex]!.isEmpty) {
                       return null;
                     }
-                    Homework hw = sortedHw[priorityIndex]![hwIndex];
+                    HomeworkDTO hw =
+                        sortedHw[priorityIndex]![indexInSortedList];
                     return HomeworkTile(
                       hwText: hw.text,
                       hwDeadline: hw.deadline,
                       hwSubject: hw.subject,
                       hwCompletion: hw.completion,
                       hwPriority: hw.priority,
-                      onChangedCompletion: (value) =>
-                          checkBoxChange(value, hwIndex),
-                      onDelete: (context) => deleteTask(hwIndex),
-                      onEdit: () => editHW(hwIndex),
+                      onChangedCompletion: (value) => checkBoxChange(hw.index),
+                      onDelete: (context) => deleteTask(hw.index),
+                      onEdit: () => editHW(hw.index),
                     );
                   },
                 ),

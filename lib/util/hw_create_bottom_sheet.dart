@@ -10,7 +10,7 @@ class HwBottomSheet extends StatefulWidget {
       required this.initialDate,
       required this.initialPriority,
       required this.onSave,
-      required this.hwIndex});
+      required this.index});
 
   final TextEditingController subjectController;
   final TextEditingController nameController;
@@ -20,7 +20,7 @@ class HwBottomSheet extends StatefulWidget {
       required int index}) onSave;
   final DateTime initialDate;
   final int initialPriority;
-  final int hwIndex;
+  final int index;
 
   @override
   State<HwBottomSheet> createState() => _HwBottomSheetState();
@@ -71,7 +71,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                     widget.onSave(
                         date: pickedDate,
                         priority: pickedPriority,
-                        index: widget.hwIndex);
+                        index: widget.index);
                   },
                   child: const Text('Save'),
                 )
