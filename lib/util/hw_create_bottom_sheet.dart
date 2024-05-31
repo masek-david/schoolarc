@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/util/get_priority_color.dart';
 
@@ -75,6 +76,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 ),
                 FilledButton(
                   onPressed: () {
+                    HapticFeedback.lightImpact();
                     widget.onSave(
                       subject: widget.subjectController.text,
                       text: widget.nameController.text,

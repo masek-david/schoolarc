@@ -68,7 +68,6 @@ class ServiceHW {
   void saveNewHW({
     required DateTime date,
     required int priority,
-    required int index,
     required String subject,
     required String text,
   }) {
@@ -99,8 +98,6 @@ class ServiceHW {
         priority: priority);
     db.editHW(index, editedHw);
     sortHwList();
-    // HomeworkDTO editedHwDto = convertToDTO(editedHw, index);
-    // sortedHw[editedHwDto.priority] = editedHwDto;
     db.updateDatabase();
   }
 

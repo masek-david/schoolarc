@@ -34,14 +34,16 @@ class HomeworkTile extends StatelessWidget {
     String deadlineText = '${hwDeadline.day}.${hwDeadline.month}.';
     if (hwDeadline.year != DateTime.now().year) {
       deadlineText += ' ${hwDeadline.year}';
-    }else if(deadlineText == '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
+    } else if (deadlineText ==
+        '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
       deadlineText = 'Tomorrow';
-    }else if(deadlineText == '${(DateTime.now().day)}.${DateTime.now().month}.') {
+    } else if (deadlineText ==
+        '${(DateTime.now().day)}.${DateTime.now().month}.') {
       deadlineText = 'Today';
-    }else if(deadlineText == '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
+    } else if (deadlineText ==
+        '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
       deadlineText = 'Yesterday';
     }
-
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -87,7 +89,6 @@ class HomeworkTile extends StatelessWidget {
                         child: Text(
                           hwSubject,
                           style: const TextStyle(
-                            // color: Theme.of(context).colorScheme.onPrimaryContainer,     // stejne je to bila
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
