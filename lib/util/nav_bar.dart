@@ -10,7 +10,7 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
-  int currentPageIndex = 0;
+  int currentPageIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,10 @@ class _NavbarState extends State<Navbar> {
       },
       selectedIndex: currentPageIndex,
       destinations: const <Widget>[
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
         NavigationDestination(
           icon: Icon(Icons.home_work),
           label: 'Homeworks',

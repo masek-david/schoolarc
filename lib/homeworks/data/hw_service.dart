@@ -1,7 +1,7 @@
-import 'package:school_manager/data/database.dart';
+import 'package:school_manager/homeworks/data/hw_database.dart';
 import 'package:hive/hive.dart';
-import 'package:school_manager/data/hw_dto_model.dart';
-import 'package:school_manager/data/hw_model.dart';
+import 'package:school_manager/homeworks/data/hw_dto_model.dart';
+import 'package:school_manager/homeworks/data/hw_model.dart';
 
 class ServiceHW {
   final _myBox = Hive.box('myBox');
@@ -50,12 +50,14 @@ class ServiceHW {
     }
     cleanSortedHwList();
     for (HomeworkDTO hw in indexedList) {
-      var list = sortedHw[
-          // var list je odkaz na list Homework v mape sortedHw => priradi se do mapy se spravnou prioritou
-          hw.priority];
+      var list = sortedHw[hw.priority];
+      // var list je odkaz na list Homework v mape sortedHw => priradi se do mapy se spravnou prioritou
       if (list != null) {
         list.add(hw);
       }
+    }
+    for (int i = 0; i <= 3; i++) {
+      sortedHw[i]!.sort((a,b) => a.deadline.compareTo(b.deadline));
     }
     return sortedHw;
   }
@@ -102,7 +104,13 @@ class ServiceHW {
   }
 
   HomeworkDTO convertToDTO(Homework hw, int index) {
-    return HomeworkDTO(subject: hw.subject, text: hw.text, deadline: hw.deadline, completion: hw.completion, priority: hw.priority, index: index);
+    return HomeworkDTO(
+        subject: hw.subject,
+        text: hw.text,
+        deadline: hw.deadline,
+        completion: hw.completion,
+        priority: hw.priority,
+        index: index);
   }
 
   HomeworkDTO getHomework(int index) {

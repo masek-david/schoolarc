@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/hw_dto_model.dart';
-import 'package:school_manager/util/homework_tile.dart';
+import 'package:school_manager/homeworks/data/hw_dto_model.dart';
+import 'package:school_manager/homeworks/util/homework_tile.dart';
 
 class ListOfHws extends StatefulWidget {
   const ListOfHws({
@@ -64,12 +64,11 @@ class _ListOfHwsState extends State<ListOfHws> {
                       hwText: hw.text,
                       hwDeadline: hw.deadline,
                       hwSubject: hw.subject,
-                      hwCompletion: hw.completion,
                       hwPriority: hw.priority,
+                      hwCompletion: hw.completion,
                       onDelete: (context) => widget.deleteHw(hw.index),
                       onEdit: () => widget.editHw(hw.index),
-                      onChangedCompletion: (context) =>
-                          widget.changeCompletion(hw.index),
+                      onChangedCompletion: (p0) => widget.changeCompletion(hw.index),
                     );
                   },
                 ),

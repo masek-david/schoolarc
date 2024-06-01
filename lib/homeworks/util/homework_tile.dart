@@ -1,7 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/util/my_checkbox.dart';
+import 'package:school_manager/homeworks/util/my_checkbox.dart';
 
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({

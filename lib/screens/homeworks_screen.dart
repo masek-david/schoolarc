@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/service_hw.dart';
-import 'package:school_manager/util/list_of_hws.dart';
-import 'package:school_manager/util/hw_create_bottom_sheet.dart';
-import 'package:school_manager/data/hw_dto_model.dart';
+import 'package:school_manager/homeworks/data/hw_service.dart';
+import 'package:school_manager/homeworks/util/list_of_hws.dart';
+import 'package:school_manager/homeworks/util/hw_bottom_sheet.dart';
+import 'package:school_manager/homeworks/data/hw_dto_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -95,6 +95,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                 subject: subject,
                 text: text,
               );
+              sortedHw = service.sortHwList();
               Navigator.of(context).pop();
             });
           },
@@ -160,10 +161,13 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Homeworks'),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           createNewHW();
-          HapticFeedback.mediumImpact();
+          HapticFeedback.lightImpact();
         },
         enableFeedback: true,
         child: const Icon(Icons.add),

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:school_manager/data/hw_model.dart';
+import 'package:school_manager/homeworks/data/hw_model.dart';
 
 class HomeworksDatabase {
   List<Homework> _hwList = [];

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:school_manager/util/nav_bar.dart';
 import 'package:school_manager/screens/homeworks_screen.dart';
 import 'package:school_manager/screens/exams_screen.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+import 'package:school_manager/screens/home_screen.dart';
 
 class TasksApp extends StatefulWidget {
   // or schoolman?
@@ -14,7 +15,7 @@ class TasksApp extends StatefulWidget {
 
 class _TasksAppState extends State<TasksApp> {
   Widget screenWidget = const HomeworksScreen();
-  int currentScreen = 0;
+  int currentScreen = 1;
 
   void switchScreen({required int newScreenIndex}) {
     setState(() {
@@ -26,9 +27,12 @@ class _TasksAppState extends State<TasksApp> {
   Widget build(BuildContext context) {
     switch (currentScreen) {
       case 0:
-        screenWidget = const HomeworksScreen();
+        screenWidget = const HomeScreen();
         break;
       case 1:
+        screenWidget = const HomeworksScreen();
+        break;
+      case 2:
         screenWidget = const ExamsScreen();
     }
 
@@ -47,7 +51,7 @@ class _TasksAppState extends State<TasksApp> {
         themeMode: ThemeMode.system,
         home: Scaffold(
           body: screenWidget,
-          appBar: AppBar(title: const Text('School manager')),
+          // appBar: AppBar(title: const Text('School manager')),
           bottomNavigationBar: Navbar(onTap: switchScreen),
         ),
       );
