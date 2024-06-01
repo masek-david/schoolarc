@@ -1,17 +1,19 @@
-# schoolman
+# SchoolMan
 
-A new Flutter project.
+An app to help students manage their homeworks and exams, simply in one app.
 
-## Getting Started
+## Features 
 
-This project is a starting point for a Flutter application.
+• take track of homeworks and exams
+• subjects
+• priority 
+• material you design with monet theming 💜
 
-A few resources to get you started if this is your first Flutter project:
+## Upcoming features 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# school_manager
+• duration for homeworks
+• calendar view
+• plan-it function, helps you plan when you do your homeworks
+• homescreen widget with homeworks and exams 
+• notifications
+• overview for upcoming homeworks and exams 
