@@ -21,12 +21,14 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     2: <HomeworkDTO>[],
     3: <HomeworkDTO>[],
   };
+  List<HomeworkDTO> completedHw = [];
 
   @override
   void initState() {
     service.initiate();
 
     sortedHw = service.sortHwList();
+    completedHw = service.getCompletedList();
     super.initState();
   }
 
@@ -56,12 +58,15 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                 })),
       );
       sortedHw = service.sortHwList();
+      completedHw = service.getCompletedList();
     });
   }
 
   void changeCompletion(int index) {
     setState(() {
       service.changeCompletion(index);
+      sortedHw = service.sortHwList();
+      completedHw = service.getCompletedList();
     });
   }
 
@@ -174,15 +179,25 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       ),
       body: SlidableAutoCloseBehavior(
         child: ListView.builder(
-          itemCount: 5,
+          itemCount: 6,
           itemBuilder: (context, index) {
             final priorityIndex = 4 - 1 - index; // obrati index
             if (index == 4) {
+              return ListOfHws(
+                  hwList: completedHw,
+                  priority: 0,
+                  textOfList: 'Completed',
+                  changeCompletion: changeCompletion,
+                  deleteHw: deleteHw,
+                  editHw: editHw);
+            }
+            if (index == 5) {
               return const SizedBox(height: 70);
             }
             return ListOfHws(
                 hwList: sortedHw[priorityIndex],
                 priority: priorityIndex,
+                textOfList: 'Priority: ',
                 changeCompletion: changeCompletion,
                 deleteHw: deleteHw,
                 editHw: editHw);

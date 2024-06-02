@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:school_manager/homeworks/data/hw_database.dart';
 import 'package:hive/hive.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
@@ -40,13 +41,15 @@ class ServiceHW {
     List<HomeworkDTO> indexedList = [];
     for (int index = 0; index < hwList.length; index++) {
       Homework hw = hwList[index];
-      indexedList.add(HomeworkDTO(
-          subject: hw.subject,
-          text: hw.text,
-          deadline: hw.deadline,
-          completion: hw.completion,
-          priority: hw.priority,
-          index: index));
+      if (hw.completion == false) {
+        indexedList.add(HomeworkDTO(
+            subject: hw.subject,
+            text: hw.text,
+            deadline: hw.deadline,
+            completion: hw.completion,
+            priority: hw.priority,
+            index: index));
+      }
     }
     cleanSortedHwList();
     for (HomeworkDTO hw in indexedList) {
@@ -57,9 +60,21 @@ class ServiceHW {
       }
     }
     for (int i = 0; i <= 3; i++) {
-      sortedHw[i]!.sort((a,b) => a.deadline.compareTo(b.deadline));
+      sortedHw[i]!.sort((a, b) => a.deadline.compareTo(b.deadline));
     }
     return sortedHw;
+  }
+
+  List<HomeworkDTO> getCompletedList() {
+    List<HomeworkDTO> completedHw = [];
+    for (int index = hwList.length - 1; index >= 0; index--) {
+      Homework hw = hwList[index];
+      if (hw.completion == true) {
+        completedHw.add(convertToDTO(hw, index));
+      }
+    }
+    debugPrint('completed hw: ${completedHw.toString()}');
+    return completedHw;
   }
 
   void deleteHw(int index) {

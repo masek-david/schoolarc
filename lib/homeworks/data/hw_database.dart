@@ -9,6 +9,7 @@ class HomeworksDatabase {
 
   // run this first time ever opening app
   void createInitialData() {
+    // _mybox.deleteFromDisk();
     _hwList = [];
     _hwList = [
       // [0]subject, [1]text, [2]deadline, [3]completion, [4]priority
@@ -20,7 +21,7 @@ class HomeworksDatabase {
           priority: 1),
       Homework(
           subject: 'ma',
-          text: 'tady se zobrazi text',
+          text: 'tady se zobrazi text pro ukol',
           deadline: DateTime(2024),
           completion: false,
           priority: 3),
@@ -34,7 +35,7 @@ class HomeworksDatabase {
           subject: 'cj',
           text: 'uc 23/4',
           deadline: DateTime(2023),
-          completion: false,
+          completion: true,
           priority: 2)
     ];
     updateDatabase();
@@ -55,7 +56,7 @@ class HomeworksDatabase {
   }
 
   Homework getHomework(int index) {
-    return _hwList[index]; 
+    return _hwList[index];
   }
 
   void addHw(Homework hw) {

@@ -23,7 +23,7 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color deadlineColor = Theme.of(context).colorScheme.onBackground;
+    Color deadlineColor = Theme.of(context).colorScheme.onSurface;
     if (examDeadline.isBefore(DateTime.now())) {
       deadlineColor = Colors.red.harmonizeWith(Theme.of(context).primaryColor);
     }
@@ -65,7 +65,7 @@ class ExamTile extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: InkWell(
             onTap: onEdit,

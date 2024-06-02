@@ -7,6 +7,7 @@ class ListOfHws extends StatefulWidget {
     super.key,
     required this.hwList,
     required this.priority,
+    required this.textOfList,
     required this.changeCompletion,
     required this.deleteHw,
     required this.editHw,
@@ -18,6 +19,7 @@ class ListOfHws extends StatefulWidget {
 
   final List<HomeworkDTO>? hwList;
   final int priority;
+  final String textOfList;
 
   @override
   State<ListOfHws> createState() => _ListOfHwsState();
@@ -47,14 +49,14 @@ class _ListOfHwsState extends State<ListOfHws> {
               ),
             ),
             child: ExpansionTile(
-              title: Text('Priority: ${widget.priority.toString()}'),
+              title: Text('${widget.textOfList}${widget.priority.toString()}'),
               initiallyExpanded: true,
               shape: const Border(),
               children: [
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: widget.hwList!.length,
+                  itemCount: widget.hwList?.length,
                   itemBuilder: (context, indexInSortedList) {
                     if (widget.hwList == null && widget.hwList!.isEmpty) {
                       return null;
@@ -68,7 +70,8 @@ class _ListOfHwsState extends State<ListOfHws> {
                       hwCompletion: hw.completion,
                       onDelete: (context) => widget.deleteHw(hw.index),
                       onEdit: () => widget.editHw(hw.index),
-                      onChangedCompletion: (p0) => widget.changeCompletion(hw.index),
+                      onChangedCompletion: (p0) =>
+                          widget.changeCompletion(hw.index),
                     );
                   },
                 ),
