@@ -5,6 +5,7 @@ import 'package:school_manager/homeworks/data/hw_service.dart';
 import 'package:school_manager/homeworks/util/list_of_hws.dart';
 import 'package:school_manager/homeworks/util/hw_bottom_sheet.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -184,23 +185,24 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
             final priorityIndex = 4 - 1 - index; // obrati index
             if (index == 4) {
               return ListOfHws(
-                  hwList: completedHw,
-                  priority: 0,
-                  textOfList: 'Completed',
-                  changeCompletion: changeCompletion,
-                  deleteHw: deleteHw,
-                  editHw: editHw);
+                context: context,
+                hwList: completedHw,
+                changeCompletion: changeCompletion,
+                deleteHw: deleteHw,
+                editHw: editHw,
+              );
             }
             if (index == 5) {
               return const SizedBox(height: 70);
             }
             return ListOfHws(
-                hwList: sortedHw[priorityIndex],
-                priority: priorityIndex,
-                textOfList: 'Priority: ',
-                changeCompletion: changeCompletion,
-                deleteHw: deleteHw,
-                editHw: editHw);
+              context: context,
+              hwList: sortedHw[priorityIndex],
+              priority: Priority(priorityIndex, context),
+              changeCompletion: changeCompletion,
+              deleteHw: deleteHw,
+              editHw: editHw,
+            );
           },
         ),
       ),

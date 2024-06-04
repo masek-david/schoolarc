@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/util/get_priority_color.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class MyCheckbox extends StatelessWidget {
   const MyCheckbox({
@@ -11,13 +11,13 @@ class MyCheckbox extends StatelessWidget {
   });
 
   final bool value;
-  final int priority;
+  final Priority priority;
   final void Function(bool?) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    Color checkboxColor =
-        getPriorityColor(priority: priority, context: context);
+    // Color checkboxColor =
+    //     getPriorityColor(priority: priority, context: context);
 
     return Transform.scale(
       scale: 1.2,
@@ -38,9 +38,9 @@ class MyCheckbox extends StatelessWidget {
             );
           }
         },
-        activeColor: checkboxColor,
+        activeColor: priority.color,
         checkColor: Colors.white,
-        side: BorderSide(color: checkboxColor, width: 2.7),
+        side: BorderSide(color: priority.color, width: 2.7),
         shape: const CircleBorder(),
       ),
     );

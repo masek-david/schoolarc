@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/homeworks/util/my_checkbox.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({
@@ -11,6 +12,7 @@ class HomeworkTile extends StatelessWidget {
     required this.hwSubject,
     required this.hwCompletion,
     required this.hwPriority,
+    // required this.priority,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
@@ -28,7 +30,7 @@ class HomeworkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
-    if (hwDeadline.isBefore(DateTime.now())) {
+    if (hwDeadline.isBefore(DateTime.now()) && hwCompletion == false) {
       deadlineColor = Colors.red.harmonizeWith(Theme.of(context).primaryColor);
     }
     String deadlineText = '${hwDeadline.day}.${hwDeadline.month}.';
@@ -44,6 +46,13 @@ class HomeworkTile extends StatelessWidget {
         '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
       deadlineText = 'Yesterday';
     }
+
+    double opacity = 1;
+    if(hwCompletion == true){
+      opacity = 0.5;
+    }
+
+    final Priority priority = Priority(hwPriority, context);
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -71,55 +80,58 @@ class HomeworkTile extends StatelessWidget {
           ),
           child: InkWell(
             onTap: onEdit,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
-                      child: Center(
-                        child: Text(
-                          hwSubject,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+            child: Opacity(
+              opacity: opacity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        child: Center(
+                          child: Text(
+                            hwSubject,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    SizedBox(width: 210, child: Text(hwText, maxLines: 2)),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 47,
-                      child: Center(
-                        child: Text(
-                          deadlineText,
-                          maxLines: 2,
-                          style: TextStyle(color: deadlineColor, fontSize: 12),
+                      const SizedBox(width: 10),
+                      SizedBox(width: 210, child: Text(hwText, maxLines: 2)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: 47,
+                        child: Center(
+                          child: Text(
+                            deadlineText,
+                            maxLines: 2,
+                            style: TextStyle(color: deadlineColor, fontSize: 12),
+                          ),
                         ),
                       ),
-                    ),
-                    MyCheckbox(
-                      value: hwCompletion,
-                      priority: hwPriority,
-                      onChanged: onChangedCompletion,
-                    ),
-                  ],
-                ),
-              ],
+                      MyCheckbox(
+                        value: hwCompletion,
+                        priority: priority,
+                        onChanged: onChangedCompletion,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

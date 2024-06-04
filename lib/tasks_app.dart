@@ -15,7 +15,7 @@ class TasksApp extends StatefulWidget {
 
 class _TasksAppState extends State<TasksApp> {
   Widget screenWidget = const HomeworksScreen();
-  int currentScreen = 1;
+  int currentScreen = 0;
 
   void switchScreen({required int newScreenIndex}) {
     setState(() {
