@@ -1,35 +1,35 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/util/get_priority_color.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class ExamTile extends StatelessWidget {
   const ExamTile({
     super.key,
-    required this.examText,
-    required this.examDeadline,
-    required this.examSubject,
-    required this.examPriority,
+    required this.text,
+    required this.deadline,
+    required this.subject,
+    required this.priority,
     required this.onDelete,
     required this.onEdit,
   });
 
-  final String examSubject;
-  final String examText;
-  final DateTime examDeadline;
-  final int examPriority;
+  final String subject;
+  final String text;
+  final DateTime deadline;
+  final Priority priority;
   final Function(BuildContext)? onDelete;
   final Function()? onEdit;
 
   @override
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
-    if (examDeadline.isBefore(DateTime.now())) {
+    if (deadline.isBefore(DateTime.now())) {
       deadlineColor = Colors.red.harmonizeWith(Theme.of(context).primaryColor);
     }
-    String deadlineText = '${examDeadline.day}.${examDeadline.month}.';
-    if (examDeadline.year != DateTime.now().year) {
-      deadlineText += ' ${examDeadline.year}';
+    String deadlineText = '${deadline.day}.${deadline.month}.';
+    if (deadline.year != DateTime.now().year) {
+      deadlineText += ' ${deadline.year}';
     } else if (deadlineText ==
         '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
       deadlineText = 'Tomorrow';
@@ -40,8 +40,7 @@ class ExamTile extends StatelessWidget {
         '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
       deadlineText = 'Yesterday';
     }
-    Color circleColor =
-        getPriorityColor(priority: examPriority, context: context);
+    Color circleColor = priority.color;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -85,7 +84,7 @@ class ExamTile extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          examSubject,
+                          subject,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -94,7 +93,7 @@ class ExamTile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    SizedBox(width: 210, child: Text(examText, maxLines: 2)),
+                    SizedBox(width: 210, child: Text(text, maxLines: 2)),
                   ],
                 ),
                 Row(

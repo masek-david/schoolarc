@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         label: const Text('Plan-it'),
-        icon: const Icon(Icons.draw),
+        icon: const Icon(Icons.schedule),
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),
@@ -36,8 +36,8 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text('number Homeworks'),
-                Text('number Exams'),
+                const Text('number Homeworks'),
+                const Text('number Exams'),
               ],
             ),
           ),

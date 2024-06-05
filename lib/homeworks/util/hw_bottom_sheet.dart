@@ -150,7 +150,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/exams/data/exam_dto_model.dart';
 import 'package:school_manager/exams/util/exam_tile.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class ListOfExams extends StatefulWidget {
   const ListOfExams({
@@ -15,7 +16,7 @@ class ListOfExams extends StatefulWidget {
   final Function editExam;
 
   final List<ExamDTO>? examList;
-  final int priority;
+  final Priority priority;
 
   @override
   State<ListOfExams> createState() => _ListOfExamsState();
@@ -24,10 +25,17 @@ class ListOfExams extends StatefulWidget {
 class _ListOfExamsState extends State<ListOfExams> {
   @override
   Widget build(BuildContext context) {
+    String titleText = widget.priority.name;
+    Color titleTextColor = widget.priority.color;
+
     Color tileBkgColor = ElevationOverlay.applySurfaceTint(
         Theme.of(context).colorScheme.surface,
         Theme.of(context).colorScheme.primary,
         0.8);
+
+    if (widget.examList!.isEmpty) {
+      return const SizedBox();
+    }
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       padding: const EdgeInsets.all(8),
@@ -45,7 +53,14 @@ class _ListOfExamsState extends State<ListOfExams> {
               ),
             ),
             child: ExpansionTile(
-              title: Text('Priority: ${widget.priority.toString()}'),
+              title: Text(
+                titleText,
+                style: TextStyle(
+                  color: titleTextColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
               initiallyExpanded: true,
               shape: const Border(),
               children: [
@@ -59,10 +74,10 @@ class _ListOfExamsState extends State<ListOfExams> {
                     }
                     ExamDTO exam = widget.examList![indexInSortedList];
                     return ExamTile(
-                      examText: exam.text,
-                      examDeadline: exam.date,
-                      examSubject: exam.subject,
-                      examPriority: exam.priority,
+                      text: exam.text,
+                      deadline: exam.date,
+                      subject: exam.subject,
+                      priority: widget.priority,
                       onDelete: (context) => widget.deleteExam(exam.index),
                       onEdit: () => widget.editExam(exam.index),
                     );

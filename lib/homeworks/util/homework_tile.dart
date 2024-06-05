@@ -12,7 +12,6 @@ class HomeworkTile extends StatelessWidget {
     required this.hwSubject,
     required this.hwCompletion,
     required this.hwPriority,
-    // required this.priority,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,

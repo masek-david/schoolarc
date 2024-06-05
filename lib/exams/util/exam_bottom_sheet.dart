@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/util/get_priority_color.dart';
+import 'package:school_manager/util/priority_model.dart';
 
 class ExamBottomSheet extends StatefulWidget {
   const ExamBottomSheet(
@@ -45,13 +45,6 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> prioritiesList = [
-      'No priority',
-      'Low',
-      'Medium',
-      'High'
-    ];
-
     return BottomSheet(
       enableDrag: false,
       onClosing: () {},
@@ -112,32 +105,28 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
               // listview musi mit vysku, kterou urci sizedbox
               height: 40,
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(prioritiesList[index]),
-                    selected: index == pickedPriority,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                        color:
-                            getPriorityColor(priority: index, context: context),
-                      ),
-                    ),
-                    backgroundColor:
-                        getPriorityColor(priority: index, context: context)
-                            .withOpacity(0.10),
-                    selectedColor:
-                        getPriorityColor(priority: index, context: context)
-                            .withOpacity(0.45),
-                    onSelected: (value) => setState(() {
-                      pickedPriority = index;
-                    }),
-                  ),
-                ),
-              ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    Priority priority = Priority(index, context);
+                    return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          selected: index == pickedPriority,
+                          label: Text(priority.name),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: priority.color,
+                            ),
+                          ),
+                          backgroundColor: priority.color.withOpacity(0.10),
+                          selectedColor: priority.color.withOpacity(0.45),
+                          onSelected: (value) => setState(() {
+                            pickedPriority = index;
+                          }),
+                        ));
+                  }),
             ),
             const Divider(),
             InkWell(
@@ -157,7 +146,7 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
