@@ -155,6 +155,7 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
                       style: TextStyle(fontSize: 16),
                     ),
                     Text(
+                      // pickedDate.toString(),
                       '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
                       style: const TextStyle(fontSize: 16),
                     ),

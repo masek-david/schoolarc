@@ -13,14 +13,14 @@ class ExamsDatabase {
     _examList = [
       Exam(
         subject: 'sb',
-        text: 'text',
-        date: DateTime.utc(2024),
+        text: 'text exam',
+        date: DateTime.utc(2024, 6, 8),
         priority: 1,
       ),
       Exam(
         subject: 'sb',
         text: 'text of test',
-        date: DateTime.utc(2023),
+        date: DateTime.utc(2024, 6, 7),
         priority: 3,
       )
     ];

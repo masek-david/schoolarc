@@ -27,7 +27,7 @@ class ServiceHW {
 
   void changeCompletion(int index) {
     db.changeCompletion(index);
-    sortHwList();
+    // sortHwList();
   }
 
   void cleanSortedHwList() {
@@ -114,7 +114,7 @@ class ServiceHW {
         completion: completion,
         priority: priority);
     db.editHW(index, editedHw);
-    sortHwList();
+    sortHwList();                   // musi tu byt aby se aktualizoval view
     db.updateDatabase();
   }
 
@@ -132,4 +132,8 @@ class ServiceHW {
     Homework hw = db.getHomework(index);
     return convertToDTO(hw, index);
   }
+
+  // List<HomeworkDTO> getTodayHws(){
+  //   for
+  // }
 }

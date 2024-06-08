@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/homeworks/data/hw_service.dart';
+import 'package:school_manager/exams/data/exam_service.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final ServiceHW _serviceHW = ServiceHW();
+  final ServiceExam _serviceExam = ServiceExam();
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +24,15 @@ class HomeScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
+            // margin: const EdgeInsets.all(value),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).colorScheme.surface.withOpacity(1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             ),
             width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Today:',
@@ -36,8 +42,13 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text('number Homeworks'),
-                const Text('number Exams'),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('number Homeworks'),
+                    Text('number Exams'),
+                  ],
+                ),
               ],
             ),
           ),

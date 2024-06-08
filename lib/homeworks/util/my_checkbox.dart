@@ -16,9 +16,6 @@ class MyCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Color checkboxColor =
-    //     getPriorityColor(priority: priority, context: context);
-
     return Transform.scale(
       scale: 1.2,
       child: Checkbox(

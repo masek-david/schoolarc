@@ -27,7 +27,7 @@ class _TasksAppState extends State<TasksApp> {
   Widget build(BuildContext context) {
     switch (currentScreen) {
       case 0:
-        screenWidget = const HomeScreen();
+        screenWidget = HomeScreen();
         break;
       case 1:
         screenWidget = const HomeworksScreen();
@@ -51,7 +51,6 @@ class _TasksAppState extends State<TasksApp> {
         themeMode: ThemeMode.system,
         home: Scaffold(
           body: screenWidget,
-          // appBar: AppBar(title: const Text('School manager')),
           bottomNavigationBar: Navbar(onTap: switchScreen),
         ),
       );

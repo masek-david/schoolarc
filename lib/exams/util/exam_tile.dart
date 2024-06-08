@@ -64,7 +64,7 @@ class ExamTile extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
           ),
           child: InkWell(
             onTap: onEdit,

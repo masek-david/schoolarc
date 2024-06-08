@@ -40,11 +40,7 @@ class _ListOfHwsState extends State<ListOfHws> {
       titleText = widget.priority!.name;
       titleTextColor = widget.priority!.color;
       initiallyExpanded = true;
-      tileBkgColor = ElevationOverlay.applySurfaceTint(
-        Theme.of(widget.context).colorScheme.surface,
-        Theme.of(widget.context).colorScheme.primary,
-        0.5,
-      );
+      tileBkgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
     }
 
     return Container(
