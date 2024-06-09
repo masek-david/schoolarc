@@ -21,13 +21,14 @@ class ExamAdapter extends TypeAdapter<Exam> {
       text: fields[1] as String,
       date: fields[2] as DateTime,
       priority: fields[3] as int,
+      isCompleted: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exam obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.subject)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..writeByte(2)
       ..write(obj.date)
       ..writeByte(3)
-      ..write(obj.priority);
+      ..write(obj.priority)
+      ..writeByte(4)
+      ..write(obj.isCompleted);
   }
 
   @override

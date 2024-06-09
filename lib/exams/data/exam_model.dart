@@ -4,8 +4,14 @@ part 'exam_model.g.dart';
 
 @HiveType(typeId: 1)
 class Exam extends HiveObject {
-  Exam({required this.subject, required this.text, required this.date, required this.priority});
-  
+  Exam({
+    required this.subject,
+    required this.text,
+    required this.date,
+    required this.priority,
+    required this.isCompleted,
+  });
+
   @HiveField(0)
   String subject;
   @HiveField(1)
@@ -14,4 +20,6 @@ class Exam extends HiveObject {
   DateTime date;
   @HiveField(3)
   int priority;
+  @HiveField(4)
+  bool isCompleted;
 }

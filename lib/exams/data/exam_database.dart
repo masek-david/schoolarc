@@ -16,12 +16,14 @@ class ExamsDatabase {
         text: 'text exam',
         date: DateTime.utc(2024, 6, 8),
         priority: 1,
+        isCompleted: false,
       ),
       Exam(
         subject: 'sb',
         text: 'text of test',
         date: DateTime.utc(2024, 6, 7),
         priority: 3,
+        isCompleted: false,
       )
     ];
     updateDatabase();

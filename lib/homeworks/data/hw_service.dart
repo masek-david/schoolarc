@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:school_manager/homeworks/data/hw_database.dart';
 import 'package:hive/hive.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
@@ -66,6 +65,7 @@ class ServiceHW {
   }
 
   List<HomeworkDTO> getCompletedList() {
+    hwList = db.getDatabase();
     List<HomeworkDTO> completedHw = [];
     for (int index = hwList.length - 1; index >= 0; index--) {
       Homework hw = hwList[index];
@@ -73,7 +73,6 @@ class ServiceHW {
         completedHw.add(convertToDTO(hw, index));
       }
     }
-    debugPrint('completed hw: ${completedHw.toString()}');
     return completedHw;
   }
 

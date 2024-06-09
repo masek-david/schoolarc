@@ -26,11 +26,12 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
   @override
   void initState() {
+    super.initState();
+    
     service.initiate();
 
     sortedHw = service.sortHwList();
     completedHw = service.getCompletedList();
-    super.initState();
   }
 
   // text controller
@@ -198,7 +199,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
             return ListOfHws(
               context: context,
               hwList: sortedHw[priorityIndex],
-              priority: Priority(priorityIndex, context),
+              priorityOfList: Priority(priorityIndex, context),
               changeCompletion: changeCompletion,
               deleteHw: deleteHw,
               editHw: editHw,

@@ -7,21 +7,21 @@ import 'package:school_manager/util/priority_model.dart';
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({
     super.key,
-    required this.hwText,
-    required this.hwDeadline,
-    required this.hwSubject,
-    required this.hwCompletion,
-    required this.hwPriority,
+    required this.text,
+    required this.deadline,
+    required this.subject,
+    required this.completion,
+    required this.priority,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
   });
 
-  final String hwSubject;
-  final String hwText;
-  final DateTime hwDeadline;
-  final bool hwCompletion;
-  final int hwPriority;
+  final String subject;
+  final String text;
+  final DateTime deadline;
+  final bool completion;
+  final Priority priority;
   final Function(bool?) onChangedCompletion;
   final Function(BuildContext)? onDelete;
   final Function()? onEdit;
@@ -29,12 +29,12 @@ class HomeworkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
-    if (hwDeadline.isBefore(DateTime.now()) && hwCompletion == false) {
+    if (deadline.isBefore(DateTime.now()) && completion == false) {
       deadlineColor = Colors.red.harmonizeWith(Theme.of(context).primaryColor);
     }
-    String deadlineText = '${hwDeadline.day}.${hwDeadline.month}.';
-    if (hwDeadline.year != DateTime.now().year) {
-      deadlineText += ' ${hwDeadline.year}';
+    String deadlineText = '${deadline.day}.${deadline.month}.';
+    if (deadline.year != DateTime.now().year) {
+      deadlineText += ' ${deadline.year}';
     } else if (deadlineText ==
         '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
       deadlineText = 'Tomorrow';
@@ -47,11 +47,9 @@ class HomeworkTile extends StatelessWidget {
     }
 
     double opacity = 1;
-    if(hwCompletion == true){
+    if(completion == true){
       opacity = 0.5;
     }
-
-    final Priority priority = Priority(hwPriority, context);
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -97,7 +95,7 @@ class HomeworkTile extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            hwSubject,
+                            subject,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -106,7 +104,7 @@ class HomeworkTile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      SizedBox(width: 210, child: Text(hwText, maxLines: 2)),
+                      SizedBox(width: 210, child: Text(text, maxLines: 2)),
                     ],
                   ),
                   Row(
@@ -123,7 +121,7 @@ class HomeworkTile extends StatelessWidget {
                         ),
                       ),
                       MyCheckbox(
-                        value: hwCompletion,
+                        value: completion,
                         priority: priority,
                         onChanged: onChangedCompletion,
                       ),

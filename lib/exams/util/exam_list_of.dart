@@ -6,8 +6,9 @@ import 'package:school_manager/util/priority_model.dart';
 class ListOfExams extends StatefulWidget {
   const ListOfExams({
     super.key,
+    required this.context,
     required this.examList,
-    required this.priority,
+    this.priorityOfList,
     required this.deleteExam,
     required this.editExam,
   });
@@ -15,8 +16,9 @@ class ListOfExams extends StatefulWidget {
   final Function deleteExam;
   final Function editExam;
 
+  final BuildContext context;
   final List<ExamDTO>? examList;
-  final Priority priority;
+  final Priority? priorityOfList;
 
   @override
   State<ListOfExams> createState() => _ListOfExamsState();
@@ -25,13 +27,19 @@ class ListOfExams extends StatefulWidget {
 class _ListOfExamsState extends State<ListOfExams> {
   @override
   Widget build(BuildContext context) {
-    String titleText = widget.priority.name;
-    Color titleTextColor = widget.priority.color;
+    String titleText = 'Completed';
+    Color titleTextColor = Colors.white;
+    Color? tileBkgColor;
+    bool initiallyExpanded = false;
 
-    Color tileBkgColor = ElevationOverlay.applySurfaceTint(
-        Theme.of(context).colorScheme.surface,
-        Theme.of(context).colorScheme.primary,
-        0.8);
+    titleTextColor = Theme.of(widget.context).colorScheme.inverseSurface;
+
+    if (widget.priorityOfList != null) {
+      titleText = widget.priorityOfList!.name;
+      titleTextColor = widget.priorityOfList!.color;
+      initiallyExpanded = true;
+      tileBkgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
+    }
 
     if (widget.examList!.isEmpty) {
       return const SizedBox();
@@ -53,15 +61,32 @@ class _ListOfExamsState extends State<ListOfExams> {
               ),
             ),
             child: ExpansionTile(
-              title: Text(
-                titleText,
-                style: TextStyle(
-                  color: titleTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    titleText,
+                    style: TextStyle(
+                      color: titleTextColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Container(
+                    height: 25,
+                    width: 25,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Text(
+                      widget.examList!.length.toString(),
+                    ),
+                  ),
+                ],
               ),
-              initiallyExpanded: true,
+              initiallyExpanded: initiallyExpanded,
               shape: const Border(),
               children: [
                 ListView.builder(
@@ -77,7 +102,7 @@ class _ListOfExamsState extends State<ListOfExams> {
                       text: exam.text,
                       deadline: exam.date,
                       subject: exam.subject,
-                      priority: widget.priority,
+                      priority: Priority(exam.priority, context),
                       onDelete: (context) => widget.deleteExam(exam.index),
                       onEdit: () => widget.editExam(exam.index),
                     );

@@ -24,6 +24,7 @@ class ServiceExam {
       // there already exist data
       db.loadData();
     }
+    markAllCompletedExams();
   }
 
   void cleanExamsByPriority() {
@@ -33,7 +34,9 @@ class ServiceExam {
   }
 
   void cleanExamsByDate() {
-    examsByDate.forEach((key, value){examsByDate[key]!.clear();});
+    examsByDate.forEach((key, value) {
+      examsByDate[key]!.clear();
+    });
   }
 
   Map<DateTime, List<ExamDTO>> sortByDate() {
@@ -41,12 +44,7 @@ class ServiceExam {
     List<ExamDTO> indexedList = [];
     for (int index = 0; index < examList.length; index++) {
       Exam exam = examList[index];
-      indexedList.add(ExamDTO(
-          subject: exam.subject,
-          text: exam.text,
-          date: exam.date,
-          priority: exam.priority,
-          index: index));
+      indexedList.add(convertToDTO(exam, index));
     }
     cleanExamsByDate();
     for (ExamDTO exam in indexedList) {
@@ -62,7 +60,7 @@ class ServiceExam {
       }
     }
 
-    examsByDate.forEach((key, value){
+    examsByDate.forEach((key, value) {
       value.sort((a, b) => b.priority.compareTo(a.priority));
     });
 
@@ -73,19 +71,15 @@ class ServiceExam {
     examList = db.getDatabase();
     List<ExamDTO> indexedList = [];
     for (int index = 0; index < examList.length; index++) {
-      Exam hw = examList[index];
-      indexedList.add(ExamDTO(
-          subject: hw.subject,
-          text: hw.text,
-          date: hw.date,
-          priority: hw.priority,
-          index: index));
+      Exam exam = examList[index];
+      if (!exam.isCompleted) {
+        indexedList.add(convertToDTO(exam, index));
+      }
     }
     cleanExamsByPriority();
     for (ExamDTO exam in indexedList) {
-      var list = examsByPriority[
-          // var list je odkaz na list Exam v mape sortedHw => priradi se do mapy se spravnou prioritou
-          exam.priority];
+      var list = examsByPriority[exam.priority];
+      // var list je odkaz na list Exam v mape sortedHw => priradi se do mapy se spravnou prioritou
       if (list != null) {
         list.add(exam);
       }
@@ -94,6 +88,30 @@ class ServiceExam {
       examsByPriority[i]!.sort((a, b) => a.date.compareTo(b.date));
     }
     return examsByPriority;
+  }
+
+  List<ExamDTO> getCompletedExams() {
+    examList = db.getDatabase();
+    List<ExamDTO> completedHw = [];
+    for (int index = examList.length - 1; index >= 0; index--) {
+      Exam exam = examList[index];
+      if (exam.isCompleted == true) {
+        completedHw.add(convertToDTO(exam, index));
+      }
+    }
+    return completedHw;
+  }
+
+  void markAllCompletedExams() {
+    examList = db.getDatabase();
+    for (Exam exam in examList) {
+      if (exam.isCompleted == false) {
+        if (isBeforeToday(exam.date)) {
+          exam.isCompleted = true;
+        }
+      }
+    }
+    db.updateDatabase();
   }
 
   void deleteExam(int index) {
@@ -107,8 +125,12 @@ class ServiceExam {
     required String subject,
     required String text,
   }) {
-    Exam newExam =
-        Exam(subject: subject, text: text, date: date, priority: priority);
+    Exam newExam = Exam(
+        subject: subject,
+        text: text,
+        date: date,
+        priority: priority,
+        isCompleted: isBeforeToday(date));
     db.addExam(newExam);
     ExamDTO newExamDto = convertToDTO(newExam, examList.length - 1);
     DateTime examDateNoTime = DateTime(
@@ -130,25 +152,41 @@ class ServiceExam {
     required String text,
     required int index,
   }) {
-    Exam editedHw =
-        Exam(subject: subject, text: text, date: date, priority: priority);
-    db.editExam(index, editedHw);
-    sortByPriority();                   // musi tu byt aby se aktualizoval view
+    Exam editedExam = Exam(
+        subject: subject,
+        text: text,
+        date: date,
+        priority: priority,
+        isCompleted: isBeforeToday(date));
+    db.editExam(index, editedExam);
+    sortByPriority(); // musi tu byt aby se aktualizoval view
     sortByDate();
     db.updateDatabase();
   }
 
-  ExamDTO convertToDTO(Exam exam, int index) {
-    return ExamDTO(
-        subject: exam.subject,
-        text: exam.text,
-        date: exam.date,
-        priority: exam.priority,
-        index: index);
+  ExamDTO getExam(int index) {
+    Exam exam = db.getExam(index);
+    return convertToDTO(exam, index);
   }
 
-  ExamDTO getExam(int index) {
-    Exam hw = db.getExam(index);
-    return convertToDTO(hw, index);
+  // vrati true pokud je date vcera a drive, false pokud dnes
+  bool isBeforeToday(DateTime date) {
+    DateTime now = DateTime.now();
+    DateTime dateOnlyDate = DateTime(date.year, date.month, date.day);
+    DateTime nowOnlyDate = DateTime(now.year, now.month, now.day);
+
+    return dateOnlyDate.isBefore(DateTime.now()) &&
+        !dateOnlyDate.isAtSameMomentAs(nowOnlyDate);
+  }
+
+  ExamDTO convertToDTO(Exam exam, int index) {
+    return ExamDTO(
+      subject: exam.subject,
+      text: exam.text,
+      date: exam.date,
+      priority: exam.priority,
+      isCompleted: exam.isCompleted,
+      index: index,
+    );
   }
 }

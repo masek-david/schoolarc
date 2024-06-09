@@ -7,7 +7,7 @@ class ListOfHws extends StatefulWidget {
   const ListOfHws({
     super.key,
     required this.hwList,
-    this.priority,
+    this.priorityOfList,
     required this.changeCompletion,
     required this.context,
     required this.deleteHw,
@@ -20,7 +20,7 @@ class ListOfHws extends StatefulWidget {
 
   final BuildContext context;
   final List<HomeworkDTO>? hwList;
-  final Priority? priority;
+  final Priority? priorityOfList;
 
   @override
   State<ListOfHws> createState() => _ListOfHwsState();
@@ -36,13 +36,16 @@ class _ListOfHwsState extends State<ListOfHws> {
 
     titleTextColor = Theme.of(widget.context).colorScheme.inverseSurface;
 
-    if (widget.priority != null) {
-      titleText = widget.priority!.name;
-      titleTextColor = widget.priority!.color;
+    if (widget.priorityOfList != null) {
+      titleText = widget.priorityOfList!.name;
+      titleTextColor = widget.priorityOfList!.color;
       initiallyExpanded = true;
       tileBkgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
     }
 
+    if (widget.hwList!.isEmpty) {
+      return const SizedBox();
+    }    
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       padding: const EdgeInsets.all(8),
@@ -98,11 +101,11 @@ class _ListOfHwsState extends State<ListOfHws> {
                     }
                     HomeworkDTO hw = widget.hwList![indexInSortedList];
                     return HomeworkTile(
-                      hwText: hw.text,
-                      hwDeadline: hw.deadline,
-                      hwSubject: hw.subject,
-                      hwPriority: hw.priority,
-                      hwCompletion: hw.completion,
+                      text: hw.text,
+                      deadline: hw.deadline,
+                      subject: hw.subject,
+                      priority: Priority(hw.priority, context),
+                      completion: hw.completion,
                       onDelete: (context) => widget.deleteHw(hw.index),
                       onEdit: () => widget.editHw(hw.index),
                       onChangedCompletion: (p0) =>

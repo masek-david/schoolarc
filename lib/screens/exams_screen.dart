@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:school_manager/exams/data/exam_service.dart';
 import 'package:school_manager/exams/data/exam_dto_model.dart';
 import 'package:school_manager/exams/util/exam_bottom_sheet.dart';
 import 'package:school_manager/exams/calendar_view.dart';
+import 'package:school_manager/exams/priority_view.dart';
 
 class ExamsScreen extends StatefulWidget {
   const ExamsScreen({super.key});
@@ -20,9 +20,10 @@ class _ExamsScreenState extends State<ExamsScreen> {
     2: <ExamDTO>[],
     3: <ExamDTO>[],
   };
+  List<ExamDTO> completedExams = [];
   Map<DateTime, List<ExamDTO>> examsByDate = {};
 
-  bool calendarView = true;
+  bool calendarView = false;
   Widget viewWidget = const Placeholder();
 
   @override
@@ -32,6 +33,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
 
     examsByPriority = service.sortByPriority();
     examsByDate = service.sortByDate();
+    completedExams =  service.getCompletedExams();
   }
 
   // text controller
@@ -63,13 +65,14 @@ class _ExamsScreenState extends State<ExamsScreen> {
             ),
           ),
         );
-        examsByPriority = service.sortByPriority();
-        examsByDate = service.sortByDate();
+        updateList();
       },
     );
   }
 
-  void createNewExam() {
+  void createNewExam({DateTime? initialDate}) {
+    initialDate ??= DateTime.now();       // pokud je initial date null, nastavi se na datetime.now
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -78,7 +81,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
         return ExamBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          initialDate: DateTime.now(),
+          initialDate: initialDate!,
           initialPriority: 0,
           index: 0, // index neni potreba u zakladani noveho listu
           onSave: ({
@@ -94,12 +97,10 @@ class _ExamsScreenState extends State<ExamsScreen> {
                 service.saveNewExam(
                   date: date,
                   priority: priority,
-                  // index: index,
                   subject: subject,
                   text: text,
                 );
-                examsByPriority = service.sortByPriority();
-                examsByDate = service.sortByDate();
+                updateList();
                 Navigator.of(context).pop();
               },
             );
@@ -147,6 +148,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
                 subject: subject,
                 text: text,
               );
+              updateList();
               Navigator.of(context).pop();
             });
           },
@@ -166,6 +168,15 @@ class _ExamsScreenState extends State<ExamsScreen> {
     });
   }
 
+  void updateList() {
+    if (calendarView) {
+      examsByDate = service.sortByDate();
+    } else {
+      examsByPriority = service.sortByPriority();
+      completedExams = service.getCompletedExams();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Icon viewIcon;
@@ -174,12 +185,19 @@ class _ExamsScreenState extends State<ExamsScreen> {
       viewIcon = const Icon(Icons.calendar_view_day);
       viewWidget = CalendarView(
         examsByDate: examsByDate,
+        createNewExam: createNewExam,
         deleteExam: deleteExam,
         editExam: editExam,
       );
     } else {
       viewIcon = const Icon(Icons.calendar_today);
-      viewWidget = const Text('list view');
+      viewWidget = PriorityView(
+        examsByPriority: examsByPriority,
+        completedExams: completedExams,
+        createNewExam: createNewExam,
+        deleteExam: deleteExam,
+        editExam: editExam,
+      );
     }
     return Scaffold(
       appBar: AppBar(
@@ -193,14 +211,6 @@ class _ExamsScreenState extends State<ExamsScreen> {
             )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createNewExam();
-          HapticFeedback.lightImpact();
-        },
-        enableFeedback: true,
-        child: const Icon(Icons.add),
       ),
       body: viewWidget,
     );
