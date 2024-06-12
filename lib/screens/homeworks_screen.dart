@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/homeworks/calendar_view.dart';
+import 'package:school_manager/homeworks/priority_view.dart';
 import 'package:school_manager/homeworks/data/hw_service.dart';
 import 'package:school_manager/homeworks/util/list_of_hws.dart';
 import 'package:school_manager/homeworks/util/hw_bottom_sheet.dart';
@@ -16,22 +18,27 @@ class HomeworksScreen extends StatefulWidget {
 
 class _HomeworksScreenState extends State<HomeworksScreen> {
   ServiceHW service = ServiceHW();
-  Map<int, List<HomeworkDTO>> sortedHw = {
+  Map<int, List<HomeworkDTO>> hwByPriority = {
     0: <HomeworkDTO>[],
     1: <HomeworkDTO>[],
     2: <HomeworkDTO>[],
     3: <HomeworkDTO>[],
   };
   List<HomeworkDTO> completedHw = [];
+  Map<DateTime, List<HomeworkDTO>> hwByDate = {};
+
+  bool calendarView = false;
+  Widget viewWidget = const Placeholder();
 
   @override
   void initState() {
     super.initState();
-    
+
     service.initiate();
 
-    sortedHw = service.sortHwList();
-    completedHw = service.getCompletedList();
+    hwByPriority = service.sortByPriority();
+    hwByDate = service.sortByDate();
+    completedHw = service.getCompletedHw();
   }
 
   // text controller
@@ -55,25 +62,27 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                         priority: deletedHw.priority,
                         subject: deletedHw.subject,
                         text: deletedHw.text);
-                    sortedHw = service.sortHwList();
+                    hwByPriority = service.sortByPriority();
                   });
                 })),
       );
-      sortedHw = service.sortHwList();
-      completedHw = service.getCompletedList();
+      hwByPriority = service.sortByPriority();
+      completedHw = service.getCompletedHw();
     });
   }
 
   void changeCompletion(int index) {
     setState(() {
       service.changeCompletion(index);
-      sortedHw = service.sortHwList();
-      completedHw = service.getCompletedList();
+      hwByPriority = service.sortByPriority();
+      completedHw = service.getCompletedHw();
     });
   }
 
-  void createNewHW() {
-    showModalBottomSheet(
+  Future<void> createNewHw({DateTime? initialDate}) async {
+    initialDate ??= DateTime.now();
+
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
@@ -81,7 +90,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         return HwBottomSheet(
           subjectController: _subjectController,
           nameController: _nameController,
-          initialDate: DateTime.now(),
+          initialDate: initialDate!,
           initialPriority: 0,
           initialCompletion: false,
           index: 0, // index neni potreba u zakladani noveho listu
@@ -98,11 +107,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
               service.saveNewHW(
                 date: date,
                 priority: priority,
-                // index: index,
                 subject: subject,
                 text: text,
               );
-              sortedHw = service.sortHwList();
+              updateList();
               Navigator.of(context).pop();
             });
           },
@@ -165,48 +173,96 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     );
   }
 
+  void switchView() {
+    setState(() {
+      calendarView = !calendarView;
+    });
+  }
+
+  void updateList() {
+    if (calendarView) {
+      hwByDate = service.sortByDate();
+    } else {
+      hwByPriority = service.sortByPriority();
+      completedHw = service.getCompletedHw();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Icon viewIcon;
+    
+    if (calendarView) {
+      viewIcon = const Icon(Icons.calendar_view_day);
+      viewWidget = CalendarView(
+        hwByDate: hwByDate,
+        createNewHw: createNewHw,
+        changeCompletion: changeCompletion,
+        deleteHw: deleteHw,
+        editHw: editHw,
+      );
+    } else {
+      viewIcon = const Icon(Icons.calendar_today);
+      viewWidget = PriorityView(
+        hwByPriority: hwByPriority,
+        completedHws: completedHw,
+        changeCompletion: changeCompletion,
+        createNewHw: createNewHw,
+        deleteHw: deleteHw,
+        editHw: editHw,
+      );
+    }
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Homeworks'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createNewHW();
-          HapticFeedback.lightImpact();
-        },
-        enableFeedback: true,
-        child: const Icon(Icons.add),
-      ),
-      body: SlidableAutoCloseBehavior(
-        child: ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            final priorityIndex = 4 - 1 - index; // obrati index
-            if (index == 4) {
-              return ListOfHws(
-                context: context,
-                hwList: completedHw,
-                changeCompletion: changeCompletion,
-                deleteHw: deleteHw,
-                editHw: editHw,
-              );
-            }
-            if (index == 5) {
-              return const SizedBox(height: 70);
-            }
-            return ListOfHws(
-              context: context,
-              hwList: sortedHw[priorityIndex],
-              priorityOfList: Priority(priorityIndex, context),
-              changeCompletion: changeCompletion,
-              deleteHw: deleteHw,
-              editHw: editHw,
-            );
-          },
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Homeworks'),
+            TextButton(
+              onPressed: switchView,
+              child: viewIcon,
+            )
+          ],
         ),
       ),
+      body: viewWidget,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     createNewHw();
+      //     HapticFeedback.lightImpact();
+      //   },
+      //   enableFeedback: true,
+      //   child: const Icon(Icons.add),
+      // ),
+      // body: SlidableAutoCloseBehavior(
+      //   child: ListView.builder(
+      //     itemCount: 6,
+      //     itemBuilder: (context, index) {
+      //       final priorityIndex = 4 - 1 - index; // obrati index
+      //       if (index == 4) {
+      //         return ListOfHws(
+      //           context: context,
+      //           hwList: completedHw,
+      //           changeCompletion: changeCompletion,
+      //           deleteHw: deleteHw,
+      //           editHw: editHw,
+      //         );
+      //       }
+      //       if (index == 5) {
+      //         return const SizedBox(height: 70);
+      //       }
+      //       return ListOfHws(
+      //         context: context,
+      //         hwList: hwByPriority[priorityIndex],
+      //         priorityOfList: Priority(priorityIndex, context),
+      //         changeCompletion: changeCompletion,
+      //         deleteHw: deleteHw,
+      //         editHw: editHw,
+      //       );
+      //     },
+      //   ),
+      // ),
     );
   }
 }

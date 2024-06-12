@@ -70,10 +70,10 @@ class _ExamsScreenState extends State<ExamsScreen> {
     );
   }
 
-  void createNewExam({DateTime? initialDate}) {
+  Future<void> createNewExam({DateTime? initialDate}) async {
     initialDate ??= DateTime.now();       // pokud je initial date null, nastavi se na datetime.now
     
-    showModalBottomSheet(
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,

@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/homeworks/data/hw_dto_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:school_manager/util/priority_model.dart';
-import 'package:school_manager/exams/data/exam_dto_model.dart';
-import 'package:school_manager/exams/util/exam_tile.dart';
+import 'package:school_manager/homeworks/util/homework_tile.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({
     super.key,
-    required this.examsByDate,
-    required this.createNewExam,
-    required this.deleteExam,
-    required this.editExam,
+    required this.hwByDate,
+    required this.createNewHw,
+    required this.changeCompletion,
+    required this.deleteHw,
+    required this.editHw,
   });
 
-  final Map<DateTime, List<ExamDTO>> examsByDate;
-  final Future<void> Function({DateTime? initialDate}) createNewExam;
-  final Function deleteExam;
-  final Function editExam;
+  final Map<DateTime, List<HomeworkDTO>> hwByDate;
+  final Future<void> Function({DateTime? initialDate}) createNewHw;
+  final Function changeCompletion;
+  final Function deleteHw;
+  final Function editHw;
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
 }
 
 class _CalendarViewState extends State<CalendarView> {
-  late final ValueNotifier<List<ExamDTO>> _selectedEvents;
+  late final ValueNotifier<List<HomeworkDTO>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -35,23 +37,23 @@ class _CalendarViewState extends State<CalendarView> {
     super.initState();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(getExamForDay(_selectedDay!));
+    _selectedEvents = ValueNotifier(getHwForDay(_selectedDay!));
   }
 
-  List<ExamDTO> getExamForDay(DateTime day) {
-    return widget.examsByDate[DateTime(day.year, day.month, day.day)] ?? [];
+  List<HomeworkDTO> getHwForDay(DateTime day) {
+    return widget.hwByDate[DateTime(day.year, day.month, day.day)] ?? [];
     // musi se shodovat pouze datum, ne cas
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.examsByDate.toString());
+    debugPrint(widget.hwByDate.toString());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           HapticFeedback.lightImpact();
-          await widget.createNewExam(initialDate: _selectedDay);
-          _selectedEvents.value = getExamForDay(_selectedDay!);
+          await widget.createNewHw(initialDate: _selectedDay);
+          _selectedEvents.value = getHwForDay(_selectedDay!);
         },
         enableFeedback: true,
         child: const Icon(Icons.add),
@@ -82,7 +84,7 @@ class _CalendarViewState extends State<CalendarView> {
                 shape: BoxShape.circle,
               ),
             ),
-            eventLoader: (day) => getExamForDay(day),
+            eventLoader: (day) => getHwForDay(day),
             selectedDayPredicate: (day) {
               // Use `selectedDayPredicate` to determine which day is currently selected.
               // If this returns true, then `day` will be marked as selected.
@@ -99,7 +101,7 @@ class _CalendarViewState extends State<CalendarView> {
                   _focusedDay = focusedDay;
                 });
 
-                _selectedEvents.value = getExamForDay(selectedDay);
+                _selectedEvents.value = getHwForDay(selectedDay);
               }
             },
             onFormatChanged: (format) {
@@ -120,7 +122,7 @@ class _CalendarViewState extends State<CalendarView> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: SlidableAutoCloseBehavior(
-                child: ValueListenableBuilder<List<ExamDTO>>(
+                child: ValueListenableBuilder<List<HomeworkDTO>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _) {
                     return ListView.builder(
@@ -129,15 +131,16 @@ class _CalendarViewState extends State<CalendarView> {
                         if (index == value.length) {
                           return const SizedBox(height: 80);
                         }
-                        ExamDTO exam = value[index];
-                        return ExamTile(
-                          text: exam.text,
-                          deadline: exam.date,
-                          subject: exam.subject,
-                          completion: exam.isCompleted,
-                          priority: Priority(exam.priority, context),
-                          onDelete: (context) => widget.deleteExam(exam.index),
-                          onEdit: () => widget.editExam(exam.index),
+                        HomeworkDTO hw = value[index];
+                        return HomeworkTile(
+                          text: hw.text,
+                          deadline: hw.deadline,
+                          subject: hw.subject,
+                          completion: hw.completion,
+                          priority: Priority(hw.priority, context),
+                          onChangedCompletion: (context) => widget.changeCompletion,
+                          onDelete: (context) => widget.deleteHw(hw.index),
+                          onEdit: () => widget.editHw(hw.index),
                         );
                       },
                     );

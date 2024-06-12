@@ -27,7 +27,7 @@ class ListOfExams extends StatefulWidget {
 class _ListOfExamsState extends State<ListOfExams> {
   @override
   Widget build(BuildContext context) {
-    String titleText = 'Completed';
+    String titleText = 'Past';
     Color titleTextColor = Colors.white;
     Color? tileBkgColor;
     bool initiallyExpanded = false;
@@ -38,7 +38,7 @@ class _ListOfExamsState extends State<ListOfExams> {
       titleText = widget.priorityOfList!.name;
       titleTextColor = widget.priorityOfList!.color;
       initiallyExpanded = true;
-      tileBkgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
+      tileBkgColor = Theme.of(context).colorScheme.primary.withAlpha(20);
     }
 
     if (widget.examList!.isEmpty) {
@@ -48,7 +48,7 @@ class _ListOfExamsState extends State<ListOfExams> {
       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         color: tileBkgColor,
       ),
       child: Column(
@@ -77,7 +77,7 @@ class _ListOfExamsState extends State<ListOfExams> {
                     width: 25,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.primary.withAlpha(20),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     child: Text(
@@ -103,6 +103,7 @@ class _ListOfExamsState extends State<ListOfExams> {
                       deadline: exam.date,
                       subject: exam.subject,
                       priority: Priority(exam.priority, context),
+                      completion: exam.isCompleted,
                       onDelete: (context) => widget.deleteExam(exam.index),
                       onEdit: () => widget.editExam(exam.index),
                     );

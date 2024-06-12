@@ -102,6 +102,7 @@ class ServiceExam {
     return completedHw;
   }
 
+  // projde vsechny testy a ty co uz probehly oznaci jako hotove
   void markAllCompletedExams() {
     examList = db.getDatabase();
     for (Exam exam in examList) {
@@ -188,5 +189,16 @@ class ServiceExam {
       isCompleted: exam.isCompleted,
       index: index,
     );
+  }
+
+  int getNumberOfIncomplete(){
+    examList = db.getDatabase();
+    int numberOfIncomplete = 0;
+    for(int i = 0; i < examList.length; i++) {
+      if (!examList[i].isCompleted){
+        numberOfIncomplete++;
+      }
+    }
+    return numberOfIncomplete;
   }
 }
