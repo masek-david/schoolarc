@@ -38,29 +38,34 @@ class _PriorityViewState extends State<PriorityView> {
         child: const Icon(Icons.add),
       ),
       body: SlidableAutoCloseBehavior(
-        child: ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            final priorityIndex = 4 - 1 - index; // obrati index
-            if (index == 4) {
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ListView.builder(
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              final priorityIndex = 4 - 1 - index; // obrati index
+              if (index == 4) {
+                // completed exams
+                return ListOfExams(
+                  context: context,
+                  examList: widget.completedExams,
+                  deleteExam: widget.deleteExam,
+                  editExam: widget.editExam,
+                );
+              }
+              // bottom spacing
+              if (index == 5) {
+                return const SizedBox(height: 70);
+              }
               return ListOfExams(
                 context: context,
-                examList: widget.completedExams,
+                examList: widget.examsByPriority[priorityIndex],
+                priorityOfList: Priority(priorityIndex, context),
                 deleteExam: widget.deleteExam,
                 editExam: widget.editExam,
               );
-            }
-            if (index == 5) {
-              return const SizedBox(height: 70);
-            }
-            return ListOfExams(
-              context: context,
-              examList: widget.examsByPriority[priorityIndex],
-              priorityOfList: Priority(priorityIndex, context),
-              deleteExam: widget.deleteExam,
-              editExam: widget.editExam,
-            );
-          },
+            },
+          ),
         ),
       ),
     );

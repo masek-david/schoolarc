@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/homeworks/calendar_view.dart';
 import 'package:school_manager/homeworks/priority_view.dart';
 import 'package:school_manager/homeworks/data/hw_service.dart';
-import 'package:school_manager/homeworks/util/list_of_hws.dart';
 import 'package:school_manager/homeworks/util/hw_bottom_sheet.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
-import 'package:school_manager/util/priority_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -30,6 +26,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   bool calendarView = false;
   Widget viewWidget = const Placeholder();
 
+  // text controllers for creating and editing hw
+  var _subjectController = TextEditingController();
+  var _nameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -41,10 +41,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     completedHw = service.getCompletedHw();
   }
 
-  // text controller
-  var _subjectController = TextEditingController();
-  var _nameController = TextEditingController();
-
   // deletes hw and shows snackbar to undo it
   void deleteHw(int index) {
     setState(() {
@@ -52,30 +48,30 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       service.deleteHw(index);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: const Text('Homework deleted'),
-            action: SnackBarAction(
-                label: 'Undo',
-                onPressed: () {
-                  setState(() {
-                    service.saveNewHW(
-                        date: deletedHw.deadline,
-                        priority: deletedHw.priority,
-                        subject: deletedHw.subject,
-                        text: deletedHw.text);
-                    hwByPriority = service.sortByPriority();
-                  });
-                })),
+          content: const Text('Homework deleted'),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              setState(() {
+                service.saveNewHW(
+                    date: deletedHw.deadline,
+                    priority: deletedHw.priority,
+                    subject: deletedHw.subject,
+                    text: deletedHw.text);
+                hwByPriority = service.sortByPriority();
+              });
+            },
+          ),
+        ),
       );
-      hwByPriority = service.sortByPriority();
-      completedHw = service.getCompletedHw();
+      updateList();
     });
   }
 
-  void changeCompletion(int index) {
+  void changeCompletion(int dbIndex) {
     setState(() {
-      service.changeCompletion(index);
-      hwByPriority = service.sortByPriority();
-      completedHw = service.getCompletedHw();
+      service.changeCompletion(dbIndex);
+      updateList();
     });
   }
 
@@ -160,6 +156,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                 text: text,
                 completion: completion,
               );
+              updateList();
               Navigator.of(context).pop();
             });
           },
@@ -176,6 +173,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void switchView() {
     setState(() {
       calendarView = !calendarView;
+      updateList();
     });
   }
 
@@ -191,7 +189,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   @override
   Widget build(BuildContext context) {
     Icon viewIcon;
-    
+
     if (calendarView) {
       viewIcon = const Icon(Icons.calendar_view_day);
       viewWidget = CalendarView(
@@ -212,8 +210,9 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         editHw: editHw,
       );
     }
-    
+
     return Scaffold(
+      body: viewWidget,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,43 +225,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
           ],
         ),
       ),
-      body: viewWidget,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     createNewHw();
-      //     HapticFeedback.lightImpact();
-      //   },
-      //   enableFeedback: true,
-      //   child: const Icon(Icons.add),
-      // ),
-      // body: SlidableAutoCloseBehavior(
-      //   child: ListView.builder(
-      //     itemCount: 6,
-      //     itemBuilder: (context, index) {
-      //       final priorityIndex = 4 - 1 - index; // obrati index
-      //       if (index == 4) {
-      //         return ListOfHws(
-      //           context: context,
-      //           hwList: completedHw,
-      //           changeCompletion: changeCompletion,
-      //           deleteHw: deleteHw,
-      //           editHw: editHw,
-      //         );
-      //       }
-      //       if (index == 5) {
-      //         return const SizedBox(height: 70);
-      //       }
-      //       return ListOfHws(
-      //         context: context,
-      //         hwList: hwByPriority[priorityIndex],
-      //         priorityOfList: Priority(priorityIndex, context),
-      //         changeCompletion: changeCompletion,
-      //         deleteHw: deleteHw,
-      //         editHw: editHw,
-      //       );
-      //     },
-      //   ),
-      // ),
     );
   }
 }

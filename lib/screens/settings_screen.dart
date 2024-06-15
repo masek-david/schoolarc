@@ -10,7 +10,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(),
       body: ListView(
         children: [
-          SettingTile(),
+          const SettingTile(),
           Slider.adaptive(value: 0.1, onChanged: (value) {}),
         ],
       ),

@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
 import 'package:school_manager/homeworks/util/list_of_hws.dart';
 import 'package:school_manager/util/priority_model.dart';
-import 'package:school_manager/homeworks/data/hw_dto_model.dart';
 
 class PriorityView extends StatefulWidget {
   const PriorityView({
@@ -41,31 +40,34 @@ class _PriorityViewState extends State<PriorityView> {
         child: const Icon(Icons.add),
       ),
       body: SlidableAutoCloseBehavior(
-        child: ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            final priorityIndex = 4 - 1 - index; // obrati index
-            if (index == 4) {
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ListView.builder(
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              final priorityIndex = 4 - 1 - index; // obrati index
+              if (index == 4) {
+                return ListOfHws(
+                  context: context,
+                  hwList: widget.completedHws,
+                  changeCompletion: widget.changeCompletion,
+                  deleteHw: widget.deleteHw,
+                  editHw: widget.editHw,
+                );
+              }
+              if (index == 5) {
+                return const SizedBox(height: 70);
+              }
               return ListOfHws(
                 context: context,
-                hwList: widget.completedHws,
-                changeCompletion: (index) => widget.changeCompletion,
+                hwList: widget.hwByPriority[priorityIndex],
+                priorityOfList: Priority(priorityIndex, context),
+                changeCompletion: widget.changeCompletion,
                 deleteHw: widget.deleteHw,
                 editHw: widget.editHw,
               );
-            }
-            if (index == 5) {
-              return const SizedBox(height: 70);
-            }
-            return ListOfHws(
-              context: context,
-              hwList: widget.hwByPriority[priorityIndex],
-              priorityOfList: Priority(priorityIndex, context),
-              changeCompletion: (index) => widget.changeCompletion,
-              deleteHw: widget.deleteHw,
-              editHw: widget.editHw,
-            );
-          },
+            },
+          ),
         ),
       ),
     );

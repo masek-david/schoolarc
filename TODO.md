@@ -1,4 +1,11 @@
-enum pro priority
+fix:
+
+
+
+
+
+
+enum pro priority ?? mozna nejde kvuli barvam, ktery musej byt generovany s contextem
 
 udelat jeden bottom sheet, nahore by byl vyber, jestli chci ukol nebo test
 

@@ -126,13 +126,14 @@ class _CalendarViewState extends State<CalendarView> {
                     return ListView.builder(
                       itemCount: value.length + 1,
                       itemBuilder: (context, index) {
+                        // bottom spacing
                         if (index == value.length) {
                           return const SizedBox(height: 80);
                         }
                         ExamDTO exam = value[index];
                         return ExamTile(
                           text: exam.text,
-                          deadline: exam.date,
+                          // deadline: exam.date,
                           subject: exam.subject,
                           completion: exam.isCompleted,
                           priority: Priority(exam.priority, context),

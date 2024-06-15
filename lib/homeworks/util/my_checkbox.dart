@@ -26,12 +26,15 @@ class MyCheckbox extends StatelessWidget {
           if (value == true) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: const Text('Homework marked as completed'),
-                  duration: const Duration(milliseconds: 2000),
-                  action: SnackBarAction(label: 'Undo', onPressed: () {
+                content: const Text('Homework marked as completed'),
+                duration: const Duration(milliseconds: 2000),
+                action: SnackBarAction(
+                  label: 'Undo',
+                  onPressed: () {
                     onChanged(value);
-                  }, ),
-                  ),
+                  },
+                ),
+              ),
             );
           }
         },

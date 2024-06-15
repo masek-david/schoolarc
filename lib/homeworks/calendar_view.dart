@@ -134,11 +134,10 @@ class _CalendarViewState extends State<CalendarView> {
                         HomeworkDTO hw = value[index];
                         return HomeworkTile(
                           text: hw.text,
-                          deadline: hw.deadline,
                           subject: hw.subject,
                           completion: hw.completion,
                           priority: Priority(hw.priority, context),
-                          onChangedCompletion: (context) => widget.changeCompletion,
+                          onChangedCompletion: (completion) => widget.changeCompletion(hw.index),
                           onDelete: (context) => widget.deleteHw(hw.index),
                           onEdit: () => widget.editHw(hw.index),
                         );

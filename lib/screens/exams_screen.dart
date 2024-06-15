@@ -165,6 +165,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
   void switchView() {
     setState(() {
       calendarView = !calendarView;
+      updateList();
     });
   }
 

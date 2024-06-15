@@ -27,18 +27,17 @@ class ServiceHW {
 
   void changeCompletion(int index) {
     db.changeCompletion(index);
-    // sortHwList();
   }
 
   void cleanHwByDate() {
-    for (int i = 0; i <= 3; i++) {
-      hwByPriority[i]!.clear();
-    }
+    hwByDate.forEach((key, value) {
+      hwByDate[key]!.clear();
+    });
   }
 
   void cleanHwByPriority() {
     for (int i = 0; i <= 3; i++) {
-      hwByDate[i]!.clear();
+      hwByPriority[i]!.clear();
     }
   }
 
@@ -79,7 +78,7 @@ class ServiceHW {
         indexedList.add(convertToDTO(hw, index));
       }
     }
-    cleanHwByDate();
+    cleanHwByPriority();
     for (HomeworkDTO hw in indexedList) {
       var list = hwByPriority[hw.priority];
       // var list je odkaz na list Homework v mape sortedHw => priradi se do mapy se spravnou prioritou

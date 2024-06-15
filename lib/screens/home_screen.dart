@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/homeworks/data/hw_service.dart';
+// import 'package:school_manager/homeworks/data/hw_service.dart';
 import 'package:school_manager/exams/data/exam_service.dart';
 import 'package:school_manager/screens/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final ServiceHW _serviceHw = ServiceHW();
+  // final ServiceHW _serviceHw = ServiceHW();
   final ServiceExam _serviceExam = ServiceExam();
 
   @override
@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'num',
                       style: TextStyle(fontSize: 15),
                     ),
