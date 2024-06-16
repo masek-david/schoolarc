@@ -131,14 +131,16 @@ class _CalendarViewState extends State<CalendarView> {
                           return const SizedBox(height: 80);
                         }
                         ExamDTO exam = value[index];
-                        return ExamTile(
-                          text: exam.text,
-                          // deadline: exam.date,
-                          subject: exam.subject,
-                          completion: exam.isCompleted,
-                          priority: Priority(exam.priority, context),
-                          onDelete: (context) => widget.deleteExam(exam.index),
-                          onEdit: () => widget.editExam(exam.index),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: ExamTile(
+                            text: exam.text,
+                            subject: exam.subject,
+                            completion: exam.isCompleted,
+                            priority: Priority(exam.priority, context),
+                            onDelete: (context) => widget.deleteExam(exam.index),
+                            onEdit: () => widget.editExam(exam.index),
+                          ),
                         );
                       },
                     );

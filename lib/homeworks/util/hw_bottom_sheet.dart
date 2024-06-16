@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/util/priority_model.dart';
+import 'package:school_manager/subjects/subject_database.dart';
+import 'package:school_manager/subjects/subject_model.dart';
 
 class HwBottomSheet extends StatefulWidget {
   const HwBottomSheet(
@@ -37,13 +39,19 @@ class HwBottomSheet extends StatefulWidget {
 class _HwBottomSheetState extends State<HwBottomSheet> {
   DateTime pickedDate = DateTime.now();
   int pickedPriority = 0;
+  int? pickedSubject;
+  SubjectDatabase subjectDatabase = SubjectDatabase();
+  List<Subject> subjects = [];
 
   @override
   void initState() {
+    super.initState();
+
     pickedDate = widget.initialDate;
     pickedPriority = widget.initialPriority;
 
-    super.initState();
+    subjectDatabase.initiate();
+    subjects = subjectDatabase.getDatabase();
   }
 
   @override
@@ -104,6 +112,50 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 labelText: 'Subject',
               ),
             ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                itemCount: subjects.length + 1,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return OutlinedButton.icon(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                child: Text('Add new subject'),
+                              );
+                            },
+                          );
+                        },
+                        label: const Icon(Icons.add));
+                  }
+                  int subjectIndex = index - 1;
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: ChoiceChip(
+                      selected: subjectIndex == pickedSubject,
+                      label: Text(subjects[subjectIndex].name),
+                      onSelected: (value) {
+                        setState(() {
+                          if (subjectIndex == pickedSubject) {
+                            pickedSubject = null;
+                            widget.subjectController.text = '';
+                          } else {
+                            pickedSubject = subjectIndex;
+                            widget.subjectController.text =
+                                subjects[subjectIndex].shortcut;
+                          }
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
             const Divider(),
             SizedBox(
               // listview musi mit vysku, kterou urci sizedbox
@@ -150,7 +202,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
+                padding: const EdgeInsets.only(
+                    top: 15, bottom: 15, left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

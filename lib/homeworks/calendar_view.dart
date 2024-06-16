@@ -132,14 +132,17 @@ class _CalendarViewState extends State<CalendarView> {
                           return const SizedBox(height: 80);
                         }
                         HomeworkDTO hw = value[index];
-                        return HomeworkTile(
-                          text: hw.text,
-                          subject: hw.subject,
-                          completion: hw.completion,
-                          priority: Priority(hw.priority, context),
-                          onChangedCompletion: (completion) => widget.changeCompletion(hw.index),
-                          onDelete: (context) => widget.deleteHw(hw.index),
-                          onEdit: () => widget.editHw(hw.index),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: HomeworkTile(
+                            text: hw.text,
+                            subject: hw.subject,
+                            completion: hw.completion,
+                            priority: Priority(hw.priority, context),
+                            onChangedCompletion: (completion) => widget.changeCompletion(hw.index),
+                            onDelete: (context) => widget.deleteHw(hw.index),
+                            onEdit: () => widget.editHw(hw.index),
+                          ),
                         );
                       },
                     );

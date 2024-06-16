@@ -30,7 +30,7 @@ class _ListOfHwsState extends State<ListOfHws> {
   @override
   Widget build(BuildContext context) {
     String titleText = 'Completed';
-    Color titleTextColor = Theme.of(widget.context).colorScheme.inverseSurface;;
+    Color titleTextColor = Theme.of(widget.context).colorScheme.inverseSurface;
     Color? tileBkgColor;
     bool initiallyExpanded = false;
 
