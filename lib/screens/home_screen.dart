@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 // import 'package:school_manager/homeworks/data/hw_service.dart';
 import 'package:school_manager/exams/data/exam_service.dart';
 import 'package:school_manager/screens/settings_screen.dart';
+import 'package:school_manager/util/completed_star.dart';
+import 'package:school_manager/util/side_nav.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -16,6 +18,7 @@ class HomeScreen extends StatelessWidget {
     // int homeworkNumberOfIncomplete = _serviceHw.getNumberOfIncomplete();
 
     return Scaffold(
+      drawer: const MyDrawer(),
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,10 +76,9 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       examNumberOfIncomplete.toString(),
                       style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold
-                      ),
+                          fontSize: 15,
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -97,6 +99,8 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 10),
+          const CompletedStar(),
         ],
       ),
     );

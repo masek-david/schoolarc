@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:school_manager/util/nav_bar.dart';
 import 'package:school_manager/screens/homeworks_screen.dart';
 import 'package:school_manager/screens/exams_screen.dart';
@@ -15,6 +16,7 @@ class TasksApp extends StatefulWidget {
 
 class _TasksAppState extends State<TasksApp> {
   Widget screenWidget = const HomeworksScreen();
+  String appBarTitle = '';
   int currentScreen = 0;
 
   void switchScreen({required int newScreenIndex}) {
@@ -28,17 +30,30 @@ class _TasksAppState extends State<TasksApp> {
     switch (currentScreen) {
       case 0:
         screenWidget = HomeScreen();
+        appBarTitle = 'Home';
         break;
       case 1:
         screenWidget = const HomeworksScreen();
+        appBarTitle = 'Homeworks';
         break;
       case 2:
         screenWidget = const ExamsScreen();
+        appBarTitle = 'Exams';
+        break;
     }
 
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       return MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'), // English
+        ],
+        locale: const Locale('en', 'GB'),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: lightDynamic,

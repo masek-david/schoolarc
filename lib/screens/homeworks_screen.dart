@@ -4,6 +4,7 @@ import 'package:school_manager/homeworks/priority_view.dart';
 import 'package:school_manager/homeworks/data/hw_service.dart';
 import 'package:school_manager/homeworks/util/hw_bottom_sheet.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
+import 'package:school_manager/util/side_nav.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -107,7 +108,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                 text: text,
               );
               updateList();
-              Navigator.of(context).pop();
             });
           },
         );
@@ -157,7 +157,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
                 completion: completion,
               );
               updateList();
-              Navigator.of(context).pop();
             });
           },
         );
@@ -213,14 +212,15 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
     return Scaffold(
       body: viewWidget,
+      drawer: const MyDrawer(),
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Homeworks'),
-            TextButton(
+            TextButton.icon(
               onPressed: switchView,
-              child: viewIcon,
+              label: viewIcon,
             )
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/subjects/subject_database.dart';
+import 'package:school_manager/subjects/subject_model.dart';
+import 'package:school_manager/util/cancel_save_button.dart';
 import 'package:school_manager/util/priority_model.dart';
 
 class ExamBottomSheet extends StatefulWidget {
@@ -34,13 +36,30 @@ class ExamBottomSheet extends StatefulWidget {
 class _ExamBottomSheetState extends State<ExamBottomSheet> {
   DateTime pickedDate = DateTime.now();
   int pickedPriority = 0;
+  int? pickedSubject;
+  SubjectDatabase subjectDatabase = SubjectDatabase();
+  List<Subject> subjects = [];
 
   @override
   void initState() {
+    super.initState();
+
     pickedDate = widget.initialDate;
     pickedPriority = widget.initialPriority;
 
-    super.initState();
+    subjectDatabase.initiate();
+    subjects = subjectDatabase.getDatabase();
+  }
+
+  void onSave() {
+    widget.onSave(
+      subject: widget.subjectController.text,
+      text: widget.nameController.text,
+      context: context,
+      date: pickedDate,
+      priority: pickedPriority,
+      index: widget.index,
+    );
   }
 
   @override
@@ -55,31 +74,7 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    widget.onSave(
-                      subject: widget.subjectController.text,
-                      text: widget.nameController.text,
-                      context: context,
-                      date: pickedDate,
-                      priority: pickedPriority,
-                      index: widget.index,
-                    );
-                  },
-                  child: const Text('Save'),
-                )
-              ],
-            ),
+            CancelSaveButton(onSave: onSave),
             const SizedBox(height: 15),
             TextField(
               controller: widget.nameController,
@@ -94,10 +89,41 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
             const SizedBox(height: 10),
             TextField(
               controller: widget.subjectController,
+              maxLength: 5,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
                 labelText: 'Subject',
+              ),
+            ),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: subjects.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      selected: index == pickedSubject,
+                      label: Text(subjects[index].name),
+                      onSelected: (value) {
+                        setState(
+                          () {
+                            if (!value) {
+                              pickedSubject = null;
+                              widget.subjectController.text = '';
+                            } else {
+                              pickedSubject = index;
+                              widget.subjectController.text =
+                                  subjects[index].shortcut;
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
             const Divider(),
@@ -146,7 +172,8 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
+                padding: const EdgeInsets.only(
+                    top: 15, bottom: 15, left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

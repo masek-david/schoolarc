@@ -72,64 +72,51 @@ class HomeworkTile extends StatelessWidget {
           ),
         ],
       ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.primary.withAlpha(20),
-        ),
-        child: InkWell(
-          onTap: onEdit,
+      child: InkWell(
+        onTap: onEdit,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.primary.withAlpha(20),
+          ),
           child: Opacity(
             opacity: opacity,
+            // main row
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
-                      child: Center(
-                        child: Text(
-                          subject,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  child: Center(
+                    child: Text(
+                      subject,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    SizedBox(width: 210, child: Text(text, maxLines: 2)),
-                  ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 47,
-                      child: Center(
-                        child: Text(
-                          deadlineText,
-                          maxLines: 2,
-                          style:
-                              TextStyle(color: deadlineColor, fontSize: 12),
-                        ),
-                      ),
-                    ),
-                    MyCheckbox(
-                      value: completion,
-                      priority: priority,
-                      onChanged: onChangedCompletion,
-                    ),
-                  ],
+                const SizedBox(width: 10),
+                Expanded(child: Text(text, maxLines: 2)),
+                const SizedBox(width: 10),
+                Text(
+                  deadlineText,
+                  maxLines: 2,
+                  style: TextStyle(color: deadlineColor, fontSize: 12),
+                ),
+                MyCheckbox(
+                  value: completion,
+                  priority: priority,
+                  onChanged: onChangedCompletion,
                 ),
               ],
             ),

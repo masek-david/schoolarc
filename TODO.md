@@ -3,12 +3,9 @@ fix:
 
 
 
+interakce v subject menu by mely byt slide na delete a tap na edit
 
-
-enum pro priority ?? mozna nejde kvuli barvam, ktery musej byt generovany s contextem
-
-udelat jeden bottom sheet, nahore by byl vyber, jestli chci ukol nebo test
-
-vyber calendar/list view pro ukoly i testy
+? udelat jeden bottom sheet, nahore by byl vyber, jestli chci ukol nebo test 
+pouzit cancel_save_button v bottom sheetech
 
 animaci pro odkliknuti ukolu

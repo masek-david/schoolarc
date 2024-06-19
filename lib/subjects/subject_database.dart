@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/subjects/subject_model.dart';
 
 class SubjectDatabase {
-  List<Subject> subjects = [];
+  List<Subject> _subjects = [];
 
   final _myBox = Hive.box('myBox');
 
@@ -17,8 +17,8 @@ class SubjectDatabase {
   }
 
   void createInitialData() {
-    subjects = [];
-    subjects = [
+    _subjects = [];
+    _subjects = [
       Subject(
         name: 'Math',
         shortcut: 'Ma',
@@ -32,24 +32,31 @@ class SubjectDatabase {
   }
 
   void loadData() {
-    subjects = _myBox.get("SUBJECTS").cast<Subject>();
+    _subjects.addAll(_myBox.get('SUBJECTS').cast<Subject>());
+    // _subjects = _myBox.get("SUBJECTS").cast<Subject>();
   }
 
   // update data in database
   void updateDatabase() {
-    _myBox.put("SUBJECTS ", subjects);
+    _myBox.put("SUBJECTS", _subjects);
   }
 
   List<Subject> getDatabase() {
-    return subjects;
+    return _subjects;
   }
 
-  void addSubject(String name, String shortcut) {
-    subjects.add(Subject(name: name, shortcut: shortcut));
+  void addSubject(Subject subject) {
+    _subjects.add(subject);
     updateDatabase();
   }
 
-  void deleteSubject() {
-    // TODO
+  void saveEditedSubject(int index, Subject newSubject) {
+    _subjects[index] = newSubject;
+    updateDatabase();
+  }
+
+  void deleteSubject(int index) {
+    _subjects.removeAt(index);
+    updateDatabase();
   }
 }

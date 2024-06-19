@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/util/cancel_save_button.dart';
 import 'package:school_manager/util/priority_model.dart';
 import 'package:school_manager/subjects/subject_database.dart';
 import 'package:school_manager/subjects/subject_model.dart';
@@ -54,6 +54,18 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
     subjects = subjectDatabase.getDatabase();
   }
 
+  void onSave() {
+    widget.onSave(
+      subject: widget.subjectController.text,
+      text: widget.nameController.text,
+      context: context,
+      date: pickedDate,
+      priority: pickedPriority,
+      completion: widget.initialCompletion,
+      index: widget.index,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -66,37 +78,11 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    widget.onSave(
-                      subject: widget.subjectController.text,
-                      text: widget.nameController.text,
-                      context: context,
-                      date: pickedDate,
-                      priority: pickedPriority,
-                      completion: widget.initialCompletion,
-                      index: widget.index,
-                    );
-                  },
-                  child: const Text('Save'),
-                )
-              ],
-            ),
+            CancelSaveButton(onSave: onSave),
             const SizedBox(height: 15),
             TextField(
               controller: widget.nameController,
               autofocus: true,
-              maxLines: null,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
@@ -106,6 +92,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
             const SizedBox(height: 10),
             TextField(
               controller: widget.subjectController,
+              maxLength: 5,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
@@ -116,40 +103,27 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
             SizedBox(
               height: 40,
               child: ListView.builder(
-                itemCount: subjects.length + 1,
                 scrollDirection: Axis.horizontal,
+                itemCount: subjects.length,
                 itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return OutlinedButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: Text('Add new subject'),
-                              );
-                            },
-                          );
-                        },
-                        label: const Icon(Icons.add));
-                  }
-                  int subjectIndex = index - 1;
                   return Padding(
-                    padding: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
-                      selected: subjectIndex == pickedSubject,
-                      label: Text(subjects[subjectIndex].name),
+                      selected: index == pickedSubject,
+                      label: Text(subjects[index].name),
                       onSelected: (value) {
-                        setState(() {
-                          if (subjectIndex == pickedSubject) {
-                            pickedSubject = null;
-                            widget.subjectController.text = '';
-                          } else {
-                            pickedSubject = subjectIndex;
-                            widget.subjectController.text =
-                                subjects[subjectIndex].shortcut;
-                          }
-                        });
+                        setState(
+                          () {
+                            if (!value) {
+                              pickedSubject = null;
+                              widget.subjectController.text = '';
+                            } else {
+                              pickedSubject = index;
+                              widget.subjectController.text =
+                                  subjects[index].shortcut;
+                            }
+                          },
+                        );
                       },
                     ),
                   );

@@ -4,6 +4,7 @@ import 'package:school_manager/exams/data/exam_dto_model.dart';
 import 'package:school_manager/exams/util/exam_bottom_sheet.dart';
 import 'package:school_manager/exams/calendar_view.dart';
 import 'package:school_manager/exams/priority_view.dart';
+import 'package:school_manager/util/side_nav.dart';
 
 class ExamsScreen extends StatefulWidget {
   const ExamsScreen({super.key});
@@ -101,7 +102,6 @@ class _ExamsScreenState extends State<ExamsScreen> {
                   text: text,
                 );
                 updateList();
-                Navigator.of(context).pop();
               },
             );
           },
@@ -149,7 +149,6 @@ class _ExamsScreenState extends State<ExamsScreen> {
                 text: text,
               );
               updateList();
-              Navigator.of(context).pop();
             });
           },
         );
@@ -201,6 +200,8 @@ class _ExamsScreenState extends State<ExamsScreen> {
       );
     }
     return Scaffold(
+      body: viewWidget,
+      drawer: const MyDrawer(),
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,7 +214,6 @@ class _ExamsScreenState extends State<ExamsScreen> {
           ],
         ),
       ),
-      body: viewWidget,
     );
   }
 }
