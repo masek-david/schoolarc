@@ -146,8 +146,8 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
                               color: priority.color,
                             ),
                           ),
-                          backgroundColor: priority.color.withOpacity(0.10),
-                          selectedColor: priority.color.withOpacity(0.45),
+                          backgroundColor: priority.color.withAlpha(25),
+                          selectedColor: priority.color.withAlpha(100),
                           onSelected: (value) => setState(() {
                             pickedPriority = index;
                           }),

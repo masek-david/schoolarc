@@ -20,7 +20,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       subject: fields[0] as String,
       text: fields[1] as String,
       deadline: fields[2] as DateTime,
-      completion: fields[3] as bool,
+      isCompleted: fields[3] as bool,
       priority: fields[4] as int,
     );
   }
@@ -36,7 +36,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       ..writeByte(2)
       ..write(obj.deadline)
       ..writeByte(3)
-      ..write(obj.completion)
+      ..write(obj.isCompleted)
       ..writeByte(4)
       ..write(obj.priority);
   }

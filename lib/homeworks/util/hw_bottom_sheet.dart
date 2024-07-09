@@ -72,8 +72,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
       enableDrag: false,
       onClosing: () {},
       builder: (context) => Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
         margin: const EdgeInsets.all(15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -83,6 +83,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
             TextField(
               controller: widget.nameController,
               autofocus: true,
+              maxLines: null,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
@@ -150,8 +151,8 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                               color: priority.color,
                             ),
                           ),
-                          backgroundColor: priority.color.withOpacity(0.10),
-                          selectedColor: priority.color.withOpacity(0.45),
+                          backgroundColor: priority.color.withAlpha(25),
+                          selectedColor: priority.color.withAlpha(100),
                           onSelected: (value) => setState(() {
                             pickedPriority = index;
                           }),
@@ -168,9 +169,9 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                   firstDate: DateTime.utc(2000),
                   lastDate: DateTime.utc(2100),
                 );
-
+      
                 if (newDate == null) return;
-
+      
                 setState(() {
                   pickedDate = newDate;
                 });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/subjects/new_subject_dialog.dart';
 import 'package:school_manager/subjects/subject_database.dart';
 import 'package:school_manager/subjects/subject_model.dart';
@@ -125,33 +126,35 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ReorderableListView(
-          onReorderStart: (index) => HapticFeedback.lightImpact(),
-          children: [
-            for (int index = 0; index < subjectList.length; index++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                key: Key('$index'),
-                child: SubjectTile(
-                  subject: subjectList[index],
-                  onEdit: () => editSubject(index),
-                  onDelete: () => deleteSubject(index),
-                ),
-              )
-          ],
-          onReorder: (int oldIndex, int newIndex) {
-            setState(
-              () {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final Subject item = subjectList.removeAt(oldIndex);
-                subjectList.insert(newIndex, item);
-              },
-            );
-          },
+      body: SlidableAutoCloseBehavior(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ReorderableListView(
+            onReorderStart: (index) => HapticFeedback.lightImpact(),
+            children: [
+              for (int index = 0; index < subjectList.length; index++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  key: Key('$index'),
+                  child: SubjectTile(
+                    subject: subjectList[index],
+                    onEdit: () => editSubject(index),
+                    onDelete: () => deleteSubject(index),
+                  ),
+                )
+            ],
+            onReorder: (int oldIndex, int newIndex) {
+              setState(
+                () {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final Subject item = subjectList.removeAt(oldIndex);
+                  subjectList.insert(newIndex, item);
+                },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -47,7 +47,6 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.hwByDate.toString());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -76,7 +75,7 @@ class _CalendarViewState extends State<CalendarView> {
                 fontWeight: FontWeight.bold,
               ),
               todayDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.secondary.withAlpha(100),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
@@ -140,7 +139,7 @@ class _CalendarViewState extends State<CalendarView> {
                             completion: hw.completion,
                             priority: Priority(hw.priority, context),
                             onChangedCompletion: (completion) => widget.changeCompletion(hw.index),
-                            onDelete: (context) => widget.deleteHw(hw.index),
+                            onDelete: () => widget.deleteHw(hw.index),
                             onEdit: () => widget.editHw(hw.index),
                           ),
                         );

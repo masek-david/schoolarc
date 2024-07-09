@@ -17,25 +17,25 @@ class HomeworksDatabase {
           subject: 'ma',
           text: 'tady se zobrazi text',
           deadline: DateTime(2024),
-          completion: false,
+          isCompleted: false,
           priority: 1),
       Homework(
           subject: 'ma',
           text: 'tady se zobrazi text pro ukol',
           deadline: DateTime(2024),
-          completion: false,
+          isCompleted: false,
           priority: 3),
       Homework(
           subject: 'ma',
           text: 'tady se zobrazi text',
           deadline: DateTime(2024),
-          completion: false,
+          isCompleted: false,
           priority: 0),
       Homework(
           subject: 'cj',
           text: 'uc 23/4',
           deadline: DateTime(2023),
-          completion: true,
+          isCompleted: true,
           priority: 2)
     ];
     updateDatabase();
@@ -75,7 +75,7 @@ class HomeworksDatabase {
   }
 
   void changeCompletion(int index) {
-    (_hwList[index]).completion = !(_hwList[index]).completion;
+    (_hwList[index]).isCompleted = !(_hwList[index]).isCompleted;
     updateDatabase();
   }
 }

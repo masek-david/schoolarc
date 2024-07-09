@@ -23,8 +23,8 @@ class HomeworkTile extends StatelessWidget {
   final bool completion;
   final Priority priority;
   final Function(bool?) onChangedCompletion;
-  final Function(BuildContext)? onDelete;
-  final Function()? onEdit;
+  final Function() onDelete;
+  final Function() onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class HomeworkTile extends StatelessWidget {
         extentRatio: 0.3,
         children: [
           SlidableAction(
-            onPressed: onDelete,
+            onPressed: (context) => onDelete(),
             icon: Icons.delete,
             foregroundColor: Theme.of(context).colorScheme.onError,
             backgroundColor: Theme.of(context).colorScheme.error,

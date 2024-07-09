@@ -74,7 +74,7 @@ class ServiceHW {
     List<HomeworkDTO> indexedList = [];
     for (int index = 0; index < hwList.length; index++) {
       Homework hw = hwList[index];
-      if (hw.completion == false) {
+      if (hw.isCompleted == false) {
         indexedList.add(convertToDTO(hw, index));
       }
     }
@@ -97,7 +97,7 @@ class ServiceHW {
     List<HomeworkDTO> completedHw = [];
     for (int index = hwList.length - 1; index >= 0; index--) {
       Homework hw = hwList[index];
-      if (hw.completion == true) {
+      if (hw.isCompleted == true) {
         completedHw.add(convertToDTO(hw, index));
       }
     }
@@ -119,7 +119,7 @@ class ServiceHW {
         subject: subject,
         text: text,
         deadline: date,
-        completion: false,
+        isCompleted: false,
         priority: priority);
     db.addHw(editedHw);
     HomeworkDTO editedHwDto = convertToDTO(editedHw, hwList.length - 1);
@@ -138,7 +138,7 @@ class ServiceHW {
         subject: subject,
         text: text,
         deadline: date,
-        completion: completion,
+        isCompleted: completion,
         priority: priority);
     db.editHW(index, editedHw);
     sortByPriority(); // musi tu byt aby se aktualizoval view
@@ -150,7 +150,7 @@ class ServiceHW {
         subject: hw.subject,
         text: hw.text,
         deadline: hw.deadline,
-        completion: hw.completion,
+        completion: hw.isCompleted,
         priority: hw.priority,
         index: index);
   }
@@ -158,6 +158,17 @@ class ServiceHW {
   HomeworkDTO getHomework(int index) {
     Homework hw = db.getHomework(index);
     return convertToDTO(hw, index);
+  }
+
+  int getNumberOfIncomplete(){
+    hwList = db.getDatabase();
+    int numberOfIncomplete = 0;
+    for(int i = 0; i < hwList.length; i++) {
+      if (!hwList[i].isCompleted){
+        numberOfIncomplete++;
+      }
+    }
+    return numberOfIncomplete;
   }
 
   // List<HomeworkDTO> getTodayHws(){

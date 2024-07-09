@@ -90,7 +90,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
           initialDate: initialDate!,
           initialPriority: 0,
           initialCompletion: false,
-          index: 0, // index neni potreba u zakladani noveho listu
+          index: 0, // index neni potreba u zakladani noveho ukolu
           onSave: ({
             required context,
             required date,

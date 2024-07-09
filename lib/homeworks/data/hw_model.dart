@@ -4,7 +4,7 @@ part 'hw_model.g.dart';
 
 @HiveType(typeId: 0)
 class Homework extends HiveObject {
-  Homework({required this.subject, required this.text, required this.deadline, required this.completion, required this.priority});
+  Homework({required this.subject, required this.text, required this.deadline, required this.isCompleted, required this.priority});
   
   @HiveField(0)
   String subject;
@@ -13,7 +13,7 @@ class Homework extends HiveObject {
   @HiveField(2)
   DateTime deadline;
   @HiveField(3)
-  bool completion;
+  bool isCompleted;
   @HiveField(4)
   int priority;
 }

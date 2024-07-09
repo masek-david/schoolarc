@@ -74,7 +74,7 @@ class _CalendarViewState extends State<CalendarView> {
                 fontWeight: FontWeight.bold,
               ),
               todayDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.secondary.withAlpha(100),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(

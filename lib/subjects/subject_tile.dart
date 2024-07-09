@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/subjects/subject_model.dart';
 
 class SubjectTile extends StatelessWidget {
@@ -15,36 +16,40 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.primary.withAlpha(10),
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Slidable(
+      groupTag: '1',
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        extentRatio: 0.3,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 50, child: Text(subject.shortcut)),
-              Text(subject.name),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton.icon(
-                label: const Icon(Icons.edit_outlined),
-                onPressed: onEdit,
-              ),
-              TextButton.icon(
-                label: const Icon(Icons.delete_outline),
-                onPressed: onDelete,
-              ),
-            ],
+          SlidableAction(
+            onPressed: (context) => onDelete(),
+            icon: Icons.delete,
+            foregroundColor: Theme.of(context).colorScheme.onError,
+            backgroundColor: Theme.of(context).colorScheme.error,
+            borderRadius: BorderRadius.circular(10),
+            flex: 10,
           ),
         ],
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onEdit,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.primary.withAlpha(10),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 50, child: Center(child: Text(subject.shortcut))),
+              const SizedBox(width: 10),
+              Expanded(child: Text(subject.name)),
+            ],
+          ),
+        ),
       ),
     );
   }
