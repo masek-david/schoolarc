@@ -42,11 +42,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     completedHw = service.getCompletedHw();
   }
 
-  // deletes hw and shows snackbar to undo it
-  void deleteHw(int index) {
-    setState(() {
-      HomeworkDTO deletedHw = service.getHomework(index);
-      service.deleteHw(index);
+  /// deletes hw from db and shows snackbar to undo it
+  void deleteHw(int key) {
+    service.deleteHw(key);
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Homework deleted'),
@@ -54,26 +53,21 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
             label: 'Undo',
             onPressed: () {
               setState(() {
-                service.saveNewHW(
-                    date: deletedHw.deadline,
-                    priority: deletedHw.priority,
-                    subject: deletedHw.subject,
-                    text: deletedHw.text);
-                hwByPriority = service.sortByPriority();
+                service.revertLastlyDeletedHw();
+                updateList();
               });
             },
           ),
         ),
       );
-      updateList();
-    });
+    //   // updateList();
   }
 
   void changeCompletion(int dbIndex) {
-    setState(() {
       service.changeCompletion(dbIndex);
-      updateList();
-    });
+    // setState(() {
+    //   updateList();
+    // });
   }
 
   Future<void> createNewHw({DateTime? initialDate}) async {
@@ -99,14 +93,14 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
             required subject,
             required completion,
             required text,
-          }) {
+          }) async {
+            await service.saveNewHW(
+              date: date,
+              priority: priority,
+              subject: subject,
+              text: text,
+            );
             setState(() {
-              service.saveNewHW(
-                date: date,
-                priority: priority,
-                subject: subject,
-                text: text,
-              );
               updateList();
             });
           },
@@ -151,7 +145,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
               service.saveEditedHW(
                 date: date,
                 priority: priority,
-                index: index,
+                key: index,
                 subject: subject,
                 text: text,
                 completion: completion,
@@ -207,6 +201,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
         createNewHw: createNewHw,
         deleteHw: deleteHw,
         editHw: editHw,
+        changeSequence: service.changeSequence,
       );
     }
 

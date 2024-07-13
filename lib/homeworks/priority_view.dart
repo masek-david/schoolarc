@@ -17,6 +17,7 @@ class PriorityView extends StatefulWidget {
     required this.changeCompletion,
     required this.deleteHw,
     required this.editHw,
+    required this.changeSequence,
   });
 
   final Map<int, List<HomeworkDTO>> hwByPriority;
@@ -25,6 +26,8 @@ class PriorityView extends StatefulWidget {
   final Function(int hwIndex) changeCompletion;
   final Function(int hwIndex) editHw;
   final Function(int hwIndex) deleteHw;
+  final Function(int oldPriority, int oldIndex, int newPriority, int newIndex)
+      changeSequence;
 
   @override
   State<PriorityView> createState() => _PriorityViewState();
@@ -40,7 +43,22 @@ class _PriorityViewState extends State<PriorityView> {
       movedItem.priority = newPriority;
       widget.hwByPriority[newPriority]!.insert(newItemIndex, movedItem);
     });
+    widget.changeSequence(oldPriority, oldItemIndex, newPriority, newItemIndex);
   }
+
+  
+  void removeHw(HomeworkDTO hw) {
+    setState(() {
+      widget.hwByPriority[hw.priority]!.remove(hw);
+    });
+  }
+
+  void addAt(HomeworkDTO hw){
+    setState(() {
+      widget.hwByPriority[hw.priority]!.remove(hw);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +92,7 @@ class _PriorityViewState extends State<PriorityView> {
             children: [
               DragAndDropLists(
                 disableScrolling: true,
-                children: List.generate(
-                  numberOfPriorityLists,
-                  (index) => _buildList(Priority(3 - index, context)),
-                ),
+                constrainDraggingAxis: false,
                 contentsWhenEmpty: const CompletedStar(),
                 itemDivider: const SizedBox(height: 10),
                 listDivider: const SizedBox(height: 10),
@@ -87,11 +102,16 @@ class _PriorityViewState extends State<PriorityView> {
                   borderRadius: BorderRadius.circular(10),
                   // color: Theme.of(context).colorScheme.primary.withAlpha(20),
                 ),
-                onItemDraggingChanged: (item, dragging) =>
-                    HapticFeedback.mediumImpact(),
+                onItemDraggingChanged: (item, dragging) {
+                  if(dragging) HapticFeedback.heavyImpact();
+                },
                 onItemReorder: _onItemReorder,
                 onListReorder: (oldListIndex, newListIndex) {},
                 listGhost: const Placeholder(),
+                children: List.generate(
+                  numberOfPriorityLists,
+                  (index) => _buildList(Priority(3 - index, context)),
+                ),
               ),
               ExpansionTile(
                 title: ExpansionTitle(
@@ -111,10 +131,12 @@ class _PriorityViewState extends State<PriorityView> {
                         subject: hw.subject,
                         completion: hw.completion,
                         priority: Priority(hw.priority, context),
+                        deadline: hw.deadline,
                         onChangedCompletion: (p0) =>
-                            widget.changeCompletion(hw.index),
-                        onDelete: () => widget.deleteHw(hw.index),
-                        onEdit: () => widget.editHw(hw.index),
+                            widget.changeCompletion(hw.key),
+                        onDelete: () => widget.deleteHw(hw.key),
+                        onEdit: () => widget.editHw(hw.key),
+                        removeHw: () => removeHw(hw),
                       ),
                     );
                   },
@@ -155,9 +177,11 @@ class _PriorityViewState extends State<PriorityView> {
         subject: hw.subject,
         completion: hw.completion,
         priority: Priority(hw.priority, context),
-        onChangedCompletion: (p0) => widget.changeCompletion(hw.index),
-        onDelete: () => widget.deleteHw(hw.index),
-        onEdit: () => widget.editHw(hw.index),
+        deadline: hw.deadline,
+        onChangedCompletion: (p0) => widget.changeCompletion(hw.key),
+        onDelete: () => widget.deleteHw(hw.key),
+        onEdit: () => widget.editHw(hw.key),
+        removeHw: () => removeHw(hw),
       ),
     );
   }

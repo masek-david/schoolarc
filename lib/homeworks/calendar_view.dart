@@ -138,9 +138,10 @@ class _CalendarViewState extends State<CalendarView> {
                             subject: hw.subject,
                             completion: hw.completion,
                             priority: Priority(hw.priority, context),
-                            onChangedCompletion: (completion) => widget.changeCompletion(hw.index),
-                            onDelete: () => widget.deleteHw(hw.index),
-                            onEdit: () => widget.editHw(hw.index),
+                            onChangedCompletion: (completion) => widget.changeCompletion(hw.key),
+                            onDelete: () => widget.deleteHw(hw.key),
+                            onEdit: () => widget.editHw(hw.key),
+                            removeHw: () {},
                           ),
                         );
                       },

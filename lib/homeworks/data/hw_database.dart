@@ -2,80 +2,88 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/homeworks/data/hw_model.dart';
 
 class HomeworksDatabase {
-  List<Homework> _hwList = [];
-
-  // reference box
-  final _mybox = Hive.box('myBox');
+  final _hwBox = Hive.box('hwBox');
+  final _hwSequenceBox = Hive.box('hwSequenceBox');
 
   // run this first time ever opening app
   void createInitialData() {
-    // _mybox.deleteFromDisk();
-    _hwList = [];
-    _hwList = [
-      // [0]subject, [1]text, [2]deadline, [3]completion, [4]priority
-      Homework(
-          subject: 'ma',
-          text: 'tady se zobrazi text',
-          deadline: DateTime(2024),
-          isCompleted: false,
-          priority: 1),
-      Homework(
-          subject: 'ma',
-          text: 'tady se zobrazi text pro ukol',
-          deadline: DateTime(2024),
-          isCompleted: false,
-          priority: 3),
-      Homework(
-          subject: 'ma',
-          text: 'tady se zobrazi text',
-          deadline: DateTime(2024),
-          isCompleted: false,
-          priority: 0),
-      Homework(
-          subject: 'cj',
-          text: 'uc 23/4',
-          deadline: DateTime(2023),
-          isCompleted: true,
-          priority: 2)
-    ];
-    updateDatabase();
+    // _hwBox.deleteFromDisk();
+    if (_hwSequenceBox.get('appAlreadyOpened') == null) {
+      _hwBox.putAll({
+        3: Homework(
+            subject: 'Math',
+            text: 'This is the assignment of the homework',
+            deadline: DateTime.now(),
+            isCompleted: false,
+            priority: 3),
+        2: Homework(
+            subject: 'En',
+            text: '<- here you can see the subject',
+            deadline: DateTime.now(),
+            isCompleted: false,
+            priority: 2),
+        1: Homework(
+            subject: 'Pe',
+            text: 'and here is the tick box with color indicating priority ->',
+            deadline: DateTime.now(),
+            isCompleted: false,
+            priority: 1),
+        0: Homework(
+            subject: 'Bio',
+            text: 'Prepare presentation',
+            deadline: DateTime.now(),
+            isCompleted: false,
+            priority: 0),
+      });
+
+      Map<int, List<int>> sequence = {
+        0: [0],
+        1: [1],
+        2: [2],
+        3: [3],
+      };
+      _hwSequenceBox.put('sequence', sequence);
+      _hwSequenceBox.put('appAlreadyOpened', true);
+    }
   }
 
-  // load data from database
-  void loadData() {
-    _hwList = _mybox.get("HOMEWORKS").cast<Homework>();
+  Map<int, List<int>> getSequence() {
+    Map<int, List<int>> converted = {};
+    var map = _hwSequenceBox.get('sequence');
+
+    for (var item in map.keys) {
+      converted[item] = List<int>.from(map[item]);
+    }
+    return converted;
   }
 
-  // update data in database
-  void updateDatabase() {
-    _mybox.put("HOMEWORKS", _hwList);
+  void saveSequence(Map<int, List<int>> sequence) {
+    _hwSequenceBox.put('sequence', sequence);
   }
 
-  List<Homework> getDatabase() {
-    return _hwList;
+  Map<int, Homework> getDatabase() {
+    return _hwBox.toMap().cast<int, Homework>();
   }
 
-  Homework getHomework(int index) {
-    return _hwList[index];
+  Homework getHomework(int key) {
+    return _hwBox.get(key);
   }
 
-  void addHw(Homework hw) {
-    _hwList.add(hw);
-    updateDatabase();
+  /// returns key of new homework
+  Future<int> addHw(Homework hw) async {
+    return await _hwBox.add(hw);
   }
 
-  void editHW(int index, Homework hw) {
-    _hwList[index] = hw;
-    updateDatabase();
+  void editHW(int key, Homework hw) {
+    _hwBox.put(key, hw);
   }
 
-  void deleteHw(int index) {
-    _hwList.removeAt(index);
-    updateDatabase();
+  void deleteHw(int key) {
+    _hwBox.delete(key);
   }
 
-  void changeCompletion(int index) {
-    (_hwList[index]).isCompleted = !(_hwList[index]).isCompleted;
-    updateDatabase();
+  void changeCompletion(int key) {
+    Homework hw = _hwBox.get(key);
+    hw.isCompleted = !hw.isCompleted;
   }
 }

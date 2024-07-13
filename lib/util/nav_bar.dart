@@ -19,6 +19,7 @@ class _NavbarState extends State<Navbar> {
         currentPageIndex = index;
         widget.onTap(newScreenIndex: index);
       },
+      shadowColor: Colors.amber,
       selectedIndex: currentPageIndex,
       destinations: const <Widget>[
         NavigationDestination(

@@ -97,6 +97,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     setState(() {
       Subject deletedSubject = subjectList[index];
       db.deleteSubject(index);
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Homework deleted'),

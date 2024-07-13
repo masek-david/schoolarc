@@ -34,7 +34,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
 
     examsByPriority = service.sortByPriority();
     examsByDate = service.sortByDate();
-    completedExams =  service.getCompletedExams();
+    completedExams = service.getCompletedExams();
   }
 
   // text controller
@@ -47,6 +47,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
       () {
         ExamDTO deletedExam = service.getExam(index);
         service.deleteExam(index);
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Homework deleted'),
@@ -72,8 +73,9 @@ class _ExamsScreenState extends State<ExamsScreen> {
   }
 
   Future<void> createNewExam({DateTime? initialDate}) async {
-    initialDate ??= DateTime.now();       // pokud je initial date null, nastavi se na datetime.now
-    
+    initialDate ??= DateTime
+        .now(); // pokud je initial date null, nastavi se na datetime.now
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,

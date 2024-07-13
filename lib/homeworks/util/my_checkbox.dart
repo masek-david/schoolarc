@@ -24,6 +24,7 @@ class MyCheckbox extends StatelessWidget {
           onChanged(value);
           HapticFeedback.mediumImpact();
           if (value == true) {
+            ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: const Text('Homework marked as completed'),
