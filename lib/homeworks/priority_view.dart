@@ -34,7 +34,7 @@ class PriorityView extends StatefulWidget {
 }
 
 class _PriorityViewState extends State<PriorityView> {
-  _onItemReorder(
+  void _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     int oldPriority = 3 - oldListIndex;
     int newPriority = 3 - newListIndex;
@@ -46,19 +46,43 @@ class _PriorityViewState extends State<PriorityView> {
     widget.changeSequence(oldPriority, oldItemIndex, newPriority, newItemIndex);
   }
 
-  
-  void removeHw(HomeworkDTO hw) {
-    setState(() {
-      widget.hwByPriority[hw.priority]!.remove(hw);
-    });
+  /// removes hw from db and ui
+  void _removeHw(HomeworkDTO hw) {
+    widget.deleteHw(hw.key);
+
+    if (hw.completion) {
+      setState(() {
+        widget.completedHws.remove(hw);
+      });
+    } else {
+      setState(() {
+        widget.hwByPriority[hw.priority]!.remove(hw);
+      });
+    }
   }
 
-  void addAt(HomeworkDTO hw){
-    setState(() {
-      widget.hwByPriority[hw.priority]!.remove(hw);
-    });
-  }
+  // void addAt(HomeworkDTO hw) {
+  //   setState(() {
+  //     widget.hwByPriority[hw.priority]!.remove(hw);
+  //   });
+  // }
 
+  void changeCompletion(HomeworkDTO hw) {
+    widget.changeCompletion(hw.key);
+    hw.completion = !hw.completion;
+
+    if (hw.completion) {
+      setState(() {
+        widget.hwByPriority[hw.priority]!.remove(hw);
+        widget.completedHws.insert(0, hw);
+      });
+    } else {
+      setState(() {
+        widget.hwByPriority[hw.priority]!.add(hw);
+        widget.completedHws.remove(hw);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +127,7 @@ class _PriorityViewState extends State<PriorityView> {
                   // color: Theme.of(context).colorScheme.primary.withAlpha(20),
                 ),
                 onItemDraggingChanged: (item, dragging) {
-                  if(dragging) HapticFeedback.heavyImpact();
+                  if (dragging) HapticFeedback.heavyImpact();
                 },
                 onItemReorder: _onItemReorder,
                 onListReorder: (oldListIndex, newListIndex) {},
@@ -132,11 +156,9 @@ class _PriorityViewState extends State<PriorityView> {
                         completion: hw.completion,
                         priority: Priority(hw.priority, context),
                         deadline: hw.deadline,
-                        onChangedCompletion: (p0) =>
-                            widget.changeCompletion(hw.key),
-                        onDelete: () => widget.deleteHw(hw.key),
+                        onChangedCompletion: (p0) => changeCompletion(hw),
+                        onDelete: () => _removeHw(hw),
                         onEdit: () => widget.editHw(hw.key),
-                        removeHw: () => removeHw(hw),
                       ),
                     );
                   },
@@ -178,10 +200,9 @@ class _PriorityViewState extends State<PriorityView> {
         completion: hw.completion,
         priority: Priority(hw.priority, context),
         deadline: hw.deadline,
-        onChangedCompletion: (p0) => widget.changeCompletion(hw.key),
-        onDelete: () => widget.deleteHw(hw.key),
+        onChangedCompletion: (completion) => changeCompletion(hw),
+        onDelete: () => _removeHw(hw),
         onEdit: () => widget.editHw(hw.key),
-        removeHw: () => removeHw(hw),
       ),
     );
   }

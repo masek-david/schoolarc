@@ -4,18 +4,18 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/homeworks/util/my_checkbox.dart';
 import 'package:school_manager/util/priority_model.dart';
 
-class HomeworkTile extends StatefulWidget {
-  const HomeworkTile(
-      {super.key,
-      required this.text,
-      this.deadline,
-      required this.subject,
-      required this.completion,
-      required this.priority,
-      required this.onChangedCompletion,
-      required this.onDelete,
-      required this.onEdit,
-      required this.removeHw});
+class HomeworkTile extends StatelessWidget {
+  const HomeworkTile({
+    super.key,
+    required this.text,
+    this.deadline,
+    required this.subject,
+    required this.completion,
+    required this.priority,
+    required this.onChangedCompletion,
+    required this.onDelete,
+    required this.onEdit,
+  });
 
   final String subject;
   final String text;
@@ -25,50 +25,20 @@ class HomeworkTile extends StatefulWidget {
   final Function(bool?) onChangedCompletion;
   final Function() onDelete;
   final Function() onEdit;
-  final Function() removeHw;
-
-  @override
-  State<HomeworkTile> createState() => _HomeworkTileState();
-}
-
-class _HomeworkTileState extends State<HomeworkTile>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      value: 1,
-      duration: const Duration(milliseconds: 300),
-    );
-
-    _animationController.addListener(() => setState(() {}));
-  }
-
-  @override
-  void dispose(){
-    _animationController.dispose();
-    
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
     String deadlineText = '';
 
-    if (widget.deadline != null) {
-      if (widget.deadline!.isBefore(DateTime.now()) &&
-          widget.completion == false) {
+    if (deadline != null) {
+      if (deadline!.isBefore(DateTime.now()) && completion == false) {
         deadlineColor =
             Colors.red.harmonizeWith(Theme.of(context).primaryColor);
       }
-      deadlineText = '${widget.deadline!.day}.${widget.deadline!.month}.';
-      if (widget.deadline!.year != DateTime.now().year) {
-        deadlineText += ' ${widget.deadline!.year}';
+      deadlineText = '${deadline!.day}.${deadline!.month}.';
+      if (deadline!.year != DateTime.now().year) {
+        deadlineText += ' ${deadline!.year}';
       } else if (deadlineText ==
           '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
         deadlineText = 'Tomorrow';
@@ -82,86 +52,73 @@ class _HomeworkTileState extends State<HomeworkTile>
     }
 
     double opacity = 1;
-    if (widget.completion == true) {
+    if (completion == true) {
       opacity = 0.5;
     }
 
-    return Transform.scale(
-      scaleY: _animationController.value,
-      alignment: Alignment.topCenter,
-      child: Slidable(
-        groupTag: '0',
-        endActionPane: ActionPane(
-          motion: const StretchMotion(),
-          extentRatio: 0.3,
-          children: [
-            SlidableAction(
-              onPressed: (context) async {
-                widget.onDelete();
-                await _animationController.animateBack(0);
-                widget.removeHw();
-              },
-              icon: Icons.delete,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-              backgroundColor: Theme.of(context).colorScheme.error,
-              borderRadius: BorderRadius.circular(10),
-              flex: 10,
-            ),
-          ],
-        ),
-        child: InkWell(
-          onTap: widget.onEdit,
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.primary.withAlpha(20),
-            ),
-            child: Opacity(
-              opacity: opacity,
-              // main row
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    child: Center(
-                      child: Text(
-                        widget.subject,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+    return Slidable(
+      groupTag: '0',
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        extentRatio: 0.3,
+        children: [
+          SlidableAction(
+            onPressed: (context) => onDelete(),
+            icon: Icons.delete,
+            foregroundColor: Theme.of(context).colorScheme.onError,
+            backgroundColor: Theme.of(context).colorScheme.error,
+            borderRadius: BorderRadius.circular(10),
+            flex: 10,
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: onEdit,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.primary.withAlpha(20),
+          ),
+          child: Opacity(
+            opacity: opacity,
+            // main row
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  child: Center(
+                    child: Text(
+                      subject,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(widget.text, maxLines: 2)),
-                  const SizedBox(width: 10),
-                  Text(
-                    deadlineText,
-                    maxLines: 2,
-                    style: TextStyle(color: deadlineColor, fontSize: 12),
-                  ),
-                  MyCheckbox(
-                    value: widget.completion,
-                    priority: widget.priority,
-                    onChanged: (completion){
-                      widget.onChangedCompletion(completion);
-                      
-                      _animationController.animateBack(0);
-                      widget.removeHw();
-                    },
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(child: Text(text, maxLines: 2)),
+                const SizedBox(width: 10),
+                Text(
+                  deadlineText,
+                  maxLines: 2,
+                  style: TextStyle(color: deadlineColor, fontSize: 12),
+                ),
+                MyCheckbox(
+                  value: completion,
+                  priority: priority,
+                  onChanged: onChangedCompletion,
+                ),
+              ],
             ),
           ),
         ),

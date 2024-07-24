@@ -31,6 +31,7 @@ class ServiceHW {
     _db.saveSequence(sequence);
   }
 
+  /// returns map with datetime being only the date, not the time
   Map<DateTime, List<HomeworkDTO>> sortByDate() {
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
 
@@ -108,6 +109,10 @@ class ServiceHW {
       sequence[lastlyDeletedHw!.priority]!.insert(lastlyDeletedHwIndex!, lastlyDeletedHwKey!);
       _hwKeyMap[lastlyDeletedHwKey!] = lastlyDeletedHw!;
       _db.saveSequence(sequence);
+
+      lastlyDeletedHw = null;
+      lastlyDeletedHwIndex = null;
+      lastlyDeletedHwKey = null;
     }
   }
 

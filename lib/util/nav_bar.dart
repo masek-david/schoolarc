@@ -27,6 +27,10 @@ class _NavbarState extends State<Navbar> {
           label: 'Home',
         ),
         NavigationDestination(
+          icon: Icon(Icons.calendar_month),
+          label: 'Calendar',
+        ),
+        NavigationDestination(
           icon: Icon(Icons.home_work),
           label: 'Homeworks',
         ),

@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/exams/data/exam_dto_model.dart';
+import 'package:school_manager/exams/data/exam_service.dart';
 import 'package:school_manager/homeworks/data/hw_dto_model.dart';
+import 'package:school_manager/homeworks/data/hw_service.dart';
+import 'package:school_manager/util/side_nav.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:school_manager/util/priority_model.dart';
-import 'package:school_manager/homeworks/util/homework_tile.dart';
 
-class CalendarView extends StatefulWidget {
-  const CalendarView({
-    super.key,
-    required this.hwByDate,
-    required this.createNewHw,
-    required this.changeCompletion,
-    required this.deleteHw,
-    required this.editHw,
-  });
-
-  final Map<DateTime, List<HomeworkDTO>> hwByDate;
-  final Future<void> Function({DateTime? initialDate}) createNewHw;
-  final Function changeCompletion;
-  final Function deleteHw;
-  final Function editHw;
+class CalendarScreen extends StatefulWidget {
+  const CalendarScreen({super.key});
 
   @override
-  State<CalendarView> createState() => _CalendarViewState();
+  State<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarViewState extends State<CalendarView> {
+class _CalendarScreenState extends State<CalendarScreen> {
+  final ServiceHW _serviceHw = ServiceHW();
+  final ServiceExam _serviceExam = ServiceExam();
+
+  late Map<DateTime, List<HomeworkDTO>> hwByDate;
+  late Map<DateTime, List<ExamDTO>> examByDate;
+
   late final ValueNotifier<List<HomeworkDTO>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
@@ -36,26 +29,32 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     super.initState();
 
+    _serviceHw.initiate();
+    _serviceExam.initiate();
+
+    hwByDate = _serviceHw.sortByDate();
+    examByDate = _serviceExam.sortByDate();
+
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(getHwForDay(_selectedDay!));
   }
 
   List<HomeworkDTO> getHwForDay(DateTime day) {
-    return widget.hwByDate[DateTime(day.year, day.month, day.day)] ?? [];
+    return hwByDate[DateTime(day.year, day.month, day.day)] ?? [];
     // musi se shodovat pouze datum, ne cas
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          HapticFeedback.lightImpact();
-          await widget.createNewHw(initialDate: _selectedDay);
-          _selectedEvents.value = getHwForDay(_selectedDay!);
-        },
-        enableFeedback: true,
-        child: const Icon(Icons.add),
+      drawer: const MyDrawer(),
+      appBar: AppBar(
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Home'),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -119,42 +118,22 @@ class _CalendarViewState extends State<CalendarView> {
                     focusedDay.subtract(Duration(days: focusedDay.weekday - 1));
               });
             },
+            onHeaderTapped: (focusedDay) {
+              setState(() {
+                _selectedDay = DateTime.now();
+              });
+            },
           ),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: SlidableAutoCloseBehavior(
-                child: ValueListenableBuilder<List<HomeworkDTO>>(
-                  valueListenable: _selectedEvents,
-                  builder: (context, value, _) {
-                    return ListView.builder(
-                      itemCount: value.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == value.length) {
-                          return const SizedBox(height: 80);
-                        }
-                        HomeworkDTO hw = value[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: HomeworkTile(
-                            text: hw.text,
-                            subject: hw.subject,
-                            completion: hw.completion,
-                            priority: Priority(hw.priority, context),
-                            onChangedCompletion: (completion) =>
-                                widget.changeCompletion(hw.key),
-                            onDelete: () => widget.deleteHw(hw.key),
-                            onEdit: () => widget.editHw(hw.key),
-                          ),
-                        );
-                      },
-                    );
-                  },
+          ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return const ListTile(
+                leading: Icon(
+                  Icons.abc,
                 ),
-              ),
-            ),
-          ),
+              );
+            },
+          )
         ],
       ),
     );
