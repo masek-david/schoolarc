@@ -1,8 +1,6 @@
 fix:
 
-kdyz se stiskne undo ve snackbaru, ale uz jsi jinde, crash (ale funguje to)
-kdyz se najednou zavre vic veci, snackbary se objevujou postupne
-smazanej hotovej ukol se objevi nehotovej
+
 
 =============================================================================================
 
@@ -14,6 +12,11 @@ barva hwtilu by mela byt zadana parametrem
 ? udelat jeden bottom sheet, nahore by byl vyber, jestli chci ukol nebo test 
 
 spravit drawer (mel by byt na celou obrazovku)
+
+kdyz se zavola undo pro completion ukolu po zakliknuti hotovo a hned zase nehotovo, oznaci se zase jako hotovy 
+
+opravdu jsou potreba collapsible lists?
+
 
 animaci pro odkliknuti ukolu
 animace pro listy

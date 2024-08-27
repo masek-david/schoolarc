@@ -1,0 +1,253 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/screens/calendar/widgets/calendar_list_exam.dart';
+import 'package:school_manager/screens/calendar/widgets/calendar_list_hw.dart';
+import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/exams_data/exam_service.dart';
+import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/data/homeworks_data/hw_service.dart';
+import 'package:school_manager/widgets/list_bottom_spacer.dart';
+import 'package:school_manager/widgets/upcoming_feature_dialog.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+class CalendarScreen extends StatefulWidget {
+  const CalendarScreen({super.key});
+
+  @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  final ServiceHW _serviceHw = ServiceHW();
+  final ServiceExam _serviceExam = ServiceExam();
+
+  late Map<DateTime, List<HomeworkDTO>> hwByDate;
+  late Map<DateTime, List<ExamDTO>> examByDate;
+
+  CalendarFormat _calendarFormat = CalendarFormat.week;
+  DateTime _focusedDay = DateTime.now();
+  late DateTime _selectedDay = _focusedDay;
+
+  late Color calendarBackgroundColor;
+
+  // how many pages you can scroll to negative
+  int negativePageCount = 1000000;
+  late final PageController _pageController =
+      PageController(viewportFraction: 0.93, initialPage: negativePageCount);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _serviceHw.initiate();
+    _serviceExam.initiate();
+
+    hwByDate = _serviceHw.sortByDate();
+    examByDate = _serviceExam.sortByDate();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    calendarBackgroundColor = Theme.of(context).colorScheme.surface;
+    // the color is needed or else the list will be visible under the calendar
+  }
+
+  void updateView() {
+    if (mounted) {
+      setState(() {
+        hwByDate = _serviceHw.sortByDate();
+        examByDate = _serviceExam.sortByDate();
+      });
+    }
+  }
+
+  void changeCompletion(int dbIndex) {
+    _serviceHw.changeCompletion(dbIndex);
+    updateView();
+  }
+
+  void deleteHw(int dbIndex) {
+    _serviceHw.deleteHw(dbIndex);
+    updateView();
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Homework deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            _serviceHw.revertLastlyDeletedHw();
+            updateView();
+          },
+        ),
+      ),
+    );
+  }
+
+  void deleteExam(int dbIndex) {
+    _serviceExam.deleteExam(dbIndex);
+    updateView();
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Exam deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            _serviceExam.revertLastlyDeletedExam();
+            updateView();
+          },
+        ),
+      ),
+    );
+  }
+
+  void edit(int dbIndex) {
+    showDialog(context: context, builder: buildDialog);
+  }
+
+  List<Object> getEventsForDay(DateTime day) {
+    List<Object> listOfEvents = [
+      ...hwByDate[DateTime(day.year, day.month, day.day)] ?? [],
+      ...examByDate[DateTime(day.year, day.month, day.day)] ?? []
+    ];
+    return listOfEvents;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          TableCalendar(
+            // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
+            firstDay: DateTime.utc(2000),
+            lastDay: DateTime.utc(2100),
+            focusedDay: _focusedDay,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            calendarFormat: _calendarFormat,
+            availableCalendarFormats: const {
+              CalendarFormat.month: 'Month',
+              CalendarFormat.week: 'Week'
+            },
+            headerStyle: HeaderStyle(
+                decoration: BoxDecoration(color: calendarBackgroundColor)),
+            daysOfWeekStyle: DaysOfWeekStyle(
+                decoration: BoxDecoration(color: calendarBackgroundColor)),
+            calendarStyle: CalendarStyle(
+              rowDecoration: BoxDecoration(color: calendarBackgroundColor),
+              markerDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+                shape: BoxShape.circle,
+              ),
+              selectedTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+                fontWeight: FontWeight.bold,
+              ),
+              todayDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary.withAlpha(50),
+                shape: BoxShape.circle,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            eventLoader: (day) => getEventsForDay(day),
+            selectedDayPredicate: (day) {
+              // Use `selectedDayPredicate` to determine which day is currently selected.
+              // If this returns true, then `day` will be marked as selected.
+
+              // Using `isSameDay` is recommended to disregard
+              // the time-part of compared DateTime objects.
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              if (!isSameDay(_selectedDay, selectedDay)) {
+                // Call `setState()` when updating the selected day
+                DateTime now = DateTime.now();
+                // kdyz to neni utc neni to schopnej spravne porovnat
+                DateTime nowOnlyDate =
+                    DateTime.utc(now.year, now.month, now.day);
+                int dayDifferenceFromNow =
+                    selectedDay.difference(nowOnlyDate).inDays;
+                int correctPageIndex = negativePageCount + dayDifferenceFromNow;
+
+                _pageController.jumpToPage(
+                  correctPageIndex,
+                );
+              }
+            },
+            // onPageChanged: (focusedDay) {
+            //   DateTime now = DateTime.now();
+            //   int dayDifferenceFromNow = focusedDay
+            //       .difference(DateTime(now.year, now.month, now.day))
+            //       .inDays;
+            //   int correctPageIndex = negativePageCount + dayDifferenceFromNow;
+            //   _pageController.jumpToPage(
+            //     correctPageIndex,
+            //     // duration: const Duration(milliseconds: 500),
+            //     // curve: Curves.easeInOut,
+            //   );
+            // },
+            onHeaderTapped: (focusedDay) {
+              setState(() {
+                _focusedDay = DateTime.now();
+              });
+              _pageController.jumpToPage(negativePageCount);
+            },
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                // Call `setState()` when updating calendar format
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
+            },
+          ),
+          Expanded(
+            child: SlidableAutoCloseBehavior(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (value) {
+                  setState(() {
+                    _focusedDay = DateTime.now()
+                        .add(Duration(days: value - negativePageCount));
+                    _selectedDay = _focusedDay;
+                  });
+                },
+                itemBuilder: (context, pageIndex) {
+                  DateTime now = DateTime.now();
+                  DateTime date = DateTime(now.year, now.month, now.day)
+                      .add(Duration(days: pageIndex - negativePageCount));
+
+                  List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
+                  List<ExamDTO> examListForDay = examByDate[date] ?? [];
+
+                  return ListView(
+                    children: [
+                      CalendarListExam(
+                        examList: examListForDay,
+                        deleteHw: deleteExam,
+                        editHw: edit,
+                      ),
+                      CalendarListHw(
+                        hwList: hwListForDay,
+                        changeCompletion: changeCompletion,
+                        deleteHw: deleteHw,
+                        editHw: edit,
+                      ),
+                      const ListBottomSpacer(),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

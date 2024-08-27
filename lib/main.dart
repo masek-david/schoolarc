@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/exams/data/exam_model.dart';
-import 'package:school_manager/homeworks/data/hw_model.dart';
-import 'package:school_manager/subjects/subject_model.dart';
+import 'package:flutter/services.dart';
+import 'package:school_manager/data/exams_data/exam_model.dart';
+import 'package:school_manager/data/homeworks_data/hw_model.dart';
+import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -13,7 +14,24 @@ void main() async {
   Hive.registerAdapter(HomeworkAdapter());
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
-  await Hive.openBox('myBox');
+  await Future.wait([
+    Hive.openBox('myBox'),
+    Hive.openBox('hwBox'),
+    Hive.openBox('examBox'),
+    // other data includes sequences and if the app is opened for the first time
+    Hive.openBox('hwOtherData'),
+    Hive.openBox('examOtherData'),
+  ]);
+
+  // gets rid of android bottom colored bar
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      // systemStatusBarContrastEnforced: true,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.top]);
 
   runApp(const TasksApp());
 }

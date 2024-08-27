@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:school_manager/util/nav_bar.dart';
-import 'package:school_manager/screens/homeworks_screen.dart';
-import 'package:school_manager/screens/exams_screen.dart';
-import 'package:school_manager/screens/home_screen.dart';
+import 'package:school_manager/screens/calendar/calendar_screen.dart';
+import 'package:school_manager/widgets/nav_bar.dart';
+import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
+import 'package:school_manager/screens/exams/exams_screen.dart';
+import 'package:school_manager/screens/home/home_screen.dart';
+import 'package:school_manager/widgets/drawer/my_drawer.dart';
 
 class TasksApp extends StatefulWidget {
-  // or schoolman?
   const TasksApp({super.key});
 
   @override
@@ -33,10 +34,13 @@ class _TasksAppState extends State<TasksApp> {
         appBarTitle = 'Home';
         break;
       case 1:
+        screenWidget = const CalendarScreen();
+        appBarTitle = 'Calendar';
+      case 2:
         screenWidget = const HomeworksScreen();
         appBarTitle = 'Homeworks';
         break;
-      case 2:
+      case 3:
         screenWidget = const ExamsScreen();
         appBarTitle = 'Exams';
         break;
@@ -66,7 +70,9 @@ class _TasksAppState extends State<TasksApp> {
         themeMode: ThemeMode.system,
         home: Scaffold(
           body: screenWidget,
-          bottomNavigationBar: Navbar(onTap: switchScreen),
+          appBar: AppBar(title: Text(appBarTitle)),
+          drawer: const MyDrawer(),
+          bottomNavigationBar: NavBar(onTap: switchScreen),
         ),
       );
     });
