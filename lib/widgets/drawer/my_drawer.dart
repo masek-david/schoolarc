@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
@@ -21,6 +22,16 @@ class MyDrawer extends StatelessWidget {
               ),
             );
           },
+        ),
+        const MyDrawerButton(
+          text: 'Display Quick add notification',
+          icon: Icon(Icons.notifications),
+          onTap: NotificationSender.sendQuickAdd,
+        ),
+        const MyDrawerButton(
+          text: 'Schedule notification',
+          icon: Icon(Icons.notifications),
+          onTap: NotificationSender.scheduleNotification,
         ),
         const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(

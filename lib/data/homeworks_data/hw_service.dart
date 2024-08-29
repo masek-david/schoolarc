@@ -2,7 +2,7 @@ import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
 
-class ServiceHW {
+class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
   Map<int, Homework> _hwDbIndexMap = {};
   Map<int, List<int>> _sequence = {};
@@ -10,7 +10,7 @@ class ServiceHW {
   int? lastlyDeletedHwDbIndex;
   int? lastlyDeletedHwIndex;
 
-  void initiate() {
+  HomeworkService() {
     _db.initiateDatabase();
     _hwDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();

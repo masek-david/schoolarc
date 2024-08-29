@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
@@ -22,6 +23,42 @@ void main() async {
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),
   ]);
+
+  await AwesomeNotifications().initialize(
+    // set the icon to null if you want to use the default app icon
+    'resource://drawable/logo',
+    // null,
+    [
+      NotificationChannel(
+        channelGroupKey: 'persistent_channel_group',
+        channelKey: 'persistent_channel',
+        channelName: 'Quick add',
+        channelDescription: 'Here you can quickly add homeworks and exams',
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      ),
+      NotificationChannel(
+        channelGroupKey: 'tommorrow_channel_group',
+        channelKey: 'tommorrow_channel',
+        channelName: 'Info about tommorrow',
+        channelDescription: 'Here you will find upcoming exams and homeworks',
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      ),
+    ],
+    // Channel groups are only visual and are not required
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupKey: 'persistent_channel_group',
+        channelGroupName: 'Persistent group',
+      ),
+      NotificationChannelGroup(
+        channelGroupKey: 'tommorrow_channel_group',
+        channelGroupName: 'Tommorrow group',
+      ),
+    ],
+    debug: true,
+  );
 
   // gets rid of android bottom colored bar
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

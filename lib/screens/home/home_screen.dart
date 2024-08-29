@@ -5,13 +5,11 @@ import 'package:school_manager/data/exams_data/exam_service.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final ServiceHW _serviceHw = ServiceHW();
-  final ServiceExam _serviceExam = ServiceExam();
+  final HomeworkService _serviceHw = HomeworkService();
+  final ExamService _serviceExam = ExamService();
 
   @override
   Widget build(BuildContext context) {
-    _serviceHw.initiate();
-    _serviceExam.initiate();
     int hwNumberOfIncomplete = _serviceHw.getNumberOfIncomplete();
     int examNumberOfIncomplete = _serviceExam.getNumberOfIncomplete();
 

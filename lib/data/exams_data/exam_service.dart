@@ -2,7 +2,7 @@ import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 
-class ServiceExam {
+class ExamService {
   final ExamDatabase _db = ExamDatabase();
   Map<int, Exam> _examDbIndexMap = {};
   Map<int, List<int>> _sequence = {};
@@ -10,7 +10,7 @@ class ServiceExam {
   int? lastlyDeletedExamDbIndex;
   int? lastlyDeletedExamIndex;
 
-  void initiate() {
+  ExamService() {
     _db.initiateDatabase();
     _examDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
