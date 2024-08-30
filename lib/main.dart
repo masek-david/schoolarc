@@ -38,6 +38,7 @@ void main() async {
         ledColor: Colors.white,
       ),
       NotificationChannel(
+        onlyAlertOnce: true,
         channelGroupKey: 'tommorrow_channel_group',
         channelKey: 'tommorrow_channel',
         channelName: 'Info about tommorrow',
