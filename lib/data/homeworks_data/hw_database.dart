@@ -47,7 +47,7 @@ class HomeworksDatabase {
     }
   }
 
-  /// returns list of homeworks dbIndexes for each priority 
+  /// returns list of homeworks dbIndexes for each priority
   Map<int, List<int>> getSequence() {
     return Map.from(_hwSequenceBox.get('sequence'));
   }
@@ -70,7 +70,7 @@ class HomeworksDatabase {
     return await _hwBox.add(hw);
   }
 
-  /// puts/replaces homework at dbIndex with new one 
+  /// puts/replaces homework at dbIndex with new one
   void editHw(int dbIndex, Homework hw) {
     _hwBox.put(dbIndex, hw);
   }
@@ -79,8 +79,18 @@ class HomeworksDatabase {
     _hwBox.delete(dbIndex);
   }
 
-  void changeCompletion(int dbIndex) {
+  void changeCompletion(int dbIndex, bool value) {
     Homework hw = _hwBox.get(dbIndex);
-    hw.completion = !hw.completion;
+
+    _hwBox.put(
+      dbIndex,
+      Homework(
+        subject: hw.subject,
+        text: hw.text,
+        deadline: hw.deadline,
+        completion: value,
+        priority: hw.priority,
+      ),
+    );
   }
 }

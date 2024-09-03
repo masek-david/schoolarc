@@ -18,8 +18,8 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final ServiceHW _serviceHw = ServiceHW();
-  final ServiceExam _serviceExam = ServiceExam();
+  final HomeworkService _serviceHw = HomeworkService();
+  final ExamService _serviceExam = ExamService();
 
   late Map<DateTime, List<HomeworkDTO>> hwByDate;
   late Map<DateTime, List<ExamDTO>> examByDate;
@@ -38,9 +38,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-
-    _serviceHw.initiate();
-    _serviceExam.initiate();
 
     hwByDate = _serviceHw.sortByDate();
     examByDate = _serviceExam.sortByDate();
@@ -63,8 +60,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  void changeCompletion(int dbIndex) {
-    _serviceHw.changeCompletion(dbIndex);
+  void changeCompletion(int dbIndex, bool value) {
+    _serviceHw.changeCompletion(dbIndex, value);
     updateView();
   }
 

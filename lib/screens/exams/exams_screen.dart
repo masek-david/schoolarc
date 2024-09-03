@@ -12,7 +12,7 @@ class ExamsScreen extends StatefulWidget {
 }
 
 class _ExamsScreenState extends State<ExamsScreen> {
-  ServiceExam service = ServiceExam();
+  ExamService service = ExamService();
   Map<int, List<ExamDTO>> examsByPriority = {
     0: <ExamDTO>[],
     1: <ExamDTO>[],
@@ -30,8 +30,6 @@ class _ExamsScreenState extends State<ExamsScreen> {
   @override
   void initState() {
     super.initState();
-
-    service.initiate();
 
     examsByPriority = service.sortByPriority();
     completedExams = service.getCompletedExams();

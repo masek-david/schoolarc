@@ -12,7 +12,7 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworksScreenState extends State<HomeworksScreen> {
-  ServiceHW service = ServiceHW();
+  HomeworkService service = HomeworkService();
   Map<int, List<HomeworkDTO>> hwByPriority = {
     0: <HomeworkDTO>[],
     1: <HomeworkDTO>[],
@@ -28,8 +28,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   @override
   void initState() {
     super.initState();
-
-    service.initiate();
 
     hwByPriority = service.sortByPriority();
     completedHw = service.getCompletedHw();
@@ -54,8 +52,8 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     );
   }
 
-  void changeCompletion(int dbIndex) {
-    service.changeCompletion(dbIndex);
+  void changeCompletion(int dbIndex, bool value) {
+    service.changeCompletion(dbIndex, value);
     updateListView();
   }
 

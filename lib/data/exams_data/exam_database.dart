@@ -43,15 +43,15 @@ class ExamDatabase {
       };
       _examSequenceBox.put('sequence', sequence);
       _examSequenceBox.put('appAlreadyOpened', true);
-      }
+    }
   }
 
-  /// returns list of Exams dbIndexes for each priority 
+  /// returns list of Exams dbIndexes for each priority
   Map<int, List<int>> getSequence() {
     return Map.from(_examSequenceBox.get('sequence'));
   }
 
-   void saveSequence(Map<int, List<int>> sequence) {
+  void saveSequence(Map<int, List<int>> sequence) {
     _examSequenceBox.put('sequence', sequence);
   }
 
@@ -60,8 +60,8 @@ class ExamDatabase {
     return _examBox.toMap().cast<int, Exam>();
   }
 
-  Exam getExam(int dbIndex) {
-    return _examBox.get(dbIndex);
+  Exam getExam(int dbKey) {
+    return _examBox.get(dbKey);
   }
 
   /// adds new Exam and returns dbIndex of the new Exam
@@ -69,17 +69,28 @@ class ExamDatabase {
     return await _examBox.add(exam);
   }
 
-  /// puts/replaces Exam at dbIndex with new one 
-  void editExam(int dbIndex, Exam exam) {
-    _examBox.put(dbIndex, exam);
+  /// puts/replaces Exam at dbIndex with new one
+  void editExam(int dbKey, Exam exam) {
+    _examBox.put(dbKey, exam);
   }
 
-   void deleteExam(int dbIndex) {
-    _examBox.delete(dbIndex);
+  void deleteExam(int dbKey) {
+    _examBox.delete(dbKey);
   }
 
-   void changeCompletion(int dbIndex) {
-    Exam hw = _examBox.get(dbIndex);
-    hw.completion = !hw.completion;
+  void setCompletion(int dbKey, bool value) {
+    Exam exam = _examBox.get(dbKey);
+    exam.completion = !exam.completion;
+
+    _examBox.put(
+      dbKey,
+      Exam(
+        subject: exam.subject,
+        text: exam.text,
+        date: exam.date,
+        priority: exam.priority,
+        completion: value,
+      ),
+    );
   }
 }

@@ -43,6 +43,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   drag_and_drop_lists: ^0.4.1
+  awesome_notifications_core: ^0.9.3
+  awesome_notifications: any
 
 dev_dependencies:
   flutter_test:

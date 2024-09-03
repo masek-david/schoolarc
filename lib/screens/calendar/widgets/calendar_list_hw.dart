@@ -14,7 +14,7 @@ class CalendarListHw extends StatelessWidget {
   });
 
   final List<HomeworkDTO> hwList;
-  final Function(int dbIndex) changeCompletion;
+  final Function(int dbIndex, bool value) changeCompletion;
   final Function(int dbIndex) deleteHw;
   final Function(int dbIndex) editHw;
 
@@ -42,7 +42,7 @@ class CalendarListHw extends StatelessWidget {
             subject: hw.subject,
             completion: hw.completion,
             priority: Priority(hw.priority, context),
-            onChangedCompletion: (completion) => changeCompletion(hw.dbIndex),
+            onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
             onDelete: () => deleteHw(hw.dbIndex),
             onEdit: () => editHw(hw.dbIndex),
           ),
