@@ -16,8 +16,8 @@ class HomeworkService {
     _sequence = _db.getSequence();
   }
 
-  void changeCompletion(int dbIndex) {
-    _db.changeCompletion(dbIndex);
+  void changeCompletion(int dbIndex, value) {
+    _db.changeCompletion(dbIndex, value);
   }
 
   /// edits the position and priority of a homework at the provided index
@@ -35,6 +35,7 @@ class HomeworkService {
   /// returns map with datetime being only the date, not the time
   Map<DateTime, List<HomeworkDTO>> sortByDate() {
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
+    _hwDbIndexMap = _db.getDatabase();
 
     _hwDbIndexMap.forEach(
       (dbIndex, value) {
@@ -59,6 +60,9 @@ class HomeworkService {
 
   /// returns list of sorted homeworks for each priority
   Map<int, List<HomeworkDTO>> sortByPriority() {
+    _hwDbIndexMap = _db.getDatabase();
+    _sequence = _db.getSequence();
+
     Map<int, List<HomeworkDTO>> hwPriorityMap = {
       0: <HomeworkDTO>[],
       1: <HomeworkDTO>[],
@@ -80,6 +84,7 @@ class HomeworkService {
 
   List<HomeworkDTO> getCompletedHw() {
     List<HomeworkDTO> completedHw = [];
+    _hwDbIndexMap = _db.getDatabase();
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -178,7 +183,9 @@ class HomeworkService {
 
   /// returns the number of incomplete homeworks
   int getNumberOfIncomplete() {
+    _hwDbIndexMap = _db.getDatabase();
     int numberOfUncomplete = 0;
+
     _hwDbIndexMap.forEach(
       (dbIndex, value) {
         if (!value.completion) {

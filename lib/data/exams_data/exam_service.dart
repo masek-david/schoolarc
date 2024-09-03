@@ -1,6 +1,7 @@
 import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
 
 class ExamService {
   final ExamDatabase _db = ExamDatabase();
@@ -14,30 +15,22 @@ class ExamService {
     _db.initiateDatabase();
     _examDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
+    markAllCompletedExams();
   }
 
   // projde vsechny testy a ty co uz probehly oznaci jako hotove
   void markAllCompletedExams() {
     Map<int, Exam> examList = _db.getDatabase();
+
     examList.forEach(
       (dbIndex, exam) {
         if (exam.completion == false) {
-          if (isBeforeToday(exam.date)) {
-            _db.changeCompletion(dbIndex);
+          if (exam.date.isBeforeToday()) {
+            _db.setCompletion(dbIndex, true);
           }
         }
       },
     );
-  }
-
-  // vrati true pokud je date vcera a drive, false pokud dnes
-  bool isBeforeToday(DateTime date) {
-    DateTime now = DateTime.now();
-    DateTime dateOnlyDate = DateTime(date.year, date.month, date.day);
-    DateTime nowOnlyDate = DateTime(now.year, now.month, now.day);
-
-    return dateOnlyDate.isBefore(DateTime.now()) &&
-        !dateOnlyDate.isAtSameMomentAs(nowOnlyDate);
   }
 
   /// edits the position and priority of a Exam at the provided index
@@ -55,6 +48,7 @@ class ExamService {
   /// returns map with datetime being only the date, not the time
   Map<DateTime, List<ExamDTO>> sortByDate() {
     Map<DateTime, List<ExamDTO>> examDateMap = {};
+    _examDbIndexMap = _db.getDatabase();
 
     _examDbIndexMap.forEach(
       (dbIndex, value) {
@@ -78,6 +72,8 @@ class ExamService {
   }
 
   Map<int, List<ExamDTO>> sortByPriority() {
+    _examDbIndexMap = _db.getDatabase();
+    _sequence = _db.getSequence();
     Map<int, List<ExamDTO>> examPriorityMap = {
       0: <ExamDTO>[],
       1: <ExamDTO>[],
@@ -98,6 +94,7 @@ class ExamService {
   }
 
   List<ExamDTO> getCompletedExams() {
+    _examDbIndexMap = _db.getDatabase();
     List<ExamDTO> completedExams = [];
 
     _examDbIndexMap.forEach(
@@ -153,7 +150,7 @@ class ExamService {
       text: text,
       date: date,
       priority: priority,
-      completion: isBeforeToday(date),
+      completion: date.isBeforeToday(),
     );
     int dbIndex = await _db.addExam(newExam);
     _examDbIndexMap[dbIndex] = newExam;
@@ -176,7 +173,7 @@ class ExamService {
         text: text,
         date: date,
         priority: priority,
-        completion: isBeforeToday(date));
+        completion: date.isBeforeToday());
     _db.editExam(dbIndex, editedExam);
     _examDbIndexMap.update(
       dbIndex,
@@ -191,7 +188,7 @@ class ExamService {
   }
 
   ExamDTO getExam(int dbIndex) {
-   return _db.getExam(dbIndex).convertToDTO(dbIndex);
+    return _db.getExam(dbIndex).convertToDTO(dbIndex);
   }
 
   int getNumberOfIncomplete() {

@@ -23,7 +23,7 @@ class PriorityView extends StatelessWidget {
   final Map<int, List<HomeworkDTO>> hwByPriority;
   final List<HomeworkDTO> completedHws;
   final Function createNewHw;
-  final Function(int hwDbIndex) changeCompletion;
+  final Function(int hwDbIndex, bool value) changeCompletion;
   final Function(int hwDbIndex) editHw;
   final Function(int hwDbIndex) deleteHw;
   final Function(int oldPriority, int oldIndex, int newPriority, int newIndex)
@@ -108,7 +108,7 @@ class PriorityView extends StatelessWidget {
                         completion: hw.completion,
                         priority: Priority(hw.priority, context),
                         deadline: hw.deadline,
-                        onChangedCompletion: (p0) => changeCompletion(hw.dbIndex),
+                        onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
                         onDelete: () => deleteHw(hw.dbIndex),
                         onEdit: () => editHw(hw.dbIndex),
                       ),
@@ -152,7 +152,7 @@ class PriorityView extends StatelessWidget {
         completion: hw.completion,
         priority: Priority(hw.priority, context),
         deadline: hw.deadline,
-        onChangedCompletion: (completion) => changeCompletion(hw.dbIndex),
+        onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
         onDelete: () => deleteHw(hw.dbIndex),
         onEdit: () => editHw(hw.dbIndex),
       ),

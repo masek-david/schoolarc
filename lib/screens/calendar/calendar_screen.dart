@@ -60,8 +60,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  void changeCompletion(int dbIndex) {
-    _serviceHw.changeCompletion(dbIndex);
+  void changeCompletion(int dbIndex, bool value) {
+    _serviceHw.changeCompletion(dbIndex, value);
     updateView();
   }
 

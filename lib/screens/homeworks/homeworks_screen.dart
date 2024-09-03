@@ -52,8 +52,8 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     );
   }
 
-  void changeCompletion(int dbIndex) {
-    service.changeCompletion(dbIndex);
+  void changeCompletion(int dbIndex, bool value) {
+    service.changeCompletion(dbIndex, value);
     updateListView();
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
+import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -22,6 +23,7 @@ void main() async {
     // other data includes sequences and if the app is opened for the first time
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),
+    Hive.openBox('settings'),
   ]);
 
   await AwesomeNotifications().initialize(
@@ -41,7 +43,7 @@ void main() async {
         onlyAlertOnce: true,
         channelGroupKey: 'tommorrow_channel_group',
         channelKey: 'tommorrow_channel',
-        channelName: 'Info about tommorrow',
+        channelName: 'Upcoming day notifications',
         channelDescription: 'Here you will find upcoming exams and homeworks',
         defaultColor: const Color(0xFF9D50DD),
         ledColor: Colors.white,
@@ -51,15 +53,21 @@ void main() async {
     channelGroups: [
       NotificationChannelGroup(
         channelGroupKey: 'persistent_channel_group',
-        channelGroupName: 'Persistent group',
+        channelGroupName: 'Add from notifications',
       ),
       NotificationChannelGroup(
         channelGroupKey: 'tommorrow_channel_group',
-        channelGroupName: 'Tommorrow group',
+        channelGroupName: 'Upcoming day',
       ),
     ],
     debug: true,
   );
+
+  SettingsDatabase settings = SettingsDatabase();
+
+  if(settings.firstTimeOpeningApp()){
+    firstTimeOpeningApp(settings);
+  }
 
   // gets rid of android bottom colored bar
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -72,4 +80,8 @@ void main() async {
       overlays: [SystemUiOverlay.top]);
 
   runApp(const TasksApp());
+}
+
+void firstTimeOpeningApp(SettingsDatabase settings){
+  settings.createInitialData();
 }

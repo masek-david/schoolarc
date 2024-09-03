@@ -12,7 +12,7 @@ class MyCheckbox extends StatelessWidget {
 
   final bool value;
   final Priority priority;
-  final void Function(bool?) onChanged;
+  final void Function(bool) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MyCheckbox extends StatelessWidget {
       child: Checkbox(
         value: value,
         onChanged: (value) {
-          onChanged(value);
+          onChanged(value ?? false);
           HapticFeedback.mediumImpact();
           if (value == true) {
             ScaffoldMessenger.of(context).clearSnackBars();
@@ -32,7 +32,7 @@ class MyCheckbox extends StatelessWidget {
                 action: SnackBarAction(
                   label: 'Undo',
                   onPressed: () {
-                    onChanged(value);
+                    onChanged(false);
                   },
                 ),
               ),

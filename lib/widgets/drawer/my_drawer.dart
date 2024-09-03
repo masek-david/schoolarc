@@ -7,10 +7,21 @@ import 'package:school_manager/widgets/drawer/drawer_button.dart';
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+      duration: const Duration(seconds: 10),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return NavigationDrawer(
       children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
+          child: Text('School app', style: TextStyle(fontSize: 20)),
+        ),
         MyDrawerButton(
           text: 'Subjects',
           icon: const Icon(Icons.school_outlined),
@@ -22,16 +33,6 @@ class MyDrawer extends StatelessWidget {
               ),
             );
           },
-        ),
-        const MyDrawerButton(
-          text: 'Display Quick add notification',
-          icon: Icon(Icons.notifications),
-          onTap: NotificationSender.sendQuickAdd,
-        ),
-        const MyDrawerButton(
-          text: 'Schedule notification',
-          icon: Icon(Icons.notifications),
-          onTap: NotificationSender.scheduleNotification,
         ),
         const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(

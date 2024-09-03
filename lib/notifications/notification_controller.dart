@@ -16,6 +16,13 @@ class NotificationController {
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
     // Your code goes here
+
+    if (receivedNotification.channelKey == 'tommorrow_channel') {
+      NotificationSender.scheduleTommorrowNotification();
+    }
+    if (receivedNotification.channelKey == 'persistent_channel') {
+      NotificationSender.sendQuickAdd(true);
+    }
   }
 
   /// Use this method to detect if the user dismissed a notification
@@ -26,9 +33,9 @@ class NotificationController {
 
     // on andriod 13+ you can close any notification, so if you close a persistent notification,
     // it will immediately appear again
-    if (receivedAction.channelKey == 'persistent_channel') {
-      NotificationSender.sendQuickAdd();
-    }
+    // if (receivedAction.channelKey == 'persistent_channel') {
+    //   NotificationSender.sendQuickAdd(false);
+    // }
   }
 
   /// Use this method to detect when the user taps on a notification or action button
@@ -41,6 +48,7 @@ class NotificationController {
     // TasksApp.navigatorKey.currentState?.pushNamedAndRemoveUntil('/notification-page',
     //         (route) => (route.settings.name != '/notification-page') || route.isFirst,
     //     arguments: receivedAction);
+
 
     switch (receivedAction.buttonKeyPressed) {
       case 'homework':

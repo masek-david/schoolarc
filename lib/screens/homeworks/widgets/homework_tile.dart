@@ -22,7 +22,7 @@ class HomeworkTile extends StatelessWidget {
   final DateTime? deadline;
   final bool completion;
   final Priority priority;
-  final Function(bool?) onChangedCompletion;
+  final Function(bool) onChangedCompletion;
   final Function() onDelete;
   final Function() onEdit;
 

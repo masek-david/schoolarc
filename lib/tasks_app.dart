@@ -14,7 +14,8 @@ import 'package:school_manager/widgets/drawer/my_drawer.dart';
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   State<TasksApp> createState() => _TasksAppState();
@@ -27,17 +28,18 @@ class _TasksAppState extends State<TasksApp> {
 
   @override
   void initState() {
+    super.initState();
+
     // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
-        onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:
-            NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:
-            NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:
-            NotificationController.onDismissActionReceivedMethod);
-
-    super.initState();
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
+    );
   }
 
   void switchScreen({required int newScreenIndex}) {
