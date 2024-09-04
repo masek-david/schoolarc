@@ -1,6 +1,7 @@
 import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
+import 'package:school_manager/notifications/notification_sender.dart';
 
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
@@ -18,6 +19,7 @@ class HomeworkService {
 
   void changeCompletion(int dbIndex, value) {
     _db.changeCompletion(dbIndex, value);
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// edits the position and priority of a homework at the provided index
@@ -109,6 +111,8 @@ class HomeworkService {
 
     _db.deleteHw(dbIndex);
     _hwDbIndexMap.remove(dbIndex);
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   void revertLastlyDeletedHw() {
@@ -125,6 +129,8 @@ class HomeworkService {
       lastlyDeletedHwIndex = null;
       lastlyDeletedHwDbIndex = null;
     }
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// saves new homework and puts it at the end of the sequence of correct priority
@@ -145,6 +151,9 @@ class HomeworkService {
     _hwDbIndexMap[dbIndex] = newHw;
     _sequence[priority]!.add(dbIndex);
     _db.saveSequence(_sequence);
+    
+    NotificationSender.scheduleTommorrowNotification();
+    
     return;
   }
 
@@ -193,6 +202,9 @@ class HomeworkService {
         }
       },
     );
+
+    NotificationSender.scheduleTommorrowNotification();
+    
     return numberOfUncomplete;
   }
 }

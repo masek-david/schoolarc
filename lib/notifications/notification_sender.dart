@@ -34,9 +34,9 @@ class NotificationSender {
         );
         TimeOfDay dismissTime = settings.quickAddDissappearTime();
         DateTime dismissDate = DateTime(
-          now.year,
-          now.month,
-          now.day,
+          arriveDate.year,
+          arriveDate.month,
+          arriveDate.day,
           dismissTime.hour,
           dismissTime.minute,
         );
@@ -46,6 +46,10 @@ class NotificationSender {
           arriveDate = arriveDate.add(const Duration(
             days: 1,
           ));
+        }
+
+        if(settings.quickAddOnWeekends() && arriveDate.weekday == 6 || arriveDate.weekday == 7){
+          arriveDate.add(Duration(days: 8 - arriveDate.weekday));
         }
 
         timeoutAfter = dismissDate.difference(arriveDate);

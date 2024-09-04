@@ -2,6 +2,7 @@ import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/notifications/notification_sender.dart';
 
 class ExamService {
   final ExamDatabase _db = ExamDatabase();
@@ -120,6 +121,8 @@ class ExamService {
 
     _db.deleteExam(dbIndex);
     _examDbIndexMap.remove(dbIndex);
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   void revertLastlyDeletedExam() {
@@ -136,6 +139,8 @@ class ExamService {
       lastlyDeletedExamIndex = null;
       lastlyDeletedExamDbIndex = null;
     }
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// saves new homework and puts it at the end of the sequence of correct priority
@@ -156,6 +161,9 @@ class ExamService {
     _examDbIndexMap[dbIndex] = newExam;
     _sequence[priority]!.add(dbIndex);
     _db.saveSequence(_sequence);
+
+    NotificationSender.scheduleTommorrowNotification();
+    
     return;
   }
 
@@ -200,6 +208,9 @@ class ExamService {
         }
       },
     );
+
+    NotificationSender.scheduleTommorrowNotification();
+    
     return numberOfUncomplete;
   }
 }

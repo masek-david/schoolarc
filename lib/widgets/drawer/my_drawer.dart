@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
