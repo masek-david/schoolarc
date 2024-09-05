@@ -1,13 +1,13 @@
 fix:
 
 
+pri editaci neni zvolen subject
 
 =============================================================================================
 
+v bottomsheetu by mel byt dropdown vyber predmetu rovnou u psani nazvu
 
-ukladat jestli uz byla aplikace otevrena do settings db, tvorit initial data pri spusteni aplikace
-
-subject by mely byt ukladany jako objekty a i pro ukoly
+? subject by mely byt ukladany jako objekty a i pro ukoly
 
 predelat parametry funkci, dbindexy by mely byt zadavany az z hwTilu
 homework tile by mel prijimat HomeworkDTO, ne vse ostatni

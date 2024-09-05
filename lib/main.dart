@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
-import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -20,7 +19,7 @@ void main() async {
     Hive.openBox('myBox'),
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
-    // other data includes sequences and if the app is opened for the first time
+    // other data includes sequences
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),
     Hive.openBox('settings'),
@@ -63,12 +62,6 @@ void main() async {
     debug: true,
   );
 
-  SettingsDatabase settings = SettingsDatabase();
-
-  if(settings.firstTimeOpeningApp()){
-    firstTimeOpeningApp(settings);
-  }
-
   // gets rid of android bottom colored bar
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       // systemStatusBarContrastEnforced: true,
@@ -80,8 +73,4 @@ void main() async {
       overlays: [SystemUiOverlay.top]);
 
   runApp(const TasksApp());
-}
-
-void firstTimeOpeningApp(SettingsDatabase settings){
-  settings.createInitialData();
 }

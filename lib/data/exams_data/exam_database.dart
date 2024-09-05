@@ -5,45 +5,43 @@ class ExamDatabase {
   final _examBox = Hive.box('examBox');
   final _examSequenceBox = Hive.box('examOtherData');
 
-  /// initiates database, if the app is opened for the first time, initial data will be inserted
-  void initiateDatabase() {
-    if (_examSequenceBox.get('appAlreadyOpened') == null) {
-      _examBox.putAll({
-        3: Exam(
-            subject: 'Math',
-            text: 'This is the text of the exam',
-            date: DateTime.now(),
-            completion: false,
-            priority: 3),
-        2: Exam(
-            subject: 'En',
-            text: '<- here you can see the subject',
-            date: DateTime.now(),
-            completion: false,
-            priority: 2),
-        1: Exam(
-            subject: 'Ma',
-            text: 'Algrebra',
-            date: DateTime.now(),
-            completion: false,
-            priority: 1),
-        0: Exam(
-            subject: 'Bio',
-            text: 'Mammals',
-            date: DateTime.now(),
-            completion: false,
-            priority: 0),
-      });
+  /// initial data will be inserted
+  void createInitialData() {
+    _examBox.putAll({
+      3: Exam(
+          subject: 'Math',
+          text: 'This is the text of the exam',
+          date: DateTime.now(),
+          completion: false,
+          priority: 3),
+      2: Exam(
+          subject: 'En',
+          text: '<- here you can see the subject',
+          date: DateTime.now(),
+          completion: false,
+          priority: 2),
+      1: Exam(
+          subject: 'Ma',
+          text: 'Algrebra',
+          date: DateTime.now(),
+          completion: false,
+          priority: 1),
+      0: Exam(
+          subject: 'Bio',
+          text: 'Mammals',
+          date: DateTime.now(),
+          completion: false,
+          priority: 0),
+    });
 
-      Map<int, List<int>> sequence = {
-        0: [0],
-        1: [1],
-        2: [2],
-        3: [3],
-      };
-      _examSequenceBox.put('sequence', sequence);
-      _examSequenceBox.put('appAlreadyOpened', true);
-    }
+    Map<int, List<int>> sequence = {
+      0: [0],
+      1: [1],
+      2: [2],
+      3: [3],
+    };
+    _examSequenceBox.put('sequence', sequence);
+    _examSequenceBox.put('appAlreadyOpened', true);
   }
 
   /// returns list of Exams dbIndexes for each priority

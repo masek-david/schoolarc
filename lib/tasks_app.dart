@@ -2,6 +2,10 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:school_manager/data/exams_data/exam_database.dart';
+import 'package:school_manager/data/homeworks_data/hw_database.dart';
+import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/data/subjects_data/subject_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/screens/notifications_screen.dart';
@@ -30,6 +34,12 @@ class _TasksAppState extends State<TasksApp> {
   void initState() {
     super.initState();
 
+    SettingsDatabase settings = SettingsDatabase();
+
+    if (settings.firstTimeOpeningApp()) {
+      firstTimeOpeningApp(settings);
+    }
+
     // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
@@ -40,6 +50,13 @@ class _TasksAppState extends State<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
+  }
+
+  void firstTimeOpeningApp(SettingsDatabase settings) {
+    settings.createInitialData();
+    HomeworksDatabase().createInitialData();
+    ExamDatabase().createInitialData();
+    SubjectDatabase().createInitialData();
   }
 
   void switchScreen({required int newScreenIndex}) {

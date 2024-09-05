@@ -10,7 +10,8 @@ import 'package:school_manager/extensions/datetime_extension.dart';
 class NotificationSender {
   // if not scheduled, it will arrive now and never automatically expire
   static void sendQuickAdd(bool scheduled) async {
-    if (!await _getPermission()) {
+    if (!await AwesomeNotifications().isNotificationAllowed()) {
+      AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
       return;
     }
 
@@ -22,7 +23,7 @@ class NotificationSender {
 
       if (settings.quickAddEnabled()) {
         AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
-        
+
         DateTime now = DateTime.now();
         TimeOfDay arriveTime = settings.quickAddArriveTime();
         DateTime arriveDate = DateTime(
@@ -48,7 +49,8 @@ class NotificationSender {
           ));
         }
 
-        if(settings.quickAddOnWeekends() && arriveDate.weekday == 6 || arriveDate.weekday == 7){
+        if (settings.quickAddOnWeekends() && arriveDate.weekday == 6 ||
+            arriveDate.weekday == 7) {
           arriveDate.add(Duration(days: 8 - arriveDate.weekday));
         }
 
@@ -135,7 +137,7 @@ class NotificationSender {
   // schedules notification with info about tommorrow (doesn't need to be provided) for provided date
   static void _scheduleNotificationForDay(
       {Function(String text)? showSnackbar, required DateTime date}) async {
-    if (!await _getPermission()) {
+    if (!await AwesomeNotifications().isNotificationAllowed()) {
       return;
     }
     String notificationText = '';
@@ -203,7 +205,7 @@ class NotificationSender {
   }
 
   static void sendSimpleNotification() async {
-    if (!await _getPermission()) {
+    if (!await AwesomeNotifications().isNotificationAllowed()) {
       return;
     }
 
@@ -231,10 +233,52 @@ class NotificationSender {
         .replaceAll('\'', '&#39;');
   }
 
-  // returns true if notifications are enabled
-  static Future<bool> _getPermission() async {
+  // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
+  static Future<bool> getPermission(BuildContext context) async {
     if (!await AwesomeNotifications().isNotificationAllowed()) {
-      await AwesomeNotifications().requestPermissionToSendNotifications();
+      await showDialog(
+        context: context.mounted == true
+            ? context
+            : throw Exception('context isn\'mounted: $context'),
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Notification Permission',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                      'If you want this app to send you notifications, you need to grant it permission.'),
+                  const Text(
+                      'The Grant permission button will take you to app settings from where you will enable all notifications.'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Close'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await AwesomeNotifications()
+                              .requestPermissionToSendNotifications();
+                        },
+                        child: const Text('Grant permission'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
     }
 
     return await AwesomeNotifications().isNotificationAllowed();
