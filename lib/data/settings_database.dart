@@ -28,13 +28,18 @@ class SettingsDatabase {
   }
 
   bool firstTimeOpeningApp() {
-    if (_settingsBox.get(DatabaseKeys.appAlreadyOpened) == null) {
+    if (_settingsBox.get(DatabaseKeys.appAlreadyOpened) != true) {
       _settingsBox.put(DatabaseKeys.appAlreadyOpened, true);
       return true;
     } else {
       return false;
     }
   }
+
+  // /// ONLY FOR DEBUGGING
+  // void setFirstTimeOpeningAppToFalse(){
+  //   _settingsBox.put(DatabaseKeys.appAlreadyOpened, false);
+  // }
 
   bool tommorrowNotificationEnabled() {
     return _settingsBox.get(DatabaseKeys.tommorowNotificationEnabled);

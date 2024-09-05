@@ -13,7 +13,6 @@ class ExamService {
   int? lastlyDeletedExamIndex;
 
   ExamService() {
-    _db.initiateDatabase();
     _examDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
     markAllCompletedExams();
@@ -209,8 +208,6 @@ class ExamService {
       },
     );
 
-    NotificationSender.scheduleTommorrowNotification();
-    
     return numberOfUncomplete;
   }
 }

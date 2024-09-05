@@ -33,6 +33,8 @@ class SubjectDialog extends StatelessWidget {
             TextField(
               controller: nameController,
               autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
@@ -42,7 +44,12 @@ class SubjectDialog extends StatelessWidget {
             const SizedBox(height: 16),
             TextField(
               controller: shortcutController,
+              textCapitalization: TextCapitalization.sentences,
               maxLength: 5,
+              onSubmitted: (text) {
+                onSave();
+                Navigator.pop(context);
+              },
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),

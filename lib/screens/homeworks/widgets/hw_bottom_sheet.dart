@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/extensions/string_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/subjects_data/subject_database.dart';
@@ -8,7 +9,6 @@ import 'package:school_manager/data/subjects_data/subject_model.dart';
 class HwBottomSheet extends StatefulWidget {
   const HwBottomSheet(
       {super.key,
-      required this.subjectController,
       required this.nameController,
       required this.initialDate,
       required this.initialPriority,
@@ -16,7 +16,6 @@ class HwBottomSheet extends StatefulWidget {
       required this.initialCompletion,
       required this.index});
 
-  final TextEditingController subjectController;
   final TextEditingController nameController;
   final void Function({
     required DateTime date,
@@ -37,26 +36,20 @@ class HwBottomSheet extends StatefulWidget {
 }
 
 class _HwBottomSheetState extends State<HwBottomSheet> {
-  DateTime pickedDate = DateTime.now();
-  int pickedPriority = 0;
-  int? pickedSubject;
+  late DateTime pickedDate = widget.initialDate;
+  late int pickedPriority = widget.initialPriority;
   SubjectDatabase subjectDatabase = SubjectDatabase();
-  List<Subject> subjects = [];
+  late List<Subject> subjects = subjectDatabase.getDatabase();
+  Subject? pickedSubject;
 
-  @override
-  void initState() {
-    super.initState();
-
-    pickedDate = widget.initialDate;
-    pickedPriority = widget.initialPriority;
-
-    subjectDatabase.initiate();
-    subjects = subjectDatabase.getDatabase();
-  }
+  late List<GlobalKey> keysList = List<GlobalKey>.generate(
+    subjects.length,
+    (index) => GlobalKey(),
+  );
 
   void onSave() {
     widget.onSave(
-      subject: widget.subjectController.text,
+      subject: pickedSubject?.shortcut ?? '',
       text: widget.nameController.text,
       context: context,
       date: pickedDate,
@@ -72,35 +65,14 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
       enableDrag: false,
       onClosing: () {},
       builder: (context) => Container(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         margin: const EdgeInsets.all(15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CancelSaveButton(onSave: onSave),
             const SizedBox(height: 15),
-            TextField(
-              controller: widget.nameController,
-              autofocus: true,
-              maxLines: null,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Assignment',
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: widget.subjectController,
-              maxLength: 5,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Subject',
-              ),
-            ),
-            const SizedBox(height: 10),
             SizedBox(
               height: 40,
               child: ListView.builder(
@@ -110,18 +82,16 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
-                      selected: index == pickedSubject,
+                      key: keysList[index],
+                      selected: pickedSubject == subjects[index],
                       label: Text(subjects[index].name),
                       onSelected: (value) {
                         setState(
                           () {
                             if (!value) {
                               pickedSubject = null;
-                              widget.subjectController.text = '';
                             } else {
-                              pickedSubject = index;
-                              widget.subjectController.text =
-                                  subjects[index].shortcut;
+                              pickedSubject = subjects[index];
                             }
                           },
                         );
@@ -131,33 +101,97 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                 },
               ),
             ),
+            const SizedBox(height: 10),
+            Autocomplete<Subject>(
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return TextField(
+                  controller: widget.nameController,
+                  focusNode: focusNode,
+                  autofocus: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    if (pickedSubject == null) {
+                      onFieldSubmitted();
+                    }
+                    if (widget.nameController.text.isNotEmpty) {
+                      onSave();
+                      Navigator.pop(context);
+                    }
+                  },
+                  onChanged: (value) {
+                    textEditingController.text = value;
+                  },
+                  onEditingComplete: () {},
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(15),
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
+              onSelected: (subject) {
+                setState(() {
+                  pickedSubject = subject;
+                  widget.nameController.text = '';
+                });
+                Scrollable.ensureVisible(
+                    keysList[subjects.indexOf(subject)].currentContext!,
+                    duration: const Duration(milliseconds: 500));
+              },
+              displayStringForOption: (subject) {
+                return subject.name;
+              },
+              optionsBuilder: (textEditingValue) {
+                if (textEditingValue.text == '' || pickedSubject != null) {
+                  return const Iterable.empty();
+                }
+                return subjects.where(
+                  (subject) {
+                    return subject.name.withoutDiacriticalMarks
+                            .toLowerCase()
+                            .contains(textEditingValue
+                                .text.withoutDiacriticalMarks
+                                .toLowerCase()) ||
+                        subject.shortcut.withoutDiacriticalMarks
+                            .toLowerCase()
+                            .contains(textEditingValue
+                                .text.withoutDiacriticalMarks
+                                .toLowerCase());
+                  },
+                );
+              },
+            ),
             const Divider(),
             SizedBox(
               // listview musi mit vysku, kterou urci sizedbox
               height: 40,
               child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    Priority priority = Priority(index, context);
-                    return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          selected: index == pickedPriority,
-                          label: Text(priority.name),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(
-                              color: priority.color,
-                            ),
-                          ),
-                          backgroundColor: priority.color.withAlpha(25),
-                          selectedColor: priority.color.withAlpha(100),
-                          onSelected: (value) => setState(() {
-                            pickedPriority = index;
-                          }),
-                        ));
-                  }),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  Priority priority = Priority(index, context);
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      selected: index == pickedPriority,
+                      label: Text(priority.name),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: priority.color,
+                        ),
+                      ),
+                      backgroundColor: priority.color.withAlpha(25),
+                      selectedColor: priority.color.withAlpha(100),
+                      onSelected: (value) => setState(
+                        () {
+                          pickedPriority = index;
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             const Divider(),
             InkWell(
@@ -169,9 +203,9 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
                   firstDate: DateTime.utc(2000),
                   lastDate: DateTime.utc(2100),
                 );
-      
+
                 if (newDate == null) return;
-      
+
                 setState(() {
                   pickedDate = newDate;
                 });

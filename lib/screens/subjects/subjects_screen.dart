@@ -15,18 +15,10 @@ class SubjectsScreen extends StatefulWidget {
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
   final SubjectDatabase db = SubjectDatabase();
-  List<Subject> subjectList = [];
+  late List<Subject> subjectList = db.getDatabase();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController shortcutController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    db.initiate();
-    subjectList = db.getDatabase();
-  }
 
   @override
   void dispose() {

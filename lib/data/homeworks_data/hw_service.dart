@@ -12,7 +12,6 @@ class HomeworkService {
   int? lastlyDeletedHwIndex;
 
   HomeworkService() {
-    _db.initiateDatabase();
     _hwDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
   }
@@ -151,9 +150,9 @@ class HomeworkService {
     _hwDbIndexMap[dbIndex] = newHw;
     _sequence[priority]!.add(dbIndex);
     _db.saveSequence(_sequence);
-    
+
     NotificationSender.scheduleTommorrowNotification();
-    
+
     return;
   }
 
@@ -203,8 +202,6 @@ class HomeworkService {
       },
     );
 
-    NotificationSender.scheduleTommorrowNotification();
-    
     return numberOfUncomplete;
   }
 }

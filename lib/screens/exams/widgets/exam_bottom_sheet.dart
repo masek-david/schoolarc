@@ -47,7 +47,6 @@ class _ExamBottomSheetState extends State<ExamBottomSheet> {
     pickedDate = widget.initialDate;
     pickedPriority = widget.initialPriority;
 
-    subjectDatabase.initiate();
     subjects = subjectDatabase.getDatabase();
   }
 

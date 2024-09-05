@@ -22,7 +22,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   List<HomeworkDTO> completedHw = [];
 
   // text controllers for creating and editing hw
-  var _subjectController = TextEditingController();
   var _nameController = TextEditingController();
 
   @override
@@ -67,7 +66,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       isDismissible: true,
       builder: (context) {
         return HwBottomSheet(
-          subjectController: _subjectController,
           nameController: _nameController,
           initialDate: initialDate!,
           initialPriority: 0,
@@ -96,7 +94,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       // po zavreni bottomSheetu se smaze uzivatelem zadany text
       (value) => {
         _nameController.clear(),
-        _subjectController.clear(),
       },
     );
   }
@@ -104,8 +101,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void editHw(int dbIndex) {
     HomeworkDTO currentlyEditedTask = service.getHomework(dbIndex);
     _nameController = TextEditingController(text: currentlyEditedTask.text);
-    _subjectController =
-        TextEditingController(text: currentlyEditedTask.subject);
 
     showModalBottomSheet(
       context: context,
@@ -113,7 +108,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       isDismissible: true,
       builder: (context) {
         return HwBottomSheet(
-          subjectController: _subjectController,
           nameController: _nameController,
           initialDate: currentlyEditedTask.deadline,
           initialPriority: currentlyEditedTask.priority,
@@ -142,7 +136,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     ).then(
       (value) => {
         _nameController.clear(),
-        _subjectController.clear(),
       },
     );
   }

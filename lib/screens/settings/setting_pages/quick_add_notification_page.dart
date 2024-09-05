@@ -24,7 +24,12 @@ class QuickAddNotificationPage extends StatelessWidget {
             highlighted: true,
             action: SwitchAction(
               initialValue: settings.quickAddEnabled(),
-              onChanged: settings.setQuickAddEnabled,
+              onChanged: (value) {
+                settings.setQuickAddEnabled(value);
+                if (value) {
+                  NotificationSender.getPermission(context);
+                }
+              },
             ),
           ),
           SettingTile(
