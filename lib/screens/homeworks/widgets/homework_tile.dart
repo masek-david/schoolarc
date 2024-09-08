@@ -1,27 +1,24 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/data/priority_model.dart';
 
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({
     super.key,
-    required this.text,
-    this.deadline,
-    required this.subject,
-    required this.completion,
+    required this.hw,
+    this.showDeadline = true,
     required this.priority,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
   });
 
-  final String subject;
-  final String text;
-  final DateTime? deadline;
-  final bool completion;
+  final HomeworkDTO hw;
   final Priority priority;
+  final bool showDeadline;
   final Function(bool) onChangedCompletion;
   final Function() onDelete;
   final Function() onEdit;
@@ -31,14 +28,14 @@ class HomeworkTile extends StatelessWidget {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
     String deadlineText = '';
 
-    if (deadline != null) {
-      if (deadline!.isBefore(DateTime.now()) && completion == false) {
+    if (showDeadline) {
+      if (hw.deadline.isBefore(DateTime.now()) && hw.completion == false) {
         deadlineColor =
             Colors.red.harmonizeWith(Theme.of(context).primaryColor);
       }
-      deadlineText = '${deadline!.day}.${deadline!.month}.';
-      if (deadline!.year != DateTime.now().year) {
-        deadlineText += ' ${deadline!.year}';
+      deadlineText = '${hw.deadline.day}.${hw.deadline.month}.';
+      if (hw.deadline.year != DateTime.now().year) {
+        deadlineText += ' ${hw.deadline.year}';
       } else if (deadlineText ==
           '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
         deadlineText = 'Tomorrow';
@@ -52,7 +49,7 @@ class HomeworkTile extends StatelessWidget {
     }
 
     double opacity = 1;
-    if (completion == true) {
+    if (hw.completion == true) {
       opacity = 0.5;
     }
 
@@ -97,7 +94,7 @@ class HomeworkTile extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      subject,
+                      hw.subject,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -106,7 +103,7 @@ class HomeworkTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: Text(text, maxLines: 2)),
+                Expanded(child: Text(hw.text, maxLines: 2)),
                 const SizedBox(width: 10),
                 Text(
                   deadlineText,
@@ -114,9 +111,10 @@ class HomeworkTile extends StatelessWidget {
                   style: TextStyle(color: deadlineColor, fontSize: 12),
                 ),
                 MyCheckbox(
-                  value: completion,
+                  value: hw.completion,
                   priority: priority,
                   onChanged: onChangedCompletion,
+                  key: ValueKey('checkbox ${hw.dbIndex}'),
                 ),
               ],
             ),

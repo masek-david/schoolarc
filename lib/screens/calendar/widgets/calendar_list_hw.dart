@@ -38,9 +38,8 @@ class CalendarListHw extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(5),
           child: HomeworkTile(
-            text: hw.text,
-            subject: hw.subject,
-            completion: hw.completion,
+            hw: hw,
+            showDeadline: false,
             priority: Priority(hw.priority, context),
             onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
             onDelete: () => deleteHw(hw.dbIndex),

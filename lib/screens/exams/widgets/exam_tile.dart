@@ -1,25 +1,22 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/priority_model.dart';
 
 class ExamTile extends StatelessWidget {
   const ExamTile({
     super.key,
-    required this.text,
-    this.deadline,
-    required this.subject,
+    required this.exam,
+    this.showDeadline = true,
     required this.priority,
-    required this.completion,
     required this.onDelete,
     required this.onEdit,
   });
 
-  final String subject;
-  final String text;
-  final DateTime? deadline;
+  final ExamDTO exam;
+  final bool showDeadline;
   final Priority priority;
-  final bool completion;
   final Function(BuildContext) onDelete;
   final Function() onEdit;
 
@@ -29,14 +26,14 @@ class ExamTile extends StatelessWidget {
     String deadlineText = '';
     Color circleColor = priority.color;
 
-    if (deadline != null) {
-      if (deadline!.isBefore(DateTime.now())) {
+    if (showDeadline) {
+      if (exam.deadline.isBefore(DateTime.now())) {
         deadlineTextColor =
             Colors.red.harmonizeWith(Theme.of(context).primaryColor);
       }
-      deadlineText = '${deadline!.day}.${deadline!.month}.';
-      if (deadline!.year != DateTime.now().year) {
-        deadlineText += ' ${deadline!.year}';
+      deadlineText = '${exam.deadline.day}.${exam.deadline.month}.';
+      if (exam.deadline.year != DateTime.now().year) {
+        deadlineText += ' ${exam.deadline.year}';
       } else if (deadlineText ==
           '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
         deadlineText = 'Tomorrow';
@@ -50,7 +47,7 @@ class ExamTile extends StatelessWidget {
     }
 
     double opacity = 1;
-    if (completion == true) {
+    if (exam.completion == true) {
       opacity = 0.5;
     }
 
@@ -94,7 +91,7 @@ class ExamTile extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      subject,
+                      exam.subject,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -103,7 +100,7 @@ class ExamTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: Text(text, maxLines: 2)),
+                Expanded(child: Text(exam.text, maxLines: 2)),
                 const SizedBox(width: 10),
                 Text(
                   deadlineText,

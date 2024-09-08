@@ -41,7 +41,6 @@ class HomeworksDatabase {
       3: [3],
     };
     _hwSequenceBox.put('sequence', sequence);
-    _hwSequenceBox.put('appAlreadyOpened', true);
   }
 
   /// returns list of homeworks dbIndexes for each priority

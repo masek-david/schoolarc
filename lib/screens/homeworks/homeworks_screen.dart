@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/priority_view.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/screens/homeworks/widgets/hw_bottom_sheet.dart';
@@ -20,6 +21,10 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     3: <HomeworkDTO>[],
   };
   List<HomeworkDTO> completedHw = [];
+  late List<Priority> priorities = List.generate(
+    4,
+    (index) => Priority(index, context),
+  );
 
   // text controllers for creating and editing hw
   var _nameController = TextEditingController();
@@ -53,7 +58,7 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
   void changeCompletion(int dbIndex, bool value) {
     service.changeCompletion(dbIndex, value);
-    updateListView();
+    // updateListView();
   }
 
   Future<void> createNewHw({DateTime? initialDate}) async {
@@ -162,11 +167,13 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
       body: PriorityView(
         hwByPriority: hwByPriority,
         completedHws: completedHw,
+        priorities: priorities,
         changeCompletion: changeCompletion,
         createNewHw: createNewHw,
         deleteHw: deleteHw,
         editHw: editHw,
         reorderHomework: reorderHomework,
+        updateView: updateListView,
       ),
     );
   }
