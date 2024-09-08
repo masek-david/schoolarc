@@ -94,8 +94,8 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
               widget.onAnimationEnd();
             }
           },
-          onDelete: () => widget.onDelete,
-          onEdit: () => widget.onEdit,
+          onDelete: () => widget.onDelete(),
+          onEdit: () => widget.onEdit(),
         ),
       ),
     );
