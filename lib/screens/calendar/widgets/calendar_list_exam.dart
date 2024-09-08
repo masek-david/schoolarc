@@ -35,9 +35,8 @@ class CalendarListExam extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(5),
           child: ExamTile(
-            text: exam.text,
-            subject: exam.subject,
-            completion: exam.completion,
+            exam: exam,
+            showDeadline: false,
             priority: Priority(exam.priority, context),
             onDelete: (context) => deleteHw(exam.dbIndex),
             onEdit: () => editHw(exam.dbIndex),

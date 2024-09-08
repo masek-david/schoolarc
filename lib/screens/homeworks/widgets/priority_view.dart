@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
+import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/completed_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/data/priority_model.dart';
@@ -13,21 +14,25 @@ class PriorityView extends StatelessWidget {
     super.key,
     required this.hwByPriority,
     required this.completedHws,
+    required this.priorities,
     required this.createNewHw,
     required this.changeCompletion,
     required this.deleteHw,
     required this.editHw,
     required this.reorderHomework,
+    required this.updateView,
   });
 
   final Map<int, List<HomeworkDTO>> hwByPriority;
   final List<HomeworkDTO> completedHws;
   final Function createNewHw;
+  final List<Priority> priorities;
   final Function(int hwDbIndex, bool value) changeCompletion;
   final Function(int hwDbIndex) editHw;
   final Function(int hwDbIndex) deleteHw;
   final Function(int oldPriority, int oldIndex, int newPriority, int newIndex)
       reorderHomework;
+  final Function updateView;
 
   void _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
@@ -86,7 +91,7 @@ class PriorityView extends StatelessWidget {
                 listGhost: const Placeholder(),
                 children: List.generate(
                   numberOfPriorityLists,
-                  (index) => _buildList(Priority(3 - index, context), context),
+                  (index) => _buildList(priorities[3-index], context),
                 ),
               ),
               ExpansionTile(
@@ -103,12 +108,12 @@ class PriorityView extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: HomeworkTile(
-                        text: hw.text,
-                        subject: hw.subject,
-                        completion: hw.completion,
-                        priority: Priority(hw.priority, context),
-                        deadline: hw.deadline,
-                        onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
+                        hw: hw,
+                        priority: priorities[hw.priority],
+                        onChangedCompletion: (value) {
+                          changeCompletion(hw.dbIndex, value);
+                          updateView();
+                        },
                         onDelete: () => deleteHw(hw.dbIndex),
                         onEdit: () => editHw(hw.dbIndex),
                       ),
@@ -135,7 +140,6 @@ class PriorityView extends StatelessWidget {
         numberOfItems: innerList!.length,
       ),
       contentsWhenEmpty: const SizedBox(),
-      // backgroundColor: Theme.of(context).colorScheme.surface,
       initiallyExpanded: true,
       canDrag: false,
       disableTopAndBottomBorders: true,
@@ -146,12 +150,10 @@ class PriorityView extends StatelessWidget {
 
   _buildItem(HomeworkDTO hw, BuildContext context) {
     return DragAndDropItem(
-      child: HomeworkTile(
-        text: hw.text,
-        subject: hw.subject,
-        completion: hw.completion,
-        priority: Priority(hw.priority, context),
-        deadline: hw.deadline,
+      child: AnimatedCompletionTile(
+        hw: hw,
+        priority: priorities[hw.priority],
+        onAnimationEnd: updateView,
         onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
         onDelete: () => deleteHw(hw.dbIndex),
         onEdit: () => editHw(hw.dbIndex),

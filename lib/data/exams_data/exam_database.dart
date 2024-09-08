@@ -41,7 +41,6 @@ class ExamDatabase {
       3: [3],
     };
     _examSequenceBox.put('sequence', sequence);
-    _examSequenceBox.put('appAlreadyOpened', true);
   }
 
   /// returns list of Exams dbIndexes for each priority

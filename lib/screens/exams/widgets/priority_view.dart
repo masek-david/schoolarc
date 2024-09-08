@@ -12,6 +12,7 @@ class PriorityView extends StatelessWidget {
   const PriorityView({
     super.key,
     required this.examsByPriority,
+    required this.priorities,
     required this.completedExams,
     required this.createNewExam,
     required this.deleteExam,
@@ -21,6 +22,7 @@ class PriorityView extends StatelessWidget {
 
   final Map<int, List<ExamDTO>> examsByPriority;
   final List<ExamDTO> completedExams;
+  final List<Priority> priorities;
   final Function createNewExam;
   final Function editExam;
   final Function deleteExam;
@@ -42,7 +44,7 @@ class PriorityView extends StatelessWidget {
         if (list.isNotEmpty) numberOfPriorityLists = 4;
       },
     );
-    
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -84,7 +86,7 @@ class PriorityView extends StatelessWidget {
                 listGhost: const Placeholder(),
                 children: List.generate(
                   numberOfPriorityLists,
-                  (index) => _buildList(Priority(3 - index, context), context),
+                  (index) => _buildList(priorities[3 - index], context),
                 ),
               ),
               ExpansionTile(
@@ -101,11 +103,8 @@ class PriorityView extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: ExamTile(
-                        text: exam.text,
-                        subject: exam.subject,
-                        completion: exam.completion,
-                        priority: Priority(exam.priority, context),
-                        deadline: exam.deadline,
+                        exam: exam,
+                        priority: priorities[exam.priority],
                         onDelete: (context) => deleteExam(exam.dbIndex),
                         onEdit: () => editExam(exam.dbIndex),
                       ),
@@ -132,7 +131,6 @@ class PriorityView extends StatelessWidget {
         numberOfItems: innerList!.length,
       ),
       contentsWhenEmpty: const SizedBox(),
-      // backgroundColor: Theme.of(context).colorScheme.surface,
       initiallyExpanded: true,
       canDrag: false,
       disableTopAndBottomBorders: true,
@@ -144,11 +142,8 @@ class PriorityView extends StatelessWidget {
   _buildItem(ExamDTO exam, BuildContext context) {
     return DragAndDropItem(
       child: ExamTile(
-        text: exam.text,
-        subject: exam.subject,
-        completion: exam.completion,
-        priority: Priority(exam.priority, context),
-        deadline: exam.deadline,
+        exam: exam,
+        priority: priorities[exam.priority],
         onDelete: (context) => deleteExam(exam.dbIndex),
         onEdit: () => editExam(exam.dbIndex),
       ),

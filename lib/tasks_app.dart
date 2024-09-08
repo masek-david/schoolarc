@@ -56,7 +56,7 @@ class _TasksAppState extends State<TasksApp> {
     settings.createInitialData();
     HomeworksDatabase().createInitialData();
     ExamDatabase().createInitialData();
-    SubjectDatabase().createInitialData();
+    SubjectDatabase.createInitialData();
   }
 
   void switchScreen({required int newScreenIndex}) {

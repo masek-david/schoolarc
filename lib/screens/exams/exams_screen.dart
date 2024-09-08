@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/screens/exams/widgets/exam_bottom_sheet.dart';
 import 'package:school_manager/screens/exams/widgets/priority_view.dart';
 
@@ -20,6 +21,10 @@ class _ExamsScreenState extends State<ExamsScreen> {
     3: <ExamDTO>[],
   };
   List<ExamDTO> completedExams = [];
+  late List<Priority> priorities = List.generate(
+    4,
+    (index) => Priority(index, context),
+  );
 
   Widget viewWidget = const Placeholder();
 
@@ -164,6 +169,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
       body: PriorityView(
         examsByPriority: examsByPriority,
         completedExams: completedExams,
+        priorities: priorities,
         createNewExam: createNewExam,
         deleteExam: deleteExam,
         editExam: editExam,
