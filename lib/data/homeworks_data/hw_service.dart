@@ -5,18 +5,13 @@ import 'package:school_manager/notifications/notification_sender.dart';
 
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
-  Map<int, Homework> _hwDbIndexMap = {};
-  Map<int, List<int>> _sequence = {};
+  late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
+  late Map<int, List<int>> _sequence = _db.getSequence();
   Homework? lastlyDeletedHw;
   int? lastlyDeletedHwDbIndex;
   int? lastlyDeletedHwIndex;
 
-  HomeworkService() {
-    _hwDbIndexMap = _db.getDatabase();
-    _sequence = _db.getSequence();
-  }
-
-  void changeCompletion(int dbIndex, value) {
+  void changeCompletion(int dbIndex, bool value) {
     _db.changeCompletion(dbIndex, value);
     NotificationSender.scheduleTommorrowNotification();
   }

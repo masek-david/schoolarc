@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/subjects_data/subject_model.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 
 class SubjectTile extends StatelessWidget {
   const SubjectTile({
@@ -10,7 +10,7 @@ class SubjectTile extends StatelessWidget {
     required this.onDelete,
   });
 
-  final Subject subject;
+  final SubjectDTO subject;
   final void Function() onEdit;
   final void Function() onDelete;
 

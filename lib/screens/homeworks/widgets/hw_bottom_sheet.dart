@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/extensions/string_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
-import 'package:school_manager/data/subjects_data/subject_database.dart';
-import 'package:school_manager/data/subjects_data/subject_model.dart';
 
 class HwBottomSheet extends StatefulWidget {
-  const HwBottomSheet(
-      {super.key,
-      required this.nameController,
-      required this.initialDate,
-      required this.initialPriority,
-      required this.onSave,
-      required this.initialCompletion,
-      required this.index});
+  const HwBottomSheet({
+    super.key,
+    required this.nameController,
+    required this.initialDate,
+    required this.initialPriority,
+    required this.onSave,
+    required this.initialCompletion,
+    required this.index,
+  });
 
   final TextEditingController nameController;
   final void Function({
@@ -38,9 +39,9 @@ class HwBottomSheet extends StatefulWidget {
 class _HwBottomSheetState extends State<HwBottomSheet> {
   late DateTime pickedDate = widget.initialDate;
   late int pickedPriority = widget.initialPriority;
-  SubjectDatabase subjectDatabase = SubjectDatabase();
-  late List<Subject> subjects = subjectDatabase.getDatabase();
-  Subject? pickedSubject;
+  final SubjectService _subjectService = SubjectService();
+  late List<SubjectDTO> subjects = _subjectService.getSortedList();
+  SubjectDTO? pickedSubject;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(
     subjects.length,
@@ -102,7 +103,7 @@ class _HwBottomSheetState extends State<HwBottomSheet> {
               ),
             ),
             const SizedBox(height: 10),
-            Autocomplete<Subject>(
+            Autocomplete<SubjectDTO>(
               fieldViewBuilder: (context, textEditingController, focusNode,
                   onFieldSubmitted) {
                 return TextField(

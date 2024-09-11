@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/data/subjects_data/subject_database.dart';
-import 'package:school_manager/data/subjects_data/subject_model.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
 
@@ -34,21 +34,11 @@ class ExamBottomSheet extends StatefulWidget {
 }
 
 class _ExamBottomSheetState extends State<ExamBottomSheet> {
-  DateTime pickedDate = DateTime.now();
-  int pickedPriority = 0;
+  late DateTime pickedDate = widget.initialDate;
+  late int pickedPriority = widget.initialPriority;
   int? pickedSubject;
-  SubjectDatabase subjectDatabase = SubjectDatabase();
-  List<Subject> subjects = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    pickedDate = widget.initialDate;
-    pickedPriority = widget.initialPriority;
-
-    subjects = subjectDatabase.getDatabase();
-  }
+  final SubjectService _subjectService = SubjectService();
+  late List<SubjectDTO> subjects = _subjectService.getSortedList();
 
   void onSave() {
     widget.onSave(
