@@ -30,14 +30,28 @@ class _TasksAppState extends State<TasksApp> {
   String appBarTitle = '';
   int currentScreen = 0;
 
+  final SettingsDatabase _settings = SettingsDatabase();
+  late ThemeMode themeMode = _getThemeMode(_settings.themeMode());
+
+  ThemeMode _getThemeMode(bool? value){
+    switch (value) {
+      case null:
+        return ThemeMode.system;
+
+      case true:
+        return ThemeMode.dark;
+
+      case false:
+        return ThemeMode.light;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    SettingsDatabase settings = SettingsDatabase();
-
-    if (settings.firstTimeOpeningApp()) {
-      firstTimeOpeningApp(settings);
+    if (_settings.firstTimeOpeningApp()) {
+      firstTimeOpeningApp();
     }
 
     // Only after at least the action method is set, the notification events are delivered
@@ -52,11 +66,17 @@ class _TasksAppState extends State<TasksApp> {
     );
   }
 
-  void firstTimeOpeningApp(SettingsDatabase settings) {
-    settings.createInitialData();
+  void firstTimeOpeningApp() {
+    _settings.createInitialData();
     HomeworksDatabase().createInitialData();
     ExamDatabase().createInitialData();
     SubjectDatabase().createInitialData();
+  }
+
+  void setThemeMode(bool? value) {
+    setState(() {
+      themeMode = _getThemeMode(value);
+    });
   }
 
   void switchScreen({required int newScreenIndex}) {
@@ -106,7 +126,7 @@ class _TasksAppState extends State<TasksApp> {
           colorScheme: darkDynamic,
           useMaterial3: true,
         ),
-        themeMode: ThemeMode.system,
+        themeMode: themeMode,
         navigatorKey: TasksApp.navigatorKey,
         initialRoute: '/',
         onGenerateRoute: (settings) {
@@ -129,7 +149,7 @@ class _TasksAppState extends State<TasksApp> {
         home: Scaffold(
           body: screenWidget,
           appBar: AppBar(title: Text(appBarTitle)),
-          drawer: const MyDrawer(),
+          drawer: MyDrawer(setThemeMode: setThemeMode),
           bottomNavigationBar: NavBar(onTap: switchScreen),
         ),
       );

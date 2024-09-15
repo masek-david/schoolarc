@@ -5,10 +5,13 @@ fix:
 =============================================================================================
 
 
-
-udelat jeden bottom sheet, nahore by byl vyber, jestli chci ukol nebo test 
-
-opravdu jsou potreba collapsible lists?
+widget
 
 
-animace pro listy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+? drag and drop v calendari
+
+? opravdu jsou potreba collapsible lists?
+
+? animace pro listy (pouzivat reorderable animated listview)
