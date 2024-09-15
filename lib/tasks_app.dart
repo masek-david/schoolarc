@@ -33,7 +33,7 @@ class _TasksAppState extends State<TasksApp> {
   final SettingsDatabase _settings = SettingsDatabase();
   late ThemeMode themeMode = _getThemeMode(_settings.themeMode());
 
-  ThemeMode _getThemeMode(bool? value){
+  ThemeMode _getThemeMode(bool? value) {
     switch (value) {
       case null:
         return ThemeMode.system;
@@ -119,11 +119,18 @@ class _TasksAppState extends State<TasksApp> {
         locale: const Locale('en', 'GB'),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: lightDynamic,
+          colorScheme: lightDynamic ??
+              ColorScheme.fromSeed(
+                seedColor: Colors.deepPurpleAccent,
+              ),
           useMaterial3: true,
         ),
         darkTheme: ThemeData(
-          colorScheme: darkDynamic,
+          colorScheme: darkDynamic ??
+              ColorScheme.fromSeed(
+                seedColor: Colors.deepPurpleAccent,
+                brightness: Brightness.dark,
+              ),
           useMaterial3: true,
         ),
         themeMode: themeMode,

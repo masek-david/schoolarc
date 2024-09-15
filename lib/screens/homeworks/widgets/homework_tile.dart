@@ -99,7 +99,8 @@ class HomeworkTile extends StatelessWidget {
                   child: Center(
                     child: Text(
                       hw.subject?.shortcut ?? '',
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
