@@ -35,7 +35,7 @@ class _NavBarState extends State<NavBar> {
           label: 'Homeworks',
         ),
         NavigationDestination(
-          icon: Icon(Icons.school),
+          icon: Icon(Icons.description),
           label: 'Exams',
         ),
       ],

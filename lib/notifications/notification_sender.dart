@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
@@ -10,6 +13,9 @@ import 'package:school_manager/extensions/datetime_extension.dart';
 class NotificationSender {
   // if not scheduled, it will arrive now and never automatically expire
   static void sendQuickAdd(bool scheduled) async {
+    if (!compatiblePlatform()) {
+      return;
+    }
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
       return;
@@ -102,6 +108,10 @@ class NotificationSender {
   // will set new notification about tommorrow
   static void scheduleTommorrowNotification(
       {Function(String text)? showSnackbar}) {
+    if (!compatiblePlatform()) {
+      return;
+    }
+
     SettingsDatabase settings = SettingsDatabase();
 
     if (!settings.tommorrowNotificationEnabled()) {
@@ -205,6 +215,10 @@ class NotificationSender {
   }
 
   static void sendSimpleNotification() async {
+    if(!compatiblePlatform()){
+      return;
+    }
+    
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       return;
     }
@@ -233,8 +247,19 @@ class NotificationSender {
         .replaceAll('\'', '&#39;');
   }
 
+  static bool compatiblePlatform() {
+    if(kIsWeb){
+      return false;
+    }
+    return Platform.isAndroid || Platform.isIOS;
+  }
+
   // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
   static Future<bool> getPermission(BuildContext context) async {
+    if(!compatiblePlatform()){
+      return false;
+    }
+    
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       await showDialog(
         context: context.mounted == true
@@ -255,7 +280,7 @@ class NotificationSender {
                   const Text(
                       'If you want this app to send you notifications, you need to grant it permission.'),
                   const Text(
-                      'The Grant permission button will take you to app settings from where you will enable all notifications.'),
+                      'The Grant permission button will take you to app settings from where you can enable all notifications.'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

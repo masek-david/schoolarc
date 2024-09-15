@@ -16,12 +16,13 @@ void main() async {
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
   await Future.wait([
-    Hive.openBox('myBox'),
+    Hive.openBox('subjectBox'),
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
     // other data includes sequences
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),
+    Hive.openBox('subjectOtherData'),
     Hive.openBox('settings'),
   ]);
 

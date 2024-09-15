@@ -4,7 +4,12 @@ import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  const MyDrawer({
+    super.key,
+    required this.setThemeMode,
+  });
+
+  final void Function(bool? value) setThemeMode;
 
   void showSnackbar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -41,7 +46,7 @@ class MyDrawer extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const SettingsScreen(),
+                builder: (context) => SettingsScreen(setThemeMode: setThemeMode,),
               ),
             );
           },

@@ -2,50 +2,49 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 
 class SubjectDatabase {
-  final List<Subject> _subjects = [];
+  final _subjectBox = Hive.box('subjectBox');
+  final _sequenceBox = Hive.box('subjectOtherData');
 
-  SubjectDatabase() {
-    _subjects.addAll(_myBox.get('SUBJECTS').cast<Subject>());
-  }
-
-  final _myBox = Hive.box('myBox');
-
-  static void createInitialData() {
-    final box = Hive.box('myBox');
-
-    box.put('SUBJECTS', [
-      Subject(
+  void createInitialData() {
+    _subjectBox.putAll({
+      0: Subject(
         name: 'Math',
         shortcut: 'Ma',
       ),
-      Subject(
+      1: Subject(
         name: 'English',
         shortcut: 'En',
-      )
-    ]);
+      ),
+    });
+
+    _sequenceBox.put('SEQUENCE', [0, 1]);
   }
 
-  // put data in database
-  void updateDatabase() {
-    _myBox.put("SUBJECTS", _subjects);
+  List<int> getSequence() {
+    return _sequenceBox.get('SEQUENCE').cast<int>();
   }
 
-  List<Subject> getDatabase() {
-    return _subjects;
+  void saveSequence(List<int> newSequence) {
+    _sequenceBox.put('SEQUENCE', newSequence);
   }
 
-  void addSubject(Subject subject) {
-    _subjects.add(subject);
-    updateDatabase();
+  Map<int, Subject> getDatabase() {
+    return _subjectBox.toMap().cast<int, Subject>();
   }
 
-  void saveEditedSubject(int index, Subject newSubject) {
-    _subjects[index] = newSubject;
-    updateDatabase();
+  Future<int> addSubject(Subject subject) {
+    return _subjectBox.add(subject);
   }
 
-  void deleteSubject(int index) {
-    _subjects.removeAt(index);
-    updateDatabase();
+  void saveEditedSubject(int dbIndex, Subject newSubject) {
+    _subjectBox.put(dbIndex, newSubject);
+  }
+
+  void deleteSubject(int dbIndex) {
+    _subjectBox.delete(dbIndex);
+  }
+
+  Subject getSubject(int dbIndex) {
+    return _subjectBox.get(dbIndex);
   }
 }

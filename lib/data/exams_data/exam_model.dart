@@ -1,12 +1,13 @@
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 
 part 'exam_model.g.dart';
 
 @HiveType(typeId: 1)
 class Exam extends HiveObject {
   Exam({
-    required this.subject,
+    required this.subjectDbIndex,
     required this.text,
     required this.date,
     required this.priority,
@@ -14,7 +15,7 @@ class Exam extends HiveObject {
   });
 
   @HiveField(0)
-  String subject;
+  int? subjectDbIndex;
   @HiveField(1)
   String text;
   @HiveField(2)
@@ -24,7 +25,7 @@ class Exam extends HiveObject {
   @HiveField(4)
   bool completion;
 
-  ExamDTO convertToDTO(int dbIndex) {
+  ExamDTO convertToDTO(int dbIndex, SubjectDTO? subject) {
     return ExamDTO(
       subject: subject,
       text: text,

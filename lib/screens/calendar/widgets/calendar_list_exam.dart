@@ -8,12 +8,12 @@ class CalendarListExam extends StatelessWidget {
   const CalendarListExam(
       {super.key,
       required this.examList,
-      required this.deleteHw,
-      required this.editHw});
+      required this.deleteExam,
+      required this.editExam});
 
   final List<ExamDTO> examList;
-  final Function(int dbIndex) deleteHw;
-  final Function(int dbIndex) editHw;
+  final Function(int dbIndex) deleteExam;
+  final Function(int dbIndex) editExam;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +38,8 @@ class CalendarListExam extends StatelessWidget {
             exam: exam,
             showDeadline: false,
             priority: Priority(exam.priority, context),
-            onDelete: (context) => deleteHw(exam.dbIndex),
-            onEdit: () => editHw(exam.dbIndex),
+            onDelete: (context) => deleteExam(exam.dbIndex),
+            onEdit: () => editExam(exam.dbIndex),
           ),
         );
       }),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
-import 'package:school_manager/data/subjects_data/subject_database.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 
@@ -14,16 +15,14 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
-  final SubjectDatabase db = SubjectDatabase();
-  late List<Subject> subjectList = db.getDatabase();
+  final SubjectService _service = SubjectService();
+  late List<SubjectDTO> subjectList = _service.getSortedList();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController shortcutController = TextEditingController();
 
   @override
   void dispose() {
-    db.updateDatabase();
-
     super.dispose();
   }
 
@@ -34,15 +33,16 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         text: 'Add new subject',
         nameController: nameController,
         shortcutController: shortcutController,
-        onSave: () {
+        onSave: () async {
+          SubjectDTO newSubject = await _service.addNewSubject(
+            Subject(
+              name: nameController.text,
+              shortcut: shortcutController.text,
+            ),
+          );
           setState(
             () {
-              db.addSubject(
-                Subject(
-                  name: nameController.text,
-                  shortcut: shortcutController.text,
-                ),
-              );
+              subjectList.add(newSubject);
             },
           );
         },
@@ -55,9 +55,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
-  void editSubject(int index) {
-    nameController.text = subjectList[index].name;
-    shortcutController.text = subjectList[index].shortcut;
+  void editSubject(int dbIndex) {
+    SubjectDTO subject = _service.getSubject(dbIndex);
+
+    nameController.text = subject.name;
+    shortcutController.text = subject.shortcut;
 
     showDialog(
       context: context,
@@ -66,15 +68,20 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () {
+          SubjectDTO newSubject = SubjectDTO(
+            name: nameController.text,
+            shortcut: shortcutController.text,
+            dbIndex: subject.dbIndex,
+          );
+
+          _service.editSubject(newSubject);
           setState(
             () {
-              db.saveEditedSubject(
-                index,
-                Subject(
-                  name: nameController.text,
-                  shortcut: shortcutController.text,
-                ),
-              );
+              subjectList[subjectList.indexWhere(
+                (element) {
+                  return element.dbIndex == newSubject.dbIndex;
+                },
+              )] = newSubject;
             },
           );
         },
@@ -87,27 +94,34 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
-  void deleteSubject(int index) {
+  void deleteSubject(int dbIndex) {
+    SubjectDTO deletedSubject = _service.getSubject(dbIndex);
+    _service.deleteSubject(deletedSubject.dbIndex);
     setState(() {
-      Subject deletedSubject = subjectList[index];
-      db.deleteSubject(index);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Homework deleted'),
-          action: SnackBarAction(
-            label: 'Undo',
-            onPressed: () {
-              if (mounted) {
-                setState(() {
-                  db.addSubject(deletedSubject);
-                });
-              }
-            },
-          ),
-        ),
+      subjectList.removeWhere(
+        (element) {
+          return element.dbIndex == deletedSubject.dbIndex;
+        },
       );
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Homework deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            _service.revertLastlyDeletedSubject();
+            if (mounted) {
+              setState(() {
+                subjectList = _service.getSortedList();
+              });
+            }
+          },
+        ),
+      ),
+    );
+    // });
   }
 
   @override
@@ -126,27 +140,30 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
       body: SlidableAutoCloseBehavior(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: ReorderableListView(
+          child: ReorderableListView.builder(
             onReorderStart: (index) => HapticFeedback.lightImpact(),
-            children: [
-              for (int index = 0; index < subjectList.length; index++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  key: Key('$index'),
-                  child: SubjectTile(
-                    subject: subjectList[index],
-                    onEdit: () => editSubject(index),
-                    onDelete: () => deleteSubject(index),
-                  ),
-                )
-            ],
+            itemCount: subjectList.length,
+            itemBuilder: (context, index) {
+              SubjectDTO subject = subjectList[index];
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                key: Key('$index'),
+                child: SubjectTile(
+                  subject: subject,
+                  onEdit: () => editSubject(subject.dbIndex),
+                  onDelete: () => deleteSubject(subject.dbIndex),
+                ),
+              );
+            },
             onReorder: (int oldIndex, int newIndex) {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              final SubjectDTO item = subjectList.removeAt(oldIndex);
+              _service.changeSequence(oldIndex, newIndex);
               setState(
                 () {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final Subject item = subjectList.removeAt(oldIndex);
                   subjectList.insert(newIndex, item);
                 },
               );

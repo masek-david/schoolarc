@@ -1,20 +1,24 @@
 import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
 
 class ExamService {
   final ExamDatabase _db = ExamDatabase();
-  Map<int, Exam> _examDbIndexMap = {};
-  Map<int, List<int>> _sequence = {};
+  final SubjectService _subjectService = SubjectService();
+  late final Map<int, SubjectDTO> _subjectsDbIndex = _subjectService.getMap();
+  // key is the dbIndex
+  late Map<int, Exam> _examDbIndexMap = _db.getDatabase();
+  // key is the priority, for each priority is a list of dbIndexes
+  late Map<int, List<int>> _sequence = _db.getSequence();
   Exam? lastlyDeletedExam;
   int? lastlyDeletedExamDbIndex;
   int? lastlyDeletedExamIndex;
 
   ExamService() {
-    _examDbIndexMap = _db.getDatabase();
-    _sequence = _db.getSequence();
     markAllCompletedExams();
   }
 
@@ -31,6 +35,8 @@ class ExamService {
         }
       },
     );
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// edits the position and priority of a Exam at the provided index
@@ -51,15 +57,18 @@ class ExamService {
     _examDbIndexMap = _db.getDatabase();
 
     _examDbIndexMap.forEach(
-      (dbIndex, value) {
+      (dbIndex, exam) {
         DateTime dateNoTime =
-            DateTime(value.date.year, value.date.month, value.date.day);
+            DateTime(exam.date.year, exam.date.month, exam.date.day);
         if (examDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
-          examDateMap[dateNoTime]!.add(value.convertToDTO(dbIndex));
+          examDateMap[dateNoTime]!.add(exam.convertToDTO(
+              dbIndex, _subjectsDbIndex[exam.subjectDbIndex]));
         } else {
           // If it does not exist, create a new list with the exam
-          examDateMap[dateNoTime] = [value.convertToDTO(dbIndex)];
+          examDateMap[dateNoTime] = [
+            exam.convertToDTO(dbIndex, _subjectsDbIndex[exam.subjectDbIndex])
+          ];
         }
       },
     );
@@ -85,7 +94,8 @@ class ExamService {
       for (int i = 0; i < list.length; i++) {
         Exam exam = _examDbIndexMap[list[i]]!;
         if (!exam.completion) {
-          examPriorityMap[priority]!.add(exam.convertToDTO(list[i]));
+          examPriorityMap[priority]!.add(exam.convertToDTO(
+              list[i], _subjectsDbIndex[exam.subjectDbIndex]));
         }
       }
     });
@@ -100,7 +110,8 @@ class ExamService {
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
         if (exam.completion) {
-          completedExams.add(exam.convertToDTO(dbIndex));
+          completedExams.add(exam.convertToDTO(
+              dbIndex, _subjectsDbIndex[exam.subjectDbIndex]));
         }
       },
     );
@@ -146,11 +157,11 @@ class ExamService {
   Future<void> saveNewExam({
     required DateTime date,
     required int priority,
-    required String subject,
+    required SubjectDTO? subject,
     required String text,
   }) async {
     Exam newExam = Exam(
-      subject: subject,
+      subjectDbIndex: subject?.dbIndex,
       text: text,
       date: date,
       priority: priority,
@@ -162,7 +173,7 @@ class ExamService {
     _db.saveSequence(_sequence);
 
     NotificationSender.scheduleTommorrowNotification();
-    
+
     return;
   }
 
@@ -170,13 +181,13 @@ class ExamService {
   void saveEditedExam({
     required DateTime date,
     required int priority,
-    required String subject,
+    required SubjectDTO? subject,
     required String text,
     required int dbIndex,
   }) {
     int oldPriority = _examDbIndexMap[dbIndex]!.priority;
     Exam editedExam = Exam(
-        subject: subject,
+        subjectDbIndex: subject?.dbIndex,
         text: text,
         date: date,
         priority: priority,
@@ -195,7 +206,9 @@ class ExamService {
   }
 
   ExamDTO getExam(int dbIndex) {
-    return _db.getExam(dbIndex).convertToDTO(dbIndex);
+    Exam exam = _db.getExam(dbIndex);
+
+    return exam.convertToDTO(dbIndex, _subjectsDbIndex[exam.subjectDbIndex]);
   }
 
   int getNumberOfIncomplete() {

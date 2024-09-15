@@ -55,14 +55,14 @@ class NotificationController {
         HomeworkService().saveNewHW(
           date: DateTime.now(),
           priority: 0,
-          subject: '',
+          subject: null,
           text: receivedAction.buttonKeyInput,
         );
       case 'exam':
         ExamService().saveNewExam(
           date: DateTime.now(),
           priority: 0,
-          subject: '',
+          subject: null,
           text: receivedAction.buttonKeyInput,
         );
       default:

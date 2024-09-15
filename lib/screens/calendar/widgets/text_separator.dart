@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// used in calendar views for dividing exams and homeworks
 class TextSeparator extends StatelessWidget {
-  const TextSeparator({super.key, this.text = 'empty', this.greydOut = false});
+  const TextSeparator({super.key, this.text = '', this.greydOut = false});
 
   final String text;
   final bool greydOut;

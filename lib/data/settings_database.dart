@@ -11,6 +11,7 @@ class DatabaseKeys {
   static const String quickAddArriveTime = 'quickAddArriveTime';
   static const String quickAddDissappearTime = 'quickAddDissappearTime';
   static const String quickAddOnWeekends = 'quickAddOnWeekends';
+  static const String themeMode = 'themeMode';
 }
 
 class SettingsDatabase {
@@ -91,5 +92,15 @@ class SettingsDatabase {
 
   void setQuickAddOnWeekends(bool value) {
     _settingsBox.put(DatabaseKeys.quickAddOnWeekends, value);
+  }
+
+  /// returns true for dark mode, false for light and null for system mode
+  bool? themeMode(){
+    return _settingsBox.get(DatabaseKeys.themeMode);
+  }
+
+  /// sets true for dark mode, false for light and null for system mode
+  void setThemeMode(bool? value){
+    _settingsBox.put(DatabaseKeys.themeMode, value);
   }
 }

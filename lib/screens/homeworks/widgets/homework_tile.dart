@@ -23,6 +23,9 @@ class HomeworkTile extends StatelessWidget {
   final Function() onDelete;
   final Function() onEdit;
 
+  final double borderRadius = 12;
+  final double padding = 5;
+
   @override
   Widget build(BuildContext context) {
     Color deadlineColor = Theme.of(context).colorScheme.onSurface;
@@ -71,12 +74,13 @@ class HomeworkTile extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onEdit,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(borderRadius),
         child: Container(
-          padding: const EdgeInsets.all(5),
+          padding: EdgeInsets.all(padding),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.secondaryContainer.withAlpha(100),
+            borderRadius: BorderRadius.circular(borderRadius),
+            color:
+                Theme.of(context).colorScheme.secondaryContainer.withAlpha(100),
           ),
           child: Opacity(
             opacity: opacity,
@@ -89,12 +93,12 @@ class HomeworkTile extends StatelessWidget {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(borderRadius - padding),
                     color: Theme.of(context).colorScheme.primaryContainer,
                   ),
                   child: Center(
                     child: Text(
-                      hw.subject,
+                      hw.subject?.shortcut ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -104,12 +108,13 @@ class HomeworkTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: Text(hw.text, maxLines: 2)),
-                const SizedBox(width: 10),
+                const SizedBox(width: 5),
                 Text(
                   deadlineText,
                   maxLines: 2,
                   style: TextStyle(color: deadlineColor, fontSize: 12),
                 ),
+                const SizedBox(width: 5),
                 MyCheckbox(
                   value: hw.completion,
                   priority: priority,

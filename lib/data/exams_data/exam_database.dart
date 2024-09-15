@@ -9,25 +9,25 @@ class ExamDatabase {
   void createInitialData() {
     _examBox.putAll({
       3: Exam(
-          subject: 'Math',
+          subjectDbIndex: 0,
           text: 'This is the text of the exam',
           date: DateTime.now(),
           completion: false,
           priority: 3),
       2: Exam(
-          subject: 'En',
+          subjectDbIndex: 1,
           text: '<- here you can see the subject',
           date: DateTime.now(),
           completion: false,
           priority: 2),
       1: Exam(
-          subject: 'Ma',
+          subjectDbIndex: 1,
           text: 'Algrebra',
           date: DateTime.now(),
           completion: false,
           priority: 1),
       0: Exam(
-          subject: 'Bio',
+          subjectDbIndex: 0,
           text: 'Mammals',
           date: DateTime.now(),
           completion: false,
@@ -82,7 +82,7 @@ class ExamDatabase {
     _examBox.put(
       dbKey,
       Exam(
-        subject: exam.subject,
+        subjectDbIndex: exam.subjectDbIndex,
         text: exam.text,
         date: exam.date,
         priority: exam.priority,

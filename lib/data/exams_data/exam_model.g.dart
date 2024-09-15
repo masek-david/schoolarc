@@ -17,7 +17,7 @@ class ExamAdapter extends TypeAdapter<Exam> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Exam(
-      subject: fields[0] as String,
+      subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
       date: fields[2] as DateTime,
       priority: fields[3] as int,
@@ -30,7 +30,7 @@ class ExamAdapter extends TypeAdapter<Exam> {
     writer
       ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.subject)
+      ..write(obj.subjectDbIndex)
       ..writeByte(1)
       ..write(obj.text)
       ..writeByte(2)

@@ -9,25 +9,25 @@ class HomeworksDatabase {
   void createInitialData() {
     _hwBox.putAll({
       3: Homework(
-          subject: 'Math',
+          subjectDbIndex: 0,
           text: 'This is the assignment of the homework',
           deadline: DateTime.now(),
           completion: false,
           priority: 3),
       2: Homework(
-          subject: 'En',
+          subjectDbIndex: 0,
           text: '<- here you can see the subject',
           deadline: DateTime.now(),
           completion: false,
           priority: 2),
       1: Homework(
-          subject: 'Pe',
+          subjectDbIndex: 0,
           text: 'and here is the tick box with color indicating priority ->',
           deadline: DateTime.now(),
           completion: false,
           priority: 1),
       0: Homework(
-          subject: 'Bio',
+          subjectDbIndex: 1,
           text: 'Prepare presentation',
           deadline: DateTime.now(),
           completion: false,
@@ -67,8 +67,9 @@ class HomeworksDatabase {
   }
 
   /// puts/replaces homework at dbIndex with new one
-  void editHw(int dbIndex, Homework hw) {
-    _hwBox.put(dbIndex, hw);
+  Future<void> editHw(int dbIndex, Homework hw) async {
+    await _hwBox.put(dbIndex, hw);
+    return;
   }
 
   void deleteHw(int dbIndex) {
@@ -81,7 +82,7 @@ class HomeworksDatabase {
     _hwBox.put(
       dbIndex,
       Homework(
-        subject: hw.subject,
+        subjectDbIndex: hw.subjectDbIndex,
         text: hw.text,
         deadline: hw.deadline,
         completion: value,
