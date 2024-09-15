@@ -15,7 +15,9 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {},
+      //   onPressed: () {
+      //     HapticFeedback.lightImpact();
+      //   },
       //   label: const Text('Plan-it'),
       //   icon: const Icon(Icons.schedule),
       // ),
@@ -24,7 +26,6 @@ class HomeScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            // margin: const EdgeInsets.all(value),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Theme.of(context)

@@ -24,7 +24,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scale: 1.2,
+      scale: 1.3,
       child: Checkbox(
         value: checboxValue,
         activeColor: widget.priority.color,
@@ -37,21 +37,6 @@ class _MyCheckboxState extends State<MyCheckbox> {
           setState(() {
             checboxValue = value;
           });
-          // if (value == true) {
-          //   ScaffoldMessenger.of(context).clearSnackBars();
-          //   ScaffoldMessenger.of(context).showSnackBar(
-          //     SnackBar(
-          //       content: const Text('Homework marked as completed'),
-          //       duration: const Duration(milliseconds: 2000),
-          //       action: SnackBarAction(
-          //         label: 'Undo',
-          //         onPressed: () {
-          //           widget.onChanged(false);
-          //         },
-          //       ),
-          //     ),
-          //   );
-          // }
         },
       ),
     );

@@ -8,7 +8,7 @@ class SettingTile extends StatelessWidget {
     this.icon,
     this.action,
     this.onTap,
-    this.highlighted,
+    this.highlighted = false,
   });
 
   final String label;
@@ -16,16 +16,16 @@ class SettingTile extends StatelessWidget {
   final Icon? icon;
   final Widget? action;
   final Function()? onTap;
-  final bool? highlighted;
+  final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: highlighted != null ? const EdgeInsets.all(16) : null,
+        padding: highlighted == true ? const EdgeInsets.all(16) : null,
         margin: const EdgeInsets.all(16),
-        decoration: highlighted != null
+        decoration: highlighted == true
             ? BoxDecoration(
                 borderRadius: BorderRadius.circular(32),
                 color: Theme.of(context).colorScheme.primary.withAlpha(100))

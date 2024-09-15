@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CancelSaveButton extends StatelessWidget {
-  const CancelSaveButton({super.key, required this.onSave, this.onCancel});
+  const CancelSaveButton({
+    super.key,
+    required this.onSave,
+    this.onCancel,
+    this.middle,
+  });
 
   final Function onSave;
   final Function? onCancel;
+  final Widget? middle;
 
   @override
   Widget build(BuildContext context) {
-    // onCancel ??=
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -23,6 +27,7 @@ class CancelSaveButton extends StatelessWidget {
           },
           child: const Text('Cancel'),
         ),
+        if(middle != null) middle!,
         FilledButton(
           onPressed: () {
             HapticFeedback.lightImpact();

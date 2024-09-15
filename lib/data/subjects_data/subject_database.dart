@@ -21,7 +21,7 @@ class SubjectDatabase {
   }
 
   List<int> getSequence() {
-    return _sequenceBox.get('SEQUENCE');
+    return _sequenceBox.get('SEQUENCE').cast<int>();
   }
 
   void saveSequence(List<int> newSequence) {

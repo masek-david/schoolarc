@@ -6,8 +6,8 @@ import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
+import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
-import 'package:school_manager/widgets/upcoming_feature_dialog.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -60,9 +60,69 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
+  void addTask(bool isHomework) {
+    showAddBottomSheet(
+      context,
+      initialDate: _selectedDay,
+      onSave: (
+          {required date, required priority, subject, required text}) async {
+        isHomework
+            ? await _serviceHw.saveNewHW(
+                date: date, priority: priority, subject: subject, text: text)
+            : await _serviceExam.saveNewExam(
+                date: date, priority: priority, subject: subject, text: text);
+        updateView();
+      },
+    );
+  }
+
+  void editHw(int dbIndex) {
+    HomeworkDTO hw = _serviceHw.getHomework(dbIndex);
+
+    showAddBottomSheet(
+      context,
+      initialDate: hw.deadline,
+      initialSubject: hw.subject,
+      initialPriority: hw.priority,
+      initialName: hw.text,
+      onSave: ({required date, required priority, subject, required text}) {
+        _serviceHw.saveEditedHW(
+          date: date,
+          priority: priority,
+          subject: subject,
+          text: text,
+          completion: false,
+          dbIndex: dbIndex,
+        );
+        updateView();
+      },
+    );
+  }
+
+  void editExam(int dbIndex) {
+    ExamDTO exam = _serviceExam.getExam(dbIndex);
+
+    showAddBottomSheet(
+      context,
+      initialDate: exam.deadline,
+      initialSubject: exam.subject,
+      initialPriority: exam.priority,
+      initialName: exam.text,
+      onSave: ({required date, required priority, subject, required text}) {
+        _serviceExam.saveEditedExam(
+          date: date,
+          priority: priority,
+          subject: subject,
+          text: text,
+          dbIndex: dbIndex,
+        );
+        updateView();
+      },
+    );
+  }
+
   void changeCompletion(int dbIndex, bool value) {
     _serviceHw.changeCompletion(dbIndex, value);
-    updateView();
   }
 
   void deleteHw(int dbIndex) {
@@ -101,10 +161,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void edit(int dbIndex) {
-    showDialog(context: context, builder: buildDialog);
-  }
-
   List<Object> getEventsForDay(DateTime day) {
     List<Object> listOfEvents = [
       ...hwByDate[DateTime(day.year, day.month, day.day)] ?? [],
@@ -116,6 +172,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: () => addTask(false),
+            icon: const Icon(Icons.add),
+            label: const Text('Exam'),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          FloatingActionButton.extended(
+            onPressed: () => addTask(true),
+            icon: const Icon(Icons.add),
+            label: const Text('Homework'),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           TableCalendar(
@@ -177,18 +252,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 );
               }
             },
-            // onPageChanged: (focusedDay) {
-            //   DateTime now = DateTime.now();
-            //   int dayDifferenceFromNow = focusedDay
-            //       .difference(DateTime(now.year, now.month, now.day))
-            //       .inDays;
-            //   int correctPageIndex = negativePageCount + dayDifferenceFromNow;
-            //   _pageController.jumpToPage(
-            //     correctPageIndex,
-            //     // duration: const Duration(milliseconds: 500),
-            //     // curve: Curves.easeInOut,
-            //   );
-            // },
             onHeaderTapped: (focusedDay) {
               setState(() {
                 _focusedDay = DateTime.now();
@@ -226,16 +289,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   return ListView(
                     children: [
                       CalendarListExam(
-                        examList: examListForDay,
-                        deleteHw: deleteExam,
-                        editHw: edit,
-                      ),
+                          examList: examListForDay,
+                          deleteExam: deleteExam,
+                          editExam: editExam),
                       CalendarListHw(
                         hwList: hwListForDay,
                         changeCompletion: changeCompletion,
                         deleteHw: deleteHw,
-                        editHw: edit,
+                        editHw: editHw,
+                        updateListView: updateView,
                       ),
+                      const ListBottomSpacer(),
                       const ListBottomSpacer(),
                     ],
                   );

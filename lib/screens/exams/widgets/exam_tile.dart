@@ -91,7 +91,7 @@ class ExamTile extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      exam.subject,
+                      exam.subject?.shortcut ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

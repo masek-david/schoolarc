@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/priority_view.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
-import 'package:school_manager/screens/homeworks/widgets/hw_bottom_sheet.dart';
+import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
@@ -25,9 +25,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     4,
     (index) => Priority(index, context),
   );
-
-  // text controllers for creating and editing hw
-  var _nameController = TextEditingController();
 
   @override
   void initState() {
@@ -58,89 +55,52 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
   void changeCompletion(int dbIndex, bool value) {
     service.changeCompletion(dbIndex, value);
-    // updateListView();
   }
 
-  Future<void> createNewHw({DateTime? initialDate}) async {
-    initialDate ??= DateTime.now();
-    // pokud je initial date null, nastavi se na datetime.now
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      builder: (context) {
-        return HwBottomSheet(
-          nameController: _nameController,
-          initialDate: initialDate!,
-          initialPriority: 0,
-          initialCompletion: false,
-          index: 0, // index neni potreba u zakladani noveho ukolu
-          onSave: ({
-            required context,
-            required date,
-            required index,
-            required priority,
-            required subject,
-            required completion,
-            required text,
-          }) async {
-            await service.saveNewHW(
-              date: date,
-              priority: priority,
-              subject: subject,
-              text: text,
-            );
-            updateListView();
-          },
+  void createNewHw() {
+    showAddBottomSheet(
+      context,
+      onSave: ({
+        required date,
+        required priority,
+        subject,
+        required text,
+      }) async {
+        await service.saveNewHW(
+          date: date,
+          priority: priority,
+          subject: subject,
+          text: text,
         );
-      },
-    ).then(
-      // po zavreni bottomSheetu se smaze uzivatelem zadany text
-      (value) => {
-        _nameController.clear(),
+        updateListView();
       },
     );
   }
 
   void editHw(int dbIndex) {
     HomeworkDTO currentlyEditedTask = service.getHomework(dbIndex);
-    _nameController = TextEditingController(text: currentlyEditedTask.text);
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      builder: (context) {
-        return HwBottomSheet(
-          nameController: _nameController,
-          initialDate: currentlyEditedTask.deadline,
-          initialPriority: currentlyEditedTask.priority,
-          initialCompletion: currentlyEditedTask.completion,
-          index: dbIndex,
-          onSave: (
-              {required context,
-              required date,
-              required index,
-              required priority,
-              required subject,
-              required completion,
-              required text}) {
-            service.saveEditedHW(
-              date: date,
-              priority: priority,
-              dbIndex: index,
-              subject: subject,
-              text: text,
-              completion: completion,
-            );
-            updateListView();
-          },
+    showAddBottomSheet(
+      context,
+      initialName: currentlyEditedTask.text,
+      initialSubject: currentlyEditedTask.subject,
+      initialDate: currentlyEditedTask.deadline,
+      initialPriority: currentlyEditedTask.priority,
+      onSave: ({
+        required date,
+        required priority,
+        required text,
+        subject,
+      }) async {
+        await service.saveEditedHW(
+          date: date,
+          priority: priority,
+          dbIndex: dbIndex,
+          subject: subject,
+          text: text,
+          completion: currentlyEditedTask.completion,
         );
-      },
-    ).then(
-      (value) => {
-        _nameController.clear(),
+        updateListView();
       },
     );
   }

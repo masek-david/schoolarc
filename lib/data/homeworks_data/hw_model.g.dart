@@ -17,7 +17,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Homework(
-      subject: fields[0] as String,
+      subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
       deadline: fields[2] as DateTime,
       completion: fields[3] as bool,
@@ -30,7 +30,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
     writer
       ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.subject)
+      ..write(obj.subjectDbIndex)
       ..writeByte(1)
       ..write(obj.text)
       ..writeByte(2)

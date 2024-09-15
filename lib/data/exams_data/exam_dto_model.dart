@@ -1,3 +1,5 @@
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+
 class ExamDTO {
   ExamDTO(
       {required this.subject,
@@ -7,7 +9,7 @@ class ExamDTO {
       required this.dbIndex,
       required this.completion});
 
-  String subject;
+  SubjectDTO? subject;
   String text;
   DateTime deadline;
   bool completion;

@@ -1,11 +1,17 @@
 import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
+import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
 
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
+  final SubjectService _subjectService = SubjectService();
+  late final Map<int, SubjectDTO> _subjectsDbIndex = _subjectService.getMap();
+  // key is the dbIndex
   late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
+  // key is the priority, for each priority is a list of dbIndexes
   late Map<int, List<int>> _sequence = _db.getSequence();
   Homework? lastlyDeletedHw;
   int? lastlyDeletedHwDbIndex;
@@ -34,15 +40,19 @@ class HomeworkService {
     _hwDbIndexMap = _db.getDatabase();
 
     _hwDbIndexMap.forEach(
-      (dbIndex, value) {
-        DateTime dateNoTime = DateTime(
-            value.deadline.year, value.deadline.month, value.deadline.day);
+      (dbIndex, homework) {
+        DateTime dateNoTime = DateTime(homework.deadline.year,
+            homework.deadline.month, homework.deadline.day);
         if (hwDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
-          hwDateMap[dateNoTime]!.add(value.convertToDTO(dbIndex));
+          hwDateMap[dateNoTime]!.add(homework.convertToDTO(
+              dbIndex, _subjectsDbIndex[homework.subjectDbIndex]));
         } else {
           // If it does not exist, create a new list with the exam
-          hwDateMap[dateNoTime] = [value.convertToDTO(dbIndex)];
+          hwDateMap[dateNoTime] = [
+            homework.convertToDTO(
+                dbIndex, _subjectsDbIndex[homework.subjectDbIndex])
+          ];
         }
       },
     );
@@ -70,7 +80,8 @@ class HomeworkService {
       for (int i = 0; i < list.length; i++) {
         Homework hw = _hwDbIndexMap[list[i]]!;
         if (!hw.completion) {
-          hwPriorityMap[priority]!.add(hw.convertToDTO(list[i]));
+          hwPriorityMap[priority]!.add(
+              hw.convertToDTO(list[i], _subjectsDbIndex[hw.subjectDbIndex]));
         }
       }
     });
@@ -85,7 +96,8 @@ class HomeworkService {
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
         if (hw.completion) {
-          completedHw.add(hw.convertToDTO(dbIndex));
+          completedHw.add(
+              hw.convertToDTO(dbIndex, _subjectsDbIndex[hw.subjectDbIndex]));
         }
       },
     );
@@ -131,11 +143,11 @@ class HomeworkService {
   Future<void> saveNewHW({
     required DateTime date,
     required int priority,
-    required String subject,
+    required SubjectDTO? subject,
     required String text,
   }) async {
     Homework newHw = Homework(
-      subject: subject,
+      subjectDbIndex: subject?.dbIndex,
       text: text,
       deadline: date,
       completion: false,
@@ -152,22 +164,22 @@ class HomeworkService {
   }
 
   /// saves edited homework and changes its position in sequence if necessary
-  void saveEditedHW({
+  Future<void> saveEditedHW({
     required DateTime date,
     required int priority,
-    required String subject,
+    required SubjectDTO? subject,
     required String text,
     required bool completion,
     required int dbIndex,
-  }) {
+  }) async {
     int oldPriority = _hwDbIndexMap[dbIndex]!.priority;
     Homework editedHw = Homework(
-        subject: subject,
+        subjectDbIndex: subject?.dbIndex,
         text: text,
         deadline: date,
         completion: completion,
         priority: priority);
-    _db.editHw(dbIndex, editedHw);
+    await _db.editHw(dbIndex, editedHw);
     _hwDbIndexMap.update(
       dbIndex,
       (value) => editedHw,
@@ -178,10 +190,14 @@ class HomeworkService {
       _sequence[editedHw.priority]!.add(dbIndex);
       _db.saveSequence(_sequence);
     }
+
+    return;
   }
 
   HomeworkDTO getHomework(int dbIndex) {
-    return _db.getHomework(dbIndex).convertToDTO(dbIndex);
+    Homework hw = _db.getHomework(dbIndex);
+
+    return hw.convertToDTO(dbIndex, _subjectsDbIndex[hw.subjectDbIndex]);
   }
 
   /// returns the number of incomplete homeworks
