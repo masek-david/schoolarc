@@ -177,6 +177,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton.extended(
+            heroTag: 'exam_btn',
             onPressed: () => addTask(false),
             icon: const Icon(Icons.add),
             label: const Text('Exam'),
@@ -185,6 +186,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             height: 10,
           ),
           FloatingActionButton.extended(
+            heroTag: 'homework_btn',
             onPressed: () => addTask(true),
             icon: const Icon(Icons.add),
             label: const Text('Homework'),
@@ -195,8 +197,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           TableCalendar(
             // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-            firstDay: DateTime.utc(2000),
-            lastDay: DateTime.utc(2100),
+            firstDay: DateTime.utc(1900),
+            lastDay: DateTime.utc(3000),
             focusedDay: _focusedDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarFormat: _calendarFormat,
