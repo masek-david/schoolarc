@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_list_exam.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_list_hw.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
@@ -9,6 +10,7 @@ import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -34,6 +36,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   int negativePageCount = 1000000;
   late final PageController _pageController =
       PageController(viewportFraction: 0.93, initialPage: negativePageCount);
+  // how many markers are used this week at most
+  late int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
 
   @override
   void initState() {
@@ -41,6 +45,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     hwByDate = _serviceHw.sortByDate();
     examByDate = _serviceExam.sortByDate();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -56,6 +67,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       setState(() {
         hwByDate = _serviceHw.sortByDate();
         examByDate = _serviceExam.sortByDate();
+        maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
       });
     }
   }
@@ -161,12 +173,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  /// used for gettin number of markers
   List<Object> getEventsForDay(DateTime day) {
     List<Object> listOfEvents = [
       ...hwByDate[DateTime(day.year, day.month, day.day)] ?? [],
       ...examByDate[DateTime(day.year, day.month, day.day)] ?? []
     ];
     return listOfEvents;
+  }
+
+  int getMaxNumberOfExamsPerDay() {
+    var weekDays = _focusedDay.allDaysInThisWeek();
+    int examsCount = 0;
+
+    for (DateTime date in weekDays) {
+      int examsInDate =
+          examByDate[DateTime(date.year, date.month, date.day)]?.length ?? 0;
+
+      if (examsInDate > examsCount) {
+        examsCount = examsInDate;
+      }
+    }
+  
+    return examsCount <= 8 ? examsCount : 8;
   }
 
   @override
@@ -197,37 +226,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           TableCalendar(
             // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-            firstDay: DateTime.utc(1900),
-            lastDay: DateTime.utc(3000),
+            firstDay: DateTime(1),
+            lastDay: DateTime(5000),
             focusedDay: _focusedDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarFormat: _calendarFormat,
-            availableCalendarFormats: const {
-              CalendarFormat.month: 'Month',
-              CalendarFormat.week: 'Week'
-            },
+            availableCalendarFormats: const {CalendarFormat.week: 'Week'},
+            rowHeight: 50 + maxNumberOfCustomMarkers * 25,
+            calendarBuilders: myCalendarBuilder(editExam),
             headerStyle: HeaderStyle(
-                decoration: BoxDecoration(color: calendarBackgroundColor)),
+              decoration: BoxDecoration(color: calendarBackgroundColor),
+            ),
             daysOfWeekStyle: DaysOfWeekStyle(
-                decoration: BoxDecoration(color: calendarBackgroundColor)),
+              decoration: BoxDecoration(color: calendarBackgroundColor),
+            ),
             calendarStyle: CalendarStyle(
+              cellAlignment: Alignment.topCenter,
+              markersAlignment: Alignment.topCenter,
               rowDecoration: BoxDecoration(color: calendarBackgroundColor),
-              markerDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
-                shape: BoxShape.circle,
-              ),
-              selectedTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
-                fontWeight: FontWeight.bold,
-              ),
-              todayDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withAlpha(50),
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                shape: BoxShape.circle,
-              ),
             ),
             eventLoader: (day) => getEventsForDay(day),
             selectedDayPredicate: (day) {
@@ -267,6 +283,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   _calendarFormat = format;
                 });
               }
+            },
+            onPageChanged: (focusedDay) {
+              setState(() {
+                _focusedDay = focusedDay;
+                maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+              });
             },
           ),
           Expanded(

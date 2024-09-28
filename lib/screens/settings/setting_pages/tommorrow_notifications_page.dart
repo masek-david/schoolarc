@@ -21,13 +21,12 @@ class TommorrowNotificationsPage extends StatelessWidget {
         children: [
           SettingTile(
             label: 'Upcoming day notifications',
-            // text: 'Time around which notification will arrive',
             highlighted: true,
             action: SwitchAction(
               initialValue: settings.tommorrowNotificationEnabled(),
               onChanged: (value) {
                 settings.setTommorowNotificationEnabled(value);
-                if(value){
+                if (value) {
                   NotificationSender.getPermission(context);
                 }
               },
@@ -40,6 +39,11 @@ class TommorrowNotificationsPage extends StatelessWidget {
               initialTime: settings.tommorowNotificationTime(),
               onChanged: settings.setTommorowNotificationTime,
             ),
+          ),
+          SettingTile(
+            label: 'Send upcoming day notification now',
+            onTap: () => NotificationSender.scheduleTommorrowNotification(
+                scheduled: false),
           ),
         ],
       ),

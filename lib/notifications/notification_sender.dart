@@ -1,19 +1,19 @@
 import 'dart:io';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/extensions/string_extension.dart';
 
 class NotificationSender {
-  // if not scheduled, it will arrive now and never automatically expire
+  /// if not scheduled, it will arrive now and never automatically expire
   static void sendQuickAdd(bool scheduled) async {
-    if (!compatiblePlatform()) {
+    if (!isCompatiblePlatform()) {
       return;
     }
     if (!await AwesomeNotifications().isNotificationAllowed()) {
@@ -27,7 +27,9 @@ class NotificationSender {
     if (scheduled) {
       SettingsDatabase settings = SettingsDatabase();
 
-      if (settings.quickAddEnabled()) {
+      if (!settings.quickAddEnabled()) {
+        return;
+      } else {
         AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
 
         DateTime now = DateTime.now();
@@ -105,10 +107,12 @@ class NotificationSender {
     );
   }
 
-  // will set new notification about tommorrow
-  static void scheduleTommorrowNotification(
-      {Function(String text)? showSnackbar}) {
-    if (!compatiblePlatform()) {
+  // will set new notification about tommorrow, if not scheduled, it will arrive now and never automatically expire
+  static void scheduleTommorrowNotification({
+    bool scheduled = true,
+    Function(String text)? showSnackbar,
+  }) {
+    if (!isCompatiblePlatform()) {
       return;
     }
 
@@ -120,61 +124,84 @@ class NotificationSender {
       return;
     }
 
-    TimeOfDay notificationTime = settings.tommorowNotificationTime();
-    DateTime now = DateTime.now();
-    DateTime nextScheduledNotificationDate = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      notificationTime.hour,
-      notificationTime.minute,
-    );
+    DateTime? schedule;
 
-    // if the notification is being set up after it would come today, it will be set to come tommorow
-    if (nextScheduledNotificationDate.isBefore(now)) {
-      nextScheduledNotificationDate =
-          nextScheduledNotificationDate.add(const Duration(
-        days: 1,
-      ));
+    // sets correct schedule time and date
+    if (scheduled) {
+      TimeOfDay notificationTime = settings.tommorowNotificationTime();
+      DateTime now = DateTime.now();
+      DateTime notificationDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        notificationTime.hour,
+        notificationTime.minute,
+      );
+
+      // if the notification is being set up after it would come today, it will be set to come tommorow
+      if (notificationDateTime.isBefore(now)) {
+        notificationDateTime = notificationDateTime.add(const Duration(
+          days: 1,
+        ));
+      }
+
+      schedule = notificationDateTime;
     }
 
     _scheduleNotificationForDay(
-      date: nextScheduledNotificationDate,
+      schedule: schedule,
       showSnackbar: showSnackbar,
     );
   }
 
   // schedules notification with info about tommorrow (doesn't need to be provided) for provided date
-  static void _scheduleNotificationForDay(
-      {Function(String text)? showSnackbar, required DateTime date}) async {
+  static void _scheduleNotificationForDay({
+    Function(String text)? showSnackbar,
+    required DateTime? schedule,
+  }) async {
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       return;
     }
+
+    NotificationCalendar? notificationCalendar;
+    if (schedule != null) {
+      notificationCalendar = NotificationCalendar.fromDate(date: schedule);
+    }
+    schedule ??= DateTime.now();
+
     String notificationText = '';
     String examsList = '';
     String homeworksList = '';
     var examsByDate = ExamService().sortByDate();
     var hwByDate = HomeworkService().sortByDate();
 
-    DateTime dateOnlyDay = DateTime(date.year, date.month, date.day);
-    DateTime tommorowDate = dateOnlyDay.add(const Duration(days: 1));
+    DateTime tommorowDate =
+        DateTime(schedule.year, schedule.month, schedule.day)
+            .add(const Duration(days: 1));
 
     List<ExamDTO> examsForTommorow = examsByDate[tommorowDate] ?? [];
     List<HomeworkDTO> hwsForTommorow = hwByDate[tommorowDate] ?? [];
 
+    // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {
+      ExamDTO exam = examsForTommorow[i];
+      String? subject = exam.subject?.shortcut.sanitizeHtml();
+
       String examText =
-          '-- ${examsForTommorow[i].subject}: ${examsForTommorow[i].text}';
-      examText = sanitizeHtml(examText);
+          '-- ${Priority(exam.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
 
       examsList += '$examText<br>';
     }
+
+    // creates text about hw
     hwsForTommorow.sort(
         (a, b) => (a.completion == b.completion ? 0 : (a.completion ? 1 : -1)));
     for (int i = 0; i < hwsForTommorow.length; i++) {
+      HomeworkDTO hw = hwsForTommorow[i];
+      String? subject = hw.subject?.shortcut.sanitizeHtml();
+
       String hwText =
-          '--  ${hwsForTommorow[i].completion ? '(completed)' : ''} ${hwsForTommorow[i].subject}: ${hwsForTommorow[i].text}';
-      hwText = sanitizeHtml(hwText);
+          '--  ${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       homeworksList += '$hwText<br>';
     }
@@ -186,13 +213,7 @@ class NotificationSender {
         .cancelSchedulesByChannelKey('tommorrow_channel_group');
 
     AwesomeNotifications().createNotification(
-      schedule: NotificationCalendar(
-        year: date.year,
-        month: date.month,
-        day: date.day,
-        hour: date.hour,
-        minute: date.minute,
-      ),
+      schedule: notificationCalendar,
       content: NotificationContent(
         id: 11,
         channelKey: 'tommorrow_channel',
@@ -207,59 +228,26 @@ class NotificationSender {
 
     debugPrintStack(
         label:
-            '\u001b[1;42m\u001b[1;30mNotification scheduled for: ${date.toString()}');
+            '\u001b[1;42m\u001b[1;30mTommorrow notification scheduled for: ${schedule.toString()}');
     if (showSnackbar != null) {
       showSnackbar(
-          'Next notification will arrive ${date.isSameDay(DateTime.now()) ? 'today' : 'tommorrow'} at around ${date.hour}:${date.minuteStartingWithZero()}');
+          'Next notification will arrive ${schedule.isSameDay(DateTime.now()) ? 'today' : 'tommorrow'} at around ${schedule.hour}:${schedule.minuteStartingWithZero()}');
     }
   }
 
-  static void sendSimpleNotification() async {
-    if(!compatiblePlatform()){
-      return;
+  static bool isCompatiblePlatform() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return true;
     }
-    
-    if (!await AwesomeNotifications().isNotificationAllowed()) {
-      return;
-    }
-
-    String text = 'Simple notification';
-
-    text = sanitizeHtml(text);
-
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 12,
-        channelKey: 'tommorrow_channel',
-        title: 'testing notification',
-        body: text,
-        notificationLayout: NotificationLayout.BigText,
-      ),
-    );
-  }
-
-  static String sanitizeHtml(String text) {
-    return text
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll('\'', '&#39;');
-  }
-
-  static bool compatiblePlatform() {
-    if(kIsWeb){
-      return false;
-    }
-    return Platform.isAndroid || Platform.isIOS;
+    return false;
   }
 
   // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
   static Future<bool> getPermission(BuildContext context) async {
-    if(!compatiblePlatform()){
+    if (!isCompatiblePlatform()) {
       return false;
     }
-    
+
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       await showDialog(
         context: context.mounted == true

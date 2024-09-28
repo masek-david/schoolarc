@@ -35,8 +35,6 @@ class ExamService {
         }
       },
     );
-
-    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// edits the position and priority of a Exam at the provided index

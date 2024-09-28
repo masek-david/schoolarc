@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/extensions/string_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
@@ -85,6 +86,29 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (pickedSubject != null) {
+        Scrollable.ensureVisible(
+          keysList[subjects.indexWhere(
+            (element) => pickedSubject!.dbIndex == element.dbIndex,
+          )]
+              .currentContext!,
+          duration: const Duration(milliseconds: 500),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding:
@@ -95,7 +119,6 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
         children: [
           CancelSaveButton(
             onSave: onSave,
-            // middle: ,
           ),
           const SizedBox(height: 15),
           SizedBox(
@@ -225,8 +248,8 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                 context: context,
                 locale: const Locale('en', 'GB'),
                 initialDate: pickedDate,
-                firstDate: DateTime.utc(2000),
-                lastDate: DateTime.utc(2100),
+                firstDate: DateTime.utc(0),
+                lastDate: DateTime.utc(3000),
               );
 
               if (newDate == null) return;
@@ -255,34 +278,39 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
           ),
           Row(
             children: [
-              ActionChip(
+              ChoiceChip(
                 label: const Text('Today'),
-                onPressed: () {
+                selected: pickedDate.isSameDay(DateTime.now()),
+                onSelected: (value) {
+                  DateTime now = DateTime.now();
                   setState(() {
-                    pickedDate = DateTime(DateTime.now().year,
-                        DateTime.now().month, DateTime.now().day);
+                    pickedDate = DateTime(now.year, now.month, now.day);
                   });
                 },
               ),
               const SizedBox(width: 8),
-              ActionChip(
+              ChoiceChip(
                 label: const Text('Tomorrow'),
-                onPressed: () {
+                selected: pickedDate
+                    .isSameDay(DateTime.now().add(const Duration(days: 1))),
+                onSelected: (value) {
+                  DateTime now = DateTime.now();
                   setState(() {
-                    pickedDate = DateTime(DateTime.now().year,
-                            DateTime.now().month, DateTime.now().day)
+                    pickedDate = DateTime(now.year, now.month, now.day)
                         .add(const Duration(days: 1));
                   });
                 },
               ),
               const SizedBox(width: 8),
-              ActionChip(
+              ChoiceChip(
                 label: Text(
                     'Next ${DateFormat('EEEE').format(DateTime.now()).toLowerCase()}'),
-                onPressed: () {
+                selected: pickedDate
+                    .isSameDay(DateTime.now().add(const Duration(days: 7))),
+                onSelected: (value) {
+                  DateTime now = DateTime.now();
                   setState(() {
-                    pickedDate = DateTime(DateTime.now().year,
-                            DateTime.now().month, DateTime.now().day)
+                    pickedDate = DateTime(now.year, now.month, now.day)
                         .add(const Duration(days: 7));
                   });
                 },

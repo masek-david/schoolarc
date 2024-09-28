@@ -16,4 +16,16 @@ extension BetterDateTime on DateTime{
   String minuteStartingWithZero(){
     return minute < 10 ? '0$minute' : minute.toString();
   }
+
+  /// returns all days in this week
+  List<DateTime> allDaysInThisWeek(){
+    DateTime firstDay = subtract(Duration(days: weekday - 1));
+    List<DateTime> list = [];
+
+    for(int i = 0; i < 7; i++){
+      list.add(firstDay.add(Duration(days: i)));
+    }
+
+    return list;
+  }
 }

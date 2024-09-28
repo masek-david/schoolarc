@@ -23,6 +23,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
   @override
   void dispose() {
+    nameController.dispose();
+    shortcutController.dispose();
+    
     super.dispose();
   }
 

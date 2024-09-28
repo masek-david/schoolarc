@@ -1,9 +1,12 @@
 fix:
 
+neukladat completed hw do sequence
 
 
 =============================================================================================
 
+
+homeworkdto by mel mit priority, muze generovat service
 
 widget
 

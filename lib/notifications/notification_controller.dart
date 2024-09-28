@@ -67,5 +67,6 @@ class NotificationController {
         );
       default:
     }
+    return;
   }
 }

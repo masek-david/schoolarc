@@ -65,11 +65,6 @@ class SettingsScreen extends StatelessWidget {
                     },
                   )),
           SettingTile(
-            label: 'Send simple notification (debugging)',
-            icon: const Icon(Icons.android),
-            onTap: () => NotificationSender.sendSimpleNotification(),
-          ),
-          SettingTile(
             label: 'App theme',
             action: DropDownAction(
               initialValue: settings.themeMode(),
