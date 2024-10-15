@@ -14,4 +14,8 @@ class SubjectDTO {
   Subject convert(){
     return Subject(name: name, shortcut: shortcut);
   }
+
+  String get trimmedShortcut{
+    return shortcut.trim();
+  }
 }

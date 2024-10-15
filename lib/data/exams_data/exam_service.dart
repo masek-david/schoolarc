@@ -31,10 +31,13 @@ class ExamService {
         if (exam.completion == false) {
           if (exam.date.isBeforeToday()) {
             _db.setCompletion(dbIndex, true);
+            _sequence[exam.priority]!.remove(dbIndex);
           }
         }
       },
     );
+
+    _db.saveSequence(_sequence);
   }
 
   /// edits the position and priority of a Exam at the provided index
@@ -167,8 +170,10 @@ class ExamService {
     );
     int dbIndex = await _db.addExam(newExam);
     _examDbIndexMap[dbIndex] = newExam;
-    _sequence[priority]!.add(dbIndex);
-    _db.saveSequence(_sequence);
+    if (!date.isBeforeToday()) {
+      _sequence[priority]!.add(dbIndex);
+      _db.saveSequence(_sequence);
+    }
 
     NotificationSender.scheduleTommorrowNotification();
 
@@ -184,12 +189,16 @@ class ExamService {
     required int dbIndex,
   }) {
     int oldPriority = _examDbIndexMap[dbIndex]!.priority;
+
+    bool isAlreadyCompleted = date.isBeforeToday();
     Exam editedExam = Exam(
-        subjectDbIndex: subject?.dbIndex,
-        text: text,
-        date: date,
-        priority: priority,
-        completion: date.isBeforeToday());
+      subjectDbIndex: subject?.dbIndex,
+      text: text,
+      date: date,
+      priority: priority,
+      completion: isAlreadyCompleted,
+    );
+
     _db.editExam(dbIndex, editedExam);
     _examDbIndexMap.update(
       dbIndex,
@@ -197,10 +206,20 @@ class ExamService {
     );
 
     if (oldPriority != editedExam.priority) {
+      // priority changed, must change place in sequence
       _sequence[oldPriority]!.remove(dbIndex);
       _sequence[editedExam.priority]!.add(dbIndex);
-      _db.saveSequence(_sequence);
     }
+
+    if (isAlreadyCompleted) {
+      // it already happened, remove it from sequence
+      _sequence[priority]!.remove(dbIndex);
+    } else if (!_sequence[priority]!.contains(dbIndex)){
+      // if it wasnt in the list, it has to be added
+      _sequence[priority]!.add(dbIndex);
+    }
+
+    _db.saveSequence(_sequence);
   }
 
   ExamDTO getExam(int dbIndex) {

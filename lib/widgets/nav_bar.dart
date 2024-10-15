@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({super.key, required this.onTap});
+  const NavBar({
+    super.key,
+    this.initialIndex = 0,
+    required this.onTap,
+  });
 
+  final int initialIndex;
   final void Function({required int newScreenIndex}) onTap;
 
   @override
@@ -10,12 +15,12 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    int currentPageIndex = widget.initialIndex;
     return NavigationBar(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withAlpha(82),
+      backgroundColor:
+          Theme.of(context).colorScheme.secondaryContainer.withAlpha(82),
       onDestinationSelected: (index) {
         currentPageIndex = index;
         widget.onTap(newScreenIndex: index);

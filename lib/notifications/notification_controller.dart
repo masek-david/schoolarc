@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class NotificationController {
   /// Use this method to detect when a new notification or a schedule is created
@@ -45,10 +46,13 @@ class NotificationController {
     // Your code goes here
 
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
-    // TasksApp.navigatorKey.currentState?.pushNamedAndRemoveUntil('/notification-page',
-    //         (route) => (route.settings.name != '/notification-page') || route.isFirst,
-    //     arguments: receivedAction);
-
+    if (receivedAction.channelKey == 'tommorrow_channel') {
+      TasksApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/calendar',
+          (route) =>
+              (route.settings.name != '/calendar') || route.isFirst,
+          arguments: receivedAction);
+    }
 
     switch (receivedAction.buttonKeyPressed) {
       case 'homework':
