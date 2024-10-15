@@ -47,8 +47,9 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
             day.day.toString(),
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSecondaryContainer),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+            ),
           ),
         ),
       );
@@ -59,11 +60,16 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
         margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
-          // technically transparent, should be less intensive
           color: Theme.of(context).colorScheme.surface,
           shape: BoxShape.circle,
         ),
-        child: Text(day.day.toString()),
+        child: SizedBox(
+          width: 40,
+          child: Text(
+            textAlign: TextAlign.center,
+            day.day.toString(),
+          ),
+        ),
       );
     },
     todayBuilder: (context, day, focusedDay) {
@@ -89,7 +95,7 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
       );
     },
     markerBuilder: (context, day, events) {
-      Color markerColor = Theme.of(context).colorScheme.tertiary;
+      // Color markerColor = Theme.of(context).colorScheme.tertiary;
       List<HomeworkDTO> homeworks = [];
       List<ExamDTO> exams = [];
       for (var event in events) {
@@ -103,61 +109,67 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
       }
 
       return Wrap(
-        children: [Column(
-          children: [
-            // spacing under the dates
-            const SizedBox(height: 39),
-            homeworks.isEmpty
-                ? const SizedBox(
-                    height: 10.4,
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                        homeworks.length <= 5 ? homeworks.length : 5, (index) {
-                      HomeworkDTO hw = homeworks[index];
-                      return Container(
-                        margin: const EdgeInsets.all(1.2),
-                        decoration: BoxDecoration(
-                          color: hw.completion
-                              ? markerColor.withAlpha(40)
-                              : markerColor,
-                          shape: BoxShape.circle,
-                        ),
-                        height: 8,
-                        width: 8,
-                      );
-                    }),
-                  ),
-            ...List.generate(
-              exams.length <= 8 ? exams.length : 8,
-              (index) {
-                ExamDTO exam = exams[index];
-                String text = '';
-                Color color = Colors.white;
-                text = exam.subject?.shortcut ?? '';
-                color = Color.lerp(Priority(exam.priority, context).color, Theme.of(context).colorScheme.surface, 0.3)!;
-        
-                return GestureDetector(
-                  onTap: () => onTap(exam.dbIndex),
-                  child: Container(
-                    width: double.maxFinite,
-                    margin: const EdgeInsets.all(2),
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                        color: color, borderRadius: BorderRadius.circular(6)),
-                    child: Text(
-                      '$text ${exam.text}',
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      softWrap: false,
+        children: [
+          Column(
+            children: [
+              // spacing under the dates
+              const SizedBox(height: 39),
+              homeworks.isEmpty
+                  ? const SizedBox(
+                      height: 10.4,
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                          homeworks.length <= 5 ? homeworks.length : 5,
+                          (index) {
+                        HomeworkDTO hw = homeworks[index];
+                        Color markerColor = Priority(hw.priority, context).color;
+
+                        return Container(
+                          margin: const EdgeInsets.all(1.2),
+                          decoration: BoxDecoration(
+                            color: hw.completion
+                                ? markerColor.withAlpha(40)
+                                : markerColor,
+                            shape: BoxShape.circle,
+                          ),
+                          height: 8,
+                          width: 8,
+                        );
+                      }),
                     ),
-                  ),
-                );
-              },
-            )
-          ],
-        ),]
+              ...List.generate(
+                exams.length <= 8 ? exams.length : 8,
+                (index) {
+                  ExamDTO exam = exams[index];
+                  String text = '';
+                  Color color = Colors.white;
+                  text = exam.subject?.trimmedShortcut ?? '';
+                  color = Color.lerp(Priority(exam.priority, context).color,
+                      Theme.of(context).colorScheme.surface, 0.3)!;
+
+                  return GestureDetector(
+                    onTap: () => onTap(exam.dbIndex),
+                    child: Container(
+                      width: double.maxFinite,
+                      margin: const EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          color: color, borderRadius: BorderRadius.circular(6)),
+                      child: Text(
+                        '$text ${exam.text}',
+                        style: const TextStyle(fontSize: 12),
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       );
     },
   );

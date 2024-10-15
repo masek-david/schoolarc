@@ -110,214 +110,216 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      margin: const EdgeInsets.all(15),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CancelSaveButton(
-            onSave: onSave,
-          ),
-          const SizedBox(height: 15),
-          SizedBox(
-            height: 40,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: subjects.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    key: keysList[index],
-                    selected: pickedSubject?.dbIndex == subjects[index].dbIndex,
-                    label: Text(subjects[index].name),
-                    onSelected: (value) {
-                      setState(
-                        () {
-                          if (!value) {
-                            pickedSubject = null;
-                          } else {
-                            pickedSubject = subjects[index];
-                          }
-                        },
-                      );
-                    },
-                  ),
-                );
-              },
+    return SingleChildScrollView(
+      child: Container(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        margin: const EdgeInsets.all(15),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CancelSaveButton(
+              onSave: onSave,
             ),
-          ),
-          const SizedBox(height: 10),
-          Autocomplete<SubjectDTO>(
-            fieldViewBuilder:
-                (context, textEditingController, focusNode, onFieldSubmitted) {
-              return TextField(
-                controller: nameController,
-                focusNode: focusNode,
-                autofocus: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (value) {
-                  if (pickedSubject == null) {
-                    onFieldSubmitted();
-                  }
-                  if (nameController.text.isNotEmpty) {
-                    onSave();
-                    Navigator.pop(context);
-                  }
-                },
-                onChanged: (value) {
-                  textEditingController.text = value;
-                },
-                onEditingComplete: () {},
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            onSelected: (subject) {
-              setState(() {
-                pickedSubject = subject;
-                nameController.text = '';
-              });
-              Scrollable.ensureVisible(
-                  keysList[subjects.indexOf(subject)].currentContext!,
-                  duration: const Duration(milliseconds: 500));
-            },
-            displayStringForOption: (subject) {
-              return subject.name;
-            },
-            optionsBuilder: (textEditingValue) {
-              if (textEditingValue.text == '' || pickedSubject != null) {
-                return const Iterable.empty();
-              }
-              return subjects.where(
-                (subject) {
-                  return subject.name.withoutDiacriticalMarks
-                          .toLowerCase()
-                          .contains(textEditingValue
-                              .text.withoutDiacriticalMarks
-                              .toLowerCase()) ||
-                      subject.shortcut.withoutDiacriticalMarks
-                          .toLowerCase()
-                          .contains(textEditingValue
-                              .text.withoutDiacriticalMarks
-                              .toLowerCase());
-                },
-              );
-            },
-          ),
-          const Divider(),
-          SizedBox(
-            // listview musi mit vysku, kterou urci sizedbox
-            height: 40,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                Priority priority = Priority(index, context);
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    selected: index == pickedPriority,
-                    label: Text(priority.name),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                        color: priority.color,
-                      ),
-                    ),
-                    backgroundColor: priority.color.withAlpha(25),
-                    selectedColor: priority.color.withAlpha(100),
-                    onSelected: (value) => setState(
-                      () {
-                        pickedPriority = index;
+            const SizedBox(height: 15),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: subjects.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      key: keysList[index],
+                      selected: pickedSubject?.dbIndex == subjects[index].dbIndex,
+                      label: Text(subjects[index].name),
+                      onSelected: (value) {
+                        setState(
+                          () {
+                            if (!value) {
+                              pickedSubject = null;
+                            } else {
+                              pickedSubject = subjects[index];
+                            }
+                          },
+                        );
                       },
                     ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            Autocomplete<SubjectDTO>(
+              fieldViewBuilder:
+                  (context, textEditingController, focusNode, onFieldSubmitted) {
+                return TextField(
+                  controller: nameController,
+                  focusNode: focusNode,
+                  autofocus: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    if (pickedSubject == null) {
+                      onFieldSubmitted();
+                    }
+                    if (nameController.text.isNotEmpty) {
+                      onSave();
+                      Navigator.pop(context);
+                    }
+                  },
+                  onChanged: (value) {
+                    textEditingController.text = value;
+                  },
+                  onEditingComplete: () {},
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(15),
+                    border: OutlineInputBorder(),
                   ),
                 );
               },
+              onSelected: (subject) {
+                setState(() {
+                  pickedSubject = subject;
+                  nameController.text = '';
+                });
+                Scrollable.ensureVisible(
+                    keysList[subjects.indexOf(subject)].currentContext!,
+                    duration: const Duration(milliseconds: 500));
+              },
+              displayStringForOption: (subject) {
+                return subject.name;
+              },
+              optionsBuilder: (textEditingValue) {
+                if (textEditingValue.text == '' || pickedSubject != null) {
+                  return const Iterable.empty();
+                }
+                return subjects.where(
+                  (subject) {
+                    return subject.name.withoutDiacriticalMarks
+                            .toLowerCase()
+                            .contains(textEditingValue
+                                .text.withoutDiacriticalMarks
+                                .toLowerCase()) ||
+                        subject.shortcut.withoutDiacriticalMarks
+                            .toLowerCase()
+                            .contains(textEditingValue
+                                .text.withoutDiacriticalMarks
+                                .toLowerCase());
+                  },
+                );
+              },
             ),
-          ),
-          const Divider(),
-          InkWell(
-            onTap: () async {
-              DateTime? newDate = await showDatePicker(
-                context: context,
-                locale: const Locale('en', 'GB'),
-                initialDate: pickedDate,
-                firstDate: DateTime.utc(0),
-                lastDate: DateTime.utc(3000),
-              );
-
-              if (newDate == null) return;
-
-              setState(() {
-                pickedDate = newDate;
-              });
-            },
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Deadline:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
+            const Divider(),
+            SizedBox(
+              // listview musi mit vysku, kterou urci sizedbox
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  Priority priority = Priority(index, context);
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      selected: index == pickedPriority,
+                      label: Text(priority.name),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: priority.color,
+                        ),
+                      ),
+                      backgroundColor: priority.color.withAlpha(25),
+                      selectedColor: priority.color.withAlpha(100),
+                      onSelected: (value) => setState(
+                        () {
+                          pickedPriority = index;
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          ),
-          Row(
-            children: [
-              ChoiceChip(
-                label: const Text('Today'),
-                selected: pickedDate.isSameDay(DateTime.now()),
-                onSelected: (value) {
-                  DateTime now = DateTime.now();
-                  setState(() {
-                    pickedDate = DateTime(now.year, now.month, now.day);
-                  });
-                },
+            const Divider(),
+            InkWell(
+              onTap: () async {
+                DateTime? newDate = await showDatePicker(
+                  context: context,
+                  locale: const Locale('en', 'GB'),
+                  initialDate: pickedDate,
+                  firstDate: DateTime.utc(0),
+                  lastDate: DateTime.utc(3000),
+                );
+      
+                if (newDate == null) return;
+      
+                setState(() {
+                  pickedDate = newDate;
+                });
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Deadline:',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              ChoiceChip(
-                label: const Text('Tomorrow'),
-                selected: pickedDate
-                    .isSameDay(DateTime.now().add(const Duration(days: 1))),
-                onSelected: (value) {
-                  DateTime now = DateTime.now();
-                  setState(() {
-                    pickedDate = DateTime(now.year, now.month, now.day)
-                        .add(const Duration(days: 1));
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              ChoiceChip(
-                label: Text(
-                    'Next ${DateFormat('EEEE').format(DateTime.now()).toLowerCase()}'),
-                selected: pickedDate
-                    .isSameDay(DateTime.now().add(const Duration(days: 7))),
-                onSelected: (value) {
-                  DateTime now = DateTime.now();
-                  setState(() {
-                    pickedDate = DateTime(now.year, now.month, now.day)
-                        .add(const Duration(days: 7));
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
+            ),
+            Row(
+              children: [
+                ChoiceChip(
+                  label: const Text('Today'),
+                  selected: pickedDate.isSameDay(DateTime.now()),
+                  onSelected: (value) {
+                    DateTime now = DateTime.now();
+                    setState(() {
+                      pickedDate = DateTime(now.year, now.month, now.day);
+                    });
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: const Text('Tomorrow'),
+                  selected: pickedDate
+                      .isSameDay(DateTime.now().add(const Duration(days: 1))),
+                  onSelected: (value) {
+                    DateTime now = DateTime.now();
+                    setState(() {
+                      pickedDate = DateTime(now.year, now.month, now.day)
+                          .add(const Duration(days: 1));
+                    });
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(
+                      'Next ${DateFormat('EEEE').format(DateTime.now()).toLowerCase()}'),
+                  selected: pickedDate
+                      .isSameDay(DateTime.now().add(const Duration(days: 7))),
+                  onSelected: (value) {
+                    DateTime now = DateTime.now();
+                    setState(() {
+                      pickedDate = DateTime(now.year, now.month, now.day)
+                          .add(const Duration(days: 7));
+                    });
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

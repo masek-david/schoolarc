@@ -185,10 +185,10 @@ class NotificationSender {
     // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {
       ExamDTO exam = examsForTommorow[i];
-      String? subject = exam.subject?.shortcut.sanitizeHtml();
+      String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
 
       String examText =
-          '-- ${Priority(exam.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
+          '${Priority(exam.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
 
       examsList += '$examText<br>';
     }
@@ -198,10 +198,10 @@ class NotificationSender {
         (a, b) => (a.completion == b.completion ? 0 : (a.completion ? 1 : -1)));
     for (int i = 0; i < hwsForTommorow.length; i++) {
       HomeworkDTO hw = hwsForTommorow[i];
-      String? subject = hw.subject?.shortcut.sanitizeHtml();
+      String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
-          '--  ${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       homeworksList += '$hwText<br>';
     }
@@ -221,7 +221,7 @@ class NotificationSender {
         body: notificationText,
         autoDismissible: false,
         category: NotificationCategory.Reminder,
-        actionType: ActionType.DisabledAction,
+        // actionType: ActionType.DisabledAction,
         notificationLayout: NotificationLayout.BigText,
       ),
     );

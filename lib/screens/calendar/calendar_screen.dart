@@ -27,7 +27,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late Map<DateTime, List<ExamDTO>> examByDate;
 
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now().add(const Duration(days: 1));
   late DateTime _selectedDay = _focusedDay;
 
   late Color calendarBackgroundColor;
@@ -35,7 +35,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   // how many pages you can scroll to negative
   int negativePageCount = 1000000;
   late final PageController _pageController =
-      PageController(viewportFraction: 0.93, initialPage: negativePageCount);
+      PageController(viewportFraction: 0.93, initialPage: negativePageCount + 1);
   // how many markers are used this week at most
   late int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
 

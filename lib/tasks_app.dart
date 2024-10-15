@@ -8,7 +8,6 @@ import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
-import 'package:school_manager/screens/notifications_screen.dart';
 import 'package:school_manager/widgets/nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
@@ -28,7 +27,7 @@ class TasksApp extends StatefulWidget {
 class _TasksAppState extends State<TasksApp> {
   Widget screenWidget = const HomeworksScreen();
   String appBarTitle = '';
-  int currentScreen = 0;
+  int currentScreenIndex = 0;
 
   final SettingsDatabase _settings = SettingsDatabase();
   late ThemeMode themeMode = _getThemeMode(_settings.themeMode());
@@ -81,13 +80,13 @@ class _TasksAppState extends State<TasksApp> {
 
   void switchScreen({required int newScreenIndex}) {
     setState(() {
-      currentScreen = newScreenIndex;
+      currentScreenIndex = newScreenIndex;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (currentScreen) {
+    switch (currentScreenIndex) {
       case 0:
         screenWidget = HomeScreen();
         appBarTitle = 'Home';
@@ -141,23 +140,29 @@ class _TasksAppState extends State<TasksApp> {
             case '/':
               return MaterialPageRoute(builder: (context) => HomeScreen());
 
-            case '/notification-page':
-              return MaterialPageRoute(builder: (context) {
-                final ReceivedAction receivedAction =
-                    settings.arguments as ReceivedAction;
-                return NotificationsScreen(receivedAction: receivedAction);
-              });
+            case '/calendar':
+              switchScreen(newScreenIndex: 1);
+
+            // return MaterialPageRoute(builder: (context) {
+            //   final ReceivedAction receivedAction =
+            //       settings.arguments as ReceivedAction;
+            //   return Scaffold(body: CalendarScreen(), appBar: AppBar(),);
+            // });
 
             default:
               assert(false, 'Page ${settings.name} not found');
               return null;
           }
+          return null;
         },
         home: Scaffold(
           body: screenWidget,
           appBar: AppBar(title: Text(appBarTitle)),
           drawer: MyDrawer(setThemeMode: setThemeMode),
-          bottomNavigationBar: NavBar(onTap: switchScreen),
+          bottomNavigationBar: NavBar(
+            onTap: switchScreen,
+            initialIndex: currentScreenIndex,
+          ),
         ),
       );
     });

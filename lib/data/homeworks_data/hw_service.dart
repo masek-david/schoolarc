@@ -16,9 +16,30 @@ class HomeworkService {
   Homework? lastlyDeletedHw;
   int? lastlyDeletedHwDbIndex;
   int? lastlyDeletedHwIndex;
+  // map with dbIndex and index in sequence, to return them to correct position
+  final Map<int, int> completedHws = {};
 
   void changeCompletion(int dbIndex, bool value) {
     _db.changeCompletion(dbIndex, value);
+
+    Homework hw = _hwDbIndexMap[dbIndex]!;
+
+    // if it is now completed
+    if (value) {
+      completedHws[dbIndex] = _sequence[hw.priority]!.indexOf(dbIndex);
+      _sequence[hw.priority]!.remove(dbIndex);
+    } else {
+      // if it is now uncompleted
+      int indexToInsertTo =
+          completedHws[dbIndex] ?? _sequence[hw.priority]!.length;
+
+      var list = _sequence[hw.priority]!;
+      list.insert(indexToInsertTo > list.length ? list.length : indexToInsertTo,
+          dbIndex);
+      completedHws.remove(dbIndex);
+    }
+
+    _db.saveSequence(_sequence);
     NotificationSender.scheduleTommorrowNotification();
   }
 
@@ -32,6 +53,7 @@ class HomeworkService {
     _sequence[oldPriority]!.removeAt(oldIndex);
     _sequence[newPriority]!.insert(newIndex, movedHwDbIndex);
     _db.saveSequence(_sequence);
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   /// returns map with datetime being only the date, not the time
@@ -126,8 +148,10 @@ class HomeworkService {
         lastlyDeletedHwIndex != null &&
         lastlyDeletedHwDbIndex != null) {
       _db.editHw(lastlyDeletedHwDbIndex!, lastlyDeletedHw!);
-      _sequence[lastlyDeletedHw!.priority]!
-          .insert(lastlyDeletedHwIndex!, lastlyDeletedHwDbIndex!);
+      if (!lastlyDeletedHw!.completion) {
+        _sequence[lastlyDeletedHw!.priority]!
+            .insert(lastlyDeletedHwIndex!, lastlyDeletedHwDbIndex!);
+      }
       _hwDbIndexMap[lastlyDeletedHwDbIndex!] = lastlyDeletedHw!;
       _db.saveSequence(_sequence);
 

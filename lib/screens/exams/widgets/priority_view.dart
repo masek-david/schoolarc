@@ -44,6 +44,11 @@ class PriorityView extends StatelessWidget {
         if (list.isNotEmpty) numberOfPriorityLists = 4;
       },
     );
+    completedExams.sort(
+      (a, b) {
+        return b.deadline.compareTo(a.deadline);
+      },
+    );
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

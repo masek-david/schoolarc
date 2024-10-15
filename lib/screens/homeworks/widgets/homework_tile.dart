@@ -98,7 +98,7 @@ class HomeworkTile extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      hw.subject?.shortcut ?? '',
+                      hw.subject?.trimmedShortcut ?? '',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,

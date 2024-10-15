@@ -44,7 +44,7 @@ class SubjectTile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(width: 50, child: Center(child: Text(subject.shortcut))),
+              SizedBox(width: 50, child: Center(child: Text(subject.trimmedShortcut))),
               const SizedBox(width: 10),
               Expanded(child: Text(subject.name)),
             ],
