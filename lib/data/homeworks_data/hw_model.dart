@@ -6,12 +6,13 @@ part 'hw_model.g.dart';
 
 @HiveType(typeId: 0)
 class Homework extends HiveObject {
-  Homework(
-      {required this.subjectDbIndex,
-      required this.text,
-      required this.deadline,
-      required this.completion,
-      required this.priority});
+  Homework({
+    required this.subjectDbIndex,
+    required this.text,
+    required this.deadline,
+    required this.completion,
+    required this.priority,
+  });
 
   @HiveField(0)
   int? subjectDbIndex;

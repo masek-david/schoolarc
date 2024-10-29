@@ -56,6 +56,12 @@ class SubjectService {
     _db.saveSequence(_sequence);
   }
 
+  void deleteAllSubjects(){
+    _subjectDbIndexMap.forEach((key, value) {
+      deleteSubject(key);
+    },);
+  }
+
   void revertLastlyDeletedSubject() {
     if (lastDeletedSubject != null && lastDeletedSequenceIndex != null) {
       _db.saveEditedSubject(

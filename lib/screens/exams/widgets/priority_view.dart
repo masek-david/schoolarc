@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
-import 'package:school_manager/widgets/completed_star.dart';
+import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
@@ -74,7 +74,7 @@ class PriorityView extends StatelessWidget {
               DragAndDropLists(
                 disableScrolling: true,
                 constrainDraggingAxis: false,
-                contentsWhenEmpty: const CompletedStar(),
+                contentsWhenEmpty: const AnimatedStar(),
                 itemDivider: const SizedBox(height: 10),
                 listDivider: const SizedBox(height: 10),
                 lastListTargetSize: 0,

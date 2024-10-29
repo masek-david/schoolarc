@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class SubjectTile extends StatelessWidget {
   const SubjectTile({
@@ -44,9 +45,14 @@ class SubjectTile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(width: 50, child: Center(child: Text(subject.trimmedShortcut))),
+              SizedBox(
+                width: 50,
+                child: SubjectShortcut(subject: subject),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: Text(subject.name)),
+              Expanded(
+                child: Text(subject.name),
+              ),
             ],
           ),
         ),

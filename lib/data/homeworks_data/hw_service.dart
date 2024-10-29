@@ -56,14 +56,14 @@ class HomeworkService {
     NotificationSender.scheduleTommorrowNotification();
   }
 
-  /// returns map with datetime being only the date, not the time
+  /// returns map with datetime being only the date in UTC, not the time
   Map<DateTime, List<HomeworkDTO>> sortByDate() {
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
     _hwDbIndexMap = _db.getDatabase();
 
     _hwDbIndexMap.forEach(
       (dbIndex, homework) {
-        DateTime dateNoTime = DateTime(homework.deadline.year,
+        DateTime dateNoTime = DateTime.utc(homework.deadline.year,
             homework.deadline.month, homework.deadline.day);
         if (hwDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list

@@ -34,8 +34,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   // how many pages you can scroll to negative
   int negativePageCount = 1000000;
-  late final PageController _pageController =
-      PageController(viewportFraction: 0.93, initialPage: negativePageCount + 1);
+  late final PageController _pageController = PageController(
+      viewportFraction: 0.93, initialPage: negativePageCount + 1);
   // how many markers are used this week at most
   late int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
 
@@ -176,25 +176,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
   /// used for gettin number of markers
   List<Object> getEventsForDay(DateTime day) {
     List<Object> listOfEvents = [
-      ...hwByDate[DateTime(day.year, day.month, day.day)] ?? [],
-      ...examByDate[DateTime(day.year, day.month, day.day)] ?? []
+      ...hwByDate[DateTime.utc(day.year, day.month, day.day)] ?? [],
+      ...examByDate[DateTime.utc(day.year, day.month, day.day)] ?? []
     ];
     return listOfEvents;
   }
 
   int getMaxNumberOfExamsPerDay() {
-    var weekDays = _focusedDay.allDaysInThisWeek();
+    var weekDays = _focusedDay.toUtc().allDaysInThisWeek();
     int examsCount = 0;
 
     for (DateTime date in weekDays) {
       int examsInDate =
-          examByDate[DateTime(date.year, date.month, date.day)]?.length ?? 0;
+          examByDate[DateTime.utc(date.year, date.month, date.day)]?.length ?? 0;
 
       if (examsInDate > examsCount) {
         examsCount = examsInDate;
       }
     }
-  
+
     return examsCount <= 8 ? examsCount : 8;
   }
 
@@ -304,8 +304,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 },
                 itemBuilder: (context, pageIndex) {
                   DateTime now = DateTime.now();
-                  DateTime date = DateTime(now.year, now.month, now.day)
-                      .add(Duration(days: pageIndex - negativePageCount));
+                  DateTime nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
+                  int daysToAdd = pageIndex - negativePageCount;
+                  DateTime date = nowOnlyDate.add(Duration(days: daysToAdd));
 
                   List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
                   List<ExamDTO> examListForDay = examByDate[date] ?? [];
@@ -313,9 +314,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   return ListView(
                     children: [
                       CalendarListExam(
-                          examList: examListForDay,
-                          deleteExam: deleteExam,
-                          editExam: editExam),
+                        examList: examListForDay,
+                        deleteExam: deleteExam,
+                        editExam: editExam,
+                      ),
                       CalendarListHw(
                         hwList: hwListForDay,
                         changeCompletion: changeCompletion,

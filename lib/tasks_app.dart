@@ -30,7 +30,7 @@ class _TasksAppState extends State<TasksApp> {
   int currentScreenIndex = 0;
 
   final SettingsDatabase _settings = SettingsDatabase();
-  late ThemeMode themeMode = _getThemeMode(_settings.themeMode());
+  late ThemeMode themeMode = _getThemeMode(_settings.get(DbKeys.themeMode));
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -49,7 +49,7 @@ class _TasksAppState extends State<TasksApp> {
   void initState() {
     super.initState();
 
-    if (_settings.firstTimeOpeningApp()) {
+    if (_settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     }
 
@@ -66,7 +66,7 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    _settings.createInitialData();
+    // _settings.createInitialData();
     HomeworksDatabase().createInitialData();
     ExamDatabase().createInitialData();
     SubjectDatabase().createInitialData();
@@ -114,8 +114,10 @@ class _TasksAppState extends State<TasksApp> {
         ],
         supportedLocales: const [
           Locale('en'), // English
+          Locale('cs'),
         ],
         locale: const Locale('en', 'GB'),
+        // locale: const Locale('cs', 'CZ'),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: lightDynamic ??

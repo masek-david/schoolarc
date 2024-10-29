@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
+import 'package:school_manager/data/table_data/table_database.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
-import 'package:school_manager/extensions/string_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
 
@@ -67,9 +67,11 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   late SubjectDTO? pickedSubject = widget.initialSubject;
   late DateTime pickedDate = widget.initialDate ?? DateTime.now();
   late int pickedPriority = widget.initialPriority;
+  late final bool autoSetDate = widget.initialDate == null;
 
   final SubjectService _subjectService = SubjectService();
   late List<SubjectDTO> subjects = _subjectService.getSortedList();
+  final _timetable = TimeTableDatabase().timeTable;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(
     subjects.length,
@@ -83,6 +85,15 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
       date: pickedDate,
       priority: pickedPriority,
     );
+  }
+
+  void setSubject(SubjectDTO? subject) {
+    setState(() {
+      pickedSubject = subject;
+      if (autoSetDate && subject != null) {
+        pickedDate = _timetable.nextDateForSubject(subject) ?? pickedDate;
+      }
+    });
   }
 
   @override
@@ -116,44 +127,44 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         margin: const EdgeInsets.all(15),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             CancelSaveButton(
               onSave: onSave,
             ),
             const SizedBox(height: 15),
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: subjects.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      key: keysList[index],
-                      selected: pickedSubject?.dbIndex == subjects[index].dbIndex,
-                      label: Text(subjects[index].name),
-                      onSelected: (value) {
-                        setState(
-                          () {
+            Wrap(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(subjects.length, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          key: keysList[index],
+                          selected:
+                              pickedSubject?.dbIndex == subjects[index].dbIndex,
+                          label: Text(subjects[index].name),
+                          onSelected: (value) {
                             if (!value) {
-                              pickedSubject = null;
+                              setSubject(null);
                             } else {
-                              pickedSubject = subjects[index];
+                              setSubject(subjects[index]);
                             }
                           },
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Autocomplete<SubjectDTO>(
-              fieldViewBuilder:
-                  (context, textEditingController, focusNode, onFieldSubmitted) {
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
                 return TextField(
                   controller: nameController,
                   focusNode: focusNode,
@@ -179,10 +190,13 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                 );
               },
               onSelected: (subject) {
-                setState(() {
-                  pickedSubject = subject;
-                  nameController.text = '';
-                });
+                nameController.text = '';
+                setSubject(subject);
+                // setState(() {
+                //   pickedSubject = subject;
+                //   pickedDate =
+                //       _timetable.nextDateForSubject(subject) ?? pickedDate;
+                // });
                 Scrollable.ensureVisible(
                     keysList[subjects.indexOf(subject)].currentContext!,
                     duration: const Duration(milliseconds: 500));
@@ -196,16 +210,7 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                 }
                 return subjects.where(
                   (subject) {
-                    return subject.name.withoutDiacriticalMarks
-                            .toLowerCase()
-                            .contains(textEditingValue
-                                .text.withoutDiacriticalMarks
-                                .toLowerCase()) ||
-                        subject.shortcut.withoutDiacriticalMarks
-                            .toLowerCase()
-                            .contains(textEditingValue
-                                .text.withoutDiacriticalMarks
-                                .toLowerCase());
+                    return subject.containsText(textEditingValue.text);
                   },
                 );
               },
@@ -252,16 +257,16 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                   firstDate: DateTime.utc(0),
                   lastDate: DateTime.utc(3000),
                 );
-      
+
                 if (newDate == null) return;
-      
+
                 setState(() {
                   pickedDate = newDate;
                 });
               },
               child: Padding(
-                padding:
-                    const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
+                padding: const EdgeInsets.only(
+                    top: 15, bottom: 15, left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

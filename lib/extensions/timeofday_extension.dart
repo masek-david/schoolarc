@@ -7,6 +7,6 @@ extension BetterTimeOfDay on TimeOfDay{
 
   // returns datetime with year, month and day being 1, but with the correct time
   DateTime toDateTime(){
-    return DateTime(1, 1, 1, hour, minute);
+    return DateTime.utc(1, 1, 1, hour, minute);
   }
 }
