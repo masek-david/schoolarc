@@ -23,9 +23,9 @@ class TommorrowNotificationsPage extends StatelessWidget {
             label: 'Upcoming day notifications',
             highlighted: true,
             action: SwitchAction(
-              initialValue: settings.tommorrowNotificationEnabled(),
+              initialValue: settings.get(DbKeys.tommorowNotificationEnabled),
               onChanged: (value) {
-                settings.setTommorowNotificationEnabled(value);
+                settings.save(DbKeys.tommorowNotificationEnabled, value);
                 if (value) {
                   NotificationSender.getPermission(context);
                 }
@@ -36,8 +36,8 @@ class TommorrowNotificationsPage extends StatelessWidget {
             label: 'Arrival time',
             text: 'Time around which notification will arrive',
             action: TimePickerAction(
-              initialTime: settings.tommorowNotificationTime(),
-              onChanged: settings.setTommorowNotificationTime,
+              initialTime: settings.getTimeOfDay(DbKeys.tommorowNotificationTime),
+              onChanged: (value) => settings.saveTimeOfDay(DbKeys.tommorowNotificationTime, value),
             ),
           ),
           SettingTile(

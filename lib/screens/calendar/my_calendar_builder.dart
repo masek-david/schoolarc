@@ -143,10 +143,8 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
                 exams.length <= 8 ? exams.length : 8,
                 (index) {
                   ExamDTO exam = exams[index];
-                  String text = '';
-                  Color color = Colors.white;
-                  text = exam.subject?.trimmedShortcut ?? '';
-                  color = Color.lerp(Priority(exam.priority, context).color,
+                  String shortcut = exam.subject?.trimmedShortcut ?? '';
+                  Color color = Color.lerp(Priority(exam.priority, context).color,
                       Theme.of(context).colorScheme.surface, 0.3)!;
 
                   return GestureDetector(
@@ -158,7 +156,7 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
                       decoration: BoxDecoration(
                           color: color, borderRadius: BorderRadius.circular(6)),
                       child: Text(
-                        '$text ${exam.text}',
+                        '$shortcut ${exam.text}',
                         style: const TextStyle(fontSize: 12),
                         maxLines: 1,
                         softWrap: false,

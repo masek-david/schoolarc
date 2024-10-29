@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {
   const ExamTile({
@@ -89,15 +90,7 @@ class ExamTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                     color: circleColor.withAlpha(130),
                   ),
-                  child: Center(
-                    child: Text(
-                      exam.subject?.trimmedShortcut ?? '',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                  child: SubjectShortcut(subject: exam.subject),
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: Text(exam.text, maxLines: 2)),

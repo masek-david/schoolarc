@@ -9,8 +9,8 @@ class CancelSaveButton extends StatelessWidget {
     this.middle,
   });
 
-  final Function onSave;
-  final Function? onCancel;
+  final Function() onSave;
+  final Function()? onCancel;
   final Widget? middle;
 
   @override

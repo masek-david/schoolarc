@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/db_info.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
+import 'package:school_manager/screens/timetable/timetable_screen.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -39,7 +41,31 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
+        MyDrawerButton(
+          text: 'Timetable',
+          icon: const Icon(Icons.calendar_month),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TimetableScreen(),
+              ),
+            );
+          },
+        ),
         const Divider(indent: 28, endIndent: 28),
+        MyDrawerButton(
+          text: 'Bakalari',
+          icon: const Icon(Icons.hexagon),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BakalariScreen(),
+              ),
+            );
+          },
+        ),
         MyDrawerButton(
           text: 'View database',
           icon: const Icon(Icons.data_array),

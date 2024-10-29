@@ -13,6 +13,9 @@ class HomeScreen extends StatelessWidget {
     int hwNumberOfIncomplete = _serviceHw.getNumberOfIncomplete();
     int examNumberOfIncomplete = _serviceExam.getNumberOfIncomplete();
 
+    // ignore: unused_local_variable
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {

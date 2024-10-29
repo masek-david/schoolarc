@@ -52,7 +52,7 @@ class ExamService {
     _db.saveSequence(_sequence);
   }
 
-  /// returns map with datetime being only the date, not the time
+  /// returns map with datetime being only the date in UTC, not the time
   Map<DateTime, List<ExamDTO>> sortByDate() {
     Map<DateTime, List<ExamDTO>> examDateMap = {};
     _examDbIndexMap = _db.getDatabase();
@@ -60,7 +60,7 @@ class ExamService {
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
         DateTime dateNoTime =
-            DateTime(exam.date.year, exam.date.month, exam.date.day);
+            DateTime.utc(exam.date.year, exam.date.month, exam.date.day);
         if (examDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
           examDateMap[dateNoTime]!.add(exam.convertToDTO(
@@ -141,8 +141,10 @@ class ExamService {
         lastlyDeletedExamIndex != null &&
         lastlyDeletedExamDbIndex != null) {
       _db.editExam(lastlyDeletedExamDbIndex!, lastlyDeletedExam!);
-      _sequence[lastlyDeletedExam!.priority]!
-          .insert(lastlyDeletedExamIndex!, lastlyDeletedExamDbIndex!);
+      if (!lastlyDeletedExam!.completion) {
+        _sequence[lastlyDeletedExam!.priority]!
+            .insert(lastlyDeletedExamIndex!, lastlyDeletedExamDbIndex!);
+      }
       _examDbIndexMap[lastlyDeletedExamDbIndex!] = lastlyDeletedExam!;
       _db.saveSequence(_sequence);
 
@@ -214,7 +216,7 @@ class ExamService {
     if (isAlreadyCompleted) {
       // it already happened, remove it from sequence
       _sequence[priority]!.remove(dbIndex);
-    } else if (!_sequence[priority]!.contains(dbIndex)){
+    } else if (!_sequence[priority]!.contains(dbIndex)) {
       // if it wasnt in the list, it has to be added
       _sequence[priority]!.add(dbIndex);
     }

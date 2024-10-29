@@ -4,17 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
+import 'package:school_manager/data/table_data/lesson_times_model.dart';
+import 'package:school_manager/data/table_data/table_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   // init hive
   await Hive.initFlutter();
-
+  
   // open a box
   Hive.registerAdapter(HomeworkAdapter());
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
+  Hive.registerAdapter(TimeTableAdapter());
+  Hive.registerAdapter(LessonTimesAdapter());
+   await Hive.openBox('tableBox');
   await Future.wait([
     Hive.openBox('subjectBox'),
     Hive.openBox('hwBox'),

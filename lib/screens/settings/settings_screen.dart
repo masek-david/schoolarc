@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SettingsDatabase settings = SettingsDatabase();
+    final settings = SettingsDatabase();
 
     return Scaffold(
       appBar: AppBar(
@@ -67,11 +67,11 @@ class SettingsScreen extends StatelessWidget {
           SettingTile(
             label: 'App theme',
             action: DropDownAction(
-              initialValue: settings.themeMode(),
+              initialValue: settings.get(DbKeys.themeMode),
               onChanged: (value) {
                 bool? valueToBool = (value is bool) ? value : null;
 
-                settings.setThemeMode(valueToBool);
+                settings.save(DbKeys.themeMode, valueToBool);
                 setThemeMode(valueToBool);
               },
               items: const [

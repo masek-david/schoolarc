@@ -27,13 +27,13 @@ class NotificationSender {
     if (scheduled) {
       SettingsDatabase settings = SettingsDatabase();
 
-      if (!settings.quickAddEnabled()) {
+      if (!settings.get(DbKeys.quickAddEnabled)) {
         return;
       } else {
         AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
 
         DateTime now = DateTime.now();
-        TimeOfDay arriveTime = settings.quickAddArriveTime();
+        TimeOfDay arriveTime = settings.getTimeOfDay(DbKeys.quickAddArriveTime);
         DateTime arriveDate = DateTime(
           now.year,
           now.month,
@@ -41,7 +41,7 @@ class NotificationSender {
           arriveTime.hour,
           arriveTime.minute,
         );
-        TimeOfDay dismissTime = settings.quickAddDissappearTime();
+        TimeOfDay dismissTime = settings.getTimeOfDay(DbKeys.quickAddDissappearTime);
         DateTime dismissDate = DateTime(
           arriveDate.year,
           arriveDate.month,
@@ -57,7 +57,7 @@ class NotificationSender {
           ));
         }
 
-        if (settings.quickAddOnWeekends() && arriveDate.weekday == 6 ||
+        if (settings.get(DbKeys.quickAddOnWeekends) && arriveDate.weekday == 6 ||
             arriveDate.weekday == 7) {
           arriveDate.add(Duration(days: 8 - arriveDate.weekday));
         }
@@ -116,9 +116,9 @@ class NotificationSender {
       return;
     }
 
-    SettingsDatabase settings = SettingsDatabase();
+    final settings = SettingsDatabase();
 
-    if (!settings.tommorrowNotificationEnabled()) {
+    if (!settings.get(DbKeys.tommorowNotificationEnabled)) {
       AwesomeNotifications()
           .cancelSchedulesByChannelKey('tommorrow_channel_group');
       return;
@@ -128,7 +128,7 @@ class NotificationSender {
 
     // sets correct schedule time and date
     if (scheduled) {
-      TimeOfDay notificationTime = settings.tommorowNotificationTime();
+      TimeOfDay notificationTime = settings.getTimeOfDay(DbKeys.tommorowNotificationTime);
       DateTime now = DateTime.now();
       DateTime notificationDateTime = DateTime(
         now.year,

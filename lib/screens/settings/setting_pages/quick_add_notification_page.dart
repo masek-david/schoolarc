@@ -23,9 +23,9 @@ class QuickAddNotificationPage extends StatelessWidget {
             label: 'Quick add notification',
             highlighted: true,
             action: SwitchAction(
-              initialValue: settings.quickAddEnabled(),
+              initialValue: settings.get(DbKeys.quickAddEnabled),
               onChanged: (value) {
-                settings.setQuickAddEnabled(value);
+                settings.save(DbKeys.quickAddEnabled, value);
                 if (value) {
                   NotificationSender.getPermission(context);
                 }
@@ -37,8 +37,8 @@ class QuickAddNotificationPage extends StatelessWidget {
             text:
                 'When the notification will automatically arrive to your notifications',
             action: TimePickerAction(
-              initialTime: settings.quickAddArriveTime(),
-              onChanged: settings.setQuickAddArriveTime,
+              initialTime: settings.getTimeOfDay(DbKeys.quickAddArriveTime),
+              onChanged: (value) => settings.saveTimeOfDay(DbKeys.quickAddArriveTime, value),
             ),
           ),
           SettingTile(
@@ -46,16 +46,16 @@ class QuickAddNotificationPage extends StatelessWidget {
             text:
                 'When the notification will automatically dissappear from your notifications',
             action: TimePickerAction(
-              initialTime: settings.quickAddDissappearTime(),
-              onChanged: settings.setQuickAddDissappearTime,
+              initialTime: settings.getTimeOfDay(DbKeys.quickAddDissappearTime),
+              onChanged:(value) => settings.saveTimeOfDay(DbKeys.quickAddDissappearTime, value),
             ),
           ),
           SettingTile(
             label: 'On weekends',
             text: 'Whether the notification should arrive on weekends',
             action: SwitchAction(
-              initialValue: settings.quickAddOnWeekends(),
-              onChanged: (value) => settings.setQuickAddOnWeekends(value),
+              initialValue: settings.get(DbKeys.quickAddOnWeekends),
+              onChanged: (value) => settings.save(DbKeys.quickAddOnWeekends, value),
             ),
           ),
           SettingTile(

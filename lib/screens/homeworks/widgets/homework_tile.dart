@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class HomeworkTile extends StatelessWidget {
   const HomeworkTile({
@@ -96,16 +97,7 @@ class HomeworkTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(borderRadius - padding),
                     color: Theme.of(context).colorScheme.primaryContainer,
                   ),
-                  child: Center(
-                    child: Text(
-                      hw.subject?.trimmedShortcut ?? '',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                  child: SubjectShortcut(subject: hw.subject),
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: Text(hw.text, maxLines: 2)),
