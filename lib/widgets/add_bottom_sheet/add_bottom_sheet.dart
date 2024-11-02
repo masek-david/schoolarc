@@ -62,7 +62,7 @@ class AddBottomSheet extends StatefulWidget {
 }
 
 class _AddBottomSheetState extends State<AddBottomSheet> {
-  late TextEditingController nameController = TextEditingController.fromValue(
+  late final nameController = TextEditingController.fromValue(
       TextEditingValue(text: widget.initialName));
   late SubjectDTO? pickedSubject = widget.initialSubject;
   late DateTime pickedDate = widget.initialDate ?? DateTime.now();

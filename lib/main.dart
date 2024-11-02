@@ -37,31 +37,19 @@ void main() async {
     // null,
     [
       NotificationChannel(
-        channelGroupKey: 'persistent_channel_group',
-        channelKey: 'persistent_channel',
-        channelName: 'Quick add',
-        channelDescription: 'Here you can quickly add homeworks and exams',
-        defaultColor: const Color(0xFF9D50DD),
-        ledColor: Colors.white,
-      ),
-      NotificationChannel(
         onlyAlertOnce: true,
-        channelGroupKey: 'tommorrow_channel_group',
+        channelGroupKey: 'tommorrow_channel',
         channelKey: 'tommorrow_channel',
         channelName: 'Upcoming day notifications',
         channelDescription: 'Here you will find upcoming exams and homeworks',
         defaultColor: const Color(0xFF9D50DD),
-        ledColor: Colors.white,
+        ledColor: Colors.blue,
       ),
     ],
     // Channel groups are only visual and are not required
     channelGroups: [
       NotificationChannelGroup(
-        channelGroupKey: 'persistent_channel_group',
-        channelGroupName: 'Add from notifications',
-      ),
-      NotificationChannelGroup(
-        channelGroupKey: 'tommorrow_channel_group',
+        channelGroupKey: 'tommorrow_channel',
         channelGroupName: 'Upcoming day',
       ),
     ],

@@ -5,23 +5,10 @@ class SubjectDatabase {
   final _subjectBox = Hive.box('subjectBox');
   final _sequenceBox = Hive.box('subjectOtherData');
 
-  void createInitialData() {
-    _subjectBox.putAll({
-      0: Subject(
-        name: 'Math',
-        shortcut: 'Ma',
-      ),
-      1: Subject(
-        name: 'English',
-        shortcut: 'En',
-      ),
-    });
-
-    _sequenceBox.put('SEQUENCE', [0, 1]);
-  }
-
   List<int> getSequence() {
-    return _sequenceBox.get('SEQUENCE').cast<int>();
+    final list = _sequenceBox.get('SEQUENCE') ?? <int>[];
+
+    return list.cast<int>();
   }
 
   void saveSequence(List<int> newSequence) {

@@ -1,6 +1,4 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:school_manager/data/exams_data/exam_service.dart';
-import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -21,9 +19,6 @@ class NotificationController {
     if (receivedNotification.channelKey == 'tommorrow_channel') {
       NotificationSender.scheduleTommorrowNotification();
     }
-    if (receivedNotification.channelKey == 'persistent_channel') {
-      NotificationSender.sendQuickAdd(true);
-    }
   }
 
   /// Use this method to detect if the user dismissed a notification
@@ -31,12 +26,6 @@ class NotificationController {
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
     // Your code goes here
-
-    // on andriod 13+ you can close any notification, so if you close a persistent notification,
-    // it will immediately appear again
-    // if (receivedAction.channelKey == 'persistent_channel') {
-    //   NotificationSender.sendQuickAdd(false);
-    // }
   }
 
   /// Use this method to detect when the user taps on a notification or action button
@@ -48,29 +37,12 @@ class NotificationController {
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
     if (receivedAction.channelKey == 'tommorrow_channel') {
       TasksApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-          '/calendar',
-          (route) =>
-              (route.settings.name != '/calendar') || route.isFirst,
-          arguments: receivedAction);
+        '/calendar',
+        (route) => (route.settings.name != '/calendar') || route.isFirst,
+        arguments: receivedAction,
+      );
     }
 
-    switch (receivedAction.buttonKeyPressed) {
-      case 'homework':
-        HomeworkService().saveNewHW(
-          date: DateTime.now(),
-          priority: 0,
-          subject: null,
-          text: receivedAction.buttonKeyInput,
-        );
-      case 'exam':
-        ExamService().saveNewExam(
-          date: DateTime.now(),
-          priority: 0,
-          subject: null,
-          text: receivedAction.buttonKeyInput,
-        );
-      default:
-    }
     return;
   }
 }

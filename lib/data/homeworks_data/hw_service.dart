@@ -103,7 +103,11 @@ class HomeworkService {
         Homework hw = _hwDbIndexMap[list[i]]!;
         if (!hw.completion) {
           hwPriorityMap[priority]!.add(
-              hw.convertToDTO(list[i], _subjectsDbIndex[hw.subjectDbIndex]));
+            hw.convertToDTO(
+              list[i],
+              _subjectsDbIndex[hw.subjectDbIndex],
+            ),
+          );
         }
       }
     });

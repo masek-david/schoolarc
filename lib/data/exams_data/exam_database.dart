@@ -5,47 +5,16 @@ class ExamDatabase {
   final _examBox = Hive.box('examBox');
   final _examSequenceBox = Hive.box('examOtherData');
 
-  /// initial data will be inserted
-  void createInitialData() {
-    _examBox.putAll({
-      3: Exam(
-          subjectDbIndex: 0,
-          text: 'This is the text of the exam',
-          date: DateTime.now(),
-          completion: false,
-          priority: 3),
-      2: Exam(
-          subjectDbIndex: 1,
-          text: '<- here you can see the subject',
-          date: DateTime.now(),
-          completion: false,
-          priority: 2),
-      1: Exam(
-          subjectDbIndex: 1,
-          text: 'Algrebra',
-          date: DateTime.now(),
-          completion: false,
-          priority: 1),
-      0: Exam(
-          subjectDbIndex: 0,
-          text: 'Mammals',
-          date: DateTime.now(),
-          completion: false,
-          priority: 0),
-    });
-
-    Map<int, List<int>> sequence = {
-      0: [0],
-      1: [1],
-      2: [2],
-      3: [3],
-    };
-    _examSequenceBox.put('sequence', sequence);
-  }
-
   /// returns list of Exams dbIndexes for each priority
   Map<int, List<int>> getSequence() {
-    return Map.from(_examSequenceBox.get('sequence'));
+    var map = _examSequenceBox.get('sequence') ??
+          {
+            0: <int>[],
+            1: <int>[],
+            2: <int>[],
+            3: <int>[],
+          };
+    return map.cast<int, List<int>>();
   }
 
   void saveSequence(Map<int, List<int>> sequence) {

@@ -22,9 +22,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
   late var timeTable = _db.timeTable;
 
-  late double columnWidth = _settings.get(DbKeys.timeTableTileWidth);
-  late bool showWholeWeek = _settings.get(DbKeys.timeTableShowWholeWeek);
-  late bool showName = _settings.get(DbKeys.timeTableShowName);
+  late double columnWidth = _settings.get(Setting.timeTableTileWidth);
+  late bool showWholeWeek = _settings.get(Setting.timeTableShowWholeWeek);
+  late bool showName = _settings.get(Setting.timeTableShowName);
 
   void updateView() {
     setState(() {
@@ -51,19 +51,19 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     changeShowSubjectName: (value) {
                       setState(() {
                         showName = value;
-                        _settings.save(DbKeys.timeTableShowName, value);
+                        _settings.save(Setting.timeTableShowName, value);
                       });
                     },
                     changeShowWholeWeek: (value) {
                       setState(() {
                         showWholeWeek = value;
-                        _settings.save(DbKeys.timeTableShowWholeWeek, value);
+                        _settings.save(Setting.timeTableShowWholeWeek, value);
                       });
                     },
                     changeTileWidth: (width) {
                       setState(() {
                         columnWidth = width;
-                        _settings.save(DbKeys.timeTableTileWidth, width);
+                        _settings.save(Setting.timeTableTileWidth, width);
                       });
                     },
                   );
@@ -75,6 +75,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Add new lesson time',
         onPressed: () {
           showDialog<LessonTimes>(
             context: context,
@@ -92,7 +93,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      body: SingleChildScrollView(
+      body: timeTable.lessonTimes.isEmpty
+              ? const Center(
+                child: Text(
+                    'No timetable found. You can create new timetable by tapping the plus button.',
+                    textAlign: TextAlign.center,
+                  ),
+              )
+              : SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
           padding: const EdgeInsets.only(

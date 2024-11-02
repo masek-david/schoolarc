@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
@@ -11,145 +12,52 @@ import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/extensions/string_extension.dart';
 
 class NotificationSender {
-  /// if not scheduled, it will arrive now and never automatically expire
-  static void sendQuickAdd(bool scheduled) async {
-    if (!isCompatiblePlatform()) {
-      return;
-    }
-    if (!await AwesomeNotifications().isNotificationAllowed()) {
-      AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
-      return;
-    }
-
-    NotificationCalendar? schedule;
-    Duration? timeoutAfter;
-
-    if (scheduled) {
-      SettingsDatabase settings = SettingsDatabase();
-
-      if (!settings.get(DbKeys.quickAddEnabled)) {
-        return;
-      } else {
-        AwesomeNotifications().cancelSchedulesByChannelKey('persistent_group');
-
-        DateTime now = DateTime.now();
-        TimeOfDay arriveTime = settings.getTimeOfDay(DbKeys.quickAddArriveTime);
-        DateTime arriveDate = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          arriveTime.hour,
-          arriveTime.minute,
-        );
-        TimeOfDay dismissTime = settings.getTimeOfDay(DbKeys.quickAddDissappearTime);
-        DateTime dismissDate = DateTime(
-          arriveDate.year,
-          arriveDate.month,
-          arriveDate.day,
-          dismissTime.hour,
-          dismissTime.minute,
-        );
-
-        // if the notification is being set up after it would come today, it will be set to come tommorow
-        if (arriveDate.isBefore(now)) {
-          arriveDate = arriveDate.add(const Duration(
-            days: 1,
-          ));
-        }
-
-        if (settings.get(DbKeys.quickAddOnWeekends) && arriveDate.weekday == 6 ||
-            arriveDate.weekday == 7) {
-          arriveDate.add(Duration(days: 8 - arriveDate.weekday));
-        }
-
-        timeoutAfter = dismissDate.difference(arriveDate);
-
-        schedule = NotificationCalendar(
-          year: arriveDate.year,
-          month: arriveDate.month,
-          day: arriveDate.day,
-          hour: arriveDate.hour,
-          minute: arriveDate.minute,
-        );
-      }
-    }
-
-    AwesomeNotifications().createNotification(
-      schedule: schedule,
-      content: NotificationContent(
-        id: 10,
-        timeoutAfter: timeoutAfter,
-        channelKey: 'persistent_channel',
-        title: 'Quick add',
-        body: 'You can add homework or exam right from this notification',
-        autoDismissible: false,
-        locked: true,
-        category: NotificationCategory.Status,
-        actionType: ActionType.DisabledAction,
-      ),
-      actionButtons: [
-        NotificationActionButton(
-          key: 'homework',
-          label: 'Homework',
-          requireInputText: true,
-        ),
-        NotificationActionButton(
-          key: 'exam',
-          label: 'Exam',
-          requireInputText: true,
-        ),
-        NotificationActionButton(
-          key: 'close',
-          label: 'Close',
-          actionType: ActionType.DisabledAction,
-        ),
-      ],
-    );
-  }
-
-  // will set new notification about tommorrow, if not scheduled, it will arrive now and never automatically expire
+  static const String tommorrowChannel = 'tommorrow_channel';
   static void scheduleTommorrowNotification({
     bool scheduled = true,
     Function(String text)? showSnackbar,
-  }) {
-    if (!isCompatiblePlatform()) {
+  }) async {
+    AwesomeNotifications().cancelSchedulesByChannelKey(tommorrowChannel);
+
+    if (!await areNotificationsAllowed(tommorrowChannel)) {
       return;
     }
 
     final settings = SettingsDatabase();
-
-    if (!settings.get(DbKeys.tommorowNotificationEnabled)) {
-      AwesomeNotifications()
-          .cancelSchedulesByChannelKey('tommorrow_channel_group');
+    if (!settings.get(Setting.tommorowNotificationEnabled)) {
+      AwesomeNotifications().cancelSchedulesByChannelKey(tommorrowChannel);
       return;
     }
 
-    DateTime? schedule;
-
+    DateTime? tommorowDate;
     // sets correct schedule time and date
     if (scheduled) {
-      TimeOfDay notificationTime = settings.getTimeOfDay(DbKeys.tommorowNotificationTime);
-      DateTime now = DateTime.now();
-      DateTime notificationDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
+      TimeOfDay notificationTimeOfDay =
+          settings.getTimeOfDay(Setting.tommorowNotificationTime);
+      DateTime notificationTime = DateTime(
+              1, 1, 1, notificationTimeOfDay.hour, notificationTimeOfDay.minute)
+          .toUtc();
+      DateTime nowUTC = DateTime.now().toUtc();
+      DateTime notificationDateTime = DateTime.utc(
+        nowUTC.year,
+        nowUTC.month,
+        nowUTC.day,
         notificationTime.hour,
         notificationTime.minute,
       );
 
       // if the notification is being set up after it would come today, it will be set to come tommorow
-      if (notificationDateTime.isBefore(now)) {
+      if (notificationDateTime.isBefore(nowUTC)) {
         notificationDateTime = notificationDateTime.add(const Duration(
           days: 1,
         ));
       }
 
-      schedule = notificationDateTime;
+      tommorowDate = notificationDateTime;
     }
 
     _scheduleNotificationForDay(
-      schedule: schedule,
+      arriveDateTime: tommorowDate,
       showSnackbar: showSnackbar,
     );
   }
@@ -157,27 +65,24 @@ class NotificationSender {
   // schedules notification with info about tommorrow (doesn't need to be provided) for provided date
   static void _scheduleNotificationForDay({
     Function(String text)? showSnackbar,
-    required DateTime? schedule,
+    required DateTime? arriveDateTime,
   }) async {
-    if (!await AwesomeNotifications().isNotificationAllowed()) {
-      return;
+    NotificationCalendar? arriveSchedule;
+    if (arriveDateTime != null) {
+      arriveSchedule =
+          NotificationCalendar.fromDate(date: arriveDateTime.toLocal());
     }
-
-    NotificationCalendar? notificationCalendar;
-    if (schedule != null) {
-      notificationCalendar = NotificationCalendar.fromDate(date: schedule);
-    }
-    schedule ??= DateTime.now();
+    arriveDateTime ??= DateTime.now().toUtc();
 
     String notificationText = '';
-    String examsList = '';
-    String homeworksList = '';
+    String examsTextList = '';
+    String homeworksTextList = '';
     var examsByDate = ExamService().sortByDate();
     var hwByDate = HomeworkService().sortByDate();
 
-    DateTime tommorowDate =
-        DateTime(schedule.year, schedule.month, schedule.day)
-            .add(const Duration(days: 1));
+    DateTime tommorowDate = DateTime.utc(
+            arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
+        .add(const Duration(days: 1));
 
     List<ExamDTO> examsForTommorow = examsByDate[tommorowDate] ?? [];
     List<HomeworkDTO> hwsForTommorow = hwByDate[tommorowDate] ?? [];
@@ -190,7 +95,7 @@ class NotificationSender {
       String examText =
           '${Priority(exam.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
 
-      examsList += '$examText<br>';
+      examsTextList += '$examText<br>';
     }
 
     // creates text about hw
@@ -203,97 +108,115 @@ class NotificationSender {
       String hwText =
           '${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
-      homeworksList += '$hwText<br>';
+      homeworksTextList += '$hwText<br>';
     }
 
     notificationText =
-        '${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksList';
+        '${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
 
-    AwesomeNotifications()
-        .cancelSchedulesByChannelKey('tommorrow_channel_group');
-
-    AwesomeNotifications().createNotification(
-      schedule: notificationCalendar,
+    await AwesomeNotifications().createNotification(
+      schedule: arriveSchedule,
       content: NotificationContent(
         id: 11,
-        channelKey: 'tommorrow_channel',
+        channelKey: tommorrowChannel,
         title: 'Tommorrow:',
         body: notificationText,
         autoDismissible: false,
         category: NotificationCategory.Reminder,
-        // actionType: ActionType.DisabledAction,
         notificationLayout: NotificationLayout.BigText,
       ),
     );
 
     debugPrintStack(
         label:
-            '\u001b[1;42m\u001b[1;30mTommorrow notification scheduled for: ${schedule.toString()}');
+            '\u001b[1;42m\u001b[1;30mTommorrow notification scheduled for: ${arriveDateTime.toString()}, in ${arriveDateTime.timeZoneName}');
+
     if (showSnackbar != null) {
       showSnackbar(
-          'Next notification will arrive ${schedule.isSameDay(DateTime.now()) ? 'today' : 'tommorrow'} at around ${schedule.hour}:${schedule.minuteStartingWithZero()}');
+          'Next notification will arrive ${arriveDateTime.isSameDay(DateTime.now().toUtc()) ? 'today' : 'tommorrow'} at around ${arriveDateTime.toLocal().hour}:${arriveDateTime.toLocal().minuteStartingWithZero()}');
     }
   }
 
-  static bool isCompatiblePlatform() {
+  static bool _isCompatiblePlatform() {
     if (Platform.isAndroid || Platform.isIOS) {
       return true;
     }
     return false;
   }
 
-  // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
-  static Future<bool> getPermission(BuildContext context) async {
-    if (!isCompatiblePlatform()) {
+  static Future<bool> areNotificationsAllowed(String? channel) async {
+    if (!await AwesomeNotifications().isNotificationAllowed()) {
       return false;
     }
+    if (!_isCompatiblePlatform()) {
+      return false;
+    }
+    List<NotificationPermission> permission = [];
+    try {
+      permission =
+          await AwesomeNotifications().checkPermissionList(channelKey: channel);
+    } on PlatformException {
+      return false;
+    }
+    if (permission.isEmpty) {
+      return false;
+    }
+    return true;
+  }
 
-    if (!await AwesomeNotifications().isNotificationAllowed()) {
-      await showDialog(
-        context: context.mounted == true
-            ? context
-            : throw Exception('context isn\'mounted: $context'),
-        builder: (context) {
-          return Dialog(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
+  // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
+  static Future<bool> getPermission(
+    BuildContext context,
+    String? channel,
+  ) async {
+    if (await areNotificationsAllowed(channel)) {
+      return true;
+    }
+    return await showDialog<bool>(
+              context: context.mounted == true
+                  ? context
+                  : throw Exception('context isn\'mounted: $context'),
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(
                     'Notification Permission',
-                    style: TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                      'If you want this app to send you notifications, you need to grant it permission.'),
-                  const Text(
-                      'The Grant permission button will take you to app settings from where you can enable all notifications.'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await AwesomeNotifications()
+                            .requestPermissionToSendNotifications(
+                          channelKey: channel,
+                        );
+                        bool allowed = await areNotificationsAllowed(channel);
+                        if (context.mounted) {
+                          Navigator.pop(context, allowed);
+                        }
+                      },
+                      child: const Text('Grant permission'),
+                    ),
+                  ],
+                  content: const Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Close'),
+                      Text(
+                        'If you want this app to send you notifications, you need to grant it permission.',
                       ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          await AwesomeNotifications()
-                              .requestPermissionToSendNotifications();
-                        },
-                        child: const Text('Grant permission'),
+                      SizedBox(height: 12),
+                      Text(
+                        'The Grant permission button will take you to app settings from where you can enable all notifications.',
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
-
-    return await AwesomeNotifications().isNotificationAllowed();
+                );
+              },
+            ) ==
+            true
+        ? true
+        : false;
   }
 }

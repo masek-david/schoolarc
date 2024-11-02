@@ -5,7 +5,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/settings/widgets/time_picker_action.dart';
 
-class TommorrowNotificationsPage extends StatelessWidget {
+class TommorrowNotificationsPage extends StatefulWidget {
   const TommorrowNotificationsPage({
     super.key,
     required this.settings,
@@ -14,20 +14,81 @@ class TommorrowNotificationsPage extends StatelessWidget {
   final SettingsDatabase settings;
 
   @override
+  State<TommorrowNotificationsPage> createState() =>
+      _TommorrowNotificationsPageState();
+}
+
+class _TommorrowNotificationsPageState
+    extends State<TommorrowNotificationsPage> {
+  bool? areNotificationsAllowed;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getNotificationAllowed();
+  }
+
+  void getNotificationAllowed() async {
+    bool value =
+        await NotificationSender.areNotificationsAllowed('tommorrow_channel');
+
+    if (mounted) {
+      setState(() {
+        areNotificationsAllowed = value;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
         children: [
+          if (areNotificationsAllowed == false)
+            Container(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    NotificationSender.getPermission(
+                            context, 'tommorrow_channel')
+                        .then(
+                      (value) async {
+                        setState(() {
+                          areNotificationsAllowed = value;
+                        });
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'Notifications not allowed, click here to grant permission',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onErrorContainer,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           SettingTile(
             label: 'Upcoming day notifications',
             highlighted: true,
             action: SwitchAction(
-              initialValue: settings.get(DbKeys.tommorowNotificationEnabled),
+              initialValue:
+                  widget.settings.get(Setting.tommorowNotificationEnabled),
               onChanged: (value) {
-                settings.save(DbKeys.tommorowNotificationEnabled, value);
+                widget.settings.save(Setting.tommorowNotificationEnabled, value);
                 if (value) {
-                  NotificationSender.getPermission(context);
+                  NotificationSender.getPermission(
+                    context,
+                    'tommorrow_channel',
+                  );
                 }
               },
             ),
@@ -36,8 +97,10 @@ class TommorrowNotificationsPage extends StatelessWidget {
             label: 'Arrival time',
             text: 'Time around which notification will arrive',
             action: TimePickerAction(
-              initialTime: settings.getTimeOfDay(DbKeys.tommorowNotificationTime),
-              onChanged: (value) => settings.saveTimeOfDay(DbKeys.tommorowNotificationTime, value),
+              initialTime:
+                  widget.settings.getTimeOfDay(Setting.tommorowNotificationTime),
+              onChanged: (value) => widget.settings
+                  .saveTimeOfDay(Setting.tommorowNotificationTime, value),
             ),
           ),
           SettingTile(
