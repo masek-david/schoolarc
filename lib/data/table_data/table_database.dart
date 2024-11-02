@@ -38,6 +38,7 @@ class TimeTableDatabase {
             _table.lessonTimes[i].startTime.toDateTime(),
           )) {
         indexOfLessonInList = i;
+        break;
       }
     }
 
@@ -67,6 +68,7 @@ class TimeTableDatabase {
             _table.lessonTimes[i].startTime.toDateTime(),
           )) {
         newIndex = i;
+        break;
       }
     }
 

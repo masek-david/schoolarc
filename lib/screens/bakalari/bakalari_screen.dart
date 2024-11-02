@@ -21,7 +21,8 @@ class _BakalariScreenState extends State<BakalariScreen> {
 
   bool isLoggedIn = false;
   bool isLoading = false;
-  late bool keepLoggedIn = _settings.get(DbKeys.bakaKeepLoggedIn);
+  late bool keepLoggedIn = _settings.get(Setting.bakaKeepLoggedIn);
+  bool obscureText = true;
 
   @override
   void dispose() {
@@ -144,18 +145,50 @@ class _BakalariScreenState extends State<BakalariScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              TextField(
-                autofillHints: const [AutofillHints.password],
-                enabled: !isLoading,
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'Password',
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      autofillHints: const [AutofillHints.password],
+                      enabled: !isLoading,
+                      controller: _passwordController,
+                      obscureText: obscureText,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.all(15),
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        obscureText = !obscureText;
+                      });
+                    },
+                    icon: Icon(
+                      obscureText ? Icons.visibility : Icons.visibility_off,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text('Remember me'),
+                  Checkbox(
+                    value: keepLoggedIn,
+                    onChanged: !isLoading
+                        ? (value) {
+                            setState(() {
+                              keepLoggedIn = value!;
+                            });
+                            _settings.save(Setting.bakaKeepLoggedIn, value!);
+                          }
+                        : null,
+                  )
+                ],
+              ),
               FilledButton(
                 onPressed: isLoading
                     ? null
@@ -176,23 +209,6 @@ class _BakalariScreenState extends State<BakalariScreen> {
                             .then(evaluateResponse);
                       },
                 child: const Text("Log in"),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text('Remember me'),
-                  Checkbox(
-                    value: keepLoggedIn,
-                    onChanged: !isLoading
-                        ? (value) {
-                            setState(() {
-                              keepLoggedIn = value!;
-                            });
-                            _settings.save(DbKeys.bakaKeepLoggedIn, value!);
-                          }
-                        : null,
-                  )
-                ],
               ),
               const Divider(),
               Row(

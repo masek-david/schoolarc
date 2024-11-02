@@ -52,6 +52,7 @@ class PriorityView extends StatelessWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Add new exam',
         onPressed: () {
           createNewExam();
           HapticFeedback.lightImpact();

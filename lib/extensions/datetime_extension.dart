@@ -28,4 +28,9 @@ extension BetterDateTime on DateTime{
 
     return list;
   }
+
+  String formattedDate(){
+    String year = this.year == DateTime.now().year ? '' : this.year.toString();
+    return '$day.$month.$year';
+  }
 }

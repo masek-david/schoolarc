@@ -2,10 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:school_manager/data/exams_data/exam_database.dart';
-import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/subjects_data/subject_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/widgets/nav_bar.dart';
@@ -30,7 +27,7 @@ class _TasksAppState extends State<TasksApp> {
   int currentScreenIndex = 0;
 
   final SettingsDatabase _settings = SettingsDatabase();
-  late ThemeMode themeMode = _getThemeMode(_settings.get(DbKeys.themeMode));
+  late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -66,10 +63,7 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    // _settings.createInitialData();
-    HomeworksDatabase().createInitialData();
-    ExamDatabase().createInitialData();
-    SubjectDatabase().createInitialData();
+    
   }
 
   void setThemeMode(bool? value) {

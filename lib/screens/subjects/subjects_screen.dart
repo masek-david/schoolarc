@@ -25,7 +25,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   void dispose() {
     nameController.dispose();
     shortcutController.dispose();
-    
+
     super.dispose();
   }
 
@@ -134,6 +134,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         title: const Text('Subjects'),
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Add new subject',
         onPressed: () {
           HapticFeedback.mediumImpact();
           createNewSubject();
@@ -143,35 +144,42 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
       body: SlidableAutoCloseBehavior(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: ReorderableListView.builder(
-            onReorderStart: (index) => HapticFeedback.lightImpact(),
-            itemCount: subjectList.length,
-            itemBuilder: (context, index) {
-              SubjectDTO subject = subjectList[index];
+          child: subjectList.isEmpty
+              ? const Center(
+                child: Text(
+                    'No subjects found. You can create new subjects by tapping the plus button.',
+                    textAlign: TextAlign.center,
+                  ),
+              )
+              : ReorderableListView.builder(
+                  onReorderStart: (index) => HapticFeedback.lightImpact(),
+                  itemCount: subjectList.length,
+                  itemBuilder: (context, index) {
+                    SubjectDTO subject = subjectList[index];
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                key: Key('$index'),
-                child: SubjectTile(
-                  subject: subject,
-                  onEdit: () => editSubject(subject.dbIndex),
-                  onDelete: () => deleteSubject(subject.dbIndex),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      key: Key('$index'),
+                      child: SubjectTile(
+                        subject: subject,
+                        onEdit: () => editSubject(subject.dbIndex),
+                        onDelete: () => deleteSubject(subject.dbIndex),
+                      ),
+                    );
+                  },
+                  onReorder: (int oldIndex, int newIndex) {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    final SubjectDTO item = subjectList.removeAt(oldIndex);
+                    _service.changeSequence(oldIndex, newIndex);
+                    setState(
+                      () {
+                        subjectList.insert(newIndex, item);
+                      },
+                    );
+                  },
                 ),
-              );
-            },
-            onReorder: (int oldIndex, int newIndex) {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final SubjectDTO item = subjectList.removeAt(oldIndex);
-              _service.changeSequence(oldIndex, newIndex);
-              setState(
-                () {
-                  subjectList.insert(newIndex, item);
-                },
-              );
-            },
-          ),
         ),
       ),
     );

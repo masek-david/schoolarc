@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/table_data/lesson_times_model.dart';
@@ -22,11 +21,7 @@ class TimeTable {
   }
 
   TimeTable.empty() {
-    lessonTimes = [
-      LessonTimes.fromTimeOfDay(
-          startTime: const TimeOfDay(hour: 7, minute: 50),
-          endTime: const TimeOfDay(hour: 8, minute: 35))
-    ];
+    lessonTimes = [];
     table = List.generate(
         7, (_) => List.filled(lessonTimes.length, null, growable: true));
   }

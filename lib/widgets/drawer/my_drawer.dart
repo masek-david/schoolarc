@@ -53,7 +53,6 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
-        const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(
           text: 'Bakalari',
           icon: const Icon(Icons.hexagon),
@@ -66,16 +65,7 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
-        MyDrawerButton(
-          text: 'View database',
-          icon: const Icon(Icons.data_array),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DbInfoScreen(),
-            ),
-          ),
-        ),
+        const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(
           text: 'Settings',
           icon: const Icon(Icons.settings),
@@ -89,6 +79,17 @@ class MyDrawer extends StatelessWidget {
               ),
             );
           },
+        ),
+        const Divider(indent: 28, endIndent: 28),
+        MyDrawerButton(
+          text: 'View database',
+          icon: const Icon(Icons.data_array),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DbInfoScreen(),
+            ),
+          ),
         ),
       ],
     );

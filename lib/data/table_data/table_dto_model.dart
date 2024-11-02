@@ -12,6 +12,10 @@ class TimeTableDTO {
   late List<List<SubjectDTO?>> table;
 
   DateTime? nextDateForSubject(SubjectDTO subject) {
+    if(lessonTimes.isEmpty){
+      return null;
+    }
+    
     var now = DateTime.now();
     // int weekday = now.weekday - 1;
 

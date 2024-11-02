@@ -188,7 +188,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     for (DateTime date in weekDays) {
       int examsInDate =
-          examByDate[DateTime.utc(date.year, date.month, date.day)]?.length ?? 0;
+          examByDate[DateTime.utc(date.year, date.month, date.day)]?.length ??
+              0;
 
       if (examsInDate > examsCount) {
         examsCount = examsInDate;
@@ -206,6 +207,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton.extended(
+            tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
             heroTag: 'exam_btn',
             onPressed: () => addTask(false),
             icon: const Icon(Icons.add),
@@ -215,6 +217,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             height: 10,
           ),
           FloatingActionButton.extended(
+            tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
             heroTag: 'homework_btn',
             onPressed: () => addTask(true),
             icon: const Icon(Icons.add),
@@ -304,7 +307,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 },
                 itemBuilder: (context, pageIndex) {
                   DateTime now = DateTime.now();
-                  DateTime nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
+                  DateTime nowOnlyDate =
+                      DateTime.utc(now.year, now.month, now.day);
                   int daysToAdd = pageIndex - negativePageCount;
                   DateTime date = nowOnlyDate.add(Duration(days: daysToAdd));
 
