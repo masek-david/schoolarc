@@ -30,7 +30,7 @@ class _TasksAppState extends State<TasksApp> {
   final SettingsDatabase _settings = SettingsDatabase();
   late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
   late int currentPageIndex = _settings.get(Setting.initialAppPage);
-  // late final initialPage =
+  bool calendarShowTommorrow = false;
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -98,6 +98,10 @@ class _TasksAppState extends State<TasksApp> {
     setState(() {
       currentPageIndex = newScreenIndex;
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This code will run after the first frame is rendered.
+      calendarShowTommorrow = false;
+    });
   }
 
   void switchDrawer({bool? close}) {
@@ -155,6 +159,7 @@ class _TasksAppState extends State<TasksApp> {
             case '/calendar':
               navigatorKey.currentState?.popUntil((route) => route.isFirst);
               switchDrawer(close: true);
+              calendarShowTommorrow = true;
               switchScreen(newScreenIndex: 1);
               break;
 
@@ -171,7 +176,10 @@ class _TasksAppState extends State<TasksApp> {
             controller: _pageController,
             children: [
               HomeScreen(switchDrawer: switchDrawer),
-              CalendarScreen(switchDrawer: switchDrawer),
+              CalendarScreen(
+                switchDrawer: switchDrawer,
+                showTommorrow: calendarShowTommorrow,
+              ),
               HomeworksScreen(switchDrawer: switchDrawer),
               ExamsScreen(switchDrawer: switchDrawer),
             ],

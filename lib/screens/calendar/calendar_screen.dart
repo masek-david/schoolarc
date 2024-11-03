@@ -53,7 +53,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
 
-    if (_settings.get(Setting.calendarInitialIsTommorrow)) {
+    if (_settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow) {
       _focusedDay =
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
