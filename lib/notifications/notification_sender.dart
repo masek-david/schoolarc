@@ -117,6 +117,7 @@ class NotificationSender {
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,
       content: NotificationContent(
+        color: Colors.transparent,
         id: 11,
         channelKey: tommorrowChannel,
         title: 'Tommorrow:',

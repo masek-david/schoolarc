@@ -33,7 +33,7 @@ void main() async {
 
   await AwesomeNotifications().initialize(
     // set the icon to null if you want to use the default app icon
-    'resource://drawable/logo',
+    'resource://drawable/res_app_icon',
     // null,
     [
       NotificationChannel(
@@ -42,7 +42,7 @@ void main() async {
         channelKey: 'tommorrow_channel',
         channelName: 'Upcoming day notifications',
         channelDescription: 'Here you will find upcoming exams and homeworks',
-        defaultColor: const Color(0xFF9D50DD),
+        defaultColor: Colors.transparent,
         ledColor: Colors.blue,
       ),
     ],
