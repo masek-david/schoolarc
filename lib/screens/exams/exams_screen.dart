@@ -6,7 +6,12 @@ import 'package:school_manager/screens/exams/widgets/priority_view.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 
 class ExamsScreen extends StatefulWidget {
-  const ExamsScreen({super.key});
+  const ExamsScreen({
+    super.key,
+    required this.switchDrawer,
+  });
+
+  final void Function() switchDrawer;
 
   @override
   State<ExamsScreen> createState() => _ExamsScreenState();
@@ -102,6 +107,12 @@ class _ExamsScreenState extends State<ExamsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: DrawerButton(
+          onPressed: widget.switchDrawer,
+        ),
+        title: const Text('Exams'),
+      ),
       body: PriorityView(
         examsByPriority: examsByPriority,
         completedExams: completedExams,

@@ -33,6 +33,7 @@ class _TimetableSettingsState extends State<TimetableSettings> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SettingTile(
           label: 'Show 7 day week',

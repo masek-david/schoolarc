@@ -6,7 +6,12 @@ import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 
 class HomeworksScreen extends StatefulWidget {
-  const HomeworksScreen({super.key});
+  const HomeworksScreen({
+    super.key,
+    required this.switchDrawer,
+  });
+
+  final void Function() switchDrawer;
 
   @override
   State<HomeworksScreen> createState() => _HomeworksScreenState();
@@ -124,6 +129,12 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: DrawerButton(
+          onPressed: widget.switchDrawer,
+        ),
+        title: const Text('Homeworks'),
+      ),
       body: PriorityView(
         hwByPriority: hwByPriority,
         completedHws: completedHw,

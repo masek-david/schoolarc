@@ -13,7 +13,7 @@ class SettingTile extends StatelessWidget {
 
   final String label;
   final String? text;
-  final Icon? icon;
+  final IconData? icon;
   final Widget? action;
   final Function()? onTap;
   final bool highlighted;
@@ -30,35 +30,41 @@ class SettingTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(32),
                 color: Theme.of(context).colorScheme.primary.withAlpha(100))
             : null,
-        child: Row(
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            if (icon != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: icon,
-              ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    maxLines: 2,
-                    style: const TextStyle(fontSize: 20),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Icon(icon),
                   ),
-                  if (text != null)
-                    Text(
-                      text!,
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withAlpha(180),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        softWrap: true,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    ),
-                ],
-              ),
+                      if (text != null)
+                        Text(
+                          text!,
+                          style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(180),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             if (action != null) action!,
           ],

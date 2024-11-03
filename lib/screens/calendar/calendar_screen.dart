@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_list_exam.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_list_hw.dart';
@@ -13,7 +15,14 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({super.key});
+  const CalendarScreen({
+    super.key,
+    required this.switchDrawer,
+    this.showTommorrow = false,
+  });
+
+  final void Function() switchDrawer;
+  final bool showTommorrow;
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
@@ -22,12 +31,13 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final HomeworkService _serviceHw = HomeworkService();
   final ExamService _serviceExam = ExamService();
+  final _settings = SettingsDatabase();
 
-  late Map<DateTime, List<HomeworkDTO>> hwByDate;
-  late Map<DateTime, List<ExamDTO>> examByDate;
+  late Map<DateTime, List<HomeworkDTO>> hwByDate = _serviceHw.sortByDate();
+  late Map<DateTime, List<ExamDTO>> examByDate = _serviceExam.sortByDate();
 
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.now().add(const Duration(days: 1));
+  DateTime _focusedDay = DateTime.now();
   late DateTime _selectedDay = _focusedDay;
 
   late Color calendarBackgroundColor;
@@ -43,8 +53,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
 
-    hwByDate = _serviceHw.sortByDate();
-    examByDate = _serviceExam.sortByDate();
+    if (_settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow) {
+      _focusedDay =
+          DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
+      _selectedDay = _focusedDay;
+    }
   }
 
   @override
@@ -202,6 +215,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: DrawerButton(
+          onPressed: widget.switchDrawer,
+        ),
+        title: const Text('Calendar'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => CalendarSettings(),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
+      ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
