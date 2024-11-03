@@ -4,6 +4,7 @@ import 'package:school_manager/screens/db_info.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -33,8 +34,7 @@ class MyDrawer extends StatelessWidget {
           text: 'Subjects',
           icon: const Icon(Icons.school_outlined),
           onTap: () {
-            Navigator.push(
-              context,
+            navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const SubjectsScreen(),
               ),
@@ -45,8 +45,7 @@ class MyDrawer extends StatelessWidget {
           text: 'Timetable',
           icon: const Icon(Icons.calendar_month),
           onTap: () {
-            Navigator.push(
-              context,
+            navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const TimetableScreen(),
               ),
@@ -57,8 +56,7 @@ class MyDrawer extends StatelessWidget {
           text: 'Bakalari',
           icon: const Icon(Icons.hexagon),
           onTap: () {
-            Navigator.push(
-              context,
+            navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const BakalariScreen(),
               ),
@@ -70,8 +68,7 @@ class MyDrawer extends StatelessWidget {
           text: 'Settings',
           icon: const Icon(Icons.settings),
           onTap: () {
-            Navigator.push(
-              context,
+            navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => SettingsScreen(
                   setThemeMode: setThemeMode,

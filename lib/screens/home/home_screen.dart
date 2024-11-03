@@ -3,10 +3,14 @@ import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+  HomeScreen({
+    super.key,
+    required this.switchDrawer,
+  });
 
   final HomeworkService _serviceHw = HomeworkService();
   final ExamService _serviceExam = ExamService();
+  final void Function() switchDrawer;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,12 @@ class HomeScreen extends StatelessWidget {
       //   label: const Text('Plan-it'),
       //   icon: const Icon(Icons.schedule),
       // ),
+      appBar: AppBar(
+        leading: DrawerButton(
+          onPressed: switchDrawer,
+        ),
+        title: const Text('Home'),
+      ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
         children: [

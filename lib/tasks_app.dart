@@ -5,29 +5,32 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
+import 'package:school_manager/screens/intro/intro_screen.dart';
 import 'package:school_manager/widgets/nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
 import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
-
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
 
   @override
   State<TasksApp> createState() => _TasksAppState();
 }
 
 class _TasksAppState extends State<TasksApp> {
-  Widget screenWidget = const HomeworksScreen();
-  String appBarTitle = '';
-  int currentScreenIndex = 0;
+  late final _pageController = PageController(
+    initialPage: _settings.get(Setting.initialAppPage),
+  );
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final SettingsDatabase _settings = SettingsDatabase();
   late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
+  late int currentPageIndex = _settings.get(Setting.initialAppPage);
+  // late final initialPage =
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -46,6 +49,7 @@ class _TasksAppState extends State<TasksApp> {
   void initState() {
     super.initState();
 
+    firstTimeOpeningApp();
     if (_settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     }
@@ -63,7 +67,9 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    
+    navigatorKey.currentState?.push(MaterialPageRoute(
+      builder: (context) => const IntroScreen(),
+    ));
   }
 
   void setThemeMode(bool? value) {
@@ -73,34 +79,41 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void switchScreen({required int newScreenIndex}) {
+    late final pageSwitchAnimationDuration = Duration(
+      milliseconds:
+          (_settings.get(Setting.pageSwitchAnimationDuration) as double)
+              .toInt(),
+    );
+
+    if (pageSwitchAnimationDuration.inMilliseconds == 0) {
+      _pageController.jumpToPage(newScreenIndex);
+    } else {
+      _pageController.animateToPage(
+        newScreenIndex,
+        curve: Curves.easeInOut,
+        duration: pageSwitchAnimationDuration,
+      );
+    }
+
     setState(() {
-      currentScreenIndex = newScreenIndex;
+      currentPageIndex = newScreenIndex;
     });
+  }
+
+  void switchDrawer({bool? close}) {
+    if (_scaffoldKey.currentState?.isDrawerOpen == true || close == true) {
+      _scaffoldKey.currentState?.closeDrawer();
+    } else {
+      _scaffoldKey.currentState?.openDrawer();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (currentScreenIndex) {
-      case 0:
-        screenWidget = HomeScreen();
-        appBarTitle = 'Home';
-        break;
-      case 1:
-        screenWidget = const CalendarScreen();
-        appBarTitle = 'Calendar';
-      case 2:
-        screenWidget = const HomeworksScreen();
-        appBarTitle = 'Homeworks';
-        break;
-      case 3:
-        screenWidget = const ExamsScreen();
-        appBarTitle = 'Exams';
-        break;
-    }
-
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       return MaterialApp(
+        navigatorKey: navigatorKey,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -129,21 +142,21 @@ class _TasksAppState extends State<TasksApp> {
           useMaterial3: true,
         ),
         themeMode: themeMode,
-        navigatorKey: TasksApp.navigatorKey,
         initialRoute: '/',
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case '/':
-              return MaterialPageRoute(builder: (context) => HomeScreen());
+              return MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                  switchDrawer: switchDrawer,
+                ),
+              );
 
             case '/calendar':
+              navigatorKey.currentState?.popUntil((route) => route.isFirst);
+              switchDrawer(close: true);
               switchScreen(newScreenIndex: 1);
-
-            // return MaterialPageRoute(builder: (context) {
-            //   final ReceivedAction receivedAction =
-            //       settings.arguments as ReceivedAction;
-            //   return Scaffold(body: CalendarScreen(), appBar: AppBar(),);
-            // });
+              break;
 
             default:
               assert(false, 'Page ${settings.name} not found');
@@ -152,12 +165,23 @@ class _TasksAppState extends State<TasksApp> {
           return null;
         },
         home: Scaffold(
-          body: screenWidget,
-          appBar: AppBar(title: Text(appBarTitle)),
-          drawer: MyDrawer(setThemeMode: setThemeMode),
+          key: _scaffoldKey,
+          body: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            children: [
+              HomeScreen(switchDrawer: switchDrawer),
+              CalendarScreen(switchDrawer: switchDrawer),
+              HomeworksScreen(switchDrawer: switchDrawer),
+              ExamsScreen(switchDrawer: switchDrawer),
+            ],
+          ),
+          drawer: MyDrawer(
+            setThemeMode: setThemeMode,
+          ),
           bottomNavigationBar: NavBar(
             onTap: switchScreen,
-            initialIndex: currentScreenIndex,
+            pageIndex: currentPageIndex,
           ),
         ),
       );

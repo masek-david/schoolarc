@@ -1,6 +1,9 @@
 fix:
 
-neukladat completed hw do sequence
+info o bakalarich
+
+uvitaci obrazovka
+
 
 
 =============================================================================================

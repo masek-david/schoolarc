@@ -3,6 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/extensions/timeofday_extension.dart';
 
 enum Setting {
+  initialAppPage,
+  pageSwitchAnimationDuration,
   tommorowNotificationEnabled,
   tommorowNotificationTime,
   themeMode,
@@ -10,6 +12,7 @@ enum Setting {
   timeTableTileWidth,
   timeTableShowName,
   bakaKeepLoggedIn,
+  calendarInitialIsTommorrow,
 }
 
 class SettingModel {
@@ -24,6 +27,14 @@ class SettingModel {
 
 class SettingsDatabase {
   static final Map<Setting, SettingModel> _settings = {
+    Setting.initialAppPage: SettingModel(
+      key: 'initialAppPage',
+      defaultValue: 1,
+    ),
+    Setting.pageSwitchAnimationDuration: SettingModel(
+      key: 'pageSwitchDuration',
+      defaultValue: 200.0,
+    ),
     Setting.tommorowNotificationEnabled: SettingModel(
       defaultValue: true,
       key: 'tommorowNotificationEnabled',
@@ -51,6 +62,10 @@ class SettingsDatabase {
       defaultValue: false,
       key: 'bakaKeepLoggedIn',
     ),
+    Setting.calendarInitialIsTommorrow: SettingModel(
+      defaultValue: true,
+      key: 'calendarInitialIsTommorrow',
+    ),
   };
   final _settingsBox = Hive.box('settings');
 
@@ -59,14 +74,14 @@ class SettingsDatabase {
     if (settingModel == null) {
       throw 'No setting found for enum $setting';
     }
-    if (settingModel.defaultValue.runtimeType != TimeOfDay){
+    if (settingModel.defaultValue.runtimeType != DateTime) {
       throw 'The setting $setting is\'t of type TimeOfDay';
     }
 
     DateTime? date = _settingsBox.get(settingModel.key);
 
     if (date == null) {
-      date = get(settingModel.defaultValue);
+      date = get(setting);
       _settingsBox.put(settingModel.key, date);
     }
 
@@ -79,6 +94,7 @@ class SettingsDatabase {
       throw 'No setting found for enum $setting';
     }
     var value = _settingsBox.get(settingModel.key);
+    // var value = null;
 
     if (value == null) {
       value = settingModel.defaultValue;
@@ -93,7 +109,7 @@ class SettingsDatabase {
     if (settingModel == null) {
       throw 'No setting found for enum $setting';
     }
-    
+
     _settingsBox.put(settingModel.key, value);
   }
 
