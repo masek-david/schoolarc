@@ -190,7 +190,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             (lessonIndex) {
                               final subject = table[weekday][lessonIndex];
 
+                              bool isHighlighted =
+                                  timeTable.lessonTimes[lessonIndex].isActive &&
+                                      DateTime.now().weekday - 1 == weekday;
+
                               return TimetableSubject(
+                                isHighlighted: isHighlighted,
                                 subject: subject,
                                 columnWidth: columnWidth,
                                 onTap: () {

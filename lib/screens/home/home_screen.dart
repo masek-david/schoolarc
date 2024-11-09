@@ -156,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 height: 100,
                                 child: TimetableSubject(
+                                  isHighlighted: entry.key.isActive,
                                   subject: entry.value,
                                   columnWidth:
                                       settings.get(Setting.timeTableTileWidth),

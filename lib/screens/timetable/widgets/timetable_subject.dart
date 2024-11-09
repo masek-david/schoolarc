@@ -9,16 +9,19 @@ class TimetableSubject extends StatelessWidget {
     required this.columnWidth,
     required this.onTap,
     required this.showName,
+    this.isHighlighted = false,
   });
 
   final SubjectDTO? subject;
   final double columnWidth;
-  final void Function()? onTap;
   final bool showName;
+  final bool isHighlighted;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final tileColor = Theme.of(context).colorScheme.secondaryContainer;
+    final colorScheme = Theme.of(context).colorScheme;
+    final tileColor = isHighlighted ? colorScheme.primaryContainer : colorScheme.secondaryContainer;
 
     return Padding(
       padding: const EdgeInsets.all(4),

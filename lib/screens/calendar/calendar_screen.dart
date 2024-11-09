@@ -223,8 +223,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_selectedDay);
-    
     return Scaffold(
       appBar: AppBar(
         leading: DrawerButton(

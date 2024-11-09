@@ -17,7 +17,7 @@ class LessonTimes {
     required TimeOfDay startTime,
     required TimeOfDay endTime,
     this.name = '',
-  }){
+  }) {
     _startTime = startTime.toDateTime();
     _endTime = endTime.toDateTime();
   }
@@ -26,20 +26,25 @@ class LessonTimes {
     required DateTime startTime,
     required DateTime endTime,
     this.name = '',
-  }){
+  }) {
     _startTime = startTime;
     _endTime = endTime;
   }
 
-  TimeOfDay get startTime{
+  TimeOfDay get startTime {
     return TimeOfDay.fromDateTime(_startTime);
   }
 
-  TimeOfDay get endTime{
+  TimeOfDay get endTime {
     return TimeOfDay.fromDateTime(_endTime);
   }
 
-  String toStringFormatted(BuildContext context){
+  bool get isActive {
+    return startTime.isBefore(TimeOfDay.fromDateTime(DateTime.now())) &&
+        TimeOfDay.fromDateTime(DateTime.now()).isBefore(endTime);
+  }
+
+  String toStringFormatted(BuildContext context) {
     return '${startTime.format(context)} - ${endTime.format(context)}';
   }
 }
