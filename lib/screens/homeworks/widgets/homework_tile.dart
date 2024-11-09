@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -29,14 +30,13 @@ class HomeworkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color deadlineColor = Theme.of(context).colorScheme.onSurface;
     String deadlineText = '';
+    final bool isMissed =
+        hw.deadline.isBeforeToday() && hw.completion == false;
+    final missedColor =
+        Colors.red.harmonizeWith(Theme.of(context).primaryColor);
 
     if (showDeadline) {
-      if (hw.deadline.isBefore(DateTime.now()) && hw.completion == false) {
-        deadlineColor =
-            Colors.red.harmonizeWith(Theme.of(context).primaryColor);
-      }
       deadlineText = '${hw.deadline.day}.${hw.deadline.month}.';
       if (hw.deadline.year != DateTime.now().year) {
         deadlineText += ' ${hw.deadline.year}';
@@ -79,9 +79,14 @@ class HomeworkTile extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(padding),
           decoration: BoxDecoration(
+            border: isMissed
+                ? Border.all(
+                    color: missedColor,
+                    width: 2,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(borderRadius),
-            color:
-                Theme.of(context).colorScheme.secondaryContainer.withAlpha(100),
+            color: Theme.of(context).colorScheme.surfaceContainer,
           ),
           child: Opacity(
             opacity: opacity,
@@ -105,7 +110,10 @@ class HomeworkTile extends StatelessWidget {
                 Text(
                   deadlineText,
                   maxLines: 2,
-                  style: TextStyle(color: deadlineColor, fontSize: 12),
+                  style: TextStyle(
+                    color: isMissed ? missedColor : null,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(width: 5),
                 MyCheckbox(

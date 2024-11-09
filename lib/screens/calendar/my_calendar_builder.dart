@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/extensions/color_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
@@ -25,7 +26,11 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
             day.day.toString(),
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+              color: Theme.of(context).colorScheme.onSurface.dynamicLighten(
+                    makeItLighter:
+                        Theme.of(context).brightness != Brightness.dark,
+                    amount: 0.4,
+                  ),
             ),
           ),
         ),
@@ -124,7 +129,8 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
                           homeworks.length <= 5 ? homeworks.length : 5,
                           (index) {
                         HomeworkDTO hw = homeworks[index];
-                        Color markerColor = Priority(hw.priority, context).color;
+                        Color markerColor =
+                            Priority(hw.priority, context).color;
 
                         return Container(
                           margin: const EdgeInsets.all(1.2),
@@ -144,8 +150,10 @@ CalendarBuilders<Object?> myCalendarBuilder(Function(int dbIndex) onTap) {
                 (index) {
                   ExamDTO exam = exams[index];
                   String shortcut = exam.subject?.trimmedShortcut ?? '';
-                  Color color = Color.lerp(Priority(exam.priority, context).color,
-                      Theme.of(context).colorScheme.surface, 0.3)!;
+                  Color color = Color.lerp(
+                      Priority(exam.priority, context).color,
+                      Theme.of(context).colorScheme.surface,
+                      0.3)!;
 
                   return GestureDetector(
                     onTap: () => onTap(exam.dbIndex),

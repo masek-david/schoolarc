@@ -3,6 +3,7 @@ import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
 
 class HomeworkService {
@@ -56,6 +57,15 @@ class HomeworkService {
     NotificationSender.scheduleTommorrowNotification();
   }
 
+  List<HomeworkDTO> getForDay(DateTime date){
+    final dateUtc = date.toUtc();
+    final hwByDate = sortByDate();
+
+    final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
+
+    return hwByDate[dateNoTime] ?? []; 
+  }
+
   /// returns map with datetime being only the date in UTC, not the time
   Map<DateTime, List<HomeworkDTO>> sortByDate() {
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
@@ -63,8 +73,11 @@ class HomeworkService {
 
     _hwDbIndexMap.forEach(
       (dbIndex, homework) {
-        DateTime dateNoTime = DateTime.utc(homework.deadline.year,
-            homework.deadline.month, homework.deadline.day);
+        final hwDeadlineUtc = homework.deadline;
+        
+        DateTime dateNoTime = DateTime.utc(hwDeadlineUtc.year,
+            hwDeadlineUtc.month, hwDeadlineUtc.day);
+
         if (hwDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
           hwDateMap[dateNoTime]!.add(homework.convertToDTO(
@@ -123,12 +136,36 @@ class HomeworkService {
       (dbIndex, hw) {
         if (hw.completion) {
           completedHw.add(
-              hw.convertToDTO(dbIndex, _subjectsDbIndex[hw.subjectDbIndex]));
+            hw.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[hw.subjectDbIndex],
+            ),
+          );
         }
       },
     );
 
     return completedHw;
+  }
+
+  List<HomeworkDTO> getMissedHw() {
+    List<HomeworkDTO> missedHw = [];
+    _hwDbIndexMap = _db.getDatabase();
+
+    _hwDbIndexMap.forEach(
+      (dbIndex, hw) {
+        if (hw.deadline.isBeforeToday() && !hw.completion) {
+          missedHw.add(
+            hw.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[hw.subjectDbIndex],
+            ),
+          );
+        }
+      },
+    );
+
+    return missedHw;
   }
 
   /// deletes howework and saves it for reverting

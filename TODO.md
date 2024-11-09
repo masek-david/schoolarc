@@ -1,5 +1,7 @@
 fix:
 
+moznost vypnout zvyrazneni missed ukolu 
+
 info o bakalarich
 
 uvitaci obrazovka

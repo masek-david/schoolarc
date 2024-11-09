@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
-import 'package:school_manager/screens/calendar/widgets/calendar_list_exam.dart';
-import 'package:school_manager/screens/calendar/widgets/calendar_list_hw.dart';
+import 'package:school_manager/widgets/exam_list.dart';
+import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
+import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
@@ -29,11 +29,12 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final HomeworkService _serviceHw = HomeworkService();
-  final ExamService _serviceExam = ExamService();
+  final _serviceHw = HomeworkService();
+  final _serviceExam = ExamService();
   final _settings = SettingsDatabase();
 
   late Map<DateTime, List<HomeworkDTO>> hwByDate = _serviceHw.sortByDate();
+  late List<HomeworkDTO> missedHwList = _serviceHw.getMissedHw();
   late Map<DateTime, List<ExamDTO>> examByDate = _serviceExam.sortByDate();
 
   CalendarFormat _calendarFormat = CalendarFormat.week;
@@ -43,21 +44,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late Color calendarBackgroundColor;
 
   // how many pages you can scroll to negative
-  int negativePageCount = 1000000;
+  static const  int negativePageCount = 1000000;
+  late final showTommorrow = _settings.get(Setting.calendarInitialIsTommorrow) ||
+        widget.showTommorrow;
   late final PageController _pageController = PageController(
-      viewportFraction: 0.93, initialPage: negativePageCount + 1);
+    viewportFraction: 0.93,
+    initialPage: negativePageCount + (showTommorrow ? 1 : 0),
+  );
   // how many markers are used this week at most
   late int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+
+  late bool showMissed = _settings.get(Setting.calendarShowMissed);
 
   @override
   void initState() {
     super.initState();
 
-    if (_settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow) {
+    if (showTommorrow) {
       _focusedDay =
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
     }
+    updateView();
   }
 
   @override
@@ -80,6 +88,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       setState(() {
         hwByDate = _serviceHw.sortByDate();
         examByDate = _serviceExam.sortByDate();
+        missedHwList = _serviceHw.getMissedHw();
         maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
       });
     }
@@ -214,6 +223,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(_selectedDay);
+    
     return Scaffold(
       appBar: AppBar(
         leading: DrawerButton(
@@ -225,7 +236,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => CalendarSettings(),
+                builder: (context) => CalendarSettings(
+                  changeShowMissed: (value) => setState(() {
+                    showMissed = value;
+                  }),
+                ),
               );
             },
             icon: const Icon(Icons.settings),
@@ -324,35 +339,79 @@ class _CalendarScreenState extends State<CalendarScreen> {
               });
             },
           ),
+          const SizedBox(height: 4),
           Expanded(
-            child: SlidableAutoCloseBehavior(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (value) {
-                  setState(() {
-                    _focusedDay = DateTime.now()
-                        .add(Duration(days: value - negativePageCount));
-                    _selectedDay = _focusedDay;
-                  });
-                },
-                itemBuilder: (context, pageIndex) {
-                  DateTime now = DateTime.now();
-                  DateTime nowOnlyDate =
-                      DateTime.utc(now.year, now.month, now.day);
-                  int daysToAdd = pageIndex - negativePageCount;
-                  DateTime date = nowOnlyDate.add(Duration(days: daysToAdd));
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (value) {
+                setState(() {
+                  _focusedDay = DateTime.now()
+                      .toUtc()
+                      .add(Duration(days: value - negativePageCount))
+                      .toLocal();
+                  _selectedDay = _focusedDay;
+                });
+              },
+              itemBuilder: (context, pageIndex) {
+                DateTime now = DateTime.now().toUtc();
+                DateTime nowOnlyDate =
+                    DateTime.utc(now.year, now.month, now.day);
+                int daysToAdd = pageIndex - negativePageCount;
+                DateTime date = nowOnlyDate.add(Duration(days: daysToAdd));
 
-                  List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
-                  List<ExamDTO> examListForDay = examByDate[date] ?? [];
+                List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
+                List<ExamDTO> examListForDay = examByDate[date] ?? [];
 
-                  return ListView(
+                final bool showMissed = missedHwList.isNotEmpty &&
+                    !date.isBeforeToday() &&
+                    this.showMissed;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ListView(
                     children: [
-                      CalendarListExam(
+                      // Text(date.toString()),
+                      // Text(pageIndex.toString()),
+                      if (showMissed)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: ListTileTheme(
+                            contentPadding:
+                                const EdgeInsets.only(left: 4, right: 8),
+                            child: ExpansionTile(
+                              initiallyExpanded: false,
+                              collapsedShape: const Border(),
+                              shape: const Border(),
+                              dense: true,
+                              title: ExpansionTitle(
+                                titleText: 'Missed Homeworks',
+                                boldText: false,
+                                titleTextColor:
+                                    Theme.of(context).colorScheme.error,
+                                numberOfItems: missedHwList.length,
+                              ),
+                              children: [
+                                HomeworkList(
+                                  hwList: missedHwList,
+                                  changeCompletion: changeCompletion,
+                                  deleteHw: deleteHw,
+                                  editHw: editHw,
+                                  updateListView: updateView,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ExamList(
+                        showDates: false,
+                        showText: true,
                         examList: examListForDay,
                         deleteExam: deleteExam,
                         editExam: editExam,
                       ),
-                      CalendarListHw(
+                      HomeworkList(
+                        showDates: false,
+                        showText: true,
                         hwList: hwListForDay,
                         changeCompletion: changeCompletion,
                         deleteHw: deleteHw,
@@ -362,9 +421,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       const ListBottomSpacer(),
                       const ListBottomSpacer(),
                     ],
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ],

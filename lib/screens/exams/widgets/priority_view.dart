@@ -1,7 +1,6 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -60,67 +59,63 @@ class PriorityView extends StatelessWidget {
         enableFeedback: true,
         child: const Icon(Icons.add),
       ),
-      body: SlidableAutoCloseBehavior(
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            listTileTheme: ListTileTheme.of(context).copyWith(
-              dense: true,
-              visualDensity: VisualDensity.compact,
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          listTileTheme: ListTileTheme.of(context).copyWith(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          children: [
+            DragAndDropLists(
+              disableScrolling: true,
+              constrainDraggingAxis: false,
+              contentsWhenEmpty: const AnimatedStar(),
+              itemDivider: const SizedBox(height: 10),
+              listDivider: const SizedBox(height: 10),
+              lastListTargetSize: 0,
+              lastItemTargetHeight: 10,
+              listDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onItemDraggingChanged: (item, dragging) {
+                if (dragging) HapticFeedback.heavyImpact();
+              },
+              onItemReorder: _onItemReorder,
+              onListReorder: (oldListIndex, newListIndex) {},
+              listGhost: const Placeholder(),
+              children: List.generate(
+                numberOfPriorityLists,
+                (index) => _buildList(priorities[3 - index], context),
+              ),
             ),
-          ),
-          child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            children: [
-              DragAndDropLists(
-                disableScrolling: true,
-                constrainDraggingAxis: false,
-                contentsWhenEmpty: const AnimatedStar(),
-                itemDivider: const SizedBox(height: 10),
-                listDivider: const SizedBox(height: 10),
-                lastListTargetSize: 0,
-                lastItemTargetHeight: 10,
-                listDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  // color: Theme.of(context).colorScheme.primary.withAlpha(20),
-                ),
-                onItemDraggingChanged: (item, dragging) {
-                  if (dragging) HapticFeedback.heavyImpact();
+            ExpansionTile(
+              title: ExpansionTitle(
+                numberOfItems: completedExams.length,
+                titleText: 'Completed',
+              ),
+              shape: const Border(),
+              children: List.generate(
+                completedExams.length,
+                (index) {
+                  ExamDTO exam = completedExams[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: ExamTile(
+                      exam: exam,
+                      priority: priorities[exam.priority],
+                      onDelete: (context) => deleteExam(exam.dbIndex),
+                      onEdit: () => editExam(exam.dbIndex),
+                    ),
+                  );
                 },
-                onItemReorder: _onItemReorder,
-                onListReorder: (oldListIndex, newListIndex) {},
-                listGhost: const Placeholder(),
-                children: List.generate(
-                  numberOfPriorityLists,
-                  (index) => _buildList(priorities[3 - index], context),
-                ),
               ),
-              ExpansionTile(
-                title: ExpansionTitle(
-                  numberOfItems: completedExams.length,
-                  titleText: 'Completed',
-                  titleTextColor: Theme.of(context).colorScheme.inverseSurface,
-                ),
-                shape: const Border(),
-                children: List.generate(
-                  completedExams.length,
-                  (index) {
-                    ExamDTO exam = completedExams[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: ExamTile(
-                        exam: exam,
-                        priority: priorities[exam.priority],
-                        onDelete: (context) => deleteExam(exam.dbIndex),
-                        onEdit: () => editExam(exam.dbIndex),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 70),
-            ],
-          ),
+            ),
+            const SizedBox(height: 70),
+          ],
         ),
       ),
     );

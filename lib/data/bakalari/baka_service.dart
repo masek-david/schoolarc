@@ -8,7 +8,7 @@ import 'package:school_manager/data/bakalari/lesson_time_baka.dart';
 import 'package:school_manager/data/safe_box.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
-import 'package:school_manager/data/table_data/table_database.dart';
+import 'package:school_manager/data/table_data/timetable_database.dart';
 
 class BakaResponse {
   final String? error;

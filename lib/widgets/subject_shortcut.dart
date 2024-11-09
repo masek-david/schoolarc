@@ -5,9 +5,11 @@ class SubjectShortcut extends StatelessWidget {
   const SubjectShortcut({
     super.key,
     required this.subject,
+    this.color,
   });
 
   final SubjectDTO? subject;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class SubjectShortcut extends StatelessWidget {
         subject?.trimmedShortcut ?? '',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
+          color: color ?? Theme.of(context).colorScheme.onPrimaryContainer,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),

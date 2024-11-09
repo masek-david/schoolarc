@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/extensions/color_extension.dart';
 
 class ExpansionTitle extends StatelessWidget {
   const ExpansionTitle({
     super.key,
     required this.titleText,
-    required this.titleTextColor,
-    required this.numberOfItems,
+    this.titleTextColor,
+    this.numberOfItems,
+    this.boldText = true,
   });
 
   final String titleText;
-  final Color titleTextColor;
-  final int numberOfItems;
+  final Color? titleTextColor;
+  final int? numberOfItems;
+  final bool boldText;
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -21,23 +26,28 @@ class ExpansionTitle extends StatelessWidget {
           titleText,
           style: TextStyle(
             color: titleTextColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+            fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
+            fontSize: boldText ? 14 : 16,
           ),
         ),
         // indicator of number of hw
-        Container(
-          height: 22,
-          width: 22,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            // color: Theme.of(context).colorScheme.primary.withAlpha(10),
-            color: titleTextColor.withAlpha(25),
-            borderRadius: BorderRadius.circular(100),
+        if (numberOfItems != null)
+          Container(
+            height: 22,
+            // width: 22,
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: titleTextColor == null
+                  ? Colors.transparent
+                  : titleTextColor!.dynamicLighten(
+                      makeItLighter: !isDark,
+                      amount: 0.35,
+                    ),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Text(numberOfItems.toString()),
           ),
-          child: Text(numberOfItems.toString()),
-          // child: Text(numberOfItems.toString(), style: TextStyle(color: titleTextColor),),
-        ),
       ],
     );
   }

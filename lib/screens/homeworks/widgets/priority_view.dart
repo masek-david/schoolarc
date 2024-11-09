@@ -1,7 +1,6 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
@@ -63,71 +62,67 @@ class PriorityView extends StatelessWidget {
         enableFeedback: true,
         child: const Icon(Icons.add),
       ),
-      body: SlidableAutoCloseBehavior(
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            listTileTheme: ListTileTheme.of(context).copyWith(
-              dense: true,
-              visualDensity: VisualDensity.compact,
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          listTileTheme: ListTileTheme.of(context).copyWith(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          children: [
+            DragAndDropLists(
+              disableScrolling: true,
+              constrainDraggingAxis: false,
+              contentsWhenEmpty: const AnimatedStar(),
+              itemDivider: const SizedBox(height: 10),
+              listDivider: const SizedBox(height: 10),
+              lastListTargetSize: 0,
+              lastItemTargetHeight: 10,
+              listDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onItemDraggingChanged: (item, dragging) {
+                if (dragging) HapticFeedback.heavyImpact();
+              },
+              onItemReorder: _onItemReorder,
+              onListReorder: (oldListIndex, newListIndex) {},
+              listGhost: const Placeholder(),
+              children: List.generate(
+                numberOfPriorityLists,
+                (index) => _buildList(priorities[3-index], context),
+              ),
             ),
-          ),
-          child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            children: [
-              DragAndDropLists(
-                disableScrolling: true,
-                constrainDraggingAxis: false,
-                contentsWhenEmpty: const AnimatedStar(),
-                itemDivider: const SizedBox(height: 10),
-                listDivider: const SizedBox(height: 10),
-                lastListTargetSize: 0,
-                lastItemTargetHeight: 10,
-                listDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  // color: Theme.of(context).colorScheme.primary.withAlpha(20),
-                ),
-                onItemDraggingChanged: (item, dragging) {
-                  if (dragging) HapticFeedback.heavyImpact();
+            ExpansionTile(
+              title: ExpansionTitle(
+                numberOfItems: completedHws.length,
+                titleText: 'Completed',
+              ),
+              shape: const Border(),
+              children: List.generate(
+                completedHws.length,
+                (index) {
+                  HomeworkDTO hw = completedHws[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: HomeworkTile(
+                      hw: hw,
+                      priority: priorities[hw.priority],
+                      onChangedCompletion: (value) {
+                        changeCompletion(hw.dbIndex, value);
+                        updateView();
+                      },
+                      onDelete: () => deleteHw(hw.dbIndex),
+                      onEdit: () => editHw(hw.dbIndex),
+                    ),
+                  );
                 },
-                onItemReorder: _onItemReorder,
-                onListReorder: (oldListIndex, newListIndex) {},
-                listGhost: const Placeholder(),
-                children: List.generate(
-                  numberOfPriorityLists,
-                  (index) => _buildList(priorities[3-index], context),
-                ),
               ),
-              ExpansionTile(
-                title: ExpansionTitle(
-                  numberOfItems: completedHws.length,
-                  titleText: 'Completed',
-                  titleTextColor: Theme.of(context).colorScheme.inverseSurface,
-                ),
-                shape: const Border(),
-                children: List.generate(
-                  completedHws.length,
-                  (index) {
-                    HomeworkDTO hw = completedHws[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: HomeworkTile(
-                        hw: hw,
-                        priority: priorities[hw.priority],
-                        onChangedCompletion: (value) {
-                          changeCompletion(hw.dbIndex, value);
-                          updateView();
-                        },
-                        onDelete: () => deleteHw(hw.dbIndex),
-                        onEdit: () => editHw(hw.dbIndex),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 70),
-            ],
-          ),
+            ),
+            const SizedBox(height: 70),
+          ],
         ),
       ),
     );

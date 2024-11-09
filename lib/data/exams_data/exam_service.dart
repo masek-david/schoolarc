@@ -52,6 +52,15 @@ class ExamService {
     _db.saveSequence(_sequence);
   }
 
+  List<ExamDTO> getForDay(DateTime date) {
+    final dateUtc = date.toUtc();
+    final examByDate = sortByDate();
+
+    final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
+
+    return examByDate[dateNoTime] ?? [];
+  }
+
   /// returns map with datetime being only the date in UTC, not the time
   Map<DateTime, List<ExamDTO>> sortByDate() {
     Map<DateTime, List<ExamDTO>> examDateMap = {};

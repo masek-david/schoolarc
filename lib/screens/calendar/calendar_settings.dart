@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
+import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 
 class CalendarSettings extends StatefulWidget {
-  const CalendarSettings({super.key});
+  const CalendarSettings({
+    super.key,
+    required this.changeShowMissed,
+  });
+
+  final void Function(bool value) changeShowMissed;
 
   @override
   State<CalendarSettings> createState() => _CalendarSettingsState();
@@ -23,12 +29,12 @@ class _CalendarSettingsState extends State<CalendarSettings> {
           action: DropDownAction(
             items: const [
               DropdownMenuItem(
-                child: Text('Today'),
                 value: false,
+                child: Text('Today'),
               ),
               DropdownMenuItem(
-                child: Text('Tommorrow'),
                 value: true,
+                child: Text('Tommorrow'),
               ),
             ],
             initialValue: _settings.get(Setting.calendarInitialIsTommorrow),
@@ -40,6 +46,20 @@ class _CalendarSettingsState extends State<CalendarSettings> {
             },
           ),
         ),
+        SettingTile(
+          label: 'Show missed homeworks',
+          action: SwitchAction(
+            initialValue: _settings.get(
+              Setting.calendarShowMissed,
+            ),
+            onChanged: (value) {
+              _settings.save(
+              Setting.calendarShowMissed, value
+            );
+            widget.changeShowMissed(value);
+            },
+          ),
+        )
       ],
     );
   }

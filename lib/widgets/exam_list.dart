@@ -4,34 +4,38 @@ import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 import 'package:school_manager/data/priority_model.dart';
 
-class CalendarListExam extends StatelessWidget {
-  const CalendarListExam(
-      {super.key,
-      required this.examList,
-      required this.deleteExam,
-      required this.editExam});
+class ExamList extends StatelessWidget {
+  const ExamList({
+    super.key,
+    required this.examList,
+    required this.deleteExam,
+    required this.editExam,
+    this.showText = false,
+    this.showDates = true,
+    this.textFull = 'Exams',
+    this.textEmpty,
+  });
 
   final List<ExamDTO> examList;
   final Function(int dbIndex) deleteExam;
   final Function(int dbIndex) editExam;
+  final bool showText;
+  final bool showDates;
+  final String textFull;
+  final String? textEmpty;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(examList.length + 1, (index) {
-        if (examList.isEmpty) {
-          return const TextSeparator(
-            text: 'No Exams',
-            greydOut: true,
-          );
-        }
-
-        if (index == 0) {
-          return const TextSeparator(text: 'Exams');
-        }
-
-        ExamDTO exam = examList[index - 1];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (examList.isEmpty && showText)
+        TextSeparator(
+          text: textEmpty ?? 'No $textFull',
+          greydOut: true,
+        )
+      else if (showText)
+        TextSeparator(text: textFull),
+      ...List.generate(examList.length, (index) {
+        ExamDTO exam = examList[index];
         return Padding(
           padding: const EdgeInsets.all(5),
           child: ExamTile(
@@ -43,6 +47,6 @@ class CalendarListExam extends StatelessWidget {
           ),
         );
       }),
-    );
+    ]);
   }
 }

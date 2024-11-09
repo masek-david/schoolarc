@@ -77,15 +77,13 @@ class NotificationSender {
     String notificationText = '';
     String examsTextList = '';
     String homeworksTextList = '';
-    var examsByDate = ExamService().sortByDate();
-    var hwByDate = HomeworkService().sortByDate();
 
     DateTime tommorowDate = DateTime.utc(
             arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
         .add(const Duration(days: 1));
 
-    List<ExamDTO> examsForTommorow = examsByDate[tommorowDate] ?? [];
-    List<HomeworkDTO> hwsForTommorow = hwByDate[tommorowDate] ?? [];
+    List<ExamDTO> examsForTommorow = ExamService().getForDay(tommorowDate);
+    List<HomeworkDTO> hwsForTommorow = HomeworkService().getForDay(tommorowDate);
 
     // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {

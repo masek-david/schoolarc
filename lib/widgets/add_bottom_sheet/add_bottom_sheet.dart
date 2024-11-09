@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
-import 'package:school_manager/data/table_data/table_database.dart';
+import 'package:school_manager/data/table_data/timetable_database.dart';
+import 'package:school_manager/extensions/color_extension.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
 
-void showAddBottomSheet(
+Future<void> showAddBottomSheet(
   BuildContext context, {
   String initialName = '',
   int initialPriority = 0,
@@ -19,8 +20,8 @@ void showAddBottomSheet(
     required String text,
     SubjectDTO? subject,
   }) onSave,
-}) {
-  showModalBottomSheet(
+}) async {
+  await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     enableDrag: true,
@@ -34,6 +35,7 @@ void showAddBottomSheet(
       );
     },
   );
+  return;
 }
 
 class AddBottomSheet extends StatefulWidget {
@@ -121,6 +123,8 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       child: Container(
         padding:
@@ -228,15 +232,23 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
                       selected: index == pickedPriority,
-                      label: Text(priority.name),
+                      label: Text(
+                        priority.name,
+                        style: TextStyle(
+                          color: priority.color.dynamicLighten(
+                              makeItLighter: isDark, amount: 0.5),
+                        ),
+                      ),
+                      backgroundColor: priority.color
+                          .dynamicLighten(makeItLighter: !isDark, amount: 0.37),
+                      selectedColor: priority.color
+                          .dynamicLighten(makeItLighter: !isDark, amount: 0.23),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(
                           color: priority.color,
                         ),
                       ),
-                      backgroundColor: priority.color.withAlpha(25),
-                      selectedColor: priority.color.withAlpha(100),
                       onSelected: (value) => setState(
                         () {
                           pickedPriority = index;

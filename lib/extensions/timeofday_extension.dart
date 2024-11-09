@@ -9,4 +9,8 @@ extension BetterTimeOfDay on TimeOfDay{
   DateTime toDateTime(){
     return DateTime.utc(1, 1, 1, hour, minute);
   }
+
+  bool isBefore(TimeOfDay time){
+    return toDateTime().isBefore(time.toDateTime());
+  }
 }

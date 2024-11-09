@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/extensions/color_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {
@@ -75,7 +76,7 @@ class ExamTile extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
-            color: Theme.of(context).colorScheme.secondaryContainer.withAlpha(100),
+            color: Theme.of(context).colorScheme.surfaceContainer,
           ),
           child: Opacity(
             opacity: opacity,
@@ -88,9 +89,20 @@ class ExamTile extends StatelessWidget {
                   height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: circleColor.withAlpha(130),
+                    color: circleColor.dynamicLighten(
+                      makeItLighter:
+                          Theme.of(context).brightness != Brightness.dark,
+                      amount: 0.1,
+                    ),
                   ),
-                  child: SubjectShortcut(subject: exam.subject),
+                  child: SubjectShortcut(
+                    subject: exam.subject,
+                    color: circleColor.dynamicLighten(
+                      makeItLighter:
+                          Theme.of(context).brightness == Brightness.dark,
+                      amount: 0.5,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: Text(exam.text, maxLines: 2)),

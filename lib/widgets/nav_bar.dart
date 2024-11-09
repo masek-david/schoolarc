@@ -12,9 +12,8 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return NavigationBar(
-      backgroundColor:
-          Theme.of(context).colorScheme.secondaryContainer.withAlpha(82),
       onDestinationSelected: (index) {
         onTap(newScreenIndex: index);
       },

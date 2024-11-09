@@ -17,6 +17,7 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Slidable(
       groupTag: '1',
       endActionPane: ActionPane(
@@ -39,7 +40,7 @@ class SubjectTile extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.primary.withAlpha(10),
+            color: Theme.of(context).colorScheme.surfaceContainer,
           ),
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(

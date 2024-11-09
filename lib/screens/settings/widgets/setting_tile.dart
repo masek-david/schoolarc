@@ -20,6 +20,7 @@ class SettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -28,7 +29,7 @@ class SettingTile extends StatelessWidget {
         decoration: highlighted == true
             ? BoxDecoration(
                 borderRadius: BorderRadius.circular(32),
-                color: Theme.of(context).colorScheme.primary.withAlpha(100))
+                color: Theme.of(context).colorScheme.primaryContainer)
             : null,
         child: Wrap(
           alignment: WrapAlignment.spaceBetween,
@@ -55,10 +56,8 @@ class SettingTile extends StatelessWidget {
                         Text(
                           text!,
                           style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(180),
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     ],

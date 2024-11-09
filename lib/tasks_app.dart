@@ -2,10 +2,18 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/exams_data/exam_service.dart';
+import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/data/table_data/timetable_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/screens/intro/intro_screen.dart';
+import 'package:school_manager/theme_generate.dart';
+import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
@@ -13,6 +21,122 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+final settings = SettingsDatabase();
+final homeworkService = HomeworkService();
+final examService = ExamService();
+final timetableDatabase = TimeTableDatabase();
+
+Future<void> addTask(
+  BuildContext context, {
+  required bool isHomework,
+  DateTime? initialDate,
+}) async {
+  initialDate ??= DateTime.now();
+
+  await showAddBottomSheet(
+    context,
+    initialDate: initialDate,
+    onSave: ({required date, required priority, subject, required text}) async {
+      isHomework
+          ? await homeworkService.saveNewHW(
+              date: date, priority: priority, subject: subject, text: text)
+          : await examService.saveNewExam(
+              date: date, priority: priority, subject: subject, text: text);
+    },
+  );
+
+  return;
+}
+
+Future<void> editHw(BuildContext context, int dbIndex) async {
+  HomeworkDTO hw = homeworkService.getHomework(dbIndex);
+
+  await showAddBottomSheet(
+    context,
+    initialDate: hw.deadline,
+    initialSubject: hw.subject,
+    initialPriority: hw.priority,
+    initialName: hw.text,
+    onSave: ({required date, required priority, subject, required text}) {
+      homeworkService.saveEditedHW(
+        date: date,
+        priority: priority,
+        subject: subject,
+        text: text,
+        completion: false,
+        dbIndex: dbIndex,
+      );
+    },
+  );
+  return;
+}
+
+Future<void> editExam(BuildContext context, int dbIndex) async {
+  ExamDTO exam = examService.getExam(dbIndex);
+
+  await showAddBottomSheet(
+    context,
+    initialDate: exam.deadline,
+    initialSubject: exam.subject,
+    initialPriority: exam.priority,
+    initialName: exam.text,
+    onSave: ({required date, required priority, subject, required text}) {
+      examService.saveEditedExam(
+        date: date,
+        priority: priority,
+        subject: subject,
+        text: text,
+        dbIndex: dbIndex,
+      );
+    },
+  );
+
+  return;
+}
+
+void changeCompletion(int dbIndex, bool value) {
+  homeworkService.changeCompletion(dbIndex, value);
+}
+
+Future<void> deleteHw(
+    BuildContext context, int dbIndex, Function onDeleteRevert) async {
+  homeworkService.deleteHw(dbIndex);
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Homework deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          homeworkService.revertLastlyDeletedHw();
+          onDeleteRevert();
+        },
+      ),
+    ),
+  );
+
+  return;
+}
+
+Future<void> deleteExam(
+    BuildContext context, int dbIndex, Function onDeleteRevert) async {
+  examService.deleteExam(dbIndex);
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Exam deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          examService.revertLastlyDeletedExam();
+          onDeleteRevert();
+        },
+      ),
+    ),
+  );
+
+  return;
+}
 
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
@@ -116,6 +240,17 @@ class _TasksAppState extends State<TasksApp> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      var defaultTheme = ColorScheme.fromSeed(
+        seedColor: Colors.deepPurpleAccent,
+      );
+      (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
+        lightDynamic ?? defaultTheme,
+        darkDynamic ?? defaultTheme,
+      );
+
+      final light = schemes.$1;
+      final dark = schemes.$2;
+
       return MaterialApp(
         navigatorKey: navigatorKey,
         localizationsDelegates: const [
@@ -125,26 +260,14 @@ class _TasksAppState extends State<TasksApp> {
         ],
         supportedLocales: const [
           Locale('en'), // English
-          Locale('cs'),
+          // Locale('cs'),
         ],
         locale: const Locale('en', 'GB'),
         // locale: const Locale('cs', 'CZ'),
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: lightDynamic ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.deepPurpleAccent,
-              ),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: darkDynamic ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.deepPurpleAccent,
-                brightness: Brightness.dark,
-              ),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(colorScheme: light),
+        darkTheme: ThemeData(colorScheme: dark),
+        // darkTheme: ThemeData(colorScheme: darkDynamic),
         themeMode: themeMode,
         initialRoute: '/',
         onGenerateRoute: (settings) {
@@ -171,18 +294,20 @@ class _TasksAppState extends State<TasksApp> {
         },
         home: Scaffold(
           key: _scaffoldKey,
-          body: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _pageController,
-            children: [
-              HomeScreen(switchDrawer: switchDrawer),
-              CalendarScreen(
-                switchDrawer: switchDrawer,
-                showTommorrow: calendarShowTommorrow,
-              ),
-              HomeworksScreen(switchDrawer: switchDrawer),
-              ExamsScreen(switchDrawer: switchDrawer),
-            ],
+          body: SlidableAutoCloseBehavior(
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              children: [
+                HomeScreen(switchDrawer: switchDrawer),
+                CalendarScreen(
+                  switchDrawer: switchDrawer,
+                  showTommorrow: calendarShowTommorrow,
+                ),
+                HomeworksScreen(switchDrawer: switchDrawer),
+                ExamsScreen(switchDrawer: switchDrawer),
+              ],
+            ),
           ),
           drawer: MyDrawer(
             setThemeMode: setThemeMode,
