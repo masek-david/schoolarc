@@ -19,17 +19,20 @@ class SubjectAdapter extends TypeAdapter<Subject> {
     return Subject(
       name: fields[0] as String,
       shortcut: fields[1] as String,
+      bakaId: fields[2] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Subject obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.shortcut);
+      ..write(obj.shortcut)
+      ..writeByte(2)
+      ..write(obj.bakaId);
   }
 
   @override

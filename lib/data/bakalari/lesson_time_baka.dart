@@ -16,6 +16,9 @@ class LessonTimesBaka {
 
   LessonTimes toLessonTimes() {
     return LessonTimes.fromTimeOfDay(
-        startTime: startTime, endTime: endTime, name: name);
+      startTime: startTime,
+      endTime: endTime,
+      name: name,
+    );
   }
 }

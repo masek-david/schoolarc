@@ -23,7 +23,7 @@ extension BetterDateTime on DateTime{
     List<DateTime> list = [];
 
     for(int i = 0; i < 7; i++){
-      list.add(firstDay.add(Duration(days: i)));
+      list.add(firstDay.toUtc().add(Duration(days: i)));
     }
 
     return list;

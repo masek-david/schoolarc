@@ -12,7 +12,6 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return NavigationBar(
       onDestinationSelected: (index) {
         onTap(newScreenIndex: index);

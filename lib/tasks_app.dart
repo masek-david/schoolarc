@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/bakalari/baka_service.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/timetable_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
@@ -24,7 +26,9 @@ final navigatorKey = GlobalKey<NavigatorState>();
 final settings = SettingsDatabase();
 final homeworkService = HomeworkService();
 final examService = ExamService();
+final subjectService = SubjectService();
 final timetableDatabase = TimeTableDatabase();
+final bakaService = BakaService();
 
 Future<void> addTask(
   BuildContext context, {

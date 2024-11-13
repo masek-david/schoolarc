@@ -44,7 +44,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
     loadLogin();
 
     _service.tryLogin().then(
-          (value) => evaluateResponse(value, willShowMessage: true),
+          (value) => evaluateResponse(value, shouldShowMessage: true),
         );
   }
 
@@ -55,11 +55,11 @@ class _BakalariScreenState extends State<BakalariScreen> {
 
   void evaluateResponse(
     BakaResponse response, {
-    bool willShowMessage = true,
+    bool shouldShowMessage = true,
     String successResponse = 'Logged in successfully',
   }) {
     if (response.isSuccess) {
-      if (willShowMessage) {
+      if (shouldShowMessage) {
         showMessage(successResponse);
       }
       setState(() {
@@ -67,7 +67,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
         isLoggedIn = true;
       });
     } else {
-      if (willShowMessage) {
+      if (shouldShowMessage) {
         showMessage(response.error ?? '', isError: true);
       }
       setState(() {
@@ -77,20 +77,23 @@ class _BakalariScreenState extends State<BakalariScreen> {
   }
 
   void showMessage(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor:
-            isError ? Theme.of(context).colorScheme.errorContainer : null,
-        content: Text(
-          message,
-          style: TextStyle(
-            color:
-                isError ? Theme.of(context).colorScheme.onErrorContainer : null,
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor:
+              isError ? Theme.of(context).colorScheme.errorContainer : null,
+          content: Text(
+            message,
+            style: TextStyle(
+              color: isError
+                  ? Theme.of(context).colorScheme.onErrorContainer
+                  : null,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -332,7 +335,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                     child: const Text('Import'),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

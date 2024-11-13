@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/data/table_data/lesson_times_model.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
@@ -15,7 +16,6 @@ class TimeTable {
   late List<List<int?>> table;
 
   TimeTable(this.lessonTimes) {
-    // table = List
     table = List.generate(
         7, (_) => List.filled(lessonTimes.length, null, growable: true));
   }
@@ -23,7 +23,9 @@ class TimeTable {
   TimeTable.empty() {
     lessonTimes = [];
     table = List.generate(
-        7, (_) => List.filled(lessonTimes.length, null, growable: true));
+      7,
+      (_) => List.filled(lessonTimes.length, null, growable: true),
+    );
   }
 
   TimeTableDTO convertToDTO(Map<int, SubjectDTO> subjects) {
@@ -31,7 +33,11 @@ class TimeTable {
       (day) {
         return day.map(
           (subjectIndex) {
-            return subjects[subjectIndex];
+            final subject = subjects[subjectIndex];
+            return TimeTableLesson(
+              subject: subject,
+              change: null,
+            );
           },
         ).toList();
       },

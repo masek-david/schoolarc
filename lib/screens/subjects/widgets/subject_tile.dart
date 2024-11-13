@@ -17,7 +17,6 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Slidable(
       groupTag: '1',
       endActionPane: ActionPane(
@@ -54,6 +53,7 @@ class SubjectTile extends StatelessWidget {
               Expanded(
                 child: Text(subject.name),
               ),
+              if(subject.bakaId != null) Icon(Icons.hexagon, color: Theme.of(context).colorScheme.surfaceBright,)
             ],
           ),
         ),

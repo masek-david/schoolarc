@@ -4,11 +4,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:school_manager/data/bakalari/lesson_time_baka.dart';
+import 'package:school_manager/data/bakalari/teacher_model.dart';
+import 'package:school_manager/data/bakalari/timetable_change.dart';
+import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/data/safe_box.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
+import 'package:school_manager/data/table_data/table_dto_model.dart';
 import 'package:school_manager/data/table_data/timetable_database.dart';
+import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class BakaResponse {
   final String? error;
@@ -27,7 +33,8 @@ class BakaService {
   String? _refreshToken;
   Uri? _url;
 
-  final _subjectService = SubjectService();
+  bool isLoggedIn = false;
+
   final _timetableDb = TimeTableDatabase();
   final _secureStorage = SecureStorage();
 
@@ -41,8 +48,15 @@ class BakaService {
 
   Future<bool> connectedToInternet() async {
     try {
-      await http.get(Uri(scheme: 'https', host: 'example.com'));
-    } on SocketException catch (_) {
+      await http
+          .get(Uri(scheme: 'https', host: 'example.com'))
+          .timeout(const Duration(seconds: 10))
+          .then(
+        (value) {
+          return false;
+        },
+      );
+    } on Exception catch (_) {
       return false;
     }
 
@@ -75,6 +89,7 @@ class BakaService {
 
     if (bakaResponse.isSuccess) {
       _secureStorage.write(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+      isLoggedIn = true;
     }
 
     return bakaResponse;
@@ -104,6 +119,10 @@ class BakaService {
       _secureStorage.write(SecureStorage.bakaRefreshTokenKey, '');
       _secureStorage.write(SecureStorage.bakaSchoolNameKey, '');
       _secureStorage.write(SecureStorage.bakaUsernameKey, '');
+    }
+
+    if (bakaResponse.isSuccess) {
+      isLoggedIn = true;
     }
 
     return bakaResponse;
@@ -173,6 +192,7 @@ class BakaService {
     for (var subjectJson in listOfSubjectsJson) {
       String name = subjectJson['SubjectName'];
       String shortcut = subjectJson['SubjectAbbrev'];
+      String bakaId = subjectJson['SubjectID'];
 
       // checks for duplicates, will add the teachers surname to the subject name
       for (var subject in listOfSubjects) {
@@ -182,7 +202,11 @@ class BakaService {
         }
       }
 
-      listOfSubjects.add(Subject(name: name, shortcut: shortcut));
+      listOfSubjects.add(Subject(
+        name: name,
+        shortcut: shortcut,
+        bakaId: bakaId,
+      ));
     }
 
     return listOfSubjects;
@@ -191,21 +215,38 @@ class BakaService {
   Future<void> addAllSubjects() async {
     List<Subject> list = await _getAllSubjects();
     for (var element in list) {
-      _subjectService.addNewSubject(element);
+      subjectService.addNewSubject(element);
     }
     return;
   }
 
   Future<void> overwriteAllSubjects() async {
-    _subjectService.deleteAllSubjects();
+    subjectService.deleteAllSubjects();
 
     List<Subject> list = await _getAllSubjects();
     for (var element in list) {
-      _subjectService.addNewSubject(element);
+      subjectService.addNewSubject(element);
     }
 
     return;
   }
+
+  // Future<List<String>> importMeals() async {
+  //   List<String> meals = [];
+
+  //   final uri = Uri.parse(
+  //       'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=0613');
+
+  //   final response = await http.get(uri);
+  //   // final document = xml.XmlDocument.parse(response.body);
+  //   // final jidelnicek = document.findElements('pomjidelnic_xmljidelnic');
+
+  //   // print(jidelnicek);
+  //   // print(url);
+  //   print(response.reasonPhrase);
+
+  //   return meals;
+  // }
 
   Future<BakaResponse> importTimeTable() async {
     if (_url == null) {
@@ -248,13 +289,13 @@ class BakaService {
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
     _timetableDb.createTable(lessons.map(
-      (e) {
-        return e.toLessonTimes();
+      (lessonTimes) {
+        return lessonTimes.toLessonTimes();
       },
     ).toList());
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = _getSubjectsIdToIndex(subjectsJson);
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -265,43 +306,200 @@ class BakaService {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
         String subjectIdBaka = subjectJson['SubjectId'];
-        int? subjectIndex = bakaIdToSubjectIndex[subjectIdBaka];
+        int subjectIndex = bakaIdToSubjectIndex[subjectIdBaka]!;
         int hourId = subjectJson['HourId'];
 
-        if (subjectIndex != null) {
-          _timetableDb.newLessonAt(
-              weekday,
-              lessons.indexWhere(
-                (lesson) => lesson.id == hourId,
-              ),
-              subjectIndex);
-        }
+        _timetableDb.newLessonAt(
+          weekday,
+          lessons.indexWhere(
+            (lesson) => lesson.id == hourId,
+          ),
+          subjectIndex,
+        );
       }
     }
 
     return BakaResponse();
   }
 
-  Map<String, int> _getSubjectsIdToIndex(List<dynamic> subjectsJson) {
-    final subjects = _subjectService.getSortedList();
-    // for each id from baka, you have index of app's subjects
+  /// gets the current timetable for provided date, saturday and sunday are for next week
+  Future<(BakaResponse, TimeTableDTO?)> getCurrentTimetable(
+      DateTime date) async {
+    if (_url == null) {
+      return (BakaResponse(error: 'No url, try to log in first'), null);
+    }
+    if (_accessToken == null) {
+      return (BakaResponse(error: 'No token, try to log in first'), null);
+    }
+
+    bool connected = await connectedToInternet();
+    if (!connected) {
+      return (BakaResponse(error: 'Not connected to internet'), null);
+    }
+
+    DateTime mondayDate = date.toUtc();
+    int weekday = date.toUtc().weekday;
+
+    if (weekday == 6) {
+      mondayDate = mondayDate.add(const Duration(days: 2));
+    } else if (weekday == 7) {
+      mondayDate = mondayDate.add(const Duration(days: 1));
+    } else {
+      mondayDate = mondayDate.add(Duration(days: 1 - weekday));
+    }
+
+    Response response;
+    try {
+      response = await http.get(
+        _url!.replace(path: "/api/3/timetable/actual", queryParameters: {
+          'date': DateFormat('yyyy-MM-dd').format(mondayDate.toLocal())
+        }),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer $_accessToken",
+        },
+      );
+    } on SocketException catch (error) {
+      return (BakaResponse(error: error.message), null);
+    }
+
+    // when the url or school is incorrect, it needs to be decoded
+    if (!response.body.startsWith('{')) {
+      List<int> bytes = latin1.encode(response.body);
+      return (BakaResponse(error: utf8.decode(bytes)), null);
+    }
+
+    final parsedJson = json.decode(response.body);
+
+    if (parsedJson["Message"] != null) {
+      return (BakaResponse(error: parsedJson["Message"]), null);
+    }
+
+    var lessonsJson = parsedJson['Hours'] as List<dynamic>;
+    final lessons = _getLessons(lessonsJson);
+    TimeTableDTO timeTable = TimeTableDTO(
+        lessonTimes: lessons.map(
+      (lessonTime) {
+        return lessonTime.toLessonTimes();
+      },
+    ).toList());
+    timeTable.dates = mondayDate.allDaysInThisWeek();
+
+    var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
+    final subjects = subjectService.getMap();
+
+    final teachersJson = parsedJson['Teachers'] as List<dynamic>;
+    Map<String, Teacher> teachersMap = {};
+    for(final teacherJson in teachersJson){
+      final teacher = Teacher(name: teacherJson['Name'], shortcut: teacherJson['Abbrev']);
+
+      teachersMap.addAll({teacherJson['Id']: teacher});
+    }
+    
+    final roomsJson = parsedJson['Rooms'] as List<dynamic>;
+    Map<String, String> roomsMap = {};
+    for(final roomJson in roomsJson){
+      roomsMap.addAll({roomJson['Id']: roomJson['Abbrev']});
+    }
+
+    var daysJson = parsedJson['Days'] as List<dynamic>;
+    for (int weekday = 0; weekday < daysJson.length; weekday++) {
+      final dayJson = daysJson[weekday];
+      for (int lessonIndex = 0;
+          lessonIndex < dayJson['Atoms'].length;
+          lessonIndex++) {
+        var subjectJson = dayJson['Atoms'][lessonIndex];
+
+        String? subjectIdBaka = subjectJson['SubjectId'];
+        String? teacherId = subjectJson['TeacherId'];
+        String? roomId = subjectJson['RoomId'];
+        int? subjectIndex = bakaIdToSubjectIndex[subjectIdBaka];
+        int hourId = subjectJson['HourId'];
+        final changeJson = subjectJson['Change'];
+
+        BakaChange? change;
+        if (changeJson != null) {
+          change = BakaChange(
+            type: getChangeType(changeJson['ChangeType']),
+            description: changeJson['Description'],
+            name: changeJson['TypeName'],
+            shortcut: changeJson['TypeAbbrev'],
+          );
+        }
+
+        final subject = subjects[subjectIndex];
+
+        final teacher = teachersMap[teacherId];
+        final room = roomsMap[roomId];
+
+        timeTable.table[weekday][lessons.indexWhere(
+          (lesson) => lesson.id == hourId,
+        )] = TimeTableLesson(
+          subject: subject,
+          change: change,
+          teacher: teacher,
+          room: room,
+        );
+      }
+    }
+
+    return (BakaResponse(), timeTable);
+  }
+
+  /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
+  Future<Map<String, int>> _getSubjectsIdToIndex(
+      List<dynamic> subjectsJson) async {
+    final subjects = subjectService.getSortedList();
     Map<String, int> bakalariSubjectIdToSubjectIndex = {};
 
     for (var subjectJson in subjectsJson) {
       String bakaId = subjectJson['Id'];
       String shortcut = subjectJson['Abbrev'];
       String name = subjectJson['Name'];
+      bool subjectExisted = false;
 
       for (var subject in subjects) {
-        if (subject.containsText(name) && subject.containsText(shortcut)) {
+        if (subject.bakaId == bakaId) {
           bakalariSubjectIdToSubjectIndex.addAll({bakaId: subject.dbIndex});
+          subjectExisted = true;
           break;
         }
+      }
+
+      if (!subjectExisted) {
+        var newSubject = await subjectService.addNewSubject(Subject(
+          name: name,
+          shortcut: shortcut,
+          bakaId: bakaId,
+        ));
+        bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.dbIndex});
       }
     }
 
     return bakalariSubjectIdToSubjectIndex;
   }
+
+  // Map<String, int> _getSubjectsIdToIndex(List<dynamic> subjectsJson) {
+  //   final subjects = subjectService.getSortedList();
+  //   // for each id from baka, you have index of app's subjects
+  //   Map<String, int> bakalariSubjectIdToSubjectIndex = {};
+
+  //   for (var subjectJson in subjectsJson) {
+  //     String bakaId = subjectJson['Id'];
+  //     String shortcut = subjectJson['Abbrev'];
+  //     String name = subjectJson['Name'];
+
+  //     for (var subject in subjects) {
+  //       if (subject.containsText(name) && subject.containsText(shortcut)) {
+  //         bakalariSubjectIdToSubjectIndex.addAll({bakaId: subject.dbIndex});
+  //         break;
+  //       }
+  //     }
+  //   }
+  //
+  //   return bakalariSubjectIdToSubjectIndex;
+  // }
 
   List<LessonTimesBaka> _getLessons(List<dynamic> lessonsJson) {
     List<LessonTimesBaka> lessons = [];

@@ -6,11 +6,13 @@ class SubjectDTO {
     required this.name,
     required this.shortcut,
     required this.dbIndex,
+    this.bakaId,
   });
 
   String name;
   String shortcut;
   int dbIndex;
+  String? bakaId;
 
   Subject convert() {
     return Subject(name: name, shortcut: shortcut);

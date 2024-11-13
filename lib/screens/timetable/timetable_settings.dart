@@ -8,16 +8,12 @@ class TimetableSettings extends StatefulWidget {
     super.key,
     required this.showWholeWeek,
     required this.tileWidth,
-    required this.showSubjectNames,
-    required this.changeShowSubjectName,
     required this.changeTileWidth,
     required this.changeShowWholeWeek,
   });
 
   final bool showWholeWeek;
-  final bool showSubjectNames;
   final double tileWidth;
-  final void Function(bool value) changeShowSubjectName;
   final void Function(double width) changeTileWidth;
   final void Function(bool value) changeShowWholeWeek;
 
@@ -28,7 +24,6 @@ class TimetableSettings extends StatefulWidget {
 class _TimetableSettingsState extends State<TimetableSettings> {
   late bool showWholeWeek = widget.showWholeWeek;
   late double tileWidth = widget.tileWidth;
-  late bool showSubjectNames = widget.showSubjectNames;
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +38,6 @@ class _TimetableSettingsState extends State<TimetableSettings> {
               setState(() {
                 widget.changeShowWholeWeek(value);
                 showWholeWeek = value;
-              });
-            },
-          ),
-        ),
-        SettingTile(
-          label: 'Show names of subjects',
-          action: SwitchAction(
-            initialValue: showSubjectNames,
-            onChanged: (value) {
-              setState(() {
-                widget.changeShowSubjectName(value);
-                showSubjectNames = value;
               });
             },
           ),

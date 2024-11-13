@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/data/table_data/lesson_times_model.dart';
+import 'package:school_manager/data/table_data/table_dto_model.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/screens/timetable/widgets/timetable_subject.dart';
+import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
+import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -22,34 +26,143 @@ class _HomeScreenState extends State<HomeScreen> {
   late int hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
   late int examNumberOfIncomplete = examService.getNumberOfIncomplete();
 
-  var tommorrow = DateTime.now().toUtc().add(const Duration(days: 1));
-  late var tommorrowHw = homeworkService.getForDay(tommorrow);
-  late var tommorrowExam = examService.getForDay(tommorrow);
+  // for debugging
+  // final now = DateTime(2024, 11, 13, 12, 51);
+  final now = DateTime.now();
+  late var dateToShow = now;
+  late var hwToShow = homeworkService.getForDay(dateToShow);
+  late var examToShow = examService.getForDay(dateToShow);
   late var missedHw = homeworkService.getMissedHw();
-  late var upcomingLessons = timetableDatabase.upcomingLessons;
+  late TimeTableDTO timeTable = timetableDatabase.timeTable;
+  late var upcomingLessons = timeTable.getUpcomingLessons(dateToShow);
 
   void updateView() {
     setState(() {
       hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
       examNumberOfIncomplete = examService.getNumberOfIncomplete();
-      tommorrow = DateTime.now().toUtc().add(const Duration(days: 1));
-      tommorrowHw = homeworkService.getForDay(tommorrow);
-      tommorrowExam = examService.getForDay(tommorrow);
+      hwToShow = homeworkService.getForDay(dateToShow);
+      examToShow = examService.getForDay(dateToShow);
       missedHw = homeworkService.getMissedHw();
-      upcomingLessons = timetableDatabase.upcomingLessons;
     });
+  }
+
+  Future<void> setTimetable() async {
+    if (!bakaService.isLoggedIn) {
+      await tryLogin();
+    }
+    showMessage('Getting the timetable', isContinuos: true);
+
+    var response = await bakaService.getCurrentTimetable(now);
+
+    if (response.$1.isSuccess) {
+      showMessage('Timetable loaded');
+      if (response.$2 != null && mounted) {
+        setState(() {
+          timeTable = response.$2!;
+        });
+      }
+    } else {
+      tryLogin();
+      showMessage(response.$1.error ?? '');
+    }
+
+    return;
+  }
+
+  Future<void> tryLogin() async {
+    showMessage('Logging in', isContinuos: true);
+    await bakaService.tryLogin().then(
+      (value) {
+        if (value.isSuccess) {
+          showMessage('Logged in');
+        } else {
+          showMessage(value.error ?? '', isError: true);
+        }
+      },
+    );
+    return;
+  }
+
+  void showMessage(String message,
+      {bool isError = false, bool isContinuos = false}) {
+    if (mounted) {
+      final duration = isError
+          ? const Duration(seconds: 5)
+          : isContinuos
+              ? const Duration(days: 1)
+              : const Duration(seconds: 1);
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: duration,
+          backgroundColor:
+              isError ? Theme.of(context).colorScheme.errorContainer : null,
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                message,
+                style: TextStyle(
+                  color: isError
+                      ? Theme.of(context).colorScheme.onErrorContainer
+                      : null,
+                ),
+              ),
+              if (isContinuos)
+                CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(
+      Duration.zero,
+      () {
+        setTimetable();
+      },
+    );
+  }
+
+  bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
+    bool isEmpty = true;
+    lessons.forEach(
+      (lessonTimes, lesson) {
+        if (!lesson.isEmpty) {
+          isEmpty = false;
+        }
+      },
+    );
+    return isEmpty;
   }
 
   @override
   Widget build(BuildContext context) {
-    bool showUpcomingLessons = false;
-    upcomingLessons.forEach(
-      (key, value) {
-        if (value != null) {
-          showUpcomingLessons = true;
-        }
-      },
-    );
+    dateToShow = now;
+    var upcomingLessons = timeTable.getUpcomingLessons(dateToShow);
+
+    bool showTommorrow = isLessonsEmpty(upcomingLessons);
+    if (showTommorrow) {
+      dateToShow = DateTime.utc(dateToShow.toUtc().year,
+              dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
+          .add(const Duration(days: 1))
+          .toLocal();
+
+      upcomingLessons = timeTable.getUpcomingLessons(dateToShow);
+      hwToShow = homeworkService.getForDay(dateToShow);
+      examToShow = examService.getForDay(dateToShow);
+    }
+    String whenText = showTommorrow ? 'tommorrow' : 'today';
+
+    bool showUpcomingLessons = !isLessonsEmpty(upcomingLessons);
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
@@ -64,10 +177,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         title: const Text('Home'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-        children: [
-          if (upcomingLessons.isNotEmpty)
+      body: RefreshIndicator(
+        onRefresh: () => setTimetable(),
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+          children: [
             Card(
               color: Theme.of(context).colorScheme.surfaceContainer,
               child: Padding(
@@ -125,65 +239,129 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          if (showUpcomingLessons)
+            if (showUpcomingLessons)
+              Card(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextSeparator(
+                        text: 'Lessons $whenText',
+                        action: IconButton(
+                          onPressed: () {
+                            navigatorKey.currentState?.push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CurrentTimetableScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.keyboard_arrow_right_rounded),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: upcomingLessons.entries.map<Widget>(
+                              (entry) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      width: settings
+                                          .get(Setting.timeTableTileWidth),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            entry.key.name,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          Text(
+                                            entry.key
+                                                .toStringFormatted(context),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 100,
+                                      // settings.get(Setting.timeTableTileWidth) +
+                                      // 8,
+                                      child: TimetableTile(
+                                        isHighlighted: entry.key.isActive &&
+                                            !showTommorrow,
+                                        lesson: entry.value,
+                                        columnWidth: 80,
+                                        // settings.get(Setting.timeTableTileWidth),
+                                        onTap: (lesson) =>
+                                            lesson?.showLessonDialog(context),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ).toList()),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (missedHw.isNotEmpty)
+              Card(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: HomeworkList(
+                    textFull: 'Missed homeworks',
+                    showText: true,
+                    showDates: true,
+                    hwList: missedHw,
+                    changeCompletion: changeCompletion,
+                    deleteHw: (dbIndex) =>
+                        deleteHw(context, dbIndex, () => updateView()).then(
+                      (value) => updateView(),
+                    ),
+                    editHw: (dbIndex) => editHw(context, dbIndex).then(
+                      (value) => updateView(),
+                    ),
+                    updateListView: updateView,
+                  ),
+                ),
+              ),
             Card(
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const TextSeparator(text: 'Upcoming lessons'),
-                    const SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                          children: upcomingLessons.entries.map<Widget>(
-                        (entry) {
-                          if (entry.value == null) {
-                            return const SizedBox();
-                          }
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: settings.get(Setting.timeTableTileWidth),
-                                child: Text(
-                                  entry.key.toStringFormatted(context),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 100,
-                                child: TimetableSubject(
-                                  isHighlighted: entry.key.isActive,
-                                  subject: entry.value,
-                                  columnWidth:
-                                      settings.get(Setting.timeTableTileWidth),
-                                  onTap: null,
-                                  showName:
-                                      settings.get(Setting.timeTableShowName),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ).toList()),
-                    ),
-                  ],
+                child: ExamList(
+                  textFull: 'Exams $whenText',
+                  showText: true,
+                  showDates: false,
+                  examList: examToShow,
+                  deleteExam: (dbIndex) =>
+                      deleteExam(context, dbIndex, () => updateView()).then(
+                    (value) => updateView(),
+                  ),
+                  editExam: (dbIndex) => editExam(context, dbIndex).then(
+                    (value) => updateView(),
+                  ),
                 ),
               ),
             ),
-          if (missedHw.isNotEmpty)
             Card(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: HomeworkList(
-                  textFull: 'Missed homeworks',
+                  textFull: 'Homeworks $whenText',
                   showText: true,
-                  showDates: true,
-                  hwList: missedHw,
+                  showDates: false,
+                  hwList: hwToShow,
                   changeCompletion: changeCompletion,
                   deleteHw: (dbIndex) =>
                       deleteHw(context, dbIndex, () => updateView()).then(
@@ -196,47 +374,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          Card(
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: ExamList(
-                textFull: 'Exams tommorrow',
-                showText: true,
-                showDates: false,
-                examList: tommorrowExam,
-                deleteExam: (dbIndex) =>
-                    deleteExam(context, dbIndex, () => updateView()).then(
-                  (value) => updateView(),
-                ),
-                editExam: (dbIndex) => editExam(context, dbIndex).then(
-                  (value) => updateView(),
-                ),
-              ),
-            ),
-          ),
-          Card(
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: HomeworkList(
-                textFull: 'Homeworks tommorrow',
-                showText: true,
-                showDates: false,
-                hwList: tommorrowHw,
-                changeCompletion: changeCompletion,
-                deleteHw: (dbIndex) =>
-                    deleteHw(context, dbIndex, () => updateView()).then(
-                  (value) => updateView(),
-                ),
-                editHw: (dbIndex) => editHw(context, dbIndex).then(
-                  (value) => updateView(),
-                ),
-                updateListView: updateView,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

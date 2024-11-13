@@ -10,7 +10,6 @@ enum Setting {
   themeMode,
   timeTableShowWholeWeek,
   timeTableTileWidth,
-  timeTableShowName,
   bakaKeepLoggedIn,
   calendarInitialIsTommorrow,
   calendarShowMissed,
@@ -54,10 +53,6 @@ class SettingsDatabase {
     Setting.timeTableTileWidth: SettingModel(
       defaultValue: 80.0,
       key: 'ttTileWidth',
-    ),
-    Setting.timeTableShowName: SettingModel(
-      defaultValue: false,
-      key: 'ttShowName',
     ),
     Setting.bakaKeepLoggedIn: SettingModel(
       defaultValue: false,

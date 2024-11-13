@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/lesson_times_model.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
@@ -27,30 +26,9 @@ class TimeTableDatabase {
     return _table.convertToDTO(subjects);
   }
 
-  Map<LessonTimes, SubjectDTO?> get upcomingLessons {
-    Map<LessonTimes, SubjectDTO?> upcomingLessons = {};
-
-    final timetable = timeTable;
-    final now = DateTime.now();
-    Map<int, LessonTimes> upcomingLessonTimes = {};
-
-    for (int i = 0; i < timetable.lessonTimes.length; i++) {
-      final lesson = timetable.lessonTimes[i];
-
-      if (TimeOfDay(hour: now.hour, minute: now.minute)
-          .isBefore(lesson.endTime)) {
-        upcomingLessonTimes.addAll({i: lesson});
-      }
-    }
-
-    for (var lessonIndex in upcomingLessonTimes.keys) {
-      upcomingLessons.addAll({
-        upcomingLessonTimes[lessonIndex]!: timetable.table[now.weekday - 1]
-            [lessonIndex]
-      });
-    }
-
-    return upcomingLessons;
+  @Deprecated('use  getUpcomingLessons method of timetableDTO')
+  Map<LessonTimes, TimeTableLesson> get upcomingLessons {
+    return timeTable.getUpcomingLessons(DateTime.now());
   }
 
   /// overwrites old table

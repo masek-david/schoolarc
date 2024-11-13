@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
+import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
 import 'package:school_manager/screens/db_info.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
@@ -48,6 +49,17 @@ class MyDrawer extends StatelessWidget {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const TimetableScreen(),
+              ),
+            );
+          },
+        ),
+        MyDrawerButton(
+          text: 'Current Timetable',
+          icon: const Icon(Icons.calendar_today_rounded),
+          onTap: () {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const CurrentTimetableScreen(),
               ),
             );
           },
