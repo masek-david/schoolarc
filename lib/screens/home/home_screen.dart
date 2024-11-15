@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> setTimetable() async {
     if (!bakaService.isLoggedIn) {
-      await tryLogin();
+      await refreshLogin();
     }
     showMessage('Getting the timetable', isContinuos: true);
 
@@ -62,16 +62,16 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } else {
-      tryLogin();
+      refreshLogin();
       showMessage(response.$1.error ?? '');
     }
 
     return;
   }
 
-  Future<void> tryLogin() async {
+  Future<void> refreshLogin() async {
     showMessage('Logging in', isContinuos: true);
-    await bakaService.tryLogin().then(
+    await bakaService.refreshLogin().then(
       (value) {
         if (value.isSuccess) {
           showMessage('Logged in');
@@ -83,8 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return;
   }
 
-  void showMessage(String message,
-      {bool isError = false, bool isContinuos = false}) {
+  void showMessage(
+    String message, {
+    bool isError = false,
+    bool isContinuos = false,
+  }) {
     if (mounted) {
       final duration = isError
           ? const Duration(seconds: 5)
@@ -101,12 +104,15 @@ class _HomeScreenState extends State<HomeScreen> {
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                message,
-                style: TextStyle(
-                  color: isError
-                      ? Theme.of(context).colorScheme.onErrorContainer
-                      : null,
+              Expanded(
+                child: Text(
+                  message,
+                  maxLines: 5,
+                  style: TextStyle(
+                    color: isError
+                        ? Theme.of(context).colorScheme.onErrorContainer
+                        : null,
+                  ),
                 ),
               ),
               if (isContinuos)
@@ -162,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
-    bool showUpcomingLessons = !isLessonsEmpty(upcomingLessons);
+    bool areThereUpcomingLessons = !isLessonsEmpty(upcomingLessons);
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
@@ -239,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            if (showUpcomingLessons)
+            // if (areThereLessonsTommorrow)
               Card(
                 color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 child: Padding(
@@ -262,6 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      areThereUpcomingLessons ?
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -307,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             ).toList()),
-                      ),
+                      ):Text('No lessons $whenText')
                     ],
                   ),
                 ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/data/subjects_data/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class SubjectsScreen extends StatefulWidget {
   const SubjectsScreen({super.key});
@@ -14,8 +15,7 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
-  final SubjectService _service = SubjectService();
-  late List<SubjectDTO> subjectList = _service.getSortedList();
+  late List<SubjectDTO> subjectList = subjectService.getSortedList();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController shortcutController = TextEditingController();
@@ -36,7 +36,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () async {
-          SubjectDTO newSubject = await _service.addNewSubject(
+          SubjectDTO newSubject = await subjectService.addNewSubject(
             Subject(
               name: nameController.text,
               shortcut: shortcutController.text,
@@ -58,7 +58,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   }
 
   void editSubject(int dbIndex) {
-    SubjectDTO subject = _service.getSubject(dbIndex);
+    SubjectDTO subject = subjectService.getSubject(dbIndex);
 
     nameController.text = subject.name;
     shortcutController.text = subject.shortcut;
@@ -74,9 +74,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             name: nameController.text,
             shortcut: shortcutController.text,
             dbIndex: subject.dbIndex,
+            bakaId: subject.bakaId,
           );
 
-          _service.editSubject(newSubject);
+          subjectService.editSubject(newSubject);
           setState(
             () {
               subjectList[subjectList.indexWhere(
@@ -97,8 +98,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   }
 
   void deleteSubject(int dbIndex) {
-    SubjectDTO deletedSubject = _service.getSubject(dbIndex);
-    _service.deleteSubject(deletedSubject.dbIndex);
+    SubjectDTO deletedSubject = subjectService.getSubject(dbIndex);
+    subjectService.deleteSubject(deletedSubject.dbIndex);
     setState(() {
       subjectList.removeWhere(
         (element) {
@@ -113,10 +114,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-            _service.revertLastlyDeletedSubject();
+            subjectService.revertLastlyDeletedSubject();
             if (mounted) {
               setState(() {
-                subjectList = _service.getSortedList();
+                subjectList = subjectService.getSortedList();
               });
             }
           },
@@ -131,6 +132,34 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subjects'),
+        actions: [
+          if (settings.get(Setting.showDebugInfo))
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Delete all subjects?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            subjectService.deleteAllSubjects();
+                            setState(() {
+                              subjectList = subjectService.getSortedList();
+                            });
+                          },
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                });
+              },
+              child: const Text('Delete all'),
+            ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new subject',
@@ -144,23 +173,29 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: subjectList.isEmpty
             ? const Center(
-              child: Text(
+                child: Text(
                   'No subjects found. You can create new subjects by tapping the plus button.',
                   textAlign: TextAlign.center,
                 ),
-            )
+              )
             : ReorderableListView.builder(
                 onReorderStart: (index) => HapticFeedback.lightImpact(),
-                itemCount: subjectList.length,
+                itemCount: subjectList.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == subjectList.length) {
+                    return const SizedBox(
+                      height: 100,
+                      key: Key('SubjectScreenSpacer'),
+                    );
+                  }
+
                   SubjectDTO subject = subjectList[index];
-      
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     key: Key('$index'),
                     child: SubjectTile(
                       subject: subject,
-                      onEdit: () => editSubject(subject.dbIndex),
+                      onTap: () => editSubject(subject.dbIndex),
                       onDelete: () => deleteSubject(subject.dbIndex),
                     ),
                   );
@@ -170,7 +205,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     newIndex -= 1;
                   }
                   final SubjectDTO item = subjectList.removeAt(oldIndex);
-                  _service.changeSequence(oldIndex, newIndex);
+                  subjectService.changeSequence(oldIndex, newIndex);
                   setState(
                     () {
                       subjectList.insert(newIndex, item);

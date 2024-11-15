@@ -14,20 +14,22 @@ class TimetableView extends StatelessWidget {
     required this.columnWidth,
     required this.onLessonTimesTapped,
     required this.onSubjectTapped,
+    this.textWhenEmpty,
   });
 
   final TimeTableDTO? timeTable;
   final bool showWholeWeek;
   final double columnWidth;
+  final String? textWhenEmpty;
   final void Function(LessonTimes lessonTimes, int lessonIndex)? onLessonTimesTapped;
   final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)? onSubjectTapped;
 
   @override
   Widget build(BuildContext context) {
     if (timeTable == null) {
-      return const Center(
+      return Center(
         child: Text(
-          'No timetable found.',
+          textWhenEmpty ?? 'No timetable found',
           textAlign: TextAlign.center,
         ),
       );

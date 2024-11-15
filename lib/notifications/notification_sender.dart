@@ -10,6 +10,7 @@ import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/extensions/string_extension.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class NotificationSender {
   static const String tommorrowChannel = 'tommorrow_channel';
@@ -77,6 +78,7 @@ class NotificationSender {
     String notificationText = '';
     String examsTextList = '';
     String homeworksTextList = '';
+    String? missedHwTextList;
 
     DateTime tommorowDate = DateTime.utc(
             arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
@@ -84,6 +86,7 @@ class NotificationSender {
 
     List<ExamDTO> examsForTommorow = ExamService().getForDay(tommorowDate);
     List<HomeworkDTO> hwsForTommorow = HomeworkService().getForDay(tommorowDate);
+    List<HomeworkDTO> missedHws = homeworkService.getMissedHw();
 
     // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {
@@ -109,8 +112,21 @@ class NotificationSender {
       homeworksTextList += '$hwText<br>';
     }
 
+    missedHws.sort(
+        (a, b) => a.deadline.compareTo(b.deadline));
+    for (int i = 0; i < missedHws.length; i++) {
+      HomeworkDTO hw = missedHws[i];
+      String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
+
+      String missedHwText =
+          '${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+
+      missedHwTextList ??= '';
+      missedHwTextList += '$missedHwText<br>';
+    }
+
     notificationText =
-        '${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
+        '${missedHwTextList != null ? '<b>Missed homeworks:</b> <br> $missedHwTextList <br>' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
 
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,

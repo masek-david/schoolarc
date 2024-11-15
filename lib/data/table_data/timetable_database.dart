@@ -1,15 +1,14 @@
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/lesson_times_model.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
 import 'package:school_manager/data/table_data/table_model.dart';
 import 'package:school_manager/extensions/timeofday_extension.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class TimeTableDatabase {
   final _tableBox = Hive.box('tableBox');
   late TimeTable _table = _tableBox.get(tableKey);
-  late final _subjectService = SubjectService();
   final String tableKey = 'table';
 
   TimeTableDTO get timeTable {
@@ -21,7 +20,7 @@ class TimeTableDatabase {
       _table = tempTable as TimeTable;
     }
 
-    var subjects = _subjectService.getMap();
+    var subjects = subjectService.getMap();
 
     return _table.convertToDTO(subjects);
   }

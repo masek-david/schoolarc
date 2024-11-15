@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/timetable_database.dart';
 import 'package:school_manager/extensions/color_extension.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/data/priority_model.dart';
 
@@ -71,8 +71,7 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   late int pickedPriority = widget.initialPriority;
   late final bool autoSetDate = widget.initialDate == null;
 
-  final SubjectService _subjectService = SubjectService();
-  late List<SubjectDTO> subjects = _subjectService.getSortedList();
+  late List<SubjectDTO> subjects = subjectService.getSortedList();
   final _timetable = TimeTableDatabase().timeTable;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(

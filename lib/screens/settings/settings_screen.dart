@@ -5,6 +5,7 @@ import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifica
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
+import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -97,6 +98,15 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          SettingTile(
+            label: 'Show debug info',
+            action: SwitchAction(
+              initialValue: settings.get(Setting.showDebugInfo),
+              onChanged: (value) {
+                settings.save(Setting.showDebugInfo, value);
+              },
+            ),
+          )
         ],
       ),
     );

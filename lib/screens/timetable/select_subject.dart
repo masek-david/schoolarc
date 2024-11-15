@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/widgets/subject_shortcut.dart';
+import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 
 Future<SubjectDTO?> showSelectSubject({
   required BuildContext context,
@@ -106,7 +106,7 @@ class SelectSubjectDialog extends StatelessWidget {
                                 vertical: 12, horizontal: 8),
                             child: Text(
                               'Clear',
-                              maxLines: 1,
+                              textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -120,42 +120,12 @@ class SelectSubjectDialog extends StatelessWidget {
 
                 return Padding(
                   padding: const EdgeInsets.all(4),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context, subject);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  child: SubjectShortcut(subject: subject),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    subject.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  child: SubjectTile(
+                    subject: subject,
+                    onTap: () {
+                      Navigator.pop(context, subject);
+                    },
+                    onDelete: null,
                   ),
                 );
               },

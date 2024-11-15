@@ -2,14 +2,13 @@ import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
-  final SubjectService _subjectService = SubjectService();
-  late final Map<int, SubjectDTO> _subjectsDbIndex = _subjectService.getMap();
+  late final Map<int, SubjectDTO> _subjectsDbIndex = subjectService.getMap();
   // key is the dbIndex
   late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
   // key is the priority, for each priority is a list of dbIndexes

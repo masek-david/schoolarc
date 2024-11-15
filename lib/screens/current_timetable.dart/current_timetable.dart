@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/bakalari/baka_service.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
+import 'package:school_manager/screens/current_timetable.dart/fab_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
@@ -17,10 +18,8 @@ class CurrentTimetableScreen extends StatefulWidget {
 class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
   TimeTableDTO? timetable;
   DateTime date = DateTime.now();
-  bool isLoadingBack = false;
-  bool isLoadingForward = false;
-  bool isLoading = false;
-  bool isLoggedIn = false;
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -32,34 +31,7 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
     );
   }
 
-  Future<bool> tryLogin() async {
-    showMessage('Logging in', isContinuos: true);
-    await bakaService.tryLogin().then(
-      (value) {
-        evaluateResponse(
-          value,
-          onSuccess: () {
-            showMessage('Logged in');
-            setState(() {
-              isLoggedIn = true;
-            });
-          },
-        );
-
-        if (value.isSuccess) {
-          return true;
-        }
-      },
-    );
-
-    return false;
-  }
-
   Future<void> setTimetable() async {
-    if (!bakaService.isLoggedIn) {
-      await tryLogin();
-    }
-
     var response = await bakaService.getCurrentTimetable(date);
 
     evaluateResponse(
@@ -80,23 +52,16 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
     BakaResponse response, {
     required void Function() onSuccess,
   }) {
-    if (response.isSuccess) {
-      onSuccess();
+    if (mounted) {
       setState(() {
         isLoading = false;
-        isLoadingBack = false;
-        isLoadingForward = false;
       });
+    }
+    if (response.isSuccess) {
+      onSuccess();
     } else {
-      if (mounted) {
-        tryLogin();
-        showMessage(response.error ?? '', isError: true);
-        setState(() {
-          isLoading = false;
-          isLoadingBack = false;
-          isLoadingForward = false;
-        });
-      }
+      errorMessage = response.error;
+      showMessage(response.error ?? '', isError: true);
     }
   }
 
@@ -152,54 +117,27 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                if (isLoadingBack) const CircularProgressIndicator(),
-                IconButton(
-                  onPressed: () {
-                    date = date.subtract(const Duration(days: 7));
-                    setTimetable();
-                    setState(() {
-                      isLoadingBack = true;
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                ),
-              ],
+            FabButton(
+              icon: Icons.arrow_back,
+              onTap: () async {
+                date = date.subtract(const Duration(days: 7));
+                return setTimetable();
+              },
             ),
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                if (isLoading) const CircularProgressIndicator(),
-                IconButton(
-                  onPressed: () {
-                    date = DateTime.now();
-                    setTimetable();
-                    setState(() {
-                      isLoading = true;
-                    });
-                  },
-                  icon: const Icon(Icons.home),
-                ),
-              ],
+            FabButton(
+              icon: Icons.home,
+              onTap: () async {
+                date = DateTime.now();
+                return setTimetable();
+              },
             ),
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                if (isLoadingForward) const CircularProgressIndicator(),
-                IconButton(
-                  onPressed: () {
-                    date = date.add(const Duration(days: 7));
-                    setTimetable();
-                    setState(() {
-                      isLoadingForward = true;
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_forward),
-                ),
-              ],
-            ),
+            FabButton(
+              icon: Icons.arrow_forward,
+              onTap: () async {
+                date = date.add(const Duration(days: 7));
+                return setTimetable();
+              },
+            )
           ],
         ),
       ),
@@ -207,22 +145,28 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
         onRefresh: () async {
           await setTimetable();
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: TimetableView(
-                timeTable: timetable,
-                showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
-                columnWidth: settings.get(Setting.timeTableTileWidth),
-                onLessonTimesTapped: null,
-                onSubjectTapped: (weekday, lessonIndex, lesson) {
-                  lesson.showLessonDialog(context);
-                },
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: TimetableView(
+                      textWhenEmpty: errorMessage,
+                      timeTable: timetable,
+                      showWholeWeek:
+                          settings.get(Setting.timeTableShowWholeWeek),
+                      columnWidth: settings.get(Setting.timeTableTileWidth),
+                      onLessonTimesTapped: null,
+                      onSubjectTapped: (weekday, lessonIndex, lesson) {
+                        lesson.showLessonDialog(context);
+                      },
+                    ),
+                  ),
+                  const ListBottomSpacer(),
+                ],
               ),
-            ),
-            const ListBottomSpacer(),
-          ],
-        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ enum Setting {
   bakaKeepLoggedIn,
   calendarInitialIsTommorrow,
   calendarShowMissed,
+  showDebugInfo,
 }
 
 class SettingModel {
@@ -65,6 +66,10 @@ class SettingsDatabase {
     Setting.calendarShowMissed: SettingModel(
       defaultValue: true,
       key: 'calendarShowMissed',
+    ),
+    Setting.showDebugInfo: SettingModel(
+      defaultValue: false,
+      key: 'showDebug',
     ),
   };
   final _settingsBox = Hive.box('settings');

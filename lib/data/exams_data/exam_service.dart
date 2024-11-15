@@ -2,14 +2,13 @@ import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class ExamService {
   final ExamDatabase _db = ExamDatabase();
-  final SubjectService _subjectService = SubjectService();
-  late final Map<int, SubjectDTO> _subjectsDbIndex = _subjectService.getMap();
+  late final Map<int, SubjectDTO> _subjectsDbIndex = subjectService.getMap();
   // key is the dbIndex
   late Map<int, Exam> _examDbIndexMap = _db.getDatabase();
   // key is the priority, for each priority is a list of dbIndexes

@@ -15,11 +15,20 @@ class SubjectDTO {
   String? bakaId;
 
   Subject convert() {
-    return Subject(name: name, shortcut: shortcut);
+    return Subject(
+      name: name,
+      shortcut: shortcut,
+      bakaId: bakaId,
+    );
   }
 
   String get trimmedShortcut {
     return shortcut.trim();
+  }
+
+  @override
+  String toString() {
+    return '$name, $shortcut, $bakaId';
   }
 
   bool containsText(String text) {

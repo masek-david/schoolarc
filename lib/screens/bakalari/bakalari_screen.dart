@@ -43,14 +43,14 @@ class _BakalariScreenState extends State<BakalariScreen> {
 
     loadLogin();
 
-    _service.tryLogin().then(
+    _service.refreshLogin().then(
           (value) => evaluateResponse(value, shouldShowMessage: true),
         );
   }
 
   void loadLogin() async {
-    _schoolController.text = await _service.schoolName ?? '';
-    _usernameController.text = await _service.username ?? '';
+    _schoolController.text = await _service.schoolName;
+    _usernameController.text = await _service.username;
   }
 
   void evaluateResponse(
@@ -112,7 +112,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
             setState(() {
               isLoggedIn = false;
             });
-            await _service.tryLogin().then(
+            await _service.refreshLogin().then(
                   evaluateResponse,
                 );
           },
@@ -203,7 +203,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                         });
 
                         _service
-                            .login(
+                            .firstLogin(
                               school: _schoolController.text,
                               username: _usernameController.text,
                               password: _passwordController.text,
@@ -214,82 +214,82 @@ class _BakalariScreenState extends State<BakalariScreen> {
                 child: const Text("Log in"),
               ),
               const Divider(),
-              Row(
-                children: [
-                  const Text('Subjects'),
-                  const Spacer(),
-                  OutlinedButton(
-                    onPressed: isLoggedIn && !isLoading
-                        ? () {
-                            setState(() {
-                              isLoading = true;
-                              isLoggedIn = false;
-                            });
-                            _service.addAllSubjects().then(
-                              (value) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                showMessage('Added all subjects');
-                              },
-                            );
-                          }
-                        : null,
-                    child: const Text('Add all'),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: isLoggedIn && !isLoading
-                        ? () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Overwrite?'),
-                                  actions: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('Close'),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            setState(() {
-                                              isLoading = true;
-                                            });
-                                            _service
-                                                .overwriteAllSubjects()
-                                                .then(
-                                              (value) {
-                                                setState(() {
-                                                  isLoading = false;
-                                                  showMessage(
-                                                      'All subjects overwritten');
-                                                });
-                                              },
-                                            );
-                                          },
-                                          child: const Text('Overwrite'),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                  content: const Text(
-                                      'Overwriting will delete all of your subjects and replace them with subjects from Bakaláři.'),
-                                );
-                              },
-                            );
-                          }
-                        : null,
-                    child: const Text('Overwrite all'),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     const Text('Subjects'),
+              //     const Spacer(),
+              //     OutlinedButton(
+              //       onPressed: isLoggedIn && !isLoading
+              //           ? () {
+              //               setState(() {
+              //                 isLoading = true;
+              //                 isLoggedIn = false;
+              //               });
+              //               _service.addAllSubjects().then(
+              //                 (value) {
+              //                   setState(() {
+              //                     isLoading = false;
+              //                   });
+              //                   showMessage('Added all subjects');
+              //                 },
+              //               );
+              //             }
+              //           : null,
+              //       child: const Text('Add all'),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     OutlinedButton(
+              //       onPressed: isLoggedIn && !isLoading
+              //           ? () {
+              //               showDialog(
+              //                 context: context,
+              //                 builder: (context) {
+              //                   return AlertDialog(
+              //                     title: const Text('Overwrite?'),
+              //                     actions: [
+              //                       Row(
+              //                         mainAxisAlignment: MainAxisAlignment.end,
+              //                         children: [
+              //                           TextButton(
+              //                             onPressed: () =>
+              //                                 Navigator.pop(context),
+              //                             child: const Text('Close'),
+              //                           ),
+              //                           const SizedBox(width: 8),
+              //                           TextButton(
+              //                             onPressed: () {
+              //                               Navigator.pop(context);
+              //                               setState(() {
+              //                                 isLoading = true;
+              //                               });
+              //                               _service
+              //                                   .overwriteAllSubjects()
+              //                                   .then(
+              //                                 (value) {
+              //                                   setState(() {
+              //                                     isLoading = false;
+              //                                     showMessage(
+              //                                         'All subjects overwritten');
+              //                                   });
+              //                                 },
+              //                               );
+              //                             },
+              //                             child: const Text('Overwrite'),
+              //                           ),
+              //                         ],
+              //                       ),
+              //                     ],
+              //                     content: const Text(
+              //                         'Overwriting will delete all of your subjects and replace them with subjects from Bakaláři.'),
+              //                   );
+              //                 },
+              //               );
+              //             }
+              //           : null,
+              //       child: const Text('Overwrite all'),
+              //     ),
+              //   ],
+              // ),
               Row(
                 children: [
                   const Text('Timetable'),

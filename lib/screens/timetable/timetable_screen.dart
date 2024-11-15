@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/lesson_times_model.dart';
 import 'package:school_manager/data/table_data/timetable_database.dart';
 import 'package:school_manager/screens/timetable/new_lesson_times.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/screens/timetable/timetable_settings.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -17,13 +17,11 @@ class TimetableScreen extends StatefulWidget {
 
 class _TimetableScreenState extends State<TimetableScreen> {
   late final _db = TimeTableDatabase();
-  late final _subjectService = SubjectService();
-  late final _settings = SettingsDatabase();
 
   late var timeTable = _db.timeTable;
 
-  late double columnWidth = _settings.get(Setting.timeTableTileWidth);
-  late bool showWholeWeek = _settings.get(Setting.timeTableShowWholeWeek);
+  late double columnWidth = settings.get(Setting.timeTableTileWidth);
+  late bool showWholeWeek = settings.get(Setting.timeTableShowWholeWeek);
 
   void updateView() {
     setState(() {
@@ -48,13 +46,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     changeShowWholeWeek: (value) {
                       setState(() {
                         showWholeWeek = value;
-                        _settings.save(Setting.timeTableShowWholeWeek, value);
+                        settings.save(Setting.timeTableShowWholeWeek, value);
                       });
                     },
                     changeTileWidth: (width) {
                       setState(() {
                         columnWidth = width;
-                        _settings.save(Setting.timeTableTileWidth, width);
+                        settings.save(Setting.timeTableTileWidth, width);
                       });
                     },
                   );
@@ -114,7 +112,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
         onSubjectTapped: (weekday, lessonIndex, lesson) {
           showSelectSubject(
               context: context,
-              subjects: _subjectService.getSortedList(),
+              subjects: subjectService.getSortedList(),
               delete: () {
                 _db.deleteLessonAt(weekday, lessonIndex);
                 updateView();

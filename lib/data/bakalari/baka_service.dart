@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -31,18 +32,27 @@ class BakaService {
   BakaService();
   String? _accessToken;
   String? _refreshToken;
-  Uri? _url;
 
-  bool isLoggedIn = false;
+  DateTime? _tokenExpiration;
 
   final _timetableDb = TimeTableDatabase();
   final _secureStorage = SecureStorage();
 
-  Future<String?> get username async {
+  bool get isLoggedIn {
+    if (_tokenExpiration == null) {
+      return false;
+    }
+    if (_accessToken == null) {
+      return false;
+    }
+    return DateTime.now().isBefore(_tokenExpiration!);
+  }
+
+  Future<String> get username async {
     return _secureStorage.read(SecureStorage.bakaUsernameKey);
   }
 
-  Future<String?> get schoolName async {
+  Future<String> get schoolName async {
     return _secureStorage.read(SecureStorage.bakaSchoolNameKey);
   }
 
@@ -64,10 +74,8 @@ class BakaService {
   }
 
   /// tries to log in from memory using saved refresh token
-  Future<BakaResponse> tryLogin() async {
-    String schoolName = await _secureStorage.read(
-      SecureStorage.bakaSchoolNameKey,
-    );
+  Future<BakaResponse> refreshLogin() async {
+    String schoolName = await this.schoolName;
     _refreshToken = await _secureStorage.read(
       SecureStorage.bakaRefreshTokenKey,
     );
@@ -76,38 +84,42 @@ class BakaService {
       return BakaResponse(error: 'Please log in');
     }
 
-    _url = Uri(
+    final url = Uri(
       scheme: 'https',
       host: "$schoolName.bakalari.cz",
       path: "/api/login",
     );
-    const head = {"Content-Type": "application/x-www-form-urlencoded"};
+    const head = {
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
     final body =
         'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
-    var bakaResponse = await callLogin(_url!, head, body);
+    var bakaResponse = await _callLogin(url, head, body);
 
     if (bakaResponse.isSuccess) {
       _secureStorage.write(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-      isLoggedIn = true;
     }
 
     return bakaResponse;
   }
 
-  Future<BakaResponse> login({
+  Future<BakaResponse> firstLogin({
     required String school,
     required String username,
     required String password,
     required bool keepLoggedIn,
   }) async {
-    _url =
-        Uri(scheme: 'https', host: "$school.bakalari.cz", path: "/api/login");
+    final url = Uri(
+      scheme: 'https',
+      host: "$school.bakalari.cz",
+      path: "/api/login",
+    );
     const head = {"Content-Type": "application/x-www-form-urlencoded"};
     final body =
         'client_id=ANDR&grant_type=password&username=$username&password=$password';
 
-    var bakaResponse = await callLogin(_url!, head, body);
+    var bakaResponse = await _callLogin(url, head, body);
 
     if (keepLoggedIn) {
       if (bakaResponse.isSuccess) {
@@ -116,20 +128,17 @@ class BakaService {
         _secureStorage.write(SecureStorage.bakaUsernameKey, username);
       }
     } else {
+      // i dont know if it stays empty, im not risking removing it
       _secureStorage.write(SecureStorage.bakaRefreshTokenKey, '');
       _secureStorage.write(SecureStorage.bakaSchoolNameKey, '');
       _secureStorage.write(SecureStorage.bakaUsernameKey, '');
-    }
-
-    if (bakaResponse.isSuccess) {
-      isLoggedIn = true;
     }
 
     return bakaResponse;
   }
 
   /// logs in, returns errors and sets this._refreshToken and this._accessToken
-  Future<BakaResponse> callLogin(Uri url, var head, var body) async {
+  Future<BakaResponse> _callLogin(Uri url, var head, var body) async {
     var connected = await connectedToInternet();
     if (!connected) {
       return BakaResponse(error: 'Not connected to internet');
@@ -137,13 +146,19 @@ class BakaService {
 
     Response response;
     try {
-      response = await http.post(
-        url,
-        headers: head,
-        body: body,
-      );
+      response = await http
+          .post(
+            url,
+            headers: head,
+            body: body,
+          )
+          .timeout(const Duration(seconds: 10));
     } on SocketException catch (_) {
-      return BakaResponse(error: 'No valid school address');
+      return BakaResponse(error: 'Couldn\'t connect to the address: $url');
+    } on TimeoutException catch (_) {
+      return BakaResponse(error: 'The request timed out after 10 seconds.');
+    } catch (e) {
+      return BakaResponse(error: 'An unexpected error occurred: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -153,31 +168,46 @@ class BakaService {
     }
 
     final parsedJson = json.decode(response.body);
-    _accessToken = parsedJson["access_token"];
-    _refreshToken = parsedJson["refresh_token"];
+    final accessToken = parsedJson["access_token"];
+    final refreshToken = parsedJson["refresh_token"];
+    final expiresInSeconds = parsedJson['expires_in'] as int;
 
-    if (_accessToken == null || _refreshToken == null) {
+    if (accessToken == null || refreshToken == null) {
       return BakaResponse(error: parsedJson['error_description']);
     }
+
+    _accessToken = accessToken;
+    _refreshToken = refreshToken;
+    _secureStorage.write(SecureStorage.bakaRefreshTokenKey, refreshToken);
+    _tokenExpiration =
+        DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
 
     return BakaResponse();
   }
 
   /// returns list of subjects from bakalari
-  Future<List<Subject>> _getAllSubjects() async {
-    bool connected = await connectedToInternet();
-    if (!connected) {
-      throw 'no connection';
+  Future<(BakaResponse, List<Subject>)> _getAllSubjects() async {
+    if (!isLoggedIn) {
+      final response = await refreshLogin();
+      if (!response.isSuccess) {
+        return (response, <Subject>[]);
+      }
     }
 
-    if (_url == null) {
-      throw 'no url';
+    bool connected = await connectedToInternet();
+    if (!connected) {
+      return (BakaResponse(error: 'Not connected to internet'), <Subject>[]);
     }
-    if (_accessToken == null) {
-      throw 'no access token';
-    }
+
+    String schoolName = await this.schoolName;
+    final url = Uri(
+      scheme: 'https',
+      host: "$schoolName.bakalari.cz",
+      path: "/api/3/subjects",
+    );
+
     var response = await http.get(
-      _url!.replace(path: "/api/3/subjects"),
+      url,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": " Bearer $_accessToken",
@@ -194,6 +224,7 @@ class BakaService {
       String shortcut = subjectJson['SubjectAbbrev'];
       String bakaId = subjectJson['SubjectID'];
 
+      // TODO add teachers?
       // checks for duplicates, will add the teachers surname to the subject name
       for (var subject in listOfSubjects) {
         if (subject.name == name && subject.shortcut == shortcut) {
@@ -209,11 +240,12 @@ class BakaService {
       ));
     }
 
-    return listOfSubjects;
+    return (BakaResponse(), listOfSubjects);
   }
 
   Future<void> addAllSubjects() async {
-    List<Subject> list = await _getAllSubjects();
+    final result = await _getAllSubjects();
+    List<Subject> list = result.$2;
     for (var element in list) {
       subjectService.addNewSubject(element);
     }
@@ -222,8 +254,9 @@ class BakaService {
 
   Future<void> overwriteAllSubjects() async {
     subjectService.deleteAllSubjects();
+    final result = await _getAllSubjects();
 
-    List<Subject> list = await _getAllSubjects();
+    List<Subject> list = result.$2;
     for (var element in list) {
       subjectService.addNewSubject(element);
     }
@@ -249,11 +282,11 @@ class BakaService {
   // }
 
   Future<BakaResponse> importTimeTable() async {
-    if (_url == null) {
-      return BakaResponse(error: 'No url, try to log in first');
-    }
-    if (_accessToken == null) {
-      return BakaResponse(error: 'No token, try to log in first');
+    if (!isLoggedIn) {
+      final response = await refreshLogin();
+      if (!response.isSuccess) {
+        return response;
+      }
     }
 
     bool connected = await connectedToInternet();
@@ -261,10 +294,17 @@ class BakaService {
       return BakaResponse(error: 'Not connected to internet');
     }
 
+    String schoolName = await this.schoolName;
+    final url = Uri(
+      scheme: 'https',
+      host: "$schoolName.bakalari.cz",
+      path: "/api/3/timetable/permanent",
+    );
+
     Response response;
     try {
       response = await http.get(
-        _url!.replace(path: "/api/3/timetable/permanent"),
+        url,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "Authorization": " Bearer $_accessToken",
@@ -272,6 +312,10 @@ class BakaService {
       );
     } on SocketException catch (error) {
       return BakaResponse(error: error.message);
+    } on TimeoutException catch (_) {
+      return BakaResponse(error: 'The request timed out after 10 seconds.');
+    } catch (e) {
+      return BakaResponse(error: 'An unexpected error occurred: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -325,11 +369,11 @@ class BakaService {
   /// gets the current timetable for provided date, saturday and sunday are for next week
   Future<(BakaResponse, TimeTableDTO?)> getCurrentTimetable(
       DateTime date) async {
-    if (_url == null) {
-      return (BakaResponse(error: 'No url, try to log in first'), null);
-    }
-    if (_accessToken == null) {
-      return (BakaResponse(error: 'No token, try to log in first'), null);
+    if (!isLoggedIn) {
+      final response = await refreshLogin();
+      if (!response.isSuccess) {
+        return (response, null);
+      }
     }
 
     bool connected = await connectedToInternet();
@@ -339,6 +383,16 @@ class BakaService {
 
     DateTime mondayDate = date.toUtc();
     int weekday = date.toUtc().weekday;
+
+    String schoolName = await this.schoolName;
+    final url = Uri(
+      scheme: 'https',
+      host: "$schoolName.bakalari.cz",
+      path: "/api/3/timetable/actual",
+      queryParameters: {
+        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toLocal())
+      },
+    );
 
     if (weekday == 6) {
       mondayDate = mondayDate.add(const Duration(days: 2));
@@ -351,16 +405,21 @@ class BakaService {
     Response response;
     try {
       response = await http.get(
-        _url!.replace(path: "/api/3/timetable/actual", queryParameters: {
-          'date': DateFormat('yyyy-MM-dd').format(mondayDate.toLocal())
-        }),
+        url,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "Authorization": "Bearer $_accessToken",
         },
-      );
+      ).timeout(const Duration(seconds: 10));
     } on SocketException catch (error) {
       return (BakaResponse(error: error.message), null);
+    } on TimeoutException catch (_) {
+      return (
+        BakaResponse(error: 'The request timed out after 10 seconds.'),
+        null
+      );
+    } catch (e) {
+      return (BakaResponse(error: 'An unexpected error occurred: $e'), null);
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -391,15 +450,18 @@ class BakaService {
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
-    for(final teacherJson in teachersJson){
-      final teacher = Teacher(name: teacherJson['Name'], shortcut: teacherJson['Abbrev']);
+    for (final teacherJson in teachersJson) {
+      final teacher = Teacher(
+        name: teacherJson['Name'],
+        shortcut: teacherJson['Abbrev'],
+      );
 
       teachersMap.addAll({teacherJson['Id']: teacher});
     }
-    
+
     final roomsJson = parsedJson['Rooms'] as List<dynamic>;
     Map<String, String> roomsMap = {};
-    for(final roomJson in roomsJson){
+    for (final roomJson in roomsJson) {
       roomsMap.addAll({roomJson['Id']: roomJson['Abbrev']});
     }
 

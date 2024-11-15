@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
 import 'package:school_manager/screens/db_info.dart';
@@ -25,6 +26,7 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final bool showDebug = settings.get(Setting.showDebugInfo);
     return NavigationDrawer(
       children: [
         const Padding(
@@ -89,8 +91,8 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
-        const Divider(indent: 28, endIndent: 28),
-        MyDrawerButton(
+        if(showDebug) const Divider(indent: 28, endIndent: 28),
+        if(showDebug) MyDrawerButton(
           text: 'View database',
           icon: const Icon(Icons.data_array),
           onTap: () => Navigator.push(

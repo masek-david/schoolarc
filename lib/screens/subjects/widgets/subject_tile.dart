@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class SubjectTile extends StatelessWidget {
   const SubjectTile({
     super.key,
     required this.subject,
-    required this.onEdit,
+    required this.onTap,
     required this.onDelete,
   });
 
   final SubjectDTO subject;
-  final void Function() onEdit;
-  final void Function() onDelete;
+  final void Function() onTap;
+  final void Function()? onDelete;
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
       groupTag: '1',
-      endActionPane: ActionPane(
-        motion: const StretchMotion(),
-        extentRatio: 0.3,
-        children: [
-          SlidableAction(
-            onPressed: (context) => onDelete(),
-            icon: Icons.delete,
-            foregroundColor: Theme.of(context).colorScheme.onError,
-            backgroundColor: Theme.of(context).colorScheme.error,
-            borderRadius: BorderRadius.circular(10),
-            flex: 10,
-          ),
-        ],
-      ),
+      endActionPane: onDelete != null
+          ? ActionPane(
+              motion: const StretchMotion(),
+              extentRatio: 0.3,
+              children: [
+                SlidableAction(
+                  onPressed: (context) => onDelete!(),
+                  icon: Icons.delete,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  borderRadius: BorderRadius.circular(10),
+                  flex: 10,
+                ),
+              ],
+            )
+          : null,
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: onEdit,
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -45,6 +49,8 @@ class SubjectTile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              if(settings.get(Setting.showDebugInfo))
+              Text(subject.dbIndex.toString()),
               SizedBox(
                 width: 50,
                 child: SubjectShortcut(subject: subject),
@@ -53,7 +59,13 @@ class SubjectTile extends StatelessWidget {
               Expanded(
                 child: Text(subject.name),
               ),
-              if(subject.bakaId != null) Icon(Icons.hexagon, color: Theme.of(context).colorScheme.surfaceBright,)
+              if (subject.bakaId != null)
+                Icon(
+                  Icons.hexagon,
+                  color: Theme.of(context).colorScheme.surfaceBright,
+                ),
+              if (subject.bakaId != null && settings.get(Setting.showDebugInfo))
+                Text(subject.bakaId ?? '')
             ],
           ),
         ),

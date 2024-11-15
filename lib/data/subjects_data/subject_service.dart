@@ -5,7 +5,7 @@ import 'package:school_manager/data/subjects_data/subject_model.dart';
 class SubjectService {
   final _db = SubjectDatabase();
   late Map<int, Subject> _subjectDbIndexMap = _db.getDatabase();
-  late final List<int> _sequence = _db.getSequence();
+  late List<int> _sequence = _db.getSequence();
 
   SubjectDTO? lastDeletedSubject;
   int? lastDeletedSequenceIndex;
@@ -17,6 +17,8 @@ class SubjectService {
   }
 
   List<SubjectDTO> getSortedList() {
+    _subjectDbIndexMap = _db.getDatabase();
+    _sequence = _db.getSequence();
     List<SubjectDTO> list = [];
 
     for (int element in _sequence) {
@@ -28,6 +30,7 @@ class SubjectService {
   }
 
   Map<int, SubjectDTO> getMap() {
+    _subjectDbIndexMap = _db.getDatabase();
     return _subjectDbIndexMap.map(
       (key, value) => MapEntry(key, value.convertToDTO(key)),
     );
@@ -56,10 +59,12 @@ class SubjectService {
     _db.saveSequence(_sequence);
   }
 
-  void deleteAllSubjects(){
-    _subjectDbIndexMap.forEach((key, value) {
-      deleteSubject(key);
-    },);
+  void deleteAllSubjects() {
+    _subjectDbIndexMap.forEach(
+      (key, value) {
+        deleteSubject(key);
+      },
+    );
   }
 
   void revertLastlyDeletedSubject() {
