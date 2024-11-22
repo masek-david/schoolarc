@@ -11,7 +11,7 @@ class MyCheckbox extends StatefulWidget {
   });
 
   final bool value;
-  final Priority priority;
+  final TaskPriority priority;
   final void Function(bool) onChanged;
 
   @override

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
-class Priority {
+class TaskPriority {
   final int index;
   late String name;
   late Color color;
   late String htmlIcon;
 
-  Priority(this.index, BuildContext? context) {
-    Color appColor = Colors.white;
+  TaskPriority(this.index, BuildContext? context) {
+    Color appColor = Colors.purple;
     if (context != null) {
-      appColor = Theme.of(context).primaryColor;
+      appColor = Theme.of(context).colorScheme.primary;
     }
 
     switch (index) {

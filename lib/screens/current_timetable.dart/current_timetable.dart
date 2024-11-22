@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/bakalari/baka_service.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
-import 'package:school_manager/screens/current_timetable.dart/fab_button.dart';
+import 'package:school_manager/screens/current_timetable.dart/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
@@ -117,21 +117,21 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FabButton(
+            LoadingIconButton(
               icon: Icons.arrow_back,
               onTap: () async {
                 date = date.subtract(const Duration(days: 7));
                 return setTimetable();
               },
             ),
-            FabButton(
+            LoadingIconButton(
               icon: Icons.home,
               onTap: () async {
                 date = DateTime.now();
                 return setTimetable();
               },
             ),
-            FabButton(
+            LoadingIconButton(
               icon: Icons.arrow_forward,
               onTap: () async {
                 date = date.add(const Duration(days: 7));

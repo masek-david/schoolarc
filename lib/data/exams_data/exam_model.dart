@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 
 part 'exam_model.g.dart';
@@ -25,7 +26,7 @@ class Exam extends HiveObject {
   @HiveField(4)
   bool completion;
 
-  ExamDTO convertToDTO(int dbIndex, SubjectDTO? subject) {
+  ExamDTO convertToDTO(int dbIndex, SubjectDTO? subject, TaskPriority priority) {
     return ExamDTO(
       subject: subject,
       text: text,

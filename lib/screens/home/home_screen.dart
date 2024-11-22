@@ -29,9 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late int examNumberOfIncomplete = examService.getNumberOfIncomplete();
 
   late var dateToShow = DateTime.now();
-  late var hwToShow = homeworkService.getForDay(dateToShow);
-  late var examToShow = examService.getForDay(dateToShow);
-  late var missedHw = homeworkService.getMissedHw();
+  late var examToShow = examService.getForDay(dateToShow, null);
+  late var hwToShow = homeworkService.getForDay(dateToShow, null);
+  late var missedHw = homeworkService.getMissedHw(null);
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
   late Future<TimeTableDTO?> bakaTimetable;
@@ -41,9 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
       examNumberOfIncomplete = examService.getNumberOfIncomplete();
-      hwToShow = homeworkService.getForDay(dateToShow);
-      examToShow = examService.getForDay(dateToShow);
-      missedHw = homeworkService.getMissedHw();
+      examToShow = examService.getForDay(dateToShow, context);
+      hwToShow = homeworkService.getForDay(dateToShow, context);
+      missedHw = homeworkService.getMissedHw(context);
     });
   }
 
@@ -71,7 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return;
   }
 
-  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    updateView();
+  }
 
   @override
   void initState() {
@@ -107,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
           .toLocal();
 
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = homeworkService.getForDay(dateToShow);
-      examToShow = examService.getForDay(dateToShow);
+      hwToShow = homeworkService.getForDay(dateToShow, context);
+      examToShow = examService.getForDay(dateToShow, context);
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
@@ -216,14 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         showText: true,
                         showDates: true,
                         hwList: missedHw,
-                        changeCompletion: changeCompletion,
-                        deleteHw: (dbIndex) =>
-                            deleteHw(context, dbIndex, () => updateView()).then(
-                          (value) => updateView(),
-                        ),
-                        editHw: (dbIndex) => editHw(context, dbIndex).then(
-                          (value) => updateView(),
-                        ),
                         updateListView: updateView,
                       ),
                     ),
@@ -237,13 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       showText: true,
                       showDates: false,
                       examList: examToShow,
-                      deleteExam: (dbIndex) =>
-                          deleteExam(context, dbIndex, () => updateView()).then(
-                        (value) => updateView(),
-                      ),
-                      editExam: (dbIndex) => editExam(context, dbIndex).then(
-                        (value) => updateView(),
-                      ),
+                      updateView: updateView,
                     ),
                   ),
                 ),
@@ -256,14 +247,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       showText: true,
                       showDates: false,
                       hwList: hwToShow,
-                      changeCompletion: changeCompletion,
-                      deleteHw: (dbIndex) =>
-                          deleteHw(context, dbIndex, () => updateView()).then(
-                        (value) => updateView(),
-                      ),
-                      editHw: (dbIndex) => editHw(context, dbIndex).then(
-                        (value) => updateView(),
-                      ),
                       updateListView: updateView,
                     ),
                   ),

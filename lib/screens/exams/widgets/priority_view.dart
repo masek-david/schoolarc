@@ -2,6 +2,7 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/data/priority_model.dart';
@@ -11,20 +12,14 @@ class PriorityView extends StatelessWidget {
   const PriorityView({
     super.key,
     required this.examsByPriority,
-    required this.priorities,
     required this.completedExams,
-    required this.createNewExam,
-    required this.deleteExam,
-    required this.editExam,
+    required this.updateView,
     required this.reorderExam,
   });
 
   final Map<int, List<ExamDTO>> examsByPriority;
   final List<ExamDTO> completedExams;
-  final List<Priority> priorities;
-  final Function createNewExam;
-  final Function editExam;
-  final Function deleteExam;
+  final void Function() updateView;
   final Function(int oldPriority, int oldIndex, int newPriority, int newIndex)
       reorderExam;
 
@@ -53,7 +48,7 @@ class PriorityView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new exam',
         onPressed: () {
-          createNewExam();
+          addTask(context, isHomework: false);
           HapticFeedback.lightImpact();
         },
         enableFeedback: true,
@@ -89,7 +84,8 @@ class PriorityView extends StatelessWidget {
               listGhost: const Placeholder(),
               children: List.generate(
                 numberOfPriorityLists,
-                (index) => _buildList(priorities[3 - index], context),
+                (index) =>
+                    _buildList(TaskPriority(3 - index, context), context),
               ),
             ),
             ExpansionTile(
@@ -106,9 +102,15 @@ class PriorityView extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ExamTile(
                       exam: exam,
-                      priority: priorities[exam.priority],
-                      onDelete: (context) => deleteExam(exam.dbIndex),
-                      onEdit: () => editExam(exam.dbIndex),
+                      priority: exam.priority,
+                      onDelete: (context) =>
+                          deleteExam(context, exam.dbIndex, () => updateView())
+                              .then(
+                        (value) => updateView(),
+                      ),
+                      onEdit: () => editExam(context, exam.dbIndex).then(
+                        (value) => updateView(),
+                      ),
                     ),
                   );
                 },
@@ -121,7 +123,7 @@ class PriorityView extends StatelessWidget {
     );
   }
 
-  _buildList(Priority priority, BuildContext context) {
+  _buildList(TaskPriority priority, BuildContext context) {
     var innerList = examsByPriority[priority.index];
 
     return DragAndDropListExpansion(
@@ -144,9 +146,14 @@ class PriorityView extends StatelessWidget {
     return DragAndDropItem(
       child: ExamTile(
         exam: exam,
-        priority: priorities[exam.priority],
-        onDelete: (context) => deleteExam(exam.dbIndex),
-        onEdit: () => editExam(exam.dbIndex),
+        priority: exam.priority,
+        onDelete: (context) =>
+            deleteExam(context, exam.dbIndex, () => updateView()).then(
+          (value) => updateView(),
+        ),
+        onEdit: () => editExam(context, exam.dbIndex).then(
+          (value) => updateView(),
+        ),
       ),
     );
   }

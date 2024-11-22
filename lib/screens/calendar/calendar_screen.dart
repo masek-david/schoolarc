@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/data/homeworks_data/hw_service.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -17,11 +15,9 @@ import 'package:school_manager/extensions/datetime_extension.dart';
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({
     super.key,
-    required this.switchDrawer,
     this.showTommorrow = false,
   });
 
-  final void Function() switchDrawer;
   final bool showTommorrow;
 
   @override
@@ -29,13 +25,9 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final _serviceHw = HomeworkService();
-  final _serviceExam = ExamService();
-  final _settings = SettingsDatabase();
-
-  late Map<DateTime, List<HomeworkDTO>> hwByDate = _serviceHw.sortByDate();
-  late List<HomeworkDTO> missedHwList = _serviceHw.getMissedHw();
-  late Map<DateTime, List<ExamDTO>> examByDate = _serviceExam.sortByDate();
+  late var hwByDate = homeworkService.sortByDate(null);
+  late var missedHwList = homeworkService.getMissedHw(null);
+  late var examByDate = examService.sortByDate(null);
 
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
@@ -44,17 +36,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late Color calendarBackgroundColor;
 
   // how many pages you can scroll to negative
-  static const  int negativePageCount = 1000000;
-  late final showTommorrow = _settings.get(Setting.calendarInitialIsTommorrow) ||
-        widget.showTommorrow;
+  static const int negativePageCount = 1000000;
+  late final showTommorrow =
+      settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow;
   late final PageController _pageController = PageController(
     viewportFraction: 0.93,
     initialPage: negativePageCount + (showTommorrow ? 1 : 0),
   );
-  // how many markers are used this week at most
-  late int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
 
-  late bool showMissed = _settings.get(Setting.calendarShowMissed);
+  late bool showMissed = settings.get(Setting.calendarShowMissed);
 
   @override
   void initState() {
@@ -65,7 +55,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
     }
-    updateView();
   }
 
   @override
@@ -79,120 +68,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    calendarBackgroundColor = Theme.of(context).colorScheme.surface;
     // the color is needed or else the list will be visible under the calendar
+    calendarBackgroundColor = Theme.of(context).colorScheme.surface;
+    updateView();
   }
 
   void updateView() {
     if (mounted) {
       setState(() {
-        hwByDate = _serviceHw.sortByDate();
-        examByDate = _serviceExam.sortByDate();
-        missedHwList = _serviceHw.getMissedHw();
-        maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+        hwByDate = homeworkService.sortByDate(context);
+        examByDate = examService.sortByDate(context);
+        missedHwList = homeworkService.getMissedHw(context);
       });
     }
-  }
-
-  void addTask(bool isHomework) {
-    showAddBottomSheet(
-      context,
-      initialDate: _selectedDay,
-      onSave: (
-          {required date, required priority, subject, required text}) async {
-        isHomework
-            ? await _serviceHw.saveNewHW(
-                date: date, priority: priority, subject: subject, text: text)
-            : await _serviceExam.saveNewExam(
-                date: date, priority: priority, subject: subject, text: text);
-        updateView();
-      },
-    );
-  }
-
-  void editHw(int dbIndex) {
-    HomeworkDTO hw = _serviceHw.getHomework(dbIndex);
-
-    showAddBottomSheet(
-      context,
-      initialDate: hw.deadline,
-      initialSubject: hw.subject,
-      initialPriority: hw.priority,
-      initialName: hw.text,
-      onSave: ({required date, required priority, subject, required text}) {
-        _serviceHw.saveEditedHW(
-          date: date,
-          priority: priority,
-          subject: subject,
-          text: text,
-          completion: false,
-          dbIndex: dbIndex,
-        );
-        updateView();
-      },
-    );
-  }
-
-  void editExam(int dbIndex) {
-    ExamDTO exam = _serviceExam.getExam(dbIndex);
-
-    showAddBottomSheet(
-      context,
-      initialDate: exam.deadline,
-      initialSubject: exam.subject,
-      initialPriority: exam.priority,
-      initialName: exam.text,
-      onSave: ({required date, required priority, subject, required text}) {
-        _serviceExam.saveEditedExam(
-          date: date,
-          priority: priority,
-          subject: subject,
-          text: text,
-          dbIndex: dbIndex,
-        );
-        updateView();
-      },
-    );
-  }
-
-  void changeCompletion(int dbIndex, bool value) {
-    _serviceHw.changeCompletion(dbIndex, value);
-  }
-
-  void deleteHw(int dbIndex) {
-    _serviceHw.deleteHw(dbIndex);
-    updateView();
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Homework deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            _serviceHw.revertLastlyDeletedHw();
-            updateView();
-          },
-        ),
-      ),
-    );
-  }
-
-  void deleteExam(int dbIndex) {
-    _serviceExam.deleteExam(dbIndex);
-    updateView();
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Exam deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            _serviceExam.revertLastlyDeletedExam();
-            updateView();
-          },
-        ),
-      ),
-    );
   }
 
   /// used for gettin number of markers
@@ -223,10 +111,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /// how many markers are used this week at most
+    int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+
     return Scaffold(
       appBar: AppBar(
-        leading: DrawerButton(
-          onPressed: widget.switchDrawer,
+        leading: const DrawerButton(
+          onPressed: switchDrawer,
         ),
         title: const Text('Calendar'),
         actions: [
@@ -252,7 +143,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           FloatingActionButton.extended(
             tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
             heroTag: 'exam_btn',
-            onPressed: () => addTask(false),
+            onPressed: () =>
+                addTask(context, isHomework: false, initialDate: _selectedDay)
+                    .then(
+              (value) => updateView(),
+            ),
             icon: const Icon(Icons.add),
             label: const Text('Exam'),
           ),
@@ -262,7 +157,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           FloatingActionButton.extended(
             tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
             heroTag: 'homework_btn',
-            onPressed: () => addTask(true),
+            onPressed: () =>
+                addTask(context, isHomework: true, initialDate: _selectedDay)
+                    .then(
+              (value) => updateView(),
+            ),
             icon: const Icon(Icons.add),
             label: const Text('Homework'),
           ),
@@ -279,7 +178,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             calendarFormat: _calendarFormat,
             availableCalendarFormats: const {CalendarFormat.week: 'Week'},
             rowHeight: 50 + maxNumberOfCustomMarkers * 25,
-            calendarBuilders: myCalendarBuilder(editExam),
+            calendarBuilders: myCalendarBuilder(updateView),
             headerStyle: HeaderStyle(
               decoration: BoxDecoration(color: calendarBackgroundColor),
             ),
@@ -377,7 +276,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             contentPadding:
                                 const EdgeInsets.only(left: 4, right: 8),
                             child: ExpansionTile(
-                              initiallyExpanded: false,
+                              initiallyExpanded: true,
                               collapsedShape: const Border(),
                               shape: const Border(),
                               dense: true,
@@ -391,9 +290,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               children: [
                                 HomeworkList(
                                   hwList: missedHwList,
-                                  changeCompletion: changeCompletion,
-                                  deleteHw: deleteHw,
-                                  editHw: editHw,
                                   updateListView: updateView,
                                 )
                               ],
@@ -404,16 +300,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         showDates: false,
                         showText: true,
                         examList: examListForDay,
-                        deleteExam: deleteExam,
-                        editExam: editExam,
+                        updateView: updateView,
                       ),
                       HomeworkList(
                         showDates: false,
                         showText: true,
                         hwList: hwListForDay,
-                        changeCompletion: changeCompletion,
-                        deleteHw: deleteHw,
-                        editHw: editHw,
                         updateListView: updateView,
                       ),
                       const ListBottomSpacer(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -13,22 +14,12 @@ class PriorityView extends StatelessWidget {
     super.key,
     required this.hwByPriority,
     required this.completedHws,
-    required this.priorities,
-    required this.createNewHw,
-    required this.changeCompletion,
-    required this.deleteHw,
-    required this.editHw,
     required this.reorderHomework,
     required this.updateView,
   });
 
   final Map<int, List<HomeworkDTO>> hwByPriority;
   final List<HomeworkDTO> completedHws;
-  final Function createNewHw;
-  final List<Priority> priorities;
-  final Function(int hwDbIndex, bool value) changeCompletion;
-  final Function(int hwDbIndex) editHw;
-  final Function(int hwDbIndex) deleteHw;
   final Function(int oldPriority, int oldIndex, int newPriority, int newIndex)
       reorderHomework;
   final Function updateView;
@@ -48,15 +39,17 @@ class PriorityView extends StatelessWidget {
         if (list.isNotEmpty) numberOfPriorityLists = 4;
       },
     );
-    completedHws.sort((a, b) {
-      return b.deadline.compareTo(a.deadline);
-    },);
+    completedHws.sort(
+      (a, b) {
+        return b.deadline.compareTo(a.deadline);
+      },
+    );
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new homework',
         onPressed: () {
-          createNewHw();
+          addTask(context, isHomework: true);
           HapticFeedback.lightImpact();
         },
         enableFeedback: true,
@@ -92,7 +85,8 @@ class PriorityView extends StatelessWidget {
               listGhost: const Placeholder(),
               children: List.generate(
                 numberOfPriorityLists,
-                (index) => _buildList(priorities[3-index], context),
+                (index) =>
+                    _buildList(TaskPriority(3 - index, context), context),
               ),
             ),
             ExpansionTile(
@@ -109,13 +103,19 @@ class PriorityView extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: HomeworkTile(
                       hw: hw,
-                      priority: priorities[hw.priority],
+                      priority: hw.priority,
                       onChangedCompletion: (value) {
                         changeCompletion(hw.dbIndex, value);
                         updateView();
                       },
-                      onDelete: () => deleteHw(hw.dbIndex),
-                      onEdit: () => editHw(hw.dbIndex),
+                      onDelete: () =>
+                          deleteHw(context, hw.dbIndex, () => updateView())
+                              .then(
+                        (value) => updateView(),
+                      ),
+                      onEdit: () => editHw(context, hw.dbIndex).then(
+                        (value) => updateView(),
+                      ),
                     ),
                   );
                 },
@@ -128,7 +128,7 @@ class PriorityView extends StatelessWidget {
     );
   }
 
-  _buildList(Priority priority, BuildContext context) {
+  _buildList(TaskPriority priority, BuildContext context) {
     var innerList = hwByPriority[priority.index];
 
     return DragAndDropListExpansion(
@@ -151,11 +151,12 @@ class PriorityView extends StatelessWidget {
     return DragAndDropItem(
       child: AnimatedCompletionTile(
         hw: hw,
-        priority: priorities[hw.priority],
+        priority: hw.priority,
         onAnimationEnd: updateView,
         onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
-        onDelete: () => deleteHw(hw.dbIndex),
-        onEdit: () => editHw(hw.dbIndex),
+        onDelete: () => deleteHw(context, hw.dbIndex, () => updateView())
+            .then((value) => updateView()),
+        onEdit: () => editHw(context, hw.dbIndex).then((value) => updateView()),
       ),
     );
   }

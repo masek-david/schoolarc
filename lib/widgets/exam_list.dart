@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class ExamList extends StatelessWidget {
   const ExamList({
     super.key,
     required this.examList,
-    required this.deleteExam,
-    required this.editExam,
+    required this.updateView,
     this.showText = false,
     this.showDates = true,
     this.textFull = 'Exams',
@@ -17,8 +16,7 @@ class ExamList extends StatelessWidget {
   });
 
   final List<ExamDTO> examList;
-  final Function(int dbIndex) deleteExam;
-  final Function(int dbIndex) editExam;
+  final void Function() updateView;
   final bool showText;
   final bool showDates;
   final String textFull;
@@ -41,9 +39,12 @@ class ExamList extends StatelessWidget {
           child: ExamTile(
             exam: exam,
             showDeadline: false,
-            priority: Priority(exam.priority, context),
-            onDelete: (context) => deleteExam(exam.dbIndex),
-            onEdit: () => editExam(exam.dbIndex),
+            priority: exam.priority,
+            onDelete: (context) =>
+                deleteExam(context, exam.dbIndex, () => updateView()).then(
+              (value) => updateView(),
+            ),
+            onEdit: () => editExam(context, exam.dbIndex).then((value) => updateView(),),
           ),
         );
       }),
