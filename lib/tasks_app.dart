@@ -9,6 +9,7 @@ import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
 import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/data/stravacz/strava_service.dart';
 import 'package:school_manager/data/subjects_data/subject_service.dart';
 import 'package:school_manager/data/table_data/timetable_database.dart';
 import 'package:school_manager/notifications/notification_controller.dart';
@@ -29,6 +30,7 @@ final examService = ExamService();
 final subjectService = SubjectService();
 final timetableDatabase = TimeTableDatabase();
 final bakaService = BakaService();
+final stravaService = StravaService();
 
 Future<void> addTask(
   BuildContext context, {
@@ -142,6 +144,50 @@ Future<void> deleteExam(
   return;
 }
 
+void showMessage(
+  BuildContext context,
+  String message, {
+  bool isError = false,
+  bool isContinuos = false,
+}) {
+  if (context.mounted) {
+    final duration = isError
+        ? const Duration(seconds: 5)
+        : isContinuos
+            ? const Duration(days: 1)
+            : const Duration(seconds: 1);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: duration,
+        backgroundColor:
+            isError ? Theme.of(context).colorScheme.errorContainer : null,
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                message,
+                maxLines: 5,
+                style: TextStyle(
+                  color: isError
+                      ? Theme.of(context).colorScheme.onErrorContainer
+                      : null,
+                ),
+              ),
+            ),
+            if (isContinuos)
+              CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
 
@@ -244,12 +290,21 @@ class _TasksAppState extends State<TasksApp> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      var defaultTheme = ColorScheme.fromSeed(
+      var defaultThemeLight = ColorScheme.fromSeed(
         seedColor: Colors.deepPurpleAccent,
+        brightness: Brightness.light,
       );
+      var defaultThemeDark = ColorScheme.fromSeed(
+        seedColor: Colors.deepPurpleAccent,
+        brightness: Brightness.dark,
+      );
+
+      lightDynamic ??= defaultThemeLight;
+      darkDynamic ??= defaultThemeDark;
+
       (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
-        lightDynamic ?? defaultTheme,
-        darkDynamic ?? defaultTheme,
+        lightDynamic,
+        darkDynamic,
       );
 
       final light = schemes.$1;

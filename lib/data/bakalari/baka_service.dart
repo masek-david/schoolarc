@@ -168,6 +168,11 @@ class BakaService {
     }
 
     final parsedJson = json.decode(response.body);
+    final error = parsedJson['error'];
+    if (error != null) {
+      return BakaResponse(error: parsedJson['error_description']);
+    }
+
     final accessToken = parsedJson["access_token"];
     final refreshToken = parsedJson["refresh_token"];
     final expiresInSeconds = parsedJson['expires_in'] as int;
@@ -224,7 +229,6 @@ class BakaService {
       String shortcut = subjectJson['SubjectAbbrev'];
       String bakaId = subjectJson['SubjectID'];
 
-      // TODO add teachers?
       // checks for duplicates, will add the teachers surname to the subject name
       for (var subject in listOfSubjects) {
         if (subject.name == name && subject.shortcut == shortcut) {
@@ -263,23 +267,6 @@ class BakaService {
 
     return;
   }
-
-  // Future<List<String>> importMeals() async {
-  //   List<String> meals = [];
-
-  //   final uri = Uri.parse(
-  //       'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=0613');
-
-  //   final response = await http.get(uri);
-  //   // final document = xml.XmlDocument.parse(response.body);
-  //   // final jidelnicek = document.findElements('pomjidelnic_xmljidelnic');
-
-  //   // print(jidelnicek);
-  //   // print(url);
-  //   print(response.reasonPhrase);
-
-  //   return meals;
-  // }
 
   Future<BakaResponse> importTimeTable() async {
     if (!isLoggedIn) {
@@ -367,22 +354,30 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<(BakaResponse, TimeTableDTO?)> getCurrentTimetable(
+  Future<TimeTableDTO> getCurrentTimetable(
       DateTime date) async {
     if (!isLoggedIn) {
       final response = await refreshLogin();
       if (!response.isSuccess) {
-        return (response, null);
+        throw response.error ?? '';
       }
     }
 
     bool connected = await connectedToInternet();
     if (!connected) {
-      return (BakaResponse(error: 'Not connected to internet'), null);
+      throw Exception('Not connected to internet');
     }
 
     DateTime mondayDate = date.toUtc();
     int weekday = date.toUtc().weekday;
+
+    if (weekday == 6) {
+      mondayDate = mondayDate.add(const Duration(days: 2));
+    } else if (weekday == 7) {
+      mondayDate = mondayDate.add(const Duration(days: 1));
+    } else {
+      mondayDate = mondayDate.add(Duration(days: 1 - weekday));
+    }
 
     String schoolName = await this.schoolName;
     final url = Uri(
@@ -394,14 +389,6 @@ class BakaService {
       },
     );
 
-    if (weekday == 6) {
-      mondayDate = mondayDate.add(const Duration(days: 2));
-    } else if (weekday == 7) {
-      mondayDate = mondayDate.add(const Duration(days: 1));
-    } else {
-      mondayDate = mondayDate.add(Duration(days: 1 - weekday));
-    }
-
     Response response;
     try {
       response = await http.get(
@@ -411,27 +398,24 @@ class BakaService {
           "Authorization": "Bearer $_accessToken",
         },
       ).timeout(const Duration(seconds: 10));
-    } on SocketException catch (error) {
-      return (BakaResponse(error: error.message), null);
+    } on SocketException {
+      rethrow;
     } on TimeoutException catch (_) {
-      return (
-        BakaResponse(error: 'The request timed out after 10 seconds.'),
-        null
-      );
+      throw 'The request timed out after 10 seconds.';
     } catch (e) {
-      return (BakaResponse(error: 'An unexpected error occurred: $e'), null);
+      throw 'An unexpected error occurred: $e';
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      return (BakaResponse(error: utf8.decode(bytes)), null);
+      throw utf8.decode(bytes);
     }
 
     final parsedJson = json.decode(response.body);
 
     if (parsedJson["Message"] != null) {
-      return (BakaResponse(error: parsedJson["Message"]), null);
+      throw parsedJson["Message"];
     }
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
@@ -506,7 +490,7 @@ class BakaService {
       }
     }
 
-    return (BakaResponse(), timeTable);
+    return timeTable;
   }
 
   /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created

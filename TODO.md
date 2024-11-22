@@ -1,15 +1,17 @@
 fix:
 
+
+
+=============================================================================================
+homeworkdto by mel mit priority, muze generovat service
+
+extend Exception?
+
 info o bakalarich
 
 uvitaci obrazovka
 
-
-
-=============================================================================================
-
-
-homeworkdto by mel mit priority, muze generovat service
+add teachers
 
 widget
 

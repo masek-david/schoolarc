@@ -8,16 +8,19 @@ import 'package:school_manager/tasks_app.dart';
 
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
+
   late final Map<int, SubjectDTO> _subjectsDbIndex = subjectService.getMap();
-  // key is the dbIndex
+  /// key is the dbIndex
   late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
-  // key is the priority, for each priority is a list of dbIndexes
+  /// key is the priority, for each priority is a list of dbIndexes
   late Map<int, List<int>> _sequence = _db.getSequence();
+  /// map with dbIndex and index in sequence, to return them to correct position
+  final Map<int, int> completedHws = {};
+
   Homework? lastlyDeletedHw;
   int? lastlyDeletedHwDbIndex;
   int? lastlyDeletedHwIndex;
-  // map with dbIndex and index in sequence, to return them to correct position
-  final Map<int, int> completedHws = {};
+  
 
   void changeCompletion(int dbIndex, bool value) {
     _db.changeCompletion(dbIndex, value);

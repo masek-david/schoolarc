@@ -53,67 +53,75 @@ class ExamTile extends StatelessWidget {
       opacity = 0.5;
     }
 
-    return Slidable(
-      groupTag: '0',
-      endActionPane: ActionPane(
-        motion: const StretchMotion(),
-        extentRatio: 0.3,
-        children: [
-          SlidableAction(
-            onPressed: onDelete,
-            icon: Icons.delete,
-            foregroundColor: Theme.of(context).colorScheme.onError,
-            backgroundColor: Theme.of(context).colorScheme.error,
-            borderRadius: BorderRadius.circular(35),
-            flex: 10,
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: onEdit,
-        borderRadius: BorderRadius.circular(35),
+    return ClipRRect(
+      borderRadius: BorderRadius.horizontal(left: Radius.circular(1000)),
+      child: Slidable(
+        groupTag: '0',
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          extentRatio: 0.3,
+          children: [
+            SlidableAction(
+              onPressed: onDelete,
+              icon: Icons.delete,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+              backgroundColor: Theme.of(context).colorScheme.error,
+              borderRadius: BorderRadius.circular(35),
+              flex: 10,
+            ),
+          ],
+        ),
         child: Container(
-          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
             color: Theme.of(context).colorScheme.surfaceContainer,
           ),
-          child: Opacity(
-            opacity: opacity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: circleColor.dynamicLighten(
-                      makeItLighter:
-                          Theme.of(context).brightness != Brightness.dark,
-                      amount: 0.1,
-                    ),
-                  ),
-                  child: SubjectShortcut(
-                    subject: exam.subject,
-                    color: circleColor.dynamicLighten(
-                      makeItLighter:
-                          Theme.of(context).brightness == Brightness.dark,
-                      amount: 0.5,
-                    ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onEdit,
+              borderRadius: BorderRadius.circular(35),
+              child: Opacity(
+                opacity: opacity,
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: circleColor.dynamicLighten(
+                            makeItLighter:
+                                Theme.of(context).brightness != Brightness.dark,
+                            amount: 0.1,
+                          ),
+                        ),
+                        child: SubjectShortcut(
+                          subject: exam.subject,
+                          color: circleColor.dynamicLighten(
+                            makeItLighter:
+                                Theme.of(context).brightness == Brightness.dark,
+                            amount: 0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(exam.text, maxLines: 2)),
+                      const SizedBox(width: 10),
+                      Text(
+                        deadlineText,
+                        maxLines: 2,
+                        style: TextStyle(color: deadlineTextColor, fontSize: 12),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(child: Text(exam.text, maxLines: 2)),
-                const SizedBox(width: 10),
-                Text(
-                  deadlineText,
-                  maxLines: 2,
-                  style: TextStyle(color: deadlineTextColor, fontSize: 12),
-                ),
-                const SizedBox(width: 10),
-              ],
+              ),
             ),
           ),
         ),

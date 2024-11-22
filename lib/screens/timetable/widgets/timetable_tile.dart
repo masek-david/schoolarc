@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/data/bakalari/timetable_change.dart';
 import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -60,11 +61,15 @@ class TimetableTile extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (lesson?.subject?.dbIndex != null && settings.get(Setting.showDebugInfo))
+                    if (lesson?.subject?.dbIndex != null &&
+                        settings.get(Setting.showDebugInfo))
                       Text('db: ${lesson?.subject?.dbIndex.toString()}'),
-                    if (lesson?.subject?.bakaId != null && settings.get(Setting.showDebugInfo))
+                    if (lesson?.subject?.bakaId != null &&
+                        settings.get(Setting.showDebugInfo))
                       Text('baka: ${lesson?.subject?.bakaId}'),
                     const Spacer(),
+                    if (lesson?.change?.type == ChangeType.canceled)
+                      Text(lesson?.change?.shortcut ?? ''),
                     if (lesson?.subject != null)
                       SubjectShortcut(subject: lesson?.subject),
                     const Spacer(),

@@ -7,12 +7,12 @@ class TextSeparator extends StatelessWidget {
     super.key,
     this.text = '',
     this.greydOut = false,
-    this.action,
+    this.actions,
   });
 
   final String text;
   final bool greydOut;
-  final Widget? action;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +26,8 @@ class TextSeparator extends StatelessWidget {
     }
 
     return Padding(
-      // padding: const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 0),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: EdgeInsets.symmetric(
+          vertical: actions != null ? 0 : 8, horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -35,7 +35,10 @@ class TextSeparator extends StatelessWidget {
             text,
             style: TextStyle(fontSize: 16, color: color),
           ),
-          if (action != null) action!,
+          if (actions != null)
+            Row(
+              children: actions!,
+            ),
         ],
       ),
     );

@@ -68,61 +68,66 @@ class HomeworkTile extends StatelessWidget {
             icon: Icons.delete,
             foregroundColor: Theme.of(context).colorScheme.onError,
             backgroundColor: Theme.of(context).colorScheme.error,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(borderRadius),
             flex: 10,
           ),
         ],
       ),
-      child: InkWell(
-        onTap: onEdit,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: Container(
-          padding: EdgeInsets.all(padding),
-          decoration: BoxDecoration(
-            border: isMissed
-                ? Border.all(
-                    color: missedColor,
-                    width: 2,
-                  )
-                : null,
+      child: Container(
+        decoration: BoxDecoration(
+          border: isMissed
+              ? Border.all(
+                  color: missedColor,
+                  width: 2,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: Theme.of(context).colorScheme.surfaceContainer,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onEdit,
             borderRadius: BorderRadius.circular(borderRadius),
-            color: Theme.of(context).colorScheme.surfaceContainer,
-          ),
-          child: Opacity(
-            opacity: opacity,
-            // main row
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(borderRadius - padding),
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                  child: SubjectShortcut(subject: hw.subject),
+            child: Opacity(
+              opacity: opacity,
+              // main row
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(borderRadius - padding),
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
+                      child: SubjectShortcut(subject: hw.subject),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(hw.text, maxLines: 2)),
+                    const SizedBox(width: 5),
+                    Text(
+                      deadlineText,
+                      maxLines: 2,
+                      style: TextStyle(
+                        color: isMissed ? missedColor : null,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    MyCheckbox(
+                      value: hw.completion,
+                      priority: priority,
+                      onChanged: onChangedCompletion,
+                      key: ValueKey('checkbox ${hw.dbIndex}'),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                Expanded(child: Text(hw.text, maxLines: 2)),
-                const SizedBox(width: 5),
-                Text(
-                  deadlineText,
-                  maxLines: 2,
-                  style: TextStyle(
-                    color: isMissed ? missedColor : null,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                MyCheckbox(
-                  value: hw.completion,
-                  priority: priority,
-                  onChanged: onChangedCompletion,
-                  key: ValueKey('checkbox ${hw.dbIndex}'),
-                ),
-              ],
+              ),
             ),
           ),
         ),

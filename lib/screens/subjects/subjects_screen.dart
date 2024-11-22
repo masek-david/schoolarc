@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
@@ -169,50 +170,52 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: subjectList.isEmpty
-            ? const Center(
-                child: Text(
-                  'No subjects found. You can create new subjects by tapping the plus button.',
-                  textAlign: TextAlign.center,
-                ),
-              )
-            : ReorderableListView.builder(
-                onReorderStart: (index) => HapticFeedback.lightImpact(),
-                itemCount: subjectList.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == subjectList.length) {
-                    return const SizedBox(
-                      height: 100,
-                      key: Key('SubjectScreenSpacer'),
+      body: SlidableAutoCloseBehavior(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: subjectList.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No subjects found. You can create new subjects by tapping the plus button.',
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : ReorderableListView.builder(
+                  onReorderStart: (index) => HapticFeedback.lightImpact(),
+                  itemCount: subjectList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == subjectList.length) {
+                      return const SizedBox(
+                        height: 100,
+                        key: Key('SubjectScreenSpacer'),
+                      );
+                    }
+        
+                    SubjectDTO subject = subjectList[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      key: Key('$index'),
+                      child: SubjectTile(
+                        subject: subject,
+                        onTap: () => editSubject(subject.dbIndex),
+                        onDelete: () => deleteSubject(subject.dbIndex),
+                      ),
                     );
-                  }
-
-                  SubjectDTO subject = subjectList[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    key: Key('$index'),
-                    child: SubjectTile(
-                      subject: subject,
-                      onTap: () => editSubject(subject.dbIndex),
-                      onDelete: () => deleteSubject(subject.dbIndex),
-                    ),
-                  );
-                },
-                onReorder: (int oldIndex, int newIndex) {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final SubjectDTO item = subjectList.removeAt(oldIndex);
-                  subjectService.changeSequence(oldIndex, newIndex);
-                  setState(
-                    () {
-                      subjectList.insert(newIndex, item);
-                    },
-                  );
-                },
-              ),
+                  },
+                  onReorder: (int oldIndex, int newIndex) {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    final SubjectDTO item = subjectList.removeAt(oldIndex);
+                    subjectService.changeSequence(oldIndex, newIndex);
+                    setState(
+                      () {
+                        subjectList.insert(newIndex, item);
+                      },
+                    );
+                  },
+                ),
+        ),
       ),
     );
   }

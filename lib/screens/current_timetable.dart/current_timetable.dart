@@ -32,19 +32,19 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
   }
 
   Future<void> setTimetable() async {
-    var response = await bakaService.getCurrentTimetable(date);
-
-    evaluateResponse(
-      response.$1,
-      onSuccess: () {
-        // showMessage('Timetable loaded');
-        if (mounted) {
-          setState(() {
-            timetable = response.$2;
-          });
-        }
-      },
-    );
+    TimeTableDTO response;
+    try {
+      response = await bakaService.getCurrentTimetable(date);
+    } on Exception catch (error) {
+      showMessage(error.toString(), isError: true);
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        timetable = response;
+        isLoading = false;
+      });
+    }
     return;
   }
 
