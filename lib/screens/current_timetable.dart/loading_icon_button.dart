@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
-class FabButton extends StatefulWidget {
-  const FabButton({
+class LoadingIconButton extends StatefulWidget {
+  const LoadingIconButton({
     super.key,
     required this.icon,
     required this.onTap,
+    this.isLoading,
   });
 
   final Future<void> Function() onTap;
   final IconData icon;
+  final bool? isLoading;
 
   @override
-  State<FabButton> createState() => _FabButtonState();
+  State<LoadingIconButton> createState() => _LoadingIconButtonState();
 }
 
-class _FabButtonState extends State<FabButton> {
+class _LoadingIconButtonState extends State<LoadingIconButton> {
   bool isLoading = false;
 
   @override
@@ -22,7 +24,7 @@ class _FabButtonState extends State<FabButton> {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (isLoading) const CircularProgressIndicator(),
+        if (isLoading || widget.isLoading == true) const CircularProgressIndicator(),
         IconButton(
           onPressed: () {
             setState(() {

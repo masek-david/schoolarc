@@ -195,11 +195,6 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
               onSelected: (subject) {
                 nameController.text = '';
                 setSubject(subject);
-                // setState(() {
-                //   pickedSubject = subject;
-                //   pickedDate =
-                //       _timetable.nextDateForSubject(subject) ?? pickedDate;
-                // });
                 Scrollable.ensureVisible(
                     keysList[subjects.indexOf(subject)].currentContext!,
                     duration: const Duration(milliseconds: 500));
@@ -226,7 +221,7 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
                 itemBuilder: (context, index) {
-                  Priority priority = Priority(index, context);
+                  TaskPriority priority = TaskPriority(index, context);
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(

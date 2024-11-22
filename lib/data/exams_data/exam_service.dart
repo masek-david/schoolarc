@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:school_manager/data/exams_data/exam_database.dart';
 import 'package:school_manager/data/exams_data/exam_model.dart';
 import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
@@ -19,6 +21,16 @@ class ExamService {
 
   ExamService() {
     markAllCompletedExams();
+  }
+
+  List<TaskPriority> getPriorities(BuildContext? context) {
+    List<TaskPriority> priorities = [];
+
+    for (int i = 0; i < 4; i++) {
+      priorities.add(TaskPriority(i, context));
+    }
+
+    return priorities;
   }
 
   // projde vsechny testy a ty co uz probehly oznaci jako hotove
@@ -51,9 +63,9 @@ class ExamService {
     _db.saveSequence(_sequence);
   }
 
-  List<ExamDTO> getForDay(DateTime date) {
+  List<ExamDTO> getForDay(DateTime date, BuildContext? context) {
     final dateUtc = date.toUtc();
-    final examByDate = sortByDate();
+    final examByDate = sortByDate(context);
 
     final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
 
@@ -61,9 +73,10 @@ class ExamService {
   }
 
   /// returns map with datetime being only the date in UTC, not the time
-  Map<DateTime, List<ExamDTO>> sortByDate() {
+  Map<DateTime, List<ExamDTO>> sortByDate(BuildContext? context) {
     Map<DateTime, List<ExamDTO>> examDateMap = {};
     _examDbIndexMap = _db.getDatabase();
+    final priorities = getPriorities(context);
 
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
@@ -71,40 +84,56 @@ class ExamService {
             DateTime.utc(exam.date.year, exam.date.month, exam.date.day);
         if (examDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
-          examDateMap[dateNoTime]!.add(exam.convertToDTO(
-              dbIndex, _subjectsDbIndex[exam.subjectDbIndex]));
+          examDateMap[dateNoTime]!.add(
+            exam.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[exam.subjectDbIndex],
+              priorities[exam.priority],
+            ),
+          );
         } else {
           // If it does not exist, create a new list with the exam
           examDateMap[dateNoTime] = [
-            exam.convertToDTO(dbIndex, _subjectsDbIndex[exam.subjectDbIndex])
+            exam.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[exam.subjectDbIndex],
+              priorities[exam.priority],
+            ),
           ];
         }
       },
     );
 
     examDateMap.forEach((key, value) {
-      value.sort((a, b) => b.priority.compareTo(a.priority));
+      value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
     });
 
     return examDateMap;
   }
 
-  Map<int, List<ExamDTO>> sortByPriority() {
+  Map<int, List<ExamDTO>> sortByPriority(BuildContext? context) {
     _examDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
+
     Map<int, List<ExamDTO>> examPriorityMap = {
       0: <ExamDTO>[],
       1: <ExamDTO>[],
       2: <ExamDTO>[],
       3: <ExamDTO>[],
     };
+    final priorities = getPriorities(context);
 
     _sequence.forEach((priority, list) {
       for (int i = 0; i < list.length; i++) {
         Exam exam = _examDbIndexMap[list[i]]!;
         if (!exam.completion) {
-          examPriorityMap[priority]!.add(exam.convertToDTO(
-              list[i], _subjectsDbIndex[exam.subjectDbIndex]));
+          examPriorityMap[priority]!.add(
+            exam.convertToDTO(
+              list[i],
+              _subjectsDbIndex[exam.subjectDbIndex],
+              priorities[exam.priority],
+            ),
+          );
         }
       }
     });
@@ -112,15 +141,21 @@ class ExamService {
     return examPriorityMap;
   }
 
-  List<ExamDTO> getCompletedExams() {
+  List<ExamDTO> getCompletedExams(BuildContext? context) {
     _examDbIndexMap = _db.getDatabase();
     List<ExamDTO> completedExams = [];
+    final priorities = getPriorities(context);
 
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
         if (exam.completion) {
-          completedExams.add(exam.convertToDTO(
-              dbIndex, _subjectsDbIndex[exam.subjectDbIndex]));
+          completedExams.add(
+            exam.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[exam.subjectDbIndex],
+              priorities[exam.priority],
+            ),
+          );
         }
       },
     );
@@ -232,10 +267,15 @@ class ExamService {
     _db.saveSequence(_sequence);
   }
 
-  ExamDTO getExam(int dbIndex) {
+  ExamDTO getExam(int dbIndex, BuildContext? context) {
     Exam exam = _db.getExam(dbIndex);
+    final priorities = getPriorities(context);
 
-    return exam.convertToDTO(dbIndex, _subjectsDbIndex[exam.subjectDbIndex]);
+    return exam.convertToDTO(
+      dbIndex,
+      _subjectsDbIndex[exam.subjectDbIndex],
+      priorities[exam.priority],
+    );
   }
 
   int getNumberOfIncomplete() {

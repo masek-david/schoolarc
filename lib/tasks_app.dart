@@ -24,6 +24,7 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+final scaffoldKey = GlobalKey<ScaffoldState>();
 final settings = SettingsDatabase();
 final homeworkService = HomeworkService();
 final examService = ExamService();
@@ -55,13 +56,13 @@ Future<void> addTask(
 }
 
 Future<void> editHw(BuildContext context, int dbIndex) async {
-  HomeworkDTO hw = homeworkService.getHomework(dbIndex);
+  HomeworkDTO hw = homeworkService.getHomework(dbIndex, context);
 
   await showAddBottomSheet(
     context,
     initialDate: hw.deadline,
     initialSubject: hw.subject,
-    initialPriority: hw.priority,
+    initialPriority: hw.priority.index,
     initialName: hw.text,
     onSave: ({required date, required priority, subject, required text}) {
       homeworkService.saveEditedHW(
@@ -78,13 +79,13 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
 }
 
 Future<void> editExam(BuildContext context, int dbIndex) async {
-  ExamDTO exam = examService.getExam(dbIndex);
+  ExamDTO exam = examService.getExam(dbIndex, context);
 
   await showAddBottomSheet(
     context,
     initialDate: exam.deadline,
     initialSubject: exam.subject,
-    initialPriority: exam.priority,
+    initialPriority: exam.priority.index,
     initialName: exam.text,
     onSave: ({required date, required priority, subject, required text}) {
       examService.saveEditedExam(
@@ -188,6 +189,14 @@ void showMessage(
   }
 }
 
+void switchDrawer({bool? onlyClose}) {
+  if (scaffoldKey.currentState?.isDrawerOpen == true || onlyClose == true) {
+    scaffoldKey.currentState?.closeDrawer();
+  } else {
+    scaffoldKey.currentState?.openDrawer();
+  }
+}
+
 class TasksApp extends StatefulWidget {
   const TasksApp({super.key});
 
@@ -199,7 +208,6 @@ class _TasksAppState extends State<TasksApp> {
   late final _pageController = PageController(
     initialPage: _settings.get(Setting.initialAppPage),
   );
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final SettingsDatabase _settings = SettingsDatabase();
   late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
@@ -278,14 +286,6 @@ class _TasksAppState extends State<TasksApp> {
     });
   }
 
-  void switchDrawer({bool? close}) {
-    if (_scaffoldKey.currentState?.isDrawerOpen == true || close == true) {
-      _scaffoldKey.currentState?.closeDrawer();
-    } else {
-      _scaffoldKey.currentState?.openDrawer();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
@@ -333,14 +333,14 @@ class _TasksAppState extends State<TasksApp> {
           switch (settings.name) {
             case '/':
               return MaterialPageRoute(
-                builder: (context) => HomeScreen(
+                builder: (context) => const HomeScreen(
                   switchDrawer: switchDrawer,
                 ),
               );
 
             case '/calendar':
               navigatorKey.currentState?.popUntil((route) => route.isFirst);
-              switchDrawer(close: true);
+              switchDrawer(onlyClose: true);
               calendarShowTommorrow = true;
               switchScreen(newScreenIndex: 1);
               break;
@@ -352,19 +352,19 @@ class _TasksAppState extends State<TasksApp> {
           return null;
         },
         home: Scaffold(
-          key: _scaffoldKey,
+          key: scaffoldKey,
           body: SlidableAutoCloseBehavior(
             child: PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
               children: [
-                HomeScreen(switchDrawer: switchDrawer),
+                const HomeScreen(switchDrawer: switchDrawer),
                 CalendarScreen(
-                  switchDrawer: switchDrawer,
+                  // switchDrawer: switchDrawer,
                   showTommorrow: calendarShowTommorrow,
                 ),
-                HomeworksScreen(switchDrawer: switchDrawer),
-                ExamsScreen(switchDrawer: switchDrawer),
+                const HomeworksScreen(),
+                const ExamsScreen(switchDrawer: switchDrawer),
               ],
             ),
           ),

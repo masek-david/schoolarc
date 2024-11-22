@@ -6,7 +6,6 @@ import 'package:school_manager/data/exams_data/exam_dto_model.dart';
 import 'package:school_manager/data/exams_data/exam_service.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_service.dart';
-import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/settings_database.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/extensions/string_extension.dart';
@@ -84,9 +83,9 @@ class NotificationSender {
             arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
         .add(const Duration(days: 1));
 
-    List<ExamDTO> examsForTommorow = ExamService().getForDay(tommorowDate);
-    List<HomeworkDTO> hwsForTommorow = HomeworkService().getForDay(tommorowDate);
-    List<HomeworkDTO> missedHws = homeworkService.getMissedHw();
+    List<ExamDTO> examsForTommorow = ExamService().getForDay(tommorowDate, null);
+    List<HomeworkDTO> hwsForTommorow = HomeworkService().getForDay(tommorowDate, null);
+    List<HomeworkDTO> missedHws = homeworkService.getMissedHw(null);
 
     // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {
@@ -94,7 +93,7 @@ class NotificationSender {
       String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
 
       String examText =
-          '${Priority(exam.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
+          '${exam.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
 
       examsTextList += '$examText<br>';
     }
@@ -107,7 +106,7 @@ class NotificationSender {
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
-          '${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       homeworksTextList += '$hwText<br>';
     }
@@ -119,7 +118,7 @@ class NotificationSender {
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String missedHwText =
-          '${hw.completion ? '&#10003<i>' : ''}${Priority(hw.priority, null).htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       missedHwTextList ??= '';
       missedHwTextList += '$missedHwText<br>';

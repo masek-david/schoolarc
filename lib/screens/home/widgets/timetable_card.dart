@@ -5,6 +5,7 @@ import 'package:school_manager/data/table_data/lesson_times_model.dart';
 import 'package:school_manager/data/table_data/table_dto_model.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
+import 'package:school_manager/screens/current_timetable.dart/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -69,10 +70,12 @@ class TimetableCard extends StatelessWidget {
                 TextSeparator(
                   text: 'Lessons $whenText',
                   actions: [
-                    if (isLoading) const CircularProgressIndicator(),
-                    IconButton(
-                      onPressed: () => refresh(),
-                      icon: const Icon(Icons.refresh),
+                    LoadingIconButton(
+                      icon: Icons.refresh,
+                      isLoading: isLoading,
+                      onTap: () async {
+                        return refresh();
+                      },
                     ),
                     IconButton(
                       onPressed: () {

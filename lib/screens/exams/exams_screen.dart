@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/exams_data/exam_service.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/screens/exams/widgets/priority_view.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class ExamsScreen extends StatefulWidget {
   const ExamsScreen({
@@ -18,90 +15,30 @@ class ExamsScreen extends StatefulWidget {
 }
 
 class _ExamsScreenState extends State<ExamsScreen> {
-  ExamService service = ExamService();
-  late Map<int, List<ExamDTO>> examsByPriority = service.sortByPriority();
-  late List<ExamDTO> completedExams = service.getCompletedExams();
-  late List<Priority> priorities = List.generate(
-    4,
-    (index) => Priority(index, context),
-  );
+  late var examsByPriority = examService.sortByPriority(null);
+  late var completedExams = examService.getCompletedExams(null);
 
-  // deletes exam and shows snackbar to undo it
-  void deleteExam(int dbIndex) {
-    service.deleteExam(dbIndex);
-    updateListView();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Exam deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            service.revertLastlyDeletedExam();
-            updateListView();
-          },
-        ),
-      ),
-    );
+    updateView();
   }
 
-  void createNewExam() async {
-    showAddBottomSheet(
-      context,
-      onSave: ({
-        required date,
-        required priority,
-        subject,
-        required text,
-      }) async {
-        await service.saveNewExam(
-          date: date,
-          priority: priority,
-          subject: subject,
-          text: text,
-        );
-        updateListView();
-      },
-    );
-  }
-
-  void editExam(int dbIndex) {
-    ExamDTO currentlyEditedTask = service.getExam(dbIndex);
-
-    showAddBottomSheet(
-      context,
-      initialName: currentlyEditedTask.text,
-      initialSubject: currentlyEditedTask.subject,
-      initialDate: currentlyEditedTask.deadline,
-      initialPriority: currentlyEditedTask.priority,
-      onSave: ({required date, required priority, subject, required text}) {
-        service.saveEditedExam(
-          date: date,
-          priority: priority,
-          subject: subject,
-          text: text,
-          dbIndex: dbIndex,
-        );
-        updateListView();
-      },
-    );
+  void updateView() {
+    if (mounted) {
+      setState(() {
+        examsByPriority = examService.sortByPriority(context);
+        completedExams = examService.getCompletedExams(context);
+      });
+    }
   }
 
   void reorderExam(
       int oldItemIndex, int oldPriority, int newItemIndex, int newPriority) {
-    service.changeSequence(
+    examService.changeSequence(
         oldItemIndex, oldPriority, newItemIndex, newPriority);
-    updateListView();
-  }
-
-  void updateListView() {
-    if (mounted) {
-      setState(() {
-        examsByPriority = service.sortByPriority();
-        completedExams = service.getCompletedExams();
-      });
-    }
+    updateView();
   }
 
   @override
@@ -116,10 +53,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
       body: PriorityView(
         examsByPriority: examsByPriority,
         completedExams: completedExams,
-        priorities: priorities,
-        createNewExam: createNewExam,
-        deleteExam: deleteExam,
-        editExam: editExam,
+        updateView: updateView,
         reorderExam: reorderExam,
       ),
     );

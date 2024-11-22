@@ -19,7 +19,7 @@ class HomeworkTile extends StatelessWidget {
   });
 
   final HomeworkDTO hw;
-  final Priority priority;
+  final TaskPriority priority;
   final bool showDeadline;
   final Function(bool) onChangedCompletion;
   final Function() onDelete;

@@ -18,7 +18,7 @@ class ExamTile extends StatelessWidget {
 
   final ExamDTO exam;
   final bool showDeadline;
-  final Priority priority;
+  final TaskPriority priority;
   final Function(BuildContext) onDelete;
   final Function() onEdit;
 
@@ -54,7 +54,7 @@ class ExamTile extends StatelessWidget {
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.horizontal(left: Radius.circular(1000)),
+      borderRadius: const BorderRadius.horizontal(left: Radius.circular(1000)),
       child: Slidable(
         groupTag: '0',
         endActionPane: ActionPane(

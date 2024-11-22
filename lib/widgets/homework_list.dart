@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
 class HomeworkList extends StatelessWidget {
   const HomeworkList({
     super.key,
     required this.hwList,
-    required this.changeCompletion,
-    required this.deleteHw,
-    required this.editHw,
     required this.updateListView,
     this.showText = false,
     this.showDates = true,
@@ -19,9 +16,6 @@ class HomeworkList extends StatelessWidget {
   });
 
   final List<HomeworkDTO> hwList;
-  final Function(int dbIndex, bool value) changeCompletion;
-  final Function(int dbIndex) deleteHw;
-  final Function(int dbIndex) editHw;
   final Function() updateListView;
   final bool showText;
   final bool showDates;
@@ -47,11 +41,16 @@ class HomeworkList extends StatelessWidget {
             child: AnimatedCompletionTile(
               hw: hw,
               showDate: showDates,
-              priority: Priority(hw.priority, context),
+              priority: hw.priority,
               onChangedCompletion: (value) =>
                   changeCompletion(hw.dbIndex, value),
-              onDelete: () => deleteHw(hw.dbIndex),
-              onEdit: () => editHw(hw.dbIndex),
+              onDelete: () =>
+                  deleteHw(context, hw.dbIndex, () => updateListView()).then(
+                (value) => updateListView(),
+              ),
+              onEdit: () => editHw(context, hw.dbIndex).then(
+                (value) => updateListView(),
+              ),
               onAnimationEnd: updateListView,
             ),
           );

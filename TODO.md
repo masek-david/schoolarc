@@ -3,7 +3,6 @@ fix:
 
 
 =============================================================================================
-homeworkdto by mel mit priority, muze generovat service
 
 extend Exception?
 
@@ -11,11 +10,11 @@ info o bakalarich
 
 uvitaci obrazovka
 
-add teachers
-
 widget
 
 bigger screens
+
+add teachers
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

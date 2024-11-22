@@ -1,4 +1,3 @@
-
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/data/stravacz/meal_model.dart';
@@ -30,8 +29,8 @@ class MealsCard extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(
-            child: Text(
-                'There was an error getting the meals: ${snapshot.error}'),
+            child:
+                Text('There was an error getting the meals: ${snapshot.error}'),
           );
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No meals found'));
@@ -44,10 +43,10 @@ class MealsCard extends StatelessWidget {
             itemBuilder: (context, index) {
               final date =
                   todayLocal000.toUtc().add(Duration(days: index)).toLocal();
-    
+
               final mealsForToday = snapshot.data![date];
               final bool empty = mealsForToday == null;
-    
+
               return Padding(
                 padding: EdgeInsets.all(empty ? 20 : 8),
                 child: Column(

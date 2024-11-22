@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:school_manager/data/homeworks_data/hw_database.dart';
 import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
 import 'package:school_manager/data/homeworks_data/hw_model.dart';
+import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
 import 'package:school_manager/extensions/datetime_extension.dart';
 import 'package:school_manager/notifications/notification_sender.dart';
@@ -10,17 +12,19 @@ class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
 
   late final Map<int, SubjectDTO> _subjectsDbIndex = subjectService.getMap();
+
   /// key is the dbIndex
   late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
+
   /// key is the priority, for each priority is a list of dbIndexes
   late Map<int, List<int>> _sequence = _db.getSequence();
+
   /// map with dbIndex and index in sequence, to return them to correct position
   final Map<int, int> completedHws = {};
 
   Homework? lastlyDeletedHw;
   int? lastlyDeletedHwDbIndex;
   int? lastlyDeletedHwIndex;
-  
 
   void changeCompletion(int dbIndex, bool value) {
     _db.changeCompletion(dbIndex, value);
@@ -59,52 +63,72 @@ class HomeworkService {
     NotificationSender.scheduleTommorrowNotification();
   }
 
-  List<HomeworkDTO> getForDay(DateTime date){
+  List<TaskPriority> getPriorities(BuildContext? context) {
+    List<TaskPriority> priorities = [];
+
+    for (int i = 0; i < 4; i++) {
+      priorities.add(TaskPriority(i, context));
+    }
+
+    return priorities;
+  }
+
+  List<HomeworkDTO> getForDay(DateTime date, BuildContext? context) {
     final dateUtc = date.toUtc();
-    final hwByDate = sortByDate();
+    final hwByDate = sortByDate(context);
 
     final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
 
-    return hwByDate[dateNoTime] ?? []; 
+    return hwByDate[dateNoTime] ?? [];
   }
 
   /// returns map with datetime being only the date in UTC, not the time
-  Map<DateTime, List<HomeworkDTO>> sortByDate() {
+  Map<DateTime, List<HomeworkDTO>> sortByDate(BuildContext? context) {
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
     _hwDbIndexMap = _db.getDatabase();
+    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, homework) {
         final hwDeadlineUtc = homework.deadline;
-        
-        DateTime dateNoTime = DateTime.utc(hwDeadlineUtc.year,
-            hwDeadlineUtc.month, hwDeadlineUtc.day);
+
+        DateTime dateNoTime = DateTime.utc(
+            hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
 
         if (hwDateMap.containsKey(dateNoTime)) {
           // If it exists, add the event to the existing list
-          hwDateMap[dateNoTime]!.add(homework.convertToDTO(
-              dbIndex, _subjectsDbIndex[homework.subjectDbIndex]));
+          hwDateMap[dateNoTime]!.add(
+            homework.convertToDTO(
+              dbIndex,
+              _subjectsDbIndex[homework.subjectDbIndex],
+              priorities[homework.priority],
+            ),
+          );
         } else {
           // If it does not exist, create a new list with the exam
           hwDateMap[dateNoTime] = [
             homework.convertToDTO(
-                dbIndex, _subjectsDbIndex[homework.subjectDbIndex])
+              dbIndex,
+              _subjectsDbIndex[homework.subjectDbIndex],
+              priorities[homework.priority],
+            )
           ];
         }
       },
     );
 
     hwDateMap.forEach((key, value) {
-      value.sort((a, b) => b.priority.compareTo(a.priority));
+      value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
     });
 
     return hwDateMap;
   }
 
   /// returns list of sorted homeworks for each priority
-  Map<int, List<HomeworkDTO>> sortByPriority() {
+  Map<int, List<HomeworkDTO>> sortByPriority(BuildContext? context) {
     _hwDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
+    final priorities = getPriorities(context);
 
     Map<int, List<HomeworkDTO>> hwPriorityMap = {
       0: <HomeworkDTO>[],
@@ -118,10 +142,8 @@ class HomeworkService {
         Homework hw = _hwDbIndexMap[list[i]]!;
         if (!hw.completion) {
           hwPriorityMap[priority]!.add(
-            hw.convertToDTO(
-              list[i],
-              _subjectsDbIndex[hw.subjectDbIndex],
-            ),
+            hw.convertToDTO(list[i], _subjectsDbIndex[hw.subjectDbIndex],
+                priorities[hw.priority]),
           );
         }
       }
@@ -130,9 +152,10 @@ class HomeworkService {
     return hwPriorityMap;
   }
 
-  List<HomeworkDTO> getCompletedHw() {
+  List<HomeworkDTO> getCompletedHw(BuildContext? context) {
     List<HomeworkDTO> completedHw = [];
     _hwDbIndexMap = _db.getDatabase();
+    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -141,6 +164,7 @@ class HomeworkService {
             hw.convertToDTO(
               dbIndex,
               _subjectsDbIndex[hw.subjectDbIndex],
+              priorities[hw.priority],
             ),
           );
         }
@@ -150,9 +174,10 @@ class HomeworkService {
     return completedHw;
   }
 
-  List<HomeworkDTO> getMissedHw() {
+  List<HomeworkDTO> getMissedHw(BuildContext? context) {
     List<HomeworkDTO> missedHw = [];
     _hwDbIndexMap = _db.getDatabase();
+    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -161,6 +186,7 @@ class HomeworkService {
             hw.convertToDTO(
               dbIndex,
               _subjectsDbIndex[hw.subjectDbIndex],
+              priorities[hw.priority],
             ),
           );
         }
@@ -261,10 +287,14 @@ class HomeworkService {
     return;
   }
 
-  HomeworkDTO getHomework(int dbIndex) {
+  HomeworkDTO getHomework(int dbIndex, BuildContext? context) {
     Homework hw = _db.getHomework(dbIndex);
 
-    return hw.convertToDTO(dbIndex, _subjectsDbIndex[hw.subjectDbIndex]);
+    return hw.convertToDTO(
+      dbIndex,
+      _subjectsDbIndex[hw.subjectDbIndex],
+      TaskPriority(hw.priority, context),
+    );
   }
 
   /// returns the number of incomplete homeworks

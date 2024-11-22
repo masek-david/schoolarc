@@ -18,7 +18,7 @@ class AnimatedCompletionTile extends StatefulWidget {
 
   final HomeworkDTO hw;
   final bool showDate;
-  final Priority priority;
+  final TaskPriority priority;
   final Function onAnimationEnd;
   final Function onDelete;
   final Function onEdit;
