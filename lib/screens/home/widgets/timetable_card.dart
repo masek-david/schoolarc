@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
-import 'package:school_manager/data/table_data/table_dto_model.dart';
+import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
-import 'package:school_manager/screens/current_timetable.dart/loading_icon_button.dart';
+import 'package:school_manager/screens/current_timetable/current_timetable.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/widgets/error_tile.dart';
 
 bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
   bool isEmpty = true;
@@ -33,7 +35,7 @@ class TimetableCard extends StatelessWidget {
 
   final void Function() refresh;
   final TimeTableDTO defaultTimeTable;
-  final Future<TimeTableDTO?> bakaTimetable;
+  final Future<TimeTableDTO?>? bakaTimetable;
   final DateTime dateToShow;
   final String whenText;
 
@@ -51,7 +53,6 @@ class TimetableCard extends StatelessWidget {
         }
 
         TimeTableDTO timetable = defaultTimeTable;
-
         if (snapshot.data != null) {
           timetable = snapshot.data!;
         }
@@ -66,7 +67,6 @@ class TimetableCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (error != null) Text(error),
                 TextSeparator(
                   text: 'Lessons $whenText',
                   actions: [
@@ -90,6 +90,12 @@ class TimetableCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (error != null)
+                  ErrorTile(
+                    error: error,
+                    text:
+                        'Couldn\'t connect to bakaláři, loaded permanent timetable',
+                  ),
                 const SizedBox(height: 10),
                 areThereUpcomingLessons
                     ? SingleChildScrollView(
@@ -122,7 +128,7 @@ class TimetableCard extends StatelessWidget {
                                     SizedBox(
                                       height: 100,
                                       child: TimetableTile(
-                                        isHighlighted: entry.key.isActive,
+                                        isHighlighted: entry.key.isActive && dateToShow.isSameDay(DateTime.now()),
                                         lesson: entry.value,
                                         columnWidth: 80,
                                         onTap: (lesson) =>
@@ -134,7 +140,7 @@ class TimetableCard extends StatelessWidget {
                               },
                             ).toList()),
                       )
-                    : Text('No lessons $whenText')
+                    : Text('No lessons $whenText'),
               ],
             ),
           ),

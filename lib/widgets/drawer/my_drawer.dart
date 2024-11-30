@@ -1,15 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
-import 'package:school_manager/screens/current_timetable.dart/current_timetable.dart';
-import 'package:school_manager/screens/db_info.dart';
+import 'package:school_manager/screens/current_timetable/current_timetable.dart';
+import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
+import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
@@ -121,10 +122,19 @@ class MyDrawer extends StatelessWidget {
           MyDrawerButton(
             text: 'View database',
             icon: const Icon(Icons.data_array),
-            onTap: () => Navigator.push(
-              context,
+            onTap: () => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => DbInfoScreen(),
+              ),
+            ),
+          ),
+        if (showDebug)
+          MyDrawerButton(
+            text: 'View tutorial',
+            icon: const Icon(Icons.data_array),
+            onTap: () => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => WelcomeScreen(),
               ),
             ),
           ),

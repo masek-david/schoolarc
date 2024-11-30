@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
-import 'package:school_manager/data/subjects_data/subject_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 

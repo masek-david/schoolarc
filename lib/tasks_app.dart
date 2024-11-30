@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/bakalari/baka_service.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/exams_data/exam_service.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/data/homeworks_data/hw_service.dart';
-import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/stravacz/strava_service.dart';
-import 'package:school_manager/data/subjects_data/subject_service.dart';
-import 'package:school_manager/data/table_data/timetable_database.dart';
-import 'package:school_manager/notifications/notification_controller.dart';
+import 'package:school_manager/services/bakalari/baka_service.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/services/exams/exam_service.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/services/homeworks/hw_service.dart';
+import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/services/strava_service.dart';
+import 'package:school_manager/services/subjects/subject_service.dart';
+import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/models/task_model.dart';
+import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
-import 'package:school_manager/screens/intro/intro_screen.dart';
-import 'package:school_manager/theme_generate.dart';
+import 'package:school_manager/utils/theme_generate.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
@@ -38,19 +39,44 @@ Future<void> addTask(
   required bool isHomework,
   DateTime? initialDate,
 }) async {
-  initialDate ??= DateTime.now();
+  Task? newTask;
 
-  await showAddBottomSheet(
-    context,
-    initialDate: initialDate,
-    onSave: ({required date, required priority, subject, required text}) async {
-      isHomework
-          ? await homeworkService.saveNewHW(
-              date: date, priority: priority, subject: subject, text: text)
-          : await examService.saveNewExam(
-              date: date, priority: priority, subject: subject, text: text);
-    },
+  await showModalBottomSheet(
+    context: context,
+    builder: (context) => AddTaskBottomSheet(
+      initialDate: initialDate,
+      onSave: ({required date, required priority, subject, required text}) {
+        newTask = Task(
+          subject: subject,
+          text: text,
+          deadline: date,
+          completion: false,
+          priority: TaskPriority(priority, context),
+          dbIndex: 0,
+        );
+      },
+    ),
   );
+
+  if (newTask == null) {
+    return;
+  }
+
+  if (isHomework) {
+    await homeworkService.saveNewHW(
+      date: newTask!.deadline,
+      priority: newTask!.priority.index,
+      subject: newTask!.subject,
+      text: newTask!.text,
+    );
+  } else {
+    await examService.saveNewExam(
+      date: newTask!.deadline,
+      priority: newTask!.priority.index,
+      subject: newTask!.subject,
+      text: newTask!.text,
+    );
+  }
 
   return;
 }
@@ -58,44 +84,57 @@ Future<void> addTask(
 Future<void> editHw(BuildContext context, int dbIndex) async {
   HomeworkDTO hw = homeworkService.getHomework(dbIndex, context);
 
-  await showAddBottomSheet(
-    context,
-    initialDate: hw.deadline,
-    initialSubject: hw.subject,
-    initialPriority: hw.priority.index,
-    initialName: hw.text,
-    onSave: ({required date, required priority, subject, required text}) {
-      homeworkService.saveEditedHW(
-        date: date,
-        priority: priority,
-        subject: subject,
-        text: text,
-        completion: false,
-        dbIndex: dbIndex,
-      );
-    },
+  await showModalBottomSheet(
+    context: context,
+    builder: (context) => AddTaskBottomSheet(
+      initialSubject: hw.subject,
+      initialPriority: hw.priority.index,
+      initialName: hw.text,
+      initialDate: hw.deadline,
+      onSave: ({required date, required priority, subject, required text}) {
+        hw.deadline = date;
+        hw.priority = TaskPriority(priority, context);
+        hw.subject = subject;
+        hw.text = text;
+      },
+    ),
   );
+
+  await homeworkService.saveEditedHW(
+    date: hw.deadline,
+    priority: hw.priority.index,
+    subject: hw.subject,
+    text: hw.text,
+    dbIndex: dbIndex,
+  );
+
   return;
 }
 
 Future<void> editExam(BuildContext context, int dbIndex) async {
   ExamDTO exam = examService.getExam(dbIndex, context);
 
-  await showAddBottomSheet(
-    context,
-    initialDate: exam.deadline,
-    initialSubject: exam.subject,
-    initialPriority: exam.priority.index,
-    initialName: exam.text,
-    onSave: ({required date, required priority, subject, required text}) {
-      examService.saveEditedExam(
-        date: date,
-        priority: priority,
-        subject: subject,
-        text: text,
-        dbIndex: dbIndex,
-      );
-    },
+  await showModalBottomSheet(
+    context: context,
+    builder: (context) => AddTaskBottomSheet(
+      initialSubject: exam.subject,
+      initialPriority: exam.priority.index,
+      initialName: exam.text,
+      initialDate: exam.deadline,
+      onSave: ({required date, required priority, subject, required text}) {
+        exam.deadline = date;
+        exam.priority = TaskPriority(priority, context);
+        exam.subject = subject;
+        exam.text = text;
+      },
+    ),
+  );
+  await examService.saveEditedExam(
+    date: exam.deadline,
+    priority: exam.priority.index,
+    subject: exam.subject,
+    text: exam.text,
+    dbIndex: dbIndex,
   );
 
   return;
@@ -231,7 +270,6 @@ class _TasksAppState extends State<TasksApp> {
   void initState() {
     super.initState();
 
-    firstTimeOpeningApp();
     if (_settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     }
@@ -249,9 +287,10 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    navigatorKey.currentState?.push(MaterialPageRoute(
-      builder: (context) => const IntroScreen(),
-    ));
+    // TODO
+    // navigatorKey.currentState?.push(MaterialPageRoute(
+    //   builder: (context) => WelcomeScreen(),
+    // ));
   }
 
   void setThemeMode(bool? value) {
@@ -326,16 +365,13 @@ class _TasksAppState extends State<TasksApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(colorScheme: light),
         darkTheme: ThemeData(colorScheme: dark),
-        // darkTheme: ThemeData(colorScheme: darkDynamic),
         themeMode: themeMode,
         initialRoute: '/',
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case '/':
               return MaterialPageRoute(
-                builder: (context) => const HomeScreen(
-                  switchDrawer: switchDrawer,
-                ),
+                builder: (context) => const HomeScreen(),
               );
 
             case '/calendar':
@@ -358,13 +394,12 @@ class _TasksAppState extends State<TasksApp> {
               physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
               children: [
-                const HomeScreen(switchDrawer: switchDrawer),
+                const HomeScreen(),
                 CalendarScreen(
-                  // switchDrawer: switchDrawer,
                   showTommorrow: calendarShowTommorrow,
                 ),
                 const HomeworksScreen(),
-                const ExamsScreen(switchDrawer: switchDrawer),
+                const ExamsScreen(),
               ],
             ),
           ),

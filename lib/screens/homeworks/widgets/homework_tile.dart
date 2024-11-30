@@ -1,10 +1,9 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
-import 'package:school_manager/data/priority_model.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class HomeworkTile extends StatelessWidget {
@@ -12,15 +11,15 @@ class HomeworkTile extends StatelessWidget {
     super.key,
     required this.hw,
     this.showDeadline = true,
-    required this.priority,
+    this.slidableController,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
   });
 
   final HomeworkDTO hw;
-  final TaskPriority priority;
   final bool showDeadline;
+  final SlidableController? slidableController;
   final Function(bool) onChangedCompletion;
   final Function() onDelete;
   final Function() onEdit;
@@ -59,6 +58,7 @@ class HomeworkTile extends StatelessWidget {
 
     return Slidable(
       groupTag: '0',
+      controller: slidableController,
       endActionPane: ActionPane(
         motion: const StretchMotion(),
         extentRatio: 0.3,
@@ -121,7 +121,7 @@ class HomeworkTile extends StatelessWidget {
                     const SizedBox(width: 5),
                     MyCheckbox(
                       value: hw.completion,
-                      priority: priority,
+                      priority: hw.priority,
                       onChanged: onChangedCompletion,
                       key: ValueKey('checkbox ${hw.dbIndex}'),
                     ),

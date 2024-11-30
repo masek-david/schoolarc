@@ -4,8 +4,6 @@ fix:
 
 =============================================================================================
 
-extend Exception?
-
 info o bakalarich
 
 uvitaci obrazovka

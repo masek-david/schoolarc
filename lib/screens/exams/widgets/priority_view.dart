@@ -5,8 +5,8 @@ import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/data/priority_model.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
 
 class PriorityView extends StatelessWidget {
   const PriorityView({
@@ -48,8 +48,10 @@ class PriorityView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new exam',
         onPressed: () {
-          addTask(context, isHomework: false);
           HapticFeedback.lightImpact();
+          addTask(context, isHomework: false).then(
+            (value) => updateView(),
+          );
         },
         enableFeedback: true,
         child: const Icon(Icons.add),
@@ -102,7 +104,6 @@ class PriorityView extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ExamTile(
                       exam: exam,
-                      priority: exam.priority,
                       onDelete: (context) =>
                           deleteExam(context, exam.dbIndex, () => updateView())
                               .then(
@@ -146,7 +147,6 @@ class PriorityView extends StatelessWidget {
     return DragAndDropItem(
       child: ExamTile(
         exam: exam,
-        priority: exam.priority,
         onDelete: (context) =>
             deleteExam(context, exam.dbIndex, () => updateView()).then(
           (value) => updateView(),

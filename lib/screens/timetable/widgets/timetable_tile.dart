@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/bakalari/timetable_change.dart';
-import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/models/bakalari/timetable_change.dart';
+import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 

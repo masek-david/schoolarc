@@ -1,21 +1,26 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/stravacz/meal_model.dart';
-import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MealsCard extends StatelessWidget {
-  const MealsCard({
+  MealsCard({
     super.key,
     required this.meals,
     required this.refresh,
   });
 
-  final Future<Map<DateTime, List<Meal>>> meals;
-  final void Function() refresh;
+  final Future<Map<DateTime, List<Meal>>>? meals;
+  final Future<void> Function() refresh;
+
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,68 +30,92 @@ class MealsCard extends StatelessWidget {
     return FutureBuilder(
       future: meals,
       builder: (context, snapshot) {
+        bool isLoading = false;
+
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          isLoading = true;
         } else if (snapshot.hasError) {
-          return Center(
-            child:
-                Text('There was an error getting the meals: ${snapshot.error}'),
+          return ErrorTile(
+            error: snapshot.error,
+            text: 'Meals couldn\'t be loaded',
           );
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No meals found'));
         }
         return Card(
-          child: ExpandablePageView.builder(
-            animateFirstPage: true,
-            animationDuration: Durations.medium2,
-            itemCount: snapshot.data?.keys.length ?? 0,
-            itemBuilder: (context, index) {
-              final date =
-                  todayLocal000.toUtc().add(Duration(days: index)).toLocal();
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ExpandablePageView.builder(
+                animateFirstPage: true,
+                controller: _pageController,
+                animationDuration: Durations.medium2,
+                itemCount: snapshot.data?.keys.length ?? 1,
+                itemBuilder: (context, index) {
+                  final date = todayLocal000
+                      .toUtc()
+                      .add(Duration(days: index))
+                      .toLocal();
 
-              final mealsForToday = snapshot.data![date];
-              final bool empty = mealsForToday == null;
+                  final mealsForToday = snapshot.data?[date];
+                  final bool empty = mealsForToday == null;
 
-              return Padding(
-                padding: EdgeInsets.all(empty ? 20 : 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextSeparator(
-                      text: empty
-                          ? 'No meals for ${date.formattedDate()}'
-                          : date.formattedDate(),
-                      actions: [
-                        IconButton(
-                          onPressed: () {
-                            refresh();
-                          },
-                          icon: const Icon(
-                            Icons.refresh,
-                          ),
+                  return Padding(
+                    padding: EdgeInsets.all(empty ? 16 : 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextSeparator(
+                          text: isLoading
+                              ? 'Loading'
+                              : empty
+                                  ? 'No meals for ${date.formattedDate()}'
+                                  : 'Meals for ${date.formattedDate()}',
+                          actions: [
+                            LoadingIconButton(
+                              icon: Icons.refresh,
+                              onTap: () => refresh(),
+                              isLoading: isLoading,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                navigatorKey.currentState
+                                    ?.push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      const StravaSettingsScreen(),
+                                ));
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                              ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          onPressed: () {
-                            navigatorKey.currentState?.push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const StravaSettingsScreen(),
-                            ));
-                          },
-                          icon: const Icon(
-                            Icons.keyboard_arrow_right_rounded,
-                          ),
-                        ),
+                        if (!empty)
+                          ...mealsForToday.map((meal) {
+                            return MealTile(meal: meal);
+                          }),
                       ],
                     ),
-                    if (!empty)
-                      ...mealsForToday.map((meal) {
-                        return MealTile(meal: meal);
-                      }),
-                  ],
+                  );
+                },
+              ),
+              if(snapshot.data?.keys.length != null)
+              SmoothPageIndicator(
+                controller: _pageController,
+                count: snapshot.data?.keys.length ?? 0,
+                effect: ScrollingDotsEffect(
+                  activeDotColor: Theme.of(context).colorScheme.tertiary,
+                  dotColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  maxVisibleDots: 7,
+                  dotHeight: 4,
+                  dotWidth: 16,
                 ),
-              );
-            },
+              ),
+              const SizedBox(height: 5),
+            ],
           ),
         );
       },

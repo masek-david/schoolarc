@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/models/priority_model.dart';
 
 class MyCheckbox extends StatefulWidget {
   const MyCheckbox({

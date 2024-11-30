@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
 
 class NewLessonTimes extends StatefulWidget {
   const NewLessonTimes({

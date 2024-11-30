@@ -1,9 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/priority_model.dart';
-import 'package:school_manager/extensions/color_extension.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {
@@ -11,14 +10,12 @@ class ExamTile extends StatelessWidget {
     super.key,
     required this.exam,
     this.showDeadline = true,
-    required this.priority,
     required this.onDelete,
     required this.onEdit,
   });
 
   final ExamDTO exam;
   final bool showDeadline;
-  final TaskPriority priority;
   final Function(BuildContext) onDelete;
   final Function() onEdit;
 
@@ -26,7 +23,7 @@ class ExamTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Color deadlineTextColor = Theme.of(context).colorScheme.onSurface;
     String deadlineText = '';
-    Color circleColor = priority.color;
+    Color circleColor = exam.priority.color;
 
     if (showDeadline) {
       if (exam.deadline.isBefore(DateTime.now())) {

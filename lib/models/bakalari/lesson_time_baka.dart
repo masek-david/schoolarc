@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+
+class LessonTimesBaka {
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final String name;
+  final int id;
+
+  LessonTimesBaka({
+    required this.startTime,
+    required this.endTime,
+    required this.name,
+    required this.id,
+  });
+
+  LessonTimes toLessonTimes() {
+    return LessonTimes.fromTimeOfDay(
+      startTime: startTime,
+      endTime: endTime,
+      name: name,
+    );
+  }
+}

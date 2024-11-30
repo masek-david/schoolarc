@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
-import 'package:school_manager/data/table_data/table_dto_model.dart';
-import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 
 class TimetableView extends StatelessWidget {

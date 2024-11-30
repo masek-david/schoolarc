@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class StravaSettingsScreen extends StatefulWidget {

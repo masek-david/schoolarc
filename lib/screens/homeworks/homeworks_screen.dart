@@ -29,10 +29,11 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
     }
   }
 
-  void reorderHomework(
-      int oldItemIndex, int oldPriority, int newItemIndex, int newPriority) {
-    homeworkService.changeSequence(
+  void reorderHomework(int oldItemIndex, int oldPriority, int newItemIndex,
+      int newPriority) async {
+    await homeworkService.changeSequence(
         oldItemIndex, oldPriority, newItemIndex, newPriority);
+
     updateListView();
   }
 

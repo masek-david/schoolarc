@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/extensions/timeofday_extension.dart';
+import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 class TimePickerAction extends StatefulWidget{
   const TimePickerAction({

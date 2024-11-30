@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -39,7 +39,6 @@ class ExamList extends StatelessWidget {
           child: ExamTile(
             exam: exam,
             showDeadline: false,
-            priority: exam.priority,
             onDelete: (context) =>
                 deleteExam(context, exam.dbIndex, () => updateView()).then(
               (value) => updateView(),

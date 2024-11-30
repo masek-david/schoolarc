@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 
 class AnimatedCompletionTile extends StatefulWidget {
@@ -9,7 +9,7 @@ class AnimatedCompletionTile extends StatefulWidget {
     super.key,
     this.showDate = true,
     required this.hw,
-    required this.priority,
+    this.slidableController,
     required this.onAnimationEnd,
     required this.onChangedCompletion,
     required this.onDelete,
@@ -18,7 +18,7 @@ class AnimatedCompletionTile extends StatefulWidget {
 
   final HomeworkDTO hw;
   final bool showDate;
-  final TaskPriority priority;
+  final SlidableController? slidableController;
   final Function onAnimationEnd;
   final Function onDelete;
   final Function onEdit;
@@ -98,7 +98,7 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
               return RadialGradient(
                 colors: [
                   Colors.transparent,
-                  widget.priority.color,
+                  widget.hw.priority.color,
                   Colors.transparent,
                 ],
                 radius: _controller.value * 50,
@@ -111,7 +111,7 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
         child: HomeworkTile(
           showDeadline: widget.showDate,
           hw: widget.hw,
-          priority: widget.priority,
+          slidableController: widget.slidableController,
           onChangedCompletion: (value) {
             widget.onChangedCompletion(value);
             playAnimation(value);

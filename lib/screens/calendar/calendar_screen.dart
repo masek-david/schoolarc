@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({

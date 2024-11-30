@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
@@ -41,7 +41,6 @@ class HomeworkList extends StatelessWidget {
             child: AnimatedCompletionTile(
               hw: hw,
               showDate: showDates,
-              priority: hw.priority,
               onChangedCompletion: (value) =>
                   changeCompletion(hw.dbIndex, value),
               onDelete: () =>

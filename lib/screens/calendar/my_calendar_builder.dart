@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/exams_data/exam_dto_model.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
-import 'package:school_manager/extensions/color_extension.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:table_calendar/table_calendar.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_dto_model.dart';
 
 class SubjectShortcut extends StatelessWidget {
   const SubjectShortcut({

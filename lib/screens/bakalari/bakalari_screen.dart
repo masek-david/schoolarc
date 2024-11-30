@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/bakalari/baka_service.dart';
-import 'package:school_manager/data/settings_database.dart';
+import 'package:school_manager/services/bakalari/baka_service.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 
 class BakalariScreen extends StatefulWidget {
-  const BakalariScreen({super.key});
+  const BakalariScreen({
+    super.key,
+    this.showAppbar = true,
+  });
+
+  final bool showAppbar;
 
   @override
   State<BakalariScreen> createState() => _BakalariScreenState();
@@ -14,8 +19,8 @@ class _BakalariScreenState extends State<BakalariScreen> {
   final _service = BakaService();
   final _settings = SettingsDatabase();
 
-  late final _schoolController = TextEditingController();
-  late final _usernameController = TextEditingController();
+  final _schoolController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
@@ -41,7 +46,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
       isLoading = true;
     });
 
-    loadLogin();
+    // loadLogin();
 
     _service.refreshLogin().then(
           (value) => evaluateResponse(value, shouldShowMessage: true),
@@ -62,17 +67,21 @@ class _BakalariScreenState extends State<BakalariScreen> {
       if (shouldShowMessage) {
         showMessage(successResponse);
       }
-      setState(() {
-        isLoading = false;
-        isLoggedIn = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isLoggedIn = true;
+        });
+      }
     } else {
       if (shouldShowMessage) {
         showMessage(response.error ?? '', isError: true);
       }
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -96,15 +105,23 @@ class _BakalariScreenState extends State<BakalariScreen> {
     }
   }
 
+  bool canLogin() {
+    return _schoolController.text != '' &&
+        _passwordController.text != '' &&
+        _usernameController.text != '';
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bakaláři'),
-      ),
+      appBar: widget.showAppbar
+          ? AppBar(
+              title: const Text('Bakaláři'),
+            )
+          : null,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: RefreshIndicator(
@@ -193,7 +210,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                 ],
               ),
               FilledButton(
-                onPressed: isLoading
+                onPressed: isLoading && !canLogin()
                     ? null
                     : () async {
                         refreshIndicatorKey.currentState?.show();
@@ -214,51 +231,45 @@ class _BakalariScreenState extends State<BakalariScreen> {
                 child: const Text("Log in"),
               ),
               const Divider(),
-              Row(
-                children: [
-                  const Text('Timetable'),
-                  const Spacer(),
-                  OutlinedButton(
-                    onPressed: isLoggedIn && !isLoading
-                        ? () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Import timetable?'),
-                                  content: const Text(
-                                    'Importing the timetable will replace your existing timetable. Are you sure?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Close'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        _service.importTimeTable().then(
-                                              (response) => evaluateResponse(
-                                                response,
-                                                successResponse:
-                                                    'Imported timetable successfully',
-                                              ),
-                                            );
-                                      },
-                                      child: const Text('Import'),
-                                    ),
-                                  ],
-                                );
-                              },
+              OutlinedButton(
+                onPressed: isLoggedIn && !isLoading
+                    ? () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Import timetable?'),
+                              content: const Text(
+                                'Importing the timetable will replace your existing timetable. Are you sure?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Close'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    _service.importTimeTable().then(
+                                          (response) => evaluateResponse(
+                                            response,
+                                            successResponse:
+                                                'Imported timetable successfully',
+                                          ),
+                                        );
+                                  },
+                                  child: const Text('Import'),
+                                ),
+                              ],
                             );
-                          }
-                        : null,
-                    child: const Text('Import'),
-                  ),
-                ],
+                          },
+                        );
+                      }
+                    : null,
+                child: const Text('Import timetable'),
               ),
             ],
           ),

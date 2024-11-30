@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/extensions/color_extension.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
 
 /// used in calendar views for dividing exams and homeworks
 class TextSeparator extends StatelessWidget {

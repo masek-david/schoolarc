@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
-import 'package:school_manager/data/table_data/timetable_database.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/screens/timetable/new_lesson_times.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/screens/timetable/timetable_settings.dart';

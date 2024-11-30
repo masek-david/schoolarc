@@ -1,45 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/data/subjects_data/subject_dto_model.dart';
-import 'package:school_manager/data/table_data/timetable_database.dart';
-import 'package:school_manager/extensions/color_extension.dart';
-import 'package:school_manager/extensions/datetime_extension.dart';
+import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/models/priority_model.dart';
 
-Future<void> showAddBottomSheet(
-  BuildContext context, {
-  String initialName = '',
-  int initialPriority = 0,
-  SubjectDTO? initialSubject,
-  DateTime? initialDate,
-  required void Function({
-    required DateTime date,
-    required int priority,
-    required String text,
-    SubjectDTO? subject,
-  }) onSave,
-}) async {
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    enableDrag: true,
-    builder: (context) {
-      return AddBottomSheet(
-        initialSubject: initialSubject,
-        initialPriority: initialPriority,
-        initialName: initialName,
-        initialDate: initialDate,
-        onSave: onSave,
-      );
-    },
-  );
-  return;
-}
-
-class AddBottomSheet extends StatefulWidget {
-  const AddBottomSheet({
+class AddTaskBottomSheet extends StatefulWidget {
+  const AddTaskBottomSheet({
     super.key,
     this.initialName = '',
     this.initialDate,
@@ -60,10 +31,10 @@ class AddBottomSheet extends StatefulWidget {
   final SubjectDTO? initialSubject;
 
   @override
-  State<AddBottomSheet> createState() => _AddBottomSheetState();
+  State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
 }
 
-class _AddBottomSheetState extends State<AddBottomSheet> {
+class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   late final nameController = TextEditingController.fromValue(
       TextEditingValue(text: widget.initialName));
   late SubjectDTO? pickedSubject = widget.initialSubject;
@@ -80,6 +51,17 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   );
 
   void onSave() {
+    // Navigator.pop(
+    //     context,
+    //     Task(
+    //       dbIndex: 0,
+    //       subject: pickedSubject,
+    //       text: nameController.text,
+    //       deadline: pickedDate,
+    //       completion: false,
+    //       priority: TaskPriority(pickedPriority, context),
+    //     ));
+
     widget.onSave(
       subject: pickedSubject,
       text: nameController.text,
@@ -95,6 +77,11 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
         pickedDate = _timetable.nextDateForSubject(subject) ?? pickedDate;
       }
     });
+    if (subject != null) {
+      Scrollable.ensureVisible(
+          keysList[subjects.indexOf(subject)].currentContext!,
+          duration: const Duration(milliseconds: 500));
+    }
   }
 
   @override
@@ -137,29 +124,46 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
               onSave: onSave,
             ),
             const SizedBox(height: 15),
-            Wrap(
+            Row(
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(subjects.length, (index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          key: keysList[index],
-                          selected:
-                              pickedSubject?.dbIndex == subjects[index].dbIndex,
-                          label: Text(subjects[index].name),
-                          onSelected: (value) {
-                            if (!value) {
-                              setSubject(null);
-                            } else {
-                              setSubject(subjects[index]);
-                            }
-                          },
-                        ),
-                      );
-                    }),
+                IconButton(
+                  onPressed: () async {
+                    final newSubject = await showDialog(
+                      context: context,
+                      builder: (context) => SelectSubjectDialog(
+                        subjects: subjects,
+                        showAllSubjects: false,
+                      ),
+                    );
+
+                    setSubject(newSubject);
+                  },
+                  icon: const Icon(Icons.search),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      // cant use .map(), i need the index
+                      children: List.generate(subjects.length, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            key: keysList[index],
+                            selected: pickedSubject?.dbIndex ==
+                                subjects[index].dbIndex,
+                            label: Text(subjects[index].name),
+                            onSelected: (value) {
+                              if (!value) {
+                                setSubject(null);
+                              } else {
+                                setSubject(subjects[index]);
+                              }
+                            },
+                          ),
+                        );
+                      }),
+                    ),
                   ),
                 ),
               ],
@@ -195,9 +199,6 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
               onSelected: (subject) {
                 nameController.text = '';
                 setSubject(subject);
-                Scrollable.ensureVisible(
-                    keysList[subjects.indexOf(subject)].currentContext!,
-                    duration: const Duration(milliseconds: 500));
               },
               displayStringForOption: (subject) {
                 return subject.name;

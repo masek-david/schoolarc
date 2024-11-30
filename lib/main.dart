@@ -1,11 +1,11 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/data/exams_data/exam_model.dart';
-import 'package:school_manager/data/homeworks_data/hw_model.dart';
-import 'package:school_manager/data/subjects_data/subject_model.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
-import 'package:school_manager/data/table_data/table_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/models/timetable/table_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 

@@ -1,13 +1,13 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/data/homeworks_data/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/data/priority_model.dart';
+import 'package:school_manager/models/priority_model.dart';
 
 class PriorityView extends StatelessWidget {
   const PriorityView({
@@ -49,7 +49,9 @@ class PriorityView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new homework',
         onPressed: () {
-          addTask(context, isHomework: true);
+          addTask(context, isHomework: true).then((value) {
+            updateView();
+          },);
           HapticFeedback.lightImpact();
         },
         enableFeedback: true,
@@ -103,7 +105,6 @@ class PriorityView extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: HomeworkTile(
                       hw: hw,
-                      priority: hw.priority,
                       onChangedCompletion: (value) {
                         changeCompletion(hw.dbIndex, value);
                         updateView();
@@ -151,7 +152,6 @@ class PriorityView extends StatelessWidget {
     return DragAndDropItem(
       child: AnimatedCompletionTile(
         hw: hw,
-        priority: hw.priority,
         onAnimationEnd: updateView,
         onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
         onDelete: () => deleteHw(context, hw.dbIndex, () => updateView())

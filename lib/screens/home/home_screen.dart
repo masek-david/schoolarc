@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/data/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/data/settings_database.dart';
-import 'package:school_manager/data/stravacz/meal_model.dart';
-import 'package:school_manager/data/stravacz/strava_service.dart';
-import 'package:school_manager/data/table_data/lesson_times_model.dart';
-import 'package:school_manager/data/table_data/table_dto_model.dart';
+import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/models/timetable/table_dto_model.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
 import 'package:school_manager/widgets/exam_list.dart';
@@ -13,12 +12,7 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.switchDrawer,
-  });
-
-  final void Function() switchDrawer;
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -34,8 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late var missedHw = homeworkService.getMissedHw(null);
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
-  late Future<TimeTableDTO?> bakaTimetable;
-  late Future<Map<DateTime, List<Meal>>> meals;
+  late Future<TimeTableDTO?>? bakaTimetable;
+  late Future<Map<DateTime, List<Meal>>>? meals;
 
   void updateView() {
     setState(() {
@@ -45,6 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
       hwToShow = homeworkService.getForDay(dateToShow, context);
       missedHw = homeworkService.getMissedHw(context);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    updateView();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    bakaTimetable = bakaService.getCurrentTimetable(DateTime.now());
+    meals = stravaService.getMeals();
   }
 
   Future<void> refresh() async {
@@ -59,7 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       meals = stravaService.getMeals();
     });
-    await meals;
+
+    try {
+      await meals;
+    } catch (_) {}
+
     return;
   }
 
@@ -67,23 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       bakaTimetable = bakaService.getCurrentTimetable(dateToShow);
     });
-    await bakaTimetable;
+
+    try {
+      await bakaTimetable;
+    } catch (_) {}
+
     return;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    updateView();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    meals = stravaService.getMeals();
-    bakaTimetable = bakaService.getCurrentTimetable(DateTime.now());
   }
 
   bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
@@ -124,17 +126,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          StravaService().login();
-        },
-        label: const Text('Plan-it'),
-        icon: const Icon(Icons.schedule),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //   },
+      //   label: const Text('Plan-it'),
+      //   icon: const Icon(Icons.schedule),
+      // ),
       appBar: AppBar(
-        leading: DrawerButton(
-          onPressed: widget.switchDrawer,
-        ),
+        leading: const DrawerButton(onPressed: switchDrawer),
         title: const Text('Home'),
       ),
       body: RefreshIndicator(
@@ -146,7 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 if (showMeals) MealsCard(meals: meals, refresh: refreshMeals),
                 Card(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
