@@ -20,7 +20,7 @@ class MyDrawer extends StatelessWidget {
     required this.setThemeMode,
   });
 
-  final void Function(bool? value) setThemeMode;
+  final void Function() setThemeMode;
 
   void showSnackbar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -101,7 +101,7 @@ class MyDrawer extends StatelessWidget {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => SettingsScreen(
-                  setThemeMode: setThemeMode,
+                  refreshTheme: setThemeMode,
                 ),
               ),
             );

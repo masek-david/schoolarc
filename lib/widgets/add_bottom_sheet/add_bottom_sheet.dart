@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/services/timetable_database.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -51,17 +50,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   );
 
   void onSave() {
-    // Navigator.pop(
-    //     context,
-    //     Task(
-    //       dbIndex: 0,
-    //       subject: pickedSubject,
-    //       text: nameController.text,
-    //       deadline: pickedDate,
-    //       completion: false,
-    //       priority: TaskPriority(pickedPriority, context),
-    //     ));
-
     widget.onSave(
       subject: pickedSubject,
       text: nameController.text,
@@ -109,7 +97,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final brightness = Theme.of(context).brightness;
 
     return SingleChildScrollView(
       child: Container(
@@ -222,32 +210,31 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
                 itemBuilder: (context, index) {
+                  bool isSelected = index == pickedPriority;
                   TaskPriority priority = TaskPriority(index, context);
+                  final scheme = ColorScheme.fromSeed(
+                    seedColor: priority.color,
+                    brightness: brightness,
+                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                  );
+
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
-                      selected: index == pickedPriority,
+                      selected: isSelected,
+                      onSelected: (value) => setState(
+                        () => pickedPriority = index,
+                      ),
+                      selectedColor: scheme.primaryContainer,
+                      backgroundColor: scheme.surfaceContainer,
+                      checkmarkColor: scheme.onPrimaryContainer,
                       label: Text(
                         priority.name,
                         style: TextStyle(
-                          color: priority.color.dynamicLighten(
-                              makeItLighter: isDark, amount: 0.5),
+                          color: isSelected
+                              ? scheme.onPrimaryContainer
+                              : scheme.primary,
                         ),
-                      ),
-                      backgroundColor: priority.color
-                          .dynamicLighten(makeItLighter: !isDark, amount: 0.37),
-                      selectedColor: priority.color
-                          .dynamicLighten(makeItLighter: !isDark, amount: 0.23),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: priority.color,
-                        ),
-                      ),
-                      onSelected: (value) => setState(
-                        () {
-                          pickedPriority = index;
-                        },
                       ),
                     ),
                   );

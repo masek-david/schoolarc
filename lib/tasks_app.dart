@@ -43,6 +43,7 @@ Future<void> addTask(
 
   await showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialDate: initialDate,
       onSave: ({required date, required priority, subject, required text}) {
@@ -86,6 +87,7 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
 
   await showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialSubject: hw.subject,
       initialPriority: hw.priority.index,
@@ -116,6 +118,7 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
 
   await showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialSubject: exam.subject,
       initialPriority: exam.priority.index,
@@ -249,9 +252,11 @@ class _TasksAppState extends State<TasksApp> {
   );
 
   final SettingsDatabase _settings = SettingsDatabase();
-  late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
   late int currentPageIndex = _settings.get(Setting.initialAppPage);
   bool calendarShowTommorrow = false;
+
+  late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
+  late Color userColor = Color(settings.get(Setting.themeColorValue));
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -293,9 +298,10 @@ class _TasksAppState extends State<TasksApp> {
     // ));
   }
 
-  void setThemeMode(bool? value) {
+  void refreshTheme() {
     setState(() {
-      themeMode = _getThemeMode(value);
+      userColor = Color(settings.get(Setting.themeColorValue));
+      themeMode = _getThemeMode(settings.get(Setting.themeMode));
     });
   }
 
@@ -329,21 +335,30 @@ class _TasksAppState extends State<TasksApp> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      final int dynamicSchemeVariant =
+          settings.get(Setting.themeDynamicSchemeVariantInt);
+
       var defaultThemeLight = ColorScheme.fromSeed(
-        seedColor: Colors.deepPurpleAccent,
+        seedColor: userColor,
         brightness: Brightness.light,
+        dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
       );
       var defaultThemeDark = ColorScheme.fromSeed(
-        seedColor: Colors.deepPurpleAccent,
+        seedColor: userColor,
         brightness: Brightness.dark,
+        dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
       );
 
-      lightDynamic ??= defaultThemeLight;
-      darkDynamic ??= defaultThemeDark;
+      if (settings.get(Setting.themeUseMaterial)) {
+        if (lightDynamic != null && darkDynamic != null) {
+          defaultThemeLight = lightDynamic;
+          defaultThemeDark = darkDynamic;
+        }
+      }
 
       (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
-        lightDynamic,
-        darkDynamic,
+        defaultThemeLight,
+        defaultThemeDark,
       );
 
       final light = schemes.$1;
@@ -404,7 +419,7 @@ class _TasksAppState extends State<TasksApp> {
             ),
           ),
           drawer: MyDrawer(
-            setThemeMode: setThemeMode,
+            setThemeMode: refreshTheme,
           ),
           bottomNavigationBar: NavBar(
             onTap: switchScreen,

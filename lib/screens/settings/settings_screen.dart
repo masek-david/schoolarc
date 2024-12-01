@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
+import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifications_page.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({
+  const SettingsScreen({
     super.key,
-    required this.setThemeMode,
+    required this.refreshTheme,
   });
 
-  final void Function(bool? value) setThemeMode;
-  late final settings = SettingsDatabase();
+  final void Function() refreshTheme;
 
   void showSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -33,35 +33,31 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           SettingTile(
+            label: 'App theme',
+            text: 'Customize the look and feel of the app',
+            icon: Icons.palette_outlined,
+            onTap: () => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => ThemePage(
+                  refreshTheme: refreshTheme,
+                ),
+              ),
+            ),
+          ),
+          SettingTile(
             label: 'Upcoming day notifications',
             text: 'Notification with homeworks and exams for next day',
             icon: Icons.circle_notifications_outlined,
             onTap: () => navigatorKey.currentState
                 ?.push(
               MaterialPageRoute(
-                builder: (context) => TommorrowNotificationsPage(
-                  settings: settings,
-                ),
+                builder: (context) => const TommorrowNotificationsPage(),
               ),
             )
                 .then(
               (value) {
                 NotificationSender.scheduleTommorrowNotification(
                     showSnackbar: (text) => showSnackBar(context, text));
-              },
-            ),
-          ),
-          SettingTile(
-            label: 'Screen switching animation duration',
-            text: 'In miliseconds',
-            icon: Icons.timelapse,
-            action: SliderAction(
-              inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
-              divisions: 10,
-              min: 0,
-              max: 500,
-              onChanged: (value) {
-                settings.save(Setting.pageSwitchAnimationDuration, value);
               },
             ),
           ),
@@ -82,20 +78,17 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           SettingTile(
-            label: 'App theme',
-            action: DropDownAction(
-              initialValue: settings.get(Setting.themeMode),
+            label: 'Screen switching animation duration',
+            text: 'In miliseconds',
+            icon: Icons.timelapse,
+            action: SliderAction(
+              inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
+              divisions: 10,
+              min: 0,
+              max: 500,
               onChanged: (value) {
-                bool? valueToBool = (value is bool) ? value : null;
-
-                settings.save(Setting.themeMode, valueToBool);
-                setThemeMode(valueToBool);
+                settings.save(Setting.pageSwitchAnimationDuration, value);
               },
-              items: const [
-                DropdownMenuItem(value: null, child: Text('System')),
-                DropdownMenuItem(value: false, child: Text('Light')),
-                DropdownMenuItem(value: true, child: Text('Dark')),
-              ],
             ),
           ),
           SettingTile(

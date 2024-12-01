@@ -3,6 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 enum Setting {
+  themeUseMaterial,
+  themeColorValue,
+  themeDynamicSchemeVariantInt,
   initialAppPage,
   pageSwitchAnimationDuration,
   tommorowNotificationEnabled,
@@ -13,6 +16,7 @@ enum Setting {
   bakaKeepLoggedIn,
   calendarInitialIsTommorrow,
   calendarShowMissed,
+  mealsShowTodayUntil,
   showDebugInfo,
 }
 
@@ -28,6 +32,18 @@ class SettingModel {
 
 class SettingsDatabase {
   static final Map<Setting, SettingModel> _settings = {
+    Setting.themeUseMaterial: SettingModel(
+      key: 'themeUseMaterial',
+      defaultValue: true,
+    ),
+    Setting.themeColorValue: SettingModel(
+      key: 'themeColor',
+      defaultValue: const Color.fromARGB(255, 104, 58, 183).value,
+    ),
+    Setting.themeDynamicSchemeVariantInt: SettingModel(
+      key: 'themeColorMode',
+      defaultValue: 7,
+    ),
     Setting.initialAppPage: SettingModel(
       key: 'initialAppPage',
       defaultValue: 1,
@@ -66,6 +82,10 @@ class SettingsDatabase {
     Setting.calendarShowMissed: SettingModel(
       defaultValue: true,
       key: 'calendarShowMissed',
+    ),
+    Setting.mealsShowTodayUntil: SettingModel(
+      defaultValue: const TimeOfDay(hour: 14, minute: 30).toDateTime(),
+      key: 'mealsShowTodayUntil',
     ),
     Setting.showDebugInfo: SettingModel(
       defaultValue: false,

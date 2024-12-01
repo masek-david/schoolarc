@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
 
 class ExpansionTitle extends StatelessWidget {
   const ExpansionTitle({
@@ -17,7 +16,19 @@ class ExpansionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final brightness = Theme.of(context).brightness;
+
+    Color? containerColor;
+
+    if (titleTextColor != null) {
+      final colorScheme = ColorScheme.fromSeed(
+        seedColor: titleTextColor!,
+        brightness: brightness,
+        dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+      );
+
+      containerColor = colorScheme.onPrimary;
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,12 +49,13 @@ class ExpansionTitle extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 5),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: titleTextColor == null
-                  ? Colors.transparent
-                  : titleTextColor!.dynamicLighten(
-                      makeItLighter: !isDark,
-                      amount: 0.35,
-                    ),
+              color: containerColor,
+              // color: titleTextColor == null
+              //     ? Colors.transparent
+              //     : titleTextColor!.dynamicLighten(
+              //         makeItLighter: !isDark,
+              //         amount: 0.30,
+              //       ),
               borderRadius: BorderRadius.circular(100),
             ),
             child: Text(numberOfItems.toString()),

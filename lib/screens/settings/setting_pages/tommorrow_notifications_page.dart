@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
@@ -8,10 +9,7 @@ import 'package:school_manager/screens/settings/widgets/time_picker_action.dart'
 class TommorrowNotificationsPage extends StatefulWidget {
   const TommorrowNotificationsPage({
     super.key,
-    required this.settings,
   });
-
-  final SettingsDatabase settings;
 
   @override
   State<TommorrowNotificationsPage> createState() =>
@@ -81,9 +79,9 @@ class _TommorrowNotificationsPageState
             highlighted: true,
             action: SwitchAction(
               initialValue:
-                  widget.settings.get(Setting.tommorowNotificationEnabled),
+                  settings.get(Setting.tommorowNotificationEnabled),
               onChanged: (value) {
-                widget.settings.save(Setting.tommorowNotificationEnabled, value);
+                settings.save(Setting.tommorowNotificationEnabled, value);
                 if (value) {
                   NotificationSender.getPermission(
                     context,
@@ -98,8 +96,8 @@ class _TommorrowNotificationsPageState
             text: 'Time around which notification will arrive',
             action: TimePickerAction(
               initialTime:
-                  widget.settings.getTimeOfDay(Setting.tommorowNotificationTime),
-              onChanged: (value) => widget.settings
+                  settings.getTimeOfDay(Setting.tommorowNotificationTime),
+              onChanged: (value) => settings
                   .saveTimeOfDay(Setting.tommorowNotificationTime, value),
             ),
           ),

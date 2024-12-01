@@ -1,11 +1,13 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -24,7 +26,14 @@ class MealsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    var now = DateTime.now();
+
+    if (settings
+        .getTimeOfDay(Setting.mealsShowTodayUntil)
+        .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
+      now = now.toUtc().add(const Duration(days: 1)).toLocal();
+    }
+
     final todayLocal000 = DateTime(now.year, now.month, now.day, 0, 0);
 
     return FutureBuilder(
@@ -101,19 +110,19 @@ class MealsCard extends StatelessWidget {
                   );
                 },
               ),
-              if(snapshot.data?.keys.length != null)
-              SmoothPageIndicator(
-                controller: _pageController,
-                count: snapshot.data?.keys.length ?? 0,
-                effect: ScrollingDotsEffect(
-                  activeDotColor: Theme.of(context).colorScheme.tertiary,
-                  dotColor:
-                      Theme.of(context).colorScheme.surfaceContainerHighest,
-                  maxVisibleDots: 7,
-                  dotHeight: 4,
-                  dotWidth: 16,
+              if (snapshot.data?.keys.length != null)
+                SmoothPageIndicator(
+                  controller: _pageController,
+                  count: snapshot.data?.keys.length ?? 0,
+                  effect: ScrollingDotsEffect(
+                    activeDotColor: Theme.of(context).colorScheme.tertiary,
+                    dotColor:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    maxVisibleDots: 7,
+                    dotHeight: 4,
+                    dotWidth: 16,
+                  ),
                 ),
-              ),
               const SizedBox(height: 5),
             ],
           ),

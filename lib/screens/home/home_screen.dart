@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
-                                .onPrimaryContainer,
+                                .onSurfaceVariant,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
