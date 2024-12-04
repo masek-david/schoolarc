@@ -48,9 +48,9 @@ extension BetterDateTime on DateTime {
       text = DateFormat('d. MM. y').format(localDate);
     } else if (localDate.isSameDay(now)) {
       text = 'Today';
-    } else if (localDate.isSameDay(now.toUtc().add(Duration(days: 1)))) {
+    } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
       text = 'Tommorow';
-    } else if (localDate.isSameDay(now.toUtc().subtract(Duration(days: -1)))) {
+    } else if (localDate.isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
       text = 'Yesterday';
     }
     return text;

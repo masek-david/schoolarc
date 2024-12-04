@@ -205,10 +205,12 @@ class ExamService {
     required int priority,
     required SubjectDTO? subject,
     required String text,
+    required String? description,
   }) async {
     Exam newExam = Exam(
       subjectDbIndex: subject?.dbIndex,
       text: text,
+      description: description,
       date: date,
       priority: priority,
       completion: date.isBeforeToday(),
@@ -232,6 +234,7 @@ class ExamService {
     required SubjectDTO? subject,
     required String text,
     required int dbIndex,
+    required String? description,
   }) async{
     int oldPriority = _examDbIndexMap[dbIndex]!.priority;
 
@@ -239,6 +242,7 @@ class ExamService {
     Exam editedExam = Exam(
       subjectDbIndex: subject?.dbIndex,
       text: text,
+      description: description,
       date: date,
       priority: priority,
       completion: isAlreadyCompleted,

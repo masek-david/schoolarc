@@ -8,5 +8,6 @@ class HomeworkDTO extends Task {
     required super.completion,
     required super.priority,
     required super.dbIndex,
+    required super.description,
   });
 }

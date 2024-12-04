@@ -13,6 +13,7 @@ class Homework extends HiveObject {
     required this.deadline,
     required this.completion,
     required this.priority,
+    required this.description,
   });
 
   @HiveField(0)
@@ -25,11 +26,14 @@ class Homework extends HiveObject {
   bool completion;
   @HiveField(4)
   int priority;
+  @HiveField(5)
+  String? description;
 
   HomeworkDTO convertToDTO(int dbIndex, SubjectDTO? subject, TaskPriority priority) {
     return HomeworkDTO(
       subject: subject,
       text: text,
+      description: description,
       deadline: deadline,
       completion: completion,
       priority: priority,

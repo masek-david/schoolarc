@@ -46,11 +46,12 @@ Future<void> addTask(
     isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialDate: initialDate,
-      onSave: ({required date, required priority, subject, required text}) {
+      onSave: ({required date, required priority, subject, required text, required description}) {
         newTask = Task(
           subject: subject,
           text: text,
           deadline: date,
+          description: description,
           completion: false,
           priority: TaskPriority(priority, context),
           dbIndex: 0,
@@ -69,6 +70,7 @@ Future<void> addTask(
       priority: newTask!.priority.index,
       subject: newTask!.subject,
       text: newTask!.text,
+      description: newTask!.description,
     );
   } else {
     await examService.saveNewExam(
@@ -76,6 +78,7 @@ Future<void> addTask(
       priority: newTask!.priority.index,
       subject: newTask!.subject,
       text: newTask!.text,
+      description: newTask!.description,
     );
   }
 
@@ -93,11 +96,13 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
       initialPriority: hw.priority.index,
       initialName: hw.text,
       initialDate: hw.deadline,
-      onSave: ({required date, required priority, subject, required text}) {
+      initialDescription: hw.description,
+      onSave: ({required date, required priority, subject, required text, required description}) {
         hw.deadline = date;
         hw.priority = TaskPriority(priority, context);
         hw.subject = subject;
         hw.text = text;
+        hw.description = description;
       },
     ),
   );
@@ -107,6 +112,7 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
     priority: hw.priority.index,
     subject: hw.subject,
     text: hw.text,
+    description: hw.description,
     dbIndex: dbIndex,
   );
 
@@ -123,12 +129,14 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       initialSubject: exam.subject,
       initialPriority: exam.priority.index,
       initialName: exam.text,
+      initialDescription: exam.description,
       initialDate: exam.deadline,
-      onSave: ({required date, required priority, subject, required text}) {
+      onSave: ({required date, required priority, subject, required text, required description}) {
         exam.deadline = date;
         exam.priority = TaskPriority(priority, context);
         exam.subject = subject;
         exam.text = text;
+        exam.description = description;
       },
     ),
   );
@@ -137,6 +145,7 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
     priority: exam.priority.index,
     subject: exam.subject,
     text: exam.text,
+    description: exam.description,
     dbIndex: dbIndex,
   );
 
