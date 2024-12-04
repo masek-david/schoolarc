@@ -29,27 +29,10 @@ class HomeworkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String deadlineText = '';
     final bool isMissed =
         hw.deadline.isBeforeToday() && hw.completion == false;
     final missedColor =
         Colors.red.harmonizeWith(Theme.of(context).primaryColor);
-
-    if (showDeadline) {
-      deadlineText = '${hw.deadline.day}.${hw.deadline.month}.';
-      if (hw.deadline.year != DateTime.now().year) {
-        deadlineText += ' ${hw.deadline.year}';
-      } else if (deadlineText ==
-          '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
-        deadlineText = 'Tomorrow';
-      } else if (deadlineText ==
-          '${(DateTime.now().day)}.${DateTime.now().month}.') {
-        deadlineText = 'Today';
-      } else if (deadlineText ==
-          '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
-        deadlineText = 'Yesterday';
-      }
-    }
 
     double opacity = 1;
     if (hw.completion == true) {
@@ -110,8 +93,8 @@ class HomeworkTile extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(child: Text(hw.text, maxLines: 2)),
                     const SizedBox(width: 5),
-                    Text(
-                      deadlineText,
+                    if(showDeadline) Text(
+                      hw.deadline.dateText(),
                       maxLines: 2,
                       style: TextStyle(
                         color: isMissed ? missedColor : null,

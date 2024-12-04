@@ -22,6 +22,8 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
   Widget build(BuildContext context) {
     const schemeVariants = DynamicSchemeVariant.values;
 
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -60,7 +62,17 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
                             children: [
                               Expanded(
                                 child: Container(
-                                  color: scheme.primary,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 0,
+                                      color: isDark
+                                          ? scheme.primary
+                                          : scheme.primaryContainer,
+                                    ),
+                                    color: isDark
+                                        ? scheme.primary
+                                        : scheme.primaryContainer,
+                                  ),
                                 ),
                               ),
                               Expanded(
@@ -68,12 +80,32 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
                                   children: [
                                     Expanded(
                                       child: Container(
-                                        color: scheme.secondary,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 0,
+                                            color: isDark
+                                                ? scheme.secondary
+                                                : scheme.secondaryContainer,
+                                          ),
+                                          color: isDark
+                                              ? scheme.secondary
+                                              : scheme.secondaryContainer,
+                                        ),
                                       ),
                                     ),
                                     Expanded(
                                       child: Container(
-                                        color: scheme.tertiary,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 0,
+                                            color: isDark
+                                                ? scheme.tertiary
+                                                : scheme.tertiaryContainer,
+                                          ),
+                                          color: isDark
+                                              ? scheme.tertiary
+                                              : scheme.tertiaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],

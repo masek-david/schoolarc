@@ -18,6 +18,8 @@ class ThemePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool customColorEnabled = settings.get(Setting.themeUseMaterial) == false;
+
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
@@ -41,7 +43,26 @@ class ThemePage extends StatelessWidget {
             ),
           ),
           SettingTile(
+            label: 'Use device colors',
+            action: SwitchAction(
+              initialValue: settings.get(Setting.themeUseMaterial),
+              onChanged: (value) {
+                settings.save(Setting.themeUseMaterial, value);
+                refreshTheme();
+              },
+            ),
+          ),
+          if (!customColorEnabled)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Currently using system color. If you want to use custom color, turn off Use device colors.',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          SettingTile(
             label: 'App color',
+            enabled: customColorEnabled,
             action: ColorPickerAction(
               initialColor: Color(settings.get(Setting.themeColorValue)),
               onChanged: (color) {
@@ -52,20 +73,11 @@ class ThemePage extends StatelessWidget {
           ),
           SettingTile(
             label: '',
+            enabled: customColorEnabled,
             action: SchemeVariantPickerAction(
               initialScheme: settings.get(Setting.themeDynamicSchemeVariantInt),
               onChanged: (value) {
                 settings.save(Setting.themeDynamicSchemeVariantInt, value);
-                refreshTheme();
-              },
-            ),
-          ),
-          SettingTile(
-            label: 'Use device colors',
-            action: SwitchAction(
-              initialValue: settings.get(Setting.themeUseMaterial),
-              onChanged: (value) {
-                settings.save(Setting.themeUseMaterial, value);
                 refreshTheme();
               },
             ),

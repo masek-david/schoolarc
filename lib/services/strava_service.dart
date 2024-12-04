@@ -98,7 +98,7 @@ class StravaService {
       }
     } on SocketException catch (_) {
       throw ServiceException('Check your internet connection');
-    } on Object{
+    } on Object {
       rethrow;
     }
 
@@ -138,7 +138,7 @@ class StravaService {
 
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
-          name: mealJson['nazev'],
+          name: mealJson['druh'] == 'D'? mealJson['delsiPopis'] : mealJson['nazev'],
           selected: mealJson['pocet'] != 0,
         );
 
@@ -189,7 +189,11 @@ class StravaService {
     for (var mealXml in mealsXml) {
       final dateXml = mealXml.findElements('datum').first.innerText;
       final type = mealXml.findElements('druh_popis').first.innerText;
-      final name = mealXml.findElements('nazev').first.innerText;
+      var name = mealXml.findElements('nazev').first.innerText;
+
+      if (mealXml.findElements('druh').first.innerText == 'D') {
+        name = mealXml.findElements('popis').first.innerText;
+      }
 
       final date = DateTime.parse(dateXml);
 

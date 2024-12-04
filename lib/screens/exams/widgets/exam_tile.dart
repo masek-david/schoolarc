@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {
@@ -21,29 +22,12 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color deadlineTextColor = Theme.of(context).colorScheme.onSurface;
-    String deadlineText = '';
     Color circleColor = exam.priority.color;
 
-    if (showDeadline) {
-      if (exam.deadline.isBefore(DateTime.now())) {
-        deadlineTextColor =
-            Colors.red.harmonizeWith(Theme.of(context).primaryColor);
-      }
-      deadlineText = '${exam.deadline.day}.${exam.deadline.month}.';
-      if (exam.deadline.year != DateTime.now().year) {
-        deadlineText += ' ${exam.deadline.year}';
-      } else if (deadlineText ==
-          '${(DateTime.now().day) + 1}.${DateTime.now().month}.') {
-        deadlineText = 'Tomorrow';
-      } else if (deadlineText ==
-          '${(DateTime.now().day)}.${DateTime.now().month}.') {
-        deadlineText = 'Today';
-      } else if (deadlineText ==
-          '${(DateTime.now().day) - 1}.${DateTime.now().month}.') {
-        deadlineText = 'Yesterday';
-      }
-    }
+    final bool isMissed = exam.deadline.isBeforeToday();
+
+    Color missedColor =
+        Colors.red.harmonizeWith(Theme.of(context).primaryColor);
 
     double opacity = 1;
     if (exam.completion == true) {
@@ -109,11 +93,14 @@ class ExamTile extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child: Text(exam.text, maxLines: 2)),
                       const SizedBox(width: 10),
-                      Text(
-                        deadlineText,
-                        maxLines: 2,
-                        style: TextStyle(color: deadlineTextColor, fontSize: 12),
-                      ),
+                      if (showDeadline)
+                        Text(
+                          exam.deadline.dateText(),
+                          maxLines: 2,
+                          style: TextStyle(
+                              color: isMissed ? missedColor : null,
+                              fontSize: 12),
+                        ),
                       const SizedBox(width: 10),
                     ],
                   ),

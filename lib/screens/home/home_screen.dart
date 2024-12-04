@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
 import 'package:school_manager/widgets/exam_list.dart';
@@ -119,12 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
-    bool showMeals =
-        now.isBefore(DateTime(now.year, now.month, now.day, 14, 30));
-    if (settings.get(Setting.showDebugInfo)) {
-      showMeals = true;
-    }
-
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {
@@ -134,6 +128,21 @@ class _HomeScreenState extends State<HomeScreen> {
       // ),
       appBar: AppBar(
         leading: const DrawerButton(onPressed: switchDrawer),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return HomeSettings(
+                    onChanged: () => setState(() {}),
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
         title: const Text('Home'),
       ),
       body: RefreshIndicator(
@@ -143,7 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                if (showMeals) MealsCard(meals: meals, refresh: refreshMeals),
+                MealsCard(
+                  meals: meals,
+                  refresh: refreshMeals,
+                ),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -153,9 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           'Overview:',
                           style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
