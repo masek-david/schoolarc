@@ -88,7 +88,7 @@ class PriorityView extends StatelessWidget {
               children: List.generate(
                 numberOfPriorityLists,
                 (index) =>
-                    _buildList(TaskPriority(3 - index, context), context),
+                    _buildList(TaskPriority(3 - index), context),
               ),
             ),
             ExpansionTile(
@@ -136,7 +136,7 @@ class PriorityView extends StatelessWidget {
       listKey: ObjectKey(innerList),
       title: ExpansionTitle(
         titleText: priority.name,
-        titleTextColor: priority.color,
+        titleTextColor: priority.getColor(context),
         numberOfItems: innerList!.length,
       ),
       contentsWhenEmpty: const SizedBox(),

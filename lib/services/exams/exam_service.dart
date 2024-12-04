@@ -27,7 +27,7 @@ class ExamService {
     List<TaskPriority> priorities = [];
 
     for (int i = 0; i < 4; i++) {
-      priorities.add(TaskPriority(i, context));
+      priorities.add(TaskPriority(i));
     }
 
     return priorities;

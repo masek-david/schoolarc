@@ -138,7 +138,9 @@ class StravaService {
 
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
-          name: mealJson['druh'] == 'D'? mealJson['delsiPopis'] : mealJson['nazev'],
+          name: mealJson['druh'] == 'D'
+              ? mealJson['delsiPopis']
+              : mealJson['nazev'],
           selected: mealJson['pocet'] != 0,
         );
 
@@ -216,14 +218,15 @@ class StravaService {
 
   String fixEncode(String string) {
     return string
-        .replaceAll('è', 'č')
-        .replaceAll('', 'š')
-        .replaceAll('ø', 'ř')
-        .replaceAll('È', 'Č')
-        .replaceAll('ì', 'ě')
-        .replaceAll('', 'ž')
-        .replaceAll('ù', 'ů')
-        // .replaceAll('í', 'á')
-        .replaceAll('ò', 'ň');
+    .replaceAll('è', 'č')
+    .replaceAll('È', 'Č')
+    .replaceAll('', 'š')
+    .replaceAll('', 'Š')
+    .replaceAll('ø', 'ř')
+    .replaceAll('ì', 'ě')
+    .replaceAll('', 'ž')
+    .replaceAll('ù', 'ů')
+    // .replaceAll('í', 'á')
+    .replaceAll('ò', 'ň');
   }
 }

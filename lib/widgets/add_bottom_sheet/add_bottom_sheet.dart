@@ -111,18 +111,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        snapSizes: const [0.7, 0.95],
-        snap: true,
-        builder: (context, scrollController) {
-          return Container(
+      child: Container(
             margin: const EdgeInsets.all(15),
             child: SingleChildScrollView(
-              controller: scrollController,
+              // controller: scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -231,9 +223,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                       itemCount: 4,
                       itemBuilder: (context, index) {
                         bool isSelected = index == pickedPriority;
-                        TaskPriority priority = TaskPriority(index, context);
+                        TaskPriority priority = TaskPriority(index);
                         final scheme = ColorScheme.fromSeed(
-                          seedColor: priority.color,
+                          seedColor: priority.getColor(context),
                           brightness: brightness,
                           dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                         );
@@ -352,9 +344,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ],
               ),
             ),
-          );
-        },
-      ),
+          )
     );
   }
 }

@@ -10,6 +10,9 @@ import 'package:school_manager/models/bakalari/lesson_time_baka.dart';
 import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
@@ -26,6 +29,21 @@ class BakaResponse {
   bool get isSuccess {
     return error == null;
   }
+}
+
+class BakaHomework extends HomeworkDTO {
+  BakaHomework({
+    required super.completion,
+    required super.dbIndex,
+    required super.deadline,
+    required super.description,
+    required super.priority,
+    required super.subject,
+    required super.text,
+    required this.id,
+  });
+
+  final String id;
 }
 
 class BakaService {
@@ -560,5 +578,75 @@ class BakaService {
     }
 
     return lessons;
+  }
+
+  Future<List<BakaHomework>> getHomeworks() async {
+    if (!isLoggedIn) {
+      final response = await refreshLogin();
+      if (!response.isSuccess) {
+        throw ServiceException(response.error,
+            action: ExceptionActions.bakaLogin);
+      }
+    }
+
+    String schoolName = await this.schoolName;
+    final url = Uri.https(
+      "$schoolName.bakalari.cz",
+      "/api/3/homeworks",
+      {
+        'to': DateFormat('yyyy-MM-dd')
+            .format(DateTime.now().add(const Duration(days: 365)))
+      },
+    );
+
+    Response response;
+    try {
+      response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer $_accessToken",
+        },
+      ).timeout(const Duration(seconds: 10));
+    } on SocketException {
+      throw ServiceException('Check your internet connection');
+    } on TimeoutException catch (_) {
+      throw ServiceException(
+          'The request timed out after 10 seconds, check your internet connection');
+    } catch (e) {
+      throw ServiceException('An unexpected error occurred: $e');
+    }
+
+    final parsedJson = jsonDecode(response.body);
+
+    var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
+
+    List<BakaHomework> homeworks = [];
+    final subjects = subjectService.getSortedList();
+
+    for (var homework in homeworksJson) {
+      SubjectDTO subject = subjects.where(
+        (subject) {
+          return subject.bakaId == homework['Subject']['Id'];
+        },
+      ).first;
+
+      final String id = homework['ID'];
+      final String text = homework['Content'];
+      final DateTime deadline = DateTime.parse(homework['DateEnd']);
+      final bool completion = homework['Finished'];
+
+      homeworks.add(BakaHomework(
+        id: id,
+        subject: subject,
+        text: text,
+        deadline: deadline,
+        completion: completion,
+        priority: TaskPriority(0),
+        dbIndex: 0,
+        description: null,
+      ));
+    }
+    return homeworks;
   }
 }

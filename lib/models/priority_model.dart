@@ -7,29 +7,43 @@ class TaskPriority {
   late Color color;
   late String htmlIcon;
 
-  TaskPriority(this.index, BuildContext? context) {
-    Color appColor = Colors.purple;
-    if (context != null) {
-      appColor = Theme.of(context).colorScheme.primary;
-    }
-
+  TaskPriority(this.index) {
     switch (index) {
       case 3:
-        color = Colors.red.harmonizeWith(appColor);
+        color = Colors.red;
         htmlIcon = '&#128308;';
         name = 'High';
       case 2:
-        color = Colors.orange.harmonizeWith(appColor);
+        color = Colors.orange;
         htmlIcon = '&#128992;';
         name = 'Medium';
       case 1:
-        color = Colors.green.harmonizeWith(appColor);
+        color = Colors.green;
         htmlIcon = '&#128994;';
         name = 'Low';
       default:
-        color = Colors.blue.harmonizeWith(appColor);
+        color = Colors.blue;
         htmlIcon = '&#128309;';
         name = 'No priority';
     }
+  }
+
+  Color getColor(BuildContext context) {
+    return color.harmonizeWith(Theme.of(context).colorScheme.primary);
+  }
+
+  Color getContainerColor(BuildContext context) {
+    final harmonized =
+        color.harmonizeWith(Theme.of(context).colorScheme.primary);
+
+    return Color.lerp(harmonized, Theme.of(context).colorScheme.surface, 0.3)!;
+  }
+
+  Color getOnContainerColor(BuildContext context) {
+    final harmonized =
+        color.harmonizeWith(Theme.of(context).colorScheme.primary);
+
+    return Color.lerp(
+        harmonized, Theme.of(context).colorScheme.onSurface, 0.9)!;
   }
 }

@@ -27,9 +27,9 @@ class _MyCheckboxState extends State<MyCheckbox> {
       scale: 1.3,
       child: Checkbox(
         value: checboxValue,
-        activeColor: widget.priority.color,
+        activeColor: widget.priority.getColor(context),
         checkColor: Colors.white,
-        side: BorderSide(color: widget.priority.color, width: 2.7),
+        side: BorderSide(color: widget.priority.getColor(context), width: 2.7),
         shape: const CircleBorder(),
         onChanged: (value) {
           HapticFeedback.mediumImpact();

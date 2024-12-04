@@ -45,6 +45,15 @@ void main() async {
         defaultColor: Colors.transparent,
         ledColor: Colors.blue,
       ),
+      NotificationChannel(
+        onlyAlertOnce: true,
+        channelGroupKey: 'main_channel',
+        channelKey: 'main_channel',
+        channelName: 'Main channel',
+        channelDescription: 'Main channel for notifications',
+        defaultColor: Colors.transparent,
+        ledColor: Colors.blue,
+      ),
     ],
     // Channel groups are only visual and are not required
     channelGroups: [

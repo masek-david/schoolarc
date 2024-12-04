@@ -9,7 +9,7 @@ class WelcomeScreenPriorities extends StatelessWidget {
   Widget build(BuildContext context) {
     late final priorities = List.generate(
       4,
-      (index) => TaskPriority(index, context),
+      (index) => TaskPriority(index),
     );
 
     return SafeArea(

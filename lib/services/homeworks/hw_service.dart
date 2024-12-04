@@ -69,7 +69,7 @@ class HomeworkService {
     List<TaskPriority> priorities = [];
 
     for (int i = 0; i < 4; i++) {
-      priorities.add(TaskPriority(i, context));
+      priorities.add(TaskPriority(i));
     }
 
     return priorities;
@@ -300,7 +300,7 @@ class HomeworkService {
     return hw.convertToDTO(
       dbIndex,
       _subjectsDbIndex[hw.subjectDbIndex],
-      TaskPriority(hw.priority, context),
+      TaskPriority(hw.priority),
     );
   }
 

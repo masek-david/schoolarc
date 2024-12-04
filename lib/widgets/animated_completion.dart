@@ -98,7 +98,7 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
               return RadialGradient(
                 colors: [
                   Colors.transparent,
-                  widget.hw.priority.color,
+                  widget.hw.priority.getColor(context),
                   Colors.transparent,
                 ],
                 radius: _controller.value * 50,

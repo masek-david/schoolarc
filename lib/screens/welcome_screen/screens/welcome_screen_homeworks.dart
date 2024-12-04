@@ -36,7 +36,7 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
       completion: false,
-      priority: TaskPriority(index, context),
+      priority: TaskPriority(index),
       dbIndex: index,
     );
   });

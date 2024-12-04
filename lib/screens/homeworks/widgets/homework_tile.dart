@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -46,7 +47,10 @@ class HomeworkTile extends StatelessWidget {
         extentRatio: 0.3,
         children: [
           SlidableAction(
-            onPressed: (context) => onDelete(),
+            onPressed: (context) {
+              HapticFeedback.lightImpact();
+              onDelete();
+            },
             icon: Icons.delete,
             foregroundColor: Theme.of(context).colorScheme.onError,
             backgroundColor: Theme.of(context).colorScheme.error,

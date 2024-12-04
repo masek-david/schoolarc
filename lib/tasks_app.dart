@@ -53,7 +53,7 @@ Future<void> addTask(
           deadline: date,
           description: description,
           completion: false,
-          priority: TaskPriority(priority, context),
+          priority: TaskPriority(priority),
           dbIndex: 0,
         );
       },
@@ -99,7 +99,7 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
       initialDescription: hw.description,
       onSave: ({required date, required priority, subject, required text, required description}) {
         hw.deadline = date;
-        hw.priority = TaskPriority(priority, context);
+        hw.priority = TaskPriority(priority);
         hw.subject = subject;
         hw.text = text;
         hw.description = description;
@@ -133,7 +133,7 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       initialDate: exam.deadline,
       onSave: ({required date, required priority, subject, required text, required description}) {
         exam.deadline = date;
-        exam.priority = TaskPriority(priority, context);
+        exam.priority = TaskPriority(priority);
         exam.subject = subject;
         exam.text = text;
         exam.description = description;

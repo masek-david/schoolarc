@@ -9,7 +9,7 @@ class ThemeColorsShowcase extends StatelessWidget {
     final priorities = List.generate(
       4,
       (index) {
-        return TaskPriority(index, context);
+        return TaskPriority(index);
       },
     );
 
@@ -55,8 +55,8 @@ class ThemeColorsShowcase extends StatelessWidget {
             child: const Icon(Icons.circle_outlined),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
             children: priorities.map(
               (e) {
                 return Container(
@@ -65,12 +65,12 @@ class ThemeColorsShowcase extends StatelessWidget {
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: e.color,
+                    color: e.getContainerColor(context),
                   ),
                   child: Text(
                     e.name,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: e.getOnContainerColor(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -1,8 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
@@ -22,8 +22,6 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color circleColor = exam.priority.color;
-
     final bool isMissed = exam.deadline.isBeforeToday();
 
     Color missedColor =
@@ -43,7 +41,10 @@ class ExamTile extends StatelessWidget {
           extentRatio: 0.3,
           children: [
             SlidableAction(
-              onPressed: onDelete,
+              onPressed: (context) {
+                HapticFeedback.lightImpact();
+                onDelete(context);
+              },
               icon: Icons.delete,
               foregroundColor: Theme.of(context).colorScheme.onError,
               backgroundColor: Theme.of(context).colorScheme.error,
@@ -75,19 +76,11 @@ class ExamTile extends StatelessWidget {
                         height: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: circleColor.dynamicLighten(
-                            makeItLighter:
-                                Theme.of(context).brightness != Brightness.dark,
-                            amount: 0.1,
-                          ),
+                          color: exam.priority.getContainerColor(context)
                         ),
                         child: SubjectShortcut(
                           subject: exam.subject,
-                          color: circleColor.dynamicLighten(
-                            makeItLighter:
-                                Theme.of(context).brightness == Brightness.dark,
-                            amount: 0.5,
-                          ),
+                          color: exam.priority.getOnContainerColor(context)
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -102,6 +95,11 @@ class ExamTile extends StatelessWidget {
                               fontSize: 12),
                         ),
                       const SizedBox(width: 10),
+                      if (exam.description != null && exam.description != '')
+                        Icon(
+                          Icons.notes,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                     ],
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
@@ -67,6 +68,17 @@ class MyDrawer extends StatelessWidget {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const CurrentTimetableScreen(),
+              ),
+            );
+          },
+        ),
+        MyDrawerButton(
+          text: 'Homeworks',
+          icon: const Icon(Icons.home),
+          onTap: () {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => BakaHomeworksScreen(),
               ),
             );
           },

@@ -129,7 +129,7 @@ CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
                           homeworks.length <= 5 ? homeworks.length : 5,
                           (index) {
                         HomeworkDTO hw = homeworks[index];
-                        Color markerColor = hw.priority.color;
+                        Color markerColor = hw.priority.getColor(context);
 
                         return Container(
                           margin: const EdgeInsets.all(1.2),
@@ -149,13 +149,12 @@ CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
                 (index) {
                   ExamDTO exam = exams[index];
                   String shortcut = exam.subject?.trimmedShortcut ?? '';
-                  Color color = Color.lerp(
-                      exam.priority.color,
-                      Theme.of(context).colorScheme.surface,
-                      0.3)!;
+                  Color color = exam.priority.getContainerColor(context);
 
                   return GestureDetector(
-                    onTap: () => editExam(context, exam.dbIndex).then((value) => updateView(),),
+                    onTap: () => editExam(context, exam.dbIndex).then(
+                      (value) => updateView(),
+                    ),
                     child: Container(
                       width: double.maxFinite,
                       margin: const EdgeInsets.all(2),

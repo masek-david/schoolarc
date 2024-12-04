@@ -122,6 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {
+      //     // NotificationSender().notificationSecret();
+      //       bakaService.getHomeworks();
       //   },
       //   label: const Text('Plan-it'),
       //   icon: const Icon(Icons.schedule),

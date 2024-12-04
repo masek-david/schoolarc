@@ -13,6 +13,8 @@ import 'package:school_manager/tasks_app.dart';
 
 class NotificationSender {
   static const String tommorrowChannel = 'tommorrow_channel';
+  static const String mainChannel = 'main_channel';
+
   static void scheduleTommorrowNotification({
     bool scheduled = true,
     Function(String text)? showSnackbar,
@@ -83,8 +85,10 @@ class NotificationSender {
             arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
         .add(const Duration(days: 1));
 
-    List<ExamDTO> examsForTommorow = ExamService().getForDay(tommorowDate, null);
-    List<HomeworkDTO> hwsForTommorow = HomeworkService().getForDay(tommorowDate, null);
+    List<ExamDTO> examsForTommorow =
+        ExamService().getForDay(tommorowDate, null);
+    List<HomeworkDTO> hwsForTommorow =
+        HomeworkService().getForDay(tommorowDate, null);
     List<HomeworkDTO> missedHws = homeworkService.getMissedHw(null);
 
     // creates text for notification for exam
@@ -111,8 +115,7 @@ class NotificationSender {
       homeworksTextList += '$hwText<br>';
     }
 
-    missedHws.sort(
-        (a, b) => a.deadline.compareTo(b.deadline));
+    missedHws.sort((a, b) => a.deadline.compareTo(b.deadline));
     for (int i = 0; i < missedHws.length; i++) {
       HomeworkDTO hw = missedHws[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
@@ -127,12 +130,15 @@ class NotificationSender {
     notificationText =
         '${missedHwTextList != null ? '<b>Missed homeworks:</b> <br> $missedHwTextList <br>' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
 
+        final summary = '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
+
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,
       content: NotificationContent(
         color: Colors.transparent,
         id: 11,
         channelKey: tommorrowChannel,
+        summary: summary,
         title: 'Tommorrow:',
         body: notificationText,
         autoDismissible: false,
@@ -232,5 +238,21 @@ class NotificationSender {
             true
         ? true
         : false;
+  }
+
+  void notificationSecret() async {
+    // if (await areNotificationsAllowed(mainChannel)) {
+    //   AwesomeNotifications().createNotification(
+    //     // schedule: NotificationCalendar(day: 24, month: 12, repeats: true),
+    //     content: NotificationContent(
+    //       id: 12,
+    //       color: Colors.red,
+    //       channelKey: mainChannel,
+    //       fullScreenIntent: true,
+    //       title: 'Veselé Vánoce',
+    //       body: 'Vše nejlepší k Vánocům přeje David',
+    //     ),
+    //   );
+    // }
   }
 }
