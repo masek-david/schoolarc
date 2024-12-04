@@ -29,8 +29,7 @@ class HomeworkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMissed =
-        hw.deadline.isBeforeToday() && hw.completion == false;
+    final bool isMissed = hw.deadline.isBeforeToday() && hw.completion == false;
     final missedColor =
         Colors.red.harmonizeWith(Theme.of(context).primaryColor);
 
@@ -85,7 +84,8 @@ class HomeworkTile extends StatelessWidget {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(borderRadius - padding),
+                        borderRadius:
+                            BorderRadius.circular(borderRadius - padding),
                         color: Theme.of(context).colorScheme.primaryContainer,
                       ),
                       child: SubjectShortcut(subject: hw.subject),
@@ -93,15 +93,21 @@ class HomeworkTile extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(child: Text(hw.text, maxLines: 2)),
                     const SizedBox(width: 5),
-                    if(showDeadline) Text(
-                      hw.deadline.dateText(),
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: isMissed ? missedColor : null,
-                        fontSize: 12,
+                    if (showDeadline)
+                      Text(
+                        hw.deadline.dateText(),
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: isMissed ? missedColor : null,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 5),
+                    if (hw.description != null && hw.description != '')
+                      Icon(
+                        Icons.notes,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     MyCheckbox(
                       value: hw.completion,
                       priority: hw.priority,

@@ -240,6 +240,7 @@ class HomeworkService {
     required int priority,
     required SubjectDTO? subject,
     required String text,
+    required String? description,
   }) async {
     Homework newHw = Homework(
       subjectDbIndex: subject?.dbIndex,
@@ -247,6 +248,7 @@ class HomeworkService {
       deadline: date,
       completion: false,
       priority: priority,
+      description: description,
     );
     int dbIndex = await _db.addHw(newHw);
     _hwDbIndexMap[dbIndex] = newHw;
@@ -264,8 +266,8 @@ class HomeworkService {
     required int priority,
     required SubjectDTO? subject,
     required String text,
-    // required bool completion,
     required int dbIndex,
+    required String? description,
   }) async {
     int oldPriority = _hwDbIndexMap[dbIndex]!.priority;
     
@@ -275,6 +277,7 @@ class HomeworkService {
       deadline: date,
       completion: _hwDbIndexMap[dbIndex]!.completion,
       priority: priority,
+      description: description
     );
     await _db.editHw(dbIndex, editedHw);
     _hwDbIndexMap.update(

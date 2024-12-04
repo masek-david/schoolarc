@@ -9,6 +9,7 @@ class Task {
     required this.completion,
     required this.priority,
     required this.dbIndex,
+    required this.description,
   });
 
   SubjectDTO? subject;
@@ -17,4 +18,5 @@ class Task {
   bool completion;
   TaskPriority priority;
   int dbIndex;
+  String? description;
 }

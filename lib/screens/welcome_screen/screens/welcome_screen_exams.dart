@@ -30,6 +30,7 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
     return ExamDTO(
       subject: SubjectDTO(name: 'Subject', shortcut: 'Hw', dbIndex: 0),
       text: text,
+      description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
       completion: false,
       priority: TaskPriority(index, context),

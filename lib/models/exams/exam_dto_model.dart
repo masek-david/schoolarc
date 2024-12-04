@@ -8,5 +8,6 @@ class ExamDTO extends Task {
     required super.priority,
     required super.dbIndex,
     required super.completion,
+    required super.description,
   });
 }

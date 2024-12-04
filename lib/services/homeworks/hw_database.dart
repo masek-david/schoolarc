@@ -57,6 +57,7 @@ class HomeworksDatabase {
         deadline: hw.deadline,
         completion: value,
         priority: hw.priority,
+        description: hw.description
       ),
     );
   }

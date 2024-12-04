@@ -19,6 +19,7 @@ class ExamAdapter extends TypeAdapter<Exam> {
     return Exam(
       subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
+      description: fields[5] as String?,
       date: fields[2] as DateTime,
       priority: fields[3] as int,
       completion: fields[4] as bool,
@@ -28,7 +29,7 @@ class ExamAdapter extends TypeAdapter<Exam> {
   @override
   void write(BinaryWriter writer, Exam obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.subjectDbIndex)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..writeByte(3)
       ..write(obj.priority)
       ..writeByte(4)
-      ..write(obj.completion);
+      ..write(obj.completion)
+      ..writeByte(5)
+      ..write(obj.description);
   }
 
   @override

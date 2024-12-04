@@ -10,6 +10,7 @@ class Exam extends HiveObject {
   Exam({
     required this.subjectDbIndex,
     required this.text,
+    required this.description,
     required this.date,
     required this.priority,
     required this.completion,
@@ -25,11 +26,14 @@ class Exam extends HiveObject {
   int priority;
   @HiveField(4)
   bool completion;
+  @HiveField(5)
+  String? description;
 
   ExamDTO convertToDTO(int dbIndex, SubjectDTO? subject, TaskPriority priority) {
     return ExamDTO(
       subject: subject,
       text: text,
+      description: description,
       deadline: date,
       priority: priority,
       dbIndex: dbIndex,

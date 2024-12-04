@@ -53,6 +53,7 @@ class ExamDatabase {
       Exam(
         subjectDbIndex: exam.subjectDbIndex,
         text: exam.text,
+        description: exam.description,
         date: exam.date,
         priority: exam.priority,
         completion: value,
