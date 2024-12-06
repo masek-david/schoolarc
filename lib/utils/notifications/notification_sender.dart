@@ -240,7 +240,7 @@ class NotificationSender {
         : false;
   }
 
-  void notificationSecret() async {
+  static void notificationSecret() async {
     // if (await areNotificationsAllowed(mainChannel)) {
     //   AwesomeNotifications().createNotification(
     //     // schedule: NotificationCalendar(day: 24, month: 12, repeats: true),
@@ -250,7 +250,7 @@ class NotificationSender {
     //       channelKey: mainChannel,
     //       fullScreenIntent: true,
     //       title: 'Veselé Vánoce',
-    //       body: 'Vše nejlepší k Vánocům přeje David',
+    //       body: 'Vše nejlepší k Vánocům a šťastný Nový rok přeje David',
     //     ),
     //   );
     // }

@@ -94,7 +94,14 @@ class HomeworkTile extends StatelessWidget {
                       ),
                       child: SubjectShortcut(subject: hw.subject),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
+                    if (hw.description != null && hw.description != '')
+                      Icon(
+                        Icons.notes,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    if (hw.description != null && hw.description != '')
+                    const SizedBox(width: 8),
                     Expanded(child: Text(hw.text, maxLines: 2)),
                     const SizedBox(width: 5),
                     if (showDeadline)
@@ -106,16 +113,12 @@ class HomeworkTile extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                    const SizedBox(width: 5),
-                    if (hw.description != null && hw.description != '')
-                      Icon(
-                        Icons.notes,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    const SizedBox(width: 4),
                     MyCheckbox(
                       value: hw.completion,
                       priority: hw.priority,
                       onChanged: onChangedCompletion,
+                      // must be heres
                       key: ValueKey('checkbox ${hw.dbIndex}'),
                     ),
                   ],

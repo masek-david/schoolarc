@@ -17,6 +17,7 @@ import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -83,6 +84,7 @@ class BakaService {
     _secureStorage.write(key, value);
   }
 
+  @deprecated
   Future<bool> connectedToInternet() async {
     try {
       await http
@@ -125,6 +127,8 @@ class BakaService {
     if (bakaResponse.isSuccess) {
       saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
     }
+
+    loadName();
 
     return bakaResponse;
   }
@@ -213,6 +217,34 @@ class BakaService {
         DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
 
     return BakaResponse();
+  }
+
+  Future<void> loadName() async {
+    Response response;
+    try {
+      String schoolName = await this.schoolName;
+      final url = Uri(
+        scheme: 'https',
+        host: "$schoolName.bakalari.cz",
+        path: "/api/3/user",
+      );
+
+      response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": " Bearer $_accessToken",
+        },
+      );
+    } on Object {
+      return;
+    }
+
+    final json = jsonDecode(response.body);
+
+    String fullName = json['FullName'];
+
+    settings.save(Setting.userName, fullName.replaceAll(',', '').split(' ')[1]);
   }
 
   /// returns list of subjects from bakalari

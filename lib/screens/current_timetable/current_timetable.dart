@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/non_scrollable_refresh_indicator.dart';
 
@@ -16,90 +15,20 @@ class CurrentTimetableScreen extends StatefulWidget {
 }
 
 class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
-  TimeTableDTO? timetable;
+  late var timetable = bakaService.getCurrentTimetable(date);
   DateTime date = DateTime.now();
   bool isLoading = true;
-  String? errorMessage;
+  
+  Future<void> refresh() async {
+    setState(() {
+      timetable = bakaService.getCurrentTimetable(date);
+    });
 
-  @override
-  void initState() {
-    super.initState();
-
-    Future.delayed(
-      Duration.zero,
-      () => setTimetable(),
-    );
-  }
-
-  Future<void> setTimetable() async {
-    TimeTableDTO response;
     try {
-      response = await bakaService.getCurrentTimetable(date);
-    } on Exception catch (error) {
-      showMessage(error.toString(), isError: true);
-      return;
-    }
-    if (mounted) {
-      setState(() {
-        timetable = response;
-        isLoading = false;
-      });
-    }
+      await timetable;
+    } catch (_) {}
+
     return;
-  }
-
-  void evaluateResponse(
-    BakaResponse response, {
-    required void Function() onSuccess,
-  }) {
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
-    }
-    if (response.isSuccess) {
-      onSuccess();
-    } else {
-      errorMessage = response.error;
-      showMessage(response.error ?? '', isError: true);
-    }
-  }
-
-  void showMessage(String message,
-      {bool isError = false, bool isContinuos = false}) {
-    if (mounted) {
-      final duration = isError
-          ? const Duration(seconds: 5)
-          : isContinuos
-              ? const Duration(days: 1)
-              : const Duration(seconds: 1);
-
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: duration,
-          backgroundColor:
-              isError ? Theme.of(context).colorScheme.errorContainer : null,
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                message,
-                style: TextStyle(
-                  color: isError
-                      ? Theme.of(context).colorScheme.onErrorContainer
-                      : null,
-                ),
-              ),
-              if (isContinuos)
-                CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-            ],
-          ),
-        ),
-      );
-    }
   }
 
   @override
@@ -121,21 +50,21 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
               icon: Icons.arrow_back,
               onTap: () async {
                 date = date.subtract(const Duration(days: 7));
-                return setTimetable();
+                return refresh();
               },
             ),
             LoadingIconButton(
               icon: Icons.home,
               onTap: () async {
                 date = DateTime.now();
-                return setTimetable();
+                return refresh();
               },
             ),
             LoadingIconButton(
               icon: Icons.arrow_forward,
               onTap: () async {
                 date = date.add(const Duration(days: 7));
-                return setTimetable();
+                return refresh();
               },
             )
           ],
@@ -143,30 +72,42 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
       ),
       body: NonScrollableRefreshIndicator(
         onRefresh: () async {
-          await setTimetable();
+          await refresh();
         },
-        child: isLoading
-            ? const Center(
+        child: FutureBuilder(
+          future: timetable,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
                 child: CircularProgressIndicator(),
-              )
-            : Column(
-                children: [
-                  Expanded(
-                    child: TimetableView(
-                      textWhenEmpty: errorMessage,
-                      timeTable: timetable,
-                      showWholeWeek:
-                          settings.get(Setting.timeTableShowWholeWeek),
-                      columnWidth: settings.get(Setting.timeTableTileWidth),
-                      onLessonTimesTapped: null,
-                      onSubjectTapped: (weekday, lessonIndex, lesson) {
-                        lesson.showLessonDialog(context);
-                      },
-                    ),
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: ErrorTile(error: snapshot.error));
+            } else if (!snapshot.hasData) {
+              return Center(
+                child: Text('No timetable'),
+              );
+            }
+
+            return Column(
+              children: [
+                Expanded(
+                  child: TimetableView(
+                    textWhenEmpty: 'No timetable found',
+                    timeTable: snapshot.data,
+                    showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
+                    columnWidth: settings.get(Setting.timeTableTileWidth),
+                    onLessonTimesTapped: null,
+                    onSubjectTapped: (weekday, lessonIndex, lesson) {
+                      lesson.showLessonDialog(context);
+                    },
                   ),
-                  const ListBottomSpacer(),
-                ],
-              ),
+                ),
+                const ListBottomSpacer(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

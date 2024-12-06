@@ -83,9 +83,16 @@ class ExamTile extends StatelessWidget {
                           color: exam.priority.getOnContainerColor(context)
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      if (exam.description != null && exam.description != '')
+                      const SizedBox(width: 8),
+                      if (exam.description != null && exam.description != '')
+                        Icon(
+                          Icons.notes,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      const SizedBox(width: 8),
                       Expanded(child: Text(exam.text, maxLines: 2)),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       if (showDeadline)
                         Text(
                           exam.deadline.dateText(),
@@ -94,12 +101,7 @@ class ExamTile extends StatelessWidget {
                               color: isMissed ? missedColor : null,
                               fontSize: 12),
                         ),
-                      const SizedBox(width: 10),
-                      if (exam.description != null && exam.description != '')
-                        Icon(
-                          Icons.notes,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      const SizedBox(width: 8),
                     ],
                   ),
                 ),

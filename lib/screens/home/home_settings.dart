@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/settings/widgets/time_picker_action.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
@@ -29,6 +30,17 @@ class _HomeSettingsState extends State<HomeSettings> {
             initialTime: settings.getTimeOfDay(Setting.mealsShowTodayUntil),
             onChanged: (time) {
               settings.saveTimeOfDay(Setting.mealsShowTodayUntil, time);
+              widget.onChanged();
+            },
+          ),
+        ),
+        SettingTile(
+          label: 'Show my name',
+          text: 'If enabled, your name will be shown after ',
+          action: SwitchAction(
+            initialValue: settings.get(Setting.homeShowUserName),
+            onChanged: (value) {
+              settings.save(Setting.homeShowUserName, value);
               widget.onChanged();
             },
           ),

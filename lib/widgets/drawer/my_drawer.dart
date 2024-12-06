@@ -132,14 +132,15 @@ class MyDrawer extends StatelessWidget {
           ),
         if (showDebug)
           MyDrawerButton(
-            text: 'View database',
-            icon: const Icon(Icons.data_array),
-            onTap: () => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => DbInfoScreen(),
-              ),
-            ),
-          ),
+              text: 'View database',
+              icon: const Icon(Icons.data_array),
+              onTap: () {
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(
+                    builder: (context) => DbInfoScreen(),
+                  ),
+                );
+              }),
         if (showDebug)
           MyDrawerButton(
             text: 'View tutorial',

@@ -301,7 +301,7 @@ class _TasksAppState extends State<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    // TODO
+    // TODO - when done simply change the key of the value
     // navigatorKey.currentState?.push(MaterialPageRoute(
     //   builder: (context) => WelcomeScreen(),
     // ));

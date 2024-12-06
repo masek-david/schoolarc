@@ -63,7 +63,7 @@ class TimetableCard extends StatelessWidget {
         return Card(
           color: Theme.of(context).colorScheme.surfaceContainerLowest,
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -5,6 +5,7 @@ import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_dto_model.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
+import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
@@ -120,14 +121,15 @@ class _HomeScreenState extends State<HomeScreen> {
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
     return Scaffold(
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     // NotificationSender().notificationSecret();
-      //       bakaService.getHomeworks();
-      //   },
-      //   label: const Text('Plan-it'),
-      //   icon: const Icon(Icons.schedule),
-      // ),
+      // floatingActionButton: kDebugMode
+      //     ? FloatingActionButton.extended(
+      //         onPressed: () {
+      //           // NotificationSender.notificationSecret();
+      //         },
+      //         label: const Text('test'),
+      //         icon: const Icon(Icons.schedule),
+      //       )
+      //     : null,
       appBar: AppBar(
         leading: const DrawerButton(onPressed: switchDrawer),
         actions: [
@@ -145,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.settings),
           ),
         ],
-        title: const Text('Home'),
+        // title: const Text('Home'),
       ),
       body: RefreshIndicator(
         onRefresh: refresh,
@@ -153,67 +155,17 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Overview(
+                  hwNumberOfIncomplete: hwNumberOfIncomplete,
+                  examNumberOfIncomplete: examNumberOfIncomplete,
+                  hwNumberOfMissed: missedHw.length,
+                ),
+                SizedBox(height: 24),
                 MealsCard(
                   meals: meals,
                   refresh: refreshMeals,
-                ),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Overview:',
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              hwNumberOfIncomplete.toString(),
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              examNumberOfIncomplete.toString(),
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'uncompleted homeworks',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'upcoming exams',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
                 TimetableCard(
                   refresh: refreshTimetable,

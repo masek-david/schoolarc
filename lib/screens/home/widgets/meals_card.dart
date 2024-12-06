@@ -1,11 +1,11 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/screens/meals/meals_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
@@ -70,7 +70,7 @@ class MealsCard extends StatelessWidget {
                   final bool empty = mealsForToday == null;
 
                   return Padding(
-                    padding: EdgeInsets.all(empty ? 16 : 8),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,8 +91,10 @@ class MealsCard extends StatelessWidget {
                               onPressed: () {
                                 navigatorKey.currentState
                                     ?.push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const StravaSettingsScreen(),
+                                  builder: (context) => MealsScreen(
+                                    meals: meals,
+                                    refresh: refresh,
+                                  ),
                                 ));
                               },
                               icon: const Icon(
@@ -101,6 +103,7 @@ class MealsCard extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (empty) SizedBox(height: 8),
                         if (!empty)
                           ...mealsForToday.map((meal) {
                             return MealTile(meal: meal);

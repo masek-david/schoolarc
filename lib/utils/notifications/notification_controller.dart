@@ -34,6 +34,7 @@ class NotificationController {
       ReceivedAction receivedAction) async {
     // Your code goes here
 
+
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
     if (receivedAction.channelKey == 'tommorrow_channel') {
       navigatorKey.currentState?.pushNamedAndRemoveUntil(

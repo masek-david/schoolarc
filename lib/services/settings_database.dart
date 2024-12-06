@@ -17,6 +17,8 @@ enum Setting {
   calendarInitialIsTommorrow,
   calendarShowMissed,
   mealsShowTodayUntil,
+  userName,
+  homeShowUserName,
   showDebugInfo,
 }
 
@@ -86,6 +88,14 @@ class SettingsDatabase {
     Setting.mealsShowTodayUntil: SettingModel(
       defaultValue: const TimeOfDay(hour: 14, minute: 30).toDateTime(),
       key: 'mealsShowTodayUntil',
+    ),
+    Setting.userName: SettingModel(
+      defaultValue: null,
+      key: 'userName',
+    ),
+    Setting.homeShowUserName: SettingModel(
+      defaultValue: true,
+      key: 'homeShowUserName',
     ),
     Setting.showDebugInfo: SettingModel(
       defaultValue: false,
