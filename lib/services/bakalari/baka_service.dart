@@ -163,7 +163,8 @@ class BakaService {
         body: body,
       );
     } on SocketException catch (_) {
-      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+      throw ServiceException(
+          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -227,7 +228,7 @@ class BakaService {
   Future<List<Subject>> _getAllSubjects() async {
     if (!isLoggedIn) {
       try {
-        refreshLogin();
+        await refreshLogin();
       } on Object {
         rethrow;
       }
@@ -250,7 +251,8 @@ class BakaService {
         },
       );
     } on SocketException {
-      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+      throw ServiceException(
+          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } on Object catch (e) {
       throw ServiceException('An unexpected error occured: $e');
     }
@@ -308,7 +310,7 @@ class BakaService {
   Future<void> importTimeTable() async {
     if (!isLoggedIn) {
       try {
-        refreshLogin();
+        await refreshLogin();
       } on Object {
         rethrow;
       }
@@ -331,7 +333,8 @@ class BakaService {
         },
       );
     } on SocketException {
-      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+      throw ServiceException(
+          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -386,7 +389,7 @@ class BakaService {
   Future<TimeTableDTO> getCurrentTimetable(DateTime date) async {
     if (!isLoggedIn) {
       try {
-        refreshLogin();
+        await refreshLogin();
       } on Object {
         rethrow;
       }
@@ -420,7 +423,8 @@ class BakaService {
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+      throw ServiceException(
+          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -580,7 +584,7 @@ class BakaService {
   Future<List<BakaHomework>> getHomeworks() async {
     if (!isLoggedIn) {
       try {
-        refreshLogin();
+        await refreshLogin();
       } on Object {
         rethrow;
       }
@@ -603,7 +607,8 @@ class BakaService {
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+      throw ServiceException(
+          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }

@@ -91,10 +91,7 @@ class MealsCard extends StatelessWidget {
                               onPressed: () {
                                 navigatorKey.currentState
                                     ?.push(MaterialPageRoute(
-                                  builder: (context) => MealsScreen(
-                                    meals: meals,
-                                    refresh: refresh,
-                                  ),
+                                  builder: (context) => MealsScreen(),
                                 ));
                               },
                               icon: const Icon(

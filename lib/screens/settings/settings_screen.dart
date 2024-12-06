@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
+import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifications_page.dart';
@@ -61,6 +63,26 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ),
+          Divider(),
+          SettingTile(
+            label: 'Bakaláři login',
+            icon: Icons.hexagon_outlined,
+            onTap: () => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const BakalariScreen(),
+              ),
+            ),
+          ),
+          SettingTile(
+            label: 'Strava cz login',
+            icon: Icons.food_bank_outlined,
+            onTap: () => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const StravaSettingsScreen(),
+              ),
+            ),
+          ),
+          Divider(),
           SettingTile(
             label: 'Initial page',
             text: 'The page that will be initially opened',

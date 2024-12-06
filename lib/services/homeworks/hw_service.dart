@@ -245,7 +245,7 @@ class HomeworkService {
     Homework newHw = Homework(
       subjectDbIndex: subject?.dbIndex,
       text: text,
-      deadline: date,
+      deadline: date.toLocal(),
       completion: false,
       priority: priority,
       description: description,

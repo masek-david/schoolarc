@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/meals/meals_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
@@ -61,6 +62,7 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
+        const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(
           text: 'Current Timetable',
           icon: const Icon(Icons.calendar_today_rounded),
@@ -73,8 +75,8 @@ class MyDrawer extends StatelessWidget {
           },
         ),
         MyDrawerButton(
-          text: 'Homeworks',
-          icon: const Icon(Icons.home),
+          text: 'Homeworks from Bakaláři',
+          icon: const Icon(Icons.home_work_outlined),
           onTap: () {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -83,24 +85,14 @@ class MyDrawer extends StatelessWidget {
             );
           },
         ),
+        const Divider(indent: 28, endIndent: 28),
         MyDrawerButton(
-          text: 'Bakalari',
-          icon: const Icon(Icons.hexagon),
-          onTap: () {
-            navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const BakalariScreen(),
-              ),
-            );
-          },
-        ),
-        MyDrawerButton(
-          text: 'Strava',
+          text: 'Meals',
           icon: const Icon(Icons.food_bank_outlined),
           onTap: () {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (context) => const StravaSettingsScreen(),
+                builder: (context) => MealsScreen(),
               ),
             );
           },

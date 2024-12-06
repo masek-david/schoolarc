@@ -43,6 +43,8 @@ class BakaHomeworksScreen extends StatelessWidget {
                             text: hw.text,
                             description: hw.description,
                           );
+
+                          showMessage(context, 'Saved homework');
                         },
                         icon: const Icon(Icons.add_circle_outline)),
                     Expanded(
