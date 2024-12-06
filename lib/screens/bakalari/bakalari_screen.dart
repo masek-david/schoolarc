@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 
 class BakalariScreen extends StatefulWidget {
@@ -16,7 +16,6 @@ class BakalariScreen extends StatefulWidget {
 }
 
 class _BakalariScreenState extends State<BakalariScreen> {
-  final _service = BakaService();
   final _settings = SettingsDatabase();
 
   final _schoolController = TextEditingController();
@@ -46,43 +45,32 @@ class _BakalariScreenState extends State<BakalariScreen> {
       isLoading = true;
     });
 
-    // loadLogin();
+    loadLoginInfo();
 
-    _service.refreshLogin().then(
-          (value) => evaluateResponse(value, shouldShowMessage: true),
-        );
+    bakaService.refreshLogin().then((value) {
+      onLoginSuccess();
+    }, onError: onError);
   }
 
-  void loadLogin() async {
-    _schoolController.text = await _service.schoolName;
-    _usernameController.text = await _service.username;
+  void loadLoginInfo() async {
+    _schoolController.text = await bakaService.schoolName;
+    _usernameController.text = await bakaService.username;
   }
 
-  void evaluateResponse(
-    BakaResponse response, {
-    bool shouldShowMessage = true,
-    String successResponse = 'Logged in successfully',
-  }) {
-    if (response.isSuccess) {
-      if (shouldShowMessage) {
-        showMessage(successResponse);
-      }
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-          isLoggedIn = true;
-        });
-      }
-    } else {
-      if (shouldShowMessage) {
-        showMessage(response.error ?? '', isError: true);
-      }
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
+  void onLoginSuccess() {
+    setState(() {
+      isLoggedIn = true;
+      isLoading = false;
+    });
+
+    showMessage('Logged in');
+  }
+
+  void onError(dynamic error) {
+    setState(() {
+      isLoading = false;
+    });
+    showMessage(error.toString(), isError: true);
   }
 
   void showMessage(String message, {bool isError = false}) {
@@ -129,9 +117,12 @@ class _BakalariScreenState extends State<BakalariScreen> {
             setState(() {
               isLoggedIn = false;
             });
-            await _service.refreshLogin().then(
-                  evaluateResponse,
-                );
+            bakaService.refreshLogin().then(
+              (value) {
+                onLoginSuccess();
+              },
+              onError: onError,
+            );
           },
           child: ListView(
             children: [
@@ -219,14 +210,17 @@ class _BakalariScreenState extends State<BakalariScreen> {
                           isLoggedIn = false;
                         });
 
-                        _service
-                            .firstLogin(
-                              school: _schoolController.text,
-                              username: _usernameController.text,
-                              password: _passwordController.text,
-                              keepLoggedIn: keepLoggedIn,
-                            )
-                            .then(evaluateResponse);
+                        try {
+                          await bakaService.firstLogin(
+                            school: _schoolController.text,
+                            username: _usernameController.text,
+                            password: _passwordController.text,
+                            keepLoggedIn: keepLoggedIn,
+                          );
+                          onLoginSuccess();
+                        } catch (e) {
+                          onError(e);
+                        }
                       },
                 child: const Text("Log in"),
               ),
@@ -248,18 +242,17 @@ class _BakalariScreenState extends State<BakalariScreen> {
                                   child: const Text('Close'),
                                 ),
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     Navigator.pop(context);
                                     setState(() {
                                       isLoading = true;
                                     });
-                                    _service.importTimeTable().then(
-                                          (response) => evaluateResponse(
-                                            response,
-                                            successResponse:
-                                                'Imported timetable successfully',
-                                          ),
-                                        );
+
+                                    bakaService.importTimeTable().then((value) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }, onError: onError);
                                   },
                                   child: const Text('Import'),
                                 ),

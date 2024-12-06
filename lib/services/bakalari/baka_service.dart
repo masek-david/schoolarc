@@ -84,31 +84,14 @@ class BakaService {
     _secureStorage.write(key, value);
   }
 
-  @deprecated
-  Future<bool> connectedToInternet() async {
-    try {
-      await http
-          .get(Uri(scheme: 'https', host: 'example.com'))
-          .timeout(const Duration(seconds: 10))
-          .then(
-        (value) {
-          return false;
-        },
-      );
-    } on Exception catch (_) {
-      return false;
-    }
-
-    return true;
-  }
-
   /// tries to log in from memory using saved refresh token
-  Future<BakaResponse> refreshLogin() async {
+  Future<void> refreshLogin() async {
     String schoolName = await this.schoolName;
     _refreshToken = await _getRefreshToken;
 
     if (schoolName == '' || _refreshToken == '') {
-      return BakaResponse(error: 'Please log in');
+      throw ServiceException('Please log in first',
+          action: ExceptionActions.bakaLogin);
     }
 
     final url = Uri(
@@ -122,23 +105,27 @@ class BakaService {
     final body =
         'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
-    var bakaResponse = await _callLogin(url, head, body);
-
-    if (bakaResponse.isSuccess) {
-      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+    try {
+      await _callLogin(url, head, body);
+    } on Object {
+      rethrow;
     }
 
-    loadName();
+    saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
 
-    return bakaResponse;
+    loadName();
   }
 
-  Future<BakaResponse> firstLogin({
+  Future<void> firstLogin({
     required String school,
     required String username,
     required String password,
     required bool keepLoggedIn,
   }) async {
+    if (school == '' || username == '' || password == '') {
+      throw ServiceException('Please fill out all information');
+    }
+
     final url = Uri(
       scheme: 'https',
       host: "$school.bakalari.cz",
@@ -148,58 +135,49 @@ class BakaService {
     final body =
         'client_id=ANDR&grant_type=password&username=$username&password=$password';
 
-    var bakaResponse = await _callLogin(url, head, body);
+    try {
+      await _callLogin(url, head, body);
+    } on Object {
+      rethrow;
+    }
 
     if (keepLoggedIn) {
-      if (bakaResponse.isSuccess) {
-        saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-        saveToSecureStorage(SecureStorage.bakaSchoolNameKey, school);
-        saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
-      }
+      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+      saveToSecureStorage(SecureStorage.bakaSchoolNameKey, school);
+      saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
     } else {
       // it has to be overwriten if the user chooses
       saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, '');
       saveToSecureStorage(SecureStorage.bakaSchoolNameKey, '');
       saveToSecureStorage(SecureStorage.bakaUsernameKey, '');
     }
-
-    return bakaResponse;
   }
 
   /// logs in, returns errors and sets this._refreshToken and this._accessToken
-  Future<BakaResponse> _callLogin(Uri url, var head, var body) async {
-    var connected = await connectedToInternet();
-    if (!connected) {
-      return BakaResponse(error: 'Not connected to internet');
-    }
-
+  Future<void> _callLogin(Uri url, var head, var body) async {
     Response response;
     try {
-      response = await http
-          .post(
-            url,
-            headers: head,
-            body: body,
-          )
-          .timeout(const Duration(seconds: 10));
+      response = await http.post(
+        url,
+        headers: head,
+        body: body,
+      );
     } on SocketException catch (_) {
-      return BakaResponse(error: 'Couldn\'t connect to the address: $url');
-    } on TimeoutException catch (_) {
-      return BakaResponse(error: 'The request timed out after 10 seconds.');
+      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
-      return BakaResponse(error: 'An unexpected error occurred: $e');
+      throw ServiceException('An unexpected error occurred: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      return BakaResponse(error: utf8.decode(bytes));
+      throw ServiceException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
     final error = parsedJson['error'];
     if (error != null) {
-      return BakaResponse(error: parsedJson['error_description']);
+      throw ServiceException(error);
     }
 
     final accessToken = parsedJson["access_token"];
@@ -207,7 +185,7 @@ class BakaService {
     final expiresInSeconds = parsedJson['expires_in'] as int;
 
     if (accessToken == null || refreshToken == null) {
-      return BakaResponse(error: parsedJson['error_description']);
+      throw ServiceException(parsedJson['error_description']);
     }
 
     _accessToken = accessToken;
@@ -215,8 +193,6 @@ class BakaService {
     saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, refreshToken);
     _tokenExpiration =
         DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
-
-    return BakaResponse();
   }
 
   Future<void> loadName() async {
@@ -248,17 +224,13 @@ class BakaService {
   }
 
   /// returns list of subjects from bakalari
-  Future<(BakaResponse, List<Subject>)> _getAllSubjects() async {
+  Future<List<Subject>> _getAllSubjects() async {
     if (!isLoggedIn) {
-      final response = await refreshLogin();
-      if (!response.isSuccess) {
-        return (response, <Subject>[]);
+      try {
+        refreshLogin();
+      } on Object {
+        rethrow;
       }
-    }
-
-    bool connected = await connectedToInternet();
-    if (!connected) {
-      return (BakaResponse(error: 'Not connected to internet'), <Subject>[]);
     }
 
     String schoolName = await this.schoolName;
@@ -268,13 +240,20 @@ class BakaService {
       path: "/api/3/subjects",
     );
 
-    var response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": " Bearer $_accessToken",
-      },
-    );
+    Response response;
+    try {
+      response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": " Bearer $_accessToken",
+        },
+      );
+    } on SocketException {
+      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
+    } on Object catch (e) {
+      throw ServiceException('An unexpected error occured: $e');
+    }
 
     final parsedJson = json.decode(response.body);
 
@@ -301,12 +280,12 @@ class BakaService {
       ));
     }
 
-    return (BakaResponse(), listOfSubjects);
+    return listOfSubjects;
   }
 
   Future<void> addAllSubjects() async {
     final result = await _getAllSubjects();
-    List<Subject> list = result.$2;
+    List<Subject> list = result;
     for (var element in list) {
       subjectService.addNewSubject(element);
     }
@@ -317,7 +296,7 @@ class BakaService {
     subjectService.deleteAllSubjects();
     final result = await _getAllSubjects();
 
-    List<Subject> list = result.$2;
+    List<Subject> list = result;
     for (var element in list) {
       subjectService.addNewSubject(element);
     }
@@ -326,17 +305,13 @@ class BakaService {
   }
 
   /// imports permanent timetable and saves it
-  Future<BakaResponse> importTimeTable() async {
+  Future<void> importTimeTable() async {
     if (!isLoggedIn) {
-      final response = await refreshLogin();
-      if (!response.isSuccess) {
-        return response;
+      try {
+        refreshLogin();
+      } on Object {
+        rethrow;
       }
-    }
-
-    bool connected = await connectedToInternet();
-    if (!connected) {
-      return BakaResponse(error: 'Not connected to internet');
     }
 
     String schoolName = await this.schoolName;
@@ -355,24 +330,22 @@ class BakaService {
           "Authorization": " Bearer $_accessToken",
         },
       );
-    } on SocketException catch (error) {
-      return BakaResponse(error: error.message);
-    } on TimeoutException catch (_) {
-      return BakaResponse(error: 'The request timed out after 10 seconds.');
+    } on SocketException {
+      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
-      return BakaResponse(error: 'An unexpected error occurred: $e');
+      throw ServiceException('An unexpected error occurred: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      return BakaResponse(error: utf8.decode(bytes));
+      throw ServiceException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
 
     if (parsedJson["Message"] != null) {
-      return BakaResponse(error: parsedJson["Message"]);
+      throw ServiceException(parsedJson["Message"]);
     }
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
@@ -407,17 +380,15 @@ class BakaService {
         );
       }
     }
-
-    return BakaResponse();
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
   Future<TimeTableDTO> getCurrentTimetable(DateTime date) async {
     if (!isLoggedIn) {
-      final response = await refreshLogin();
-      if (!response.isSuccess) {
-        throw ServiceException(response.error,
-            action: ExceptionActions.bakaLogin);
+      try {
+        refreshLogin();
+      } on Object {
+        rethrow;
       }
     }
 
@@ -444,18 +415,12 @@ class BakaService {
 
     Response response;
     try {
-      response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Bearer $_accessToken",
-        },
-      ).timeout(const Duration(seconds: 10));
+      response = await http.get(url, headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Bearer $_accessToken",
+      });
     } on SocketException {
-      throw ServiceException('Check your internet connection');
-    } on TimeoutException catch (_) {
-      throw ServiceException(
-          'The request timed out after 10 seconds, check your internet connection');
+      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -463,7 +428,7 @@ class BakaService {
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      throw utf8.decode(bytes);
+      throw ServiceException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
@@ -614,10 +579,10 @@ class BakaService {
 
   Future<List<BakaHomework>> getHomeworks() async {
     if (!isLoggedIn) {
-      final response = await refreshLogin();
-      if (!response.isSuccess) {
-        throw ServiceException(response.error,
-            action: ExceptionActions.bakaLogin);
+      try {
+        refreshLogin();
+      } on Object {
+        rethrow;
       }
     }
 
@@ -633,18 +598,12 @@ class BakaService {
 
     Response response;
     try {
-      response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Bearer $_accessToken",
-        },
-      ).timeout(const Duration(seconds: 10));
+      response = await http.get(url, headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Bearer $_accessToken",
+      });
     } on SocketException {
-      throw ServiceException('Check your internet connection');
-    } on TimeoutException catch (_) {
-      throw ServiceException(
-          'The request timed out after 10 seconds, check your internet connection');
+      throw ServiceException('Check your internet connection. \nCouldn\'t connect to the address: $url.');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
