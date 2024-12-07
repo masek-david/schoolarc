@@ -56,7 +56,9 @@ class ExamTile extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            color: exam.completion
+                ? Theme.of(context).colorScheme.surfaceContainerLowest
+                : Theme.of(context).colorScheme.surfaceContainer,
           ),
           child: Material(
             color: Colors.transparent,
@@ -75,16 +77,14 @@ class ExamTile extends StatelessWidget {
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: exam.priority.getContainerColor(context)
-                        ),
+                            borderRadius: BorderRadius.circular(25),
+                            color: exam.priority.getContainerColor(context)),
                         child: SubjectShortcut(
-                          subject: exam.subject,
-                          color: exam.priority.getOnContainerColor(context)
-                        ),
+                            subject: exam.subject,
+                            color: exam.priority.getOnContainerColor(context)),
                       ),
                       if (exam.description != null && exam.description != '')
-                      const SizedBox(width: 8),
+                        const SizedBox(width: 8),
                       if (exam.description != null && exam.description != '')
                         Icon(
                           Icons.notes,

@@ -73,7 +73,7 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
           _controller.reset();
         },
       );
-    } else if(value) {
+    } else if (value) {
       _controller.animateTo(1, curve: Curves.easeInSine).then(
         (value) {
           widget.onAnimationEnd();
@@ -87,42 +87,42 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return ShaderMask(
-            blendMode: BlendMode.color,
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: ShaderMask(
+            blendMode: BlendMode.srcOver,
             shaderCallback: (bounds) {
+              final color = 
+                  widget.hw.priority.getColor(context).withAlpha(200);
+              
               return RadialGradient(
                 colors: [
                   Colors.transparent,
-                  widget.hw.priority.getColor(context),
+                  color,
+                  color,
                   Colors.transparent,
                 ],
                 radius: _controller.value * 50,
-                center: const Alignment(0.85, 0),
+                center: Alignment(1.0 - (31 / bounds.width * 2), 0),
               ).createShader(bounds);
             },
             child: child,
-          );
+          ),
+        );
+      },
+      child: HomeworkTile(
+        showDeadline: widget.showDate,
+        hw: widget.hw,
+        slidableController: widget.slidableController,
+        onChangedCompletion: (value) {
+          widget.onChangedCompletion(value);
+          playAnimation(value);
         },
-        child: HomeworkTile(
-          showDeadline: widget.showDate,
-          hw: widget.hw,
-          slidableController: widget.slidableController,
-          onChangedCompletion: (value) {
-            widget.onChangedCompletion(value);
-            playAnimation(value);
-            if (value) {
-            } else {
-              // widget.onAnimationEnd();
-            }
-          },
-          onDelete: () => widget.onDelete(),
-          onEdit: () => widget.onEdit(),
-        ),
+        onDelete: () => widget.onDelete(),
+        onEdit: () => widget.onEdit(),
       ),
     );
   }

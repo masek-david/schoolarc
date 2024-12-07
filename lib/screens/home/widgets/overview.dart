@@ -44,7 +44,8 @@ class Overview extends StatelessWidget {
     final showMissed = hwNumberOfMissed != 0;
 
     String? userName = settings.get(Setting.userName);
-    bool showUserName = settings.get(Setting.homeShowUserName) && userName != null;
+    bool showUserName =
+        settings.get(Setting.homeShowUserName) && userName != null;
 
     return Padding(
       padding: EdgeInsets.all(8),
@@ -55,7 +56,7 @@ class Overview extends StatelessWidget {
             '$welcomeText${showUserName ? ', $userName' : ''}',
             style: textTheme.headlineLarge,
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 12),
           RichText(
             text: TextSpan(
               text: 'You have ',
@@ -63,16 +64,8 @@ class Overview extends StatelessWidget {
               children: [
                 if (showMissed)
                   TextSpan(
-                    text: numberWithNo(hwNumberOfMissed),
-                    style: TextStyle(
-                      color: colorScheme.error,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                if (showMissed)
-                  TextSpan(
                     text:
-                        ' missed homework${hwNumberOfMissed != 1 ? 's' : ''}, ',
+                        '${numberWithNo(hwNumberOfMissed)} missed homework${hwNumberOfMissed != 1 ? 's' : ''}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,

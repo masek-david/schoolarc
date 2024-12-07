@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/services/exams/exam_service.dart';
@@ -32,6 +34,7 @@ final examService = ExamService();
 final subjectService = SubjectService();
 final timetableDatabase = TimeTableDatabase();
 final bakaService = BakaService();
+final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 
 Future<void> addTask(
@@ -46,7 +49,12 @@ Future<void> addTask(
     isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialDate: initialDate,
-      onSave: ({required date, required priority, subject, required text, required description}) {
+      onSave: (
+          {required date,
+          required priority,
+          subject,
+          required text,
+          required description}) {
         newTask = Task(
           subject: subject,
           text: text,
@@ -97,7 +105,12 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
       initialName: hw.text,
       initialDate: hw.deadline,
       initialDescription: hw.description,
-      onSave: ({required date, required priority, subject, required text, required description}) {
+      onSave: (
+          {required date,
+          required priority,
+          subject,
+          required text,
+          required description}) {
         hw.deadline = date;
         hw.priority = TaskPriority(priority);
         hw.subject = subject;
@@ -131,7 +144,12 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       initialName: exam.text,
       initialDescription: exam.description,
       initialDate: exam.deadline,
-      onSave: ({required date, required priority, subject, required text, required description}) {
+      onSave: (
+          {required date,
+          required priority,
+          subject,
+          required text,
+          required description}) {
         exam.deadline = date;
         exam.priority = TaskPriority(priority);
         exam.subject = subject;
@@ -199,15 +217,16 @@ Future<void> deleteExam(
 void showMessage(
   BuildContext context,
   String message, {
+  Duration duration = const Duration(seconds: 3),
   bool isError = false,
   bool isContinuos = false,
+  List<Widget>? actions,
 }) {
   if (context.mounted) {
-    final duration = isError
-        ? const Duration(seconds: 5)
-        : isContinuos
-            ? const Duration(days: 1)
-            : const Duration(seconds: 1);
+    if (isError) {}
+    if (isContinuos) {
+      duration = const Duration(days: 100);
+    }
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -229,6 +248,7 @@ void showMessage(
                 ),
               ),
             ),
+            if (actions != null) ...actions,
             if (isContinuos)
               CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primaryContainer,
@@ -245,6 +265,39 @@ void switchDrawer({bool? onlyClose}) {
     scaffoldKey.currentState?.closeDrawer();
   } else {
     scaffoldKey.currentState?.openDrawer();
+  }
+}
+
+void tryGettingNewHomeworks() async {
+  try {
+    await bakaService.getHomeworks(
+      onNewFound: (count) {
+        if (navigatorKey.currentContext != null) {
+          final context = navigatorKey.currentContext!;
+
+          showMessage(
+            context,
+            '$count new homework${count == 1 ? '' : 's'} found',
+            duration: Duration(days: 100),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  navigatorKey.currentState?.push(MaterialPageRoute(
+                    builder: (context) => BakaHomeworksScreen(),
+                  ));
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                },
+                child: Text(
+                  'View',
+                ),
+              ),
+            ],
+          );
+        }
+      },
+    );
+  } on Object {
+    // i dont mind this
   }
 }
 
@@ -298,6 +351,8 @@ class _TasksAppState extends State<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
+
+    tryGettingNewHomeworks();
   }
 
   void firstTimeOpeningApp() {

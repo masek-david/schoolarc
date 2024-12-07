@@ -58,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> refresh() async {
+    tryGettingNewHomeworks();
+
     await Future.wait([
       refreshMeals(),
       refreshTimetable(),
@@ -178,7 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   if (missedHw.isNotEmpty)
                     Card(
-                      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerLowest,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: HomeworkList(

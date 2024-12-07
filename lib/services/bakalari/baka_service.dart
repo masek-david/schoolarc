@@ -22,16 +22,6 @@ import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 
-class BakaResponse {
-  final String? error;
-
-  BakaResponse({this.error});
-
-  bool get isSuccess {
-    return error == null;
-  }
-}
-
 class BakaHomework extends HomeworkDTO {
   BakaHomework({
     required super.completion,
@@ -41,10 +31,14 @@ class BakaHomework extends HomeworkDTO {
     required super.priority,
     required super.subject,
     required super.text,
-    required this.id,
+    required this.alreadyAdded,
+    required this.alreadySeen,
+    required this.bakaId,
   });
 
-  final String id;
+  final String bakaId;
+  bool alreadyAdded;
+  final bool alreadySeen;
 }
 
 class BakaService {
@@ -581,7 +575,8 @@ class BakaService {
     return lessons;
   }
 
-  Future<List<BakaHomework>> getHomeworks() async {
+  Future<List<BakaHomework>> getHomeworks(
+      {void Function(int count)? onNewFound}) async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -620,6 +615,8 @@ class BakaService {
     List<BakaHomework> homeworks = [];
     final subjects = subjectService.getSortedList();
 
+    int newHomeworks = 0;
+
     for (var homework in homeworksJson) {
       SubjectDTO subject = subjects.where(
         (subject) {
@@ -632,17 +629,32 @@ class BakaService {
       final DateTime deadline = DateTime.parse(homework['DateEnd']);
       final bool completion = homework['Finished'];
 
-      homeworks.add(BakaHomework(
-        id: id,
-        subject: subject,
-        text: text,
-        deadline: deadline,
-        completion: completion,
-        priority: TaskPriority(0),
-        dbIndex: 0,
-        description: null,
-      ));
+      bool isSeen = bakaHomeworkService.isSeen(id);
+      if (!isSeen) {
+        newHomeworks++;
+      }
+
+      homeworks.add(
+        BakaHomework(
+          bakaId: id,
+          alreadyAdded: bakaHomeworkService.isAdded(id),
+          alreadySeen: isSeen,
+          subject: subject,
+          text: text,
+          deadline: deadline,
+          completion: completion,
+          priority: TaskPriority(0),
+          dbIndex: 0,
+          description: null,
+        ),
+      );
     }
+
+
+    if (newHomeworks != 0 && onNewFound != null) {
+      onNewFound(newHomeworks);
+    }
+
     return homeworks;
   }
 }

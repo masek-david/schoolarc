@@ -13,14 +13,18 @@ class HomeworkTile extends StatelessWidget {
     required this.hw,
     this.showDeadline = true,
     this.slidableController,
+    this.borderIfMissed = true,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
+    this.showCompletion = true,
   });
 
   final HomeworkDTO hw;
   final bool showDeadline;
   final SlidableController? slidableController;
+  final bool showCompletion;
+  final bool borderIfMissed;
   final Function(bool) onChangedCompletion;
   final Function() onDelete;
   final Function() onEdit;
@@ -61,14 +65,16 @@ class HomeworkTile extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          border: isMissed
+          border: isMissed && borderIfMissed
               ? Border.all(
                   color: missedColor,
                   width: 2,
                 )
               : null,
           borderRadius: BorderRadius.circular(borderRadius),
-          color: Theme.of(context).colorScheme.surfaceContainer,
+          color: hw.completion
+              ? Theme.of(context).colorScheme.surfaceContainerLowest
+              : Theme.of(context).colorScheme.surfaceContainer,
         ),
         child: Material(
           color: Colors.transparent,
@@ -101,7 +107,7 @@ class HomeworkTile extends StatelessWidget {
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     if (hw.description != null && hw.description != '')
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
                     Expanded(child: Text(hw.text, maxLines: 2)),
                     const SizedBox(width: 5),
                     if (showDeadline)
@@ -114,13 +120,14 @@ class HomeworkTile extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(width: 4),
-                    MyCheckbox(
-                      value: hw.completion,
-                      priority: hw.priority,
-                      onChanged: onChangedCompletion,
-                      // must be heres
-                      key: ValueKey('checkbox ${hw.dbIndex}'),
-                    ),
+                    if (showCompletion)
+                      MyCheckbox(
+                        value: hw.completion,
+                        priority: hw.priority,
+                        onChanged: onChangedCompletion,
+                        // must be heres
+                        key: ValueKey('checkbox ${hw.dbIndex}'),
+                      ),
                   ],
                 ),
               ),

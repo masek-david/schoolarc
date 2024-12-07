@@ -36,7 +36,7 @@ class _HomeSettingsState extends State<HomeSettings> {
         ),
         SettingTile(
           label: 'Show my name',
-          text: 'If enabled, your name will be shown after ',
+          text: 'If enabled, you will be greeted with your name',
           action: SwitchAction(
             initialValue: settings.get(Setting.homeShowUserName),
             onChanged: (value) {

@@ -12,14 +12,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
   // init hive
   await Hive.initFlutter();
-  
+
   // open a box
   Hive.registerAdapter(HomeworkAdapter());
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
   Hive.registerAdapter(TimeTableAdapter());
   Hive.registerAdapter(LessonTimesAdapter());
-   await Hive.openBox('tableBox');
+  await Hive.openBox('tableBox');
   await Future.wait([
     Hive.openBox('subjectBox'),
     Hive.openBox('hwBox'),
@@ -28,6 +28,10 @@ void main() async {
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),
     Hive.openBox('subjectOtherData'),
+
+    Hive.openBox('bakaAddedHw'),
+    Hive.openBox('bakaSeenHw'),
+
     Hive.openBox('settings'),
   ]);
 
