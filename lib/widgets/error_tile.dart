@@ -8,10 +8,12 @@ class ErrorTile extends StatelessWidget {
     super.key,
     this.text,
     required this.error,
+    this.actions,
   });
 
   final String? text;
   final Object? error;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,7 @@ class ErrorTile extends StatelessWidget {
               ),
             ),
           ),
+          if(actions != null)...actions!
       ],
     );
   }

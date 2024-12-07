@@ -153,70 +153,73 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: refresh,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Overview(
-                  hwNumberOfIncomplete: hwNumberOfIncomplete,
-                  examNumberOfIncomplete: examNumberOfIncomplete,
-                  hwNumberOfMissed: missedHw.length,
-                ),
-                SizedBox(height: 24),
-                MealsCard(
-                  meals: meals,
-                  refresh: refreshMeals,
-                ),
-                TimetableCard(
-                  refresh: refreshTimetable,
-                  defaultTimeTable: defaultTimeTable,
-                  bakaTimetable: bakaTimetable,
-                  dateToShow: dateToShow,
-                  whenText: whenText,
-                ),
-                if (missedHw.isNotEmpty)
+          child: ListView(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Overview(
+                    hwNumberOfIncomplete: hwNumberOfIncomplete,
+                    examNumberOfIncomplete: examNumberOfIncomplete,
+                    hwNumberOfMissed: missedHw.length,
+                  ),
+                  SizedBox(height: 24),
+                  MealsCard(
+                    meals: meals,
+                    refresh: refreshMeals,
+                  ),
+                  TimetableCard(
+                    refresh: refreshTimetable,
+                    defaultTimeTable: defaultTimeTable,
+                    bakaTimetable: bakaTimetable,
+                    dateToShow: dateToShow,
+                    whenText: whenText,
+                  ),
+                  if (missedHw.isNotEmpty)
+                    Card(
+                      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: HomeworkList(
+                          textFull: 'Missed homeworks',
+                          showText: true,
+                          showDates: true,
+                          hwList: missedHw,
+                          updateListView: updateView,
+                        ),
+                      ),
+                    ),
+                  Card(
+                    color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: ExamList(
+                        textFull: 'Exams $whenText',
+                        showText: true,
+                        showDates: false,
+                        examList: examToShow,
+                        updateView: updateView,
+                      ),
+                    ),
+                  ),
                   Card(
                     color: Theme.of(context).colorScheme.surfaceContainerLowest,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: HomeworkList(
-                        textFull: 'Missed homeworks',
+                        textFull: 'Homeworks $whenText',
                         showText: true,
-                        showDates: true,
-                        hwList: missedHw,
+                        showDates: false,
+                        hwList: hwToShow,
                         updateListView: updateView,
                       ),
                     ),
                   ),
-                Card(
-                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: ExamList(
-                      textFull: 'Exams $whenText',
-                      showText: true,
-                      showDates: false,
-                      examList: examToShow,
-                      updateView: updateView,
-                    ),
-                  ),
-                ),
-                Card(
-                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: HomeworkList(
-                      textFull: 'Homeworks $whenText',
-                      showText: true,
-                      showDates: false,
-                      hwList: hwToShow,
-                      updateListView: updateView,
-                    ),
-                  ),
-                ),
-                const ListBottomSpacer()
-              ],
-            ),
+                  const ListBottomSpacer()
+                ],
+              ),
+            ],
           ),
         ),
       ),

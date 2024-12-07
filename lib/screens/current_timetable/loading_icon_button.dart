@@ -24,7 +24,8 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (isLoading || widget.isLoading == true) const CircularProgressIndicator(),
+        if (isLoading || widget.isLoading == true)
+          const CircularProgressIndicator(),
         IconButton(
           onPressed: () {
             setState(() {
@@ -33,9 +34,11 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
 
             widget.onTap().then(
               (value) {
-                setState(() {
-                  isLoading = false;
-                });
+                if (mounted) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
               },
             );
           },

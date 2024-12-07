@@ -47,6 +47,23 @@ class MealsCard extends StatelessWidget {
           return ErrorTile(
             error: snapshot.error,
             text: 'Meals couldn\'t be loaded',
+            actions: [
+              LoadingIconButton(
+                icon: Icons.refresh,
+                onTap: () => refresh(),
+                isLoading: isLoading,
+              ),
+              IconButton(
+                onPressed: () {
+                  navigatorKey.currentState?.push(MaterialPageRoute(
+                    builder: (context) => MealsScreen(),
+                  ));
+                },
+                icon: const Icon(
+                  Icons.keyboard_arrow_right_rounded,
+                ),
+              ),
+            ],
           );
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No meals found'));
