@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
@@ -125,19 +123,15 @@ class _HomeScreenState extends State<HomeScreen> {
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
     return Scaffold(
-      floatingActionButton: kDebugMode
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                HomeWidget.saveWidgetData(
-                  'id',
-                  homeworkService.getForDay(DateTime(2024, 12, 9), context),
-                );
-                // NotificationSender.notificationSecret();
-              },
-              label: const Text('test'),
-              icon: const Icon(Icons.schedule),
-            )
-          : null,
+      // floatingActionButton: kDebugMode
+      //     ? FloatingActionButton.extended(
+      //         onPressed: () {
+      //           // NotificationSender.notificationSecret();
+      //         },
+      //         label: const Text('test'),
+      //         icon: const Icon(Icons.schedule),
+      //       )
+      // : null,
       appBar: AppBar(
         leading: const DrawerButton(onPressed: switchDrawer),
         actions: [
