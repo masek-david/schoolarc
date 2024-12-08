@@ -50,7 +50,6 @@ dependencies:
   xml: ^6.5.0
   expandable_page_view: ^1.0.17
   smooth_page_indicator: ^1.2.0+3
-  home_widget: ^0.7.0
 
 dev_dependencies:
   flutter_test:
