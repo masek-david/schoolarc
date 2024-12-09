@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/homeworks/widgets/priority_view.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/screen_size.dart';
 
 class HomeworksScreen extends StatefulWidget {
   const HomeworksScreen({super.key});
@@ -39,19 +40,24 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const DrawerButton(
-          onPressed: switchDrawer,
-        ),
-        title: const Text('Homeworks'),
-      ),
-      body: PriorityView(
-        hwByPriority: hwByPriority,
-        completedHws: completedHw,
-        reorderHomework: reorderHomework,
-        updateView: updateListView,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: ScreenSize.isWideScreen,
+      builder: (context, isWide, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: isWide ? null : const DrawerButton(
+              onPressed: switchDrawer,
+            ),
+            title: const Text('Homeworks'),
+          ),
+          body: PriorityView(
+            hwByPriority: hwByPriority,
+            completedHws: completedHw,
+            reorderHomework: reorderHomework,
+            updateView: updateListView,
+          ),
+        );
+      },
     );
   }
 }

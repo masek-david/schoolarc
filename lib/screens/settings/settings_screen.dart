@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
+import 'package:school_manager/screens/settings/widgets/adaptive_showcase.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
@@ -121,7 +122,8 @@ class SettingsScreen extends StatelessWidget {
                 settings.save(Setting.showDebugInfo, value);
               },
             ),
-          )
+          ),
+          if(settings.get(Setting.showDebugInfo)) AdaptiveShowcase(),
         ],
       ),
     );

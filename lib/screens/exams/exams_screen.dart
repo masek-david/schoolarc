@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/exams/widgets/priority_view.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/screen_size.dart';
 
 class ExamsScreen extends StatefulWidget {
   const ExamsScreen({super.key});
@@ -38,19 +39,24 @@ class _ExamsScreenState extends State<ExamsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const DrawerButton(
-          onPressed: switchDrawer,
-        ),
-        title: const Text('Exams'),
-      ),
-      body: PriorityView(
-        examsByPriority: examsByPriority,
-        completedExams: completedExams,
-        updateView: updateView,
-        reorderExam: reorderExam,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: ScreenSize.isWideScreen,
+      builder: (context, isWide, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: isWide ? null : const DrawerButton(
+              onPressed: switchDrawer,
+            ),
+            title: const Text('Exams'),
+          ),
+          body: PriorityView(
+            examsByPriority: examsByPriority,
+            completedExams: completedExams,
+            updateView: updateView,
+            reorderExam: reorderExam,
+          ),
+        );
+      },
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
+import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -122,44 +123,44 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
-    return Scaffold(
-      // floatingActionButton: kDebugMode
-      //     ? FloatingActionButton.extended(
-      //         onPressed: () {
-      //           // NotificationSender.notificationSecret();
-      //         },
-      //         label: const Text('test'),
-      //         icon: const Icon(Icons.schedule),
-      //       )
-      // : null,
-      appBar: AppBar(
-        leading: const DrawerButton(onPressed: switchDrawer),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return HomeSettings(
-                    onChanged: () => setState(() {}),
+    return ValueListenableBuilder(
+      valueListenable: ScreenSize.isWideScreen,
+      builder: (context, isWide, child) {
+        return Scaffold(
+          // floatingActionButton: kDebugMode
+          //     ? FloatingActionButton.extended(
+          //         onPressed: () {
+          //           // NotificationSender.notificationSecret();
+          //         },
+          //         label: const Text('test'),
+          //         icon: const Icon(Icons.schedule),
+          //       )
+          // : null,
+          appBar: AppBar(
+            leading:
+                isWide ? null : const DrawerButton(onPressed: switchDrawer),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return HomeSettings(
+                        onChanged: () => setState(() {}),
+                      );
+                    },
                   );
                 },
-              );
-            },
-            icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.settings),
+              ),
+            ],
+            // title: const Text('Home'),
           ),
-        ],
-        // title: const Text('Home'),
-      ),
-      body: RefreshIndicator(
-        onRefresh: refresh,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: ListView(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: RefreshIndicator(
+            onRefresh: refresh,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: ListView(
                 children: [
                   Overview(
                     hwNumberOfIncomplete: hwNumberOfIncomplete,
@@ -167,65 +168,102 @@ class _HomeScreenState extends State<HomeScreen> {
                     hwNumberOfMissed: missedHw.length,
                   ),
                   SizedBox(height: 24),
-                  MealsCard(
-                    meals: meals,
-                    refresh: refreshMeals,
-                  ),
-                  TimetableCard(
-                    refresh: refreshTimetable,
-                    defaultTimeTable: defaultTimeTable,
-                    bakaTimetable: bakaTimetable,
-                    dateToShow: dateToShow,
-                    whenText: whenText,
-                  ),
-                  if (missedHw.isNotEmpty)
-                    Card(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerLowest,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: HomeworkList(
-                          textFull: 'Missed homeworks',
-                          showText: true,
-                          showDates: true,
-                          hwList: missedHw,
-                          updateListView: updateView,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isWide)
+                        Flexible(
+                            child: Column(
+                          children: [
+                            MealsCard(
+                              meals: meals,
+                              refresh: refreshMeals,
+                            ),
+                            TimetableCard(
+                              refresh: refreshTimetable,
+                              defaultTimeTable: defaultTimeTable,
+                              bakaTimetable: bakaTimetable,
+                              dateToShow: dateToShow,
+                              whenText: whenText,
+                            ),
+                          ],
+                        )),
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if(!isWide)
+                            MealsCard(
+                              meals: meals,
+                              refresh: refreshMeals,
+                            ),
+                            if(!isWide)
+                            TimetableCard(
+                              refresh: refreshTimetable,
+                              defaultTimeTable: defaultTimeTable,
+                              bakaTimetable: bakaTimetable,
+                              dateToShow: dateToShow,
+                              whenText: whenText,
+                            ),
+                            if (missedHw.isNotEmpty)
+                              Card(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLowest,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: HomeworkList(
+                                    textFull: 'Missed homeworks',
+                                    showText: true,
+                                    showDates: true,
+                                    hwList: missedHw,
+                                    updateListView: updateView,
+                                  ),
+                                ),
+                              ),
+                            Card(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLowest,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: ExamList(
+                                  textFull: 'Exams $whenText',
+                                  showText: true,
+                                  showDates: false,
+                                  examList: examToShow,
+                                  updateView: updateView,
+                                ),
+                              ),
+                            ),
+                            Card(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLowest,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: HomeworkList(
+                                  textFull: 'Homeworks $whenText',
+                                  showText: true,
+                                  showDates: false,
+                                  hwList: hwToShow,
+                                  updateListView: updateView,
+                                ),
+                              ),
+                            ),
+                            const ListBottomSpacer()
+                          ],
                         ),
                       ),
-                    ),
-                  Card(
-                    color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: ExamList(
-                        textFull: 'Exams $whenText',
-                        showText: true,
-                        showDates: false,
-                        examList: examToShow,
-                        updateView: updateView,
-                      ),
-                    ),
+                    ],
                   ),
-                  Card(
-                    color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: HomeworkList(
-                        textFull: 'Homeworks $whenText',
-                        showText: true,
-                        showDates: false,
-                        hwList: hwToShow,
-                        updateListView: updateView,
-                      ),
-                    ),
-                  ),
-                  const ListBottomSpacer()
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

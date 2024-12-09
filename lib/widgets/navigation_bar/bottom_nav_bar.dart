@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class NavBar extends StatelessWidget {
-  const NavBar({
+class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({
     super.key,
     this.pageIndex = 0,
     required this.onTap,

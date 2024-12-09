@@ -18,13 +18,15 @@ import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
+import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/theme_generate.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
-import 'package:school_manager/widgets/nav_bar.dart';
+import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
 import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
+import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -397,6 +399,10 @@ class _TasksAppState extends State<TasksApp> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenSize.init(context);
+
+    final showSideNavBar = ScreenSize.isWiderThanTaller.value;
+
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       final int dynamicSchemeVariant =
@@ -469,26 +475,39 @@ class _TasksAppState extends State<TasksApp> {
         home: Scaffold(
           key: scaffoldKey,
           body: SlidableAutoCloseBehavior(
-            child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
+            child: Row(
               children: [
-                const HomeScreen(),
-                CalendarScreen(
-                  showTommorrow: calendarShowTommorrow,
+                if (showSideNavBar)
+                  SideNavBar(
+                    onTap: switchScreen,
+                    pageIndex: currentPageIndex,
+                  ),
+                Expanded(
+                  child: PageView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _pageController,
+                    children: [
+                      const HomeScreen(),
+                      CalendarScreen(
+                        showTommorrow: calendarShowTommorrow,
+                      ),
+                      const HomeworksScreen(),
+                      const ExamsScreen(),
+                    ],
+                  ),
                 ),
-                const HomeworksScreen(),
-                const ExamsScreen(),
               ],
             ),
           ),
           drawer: MyDrawer(
             setThemeMode: refreshTheme,
           ),
-          bottomNavigationBar: NavBar(
-            onTap: switchScreen,
-            pageIndex: currentPageIndex,
-          ),
+          bottomNavigationBar: showSideNavBar
+              ? null
+              : BottomNavBar(
+                  onTap: switchScreen,
+                  pageIndex: currentPageIndex,
+                ),
         ),
       );
     });
