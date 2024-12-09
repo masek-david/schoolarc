@@ -1,0 +1,17 @@
+# Define the iOS platform version for your project
+platform :ios, '12.0'
+
+target 'Runner' do
+  # Use dynamic frameworks for the project
+  use_frameworks!
+  use_modular_headers!
+
+  # Integrate Flutter pods
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Add test target if needed
+  target 'RunnerTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+end
