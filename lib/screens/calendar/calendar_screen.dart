@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
+import 'package:school_manager/screens/calendar/widgets/pages_widget.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
-import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
-import 'package:school_manager/widgets/exam_list.dart';
-import 'package:school_manager/widgets/homework_list.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/widgets/list_bottom_spacer.dart';
+import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
@@ -84,7 +80,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  /// used for gettin number of markers
+  /// used for getting number of markers
   List<Object> getEventsForDay(DateTime day) {
     List<Object> listOfEvents = [
       ...hwByDate[DateTime.utc(day.year, day.month, day.day)] ?? [],
@@ -110,6 +106,62 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return examsCount <= 8 ? examsCount : 8;
   }
 
+  Widget buildCalendar(int maxNumberOfCustomMarkers) {
+    return CalendarWidget(
+      focusedDay: _focusedDay,
+      selectedDay: _selectedDay,
+      maxNumberOfCustomMarkers: maxNumberOfCustomMarkers,
+      negativePageCount: negativePageCount,
+      updateView: updateView,
+      calendarBackgroundColor: calendarBackgroundColor,
+      jumpToPage: (page) {
+        _pageController.jumpToPage(page);
+      },
+      getEventsForDay: getEventsForDay,
+      onHeaderTapped: (date) {
+        setState(() {
+          _focusedDay = DateTime.now();
+        });
+        _pageController.jumpToPage(negativePageCount);
+      },
+      onFormatChanged: (format) {
+        if (_calendarFormat != format) {
+          // Call `setState()` when updating calendar format
+          setState(() {
+            _calendarFormat = format;
+          });
+        }
+      },
+      onPageChanged: (focusedDay) {
+        setState(() {
+          _focusedDay = focusedDay;
+          maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+        });
+      },
+    );
+  }
+
+  Widget buildPages() {
+    return PagesWidget(
+      pageController: _pageController,
+      onPageChanged: (page) {
+        setState(() {
+          _focusedDay = DateTime.now()
+              .toUtc()
+              .add(Duration(days: page - negativePageCount))
+              .toLocal();
+          _selectedDay = _focusedDay;
+        });
+      },
+      negativePageCount: negativePageCount,
+      hwByDate: hwByDate,
+      examByDate: examByDate,
+      missedHwList: missedHwList,
+      showMissed: showMissed,
+      updateView: updateView,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     /// how many markers are used this week at most
@@ -119,12 +171,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
-          appBar: AppBar(
-            leading: isWide
-                ? null
-                : const DrawerButton(
-                    onPressed: switchDrawer,
-                  ),
+          appBar: WideScreenAppBar(
+            isWideScreen: isWide,
             title: const Text('Calendar'),
             actions: [
               IconButton(
@@ -173,328 +221,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ],
           ),
-          // TODO this is ugly duplicate code
           body: isWide
               ? Row(
                   children: [
                     Flexible(
-                      child: TableCalendar(
-                        // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-                        firstDay: DateTime(1),
-                        lastDay: DateTime(5000),
-                        focusedDay: _focusedDay,
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        calendarFormat: _calendarFormat,
-                        availableCalendarFormats: const {
-                          CalendarFormat.week: 'Week'
-                        },
-                        rowHeight: 50 + maxNumberOfCustomMarkers * 25,
-                        calendarBuilders: myCalendarBuilder(updateView),
-                        headerStyle: HeaderStyle(
-                          decoration:
-                              BoxDecoration(color: calendarBackgroundColor),
-                        ),
-                        daysOfWeekStyle: DaysOfWeekStyle(
-                          decoration:
-                              BoxDecoration(color: calendarBackgroundColor),
-                        ),
-                        calendarStyle: CalendarStyle(
-                          cellAlignment: Alignment.topCenter,
-                          markersAlignment: Alignment.topCenter,
-                          rowDecoration:
-                              BoxDecoration(color: calendarBackgroundColor),
-                        ),
-                        eventLoader: (day) => getEventsForDay(day),
-                        selectedDayPredicate: (day) {
-                          // Use `selectedDayPredicate` to determine which day is currently selected.
-                          // If this returns true, then `day` will be marked as selected.
-                      
-                          // Using `isSameDay` is recommended to disregard
-                          // the time-part of compared DateTime objects.
-                          return isSameDay(_selectedDay, day);
-                        },
-                        onDaySelected: (selectedDay, focusedDay) {
-                          if (!isSameDay(_selectedDay, selectedDay)) {
-                            // Call `setState()` when updating the selected day
-                            DateTime now = DateTime.now();
-                            // kdyz to neni utc neni to schopnej spravne porovnat
-                            DateTime nowOnlyDate =
-                                DateTime.utc(now.year, now.month, now.day);
-                            int dayDifferenceFromNow =
-                                selectedDay.difference(nowOnlyDate).inDays;
-                            int correctPageIndex =
-                                negativePageCount + dayDifferenceFromNow;
-                      
-                            _pageController.jumpToPage(
-                              correctPageIndex,
-                            );
-                          }
-                        },
-                        onHeaderTapped: (focusedDay) {
-                          setState(() {
-                            _focusedDay = DateTime.now();
-                          });
-                          _pageController.jumpToPage(negativePageCount);
-                        },
-                        onFormatChanged: (format) {
-                          if (_calendarFormat != format) {
-                            // Call `setState()` when updating calendar format
-                            setState(() {
-                              _calendarFormat = format;
-                            });
-                          }
-                        },
-                        onPageChanged: (focusedDay) {
-                          setState(() {
-                            _focusedDay = focusedDay;
-                            maxNumberOfCustomMarkers =
-                                getMaxNumberOfExamsPerDay();
-                          });
-                        },
-                      ),
+                      child: buildCalendar(maxNumberOfCustomMarkers),
                     ),
                     const SizedBox(height: 4),
-                    Flexible(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (value) {
-                          setState(() {
-                            _focusedDay = DateTime.now()
-                                .toUtc()
-                                .add(Duration(days: value - negativePageCount))
-                                .toLocal();
-                            _selectedDay = _focusedDay;
-                          });
-                        },
-                        itemBuilder: (context, pageIndex) {
-                          DateTime now = DateTime.now().toUtc();
-                          DateTime nowOnlyDate =
-                              DateTime.utc(now.year, now.month, now.day);
-                          int daysToAdd = pageIndex - negativePageCount;
-                          DateTime date =
-                              nowOnlyDate.add(Duration(days: daysToAdd));
-
-                          List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
-                          List<ExamDTO> examListForDay = examByDate[date] ?? [];
-
-                          final bool showMissed = missedHwList.isNotEmpty &&
-                              !date.isBeforeToday() &&
-                              this.showMissed;
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: ListView(
-                              children: [
-                                // Text(date.toString()),
-                                // Text(pageIndex.toString()),
-                                if (showMissed)
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: ListTileTheme(
-                                      contentPadding: const EdgeInsets.only(
-                                          left: 4, right: 8),
-                                      child: ExpansionTile(
-                                        initiallyExpanded: true,
-                                        collapsedShape: const Border(),
-                                        shape: const Border(),
-                                        dense: true,
-                                        title: ExpansionTitle(
-                                          titleText: 'Missed Homeworks',
-                                          boldText: false,
-                                          titleTextColor: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                          numberOfItems: missedHwList.length,
-                                        ),
-                                        children: [
-                                          HomeworkList(
-                                            hwList: missedHwList,
-                                            updateListView: updateView,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ExamList(
-                                  showDates: false,
-                                  showText: true,
-                                  examList: examListForDay,
-                                  updateView: updateView,
-                                ),
-                                HomeworkList(
-                                  showDates: false,
-                                  showText: true,
-                                  hwList: hwListForDay,
-                                  updateListView: updateView,
-                                ),
-                                const ListBottomSpacer(),
-                                const ListBottomSpacer(),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    Flexible(child: buildPages()),
                   ],
                 )
               : Column(
                   children: [
-                    TableCalendar(
-                      // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-                      firstDay: DateTime(1),
-                      lastDay: DateTime(5000),
-                      focusedDay: _focusedDay,
-                      startingDayOfWeek: StartingDayOfWeek.monday,
-                      calendarFormat: _calendarFormat,
-                      availableCalendarFormats: const {
-                        CalendarFormat.week: 'Week'
-                      },
-                      rowHeight: 50 + maxNumberOfCustomMarkers * 25,
-                      calendarBuilders: myCalendarBuilder(updateView),
-                      headerStyle: HeaderStyle(
-                        decoration:
-                            BoxDecoration(color: calendarBackgroundColor),
-                      ),
-                      daysOfWeekStyle: DaysOfWeekStyle(
-                        decoration:
-                            BoxDecoration(color: calendarBackgroundColor),
-                      ),
-                      calendarStyle: CalendarStyle(
-                        cellAlignment: Alignment.topCenter,
-                        markersAlignment: Alignment.topCenter,
-                        rowDecoration:
-                            BoxDecoration(color: calendarBackgroundColor),
-                      ),
-                      eventLoader: (day) => getEventsForDay(day),
-                      selectedDayPredicate: (day) {
-                        // Use `selectedDayPredicate` to determine which day is currently selected.
-                        // If this returns true, then `day` will be marked as selected.
-
-                        // Using `isSameDay` is recommended to disregard
-                        // the time-part of compared DateTime objects.
-                        return isSameDay(_selectedDay, day);
-                      },
-                      onDaySelected: (selectedDay, focusedDay) {
-                        if (!isSameDay(_selectedDay, selectedDay)) {
-                          // Call `setState()` when updating the selected day
-                          DateTime now = DateTime.now();
-                          // kdyz to neni utc neni to schopnej spravne porovnat
-                          DateTime nowOnlyDate =
-                              DateTime.utc(now.year, now.month, now.day);
-                          int dayDifferenceFromNow =
-                              selectedDay.difference(nowOnlyDate).inDays;
-                          int correctPageIndex =
-                              negativePageCount + dayDifferenceFromNow;
-
-                          _pageController.jumpToPage(
-                            correctPageIndex,
-                          );
-                        }
-                      },
-                      onHeaderTapped: (focusedDay) {
-                        setState(() {
-                          _focusedDay = DateTime.now();
-                        });
-                        _pageController.jumpToPage(negativePageCount);
-                      },
-                      onFormatChanged: (format) {
-                        if (_calendarFormat != format) {
-                          // Call `setState()` when updating calendar format
-                          setState(() {
-                            _calendarFormat = format;
-                          });
-                        }
-                      },
-                      onPageChanged: (focusedDay) {
-                        setState(() {
-                          _focusedDay = focusedDay;
-                          maxNumberOfCustomMarkers =
-                              getMaxNumberOfExamsPerDay();
-                        });
-                      },
-                    ),
+                    buildCalendar(maxNumberOfCustomMarkers),
                     const SizedBox(height: 4),
-                    Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (value) {
-                          setState(() {
-                            _focusedDay = DateTime.now()
-                                .toUtc()
-                                .add(Duration(days: value - negativePageCount))
-                                .toLocal();
-                            _selectedDay = _focusedDay;
-                          });
-                        },
-                        itemBuilder: (context, pageIndex) {
-                          DateTime now = DateTime.now().toUtc();
-                          DateTime nowOnlyDate =
-                              DateTime.utc(now.year, now.month, now.day);
-                          int daysToAdd = pageIndex - negativePageCount;
-                          DateTime date =
-                              nowOnlyDate.add(Duration(days: daysToAdd));
-
-                          List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
-                          List<ExamDTO> examListForDay = examByDate[date] ?? [];
-
-                          final bool showMissed = missedHwList.isNotEmpty &&
-                              !date.isBeforeToday() &&
-                              this.showMissed;
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: ListView(
-                              children: [
-                                // Text(date.toString()),
-                                // Text(pageIndex.toString()),
-                                if (showMissed)
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: ListTileTheme(
-                                      contentPadding: const EdgeInsets.only(
-                                          left: 4, right: 8),
-                                      child: ExpansionTile(
-                                        initiallyExpanded: true,
-                                        collapsedShape: const Border(),
-                                        shape: const Border(),
-                                        dense: true,
-                                        title: ExpansionTitle(
-                                          titleText: 'Missed Homeworks',
-                                          boldText: false,
-                                          titleTextColor: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                          numberOfItems: missedHwList.length,
-                                        ),
-                                        children: [
-                                          HomeworkList(
-                                            hwList: missedHwList,
-                                            updateListView: updateView,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ExamList(
-                                  showDates: false,
-                                  showText: true,
-                                  examList: examListForDay,
-                                  updateView: updateView,
-                                ),
-                                HomeworkList(
-                                  showDates: false,
-                                  showText: true,
-                                  hwList: hwListForDay,
-                                  updateListView: updateView,
-                                ),
-                                const ListBottomSpacer(),
-                                const ListBottomSpacer(),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    Expanded(child: buildPages()),
                   ],
                 ),
         );

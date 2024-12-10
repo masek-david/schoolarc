@@ -8,6 +8,7 @@ enum Setting {
   themeDynamicSchemeVariantInt,
   initialAppPage,
   pageSwitchAnimationDuration,
+  showAppOverlay,
   tommorowNotificationEnabled,
   tommorowNotificationTime,
   themeMode,
@@ -53,6 +54,10 @@ class SettingsDatabase {
     Setting.pageSwitchAnimationDuration: SettingModel(
       key: 'pageSwitchDuration',
       defaultValue: 200.0,
+    ),
+    Setting.showAppOverlay: SettingModel(
+      defaultValue: true,
+      key: 'showOverlay',
     ),
     Setting.tommorowNotificationEnabled: SettingModel(
       defaultValue: true,

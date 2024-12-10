@@ -12,6 +12,7 @@ import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
+import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -136,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
           //         icon: const Icon(Icons.schedule),
           //       )
           // : null,
-          appBar: AppBar(
+          appBar: WideScreenAppBar(
+            isWideScreen: isWide,
             leading:
                 isWide ? null : const DrawerButton(onPressed: switchDrawer),
             actions: [
@@ -154,7 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.settings),
               ),
             ],
-            // title: const Text('Home'),
           ),
           body: RefreshIndicator(
             onRefresh: refresh,
@@ -193,19 +194,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if(!isWide)
-                            MealsCard(
-                              meals: meals,
-                              refresh: refreshMeals,
-                            ),
-                            if(!isWide)
-                            TimetableCard(
-                              refresh: refreshTimetable,
-                              defaultTimeTable: defaultTimeTable,
-                              bakaTimetable: bakaTimetable,
-                              dateToShow: dateToShow,
-                              whenText: whenText,
-                            ),
+                            if (!isWide)
+                              MealsCard(
+                                meals: meals,
+                                refresh: refreshMeals,
+                              ),
+                            if (!isWide)
+                              TimetableCard(
+                                refresh: refreshTimetable,
+                                defaultTimeTable: defaultTimeTable,
+                                bakaTimetable: bakaTimetable,
+                                dateToShow: dateToShow,
+                                whenText: whenText,
+                              ),
                             if (missedHw.isNotEmpty)
                               Card(
                                 color: Theme.of(context)
