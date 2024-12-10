@@ -397,11 +397,32 @@ class _TasksAppState extends State<TasksApp> {
     });
   }
 
+  void showCalendar() async {
+    navigatorKey.currentState?.popUntil((route) => route.isFirst);
+    switchDrawer(onlyClose: true);
+
+    calendarShowTommorrow = true;
+    _pageController.jumpToPage(0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This code will run after the first frame is rendered.
+      _pageController.jumpToPage(1);
+    });
+
+    setState(() {
+      currentPageIndex = 1;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This code will run after the first frame is rendered.
+      calendarShowTommorrow = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenSize.init(context);
 
-    final showSideNavBar = ScreenSize.isWiderThanTaller.value;
+    final isWide = ScreenSize.isWiderThanTaller.value;
 
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
@@ -460,10 +481,7 @@ class _TasksAppState extends State<TasksApp> {
               );
 
             case '/calendar':
-              navigatorKey.currentState?.popUntil((route) => route.isFirst);
-              switchDrawer(onlyClose: true);
-              calendarShowTommorrow = true;
-              switchScreen(newScreenIndex: 1);
+              showCalendar();
               break;
 
             default:
@@ -477,23 +495,36 @@ class _TasksAppState extends State<TasksApp> {
           body: SlidableAutoCloseBehavior(
             child: Row(
               children: [
-                if (showSideNavBar)
+                if (isWide)
                   SideNavBar(
                     onTap: switchScreen,
                     pageIndex: currentPageIndex,
                   ),
                 Expanded(
-                  child: PageView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _pageController,
-                    children: [
-                      const HomeScreen(),
-                      CalendarScreen(
-                        showTommorrow: calendarShowTommorrow,
+                  child: Container(
+                    // TODO this is always dark
+                    color: dark.surfaceContainer,
+                    padding: isWide
+                        ? MediaQuery.paddingOf(context)
+                            .add(EdgeInsets.only(right: 12))
+                        : null,
+                    child: ClipRRect(
+                      borderRadius: isWide
+                          ? BorderRadius.circular(12)
+                          : BorderRadius.zero,
+                      child: PageView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: _pageController,
+                        children: [
+                          const HomeScreen(),
+                          CalendarScreen(
+                            showTommorrow: calendarShowTommorrow,
+                          ),
+                          const HomeworksScreen(),
+                          const ExamsScreen(),
+                        ],
                       ),
-                      const HomeworksScreen(),
-                      const ExamsScreen(),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -502,7 +533,7 @@ class _TasksAppState extends State<TasksApp> {
           drawer: MyDrawer(
             setThemeMode: refreshTheme,
           ),
-          bottomNavigationBar: showSideNavBar
+          bottomNavigationBar: isWide
               ? null
               : BottomNavBar(
                   onTap: switchScreen,

@@ -93,7 +93,7 @@ class _AdaptiveShowcaseState extends State<AdaptiveShowcase> {
                     return CupertinoAlertDialog(
                       title: Text('This is a cupertino dialog'),
                       actions: [
-                        TextButton(
+                        CupertinoButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
