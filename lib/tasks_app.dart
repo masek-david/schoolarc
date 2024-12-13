@@ -473,8 +473,8 @@ class _TasksAppState extends State<TasksApp> {
           locale: const Locale('en', 'GB'),
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(colorScheme: light, platform: TargetPlatform.iOS),
-          darkTheme: ThemeData(colorScheme: dark, platform: TargetPlatform.iOS),
+          theme: ThemeData(colorScheme: light),
+          darkTheme: ThemeData(colorScheme: dark),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {
