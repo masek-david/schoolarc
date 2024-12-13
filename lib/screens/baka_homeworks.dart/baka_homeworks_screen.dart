@@ -47,7 +47,7 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator.adaptive(),
             );
           } else if (snapshot.hasError) {
             return Text(snapshot.error.toString());
@@ -95,7 +95,7 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
                 );
               }
 
-              BakaHomework hw = otherHw[index + (showNew ? 1 : 0)];
+              BakaHomework hw = otherHw[index - (showNew ? 1 : 0)];
 
               return BakaHwTile(
                 hw: hw,

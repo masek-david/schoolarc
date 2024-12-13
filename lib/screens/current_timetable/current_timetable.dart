@@ -79,7 +79,7 @@ class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator.adaptive(),
               );
             } else if (snapshot.hasError) {
               return Center(child: ErrorTile(error: snapshot.error));

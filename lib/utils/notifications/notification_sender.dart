@@ -10,6 +10,7 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class NotificationSender {
   static const String tommorrowChannel = 'tommorrow_channel';
@@ -130,7 +131,8 @@ class NotificationSender {
     notificationText =
         '${missedHwTextList != null ? '<b>Missed homeworks:</b> <br> $missedHwTextList <br>' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
 
-        final summary = '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
+    final summary =
+        '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
 
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,
@@ -192,48 +194,47 @@ class NotificationSender {
     if (await areNotificationsAllowed(channel)) {
       return true;
     }
-    return await showDialog<bool>(
-              context: context.mounted == true
-                  ? context
-                  : throw Exception('context isn\'mounted: $context'),
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text(
-                    'Notification Permission',
+    if(!context.mounted){
+      return false;
+    }
+    return await showDialogAdaptive<bool?>(
+              context: context,
+              title: const Text(
+                'Notification Permission',
+              ),
+              actions: [
+                adaptiveDialogButton(
+                  context: context,
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+                adaptiveDialogButton(
+                  context: context,
+                  onPressed: () async {
+                    await AwesomeNotifications()
+                        .requestPermissionToSendNotifications(
+                      channelKey: channel,
+                    );
+                    bool allowed = await areNotificationsAllowed(channel);
+                    if (context.mounted) {
+                      Navigator.pop(context, allowed);
+                    }
+                  },
+                  child: const Text('Grant permission'),
+                ),
+              ],
+              content: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'If you want this app to send you notifications, you need to grant it permission.',
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Close'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        await AwesomeNotifications()
-                            .requestPermissionToSendNotifications(
-                          channelKey: channel,
-                        );
-                        bool allowed = await areNotificationsAllowed(channel);
-                        if (context.mounted) {
-                          Navigator.pop(context, allowed);
-                        }
-                      },
-                      child: const Text('Grant permission'),
-                    ),
-                  ],
-                  content: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'If you want this app to send you notifications, you need to grant it permission.',
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'The Grant permission button will take you to app settings from where you can enable all notifications.',
-                      ),
-                    ],
+                  SizedBox(height: 12),
+                  Text(
+                    'The Grant permission button will take you to app settings from where you can enable all notifications.',
                   ),
-                );
-              },
+                ],
+              ),
             ) ==
             true
         ? true

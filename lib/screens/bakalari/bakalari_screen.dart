@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 
 class BakalariScreen extends StatefulWidget {
@@ -111,7 +112,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
             )
           : null,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: RefreshIndicator(
           onRefresh: () async {
             setState(() {
@@ -127,13 +128,16 @@ class _BakalariScreenState extends State<BakalariScreen> {
           child: ListView(
             children: [
               if (isLoggedIn)
-                AnimatedStar.success(
-                  text: 'Logged in',
-                  size: 100,
-                  primary: colorScheme.primary,
-                  isDark: isDark,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AnimatedStar.success(
+                    text: 'Logged in',
+                    size: 100,
+                    primary: colorScheme.primary,
+                    isDark: isDark,
+                  ),
                 ),
-              if (isLoading) const Center(child: CircularProgressIndicator()),
+              if (isLoading) const Center(child: CircularProgressIndicator.adaptive()),
               if (isLoading) const SizedBox(height: 20),
               TextField(
                 enabled: !isLoading,
@@ -228,37 +232,35 @@ class _BakalariScreenState extends State<BakalariScreen> {
               OutlinedButton(
                 onPressed: isLoggedIn && !isLoading
                     ? () {
-                        showDialog(
+                        showDialogAdaptive(
                           context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Import timetable?'),
-                              content: const Text(
-                                'Importing the timetable will replace your existing timetable. Are you sure?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Close'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                          title: const Text('Import timetable?'),
+                          content: const Text(
+                            'Importing the timetable will replace your existing timetable. Are you sure?',
+                          ),
+                          actions: [
+                            adaptiveDialogButton(
+                              context: context,
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Close'),
+                            ),
+                            adaptiveDialogButton(
+                              context: context,
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                setState(() {
+                                  isLoading = true;
+                                });
 
-                                    bakaService.importTimeTable().then((value) {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                    }, onError: onError);
-                                  },
-                                  child: const Text('Import'),
-                                ),
-                              ],
-                            );
-                          },
+                                bakaService.importTimeTable().then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }, onError: onError);
+                              },
+                              child: const Text('Import'),
+                            ),
+                          ],
                         );
                       }
                     : null,

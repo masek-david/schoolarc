@@ -7,6 +7,7 @@ import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart'
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class SubjectsScreen extends StatefulWidget {
   const SubjectsScreen({super.key});
@@ -138,23 +139,29 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  showDialog(
+                  showDialogAdaptive(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Delete all subjects?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            subjectService.deleteAllSubjects();
-                            setState(() {
-                              subjectList = subjectService.getSortedList();
-                            });
-                          },
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    ),
+                    title: const Text('Delete all subjects?'),
+                    actions: [
+                      adaptiveDialogButton(
+                        context: context,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Close'),
+                      ),
+                      adaptiveDialogButton(
+                        context: context,
+                        onPressed: () {
+                          Navigator.pop(context);
+                          subjectService.deleteAllSubjects();
+                          setState(() {
+                            subjectList = subjectService.getSortedList();
+                          });
+                        },
+                        child: const Text('Delete'),
+                      ),
+                    ],
                   );
                 });
               },
@@ -190,7 +197,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         key: Key('SubjectScreenSpacer'),
                       );
                     }
-        
+
                     SubjectDTO subject = subjectList[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),

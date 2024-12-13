@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/meal_model.dart';
@@ -128,15 +129,15 @@ class _HomeScreenState extends State<HomeScreen> {
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
-          // floatingActionButton: kDebugMode
-          //     ? FloatingActionButton.extended(
-          //         onPressed: () {
-          //           // NotificationSender.notificationSecret();
-          //         },
-          //         label: const Text('test'),
-          //         icon: const Icon(Icons.schedule),
-          //       )
-          // : null,
+          floatingActionButton: kDebugMode
+              ? FloatingActionButton.extended(
+                  onPressed: () {
+                    showMessage(context, 'message', isContinuos: true);
+                  },
+                  label: const Text('test'),
+                  icon: const Icon(Icons.schedule),
+                )
+          : null,
           appBar: WideScreenAppBar(
             isWideScreen: isWide,
             leading:
@@ -157,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: RefreshIndicator(
+          body: RefreshIndicator.adaptive(
             onRefresh: refresh,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
