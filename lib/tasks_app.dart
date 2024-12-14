@@ -253,8 +253,8 @@ void showMessage(
             ),
             if (actions != null) ...actions,
             if (isContinuos)
-              CircularProgressIndicator.adaptive(
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
           ],
         ),
@@ -474,7 +474,7 @@ class _TasksAppState extends State<TasksApp> {
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(colorScheme: light),
-          darkTheme: ThemeData(colorScheme: dark),
+          darkTheme: ThemeData(colorScheme: dark, platform: TargetPlatform.android),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {

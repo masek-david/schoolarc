@@ -29,8 +29,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   late DateTime _selectedDay = _focusedDay;
-
   late Color calendarBackgroundColor;
+
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
@@ -40,6 +40,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     viewportFraction: 0.93,
     initialPage: negativePageCount + (showTommorrow ? 1 : 0),
   );
+
+  int maxMarkers = 0;
 
   late bool showMissed = settings.get(Setting.calendarShowMissed);
 
@@ -80,44 +82,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  /// used for getting number of markers
-  List<Object> getEventsForDay(DateTime day) {
-    List<Object> listOfEvents = [
-      ...hwByDate[DateTime.utc(day.year, day.month, day.day)] ?? [],
-      ...examByDate[DateTime.utc(day.year, day.month, day.day)] ?? []
-    ];
-    return listOfEvents;
-  }
-
-  int getMaxNumberOfExamsPerDay() {
-    var weekDays = _focusedDay.toUtc().allDaysInThisWeek();
-    int examsCount = 0;
-
-    for (DateTime date in weekDays) {
-      int examsInDate =
-          examByDate[DateTime.utc(date.year, date.month, date.day)]?.length ??
-              0;
-
-      if (examsInDate > examsCount) {
-        examsCount = examsInDate;
-      }
-    }
-
-    return examsCount <= 8 ? examsCount : 8;
-  }
-
-  Widget buildCalendar(int maxNumberOfCustomMarkers) {
+  Widget buildCalendar(bool isWide) {
     return CalendarWidget(
       focusedDay: _focusedDay,
       selectedDay: _selectedDay,
-      maxNumberOfCustomMarkers: maxNumberOfCustomMarkers,
       negativePageCount: negativePageCount,
       updateView: updateView,
       calendarBackgroundColor: calendarBackgroundColor,
+      calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
+      homeworks: hwByDate,
+      exams: examByDate,
       jumpToPage: (page) {
         _pageController.jumpToPage(page);
       },
-      getEventsForDay: getEventsForDay,
       onHeaderTapped: (date) {
         setState(() {
           _focusedDay = DateTime.now();
@@ -135,7 +112,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       onPageChanged: (focusedDay) {
         setState(() {
           _focusedDay = focusedDay;
-          maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
         });
       },
     );
@@ -162,34 +138,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  PreferredSizeWidget buildAppBar(bool isWide) {
+    return WideScreenAppBar(
+      isWideScreen: isWide,
+      title: const Text('Calendar'),
+      actions: [
+        IconButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => CalendarSettings(
+                changeShowMissed: (value) => setState(() {
+                  showMissed = value;
+                }),
+              ),
+            );
+          },
+          icon: const Icon(Icons.settings),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     /// how many markers are used this week at most
-    int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
+    // int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
-          appBar: WideScreenAppBar(
-            isWideScreen: isWide,
-            title: const Text('Calendar'),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => CalendarSettings(
-                      changeShowMissed: (value) => setState(() {
-                        showMissed = value;
-                      }),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-              ),
-            ],
-          ),
+          appBar: isWide ? null : buildAppBar(isWide),
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -222,18 +202,39 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ],
           ),
           body: isWide
-              ? Row(
-                  children: [
-                    Flexible(
-                      child: buildCalendar(maxNumberOfCustomMarkers),
-                    ),
-                    const SizedBox(height: 4),
-                    Flexible(child: buildPages()),
-                  ],
+              ? Container(
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        // flex: 4,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Scaffold(
+                            appBar: buildAppBar(isWide),
+                            body: buildCalendar(isWide),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Flexible(
+                        // flex: 5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
+                          child: buildPages(),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : Column(
                   children: [
-                    buildCalendar(maxNumberOfCustomMarkers),
+                    buildCalendar(isWide),
                     const SizedBox(height: 4),
                     Expanded(child: buildPages()),
                   ],

@@ -34,6 +34,7 @@ class _ColorPickerActionState extends State<ColorPickerAction> {
     int? selectedColorIndex;
 
     for (int i = 0; i < colors.length; i++) {
+      // ignore: deprecated_member_use
       if (colors[i].value == widget.initialColor.value) {
         selectedColorIndex = i;
         break;

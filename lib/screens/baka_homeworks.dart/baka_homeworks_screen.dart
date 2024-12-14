@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks.dart/baka_hw_tile.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/widgets/error_tile.dart';
 
 class BakaHomeworksScreen extends StatefulWidget {
   const BakaHomeworksScreen({super.key});
@@ -47,10 +48,10 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator.adaptive(),
+              child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
+            return ErrorTile(error: snapshot.error);
           } else if (!snapshot.hasData) {
             return const Text('No data');
           }

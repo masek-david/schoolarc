@@ -25,7 +25,7 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
       alignment: AlignmentDirectional.center,
       children: [
         if (isLoading || widget.isLoading == true)
-          const CircularProgressIndicator.adaptive(),
+          const CircularProgressIndicator(),
         IconButton(
           onPressed: () {
             setState(() {

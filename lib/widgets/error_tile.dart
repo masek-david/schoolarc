@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exception_model.dart';
+import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -26,6 +27,7 @@ class ErrorTile extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Padding(
@@ -54,7 +56,7 @@ class ErrorTile extends StatelessWidget {
           ),
         ),
         if (action == ExceptionActions.stravaLogin)
-          TextButton(
+          OutlinedButton(
             onPressed: () {
               navigatorKey.currentState?.push(MaterialPageRoute(
                 builder: (context) {
@@ -69,7 +71,23 @@ class ErrorTile extends StatelessWidget {
               ),
             ),
           ),
-          if(actions != null)...actions!
+        if (action == ExceptionActions.bakaLogin)
+          TextButton(
+            onPressed: () {
+              navigatorKey.currentState?.push(MaterialPageRoute(
+                builder: (context) {
+                  return const BakalariScreen();
+                },
+              ));
+            },
+            child: Text(
+              'Login',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ),
+        if (actions != null) ...actions!
       ],
     );
   }

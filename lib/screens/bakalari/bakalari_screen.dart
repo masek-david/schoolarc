@@ -137,7 +137,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                     isDark: isDark,
                   ),
                 ),
-              if (isLoading) const Center(child: CircularProgressIndicator.adaptive()),
+              if (isLoading) const Center(child: CircularProgressIndicator()),
               if (isLoading) const SizedBox(height: 20),
               TextField(
                 enabled: !isLoading,

@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
+CalendarBuilders<Object?> myCalendarBuilder({
+  required void Function() updateView,
+  required bool showOutside,
+  required DateTime currentDate,
+}) {
   EdgeInsetsGeometry padding = const EdgeInsets.all(10);
-  EdgeInsetsGeometry margin = const EdgeInsets.all(6);
   Duration animationDuration = const Duration(milliseconds: 200);
 
   return CalendarBuilders(
     outsideBuilder: (context, day, focusedDay) {
-      return AnimatedContainer(
-        padding: padding,
-        margin: margin,
-        duration: animationDuration,
-        decoration: const BoxDecoration(
-          // color: Colors.red,
-          shape: BoxShape.circle,
-        ),
-        child: SizedBox(
-          width: 40,
-          child: Text(
-            day.day.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.dynamicLighten(
-                    makeItLighter:
-                        Theme.of(context).brightness != Brightness.dark,
-                    amount: 0.4,
+      return showOutside
+          ? AnimatedContainer(
+              padding: padding,
+              duration: animationDuration,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: SizedBox(
+                width: 40,
+                child: Text(
+                  day.day.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .dynamicLighten(
+                          makeItLighter:
+                              Theme.of(context).brightness != Brightness.dark,
+                          amount: 0.4,
+                        ),
                   ),
-            ),
-          ),
-        ),
-      );
+                ),
+              ),
+            )
+          : SizedBox();
     },
     selectedBuilder: (context, day, focusedDay) {
+      if (!showOutside && !day.isSameMonth(currentDate)) {
+        return SizedBox();
+      }
+
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return AnimatedContainer(
         padding: padding,
-        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           color: color,
@@ -62,7 +72,6 @@ CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
     defaultBuilder: (context, day, focusedDay) {
       return AnimatedContainer(
         padding: padding,
-        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -78,10 +87,13 @@ CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
       );
     },
     todayBuilder: (context, day, focusedDay) {
+      if (!showOutside && !day.isSameMonth(currentDate)) {
+        return SizedBox();
+      }
+
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return AnimatedContainer(
         padding: padding.subtract(const EdgeInsets.all(2)),
-        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           border: Border.all(
@@ -100,6 +112,10 @@ CalendarBuilders<Object?> myCalendarBuilder(void Function() updateView) {
       );
     },
     markerBuilder: (context, day, events) {
+      if (!showOutside && !day.isSameMonth(currentDate)) {
+        return SizedBox();
+      }
+
       // Color markerColor = Theme.of(context).colorScheme.tertiary;
       List<HomeworkDTO> homeworks = [];
       List<ExamDTO> exams = [];

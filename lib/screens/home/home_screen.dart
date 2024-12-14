@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: RefreshIndicator.adaptive(
+          body: RefreshIndicator(
             onRefresh: refresh,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

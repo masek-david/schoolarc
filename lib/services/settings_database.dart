@@ -41,6 +41,7 @@ class SettingsDatabase {
     ),
     Setting.themeColorValue: SettingModel(
       key: 'themeColor',
+      // ignore: deprecated_member_use
       defaultValue: const Color.fromARGB(255, 104, 58, 183).value,
     ),
     Setting.themeDynamicSchemeVariantInt: SettingModel(

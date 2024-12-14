@@ -11,6 +11,15 @@ extension BetterDateTime on DateTime {
         localDate.day == comparedDate.day);
   }
 
+  bool isSameMonth(DateTime comparedDate) {
+    comparedDate = comparedDate.toLocal();
+
+    final localDate = toLocal();
+
+    return (localDate.year == comparedDate.year &&
+        localDate.month == comparedDate.month);
+  }
+
   /// vrati true pokud je date vcera a drive, false pokud dnes
   bool isBeforeToday() {
     DateTime now = DateTime.now();
@@ -37,6 +46,19 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
+  /// returns all days in this week
+  List<DateTime> allDaysInThisMonth() {
+    List<DateTime> list = [];
+
+    int daysInMonth = DateTime(year, month + 1, 0).day;
+
+    for (int i = 1; i <= daysInMonth; i++) {
+      list.add(DateTime(year, month, i));
+    }
+
+    return list;
+  }
+
   /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tommorow
   String dateText() {
     final localDate = toLocal();
@@ -50,7 +72,8 @@ extension BetterDateTime on DateTime {
       text = 'Today';
     } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
       text = 'Tommorow';
-    } else if (localDate.isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
+    } else if (localDate
+        .isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
       text = 'Yesterday';
     }
     return text;

@@ -23,6 +23,7 @@ class SideNavBar extends StatelessWidget {
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       leading: DrawerButton(onPressed: switchDrawer),
+      trailing: Icon(Icons.abc, color: Colors.transparent),
       destinations: [
         NavigationRailDestination(
           icon: Icon(Icons.home),

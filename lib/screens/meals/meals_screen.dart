@@ -3,7 +3,6 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/tasks_app.dart';
-import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
 

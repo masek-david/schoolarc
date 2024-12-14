@@ -43,98 +43,116 @@ class HomeworkTile extends StatelessWidget {
       opacity = 0.5;
     }
 
-    return Slidable(
-      groupTag: '0',
-      controller: slidableController,
-      endActionPane: ActionPane(
-        motion: const StretchMotion(),
-        extentRatio: 0.3,
-        children: [
-          SlidableAction(
-            onPressed: (context) {
-              HapticFeedback.lightImpact();
-              onDelete();
-            },
-            icon: Icons.delete,
-            foregroundColor: Theme.of(context).colorScheme.onError,
-            backgroundColor: Theme.of(context).colorScheme.error,
-            borderRadius: BorderRadius.circular(borderRadius),
-            flex: 10,
-          ),
-        ],
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: isMissed && borderIfMissed
-              ? Border.all(
-                  color: missedColor,
-                  width: 2,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(borderRadius),
-          color: hw.completion
-              ? Theme.of(context).colorScheme.surfaceContainerLowest
-              : Theme.of(context).colorScheme.surfaceContainer,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onEdit,
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: Opacity(
-              opacity: opacity,
-              // main row
-              child: Padding(
-                padding: EdgeInsets.all(padding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(borderRadius - padding),
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
-                      child: SubjectShortcut(subject: hw.subject),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Slidable(
+          groupTag: '0',
+          controller: slidableController,
+          endActionPane: ActionPane(
+            motion: const StretchMotion(),
+            extentRatio: 120 / constraints.maxWidth,
+            children: [
+              // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
+              // workaround for flutter_slidable
+              Theme(
+                data: Theme.of(context).copyWith(
+                  outlinedButtonTheme: OutlinedButtonThemeData(
+                    style: ButtonStyle(
+                      iconColor: WidgetStatePropertyAll(
+                          Theme.of(context).colorScheme.onError),
                     ),
-                    const SizedBox(width: 8),
-                    if (hw.description != null && hw.description != '')
-                      Icon(
-                        Icons.notes,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    if (hw.description != null && hw.description != '')
-                      const SizedBox(width: 8),
-                    Expanded(child: Text(hw.text, maxLines: 2)),
-                    const SizedBox(width: 5),
-                    if (showDeadline)
-                      Text(
-                        hw.deadline.dateText(),
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: isMissed ? missedColor : null,
-                          fontSize: 12,
+                  ),
+                ),
+                child: SlidableAction(
+                  onPressed: (context) {
+                    HapticFeedback.lightImpact();
+                    onDelete();
+                  },
+                  icon: Icons.delete,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  flex: 10,
+                ),
+              ),
+            ],
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              border: isMissed && borderIfMissed
+                  ? Border.all(
+                      color: missedColor,
+                      width: 2,
+                    )
+                  : null,
+              borderRadius: BorderRadius.circular(borderRadius),
+              color: hw.completion
+                  ? Theme.of(context).colorScheme.surfaceContainerLowest
+                  : Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onEdit,
+                borderRadius: BorderRadius.circular(borderRadius),
+                child: Opacity(
+                  opacity: opacity,
+                  // main row
+                  child: Padding(
+                    padding: EdgeInsets.all(padding),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(borderRadius - padding),
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                          child: SubjectShortcut(subject: hw.subject),
                         ),
-                      ),
-                    const SizedBox(width: 4),
-                    if (showCompletion)
-                      MyCheckbox(
-                        value: hw.completion,
-                        priority: hw.priority,
-                        onChanged: onChangedCompletion,
-                        // must be heres
-                        key: ValueKey('checkbox ${hw.dbIndex}'),
-                      ),
-                  ],
+                        const SizedBox(width: 8),
+                        if (hw.description != null && hw.description != '')
+                          Icon(
+                            Icons.notes,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        if (hw.description != null && hw.description != '')
+                          const SizedBox(width: 8),
+                        Expanded(child: Text(hw.text, maxLines: 2)),
+                        const SizedBox(width: 5),
+                        if (showDeadline)
+                          Text(
+                            hw.deadline.dateText(),
+                            maxLines: 2,
+                            style: TextStyle(
+                              color: isMissed ? missedColor : null,
+                              fontSize: 12,
+                            ),
+                          ),
+                        const SizedBox(width: 4),
+                        if (showCompletion)
+                          MyCheckbox(
+                            value: hw.completion,
+                            priority: hw.priority,
+                            onChanged: onChangedCompletion,
+                            // must be heres
+                            key: ValueKey('checkbox ${hw.dbIndex}'),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
