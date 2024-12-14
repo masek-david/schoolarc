@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/exams/widgets/priority_view.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
+import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
 class ExamsScreen extends StatefulWidget {
   const ExamsScreen({super.key});
@@ -43,10 +44,8 @@ class _ExamsScreenState extends State<ExamsScreen> {
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
-          appBar: AppBar(
-            leading: isWide ? null : const DrawerButton(
-              onPressed: switchDrawer,
-            ),
+          appBar: WideScreenAppBar(
+            isWideScreen: isWide,
             title: const Text('Exams'),
           ),
           body: PriorityView(

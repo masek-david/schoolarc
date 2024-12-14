@@ -45,11 +45,11 @@ class TimetableCard extends StatelessWidget {
       future: bakaTimetable,
       builder: (context, snapshot) {
         bool isLoading = false;
-        String? error;
+        Object? error;
         if (snapshot.connectionState == ConnectionState.waiting) {
           isLoading = true;
         } else if (snapshot.hasError) {
-          error = snapshot.error.toString();
+          error = snapshot.error;
         }
 
         TimeTableDTO timetable = defaultTimeTable;

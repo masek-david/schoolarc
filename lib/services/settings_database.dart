@@ -8,6 +8,7 @@ enum Setting {
   themeDynamicSchemeVariantInt,
   initialAppPage,
   pageSwitchAnimationDuration,
+  showAppOverlay,
   tommorowNotificationEnabled,
   tommorowNotificationTime,
   themeMode,
@@ -40,6 +41,7 @@ class SettingsDatabase {
     ),
     Setting.themeColorValue: SettingModel(
       key: 'themeColor',
+      // ignore: deprecated_member_use
       defaultValue: const Color.fromARGB(255, 104, 58, 183).value,
     ),
     Setting.themeDynamicSchemeVariantInt: SettingModel(
@@ -53,6 +55,10 @@ class SettingsDatabase {
     Setting.pageSwitchAnimationDuration: SettingModel(
       key: 'pageSwitchDuration',
       defaultValue: 200.0,
+    ),
+    Setting.showAppOverlay: SettingModel(
+      defaultValue: true,
+      key: 'showOverlay',
     ),
     Setting.tommorowNotificationEnabled: SettingModel(
       defaultValue: true,

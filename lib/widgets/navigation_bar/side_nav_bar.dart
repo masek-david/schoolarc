@@ -14,13 +14,16 @@ class SideNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-      leading: DrawerButton(onPressed: switchDrawer,),
-      groupAlignment: 0.0,
-      labelType: NavigationRailLabelType.all,
+      selectedIndex: pageIndex,
       onDestinationSelected: (index) {
         onTap(newScreenIndex: index);
       },
-      selectedIndex: pageIndex,
+      labelType: NavigationRailLabelType.all,
+      groupAlignment: 0.0,
+      // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      leading: DrawerButton(onPressed: switchDrawer),
+      trailing: Icon(Icons.abc, color: Colors.transparent),
       destinations: [
         NavigationRailDestination(
           icon: Icon(Icons.home),

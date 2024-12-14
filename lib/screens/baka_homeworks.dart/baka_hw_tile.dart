@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class BakaHwTile extends StatelessWidget {
   const BakaHwTile({
@@ -30,27 +31,27 @@ class BakaHwTile extends StatelessWidget {
           IconButton(
             onPressed: () {
               if (hw.alreadyAdded) {
-                showDialog(
+                showDialogAdaptive(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('This homework has already been added'),
-                    content: Text('Do you want to add it again?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Close'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          onAdd();
-                        },
-                        child: Text('Add'),
-                      ),
-                    ],
-                  ),
+                  title: Text('This homework has already been added'),
+                  content: Text('Do you want to add it again?'),
+                  actions: [
+                    adaptiveDialogButton(
+                      context: context,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Close'),
+                    ),
+                    adaptiveDialogButton(
+                      context: context,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onAdd();
+                      },
+                      child: Text('Add'),
+                    ),
+                  ],
                 );
               } else {
                 onAdd();

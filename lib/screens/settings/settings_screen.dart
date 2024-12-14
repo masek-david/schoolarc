@@ -115,6 +115,17 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           SettingTile(
+            label: 'Show app overlay',
+            text: 'On big screen, show borders in the app',
+            action: SwitchAction(
+              initialValue: settings.get(Setting.showAppOverlay),
+              onChanged: (value) {
+                settings.save(Setting.showAppOverlay, value);
+                refreshTheme();
+              },
+            ),
+          ),
+          SettingTile(
             label: 'Show debug info',
             action: SwitchAction(
               initialValue: settings.get(Setting.showDebugInfo),

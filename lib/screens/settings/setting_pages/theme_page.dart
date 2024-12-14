@@ -66,6 +66,7 @@ class ThemePage extends StatelessWidget {
             action: ColorPickerAction(
               initialColor: Color(settings.get(Setting.themeColorValue)),
               onChanged: (color) {
+                // ignore: deprecated_member_use
                 settings.save(Setting.themeColorValue, color.value);
                 refreshTheme();
               },

@@ -27,6 +27,7 @@ import 'package:school_manager/screens/exams/exams_screen.dart';
 import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
+import 'package:school_manager/widgets/wide_screen_borders.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -314,6 +315,7 @@ class _TasksAppState extends State<TasksApp> {
   late final _pageController = PageController(
     initialPage: _settings.get(Setting.initialAppPage),
   );
+  final Key _key = GlobalKey();
 
   final SettingsDatabase _settings = SettingsDatabase();
   late int currentPageIndex = _settings.get(Setting.initialAppPage);
@@ -397,119 +399,142 @@ class _TasksAppState extends State<TasksApp> {
     });
   }
 
+  void showCalendar() async {
+    navigatorKey.currentState?.popUntil((route) => route.isFirst);
+    switchDrawer(onlyClose: true);
+
+    calendarShowTommorrow = true;
+    _pageController.jumpToPage(0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This code will run after the first frame is rendered.
+      _pageController.jumpToPage(1);
+    });
+
+    setState(() {
+      currentPageIndex = 1;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This code will run after the first frame is rendered.
+      calendarShowTommorrow = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenSize.init(context);
 
-    final showSideNavBar = ScreenSize.isWiderThanTaller.value;
+    final isWide = ScreenSize.isWideScreen.value;
 
     return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      final int dynamicSchemeVariant =
-          settings.get(Setting.themeDynamicSchemeVariantInt);
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        final int dynamicSchemeVariant =
+            settings.get(Setting.themeDynamicSchemeVariantInt);
 
-      var defaultThemeLight = ColorScheme.fromSeed(
-        seedColor: userColor,
-        brightness: Brightness.light,
-        dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
-      );
-      var defaultThemeDark = ColorScheme.fromSeed(
-        seedColor: userColor,
-        brightness: Brightness.dark,
-        dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
-      );
+        var defaultThemeLight = ColorScheme.fromSeed(
+          seedColor: userColor,
+          brightness: Brightness.light,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
+        var defaultThemeDark = ColorScheme.fromSeed(
+          seedColor: userColor,
+          brightness: Brightness.dark,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
 
-      if (settings.get(Setting.themeUseMaterial)) {
-        if (lightDynamic != null && darkDynamic != null) {
-          defaultThemeLight = lightDynamic;
-          defaultThemeDark = darkDynamic;
-        }
-      }
-
-      (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
-        defaultThemeLight,
-        defaultThemeDark,
-      );
-
-      final light = schemes.$1;
-      final dark = schemes.$2;
-
-      return MaterialApp(
-        navigatorKey: navigatorKey,
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'), // English
-          // Locale('cs'),
-        ],
-        locale: const Locale('en', 'GB'),
-        // locale: const Locale('cs', 'CZ'),
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(colorScheme: light),
-        darkTheme: ThemeData(colorScheme: dark),
-        themeMode: themeMode,
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case '/':
-              return MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
-              );
-
-            case '/calendar':
-              navigatorKey.currentState?.popUntil((route) => route.isFirst);
-              switchDrawer(onlyClose: true);
-              calendarShowTommorrow = true;
-              switchScreen(newScreenIndex: 1);
-              break;
-
-            default:
-              assert(false, 'Page ${settings.name} not found');
-              return null;
+        if (settings.get(Setting.themeUseMaterial)) {
+          if (lightDynamic != null && darkDynamic != null) {
+            defaultThemeLight = lightDynamic;
+            defaultThemeDark = darkDynamic;
           }
-          return null;
-        },
-        home: Scaffold(
-          key: scaffoldKey,
-          body: SlidableAutoCloseBehavior(
-            child: Row(
-              children: [
-                if (showSideNavBar)
-                  SideNavBar(
+        }
+
+        (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
+          defaultThemeLight,
+          defaultThemeDark,
+        );
+
+        final light = schemes.$1;
+        final dark = schemes.$2;
+
+        return MaterialApp(
+          navigatorKey: navigatorKey,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'), // English
+            // Locale('cs'),
+          ],
+          locale: const Locale('en', 'GB'),
+          // locale: const Locale('cs', 'CZ'),
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(colorScheme: light),
+          darkTheme: ThemeData(colorScheme: dark, platform: TargetPlatform.android),
+          themeMode: themeMode,
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/':
+                return MaterialPageRoute(
+                  builder: (context) => const HomeScreen(),
+                );
+
+              case '/calendar':
+                showCalendar();
+                break;
+
+              default:
+                assert(false, 'Page ${settings.name} not found');
+                return null;
+            }
+            return null;
+          },
+          home: Scaffold(
+            key: scaffoldKey,
+            body: SlidableAutoCloseBehavior(
+              child: Row(
+                children: [
+                  if (isWide)
+                    SideNavBar(
+                      onTap: switchScreen,
+                      pageIndex: currentPageIndex,
+                    ),
+                  WideScreenBorders(
+                    show: isWide && settings.get(Setting.showAppOverlay),
+                    child: PageView(
+                      key: _key,
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _pageController,
+                      children: [
+                        const HomeScreen(),
+                        CalendarScreen(
+                          showTommorrow: calendarShowTommorrow,
+                        ),
+                        const HomeworksScreen(),
+                        const ExamsScreen(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            drawer: MyDrawer(
+              setThemeMode: refreshTheme,
+            ),
+            bottomNavigationBar: isWide
+                ? null
+                : BottomNavBar(
                     onTap: switchScreen,
                     pageIndex: currentPageIndex,
                   ),
-                Expanded(
-                  child: PageView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _pageController,
-                    children: [
-                      const HomeScreen(),
-                      CalendarScreen(
-                        showTommorrow: calendarShowTommorrow,
-                      ),
-                      const HomeworksScreen(),
-                      const ExamsScreen(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
-          drawer: MyDrawer(
-            setThemeMode: refreshTheme,
-          ),
-          bottomNavigationBar: showSideNavBar
-              ? null
-              : BottomNavBar(
-                  onTap: switchScreen,
-                  pageIndex: currentPageIndex,
-                ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
