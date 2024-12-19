@@ -45,12 +45,18 @@ class HomeworkTile extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        double extentRatio = 120 / constraints.maxWidth;
+
+        if(extentRatio > 1){
+          extentRatio = 1;
+        }
+
         return Slidable(
           groupTag: '0',
           controller: slidableController,
           endActionPane: ActionPane(
             motion: const StretchMotion(),
-            extentRatio: 120 / constraints.maxWidth,
+            extentRatio: extentRatio,
             children: [
               // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
               // workaround for flutter_slidable

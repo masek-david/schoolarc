@@ -89,8 +89,7 @@ class CalendarWidget extends StatelessWidget {
         calendarBuilders: myCalendarBuilder(
           updateView: updateView,
           currentDate: focusedDay,
-          showOutside: false
-          // showOutside: calendarFormat.name == 'week',
+          showOutside: calendarFormat.name == 'week',
         ),
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
@@ -116,6 +115,10 @@ class CalendarWidget extends StatelessWidget {
           return isSameDay(selectedDay, day);
         },
         onDaySelected: (selectedDayNew, focusedDayNew) {
+          if(!selectedDayNew.isSameMonth(selectedDay) && calendarFormat.name == 'month'){
+            return;
+          }
+          
           if (!isSameDay(selectedDayNew, selectedDay)) {
             // Call `setState()` when updating the selected day
             DateTime now = DateTime.now();

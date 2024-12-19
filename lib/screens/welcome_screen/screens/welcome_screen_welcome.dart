@@ -12,7 +12,7 @@ class WelcomeScreenWelcome extends StatelessWidget {
       children: [
         Positioned(
           right: -120,
-          top: -30,
+          top: 20,
           child: Opacity(
             opacity: isDark ? 0.3 : 1,
             child: const AnimatedStar(

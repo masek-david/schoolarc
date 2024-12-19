@@ -23,17 +23,32 @@ class TimeTableLesson {
   }
 
   void showLessonDialog(BuildContext context) {
+    String? title = subject?.name;
+
+    if (title == null) {
+      if (change != null) {
+        title = change!.name;
+      }
+    }
+    if (title == null) {
+      if (change?.description != null) {
+        title = change!.description;
+      }
+    }
+
+    title ??= 'Empty lesson';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(subject?.name ?? 'Empty lesson'),
+        title: Text(title!),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(change != null) Text('Change: ${change?.description}'),
-            if(teacher != null) Text('Teacher: ${teacher?.name}'),
-            if(room != null) Text('Room: $room'),
+            if (change != null) Text('Change: ${change?.description}'),
+            if (teacher != null) Text('Teacher: ${teacher?.name}'),
+            if (room != null) Text('Room: $room'),
           ],
         ),
       ),

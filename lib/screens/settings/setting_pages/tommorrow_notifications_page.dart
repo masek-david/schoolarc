@@ -77,9 +77,8 @@ class _TommorrowNotificationsPageState
           SettingTile(
             label: 'Upcoming day notifications',
             highlighted: true,
-            action: SwitchAction(
-              initialValue:
-                  settings.get(Setting.tommorowNotificationEnabled),
+            trailing: SwitchAction(
+              initialValue: settings.get(Setting.tommorowNotificationEnabled),
               onChanged: (value) {
                 settings.save(Setting.tommorowNotificationEnabled, value);
                 if (value) {
@@ -91,14 +90,20 @@ class _TommorrowNotificationsPageState
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Notification with homeworks and exams for next day',
+            ),
+          ),
           SettingTile(
             label: 'Arrival time',
             text: 'Time around which notification will arrive',
-            action: TimePickerAction(
+            trailing: TimePickerAction(
               initialTime:
                   settings.getTimeOfDay(Setting.tommorowNotificationTime),
-              onChanged: (value) => settings
-                  .saveTimeOfDay(Setting.tommorowNotificationTime, value),
+              onChanged: (value) => settings.saveTimeOfDay(
+                  Setting.tommorowNotificationTime, value),
             ),
           ),
           SettingTile(

@@ -32,7 +32,7 @@ class _TimetableSettingsState extends State<TimetableSettings> {
       children: [
         SettingTile(
           label: 'Show 7 day week',
-          action: SwitchAction(
+          trailing: SwitchAction(
             initialValue: showWholeWeek,
             onChanged: (value) {
               setState(() {
@@ -44,7 +44,7 @@ class _TimetableSettingsState extends State<TimetableSettings> {
         ),
         SettingTile(
           label: 'Tile width',
-          action: SliderAction(
+          trailing: SliderAction(
             inititalValue: tileWidth.toDouble(),
             min: 60,
             max: 160,

@@ -175,6 +175,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                         controller: nameController,
                         focusNode: focusNode,
                         autofocus: true,
+                        maxLines: null,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (value) {
                           if (pickedSubject == null) {
@@ -332,8 +333,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: descriptionController,
-                    // expands: true,
-                    // minLines: 1,
                     maxLines: null,
                     decoration: const InputDecoration(
                       contentPadding: EdgeInsets.all(15),

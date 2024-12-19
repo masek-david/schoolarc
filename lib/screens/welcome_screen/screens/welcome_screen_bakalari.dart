@@ -10,11 +10,11 @@ class WelcomeScreenBakalari extends StatelessWidget {
     return SlidableAutoCloseBehavior(
       child: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 70),
         child: Column(
           children: [
             Text(
-              'You can log in to Bakaláři and import view your timetable:',
+              'You can log in to Bakaláři and import your timetable:',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),

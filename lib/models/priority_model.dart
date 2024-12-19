@@ -11,19 +11,19 @@ class TaskPriority {
     switch (index) {
       case 3:
         color = Colors.red;
-        htmlIcon = '&#128308;';
+        htmlIcon = '\uD83D\uDD34';
         name = 'High';
       case 2:
         color = Colors.orange;
-        htmlIcon = '&#128992;';
+        htmlIcon = '\uD83D\uDFE0';
         name = 'Medium';
       case 1:
         color = Colors.green;
-        htmlIcon = '&#128994;';
+        htmlIcon = '\uD83D\uDFE2';
         name = 'Low';
       default:
         color = Colors.blue;
-        htmlIcon = '&#128309;';
+        htmlIcon = '\uD83D\uDD35';
         name = 'No priority';
     }
   }
@@ -32,11 +32,11 @@ class TaskPriority {
     return color.harmonizeWith(Theme.of(context).colorScheme.primary);
   }
 
-  Color getContainerColor(BuildContext context) {
+  Color getContainerColor(BuildContext context, {bool subtle = false}) {
     final harmonized =
         color.harmonizeWith(Theme.of(context).colorScheme.primary);
 
-    return Color.lerp(harmonized, Theme.of(context).colorScheme.surface, 0.3)!;
+    return Color.lerp(harmonized, Theme.of(context).colorScheme.surface, subtle ? 0.85 : 0.3)!;
   }
 
   Color getOnContainerColor(BuildContext context) {

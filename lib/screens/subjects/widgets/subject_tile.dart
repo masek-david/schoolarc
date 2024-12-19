@@ -19,57 +19,78 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      groupTag: '1',
-      endActionPane: onDelete != null
-          ? ActionPane(
-              motion: const StretchMotion(),
-              extentRatio: 0.3,
+    return LayoutBuilder(builder: (context, constraints) {
+      double extentRatio = 120 / constraints.maxWidth;
+
+      if (extentRatio > 1) {
+        extentRatio = 1;
+      }
+
+      return Slidable(
+        groupTag: '1',
+        endActionPane: onDelete != null
+            ? ActionPane(
+                motion: const StretchMotion(),
+                extentRatio: extentRatio,
+                children: [
+                  // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
+                  // workaround for flutter_slidable
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      outlinedButtonTheme: OutlinedButtonThemeData(
+                        style: ButtonStyle(
+                          iconColor: WidgetStatePropertyAll(
+                              Theme.of(context).colorScheme.onError),
+                        ),
+                      ),
+                    ),
+                    child: SlidableAction(
+                      onPressed: (context) => onDelete!(),
+                      icon: Icons.delete,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(10),
+                      flex: 10,
+                    ),
+                  ),
+                ],
+              )
+            : null,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SlidableAction(
-                  onPressed: (context) => onDelete!(),
-                  icon: Icons.delete,
-                  foregroundColor: Theme.of(context).colorScheme.onError,
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  borderRadius: BorderRadius.circular(10),
-                  flex: 10,
+                if (settings.get(Setting.showDebugInfo))
+                  Text(subject.dbIndex.toString()),
+                SizedBox(
+                  width: 50,
+                  child: SubjectShortcut(subject: subject),
                 ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(subject.name),
+                ),
+                if (subject.bakaId != null)
+                  Icon(
+                    Icons.hexagon,
+                    color: Theme.of(context).colorScheme.surfaceBright,
+                  ),
+                if (subject.bakaId != null &&
+                    settings.get(Setting.showDebugInfo))
+                  Text(subject.bakaId ?? '')
               ],
-            )
-          : null,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.surfaceContainer,
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if(settings.get(Setting.showDebugInfo))
-              Text(subject.dbIndex.toString()),
-              SizedBox(
-                width: 50,
-                child: SubjectShortcut(subject: subject),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(subject.name),
-              ),
-              if (subject.bakaId != null)
-                Icon(
-                  Icons.hexagon,
-                  color: Theme.of(context).colorScheme.surfaceBright,
-                ),
-              if (subject.bakaId != null && settings.get(Setting.showDebugInfo))
-                Text(subject.bakaId ?? '')
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

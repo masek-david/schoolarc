@@ -11,7 +11,8 @@ CalendarBuilders<Object?> myCalendarBuilder({
   required bool showOutside,
   required DateTime currentDate,
 }) {
-  EdgeInsetsGeometry padding = const EdgeInsets.all(10);
+  final padding = const EdgeInsets.all(10);
+  final margin = const EdgeInsets.only(top: 6);
   Duration animationDuration = const Duration(milliseconds: 200);
 
   return CalendarBuilders(
@@ -19,6 +20,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
       return showOutside
           ? AnimatedContainer(
               padding: padding,
+              margin: margin,
               duration: animationDuration,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
@@ -41,7 +43,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                 ),
               ),
             )
-          : SizedBox();
+          : AbsorbPointer(child: SizedBox());
     },
     selectedBuilder: (context, day, focusedDay) {
       if (!showOutside && !day.isSameMonth(currentDate)) {
@@ -51,6 +53,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return AnimatedContainer(
         padding: padding,
+        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           color: color,
@@ -72,6 +75,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
     defaultBuilder: (context, day, focusedDay) {
       return AnimatedContainer(
         padding: padding,
+        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -94,6 +98,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return AnimatedContainer(
         padding: padding.subtract(const EdgeInsets.all(2)),
+        margin: margin,
         duration: animationDuration,
         decoration: BoxDecoration(
           border: Border.all(

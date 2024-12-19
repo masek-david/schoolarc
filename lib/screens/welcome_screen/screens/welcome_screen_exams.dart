@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -40,56 +39,54 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
 
   @override
   Widget build(BuildContext context) {
-    return SlidableAutoCloseBehavior(
-      child: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Text(
-              'Exams work in a similar way:',
-              style: Theme.of(context).textTheme.titleMedium,
+    return SafeArea(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text(
+            'Exams work in a similar way:',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Exams are automatically completed after their date',
+          ),
+          const SizedBox(height: 50),
+          Expanded(
+            child: ReorderableListView(
+              onReorder: (oldIndex, newIndex) {
+                showMessage(context, 'This way you reorder');
+                setState(() {
+                  final removedHw = homeworks.removeAt(oldIndex);
+                  homeworks.insert(
+                      newIndex >= oldIndex ? newIndex - 1 : newIndex,
+                      removedHw);
+                });
+              },
+              children: [
+                ...homeworks.map(
+                  (e) {
+                    return Padding(
+                      key: Key('welcome_hw_${e.dbIndex}'),
+                      padding: const EdgeInsets.all(8.0),
+                      child: ExamTile(
+                        exam: e,
+                        onDelete: (context) {
+                          showMessage(context, 'Exam would be deleted');
+                        },
+                        onEdit: () {
+                          showMessage(context, 'Now you could edit');
+                        },
+                      ),
+                    );
+                  },
+                )
+              ],
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'Exams are automatically completed after their date',
-            ),
-            const SizedBox(height: 50),
-            Expanded(
-              child: ReorderableListView(
-                onReorder: (oldIndex, newIndex) {
-                  showMessage(context, 'This way you reorder');
-                  setState(() {
-                    final removedHw = homeworks.removeAt(oldIndex);
-                    homeworks.insert(
-                        newIndex >= oldIndex ? newIndex - 1 : newIndex,
-                        removedHw);
-                  });
-                },
-                children: [
-                  ...homeworks.map(
-                    (e) {
-                      return Padding(
-                        key: Key('welcome_hw_${e.dbIndex}'),
-                        padding: const EdgeInsets.all(8.0),
-                        child: ExamTile(
-                          exam: e,
-                          onDelete: (context) {
-                            showMessage(context, 'Exam would be deleted');
-                          },
-                          onEdit: () {
-                            showMessage(context, 'Now you could edit');
-                          },
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      )),
-    );
+          ),
+        ],
+      ),
+    ));
   }
 }

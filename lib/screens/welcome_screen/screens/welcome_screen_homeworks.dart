@@ -68,61 +68,59 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
 
   @override
   Widget build(BuildContext context) {
-    return SlidableAutoCloseBehavior(
-      child: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Text(
-              'Learn how to interact with the homeworks:',
-              style: Theme.of(context).textTheme.titleMedium,
+    return SafeArea(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text(
+            'Learn how to interact with the homeworks:',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 50),
+          Expanded(
+            child: ReorderableListView(
+              onReorder: (oldIndex, newIndex) {
+                showMessage(context, 'This way you reorder');
+                setState(() {
+                  final removedHw = homeworks.removeAt(oldIndex);
+                  homeworks.insert(
+                      newIndex >= oldIndex ? newIndex - 1 : newIndex,
+                      removedHw);
+                });
+              },
+              children: [
+                ...homeworks.map(
+                  (e) {
+                    return Padding(
+                      key: Key('welcome_hw_${e.dbIndex}'),
+                      padding: const EdgeInsets.all(8.0),
+                      child: AnimatedCompletionTile(
+                        hw: e,
+                        slidableController:
+                            e.dbIndex == 0 ? _controller : null,
+                        onAnimationEnd: () {},
+                        onChangedCompletion: (p0) {
+                          if (p0) {
+                            showMessage(context,
+                                'And this way you check the homework!');
+                          }
+                        },
+                        onDelete: () {
+                          showMessage(context, 'Homework would be deleted');
+                        },
+                        onEdit: () {
+                          showMessage(context, 'Now you could edit');
+                        },
+                      ),
+                    );
+                  },
+                )
+              ],
             ),
-            const SizedBox(height: 50),
-            Expanded(
-              child: ReorderableListView(
-                onReorder: (oldIndex, newIndex) {
-                  showMessage(context, 'This way you reorder');
-                  setState(() {
-                    final removedHw = homeworks.removeAt(oldIndex);
-                    homeworks.insert(
-                        newIndex >= oldIndex ? newIndex - 1 : newIndex,
-                        removedHw);
-                  });
-                },
-                children: [
-                  ...homeworks.map(
-                    (e) {
-                      return Padding(
-                        key: Key('welcome_hw_${e.dbIndex}'),
-                        padding: const EdgeInsets.all(8.0),
-                        child: AnimatedCompletionTile(
-                          hw: e,
-                          slidableController:
-                              e.dbIndex == 0 ? _controller : null,
-                          onAnimationEnd: () {},
-                          onChangedCompletion: (p0) {
-                            if (p0) {
-                              showMessage(context,
-                                  'And this way you check the homework!');
-                            }
-                          },
-                          onDelete: () {
-                            showMessage(context, 'Homework would be deleted');
-                          },
-                          onEdit: () {
-                            showMessage(context, 'Now you could edit');
-                          },
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      )),
-    );
+          ),
+        ],
+      ),
+    ));
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
 
 class WelcomeScreenPriorities extends StatelessWidget {
   const WelcomeScreenPriorities({super.key});
@@ -32,8 +31,7 @@ class WelcomeScreenPriorities extends StatelessWidget {
                       margin: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: e.color
-                            .dynamicLighten(makeItLighter: Theme.of(context).brightness == Brightness.light, amount: 0.36),
+                        color: e.getContainerColor(context, subtle: true)
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,14 +41,14 @@ class WelcomeScreenPriorities extends StatelessWidget {
                             height: 30,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                              color: e.color,
+                              color: e.getContainerColor(context),
                             ),
                           ),
                           const SizedBox(width: 16),
                           Text(
                             e.name,
                             style: TextStyle(
-                              color: e.color,
+                              color: e.getContainerColor(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
