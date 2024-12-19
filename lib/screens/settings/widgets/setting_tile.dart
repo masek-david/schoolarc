@@ -6,7 +6,8 @@ class SettingTile extends StatelessWidget {
     required this.label,
     this.text,
     this.icon,
-    this.action,
+    this.trailing,
+    this.newLineAction,
     this.onTap,
     this.highlighted = false,
     this.enabled = true,
@@ -15,67 +16,48 @@ class SettingTile extends StatelessWidget {
   final String label;
   final String? text;
   final IconData? icon;
-  final Widget? action;
+  final Widget? trailing;
+  final Widget? newLineAction;
   final Function()? onTap;
   final bool highlighted;
   final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-
-    return Opacity(
-      opacity: enabled ? 1 : 0.3,
-      child: AbsorbPointer(
-        absorbing: !enabled,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: highlighted == true ? const EdgeInsets.all(16) : null,
-            margin: const EdgeInsets.all(16),
-            decoration: highlighted == true
-                ? BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    color: Theme.of(context).colorScheme.primaryContainer)
-                : null,
-            child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (icon != null)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: Icon(icon),
-                      ),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            label,
-                            softWrap: true,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          if (text != null)
-                            Text(
-                              text!,
-                              style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+    return AbsorbPointer(
+      absorbing: !enabled,
+      child: Column(
+        children: [
+          Padding(
+            padding: highlighted ? const EdgeInsets.all(16) : EdgeInsets.all(0),
+            child: ListTile(
+              enabled: enabled,
+              onTap: onTap,
+              tileColor: highlighted
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
+              shape: highlighted
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32))
+                  : null,
+              contentPadding: highlighted ? EdgeInsets.all(12) : null,
+              leading: icon != null ? Icon(icon) : null,
+              title: Text(
+                label,
+                style: TextStyle(
+                  fontSize: highlighted ? 19 : null,
                 ),
-                if (action != null) action!,
-              ],
+              ),
+              subtitle: text == null ? null : Text(text!),
+              trailing: trailing,
             ),
           ),
-        ),
+          if (newLineAction != null)
+            Opacity(
+              opacity: enabled ? 1 : 0.3,
+              child: newLineAction!,
+            ),
+        ],
       ),
     );
   }

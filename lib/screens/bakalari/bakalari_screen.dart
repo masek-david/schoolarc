@@ -17,8 +17,6 @@ class BakalariScreen extends StatefulWidget {
 }
 
 class _BakalariScreenState extends State<BakalariScreen> {
-  final _settings = SettingsDatabase();
-
   final _schoolController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -26,7 +24,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
 
   bool isLoggedIn = false;
   bool isLoading = false;
-  late bool keepLoggedIn = _settings.get(Setting.bakaKeepLoggedIn);
+  late bool keepLoggedIn = settings.get(Setting.bakaKeepLoggedIn);
   bool obscureText = true;
 
   @override
@@ -63,8 +61,6 @@ class _BakalariScreenState extends State<BakalariScreen> {
       isLoggedIn = true;
       isLoading = false;
     });
-
-    showMessage('Logged in');
   }
 
   void onError(dynamic error) {
@@ -198,7 +194,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                             setState(() {
                               keepLoggedIn = value!;
                             });
-                            _settings.save(Setting.bakaKeepLoggedIn, value!);
+                            settings.save(Setting.bakaKeepLoggedIn, value!);
                           }
                         : null,
                   )

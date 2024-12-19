@@ -25,7 +25,7 @@ class _CalendarSettingsState extends State<CalendarSettings> {
       children: [
         SettingTile(
           label: 'Initial date',
-          action: DropDownAction(
+          trailing: DropDownAction(
             items: const [
               DropdownMenuItem(
                 value: false,
@@ -47,7 +47,7 @@ class _CalendarSettingsState extends State<CalendarSettings> {
         ),
         SettingTile(
           label: 'Show missed homeworks',
-          action: SwitchAction(
+          trailing: SwitchAction(
             initialValue: settings.get(
               Setting.calendarShowMissed,
             ),

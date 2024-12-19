@@ -86,8 +86,8 @@ class SettingsScreen extends StatelessWidget {
           Divider(),
           SettingTile(
             label: 'Initial page',
-            text: 'The page that will be initially opened',
-            action: DropDownAction(
+            text: 'The page that will be displayed when opening the app',
+            trailing: DropDownAction(
               items: const [
                 DropdownMenuItem(value: 0, child: Text('Home')),
                 DropdownMenuItem(value: 1, child: Text('Calendar')),
@@ -104,7 +104,7 @@ class SettingsScreen extends StatelessWidget {
             label: 'Screen switching animation duration',
             text: 'In miliseconds',
             icon: Icons.timelapse,
-            action: SliderAction(
+            newLineAction: SliderAction(
               inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
               divisions: 10,
               min: 0,
@@ -117,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
           SettingTile(
             label: 'Show app overlay',
             text: 'On big screen, show borders in the app',
-            action: SwitchAction(
+            trailing: SwitchAction(
               initialValue: settings.get(Setting.showAppOverlay),
               onChanged: (value) {
                 settings.save(Setting.showAppOverlay, value);
@@ -127,14 +127,14 @@ class SettingsScreen extends StatelessWidget {
           ),
           SettingTile(
             label: 'Show debug info',
-            action: SwitchAction(
+            trailing: SwitchAction(
               initialValue: settings.get(Setting.showDebugInfo),
               onChanged: (value) {
                 settings.save(Setting.showDebugInfo, value);
               },
             ),
           ),
-          if(settings.get(Setting.showDebugInfo)) AdaptiveShowcase(),
+          if (settings.get(Setting.showDebugInfo)) AdaptiveShowcase(),
         ],
       ),
     );

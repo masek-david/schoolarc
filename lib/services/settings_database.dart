@@ -81,7 +81,7 @@ class SettingsDatabase {
       key: 'ttTileWidth',
     ),
     Setting.bakaKeepLoggedIn: SettingModel(
-      defaultValue: false,
+      defaultValue: true,
       key: 'bakaKeepLoggedIn',
     ),
     Setting.calendarInitialIsTommorrow: SettingModel(

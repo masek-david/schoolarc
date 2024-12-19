@@ -132,11 +132,7 @@ class NotificationSender {
     }
 
     notificationText =
-        '''${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}
-           ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'}$lineBreak
-           $examsTextList $lineBreak
-           ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'}$lineBreak
-           $homeworksTextList''';
+        '${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'}$lineBreak$examsTextList $lineBreak${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'}$lineBreak$homeworksTextList';
 
     String summary = '';
 

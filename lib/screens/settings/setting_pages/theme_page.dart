@@ -27,7 +27,7 @@ class ThemePage extends StatelessWidget {
           const ThemeColorsShowcase(),
           SettingTile(
             label: 'Brightness',
-            action: DropDownAction(
+            trailing: DropDownAction(
               initialValue: settings.get(Setting.themeMode),
               onChanged: (value) {
                 bool? valueToBool = (value is bool) ? value : null;
@@ -44,7 +44,7 @@ class ThemePage extends StatelessWidget {
           ),
           SettingTile(
             label: 'Use device colors',
-            action: SwitchAction(
+            trailing: SwitchAction(
               initialValue: settings.get(Setting.themeUseMaterial),
               onChanged: (value) {
                 settings.save(Setting.themeUseMaterial, value);
@@ -63,7 +63,7 @@ class ThemePage extends StatelessWidget {
           SettingTile(
             label: 'App color',
             enabled: customColorEnabled,
-            action: ColorPickerAction(
+            newLineAction: ColorPickerAction(
               initialColor: Color(settings.get(Setting.themeColorValue)),
               onChanged: (color) {
                 // ignore: deprecated_member_use
@@ -75,7 +75,7 @@ class ThemePage extends StatelessWidget {
           SettingTile(
             label: '',
             enabled: customColorEnabled,
-            action: SchemeVariantPickerAction(
+            newLineAction: SchemeVariantPickerAction(
               initialScheme: settings.get(Setting.themeDynamicSchemeVariantInt),
               onChanged: (value) {
                 settings.save(Setting.themeDynamicSchemeVariantInt, value);

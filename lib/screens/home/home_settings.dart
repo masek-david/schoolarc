@@ -26,7 +26,7 @@ class _HomeSettingsState extends State<HomeSettings> {
         SettingTile(
           label: 'Lunch time',
           text: 'When meals for next day appear',
-          action: TimePickerAction(
+          trailing: TimePickerAction(
             initialTime: settings.getTimeOfDay(Setting.mealsShowTodayUntil),
             onChanged: (time) {
               settings.saveTimeOfDay(Setting.mealsShowTodayUntil, time);
@@ -37,7 +37,7 @@ class _HomeSettingsState extends State<HomeSettings> {
         SettingTile(
           label: 'Show my name',
           text: 'If enabled, you will be greeted with your name',
-          action: SwitchAction(
+          trailing: SwitchAction(
             initialValue: settings.get(Setting.homeShowUserName),
             onChanged: (value) {
               settings.save(Setting.homeShowUserName, value);
