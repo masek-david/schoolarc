@@ -79,7 +79,7 @@ class NotificationSender {
 
     String notificationText;
     String examsTextList = '';
-    String homeworksTextList = '\u1F512 \u1F512 &#128308; red_circle';
+    String homeworksTextList = '\u1F512 \u1F512 &#128308; red_circle \uD83D\uDD34';
     String? missedHwTextList;
 
     DateTime tommorowDate = DateTime.utc(
@@ -132,7 +132,11 @@ class NotificationSender {
     }
 
     notificationText =
-        '${missedHwTextList != null ? '<b>Missed homeworks:</b> $lineBreak $missedHwTextList $lineBreak' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} $lineBreak $examsTextList $lineBreak ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} $lineBreak $homeworksTextList';
+        '''${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}
+           ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'}$lineBreak
+           $examsTextList $lineBreak
+           ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'}$lineBreak
+           $homeworksTextList''';
 
     final summary =
         '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
@@ -183,7 +187,7 @@ class NotificationSender {
     return true;
   }
 
-  /// returns true for android or ios 
+  /// returns true for android or ios
   static bool _isCompatiblePlatform() {
     if (Platform.isAndroid || Platform.isIOS) {
       return true;
