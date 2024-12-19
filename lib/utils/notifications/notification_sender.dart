@@ -79,7 +79,7 @@ class NotificationSender {
 
     String notificationText;
     String examsTextList = '';
-    String homeworksTextList = '\u1F512 \u1F512 &#128308; red_circle \uD83D\uDD34';
+    String homeworksTextList = '';
     String? missedHwTextList;
 
     DateTime tommorowDate = DateTime.utc(
@@ -114,7 +114,7 @@ class NotificationSender {
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
-          '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.completion ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       homeworksTextList += '$hwText$lineBreak';
     }
@@ -125,7 +125,7 @@ class NotificationSender {
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String missedHwText =
-          '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.completion ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       missedHwTextList ??= '';
       missedHwTextList += '$missedHwText$lineBreak';
@@ -138,14 +138,32 @@ class NotificationSender {
            ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'}$lineBreak
            $homeworksTextList''';
 
-    final summary =
-        '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
+    String summary = '';
+
+    if (missedHws.isNotEmpty) {
+      summary += '${missedHws.length} missed';
+    }
+    if (hwsForTommorow.isNotEmpty) {
+      if (summary != '') {
+        summary += ', ';
+      }
+      summary +=
+          '${hwsForTommorow.length} homework${hwsForTommorow.length == 1 ? '' : 's'}';
+    }
+    if (examsForTommorow.isNotEmpty) {
+      if (!summary.endsWith(', ')) {
+        summary += ', ';
+      }
+      summary +=
+          '${examsForTommorow.length} exam${examsForTommorow.length == 1 ? '' : 's'}';
+    }
 
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,
       content: NotificationContent(
         color: Colors.transparent,
         id: 11,
+        badge: 0,
         channelKey: tommorrowChannel,
         summary: summary,
         title: 'Tommorrow:',
