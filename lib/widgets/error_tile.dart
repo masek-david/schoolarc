@@ -18,6 +18,7 @@ class ErrorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     ExceptionActions? action;
 
     if (error.runtimeType == ServiceException) {
@@ -56,7 +57,11 @@ class ErrorTile extends StatelessWidget {
           ),
         ),
         if (action == ExceptionActions.stravaLogin)
-          OutlinedButton(
+          FilledButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(scheme.errorContainer),
+              foregroundColor: WidgetStatePropertyAll(scheme.onErrorContainer),
+            ),
             onPressed: () {
               navigatorKey.currentState?.push(MaterialPageRoute(
                 builder: (context) {
@@ -66,13 +71,14 @@ class ErrorTile extends StatelessWidget {
             },
             child: Text(
               'Login',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
             ),
           ),
         if (action == ExceptionActions.bakaLogin)
-          TextButton(
+          FilledButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(scheme.errorContainer),
+              foregroundColor: WidgetStatePropertyAll(scheme.onErrorContainer),
+            ),
             onPressed: () {
               navigatorKey.currentState?.push(MaterialPageRoute(
                 builder: (context) {

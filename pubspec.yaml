@@ -50,6 +50,7 @@ dependencies:
   xml: ^6.5.0
   expandable_page_view: ^1.0.17
   smooth_page_indicator: ^1.2.0+3
+  flutter_resizable_container: ^3.0.3
 
 dev_dependencies:
   flutter_test:

@@ -15,11 +15,11 @@ class WelcomeScreenEnd extends StatelessWidget {
               const Text('Tutorial completed, you can now enjoy using the app.'),
               // Text('If you find any bugs or have some suggestions please contact me.'),
               const SizedBox(height: 50),
-              FilledButton(
+              FloatingActionButton.extended(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Go to app'),
+                label: const Text('Go to app'),
               ),
             ],
           ),

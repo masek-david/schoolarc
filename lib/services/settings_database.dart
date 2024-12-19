@@ -17,6 +17,7 @@ enum Setting {
   bakaKeepLoggedIn,
   calendarInitialIsTommorrow,
   calendarShowMissed,
+  calendarResizableContainerRatio,
   mealsShowTodayUntil,
   userName,
   homeShowUserName,
@@ -54,7 +55,7 @@ class SettingsDatabase {
     ),
     Setting.pageSwitchAnimationDuration: SettingModel(
       key: 'pageSwitchDuration',
-      defaultValue: 200.0,
+      defaultValue: 0.0,
     ),
     Setting.showAppOverlay: SettingModel(
       defaultValue: true,
@@ -90,6 +91,10 @@ class SettingsDatabase {
     Setting.calendarShowMissed: SettingModel(
       defaultValue: true,
       key: 'calendarShowMissed',
+    ),
+    Setting.calendarResizableContainerRatio: SettingModel(
+      defaultValue: <double>[0.5, 0.5],
+      key: 'calendarResizeRatio',
     ),
     Setting.mealsShowTodayUntil: SettingModel(
       defaultValue: const TimeOfDay(hour: 14, minute: 30).toDateTime(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
 import 'package:school_manager/screens/calendar/widgets/pages_widget.dart';
 import 'package:school_manager/services/settings_database.dart';
@@ -31,7 +32,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _selectedDay = _focusedDay;
   late Color calendarBackgroundColor;
 
-
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
   late final showTommorrow =
@@ -41,9 +41,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
     initialPage: negativePageCount + (showTommorrow ? 1 : 0),
   );
 
-  int maxMarkers = 0;
-
   late bool showMissed = settings.get(Setting.calendarShowMissed);
+  final _resizeController = ResizableController();
+  final initialSizes = (settings.get(
+    Setting.calendarResizableContainerRatio,
+  ) as List<double>)
+      .map(
+    (e) {
+      return ResizableSize.ratio(e);
+    },
+  ).toList();
 
   @override
   void initState() {
@@ -54,6 +61,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
     }
+
+    _resizeController.addListener(
+      () {
+        settings.save(
+          Setting.calendarResizableContainerRatio,
+          _resizeController.ratios.toList(),
+        );
+      },
+    );
   }
 
   @override
@@ -162,9 +178,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    /// how many markers are used this week at most
-    // int maxNumberOfCustomMarkers = getMaxNumberOfExamsPerDay();
-
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
@@ -204,12 +217,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
           body: isWide
               ? Container(
                   color: Theme.of(context).colorScheme.surfaceContainer,
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Row(
+                  child: ResizableContainer(
+                    controller: _resizeController,
+                    direction: Axis.horizontal,
+                    divider: ResizableDivider(
+                      thickness: 4,
+                      length: ResizableSize.pixels(60),
+                      padding: 12,
+                    ),
                     children: [
-                      Flexible(
-                        // flex: 4,
+                      ResizableChild(
+                        minSize: 300,
+                        size: initialSizes[0],
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Scaffold(
@@ -218,9 +237,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 16),
-                      Flexible(
-                        // flex: 5,
+                      ResizableChild(
+                        minSize: 300,
+                        size: initialSizes[1],
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),

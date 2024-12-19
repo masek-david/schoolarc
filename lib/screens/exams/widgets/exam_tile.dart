@@ -32,96 +32,106 @@ class ExamTile extends StatelessWidget {
       opacity = 0.5;
     }
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.horizontal(left: Radius.circular(1000)),
-      child: Slidable(
-        groupTag: '0',
-        endActionPane: ActionPane(
-          motion: const StretchMotion(),
-          extentRatio: 0.3,
-          children: [
-            // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
-            // workaround for flutter_slidable
-            Theme(
-              data: Theme.of(context).copyWith(
-                outlinedButtonTheme: OutlinedButtonThemeData(
-                  style: ButtonStyle(
-                    iconColor: WidgetStatePropertyAll(
-                        Theme.of(context).colorScheme.onError),
-                  ),
-                ),
-              ),
-              child: SlidableAction(
-                onPressed: (context) {
-                  HapticFeedback.lightImpact();
-                  onDelete(context);
-                },
-                icon: Icons.delete,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-                backgroundColor: Theme.of(context).colorScheme.error,
-                borderRadius: BorderRadius.circular(35),
-                flex: 10,
-              ),
-            ),
-          ],
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(35),
-            color: exam.completion
-                ? Theme.of(context).colorScheme.surfaceContainerLowest
-                : Theme.of(context).colorScheme.surfaceContainer,
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onEdit,
-              borderRadius: BorderRadius.circular(35),
-              child: Opacity(
-                opacity: opacity,
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            color: exam.priority.getContainerColor(context)),
-                        child: SubjectShortcut(
-                            subject: exam.subject,
-                            color: exam.priority.getOnContainerColor(context)),
+    return LayoutBuilder(
+        builder: (context, constraints) {
+        double extentRatio = 120 / constraints.maxWidth;
+
+        if(extentRatio > 1){
+          extentRatio = 1;
+        }
+
+        return ClipRRect(
+          borderRadius: const BorderRadius.horizontal(left: Radius.circular(1000)),
+          child: Slidable(
+            groupTag: '0',
+            endActionPane: ActionPane(
+              motion: const StretchMotion(),
+              extentRatio: extentRatio,
+              children: [
+                // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
+                // workaround for flutter_slidable
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    outlinedButtonTheme: OutlinedButtonThemeData(
+                      style: ButtonStyle(
+                        iconColor: WidgetStatePropertyAll(
+                            Theme.of(context).colorScheme.onError),
                       ),
-                      if (exam.description != null && exam.description != '')
-                        const SizedBox(width: 8),
-                      if (exam.description != null && exam.description != '')
-                        Icon(
-                          Icons.notes,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text(exam.text, maxLines: 2)),
-                      const SizedBox(width: 8),
-                      if (showDeadline)
-                        Text(
-                          exam.deadline.dateText(),
-                          maxLines: 2,
-                          style: TextStyle(
-                              color: isMissed ? missedColor : null,
-                              fontSize: 12),
-                        ),
-                      const SizedBox(width: 8),
-                    ],
+                    ),
+                  ),
+                  child: SlidableAction(
+                    onPressed: (context) {
+                      HapticFeedback.lightImpact();
+                      onDelete(context);
+                    },
+                    icon: Icons.delete,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    borderRadius: BorderRadius.circular(35),
+                    flex: 10,
+                  ),
+                ),
+              ],
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: exam.completion
+                    ? Theme.of(context).colorScheme.surfaceContainerLowest
+                    : Theme.of(context).colorScheme.surfaceContainer,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onEdit,
+                  borderRadius: BorderRadius.circular(35),
+                  child: Opacity(
+                    opacity: opacity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                                color: exam.priority.getContainerColor(context)),
+                            child: SubjectShortcut(
+                                subject: exam.subject,
+                                color: exam.priority.getOnContainerColor(context)),
+                          ),
+                          if (exam.description != null && exam.description != '')
+                            const SizedBox(width: 8),
+                          if (exam.description != null && exam.description != '')
+                            Icon(
+                              Icons.notes,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(exam.text, maxLines: 2)),
+                          const SizedBox(width: 8),
+                          if (showDeadline)
+                            Text(
+                              exam.deadline.dateText(),
+                              maxLines: 2,
+                              style: TextStyle(
+                                  color: isMissed ? missedColor : null,
+                                  fontSize: 12),
+                            ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

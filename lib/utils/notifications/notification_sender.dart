@@ -77,9 +77,9 @@ class NotificationSender {
     }
     arriveDateTime ??= DateTime.now().toUtc();
 
-    String notificationText = '';
+    String notificationText;
     String examsTextList = '';
-    String homeworksTextList = '';
+    String homeworksTextList = '\u1F512 \u1F512 &#128308; red_circle';
     String? missedHwTextList;
 
     DateTime tommorowDate = DateTime.utc(
@@ -92,6 +92,9 @@ class NotificationSender {
         HomeworkService().getForDay(tommorowDate, null);
     List<HomeworkDTO> missedHws = homeworkService.getMissedHw(null);
 
+    final isIOS = Platform.isIOS;
+    final lineBreak = isIOS ? '\n' : '<br>';
+
     // creates text for notification for exam
     for (int i = 0; i < examsForTommorow.length; i++) {
       ExamDTO exam = examsForTommorow[i];
@@ -100,7 +103,7 @@ class NotificationSender {
       String examText =
           '${exam.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
 
-      examsTextList += '$examText<br>';
+      examsTextList += '$examText$lineBreak';
     }
 
     // creates text about hw
@@ -113,7 +116,7 @@ class NotificationSender {
       String hwText =
           '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
-      homeworksTextList += '$hwText<br>';
+      homeworksTextList += '$hwText$lineBreak';
     }
 
     missedHws.sort((a, b) => a.deadline.compareTo(b.deadline));
@@ -125,11 +128,11 @@ class NotificationSender {
           '${hw.completion ? '&#10003<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       missedHwTextList ??= '';
-      missedHwTextList += '$missedHwText<br>';
+      missedHwTextList += '$missedHwText$lineBreak';
     }
 
     notificationText =
-        '${missedHwTextList != null ? '<b>Missed homeworks:</b> <br> $missedHwTextList <br>' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} <br> $examsTextList <br> ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} <br> $homeworksTextList';
+        '${missedHwTextList != null ? '<b>Missed homeworks:</b> $lineBreak $missedHwTextList $lineBreak' : ''} ${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'} $lineBreak $examsTextList $lineBreak ${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'} $lineBreak $homeworksTextList';
 
     final summary =
         '${missedHws.isEmpty ? '' : '${missedHws.length} missed, '}${hwsForTommorow.isEmpty ? '' : '${hwsForTommorow.length} homeworks, '}${examsForTommorow.isEmpty ? '' : '${examsForTommorow.length} exams'}';
@@ -159,13 +162,7 @@ class NotificationSender {
     }
   }
 
-  static bool _isCompatiblePlatform() {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return true;
-    }
-    return false;
-  }
-
+  /// checks all permissions, for the channel if asked
   static Future<bool> areNotificationsAllowed(String? channel) async {
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       return false;
@@ -186,7 +183,15 @@ class NotificationSender {
     return true;
   }
 
-  // returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
+  /// returns true for android or ios 
+  static bool _isCompatiblePlatform() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return true;
+    }
+    return false;
+  }
+
+  /// returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
   static Future<bool> getPermission(
     BuildContext context,
     String? channel,
@@ -194,7 +199,7 @@ class NotificationSender {
     if (await areNotificationsAllowed(channel)) {
       return true;
     }
-    if(!context.mounted){
+    if (!context.mounted) {
       return false;
     }
     return await showDialogAdaptive<bool?>(
@@ -239,21 +244,5 @@ class NotificationSender {
             true
         ? true
         : false;
-  }
-
-  static void notificationSecret() async {
-    // if (await areNotificationsAllowed(mainChannel)) {
-    //   AwesomeNotifications().createNotification(
-    //     // schedule: NotificationCalendar(day: 24, month: 12, repeats: true),
-    //     content: NotificationContent(
-    //       id: 12,
-    //       color: Colors.red,
-    //       channelKey: mainChannel,
-    //       fullScreenIntent: true,
-    //       title: 'Veselé Vánoce',
-    //       body: 'Vše nejlepší k Vánocům a šťastný Nový rok přeje David',
-    //     ),
-    //   );
-    // }
   }
 }

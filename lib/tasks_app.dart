@@ -474,7 +474,7 @@ class _TasksAppState extends State<TasksApp> {
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(colorScheme: light),
-          darkTheme: ThemeData(colorScheme: dark, platform: TargetPlatform.android),
+          darkTheme: ThemeData(colorScheme: dark),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {

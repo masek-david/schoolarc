@@ -32,11 +32,11 @@ class TaskPriority {
     return color.harmonizeWith(Theme.of(context).colorScheme.primary);
   }
 
-  Color getContainerColor(BuildContext context) {
+  Color getContainerColor(BuildContext context, {bool subtle = false}) {
     final harmonized =
         color.harmonizeWith(Theme.of(context).colorScheme.primary);
 
-    return Color.lerp(harmonized, Theme.of(context).colorScheme.surface, 0.3)!;
+    return Color.lerp(harmonized, Theme.of(context).colorScheme.surface, subtle ? 0.85 : 0.3)!;
   }
 
   Color getOnContainerColor(BuildContext context) {
