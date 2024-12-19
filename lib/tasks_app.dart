@@ -4,6 +4,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
@@ -323,6 +324,7 @@ class _TasksAppState extends State<TasksApp> {
 
   late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
+  late bool showingTutorial;
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -337,12 +339,26 @@ class _TasksAppState extends State<TasksApp> {
     }
   }
 
+  void startTutorial() {
+    setState(() {
+      showingTutorial = true;
+    });
+  }
+
+  void endTutorial() {
+    setState(() {
+      showingTutorial = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
     if (_settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
+    } else {
+      showingTutorial = false;
     }
 
     // Only after at least the action method is set, the notification events are delivered
@@ -361,9 +377,7 @@ class _TasksAppState extends State<TasksApp> {
 
   void firstTimeOpeningApp() {
     // TODO - when done simply change the key of the value
-    // navigatorKey.currentState?.push(MaterialPageRoute(
-    //   builder: (context) => WelcomeScreen(),
-    // ));
+    showingTutorial = true;
   }
 
   void refreshTheme() {
@@ -494,44 +508,53 @@ class _TasksAppState extends State<TasksApp> {
             }
             return null;
           },
-          home: Scaffold(
-            key: scaffoldKey,
-            body: SlidableAutoCloseBehavior(
-              child: Row(
-                children: [
-                  if (isWide)
-                    SideNavBar(
-                      onTap: switchScreen,
-                      pageIndex: currentPageIndex,
-                    ),
-                  WideScreenBorders(
-                    show: isWide && settings.get(Setting.showAppOverlay),
-                    child: PageView(
-                      key: _key,
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _pageController,
-                      children: [
-                        const HomeScreen(),
-                        CalendarScreen(
-                          showTommorrow: calendarShowTommorrow,
+          home: Stack(
+            children: [
+              Scaffold(
+                key: scaffoldKey,
+                body: SlidableAutoCloseBehavior(
+                  child: Row(
+                    children: [
+                      if (isWide)
+                        SideNavBar(
+                          onTap: switchScreen,
+                          pageIndex: currentPageIndex,
                         ),
-                        const HomeworksScreen(),
-                        const ExamsScreen(),
-                      ],
-                    ),
+                      WideScreenBorders(
+                        show: isWide && settings.get(Setting.showAppOverlay),
+                        child: PageView(
+                          key: _key,
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: _pageController,
+                          children: [
+                            const HomeScreen(),
+                            CalendarScreen(
+                              showTommorrow: calendarShowTommorrow,
+                            ),
+                            const HomeworksScreen(),
+                            const ExamsScreen(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+                drawer: MyDrawer(
+                  setThemeMode: refreshTheme,
+                  startTutorial: startTutorial,
+                ),
+                bottomNavigationBar: isWide
+                    ? null
+                    : BottomNavBar(
+                        onTap: switchScreen,
+                        pageIndex: currentPageIndex,
+                      ),
               ),
-            ),
-            drawer: MyDrawer(
-              setThemeMode: refreshTheme,
-            ),
-            bottomNavigationBar: isWide
-                ? null
-                : BottomNavBar(
-                    onTap: switchScreen,
-                    pageIndex: currentPageIndex,
-                  ),
+              if (showingTutorial)
+                WelcomeScreen(
+                  onEnd: endTutorial,
+                ),
+            ],
           ),
         );
       },

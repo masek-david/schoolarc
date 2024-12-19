@@ -10,7 +10,6 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
-import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
@@ -18,9 +17,11 @@ class MyDrawer extends StatelessWidget {
   const MyDrawer({
     super.key,
     required this.setThemeMode,
+    required this.startTutorial,
   });
 
   final void Function() setThemeMode;
+  final void Function() startTutorial;
 
   void showSnackbar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -120,17 +121,12 @@ class MyDrawer extends StatelessWidget {
                       ),
                     );
                   }),
-            if (showDebug)
-              MyDrawerButton(
-                text: 'View tutorial',
-                icon: const Icon(Icons.data_array),
-                onTap: () => navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(),
-                  ),
-                ),
-              ),
             Spacer(),
+            MyDrawerButton(
+              text: 'View tutorial',
+              icon: const Icon(Icons.school),
+              onTap: startTutorial,
+            ),
             MyDrawerButton(
               text: 'Settings',
               icon: const Icon(Icons.settings),

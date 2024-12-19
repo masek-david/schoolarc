@@ -51,7 +51,7 @@ class SettingsDatabase {
     ),
     Setting.initialAppPage: SettingModel(
       key: 'initialAppPage',
-      defaultValue: 1,
+      defaultValue: 0,
     ),
     Setting.pageSwitchAnimationDuration: SettingModel(
       key: 'pageSwitchDuration',
@@ -140,7 +140,7 @@ class SettingsDatabase {
       throw 'No setting found for enum $setting';
     }
     var value = _settingsBox.get(settingModel.key);
-    // var value = null;
+    // value = null;
 
     if (value == null) {
       value = settingModel.defaultValue;
@@ -170,6 +170,8 @@ class SettingsDatabase {
 
   bool get firstTimeOpeningApp {
     const dbKey = 'firstTimeOpeningApp';
+
+    // return true;
 
     if (_settingsBox.get(dbKey) != true) {
       _settingsBox.put(dbKey, true);

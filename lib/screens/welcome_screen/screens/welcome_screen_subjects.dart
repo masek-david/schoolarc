@@ -34,10 +34,12 @@ class WelcomeScreenSubjects extends StatelessWidget {
             Text(
               'Each homework and exam can be assigned to one subject:',
               style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
             Text(
               'You can create more subjects in Subjects page in the drawer',
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 50),
             Column(
@@ -48,14 +50,17 @@ class WelcomeScreenSubjects extends StatelessWidget {
                   return SubjectTile(
                     subject: e,
                     onTap: () => showMessage(context, 'Now you could edit'),
-                    onDelete: () => showMessage(context, 'Now the subject would be deleted'),
+                    onDelete: () => showMessage(
+                        context, 'Now the subject would be deleted'),
                   );
                 },
               ).toList(),
             ),
             SizedBox(height: 50),
             Text(
-                'You can assign the subject when adding new task or editing old'),
+              'You can assign the subject when adding new task or editing old',
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

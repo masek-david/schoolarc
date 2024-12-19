@@ -71,7 +71,10 @@ class TimetableTile extends StatelessWidget {
                     if (lesson?.change?.type == ChangeType.canceled)
                       Text(lesson?.change?.shortcut ?? ''),
                     if (lesson?.subject != null)
-                      SubjectShortcut(subject: lesson?.subject),
+                      SubjectShortcut(
+                        subject: lesson?.subject,
+                        color: change != null ? Theme.of(context).colorScheme.onErrorContainer : null,
+                      ),
                     const Spacer(),
                     if (lesson?.teacher != null)
                       Row(
