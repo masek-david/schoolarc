@@ -27,17 +27,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late var missedHwList = homeworkService.getMissedHw(null);
   late var examByDate = examService.sortByDate(null);
 
-  CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   late DateTime _selectedDay = _focusedDay;
-  late Color calendarBackgroundColor;
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
   late final showTommorrow =
       settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow;
   late final PageController _pageController = PageController(
-    viewportFraction: 0.93,
+    viewportFraction: 0.90,
     initialPage: negativePageCount + (showTommorrow ? 1 : 0),
   );
 
@@ -79,15 +77,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // the color is needed or else the list will be visible under the calendar
-    calendarBackgroundColor = Theme.of(context).colorScheme.surface;
-    updateView();
-  }
-
   void updateView() {
     if (mounted) {
       setState(() {
@@ -103,8 +92,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       focusedDay: _focusedDay,
       selectedDay: _selectedDay,
       negativePageCount: negativePageCount,
+      setFocusedDay: (date) {
+        setState(() {
+          _focusedDay = date;
+        });
+      },
       updateView: updateView,
-      calendarBackgroundColor: calendarBackgroundColor,
       calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
       homeworks: hwByDate,
       exams: examByDate,
@@ -117,14 +110,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         });
         _pageController.jumpToPage(negativePageCount);
       },
-      onFormatChanged: (format) {
-        if (_calendarFormat != format) {
-          // Call `setState()` when updating calendar format
-          setState(() {
-            _calendarFormat = format;
-          });
-        }
-      },
+      onFormatChanged: (format) {},
       onPageChanged: (focusedDay) {
         setState(() {
           _focusedDay = focusedDay;

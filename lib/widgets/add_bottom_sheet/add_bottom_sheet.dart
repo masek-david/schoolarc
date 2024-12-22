@@ -105,8 +105,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
-    // final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
-
     return Container(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -114,7 +112,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       child: Container(
             margin: const EdgeInsets.all(15),
             child: SingleChildScrollView(
-              // controller: scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,

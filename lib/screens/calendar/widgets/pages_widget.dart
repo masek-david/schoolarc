@@ -6,6 +6,7 @@ import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
+import 'package:school_manager/widgets/reschedule_drag_target.dart';
 
 class PagesWidget extends StatelessWidget {
   const PagesWidget({
@@ -32,6 +33,8 @@ class PagesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return PageView.builder(
       controller: pageController,
       onPageChanged: onPageChanged,
@@ -47,53 +50,105 @@ class PagesWidget extends StatelessWidget {
         final bool showMissed =
             missedHwList.isNotEmpty && !date.isBeforeToday() && this.showMissed;
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: ListView(
-            children: [
-              // Text(date.toString()),
-              // Text(pageIndex.toString()),
-              if (showMissed)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: ListTileTheme(
-                    contentPadding: const EdgeInsets.only(left: 4, right: 8),
-                    child: ExpansionTile(
-                      initiallyExpanded: true,
-                      collapsedShape: const Border(),
-                      shape: const Border(),
-                      dense: true,
-                      title: ExpansionTitle(
-                        titleText: 'Missed Homeworks',
-                        boldText: false,
-                        titleTextColor: Theme.of(context).colorScheme.error,
-                        numberOfItems: missedHwList.length,
+        return RescheduleDragTarget(
+          currentDate: date,
+          updateView: updateView,
+          onMove: (details) {
+            if (pageController.page?.round() != negativePageCount + daysToAdd) {
+              pageController.animateToPage(
+                negativePageCount + daysToAdd,
+                duration: Durations.long2,
+                curve: Curves.easeInOut,
+              );
+            }
+          },
+          builder: (context, candidateData, rejectedData) {
+            bool showOverlay = candidateData.isNotEmpty;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Stack(
+                children: [
+                  ListView(
+                    children: [
+                      if (showMissed)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: ListTileTheme(
+                            contentPadding:
+                                const EdgeInsets.only(left: 4, right: 8),
+                            child: ExpansionTile(
+                              initiallyExpanded: true,
+                              collapsedShape: const Border(),
+                              shape: const Border(),
+                              dense: true,
+                              title: ExpansionTitle(
+                                titleText: 'Missed Homeworks',
+                                boldText: false,
+                                titleTextColor: scheme.error,
+                                numberOfItems: missedHwList.length,
+                              ),
+                              children: [
+                                HomeworkList(
+                                  draggable: true,
+                                  hwList: missedHwList,
+                                  updateListView: updateView,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ExamList(
+                        showDates: false,
+                        showText: true,
+                        draggable: true,
+                        examList: examListForDay,
+                        updateView: updateView,
                       ),
-                      children: [
-                        HomeworkList(
-                          hwList: missedHwList,
-                          updateListView: updateView,
-                        )
-                      ],
+                      HomeworkList(
+                        showDates: false,
+                        showText: true,
+                        draggable: true,
+                        hwList: hwListForDay,
+                        updateListView: updateView,
+                      ),
+                      const ListBottomSpacer(),
+                      const ListBottomSpacer(),
+                    ],
+                  ),
+                  IgnorePointer(
+                    child: AnimatedContainer(
+                      duration: Durations.short3,
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color:
+                            showOverlay ? scheme.primary.withAlpha(20) : null,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: showOverlay ? scheme.primary : scheme.surface,
+                          width: showOverlay ? 4 : 0,
+                        ),
+                      ),
+                      child: showOverlay
+                          ? Center(
+                              child: Text(
+                                'Change date to ${date.formattedDate()}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            )
+                          : null,
                     ),
                   ),
-                ),
-              ExamList(
-                showDates: false,
-                showText: true,
-                examList: examListForDay,
-                updateView: updateView,
+                ],
               ),
-              HomeworkList(
-                showDates: false,
-                showText: true,
-                hwList: hwListForDay,
-                updateListView: updateView,
-              ),
-              const ListBottomSpacer(),
-              const ListBottomSpacer(),
-            ],
-          ),
+            );
+          },
         );
       },
     );

@@ -16,7 +16,7 @@ class HomeworkTile extends StatelessWidget {
     this.borderIfMissed = true,
     required this.onChangedCompletion,
     required this.onDelete,
-    required this.onEdit,
+    required this.onTap,
     this.showCompletion = true,
   });
 
@@ -25,9 +25,9 @@ class HomeworkTile extends StatelessWidget {
   final SlidableController? slidableController;
   final bool showCompletion;
   final bool borderIfMissed;
-  final Function(bool) onChangedCompletion;
-  final Function() onDelete;
-  final Function() onEdit;
+  final void Function(bool) onChangedCompletion;
+  final void Function()? onDelete;
+  final void Function() onTap;
 
   final double borderRadius = 12;
   final double padding = 5;
@@ -47,42 +47,44 @@ class HomeworkTile extends StatelessWidget {
       builder: (context, constraints) {
         double extentRatio = 120 / constraints.maxWidth;
 
-        if(extentRatio > 1){
+        if (extentRatio > 1) {
           extentRatio = 1;
         }
 
         return Slidable(
           groupTag: '0',
           controller: slidableController,
-          endActionPane: ActionPane(
-            motion: const StretchMotion(),
-            extentRatio: extentRatio,
-            children: [
-              // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
-              // workaround for flutter_slidable
-              Theme(
-                data: Theme.of(context).copyWith(
-                  outlinedButtonTheme: OutlinedButtonThemeData(
-                    style: ButtonStyle(
-                      iconColor: WidgetStatePropertyAll(
-                          Theme.of(context).colorScheme.onError),
+          endActionPane: onDelete == null
+              ? null
+              : ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: extentRatio,
+                  children: [
+                    // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
+                    // workaround for flutter_slidable
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        outlinedButtonTheme: OutlinedButtonThemeData(
+                          style: ButtonStyle(
+                            iconColor: WidgetStatePropertyAll(
+                                Theme.of(context).colorScheme.onError),
+                          ),
+                        ),
+                      ),
+                      child: SlidableAction(
+                        onPressed: (context) {
+                          HapticFeedback.lightImpact();
+                          onDelete!();
+                        },
+                        icon: Icons.delete,
+                        foregroundColor: Theme.of(context).colorScheme.onError,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(borderRadius),
+                        flex: 10,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                child: SlidableAction(
-                  onPressed: (context) {
-                    HapticFeedback.lightImpact();
-                    onDelete();
-                  },
-                  icon: Icons.delete,
-                  foregroundColor: Theme.of(context).colorScheme.onError,
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  flex: 10,
-                ),
-              ),
-            ],
-          ),
           child: Container(
             decoration: BoxDecoration(
               border: isMissed && borderIfMissed
@@ -94,12 +96,12 @@ class HomeworkTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               color: hw.completion
                   ? Theme.of(context).colorScheme.surfaceContainerLowest
-                  : Theme.of(context).colorScheme.surfaceContainer,
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: onEdit,
+                onTap: onTap,
                 borderRadius: BorderRadius.circular(borderRadius),
                 child: Opacity(
                   opacity: opacity,

@@ -291,6 +291,7 @@ class HomeworkService {
       _db.saveSequence(_sequence);
     }
 
+    NotificationSender.scheduleTommorrowNotification();
     return;
   }
 

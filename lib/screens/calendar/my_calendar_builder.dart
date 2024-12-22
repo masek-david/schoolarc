@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
@@ -18,30 +20,43 @@ CalendarBuilders<Object?> myCalendarBuilder({
   return CalendarBuilders(
     outsideBuilder: (context, day, focusedDay) {
       return showOutside
-          ? AnimatedContainer(
-              padding: padding,
-              margin: margin,
-              duration: animationDuration,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: SizedBox(
-                width: 40,
-                child: Text(
-                  day.day.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .dynamicLighten(
-                          makeItLighter:
-                              Theme.of(context).brightness != Brightness.dark,
-                          amount: 0.4,
-                        ),
+          ? RescheduleDragTarget(
+              currentDate: day,
+              updateView: updateView,
+              builder: (context, candidateData, rejectedData) {
+                if (candidateData.isNotEmpty) {
+                  HapticFeedback.selectionClick();
+                }
+
+                return AnimatedContainer(
+                  padding: padding,
+                  margin: margin,
+                  duration: animationDuration,
+                  decoration: BoxDecoration(
+                    color: candidateData.isNotEmpty
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surface,
+                    shape: BoxShape.circle,
                   ),
-                ),
-              ),
+                  child: SizedBox(
+                    width: 40,
+                    child: Text(
+                      day.day.toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .dynamicLighten(
+                              makeItLighter: Theme.of(context).brightness !=
+                                  Brightness.dark,
+                              amount: 0.4,
+                            ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             )
           : AbsorbPointer(child: SizedBox());
     },
@@ -50,44 +65,67 @@ CalendarBuilders<Object?> myCalendarBuilder({
         return SizedBox();
       }
 
-      Color color = Theme.of(context).colorScheme.secondaryContainer;
-      return AnimatedContainer(
-        padding: padding,
-        margin: margin,
-        duration: animationDuration,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
-        child: SizedBox(
-          width: 40,
-          child: Text(
-            day.day.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+      return RescheduleDragTarget(
+        currentDate: day,
+        updateView: updateView,
+        builder: (context, candidateData, rejectedData) {
+          if (candidateData.isNotEmpty) {
+            HapticFeedback.selectionClick();
+          }
+
+          return AnimatedContainer(
+            padding: padding,
+            margin: margin,
+            duration: animationDuration,
+            decoration: BoxDecoration(
+              color: candidateData.isNotEmpty
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.secondaryContainer,
+              shape: BoxShape.circle,
             ),
-          ),
-        ),
+            child: SizedBox(
+              width: 40,
+              child: Text(
+                day.day.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+          );
+        },
       );
     },
     defaultBuilder: (context, day, focusedDay) {
-      return AnimatedContainer(
-        padding: padding,
-        margin: margin,
-        duration: animationDuration,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          shape: BoxShape.circle,
-        ),
-        child: SizedBox(
-          width: 40,
-          child: Text(
-            textAlign: TextAlign.center,
-            day.day.toString(),
-          ),
-        ),
+      return RescheduleDragTarget(
+        updateView: updateView,
+        currentDate: day,
+        builder: (context, candidateData, rejectedData) {
+          if (candidateData.isNotEmpty) {
+            HapticFeedback.selectionClick();
+          }
+
+          return AnimatedContainer(
+            padding: padding,
+            margin: margin,
+            duration: animationDuration,
+            decoration: BoxDecoration(
+              color: candidateData.isNotEmpty
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surface,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              width: 40,
+              child: Text(
+                textAlign: TextAlign.center,
+                day.day.toString(),
+              ),
+            ),
+          );
+        },
       );
     },
     todayBuilder: (context, day, focusedDay) {
@@ -96,24 +134,37 @@ CalendarBuilders<Object?> myCalendarBuilder({
       }
 
       Color color = Theme.of(context).colorScheme.secondaryContainer;
-      return AnimatedContainer(
-        padding: padding.subtract(const EdgeInsets.all(2)),
-        margin: margin,
-        duration: animationDuration,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: color,
-            width: 2,
-          ),
-          shape: BoxShape.circle,
-        ),
-        child: SizedBox(
-          width: 40,
-          child: Text(
-            textAlign: TextAlign.center,
-            day.day.toString(),
-          ),
-        ),
+      return RescheduleDragTarget(
+        updateView: updateView,
+        currentDate: day,
+        builder: (context, candidateData, rejectedData) {
+          if (candidateData.isNotEmpty) {
+            HapticFeedback.selectionClick();
+          }
+
+          return AnimatedContainer(
+            padding: padding.subtract(const EdgeInsets.all(2)),
+            margin: margin,
+            duration: animationDuration,
+            decoration: BoxDecoration(
+              color: candidateData.isNotEmpty
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
+              border: Border.all(
+                color: color,
+                width: 2,
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              width: 40,
+              child: Text(
+                textAlign: TextAlign.center,
+                day.day.toString(),
+              ),
+            ),
+          );
+        },
       );
     },
     markerBuilder: (context, day, events) {

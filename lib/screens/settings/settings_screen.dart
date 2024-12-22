@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
+import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
 import 'package:school_manager/screens/settings/widgets/adaptive_showcase.dart';
+import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifications_page.dart';
-import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -84,25 +85,10 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           Divider(),
-          SettingTile(
-            label: 'Initial page',
-            text: 'The page that will be displayed when opening the app',
-            trailing: DropDownAction(
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('Home')),
-                DropdownMenuItem(value: 1, child: Text('Calendar')),
-                DropdownMenuItem(value: 2, child: Text('Homeworks')),
-                DropdownMenuItem(value: 3, child: Text('Exams')),
-              ],
-              initialValue: settings.get(Setting.initialAppPage),
-              onChanged: (value) {
-                settings.save(Setting.initialAppPage, value);
-              },
-            ),
-          ),
+          InitialAppPage(),
           SettingTile(
             label: 'Screen switching animation duration',
-            text: 'In miliseconds',
+            text: 'In miliseconds (0 disables animation)',
             icon: Icons.timelapse,
             newLineAction: SliderAction(
               inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
@@ -125,12 +111,23 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ),
+          Divider(),
+          SettingTile(
+            label: 'View app logs',
+            icon: Icons.data_array,
+            onTap: () => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const LogsScreen(),
+              ),
+            ),
+          ),
           SettingTile(
             label: 'Show debug info',
             trailing: SwitchAction(
               initialValue: settings.get(Setting.showDebugInfo),
               onChanged: (value) {
                 settings.save(Setting.showDebugInfo, value);
+                refreshTheme();
               },
             ),
           ),

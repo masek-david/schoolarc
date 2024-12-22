@@ -62,15 +62,36 @@ class BakaHwTile extends StatelessWidget {
                 : const Icon(Icons.add_circle_outline),
           ),
           Expanded(
-            child: AbsorbPointer(
-              child: HomeworkTile(
-                hw: hw,
-                borderIfMissed: false,
-                showCompletion: false,
-                onChangedCompletion: (p0) {},
-                onDelete: () {},
-                onEdit: () {},
-              ),
+            child: HomeworkTile(
+              hw: hw,
+              borderIfMissed: false,
+              showCompletion: false,
+              onDelete: null,
+              onChangedCompletion: (p0) {},
+              onTap: () {
+                showDialogAdaptive(
+                  context: context,
+                  title: Text(hw.subject?.name ?? ''),
+                  content: Text(hw.text),
+                  actions: [
+                    adaptiveDialogButton(
+                      context: context,
+                      child: Text('Close'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    adaptiveDialogButton(
+                      context: context,
+                      child: Text('Add'),
+                      onPressed: () {
+                        onAdd();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],

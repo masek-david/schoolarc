@@ -22,6 +22,7 @@ enum Setting {
   userName,
   homeShowUserName,
   showDebugInfo,
+  debugShowPerformanceOverlay,
 }
 
 class SettingModel {
@@ -111,6 +112,10 @@ class SettingsDatabase {
     Setting.showDebugInfo: SettingModel(
       defaultValue: false,
       key: 'showDebug',
+    ),
+    Setting.debugShowPerformanceOverlay: SettingModel(
+      defaultValue: true,
+      key: 'showDebugPerformance',
     ),
   };
   final _settingsBox = Hive.box('settings');

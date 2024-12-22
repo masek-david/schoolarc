@@ -4,15 +4,13 @@ fix:
 
 =============================================================================================
 
-info o bakalarich
+pridat strava login do welcome
 
-uvitaci obrazovka
+info o bakalarich
 
 widget
 
-bigger screens
-
-add teachers
+test timezones
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

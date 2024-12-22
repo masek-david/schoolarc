@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarWidget extends StatelessWidget {
+class CalendarWidget extends StatefulWidget {
   const CalendarWidget({
     super.key,
     required this.focusedDay,
     required this.selectedDay,
     required this.negativePageCount,
     required this.updateView,
-    required this.calendarBackgroundColor,
     required this.calendarFormat,
     required this.jumpToPage,
     required this.onHeaderTapped,
@@ -20,6 +20,7 @@ class CalendarWidget extends StatelessWidget {
     required this.onPageChanged,
     required this.homeworks,
     required this.exams,
+    required this.setFocusedDay,
   });
 
   final DateTime focusedDay;
@@ -27,21 +28,28 @@ class CalendarWidget extends StatelessWidget {
   final Map<DateTime, List<HomeworkDTO>> homeworks;
   final Map<DateTime, List<ExamDTO>> exams;
   final int negativePageCount;
-  final Color calendarBackgroundColor;
   final CalendarFormat calendarFormat;
+  final void Function(DateTime date) setFocusedDay;
   final void Function() updateView;
   final Function(int page) jumpToPage;
   final void Function(DateTime)? onHeaderTapped;
   final void Function(CalendarFormat)? onFormatChanged;
   final void Function(DateTime)? onPageChanged;
 
+  @override
+  State<CalendarWidget> createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  bool isHovering = false;
+
   /// used for getting number of markers
   List<Object> getEventsForDay(DateTime day) {
     final currentExams =
-        exams[DateTime.utc(day.year, day.month, day.day)] ?? [];
+        widget.exams[DateTime.utc(day.year, day.month, day.day)] ?? [];
 
     List<Object> listOfEvents = [
-      ...homeworks[DateTime.utc(day.year, day.month, day.day)] ?? [],
+      ...widget.homeworks[DateTime.utc(day.year, day.month, day.day)] ?? [],
       ...currentExams
     ];
     return listOfEvents;
@@ -50,17 +58,18 @@ class CalendarWidget extends StatelessWidget {
   int getMaxNumberOfExamsPerDay() {
     List<DateTime> days = [];
 
-    if (calendarFormat.name == 'month') {
-      days = focusedDay.toUtc().allDaysInThisMonth();
+    if (widget.calendarFormat.name == 'month') {
+      days = widget.focusedDay.toUtc().allDaysInThisMonth();
     } else {
-      days = focusedDay.toUtc().allDaysInThisWeek();
+      days = widget.focusedDay.toUtc().allDaysInThisWeek();
     }
 
     int examsCount = 0;
 
     for (DateTime date in days) {
       int examsInDate =
-          exams[DateTime.utc(date.year, date.month, date.day)]?.length ?? 0;
+          widget.exams[DateTime.utc(date.year, date.month, date.day)]?.length ??
+              0;
 
       if (examsInDate > examsCount) {
         examsCount = examsInDate;
@@ -72,68 +81,134 @@ class CalendarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxNumberOfExamsPerDay = getMaxNumberOfExamsPerDay();
+
     return SingleChildScrollView(
-      child: TableCalendar(
-        // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-        firstDay: DateTime(1),
-        lastDay: DateTime(5000),
-        focusedDay: focusedDay,
-        availableGestures: AvailableGestures.horizontalSwipe,
-        startingDayOfWeek: StartingDayOfWeek.monday,
-        calendarFormat: calendarFormat,
-        availableCalendarFormats: const {
-          CalendarFormat.week: 'Week',
-          CalendarFormat.month: 'Month',
-        },
-        rowHeight: 50 + getMaxNumberOfExamsPerDay() * 25,
-        calendarBuilders: myCalendarBuilder(
-          updateView: updateView,
-          currentDate: focusedDay,
-          showOutside: calendarFormat.name == 'week',
-        ),
-        headerStyle: HeaderStyle(
-          formatButtonVisible: false,
-          decoration: BoxDecoration(color: calendarBackgroundColor),
-        ),
-        daysOfWeekStyle: DaysOfWeekStyle(
-          decoration: BoxDecoration(color: calendarBackgroundColor),
-        ),
-        calendarStyle: CalendarStyle(
-          cellAlignment: Alignment.topCenter,
-          markersAlignment: Alignment.topCenter,
-          rowDecoration: BoxDecoration(color: calendarBackgroundColor),
-        ),
-        eventLoader: (day) {
-          return getEventsForDay(day);
-        },
-        selectedDayPredicate: (day) {
-          // Use `selectedDayPredicate` to determine which day is currently selected.
-          // If this returns true, then `day` will be marked as selected.
-
-          // Using `isSameDay` is recommended to disregard
-          // the time-part of compared DateTime objects.
-          return isSameDay(selectedDay, day);
-        },
-        onDaySelected: (selectedDayNew, focusedDayNew) {
-          if(!selectedDayNew.isSameMonth(selectedDay) && calendarFormat.name == 'month'){
-            return;
-          }
+      // physics: NeverScrollableScrollPhysics(),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          TableCalendar(
+            // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
+            firstDay: DateTime(1),
+            lastDay: DateTime(5000),
+            focusedDay: widget.focusedDay,
+            availableGestures: AvailableGestures.horizontalSwipe,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            calendarFormat: widget.calendarFormat,
+            availableCalendarFormats: const {
+              CalendarFormat.week: 'Week',
+              CalendarFormat.month: 'Month',
+            },
+            rowHeight: 50 + maxNumberOfExamsPerDay * 25,
+            calendarBuilders: myCalendarBuilder(
+              updateView: widget.updateView,
+              currentDate: widget.focusedDay,
+              showOutside: widget.calendarFormat.name == 'week',
+            ),
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+            ),
+            calendarStyle: CalendarStyle(
+              cellAlignment: Alignment.topCenter,
+              markersAlignment: Alignment.topCenter,
+            ),
+            eventLoader: (day) {
+              return getEventsForDay(day);
+            },
+            selectedDayPredicate: (day) {
+              // Use `selectedDayPredicate` to determine which day is currently selected.
+              // If this returns true, then `day` will be marked as selected.
           
-          if (!isSameDay(selectedDayNew, selectedDay)) {
-            // Call `setState()` when updating the selected day
-            DateTime now = DateTime.now();
-            // kdyz to neni utc neni to schopnej spravne porovnat
-            DateTime nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
-            int dayDifferenceFromNow =
-                selectedDayNew.difference(nowOnlyDate).inDays;
-            int correctPageIndex = negativePageCount + dayDifferenceFromNow;
-
-            jumpToPage(correctPageIndex);
-          }
-        },
-        onHeaderTapped: onHeaderTapped,
-        onFormatChanged: onFormatChanged,
-        onPageChanged: onPageChanged,
+              // Using `isSameDay` is recommended to disregard
+              // the time-part of compared DateTime objects.
+              return isSameDay(widget.selectedDay, day);
+            },
+            onDaySelected: (selectedDayNew, focusedDayNew) {
+              if (!selectedDayNew.isSameMonth(widget.selectedDay) &&
+                  widget.calendarFormat.name == 'month') {
+                return;
+              }
+          
+              if (!isSameDay(selectedDayNew, widget.selectedDay)) {
+                // Call `setState()` when updating the selected day
+                DateTime now = DateTime.now();
+                // kdyz to neni utc neni to schopnej spravne porovnat
+                DateTime nowOnlyDate =
+                    DateTime.utc(now.year, now.month, now.day);
+                int dayDifferenceFromNow =
+                    selectedDayNew.difference(nowOnlyDate).inDays;
+                int correctPageIndex =
+                    widget.negativePageCount + dayDifferenceFromNow;
+          
+                widget.jumpToPage(correctPageIndex);
+              }
+            },
+            onHeaderTapped: widget.onHeaderTapped,
+            onFormatChanged: widget.onFormatChanged,
+            onPageChanged: widget.onPageChanged,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              DragTarget(
+                onMove: (details) async {
+                  if (isHovering) {
+                    return;
+                  }
+                  isHovering = true;
+      
+                  while (isHovering) {
+                    await Future.delayed(Duration(milliseconds: 1000));
+                    if (isHovering) {
+                      HapticFeedback.lightImpact();
+                      widget.setFocusedDay(
+                        widget.focusedDay.subtract(Duration(days: 7)),
+                      );
+                    }
+                  }
+                },
+                onLeave: (data) {
+                  isHovering = false;
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return SizedBox(
+                    height: (100 + 25 * maxNumberOfExamsPerDay).toDouble(),
+                    width: 16,
+                  );
+                },
+              ),
+              DragTarget(
+                onMove: (details) async {
+                  if (isHovering) {
+                    return;
+                  }
+                  isHovering = true;
+                  
+                  while (isHovering) {
+                    await Future.delayed(Duration(milliseconds: 1000));
+                    if (isHovering) {
+                      HapticFeedback.lightImpact();
+                      widget.setFocusedDay(
+                        widget.focusedDay.add(Duration(days: 7)),
+                      );
+                    }
+                  }
+                },
+                onLeave: (data) {
+                  isHovering = false;
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return SizedBox(
+                    height: (100 + 25 * maxNumberOfExamsPerDay).toDouble(),
+                    width: 16,
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

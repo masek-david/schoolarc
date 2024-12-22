@@ -61,7 +61,9 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
           final newHw = homeworks.where((hw) => !hw.alreadySeen).toList();
           final otherHw = homeworks.where((hw) => hw.alreadySeen).toList();
           otherHw.sort((a, b) => (a.deadline.compareTo(b.deadline)));
-          otherHw.sort((a, b) => (a.alreadyAdded == b.alreadyAdded ? 0 : (a.alreadyAdded ? 1 : -1)));
+          otherHw.sort((a, b) => (a.alreadyAdded == b.alreadyAdded
+              ? 0
+              : (a.alreadyAdded ? 1 : -1)));
 
           bool showNew = newHw.isNotEmpty;
 
@@ -70,7 +72,7 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
             itemBuilder: (context, index) {
               if (index == 0 && showNew) {
                 return Card(
-                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

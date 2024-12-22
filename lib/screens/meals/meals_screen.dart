@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
@@ -55,12 +56,18 @@ class _MealsScreenState extends State<MealsScreen> {
           } else if (!snapshot.hasData) {
             return const Center(child: Text('No meals found'));
           }
+
+          int itemCount = snapshot.data?.keys.length ?? 1;
+          if (itemCount == 0) {
+            itemCount = 1;
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
               refresh();
             },
             child: ListView.builder(
-              itemCount: snapshot.data?.keys.length ?? 1,
+              itemCount: itemCount,
               itemBuilder: (context, index) {
                 final date =
                     todayLocal000.toUtc().add(Duration(days: index)).toLocal();
@@ -81,6 +88,13 @@ class _MealsScreenState extends State<MealsScreen> {
                               : empty
                                   ? 'No meals for ${date.dateText().toLowerCase()}'
                                   : 'Meals for ${date.dateText().toLowerCase()}',
+                          actions: [
+                            if(isLoading) LoadingIconButton(
+                              icon: Icons.refresh,
+                              onTap: () async {},
+                              isLoading: true,
+                            ),
+                          ],
                         ),
                         if (!empty)
                           ...mealsForToday.map((meal) {
