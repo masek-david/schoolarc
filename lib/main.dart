@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_model.dart';
@@ -10,6 +13,22 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details); // Current error
+
+    String text =
+        '${details.exception.toString()}\n\n ${details.stack.toString()}\nlibrary: ${details.library}\n\ncontext: ';
+
+    text += details.context?.value.toString() ?? '';
+
+    logsService.save(text);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    logsService
+        .save('platform dispatcher: ${error.toString()}\n${stack.toString()}');
+    return true;
+  };
+
   // init hive
   await Hive.initFlutter();
 
@@ -19,6 +38,8 @@ void main() async {
   Hive.registerAdapter(SubjectAdapter());
   Hive.registerAdapter(TimeTableAdapter());
   Hive.registerAdapter(LessonTimesAdapter());
+  Hive.registerAdapter(LogAdapter());
+
   await Hive.openBox('tableBox');
   await Future.wait([
     Hive.openBox('subjectBox'),
@@ -33,6 +54,7 @@ void main() async {
     Hive.openBox('bakaSeenHw'),
 
     Hive.openBox('settings'),
+    Hive.openBox('logBox'),
   ]);
 
   await AwesomeNotifications().initialize(

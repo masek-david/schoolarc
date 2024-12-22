@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //     ? FloatingActionButton.extended(
           //         onPressed: () {},
           //         label: const Text('test'),
-          //         icon: const Icon(Icons.schedule),
+          //         icon: const Icon(Icons.bug_report),
           //       )
           //     : null,
           appBar: WideScreenAppBar(

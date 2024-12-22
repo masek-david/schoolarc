@@ -78,7 +78,7 @@ class ExamTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(35),
                 color: exam.completion
                     ? Theme.of(context).colorScheme.surfaceContainerLowest
-                    : Theme.of(context).colorScheme.surfaceContainer,
+                    : Theme.of(context).colorScheme.surfaceContainerLow,
               ),
               child: Material(
                 color: Colors.transparent,

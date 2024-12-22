@@ -67,6 +67,12 @@ class MealsCard extends StatelessWidget {
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No meals found'));
         }
+
+        int pagesCount = snapshot.data?.keys.length ?? 1;
+        if (pagesCount == 0) {
+          pagesCount = 1;
+        }
+
         return Card(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -75,7 +81,7 @@ class MealsCard extends StatelessWidget {
                 animateFirstPage: true,
                 controller: _pageController,
                 animationDuration: Durations.medium2,
-                itemCount: snapshot.data?.keys.length ?? 1,
+                itemCount: pagesCount,
                 itemBuilder: (context, index) {
                   final date = todayLocal000
                       .toUtc()
@@ -116,7 +122,7 @@ class MealsCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (empty) SizedBox(height: 8),
+                        // if (empty) SizedBox(height: 8),
                         if (!empty)
                           ...mealsForToday.map((meal) {
                             return MealTile(meal: meal);
@@ -127,18 +133,19 @@ class MealsCard extends StatelessWidget {
                 },
               ),
               if (snapshot.data?.keys.length != null)
-                SmoothPageIndicator(
-                  controller: _pageController,
-                  count: snapshot.data?.keys.length ?? 0,
-                  effect: ScrollingDotsEffect(
-                    activeDotColor: Theme.of(context).colorScheme.tertiary,
-                    dotColor:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    maxVisibleDots: 7,
-                    dotHeight: 4,
-                    dotWidth: 16,
+                if (snapshot.data!.keys.length > 1)
+                  SmoothPageIndicator(
+                    controller: _pageController,
+                    count: snapshot.data?.keys.length ?? 0,
+                    effect: ScrollingDotsEffect(
+                      activeDotColor: Theme.of(context).colorScheme.tertiary,
+                      dotColor:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      maxVisibleDots: 7,
+                      dotHeight: 4,
+                      dotWidth: 16,
+                    ),
                   ),
-                ),
               const SizedBox(height: 5),
             ],
           ),

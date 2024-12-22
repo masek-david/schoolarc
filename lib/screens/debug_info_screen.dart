@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
@@ -33,15 +34,22 @@ class DbInfoScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: subjectsDb.entries.map((entry) {
                 var item = entry.value;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('${entry.key.toString()} '),
-                    const SizedBox(width: 20),
-                    Text(item.shortcut),
-                    const SizedBox(width: 20),
-                    Expanded(child: Text(item.name)),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        child: Text(entry.key.toString()),
+                      ),
+                      SizedBox(
+                        width: 60,
+                        child: Text(item.shortcut),
+                      ),
+                      Expanded(child: Text(item.name)),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
@@ -54,17 +62,29 @@ class DbInfoScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: homeworkDb.entries.map((entry) {
                 var item = entry.value;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(entry.key.toString()),
-                    const SizedBox(width: 20),
-                    Text('pr.:  ${item.priority}'),
-                    const SizedBox(width: 20),
-                    Expanded(child: Text(item.text)),
-                    if (item.completion) const Text('(completed)')
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        child: Text(entry.key.toString()),
+                      ),
+                      SizedBox(
+                        width: 30,
+                        child: Text(
+                          item.priority.toString(),
+                          style: TextStyle(
+                            color: TaskPriority(item.priority).color,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Text(item.text)),
+                      if (item.completion) const Text('(completed)')
+                    ],
+                  ),
                 );
               }).toList(),
             ),
@@ -77,16 +97,28 @@ class DbInfoScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: examDb.entries.map((entry) {
                 var item = entry.value;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(entry.key.toString()),
-                    const SizedBox(width: 20),
-                    Text('pr.:  ${item.priority}'),
-                    const SizedBox(width: 20),
-                    Expanded(child: Text(item.text)),
-                    if (item.completion) const Text('(completed)')
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        child: Text(entry.key.toString()),
+                      ),
+                      SizedBox(
+                        width: 30,
+                        child: Text(
+                          item.priority.toString(),
+                          style: TextStyle(
+                            color: TaskPriority(item.priority).color,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Text(item.text)),
+                      if (item.completion) const Text('(completed)')
+                    ],
+                  ),
                 );
               }).toList(),
             ),

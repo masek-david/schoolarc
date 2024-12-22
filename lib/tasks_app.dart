@@ -12,6 +12,7 @@ import 'package:school_manager/services/exams/exam_service.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/services/homeworks/hw_service.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/services/logs_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_service.dart';
@@ -40,6 +41,7 @@ final timetableDatabase = TimeTableDatabase();
 final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
+final logsService = LogsService();
 
 Future<void> addTask(
   BuildContext context, {
@@ -377,7 +379,7 @@ class _TasksAppState extends State<TasksApp> {
 
   void firstTimeOpeningApp() {
     // TODO - when done simply change the key of the value
-    showingTutorial = true;
+    // showingTutorial = true;
   }
 
   void refreshTheme() {
@@ -487,6 +489,7 @@ class _TasksAppState extends State<TasksApp> {
           locale: const Locale('en', 'GB'),
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: settings.get(Setting.showDebugInfo) && settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(colorScheme: light),
           darkTheme: ThemeData(colorScheme: dark),
           themeMode: themeMode,

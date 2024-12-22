@@ -9,6 +9,7 @@ class HomeworkList extends StatelessWidget {
     super.key,
     required this.hwList,
     required this.updateListView,
+    this.draggable = false,
     this.showText = false,
     this.showDates = true,
     this.textFull = 'Homeworks',
@@ -17,6 +18,7 @@ class HomeworkList extends StatelessWidget {
 
   final List<HomeworkDTO> hwList;
   final Function() updateListView;
+  final bool draggable;
   final bool showText;
   final bool showDates;
   final String textFull;
@@ -40,6 +42,7 @@ class HomeworkList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: AnimatedCompletionTile(
               hw: hw,
+              draggable: draggable,
               showDate: showDates,
               onChangedCompletion: (value) =>
                   changeCompletion(hw.dbIndex, value),

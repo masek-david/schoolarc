@@ -8,6 +8,7 @@ class AnimatedCompletionTile extends StatefulWidget {
   const AnimatedCompletionTile({
     super.key,
     this.showDate = true,
+    this.draggable = false,
     required this.hw,
     this.slidableController,
     required this.onAnimationEnd,
@@ -18,6 +19,7 @@ class AnimatedCompletionTile extends StatefulWidget {
 
   final HomeworkDTO hw;
   final bool showDate;
+  final bool draggable;
   final SlidableController? slidableController;
   final Function onAnimationEnd;
   final Function onDelete;
@@ -95,9 +97,8 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
           child: ShaderMask(
             blendMode: BlendMode.srcOver,
             shaderCallback: (bounds) {
-              final color = 
-                  widget.hw.priority.getColor(context).withAlpha(200);
-              
+              final color = widget.hw.priority.getColor(context).withAlpha(200);
+
               return RadialGradient(
                 colors: [
                   Colors.transparent,
@@ -113,17 +114,37 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
           ),
         );
       },
-      child: HomeworkTile(
-        showDeadline: widget.showDate,
-        hw: widget.hw,
-        slidableController: widget.slidableController,
-        onChangedCompletion: (value) {
-          widget.onChangedCompletion(value);
-          playAnimation(value);
-        },
-        onDelete: () => widget.onDelete(),
-        onEdit: () => widget.onEdit(),
-      ),
+      child: widget.draggable
+          ? LayoutBuilder(
+              builder: (context, constraints) {
+                return LongPressDraggable(
+                  data: widget.hw,
+                  feedback: SizedBox(
+                    width: constraints.maxWidth,
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: buildTile(),
+                    ),
+                  ),
+                  child: buildTile(),
+                );
+              },
+            )
+          : buildTile(),
+    );
+  }
+
+  Widget buildTile() {
+    return HomeworkTile(
+      showDeadline: widget.showDate,
+      hw: widget.hw,
+      slidableController: widget.slidableController,
+      onChangedCompletion: (value) {
+        widget.onChangedCompletion(value);
+        playAnimation(value);
+      },
+      onDelete: () => widget.onDelete(),
+      onTap: () => widget.onEdit(),
     );
   }
 }

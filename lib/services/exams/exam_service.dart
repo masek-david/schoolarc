@@ -61,6 +61,8 @@ class ExamService {
     _sequence[oldPriority]!.removeAt(oldIndex);
     _sequence[newPriority]!.insert(newIndex, movedExamDbIndex);
     _db.saveSequence(_sequence);
+
+    NotificationSender.scheduleTommorrowNotification();
   }
 
   List<ExamDTO> getForDay(DateTime date, BuildContext? context) {
@@ -235,7 +237,7 @@ class ExamService {
     required String text,
     required int dbIndex,
     required String? description,
-  }) async{
+  }) async {
     int oldPriority = _examDbIndexMap[dbIndex]!.priority;
 
     bool isAlreadyCompleted = date.isBeforeToday();
@@ -269,6 +271,7 @@ class ExamService {
     }
 
     _db.saveSequence(_sequence);
+    NotificationSender.scheduleTommorrowNotification();
     return;
   }
 

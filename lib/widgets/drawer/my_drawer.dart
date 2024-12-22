@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/meals/meals_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
@@ -42,86 +43,121 @@ class MyDrawer extends StatelessWidget {
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
               child: Text('School app', style: TextStyle(fontSize: 20)),
             ),
-            MyDrawerButton(
-              text: 'Subjects',
-              icon: const Icon(Icons.school_outlined),
-              onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => const SubjectsScreen(),
-                  ),
-                );
-              },
-            ),
-            MyDrawerButton(
-              text: 'Timetable',
-              icon: const Icon(Icons.calendar_month),
-              onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => const TimetableScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(indent: 28, endIndent: 28),
-            MyDrawerButton(
-              text: 'Current Timetable',
-              icon: const Icon(Icons.calendar_today_rounded),
-              onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => const CurrentTimetableScreen(),
-                  ),
-                );
-              },
-            ),
-            MyDrawerButton(
-              text: 'Homeworks from Bakaláři',
-              icon: const Icon(Icons.home_work_outlined),
-              onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => BakaHomeworksScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(indent: 28, endIndent: 28),
-            MyDrawerButton(
-              text: 'Meals',
-              icon: const Icon(Icons.food_bank_outlined),
-              onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => MealsScreen(),
-                  ),
-                );
-              },
-            ),
-            if (showDebug) const Divider(indent: 28, endIndent: 28),
-            if (kDebugMode || showDebug)
-              SettingTile(
-                label: 'Show debug info',
-                trailing: SwitchAction(
-                  initialValue: settings.get(Setting.showDebugInfo),
-                  onChanged: (value) {
-                    settings.save(Setting.showDebugInfo, value);
-                  },
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    MyDrawerButton(
+                      text: 'Subjects',
+                      icon: const Icon(Icons.school_outlined),
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (context) => const SubjectsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    MyDrawerButton(
+                      text: 'Timetable',
+                      icon: const Icon(Icons.calendar_month),
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (context) => const TimetableScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(indent: 28, endIndent: 28),
+                    MyDrawerButton(
+                      text: 'Current Timetable',
+                      icon: const Icon(Icons.calendar_today_rounded),
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const CurrentTimetableScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    MyDrawerButton(
+                      text: 'Homeworks from Bakaláři',
+                      icon: const Icon(Icons.home_work_outlined),
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (context) => BakaHomeworksScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(indent: 28, endIndent: 28),
+                    MyDrawerButton(
+                      text: 'Meals',
+                      icon: const Icon(Icons.food_bank_outlined),
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (context) => MealsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    if (kDebugMode || showDebug)
+                      const Divider(indent: 28, endIndent: 28),
+                    if (kDebugMode || showDebug)
+                      SettingTile(
+                        label: 'Show debug info',
+                        trailing: SwitchAction(
+                          initialValue: settings.get(Setting.showDebugInfo),
+                          onChanged: (value) {
+                            settings.save(Setting.showDebugInfo, value);
+                            setThemeMode();
+                          },
+                        ),
+                      ),
+                    if (showDebug)
+                      SettingTile(
+                        label: 'Show performance overlay',
+                        trailing: SwitchAction(
+                          initialValue:
+                              settings.get(Setting.debugShowPerformanceOverlay),
+                          onChanged: (value) {
+                            settings.save(
+                                Setting.debugShowPerformanceOverlay, value);
+                            setThemeMode();
+                          },
+                        ),
+                      ),
+                    if (showDebug)
+                      MyDrawerButton(
+                          text: 'View database',
+                          icon: const Icon(Icons.data_array),
+                          onTap: () {
+                            navigatorKey.currentState?.push(
+                              MaterialPageRoute(
+                                builder: (context) => DbInfoScreen(),
+                              ),
+                            );
+                          }),
+                    if (showDebug)
+                      MyDrawerButton(
+                        text: 'View logs',
+                        icon: const Icon(Icons.bug_report),
+                        onTap: () {
+                          navigatorKey.currentState?.push(
+                            MaterialPageRoute(
+                              builder: (context) => LogsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ),
-            if (showDebug)
-              MyDrawerButton(
-                  text: 'View database',
-                  icon: const Icon(Icons.data_array),
-                  onTap: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => DbInfoScreen(),
-                      ),
-                    );
-                  }),
-            Spacer(),
+            ),
             MyDrawerButton(
               text: 'View tutorial',
               icon: const Icon(Icons.school),

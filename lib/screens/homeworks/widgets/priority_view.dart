@@ -114,7 +114,7 @@ class PriorityView extends StatelessWidget {
                               .then(
                         (value) => updateView(),
                       ),
-                      onEdit: () => editHw(context, hw.dbIndex).then(
+                      onTap: () => editHw(context, hw.dbIndex).then(
                         (value) => updateView(),
                       ),
                     ),
