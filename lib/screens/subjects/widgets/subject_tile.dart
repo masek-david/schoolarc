@@ -78,12 +78,12 @@ class SubjectTile extends StatelessWidget {
                 Expanded(
                   child: Text(subject.name),
                 ),
-                if (subject.bakaId != null)
+                if (subject.isFromBakalari)
                   Icon(
                     Icons.hexagon,
                     color: Theme.of(context).colorScheme.surfaceBright,
                   ),
-                if (subject.bakaId != null &&
+                if (subject.isFromBakalari &&
                     settings.get(Setting.showDebugInfo))
                   Text(subject.bakaId ?? '')
               ],

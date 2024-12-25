@@ -48,6 +48,7 @@ class DbInfoScreen extends StatelessWidget {
                         child: Text(item.shortcut),
                       ),
                       Expanded(child: Text(item.name)),
+                      if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
                 );

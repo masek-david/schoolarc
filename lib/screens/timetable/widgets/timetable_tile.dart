@@ -64,7 +64,7 @@ class TimetableTile extends StatelessWidget {
                     if (lesson?.subject?.dbIndex != null &&
                         settings.get(Setting.showDebugInfo))
                       Text('db: ${lesson?.subject?.dbIndex.toString()}'),
-                    if (lesson?.subject?.bakaId != null &&
+                    if (lesson?.subject?.isFromBakalari == true &&
                         settings.get(Setting.showDebugInfo))
                       Text('baka: ${lesson?.subject?.bakaId}'),
                     const Spacer(),

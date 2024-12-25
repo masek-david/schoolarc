@@ -17,6 +17,9 @@ class SubjectAdapter extends TypeAdapter<Subject> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Subject(
+      fireId: fields[3] as String?,
+      timestamp: fields[4] as DateTime?,
+      isDeleted: fields[5] == null ? false : fields[5] as bool,
       name: fields[0] as String,
       shortcut: fields[1] as String,
       bakaId: fields[2] as String?,
@@ -26,13 +29,19 @@ class SubjectAdapter extends TypeAdapter<Subject> {
   @override
   void write(BinaryWriter writer, Subject obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.shortcut)
       ..writeByte(2)
-      ..write(obj.bakaId);
+      ..write(obj.bakaId)
+      ..writeByte(3)
+      ..write(obj.fireId)
+      ..writeByte(4)
+      ..write(obj.timestamp)
+      ..writeByte(5)
+      ..write(obj.isDeleted);
   }
 
   @override

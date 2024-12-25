@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/meal_model.dart';
@@ -7,6 +9,7 @@ import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
+import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
@@ -33,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
   late Future<TimeTableDTO?>? bakaTimetable;
   late Future<Map<DateTime, List<Meal>>>? meals;
+
+  late final fire = FirestoreService();
 
   void updateView() {
     setState(() {
@@ -130,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           // floatingActionButton: kDebugMode
           //     ? FloatingActionButton.extended(
-          //         onPressed: () {},
+          //         onPressed: () {
+          //         },
           //         label: const Text('test'),
           //         icon: const Icon(Icons.bug_report),
           //       )

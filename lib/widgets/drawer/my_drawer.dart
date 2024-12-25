@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/meals/meals_screen.dart';
 import 'package:school_manager/services/settings_database.dart';

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/services/exams/exam_service.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/services/homeworks/hw_service.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/logs_service.dart';
@@ -18,6 +19,7 @@ import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_service.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/models/task_model.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -42,6 +44,7 @@ final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
+final firestoreService = FirestoreService();
 
 Future<void> addTask(
   BuildContext context, {
@@ -379,7 +382,7 @@ class _TasksAppState extends State<TasksApp> {
 
   void firstTimeOpeningApp() {
     // TODO - when done simply change the key of the value
-    // showingTutorial = true;
+    showingTutorial = false;
   }
 
   void refreshTheme() {
@@ -446,6 +449,7 @@ class _TasksAppState extends State<TasksApp> {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         final int dynamicSchemeVariant =
             settings.get(Setting.themeDynamicSchemeVariantInt);
+        final useOled = settings.get(Setting.themeUseOled);
 
         var defaultThemeLight = ColorScheme.fromSeed(
           seedColor: userColor,
@@ -460,7 +464,7 @@ class _TasksAppState extends State<TasksApp> {
               DynamicSchemeVariant.values[dynamicSchemeVariant],
         );
 
-        if (settings.get(Setting.themeUseMaterial)) {
+        if (settings.get(Setting.themeUseDeviceColor)) {
           if (lightDynamic != null && darkDynamic != null) {
             defaultThemeLight = lightDynamic;
             defaultThemeDark = darkDynamic;
@@ -473,7 +477,14 @@ class _TasksAppState extends State<TasksApp> {
         );
 
         final light = schemes.$1;
-        final dark = schemes.$2;
+        final dark = schemes.$2.copyWith(
+          surface: useOled ? Colors.black : null,
+          surfaceContainer: useOled ? Colors.black : null,
+          surfaceContainerLow: useOled ? schemes.$2.surfaceContainerLow.darken(0.05) : null,
+          surfaceContainerHigh: useOled ? schemes.$2.surfaceContainerHigh.darken(0.05) : null,
+          surfaceContainerHighest: useOled ? schemes.$2.surfaceContainerHighest.darken(0.05) : null,
+          surfaceContainerLowest: useOled ? schemes.$2.surfaceContainerLowest.darken(0.02) : null,
+        );
 
         return MaterialApp(
           navigatorKey: navigatorKey,
@@ -489,7 +500,8 @@ class _TasksAppState extends State<TasksApp> {
           locale: const Locale('en', 'GB'),
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
-          showPerformanceOverlay: settings.get(Setting.showDebugInfo) && settings.get(Setting.debugShowPerformanceOverlay),
+          showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
+              settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(colorScheme: light),
           darkTheme: ThemeData(colorScheme: dark),
           themeMode: themeMode,

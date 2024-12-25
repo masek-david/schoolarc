@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
@@ -31,7 +32,15 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
     }
 
     return HomeworkDTO(
-      subject: SubjectDTO(name: 'Subject', shortcut: 'Hw', dbIndex: 0),
+      subject: SubjectDTO(
+        name: 'Subject',
+        shortcut: 'Hw',
+        dbIndex: 0,
+        isDeleted: false,
+        bakaId: null,
+        fireId: null,
+        timestamp: Timestamp.now(),
+      ),
       text: text,
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
@@ -97,8 +106,7 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
                       padding: const EdgeInsets.all(8.0),
                       child: AnimatedCompletionTile(
                         hw: e,
-                        slidableController:
-                            e.dbIndex == 0 ? _controller : null,
+                        slidableController: e.dbIndex == 0 ? _controller : null,
                         onAnimationEnd: () {},
                         onChangedCompletion: (p0) {
                           if (p0) {

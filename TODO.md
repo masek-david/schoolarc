@@ -3,8 +3,11 @@ fix:
 
 
 =============================================================================================
+pridat permanent delete
 
 pridat strava login do welcome
+
+add oled
 
 info o bakalarich
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/baka_homeworks.dart/baka_hw_tile.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/error_tile.dart';

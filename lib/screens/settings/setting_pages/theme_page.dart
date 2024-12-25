@@ -18,7 +18,7 @@ class ThemePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool customColorEnabled = settings.get(Setting.themeUseMaterial) == false;
+    bool customColorEnabled = settings.get(Setting.themeUseDeviceColor) == false;
 
     return Scaffold(
       appBar: AppBar(),
@@ -45,9 +45,20 @@ class ThemePage extends StatelessWidget {
           SettingTile(
             label: 'Use device colors',
             trailing: SwitchAction(
-              initialValue: settings.get(Setting.themeUseMaterial),
+              initialValue: settings.get(Setting.themeUseDeviceColor),
               onChanged: (value) {
-                settings.save(Setting.themeUseMaterial, value);
+                settings.save(Setting.themeUseDeviceColor, value);
+                refreshTheme();
+              },
+            ),
+          ),
+          SettingTile(
+            label: 'OLED black',
+            text: 'Works only in dark mode',
+            trailing: SwitchAction(
+              initialValue: settings.get(Setting.themeUseOled),
+              onChanged: (value) {
+                settings.save(Setting.themeUseOled, value);
                 refreshTheme();
               },
             ),
