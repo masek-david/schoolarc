@@ -57,6 +57,9 @@ class ExamDatabase {
         date: exam.date,
         priority: exam.priority,
         completion: value,
+        fireId: exam.fireId,
+        isDeleted: exam.isDeleted,
+        timestamp: DateTime.now(),
       ),
     );
   }

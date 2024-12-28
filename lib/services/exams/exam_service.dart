@@ -208,6 +208,9 @@ class ExamService {
     required SubjectDTO? subject,
     required String text,
     required String? description,
+    required String? fireId,
+    required bool isDeleted,
+    required DateTime? timestamp,
   }) async {
     Exam newExam = Exam(
       subjectDbIndex: subject?.dbIndex,
@@ -216,6 +219,9 @@ class ExamService {
       date: date,
       priority: priority,
       completion: date.isBeforeToday(),
+      fireId: fireId,
+      isDeleted: false,
+      timestamp: timestamp ?? DateTime.now(),
     );
     int dbIndex = await _db.addExam(newExam);
     _examDbIndexMap[dbIndex] = newExam;
@@ -237,6 +243,9 @@ class ExamService {
     required String text,
     required int dbIndex,
     required String? description,
+    required String? fireId,
+    required bool isDeleted,
+    required DateTime? timestamp,
   }) async {
     int oldPriority = _examDbIndexMap[dbIndex]!.priority;
 
@@ -248,6 +257,9 @@ class ExamService {
       date: date,
       priority: priority,
       completion: isAlreadyCompleted,
+      fireId: fireId,
+      isDeleted: isDeleted,
+      timestamp: timestamp ?? DateTime.now(),
     );
 
     _db.editExam(dbIndex, editedExam);

@@ -79,27 +79,58 @@ class SubjectService {
     return list;
   }
 
-  Future<SubjectDTO> addNewSubject(Subject subject, {Timestamp? timestamp}) async {
-    int dbIndex = await _db.addSubject(subject.copyWith(timestamp: timestamp?.toDate()));
+  Future<SubjectDTO> addNewSubject(Subject subject,
+      {Timestamp? timestamp}) async {
+    final timestampToSave =
+        timestamp != null ? timestamp.toDate() : DateTime.now();
 
-    _sequence.add(dbIndex);
-    _db.saveSequence(_sequence);
+    int dbIndex = await _db.addSubject(
+      subject.copyWith(timestamp: timestampToSave),
+    );
+
+    if (!subject.isDeleted) {
+      _sequence.add(dbIndex);
+      _db.saveSequence(_sequence);
+    }
     _subjectDbIndexMap = _db.getDatabase();
 
-    return subject.convertToDTO(dbIndex).copyWith(timestamp: timestamp);
+    return subject.convertToDTO(dbIndex).copyWith(
+          timestamp: Timestamp.fromDate(timestampToSave),
+        );
   }
 
-  void editSubject(SubjectDTO editedSubject, {Timestamp? timestamp}) {
+  /// assign timestamp manually
+  void editSubject(SubjectDTO editedSubject) {
+    bool oldIsDeleted = _db.getSubject(editedSubject.dbIndex).isDeleted;
+
+    _db.saveEditedSubject(editedSubject.dbIndex, editedSubject.convert());
+
+    if (oldIsDeleted != editedSubject.isDeleted) {
+      if (editedSubject.isDeleted) {
+        _sequence.remove(editedSubject.dbIndex);
+      } else {
+        _sequence.add(editedSubject.dbIndex);
+      }
+
+      _db.saveSequence(_sequence);
+    }
+  }
+
+  void deleteSubject(int dbIndex,
+      {DateTime? timestamp, bool nowIsDeleted = true}) {
+    final subject = _db.getSubject(dbIndex);
+
     _db.saveEditedSubject(
-      editedSubject.dbIndex,
-      editedSubject.convert().copyWith(
-            timestamp: timestamp?.toDate(),
-          ),
+      dbIndex,
+      subject.copyWith(
+        isDeleted: nowIsDeleted,
+        timestamp: timestamp ?? DateTime.now(),
+      ),
     );
   }
 
-  void deleteSubject(int dbIndex) {
-    _db.deleteSubject(dbIndex);
+  void revertDelete(int dbIndex, {DateTime? timestamp}) {
+    deleteSubject(dbIndex, timestamp: timestamp, nowIsDeleted: false);
   }
 
   void deleteAllSubjects() {
@@ -110,11 +141,7 @@ class SubjectService {
     );
   }
 
-  void revertDelete(int dbIndex) {
-    _db.deleteSubject(dbIndex, isDeleted: false);
-  }
-
-  void addTimestamp(Timestamp timestamp, int dbIndex){
+  void addTimestamp(Timestamp timestamp, int dbIndex) {
     _db.addTimestamp(timestamp, dbIndex);
   }
 

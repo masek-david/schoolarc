@@ -10,6 +10,8 @@ import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
 import 'package:school_manager/services/firestore/firestore_service.dart';
+import 'package:school_manager/services/homeworks/hw_database.dart';
+import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
@@ -133,14 +135,16 @@ class _HomeScreenState extends State<HomeScreen> {
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
-          // floatingActionButton: kDebugMode
-          //     ? FloatingActionButton.extended(
-          //         onPressed: () {
-          //         },
-          //         label: const Text('test'),
-          //         icon: const Icon(Icons.bug_report),
-          //       )
-          //     : null,
+          floatingActionButton: kDebugMode
+              ? FloatingActionButton.extended(
+                  onPressed: () {
+                    HomeworksDatabase().deleteAllFromDb();
+                    SubjectDatabase().deleteAllFromDisk();
+                  },
+                  label: const Text('test'),
+                  icon: const Icon(Icons.bug_report),
+                )
+              : null,
           appBar: WideScreenAppBar(
             isWideScreen: isWide,
             leading:

@@ -43,6 +43,9 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
       completion: false,
       priority: TaskPriority(index),
       dbIndex: index,
+      fireId: '',
+      timestamp: Timestamp.now(),
+      isDeleted: false,
     );
   });
 

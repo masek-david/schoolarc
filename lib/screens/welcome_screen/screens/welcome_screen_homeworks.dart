@@ -47,6 +47,9 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
       completion: false,
       priority: TaskPriority(index),
       dbIndex: index,
+      fireId: '',
+      timestamp: Timestamp.now(),
+      isDeleted: false,
     );
   });
 

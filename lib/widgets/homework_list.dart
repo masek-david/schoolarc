@@ -45,9 +45,9 @@ class HomeworkList extends StatelessWidget {
               draggable: draggable,
               showDate: showDates,
               onChangedCompletion: (value) =>
-                  changeCompletion(hw.dbIndex, value),
+                  changeCompletion(hw, value),
               onDelete: () =>
-                  deleteHw(context, hw.dbIndex, () => updateListView()).then(
+                  deleteHw(context, hw, () => updateListView()).then(
                 (value) => updateListView(),
               ),
               onEdit: () => editHw(context, hw.dbIndex).then(

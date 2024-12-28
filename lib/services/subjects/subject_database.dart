@@ -32,31 +32,19 @@ class SubjectDatabase {
     _subjectBox.put(dbIndex, newSubject);
   }
 
-  void deleteSubject(int dbIndex, {bool isDeleted = true}) {
-    final hw = getSubject(dbIndex);
-
-    _subjectBox.put(
-      dbIndex,
-      hw.copyWith(
-        isDeleted: isDeleted,
-        timestamp: Timestamp.now().toDate(),
-      ),
-    );
-  }
-
   void addTimestamp(Timestamp timestamp, int dbIndex) {
     final hw = getSubject(dbIndex);
 
     _subjectBox.put(
       dbIndex,
       hw.copyWith(
-        timestamp: Timestamp.now().toDate(),
+        timestamp: timestamp.toDate(),
       ),
     );
   }
 
-  void hardDeleteAll() {
-    _subjectBox.deleteAll(_subjectBox.keys);
-    _sequenceBox.deleteAll(_sequenceBox.keys);
+  void deleteAllFromDisk() {
+    _subjectBox.deleteFromDisk();
+    _sequenceBox.deleteFromDisk();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
@@ -28,14 +29,15 @@ class RescheduleDragTarget extends StatelessWidget {
         if (details.data.runtimeType == HomeworkDTO) {
           final hw = details.data as HomeworkDTO;
           if (!hw.deadline.isSameDay(currentDate)) {
-            await homeworkService.saveEditedHW(
-              date: currentDate.toLocal(),
-              priority: hw.priority.index,
-              subject: hw.subject,
-              text: hw.text,
-              description: hw.description,
-              dbIndex: hw.dbIndex,
+            await homeworkService.edit(
+              hw
+                  .copyWith(
+                      deadline: currentDate.toLocal(),
+                      timestamp: Timestamp.now())
+                  .convert(),
+              hw.dbIndex,
             );
+
             updateView();
           }
         }
@@ -49,6 +51,9 @@ class RescheduleDragTarget extends StatelessWidget {
               text: exam.text,
               description: exam.description,
               dbIndex: exam.dbIndex,
+              fireId: exam.fireId,
+              isDeleted: exam.isDeleted,
+              timestamp: DateTime.now(),
             );
             updateView();
           }

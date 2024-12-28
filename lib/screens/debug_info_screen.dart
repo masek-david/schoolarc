@@ -48,7 +48,15 @@ class DbInfoScreen extends StatelessWidget {
                         child: Text(item.shortcut),
                       ),
                       Expanded(child: Text(item.name)),
-                      if (entry.value.isDeleted) Icon(Icons.delete),
+                      if (entry.value.isDeleted)
+                        IconButton(
+                          onPressed: () {
+                            final seq = subjectDatabase.getSequence();
+                            seq.remove(entry.key);
+                            subjectDatabase.saveSequence(seq);
+                          },
+                          icon: Icon(Icons.delete),
+                        )
                     ],
                   ),
                 );
@@ -83,7 +91,8 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.completion) const Text('(completed)')
+                      if (item.completion) const Text('(completed)'),
+                      if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
                 );

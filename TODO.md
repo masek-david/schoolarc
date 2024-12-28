@@ -5,9 +5,9 @@ fix:
 =============================================================================================
 pridat permanent delete
 
-pridat strava login do welcome
+pridat export a import dat
 
-add oled
+pridat strava login do welcome
 
 info o bakalarich
 

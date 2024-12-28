@@ -1,8 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
@@ -72,6 +74,9 @@ Future<void> addTask(
           completion: false,
           priority: TaskPriority(priority),
           dbIndex: 0,
+          fireId: null,
+          isDeleted: false,
+          timestamp: Timestamp.now(),
         );
       },
     ),
@@ -82,19 +87,26 @@ Future<void> addTask(
   }
 
   if (isHomework) {
-    await homeworkService.saveNewHW(
-      date: newTask!.deadline,
+    await homeworkService.saveNew(Homework(
+      deadline: newTask!.deadline,
       priority: newTask!.priority.index,
-      subject: newTask!.subject,
+      subjectDbIndex: newTask!.subject?.dbIndex,
       text: newTask!.text,
+      completion: false,
       description: newTask!.description,
-    );
+      fireId: newTask!.fireId,
+      isDeleted: newTask!.isDeleted,
+      timestamp: null,
+    ));
   } else {
     await examService.saveNewExam(
       date: newTask!.deadline,
       priority: newTask!.priority.index,
       subject: newTask!.subject,
       text: newTask!.text,
+      fireId: newTask!.fireId,
+      isDeleted: newTask!.isDeleted,
+      timestamp: DateTime.now(),
       description: newTask!.description,
     );
   }
@@ -129,13 +141,9 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
     ),
   );
 
-  await homeworkService.saveEditedHW(
-    date: hw.deadline,
-    priority: hw.priority.index,
-    subject: hw.subject,
-    text: hw.text,
-    description: hw.description,
-    dbIndex: dbIndex,
+  await homeworkService.edit(
+    hw.copyWith(timestamp: Timestamp.now()).convert(),
+    dbIndex,
   );
 
   return;
@@ -174,26 +182,29 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
     text: exam.text,
     description: exam.description,
     dbIndex: dbIndex,
+    fireId: exam.fireId,
+    isDeleted: exam.isDeleted,
+    timestamp: DateTime.now(),
   );
 
   return;
 }
 
-void changeCompletion(int dbIndex, bool value) {
-  homeworkService.changeCompletion(dbIndex, value);
+Future<void> changeCompletion(HomeworkDTO hw, bool value) async {
+  return homeworkService.changeCompletion(hw, value);
 }
 
 Future<void> deleteHw(
-    BuildContext context, int dbIndex, Function onDeleteRevert) async {
-  homeworkService.deleteHw(dbIndex);
+    BuildContext context, HomeworkDTO hw, Function onDeleteRevert) async {
+  homeworkService.delete(hw);
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: const Text('Homework deleted'),
       action: SnackBarAction(
         label: 'Undo',
-        onPressed: () {
-          homeworkService.revertLastlyDeletedHw();
+        onPressed: () async {
+          await homeworkService.revertDelete(hw.dbIndex);
           onDeleteRevert();
         },
       ),
@@ -280,13 +291,13 @@ void switchDrawer({bool? onlyClose}) {
 void tryGettingNewHomeworks() async {
   try {
     await bakaService.getHomeworks(
-      onNewFound: (count) {
+      onNewFound: (numberOfNew) {
         if (navigatorKey.currentContext != null) {
           final context = navigatorKey.currentContext!;
 
           showMessage(
             context,
-            '$count new homework${count == 1 ? '' : 's'} found',
+            '$numberOfNew new homework${numberOfNew == 1 ? '' : 's'} found',
             duration: Duration(days: 100),
             actions: [
               FilledButton(
@@ -480,10 +491,14 @@ class _TasksAppState extends State<TasksApp> {
         final dark = schemes.$2.copyWith(
           surface: useOled ? Colors.black : null,
           surfaceContainer: useOled ? Colors.black : null,
-          surfaceContainerLow: useOled ? schemes.$2.surfaceContainerLow.darken(0.05) : null,
-          surfaceContainerHigh: useOled ? schemes.$2.surfaceContainerHigh.darken(0.05) : null,
-          surfaceContainerHighest: useOled ? schemes.$2.surfaceContainerHighest.darken(0.05) : null,
-          surfaceContainerLowest: useOled ? schemes.$2.surfaceContainerLowest.darken(0.02) : null,
+          surfaceContainerLow:
+              useOled ? schemes.$2.surfaceContainerLow.darken(0.05) : null,
+          surfaceContainerHigh:
+              useOled ? schemes.$2.surfaceContainerHigh.darken(0.05) : null,
+          surfaceContainerHighest:
+              useOled ? schemes.$2.surfaceContainerHighest.darken(0.05) : null,
+          surfaceContainerLowest:
+              useOled ? schemes.$2.surfaceContainerLowest.darken(0.02) : null,
         );
 
         return MaterialApp(

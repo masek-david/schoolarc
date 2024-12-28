@@ -139,8 +139,8 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
       showDeadline: widget.showDate,
       hw: widget.hw,
       slidableController: widget.slidableController,
-      onChangedCompletion: (value) {
-        widget.onChangedCompletion(value);
+      onChangedCompletion: (value) async { 
+        await widget.onChangedCompletion(value);
         playAnimation(value);
       },
       onDelete: () => widget.onDelete(),

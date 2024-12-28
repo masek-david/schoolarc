@@ -46,6 +46,11 @@ class HomeworksDatabase {
     _hwBox.delete(dbIndex);
   }
 
+  void deleteAllFromDb(){
+    _hwBox.deleteFromDisk();
+    _hwSequenceBox.deleteFromDisk();
+  }
+
   void changeCompletion(int dbIndex, bool value) {
     Homework hw = _hwBox.get(dbIndex);
 
@@ -57,7 +62,10 @@ class HomeworksDatabase {
         deadline: hw.deadline,
         completion: value,
         priority: hw.priority,
-        description: hw.description
+        description: hw.description,
+        fireId: hw.fireId,
+        isDeleted: hw.isDeleted,
+        timestamp: DateTime.now(),
       ),
     );
   }

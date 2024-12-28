@@ -35,6 +35,9 @@ class BakaHomework extends HomeworkDTO {
     required this.alreadyAdded,
     required this.alreadySeen,
     required this.bakaId,
+    required super.fireId,
+    required super.timestamp,
+    required super.isDeleted,
   });
 
   final String bakaId;
@@ -657,6 +660,9 @@ class BakaService {
           priority: TaskPriority(0),
           dbIndex: 0,
           description: null,
+          fireId: null,
+          isDeleted: false,
+          timestamp: Timestamp.now(),
         ),
       );
     }

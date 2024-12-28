@@ -34,13 +34,11 @@ class Subject extends HiveObject {
 
   /// saves this as it is now to hive
   void saveSafe() async {
+    // i dont know why it works, this box doesnt need to exist, maybe its just the delay?
     await Hive.openBox('subjects');
 
     if (isInBox) {
       save();
-      print('saved $name');
-    } else {
-      // print('cant be saved $name, needs to save: $needsToBeSaved');
     }
   }
 
