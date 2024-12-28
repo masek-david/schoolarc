@@ -17,19 +17,22 @@ class ExamAdapter extends TypeAdapter<Exam> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Exam(
+      fireId: fields[6] as String?,
+      isDeleted: fields[8] == null ? false : fields[8] as bool,
       subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
       description: fields[5] as String?,
       date: fields[2] as DateTime,
       priority: fields[3] as int,
       completion: fields[4] as bool,
+      timestamp: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exam obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.subjectDbIndex)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..writeByte(4)
       ..write(obj.completion)
       ..writeByte(5)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(6)
+      ..write(obj.fireId)
+      ..writeByte(7)
+      ..write(obj.timestamp)
+      ..writeByte(8)
+      ..write(obj.isDeleted);
   }
 
   @override

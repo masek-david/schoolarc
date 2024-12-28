@@ -12,8 +12,8 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworksScreenState extends State<HomeworksScreen> {
-  late var hwByPriority = homeworkService.sortByPriority(null);
-  late var completedHw = homeworkService.getCompletedHw(null);
+  late var hwByPriority = homeworkService.sortByPriority();
+  late var completedHw = homeworkService.getCompletedHw();
 
   @override
   void didChangeDependencies() {
@@ -25,8 +25,8 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void updateListView() {
     if (mounted) {
       setState(() {
-        hwByPriority = homeworkService.sortByPriority(context);
-        completedHw = homeworkService.getCompletedHw(context);
+        hwByPriority = homeworkService.sortByPriority();
+        completedHw = homeworkService.getCompletedHw();
       });
     }
   }

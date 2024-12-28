@@ -3,9 +3,10 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 enum Setting {
-  themeUseMaterial,
+  themeUseDeviceColor,
   themeColorValue,
   themeDynamicSchemeVariantInt,
+  themeUseOled,
   initialAppPage,
   pageSwitchAnimationDuration,
   showAppOverlay,
@@ -21,6 +22,7 @@ enum Setting {
   mealsShowTodayUntil,
   userName,
   homeShowUserName,
+  useFirebase,
   showDebugInfo,
   debugShowPerformanceOverlay,
 }
@@ -37,7 +39,7 @@ class SettingModel {
 
 class SettingsDatabase {
   static final Map<Setting, SettingModel> _settings = {
-    Setting.themeUseMaterial: SettingModel(
+    Setting.themeUseDeviceColor: SettingModel(
       key: 'themeUseMaterial',
       defaultValue: true,
     ),
@@ -49,6 +51,10 @@ class SettingsDatabase {
     Setting.themeDynamicSchemeVariantInt: SettingModel(
       key: 'themeColorMode',
       defaultValue: 7,
+    ),
+    Setting.themeUseOled: SettingModel(
+      key: 'themeUseOled',
+      defaultValue: false,
     ),
     Setting.initialAppPage: SettingModel(
       key: 'initialAppPage',
@@ -109,12 +115,16 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'homeShowUserName',
     ),
+    Setting.useFirebase: SettingModel(
+      defaultValue: false,
+      key: 'useFirebase',
+    ),
     Setting.showDebugInfo: SettingModel(
       defaultValue: false,
       key: 'showDebug',
     ),
     Setting.debugShowPerformanceOverlay: SettingModel(
-      defaultValue: true,
+      defaultValue: false,
       key: 'showDebugPerformance',
     ),
   };

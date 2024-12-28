@@ -3,6 +3,9 @@ fix:
 
 
 =============================================================================================
+pridat permanent delete
+
+pridat export a import dat
 
 pridat strava login do welcome
 

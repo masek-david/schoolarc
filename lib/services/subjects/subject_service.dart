@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
@@ -6,9 +7,6 @@ class SubjectService {
   final _db = SubjectDatabase();
   late Map<int, Subject> _subjectDbIndexMap = _db.getDatabase();
   late List<int> _sequence = _db.getSequence();
-
-  SubjectDTO? lastDeletedSubject;
-  int? lastDeletedSequenceIndex;
 
   void changeSequence(int oldIndex, int newIndex) {
     int dbIndex = _sequence.removeAt(oldIndex);
@@ -21,42 +19,110 @@ class SubjectService {
     _sequence = _db.getSequence();
     List<SubjectDTO> list = [];
 
-    for (int element in _sequence) {
-      Subject subject = _subjectDbIndexMap[element]!;
-      list.add(subject.convertToDTO(element));
+    for (int key in _sequence) {
+      SubjectDTO subject = _subjectDbIndexMap[key]!.convertToDTO(key);
+
+      if (!subject.isDeleted) {
+        list.add(subject);
+      }
     }
+
+    return list;
+  }
+
+  /// returns even deleted ones, not sorted
+  List<SubjectDTO> getAllSubjects() {
+    _subjectDbIndexMap = _db.getDatabase();
+    List<SubjectDTO> list = [];
+
+    _subjectDbIndexMap.forEach(
+      (key, value) {
+        list.add(value.convertToDTO(key));
+      },
+    );
 
     return list;
   }
 
   Map<int, SubjectDTO> getMap() {
     _subjectDbIndexMap = _db.getDatabase();
-    return _subjectDbIndexMap.map(
-      (key, value) => MapEntry(key, value.convertToDTO(key)),
+
+    Map<int, SubjectDTO> map = {};
+
+    _subjectDbIndexMap.forEach(
+      (key, value) {
+        final subject = value.convertToDTO(key);
+
+        if (!subject.isDeleted) {
+          map[key] = subject;
+        }
+      },
     );
+
+    return map;
+  }
+
+  List<SubjectDTO> getList() {
+    _subjectDbIndexMap = _db.getDatabase();
+
+    List<SubjectDTO> list = [];
+    _subjectDbIndexMap.forEach(
+      (key, value) {
+        final subject = value.convertToDTO(key);
+
+        if (!subject.isDeleted) {
+          list.add(subject);
+        }
+      },
+    );
+
+    return list;
   }
 
   Future<SubjectDTO> addNewSubject(Subject subject) async {
     int dbIndex = await _db.addSubject(subject);
 
-    _sequence.add(dbIndex);
-    _db.saveSequence(_sequence);
+    if (!subject.isDeleted) {
+      _sequence.add(dbIndex);
+      _db.saveSequence(_sequence);
+    }
     _subjectDbIndexMap = _db.getDatabase();
 
     return subject.convertToDTO(dbIndex);
   }
 
+  /// assign timestamp manually
   void editSubject(SubjectDTO editedSubject) {
+    bool oldIsDeleted = _db.getSubject(editedSubject.dbIndex).isDeleted;
+
     _db.saveEditedSubject(editedSubject.dbIndex, editedSubject.convert());
+
+    if (oldIsDeleted != editedSubject.isDeleted) {
+      if (editedSubject.isDeleted) {
+        _sequence.remove(editedSubject.dbIndex);
+      } else {
+        _sequence.add(editedSubject.dbIndex);
+      }
+
+      _db.saveSequence(_sequence);
+    }
   }
 
-  void deleteSubject(int dbIndex) {
-    lastDeletedSubject = _db.getSubject(dbIndex).convertToDTO(dbIndex);
-    lastDeletedSequenceIndex = _sequence.indexOf(dbIndex);
+  void deleteSubject(int dbIndex,
+      {DateTime? timestamp, bool nowIsDeleted = true}) {
+    final subject = _db.getSubject(dbIndex);
 
-    _db.deleteSubject(dbIndex);
-    _sequence.remove(dbIndex);
-    _db.saveSequence(_sequence);
+    _db.saveEditedSubject(
+      dbIndex,
+      subject.copyWith(
+        isDeleted: nowIsDeleted,
+        timestamp: timestamp ?? DateTime.now(),
+      ),
+    );
+  }
+
+  void revertDelete(int dbIndex, {DateTime? timestamp}) {
+    deleteSubject(dbIndex, timestamp: timestamp, nowIsDeleted: false);
   }
 
   void deleteAllSubjects() {
@@ -67,15 +133,8 @@ class SubjectService {
     );
   }
 
-  void revertLastlyDeletedSubject() {
-    if (lastDeletedSubject != null && lastDeletedSequenceIndex != null) {
-      _db.saveEditedSubject(
-          lastDeletedSubject!.dbIndex, lastDeletedSubject!.convert());
-      _sequence.insert(lastDeletedSequenceIndex!, lastDeletedSubject!.dbIndex);
-
-      lastDeletedSequenceIndex = null;
-      lastDeletedSubject = null;
-    }
+  void addTimestamp(Timestamp timestamp, int dbIndex) {
+    _db.addTimestamp(timestamp, dbIndex);
   }
 
   SubjectDTO getSubject(int dbIndex) {

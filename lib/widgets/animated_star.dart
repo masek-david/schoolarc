@@ -1,6 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class AnimatedStar extends StatefulWidget {
   const AnimatedStar({
@@ -154,32 +156,60 @@ class _AnimatedStarState extends State<AnimatedStar>
               children: [
                 Center(
                   child: Transform.rotate(
-                    angle: 6.28 * (widget.secondsForOneRotation.isNegative ? -1 : 1) *_rotationController.value,
+                    angle: 6.28 *
+                        (widget.secondsForOneRotation.isNegative ? -1 : 1) *
+                        _rotationController.value,
                     child: AnimatedRotation(
                       turns: turns,
                       duration: const Duration(milliseconds: 800),
                       curve: Curves.fastEaseInToSlowEaseOut,
-                      child: Container(
-                        height: size.toDouble(),
-                        width: size.toDouble(),
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              blurRadius: 30,
-                              spreadRadius: -1,
-                              color: secondColor,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            height: size.toDouble(),
+                            width: size.toDouble(),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  blurRadius: 30,
+                                  spreadRadius: -1,
+                                  color: secondColor,
+                                ),
+                              ],
+                              gradient: LinearGradient(
+                                  colors: [secondColor, firstColor]),
+                              shape: const StarBorder(
+                                points: 12.00,
+                                rotation: 0.00,
+                                innerRadiusRatio: 0.85,
+                                pointRounding: 0.50,
+                                valleyRounding: 0.50,
+                              ),
                             ),
-                          ],
-                          gradient:
-                              LinearGradient(colors: [secondColor, firstColor]),
-                          shape: const StarBorder(
-                            points: 12.00,
-                            rotation: 0.00,
-                            innerRadiusRatio: 0.85,
-                            pointRounding: 0.50,
-                            valleyRounding: 0.50,
                           ),
-                        ),
+                          if(settings.get(Setting.themeUseOled)) Container(
+                            height: size.toDouble() - 8,
+                            width: size.toDouble() - 8,
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  blurRadius: 30,
+                                  spreadRadius: -1,
+                                  color: secondColor,
+                                ),
+                              ],
+                              color: Colors.black,
+                              shape: const StarBorder(
+                                points: 12.00,
+                                rotation: 0.00,
+                                innerRadiusRatio: 0.85,
+                                pointRounding: 0.50,
+                                valleyRounding: 0.50,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

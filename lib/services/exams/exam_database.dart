@@ -8,17 +8,17 @@ class ExamDatabase {
   /// returns list of Exams dbIndexes for each priority
   Map<int, List<int>> getSequence() {
     var map = _examSequenceBox.get('sequence') ??
-          {
-            0: <int>[],
-            1: <int>[],
-            2: <int>[],
-            3: <int>[],
-          };
+        {
+          0: <int>[],
+          1: <int>[],
+          2: <int>[],
+          3: <int>[],
+        };
     return map.cast<int, List<int>>();
   }
 
-  void saveSequence(Map<int, List<int>> sequence) {
-    _examSequenceBox.put('sequence', sequence);
+  Future<void> saveSequence(Map<int, List<int>> sequence) {
+    return _examSequenceBox.put('sequence', sequence);
   }
 
   /// returns map of Exams with their dbIndexes
@@ -36,28 +36,12 @@ class ExamDatabase {
   }
 
   /// puts/replaces Exam at dbIndex with new one
-  void editExam(int dbKey, Exam exam) {
-    _examBox.put(dbKey, exam);
+  Future<void> editExam(int dbKey, Exam exam) {
+    return _examBox.put(dbKey, exam);
   }
 
-  void deleteExam(int dbKey) {
-    _examBox.delete(dbKey);
-  }
-
-  void setCompletion(int dbKey, bool value) {
-    Exam exam = _examBox.get(dbKey);
-    exam.completion = !exam.completion;
-
-    _examBox.put(
-      dbKey,
-      Exam(
-        subjectDbIndex: exam.subjectDbIndex,
-        text: exam.text,
-        description: exam.description,
-        date: exam.date,
-        priority: exam.priority,
-        completion: value,
-      ),
-    );
+  void deleteAllFromDisk() {
+    _examBox.deleteFromDisk();
+    _examSequenceBox.deleteFromDisk();
   }
 }

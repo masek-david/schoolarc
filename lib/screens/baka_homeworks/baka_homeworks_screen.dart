@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/baka_homeworks.dart/baka_hw_tile.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/error_tile.dart';
@@ -16,14 +17,9 @@ class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
   var homeworks = <BakaHomework>[];
 
   void add(BuildContext context, BakaHomework hw) {
-    homeworkService.saveNewHW(
-      date: hw.deadline,
-      priority: hw.priority.index,
-      subject: hw.subject,
-      text: hw.text,
-      description: hw.description,
+    homeworkService.saveNew(
+      hw.copyWith(timestamp: Timestamp.now()).convert(),
     );
-
     bakaHomeworkService.addedHomework(hw.bakaId);
 
     setState(() {

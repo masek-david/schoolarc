@@ -17,19 +17,22 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Homework(
+      fireId: fields[6] as String?,
+      isDeleted: fields[8] == null ? false : fields[8] as bool,
       subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
       deadline: fields[2] as DateTime,
       completion: fields[3] as bool,
       priority: fields[4] as int,
       description: fields[5] as String?,
+      timestamp: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Homework obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.subjectDbIndex)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       ..writeByte(4)
       ..write(obj.priority)
       ..writeByte(5)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(6)
+      ..write(obj.fireId)
+      ..writeByte(7)
+      ..write(obj.timestamp)
+      ..writeByte(8)
+      ..write(obj.isDeleted);
   }
 
   @override

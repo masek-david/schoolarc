@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
+import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
-import 'package:school_manager/screens/settings/widgets/adaptive_showcase.dart';
 import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
@@ -84,6 +84,16 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+          if (settings.get(Setting.useFirebase))
+            SettingTile(
+              label: 'Firebase login',
+              icon: Icons.fireplace,
+              onTap: () => navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (context) => const FirestoreLoginScreen(),
+                ),
+              ),
+            ),
           Divider(),
           InitialAppPage(),
           SettingTile(
@@ -131,7 +141,17 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ),
-          if (settings.get(Setting.showDebugInfo)) AdaptiveShowcase(),
+          if (settings.get(Setting.showDebugInfo))
+            SettingTile(
+              label: 'Use firebase',
+              trailing: SwitchAction(
+                initialValue: settings.get(Setting.useFirebase),
+                onChanged: (value) {
+                  settings.save(Setting.useFirebase, value);
+                  refreshTheme();
+                },
+              ),
+            ),
         ],
       ),
     );

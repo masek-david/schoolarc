@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
@@ -13,16 +14,28 @@ class WelcomeScreenSubjects extends StatelessWidget {
         name: 'Name of the subject',
         shortcut: 'Short',
         dbIndex: 0,
+        isDeleted: false,
+        bakaId: null,
+        fireId: null,
+        timestamp: Timestamp.now()
       ),
       SubjectDTO(
         name: 'And another subject',
         shortcut: 'Math',
         dbIndex: 0,
+        isDeleted: false,
+        bakaId: null,
+        fireId: null,
+        timestamp: Timestamp.now()
       ),
       SubjectDTO(
         name: 'You can delete and edit the same way as tasks',
         shortcut: 'Edit',
         dbIndex: 0,
+        isDeleted: false,
+        bakaId: null,
+        fireId: null,
+        timestamp: Timestamp.now()
       ),
     ];
 

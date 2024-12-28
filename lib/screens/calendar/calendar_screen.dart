@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
 import 'package:school_manager/screens/calendar/widgets/pages_widget.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -23,9 +24,9 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  late var hwByDate = homeworkService.sortByDate(null);
-  late var missedHwList = homeworkService.getMissedHw(null);
-  late var examByDate = examService.sortByDate(null);
+  late var hwByDate = homeworkService.sortByDate();
+  late var missedHwList = homeworkService.getMissedHw();
+  late var examByDate = examService.sortByDate();
 
   DateTime _focusedDay = DateTime.now();
   late DateTime _selectedDay = _focusedDay;
@@ -80,9 +81,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void updateView() {
     if (mounted) {
       setState(() {
-        hwByDate = homeworkService.sortByDate(context);
-        examByDate = examService.sortByDate(context);
-        missedHwList = homeworkService.getMissedHw(context);
+        hwByDate = homeworkService.sortByDate();
+        examByDate = examService.sortByDate();
+        missedHwList = homeworkService.getMissedHw();
       });
     }
   }
@@ -145,6 +146,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
       isWideScreen: isWide,
       title: const Text('Calendar'),
       actions: [
+        if (settings.get(Setting.useFirebase))
+          LoadingIconButton(
+            icon: Icons.refresh,
+            onTap: () async {
+              try {
+                return await firestoreService.syncAll().then(
+                  (value) {
+                    if (mounted) {
+                      value.showSyncMessage(context);
+                    }
+                    updateView();
+                  },
+                );
+              } on Object catch (e) {
+                if (context.mounted) {
+                  showMessage(context, e.toString(), isError: true);
+                }
+                return;
+              }
+            },
+          ),
         IconButton(
           onPressed: () {
             showModalBottomSheet(

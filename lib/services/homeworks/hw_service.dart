@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
@@ -11,8 +10,6 @@ import 'package:school_manager/tasks_app.dart';
 class HomeworkService {
   final HomeworksDatabase _db = HomeworksDatabase();
 
-  late final Map<int, SubjectDTO> _subjectsDbIndex = subjectService.getMap();
-
   /// key is the dbIndex
   late Map<int, Homework> _hwDbIndexMap = _db.getDatabase();
 
@@ -20,43 +17,34 @@ class HomeworkService {
   late Map<int, List<int>> _sequence = _db.getSequence();
 
   /// map with dbIndex and index in sequence, to return them to correct position
-  final Map<int, int> completedHws = {};
+  final Map<int, int> hwsRemovedFromSequence = {};
 
-  Homework? lastlyDeletedHw;
-  int? lastlyDeletedHwDbIndex;
-  int? lastlyDeletedHwIndex;
-
-  void changeCompletion(int dbIndex, bool value) {
-    _db.changeCompletion(dbIndex, value);
-
-    Homework hw = _hwDbIndexMap[dbIndex]!;
-
-    // if it is now completed
-    if (value) {
-      completedHws[dbIndex] = _sequence[hw.priority]!.indexOf(dbIndex);
-      _sequence[hw.priority]!.remove(dbIndex);
-    } else {
-      // if it is now uncompleted
-      int indexToInsertTo =
-          completedHws[dbIndex] ?? _sequence[hw.priority]!.length;
-
-      var list = _sequence[hw.priority]!;
-      list.insert(indexToInsertTo > list.length ? list.length : indexToInsertTo,
-          dbIndex);
-      completedHws.remove(dbIndex);
-    }
-
-    _db.saveSequence(_sequence);
-    NotificationSender.scheduleTommorrowNotification();
+  Future<void> changeCompletion(HomeworkDTO hw, bool value) async {
+    return edit(
+      hw
+          .copyWith(
+            timestamp: Timestamp.now(),
+            completion: value,
+          )
+          .convert(),
+      hw.dbIndex,
+    );
   }
 
   /// edits the position and priority of a homework at the provided index
   Future<void> changeSequence(
-      int oldIndex, int oldPriority, int newIndex, int newPriority) async {
+    int oldIndex,
+    int oldPriority,
+    int newIndex,
+    int newPriority,
+  ) async {
     int movedHwDbIndex = _sequence[oldPriority]![oldIndex];
     Homework movedHw = _hwDbIndexMap[movedHwDbIndex]!;
     movedHw.priority = newPriority;
-    await _db.editHw(movedHwDbIndex, movedHw);
+    await _db.editHw(
+      movedHwDbIndex,
+      movedHw.copyWith(timestamp: DateTime.now()),
+    );
     _sequence[oldPriority]!.removeAt(oldIndex);
     _sequence[newPriority]!.insert(newIndex, movedHwDbIndex);
     await _db.saveSequence(_sequence);
@@ -65,19 +53,30 @@ class HomeworkService {
     return;
   }
 
-  List<TaskPriority> getPriorities(BuildContext? context) {
-    List<TaskPriority> priorities = [];
+  /// returns even deleted
+  List<HomeworkDTO> getAll() {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
-    for (int i = 0; i < 4; i++) {
-      priorities.add(TaskPriority(i));
-    }
+    List<HomeworkDTO> list = [];
+    _hwDbIndexMap = _db.getDatabase();
 
-    return priorities;
+    _hwDbIndexMap.forEach(
+      (dbIndex, hw) {
+        list.add(
+          hw.convertToDTO(
+            dbIndex,
+            subjectDbIndex[hw.subjectDbIndex],
+          ),
+        );
+      },
+    );
+
+    return list;
   }
 
-  List<HomeworkDTO> getForDay(DateTime date, BuildContext? context) {
+  List<HomeworkDTO> getForDay(DateTime date) {
     final dateUtc = date.toUtc();
-    final hwByDate = sortByDate(context);
+    final hwByDate = sortByDate();
 
     final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
 
@@ -85,10 +84,11 @@ class HomeworkService {
   }
 
   /// returns map with datetime being only the date in UTC, not the time
-  Map<DateTime, List<HomeworkDTO>> sortByDate(BuildContext? context) {
+  Map<DateTime, List<HomeworkDTO>> sortByDate() {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
+
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, homework) {
@@ -97,24 +97,24 @@ class HomeworkService {
         DateTime dateNoTime = DateTime.utc(
             hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
 
-        if (hwDateMap.containsKey(dateNoTime)) {
-          // If it exists, add the event to the existing list
-          hwDateMap[dateNoTime]!.add(
-            homework.convertToDTO(
-              dbIndex,
-              _subjectsDbIndex[homework.subjectDbIndex],
-              priorities[homework.priority],
-            ),
-          );
-        } else {
-          // If it does not exist, create a new list with the exam
-          hwDateMap[dateNoTime] = [
-            homework.convertToDTO(
-              dbIndex,
-              _subjectsDbIndex[homework.subjectDbIndex],
-              priorities[homework.priority],
-            )
-          ];
+        if (!homework.isDeleted) {
+          if (hwDateMap.containsKey(dateNoTime)) {
+            // If it exists, add the event to the existing list
+            hwDateMap[dateNoTime]!.add(
+              homework.convertToDTO(
+                dbIndex,
+                subjectDbIndex[homework.subjectDbIndex],
+              ),
+            );
+          } else {
+            // If it does not exist, create a new list with the exam
+            hwDateMap[dateNoTime] = [
+              homework.convertToDTO(
+                dbIndex,
+                subjectDbIndex[homework.subjectDbIndex],
+              )
+            ];
+          }
         }
       },
     );
@@ -127,10 +127,11 @@ class HomeworkService {
   }
 
   /// returns list of sorted homeworks for each priority
-  Map<int, List<HomeworkDTO>> sortByPriority(BuildContext? context) {
+  Map<int, List<HomeworkDTO>> sortByPriority() {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
+
     _hwDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
-    final priorities = getPriorities(context);
 
     Map<int, List<HomeworkDTO>> hwPriorityMap = {
       0: <HomeworkDTO>[],
@@ -142,10 +143,12 @@ class HomeworkService {
     _sequence.forEach((priority, list) {
       for (int i = 0; i < list.length; i++) {
         Homework hw = _hwDbIndexMap[list[i]]!;
-        if (!hw.completion) {
+        if (!hw.completion && !hw.isDeleted) {
           hwPriorityMap[priority]!.add(
-            hw.convertToDTO(list[i], _subjectsDbIndex[hw.subjectDbIndex],
-                priorities[hw.priority]),
+            hw.convertToDTO(
+              list[i],
+              subjectDbIndex[hw.subjectDbIndex],
+            ),
           );
         }
       }
@@ -154,19 +157,19 @@ class HomeworkService {
     return hwPriorityMap;
   }
 
-  List<HomeworkDTO> getCompletedHw(BuildContext? context) {
+  List<HomeworkDTO> getCompletedHw() {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
+
     List<HomeworkDTO> completedHw = [];
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
-        if (hw.completion) {
+        if (hw.completion && !hw.isDeleted) {
           completedHw.add(
             hw.convertToDTO(
               dbIndex,
-              _subjectsDbIndex[hw.subjectDbIndex],
-              priorities[hw.priority],
+              subjectDbIndex[hw.subjectDbIndex],
             ),
           );
         }
@@ -176,19 +179,19 @@ class HomeworkService {
     return completedHw;
   }
 
-  List<HomeworkDTO> getMissedHw(BuildContext? context) {
+  List<HomeworkDTO> getMissedHw() {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
+
     List<HomeworkDTO> missedHw = [];
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
-        if (hw.deadline.isBeforeToday() && !hw.completion) {
+        if (hw.deadline.isBeforeToday() && !hw.completion && !hw.isDeleted) {
           missedHw.add(
             hw.convertToDTO(
               dbIndex,
-              _subjectsDbIndex[hw.subjectDbIndex],
-              priorities[hw.priority],
+              subjectDbIndex[hw.subjectDbIndex],
             ),
           );
         }
@@ -198,96 +201,83 @@ class HomeworkService {
     return missedHw;
   }
 
-  /// deletes howework and saves it for reverting
-  void deleteHw(int dbIndex) {
-    lastlyDeletedHw = _db.getHomework(dbIndex);
-    lastlyDeletedHwDbIndex = dbIndex;
-    lastlyDeletedHwIndex =
-        _sequence[lastlyDeletedHw!.priority]!.indexOf(dbIndex);
-
-    _sequence[lastlyDeletedHw!.priority]!.remove(dbIndex);
-    _db.saveSequence(_sequence);
-
-    _db.deleteHw(dbIndex);
-    _hwDbIndexMap.remove(dbIndex);
-
-    NotificationSender.scheduleTommorrowNotification();
+  Future<void> delete(HomeworkDTO hw) {
+    return edit(
+      hw
+          .copyWith(
+            isDeleted: true,
+            timestamp: Timestamp.now(),
+          )
+          .convert(),
+      hw.dbIndex,
+    );
   }
 
-  void revertLastlyDeletedHw() {
-    if (lastlyDeletedHw != null &&
-        lastlyDeletedHwIndex != null &&
-        lastlyDeletedHwDbIndex != null) {
-      _db.editHw(lastlyDeletedHwDbIndex!, lastlyDeletedHw!);
-      if (!lastlyDeletedHw!.completion) {
-        _sequence[lastlyDeletedHw!.priority]!
-            .insert(lastlyDeletedHwIndex!, lastlyDeletedHwDbIndex!);
-      }
-      _hwDbIndexMap[lastlyDeletedHwDbIndex!] = lastlyDeletedHw!;
-      _db.saveSequence(_sequence);
+  Future<void> revertDelete(int dbIndex) {
+    final hw = _db.getHomework(dbIndex);
 
-      lastlyDeletedHw = null;
-      lastlyDeletedHwIndex = null;
-      lastlyDeletedHwDbIndex = null;
+    return edit(
+      hw.copyWith(
+        isDeleted: false,
+        timestamp: DateTime.now(),
+      ),
+      dbIndex,
+    );
+  }
+
+  /// returns id for the new hw
+  Future<int> saveNew(Homework hw) async {
+    final newHwId = await _db.addHw(hw);
+
+    _hwDbIndexMap[newHwId] = hw;
+    if (!hw.isDeleted && !hw.completion) {
+      _sequence[hw.priority]!.add(newHwId);
+      await _db.saveSequence(_sequence);
     }
 
     NotificationSender.scheduleTommorrowNotification();
+    return newHwId;
   }
 
-  /// saves new homework and puts it at the end of the sequence of correct priority
-  Future<void> saveNewHW({
-    required DateTime date,
-    required int priority,
-    required SubjectDTO? subject,
-    required String text,
-    required String? description,
-  }) async {
-    Homework newHw = Homework(
-      subjectDbIndex: subject?.dbIndex,
-      text: text,
-      deadline: date.toLocal(),
-      completion: false,
-      priority: priority,
-      description: description,
-    );
-    int dbIndex = await _db.addHw(newHw);
-    _hwDbIndexMap[dbIndex] = newHw;
-    _sequence[priority]!.add(dbIndex);
-    await _db.saveSequence(_sequence);
+  Future<void> edit(Homework hw, int dbIndex) async {
+    final oldHw = _db.getHomework(dbIndex);
+    int oldPriority = oldHw.priority;
+    bool oldCompletion = oldHw.completion;
+    bool oldIsDeleted = oldHw.isDeleted;
 
-    NotificationSender.scheduleTommorrowNotification();
+    _sequence = _db.getSequence();
 
-    return;
-  }
-
-  /// saves edited homework and changes its position in sequence if necessary, cant edit completion
-  Future<void> saveEditedHW({
-    required DateTime date,
-    required int priority,
-    required SubjectDTO? subject,
-    required String text,
-    required int dbIndex,
-    required String? description,
-  }) async {
-    int oldPriority = _hwDbIndexMap[dbIndex]!.priority;
-    
-    Homework editedHw = Homework(
-      subjectDbIndex: subject?.dbIndex,
-      text: text,
-      deadline: date,
-      completion: _hwDbIndexMap[dbIndex]!.completion,
-      priority: priority,
-      description: description
-    );
-    await _db.editHw(dbIndex, editedHw);
+    await _db.editHw(dbIndex, hw);
     _hwDbIndexMap.update(
       dbIndex,
-      (value) => editedHw,
+      (value) => hw,
     );
 
-    if (oldPriority != editedHw.priority) {
+    if (hw.isDeleted != oldIsDeleted || hw.completion != oldCompletion) {
+      if (hw.isDeleted || hw.completion) {
+        // we need to remove it from sequence and save where it was
+        hwsRemovedFromSequence[dbIndex] =
+            _sequence[hw.priority]!.indexOf(dbIndex);
+        _sequence[oldPriority]!.remove(dbIndex);
+      } else {
+        // if it isnt deleted and isnt completed, we need to add it back to sequence
+        int indexToInsertTo =
+            hwsRemovedFromSequence[dbIndex] ?? _sequence[hw.priority]!.length;
+
+        var list = _sequence[hw.priority]!;
+        list.insert(
+            indexToInsertTo > list.length || indexToInsertTo < 0
+                ? list.length
+                : indexToInsertTo,
+            dbIndex);
+        hwsRemovedFromSequence.remove(dbIndex);
+      }
+      _db.saveSequence(_sequence);
+    }
+    // if priority changes we need to edit it in sequence
+    if (hw.priority != oldPriority && !hw.isDeleted && !hw.completion) {
       _sequence[oldPriority]!.remove(dbIndex);
-      _sequence[editedHw.priority]!.add(dbIndex);
+      _sequence[hw.priority]!.add(dbIndex);
       _db.saveSequence(_sequence);
     }
 
@@ -295,13 +285,13 @@ class HomeworkService {
     return;
   }
 
-  HomeworkDTO getHomework(int dbIndex, BuildContext? context) {
+  HomeworkDTO getHomework(int dbIndex) {
+    final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
     Homework hw = _db.getHomework(dbIndex);
 
     return hw.convertToDTO(
       dbIndex,
-      _subjectsDbIndex[hw.subjectDbIndex],
-      TaskPriority(hw.priority),
+      subjectDbIndex[hw.subjectDbIndex],
     );
   }
 
@@ -311,8 +301,8 @@ class HomeworkService {
     int numberOfUncomplete = 0;
 
     _hwDbIndexMap.forEach(
-      (dbIndex, value) {
-        if (!value.completion) {
+      (dbIndex, hw) {
+        if (!hw.completion && !hw.isDeleted) {
           numberOfUncomplete++;
         }
       },

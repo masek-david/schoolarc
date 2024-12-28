@@ -29,7 +29,7 @@ class ExamList extends StatelessWidget {
       exam: exam,
       showDeadline: false,
       onDelete: (context) =>
-          deleteExam(context, exam.dbIndex, () => updateView()).then(
+          deleteExam(context, exam, () => updateView()).then(
         (value) => updateView(),
       ),
       onEdit: () => editExam(context, exam.dbIndex).then(

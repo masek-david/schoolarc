@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
+import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
@@ -42,6 +45,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             Subject(
               name: nameController.text,
               shortcut: shortcutController.text,
+              fireId: null,
+              isDeleted: false,
+              timestamp: Timestamp.now().toDate(),
+              bakaId: null,
             ),
           );
           setState(
@@ -77,6 +84,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             shortcut: shortcutController.text,
             dbIndex: subject.dbIndex,
             bakaId: subject.bakaId,
+            isDeleted: subject.isDeleted,
+            fireId: subject.fireId,
+            timestamp: Timestamp.now(),
           );
 
           subjectService.editSubject(newSubject);
@@ -112,11 +122,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Homework deleted'),
+        content: const Text('Subject deleted'),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-            subjectService.revertLastlyDeletedSubject();
+            subjectService.revertDelete(dbIndex);
             if (mounted) {
               setState(() {
                 subjectList = subjectService.getSortedList();
@@ -126,7 +136,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         ),
       ),
     );
-    // });
   }
 
   @override
@@ -161,6 +170,18 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         },
                         child: const Text('Delete'),
                       ),
+                      adaptiveDialogButton(
+                        context: context,
+                        onPressed: () {
+                          SubjectDatabase().deleteAllFromDisk();
+
+                          Navigator.pop(context);
+                          setState(() {
+                            subjectList = subjectService.getSortedList();
+                          });
+                        },
+                        child: const Text('Hard delete'),
+                      ),
                     ],
                   );
                 });
@@ -187,40 +208,63 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     textAlign: TextAlign.center,
                   ),
                 )
-              : ReorderableListView.builder(
-                  onReorderStart: (index) => HapticFeedback.lightImpact(),
-                  itemCount: subjectList.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == subjectList.length) {
-                      return const SizedBox(
-                        height: 100,
-                        key: Key('SubjectScreenSpacer'),
+              : RefreshIndicator(
+                  notificationPredicate: settings.get(Setting.useFirebase)
+                      ? (_) => true
+                      : (_) => false,
+                  onRefresh: () async {
+                    try {
+                      return await FirestoreService().syncSubjects().then(
+                        (value) {
+                          if (mounted) {
+                            setState(() {
+                              subjectList = subjectService.getSortedList();
+                            });
+                          }
+                        },
                       );
+                    } on Object catch (e) {
+                      if (context.mounted) {
+                        showMessage(context, e.toString(), isError: true);
+                      }
+                      return;
                     }
+                  },
+                  child: ReorderableListView.builder(
+                    onReorderStart: (index) => HapticFeedback.lightImpact(),
+                    itemCount: subjectList.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == subjectList.length) {
+                        return const SizedBox(
+                          height: 100,
+                          key: Key('SubjectScreenSpacer'),
+                        );
+                      }
 
-                    SubjectDTO subject = subjectList[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      key: Key('$index'),
-                      child: SubjectTile(
-                        subject: subject,
-                        onTap: () => editSubject(subject.dbIndex),
-                        onDelete: () => deleteSubject(subject.dbIndex),
-                      ),
-                    );
-                  },
-                  onReorder: (int oldIndex, int newIndex) {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    final SubjectDTO item = subjectList.removeAt(oldIndex);
-                    subjectService.changeSequence(oldIndex, newIndex);
-                    setState(
-                      () {
-                        subjectList.insert(newIndex, item);
-                      },
-                    );
-                  },
+                      SubjectDTO subject = subjectList[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        key: Key('$index'),
+                        child: SubjectTile(
+                          subject: subject,
+                          onTap: () => editSubject(subject.dbIndex),
+                          onDelete: () => deleteSubject(subject.dbIndex),
+                        ),
+                      );
+                    },
+                    onReorder: (int oldIndex, int newIndex) {
+                      if (oldIndex < newIndex) {
+                        newIndex -= 1;
+                      }
+                      final SubjectDTO item = subjectList.removeAt(oldIndex);
+                      subjectService.changeSequence(oldIndex, newIndex);
+                      setState(
+                        () {
+                          subjectList.insert(newIndex, item);
+                        },
+                      );
+                    },
+                  ),
                 ),
         ),
       ),

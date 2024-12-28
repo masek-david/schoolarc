@@ -1,15 +1,19 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/baka_homeworks.dart/baka_homeworks_screen.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/services/exams/exam_service.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/services/homeworks/hw_service.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/logs_service.dart';
@@ -18,6 +22,7 @@ import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_service.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/models/task_model.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -42,6 +47,7 @@ final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
+final firestoreService = FirestoreService();
 
 Future<void> addTask(
   BuildContext context, {
@@ -69,6 +75,9 @@ Future<void> addTask(
           completion: false,
           priority: TaskPriority(priority),
           dbIndex: 0,
+          fireId: null,
+          isDeleted: false,
+          timestamp: Timestamp.now(),
         );
       },
     ),
@@ -79,20 +88,32 @@ Future<void> addTask(
   }
 
   if (isHomework) {
-    await homeworkService.saveNewHW(
-      date: newTask!.deadline,
-      priority: newTask!.priority.index,
-      subject: newTask!.subject,
-      text: newTask!.text,
-      description: newTask!.description,
+    await homeworkService.saveNew(
+      Homework(
+        deadline: newTask!.deadline,
+        priority: newTask!.priority.index,
+        subjectDbIndex: newTask!.subject?.dbIndex,
+        text: newTask!.text,
+        completion: false,
+        description: newTask!.description,
+        fireId: newTask!.fireId,
+        isDeleted: newTask!.isDeleted,
+        timestamp: null,
+      ),
     );
   } else {
-    await examService.saveNewExam(
-      date: newTask!.deadline,
-      priority: newTask!.priority.index,
-      subject: newTask!.subject,
-      text: newTask!.text,
-      description: newTask!.description,
+    await examService.saveNew(
+      Exam(
+        date: newTask!.deadline,
+        priority: newTask!.priority.index,
+        subjectDbIndex: newTask!.subject?.dbIndex,
+        text: newTask!.text,
+        fireId: newTask!.fireId,
+        isDeleted: newTask!.isDeleted,
+        completion: false,
+        timestamp: DateTime.now(),
+        description: newTask!.description,
+      ),
     );
   }
 
@@ -100,7 +121,7 @@ Future<void> addTask(
 }
 
 Future<void> editHw(BuildContext context, int dbIndex) async {
-  HomeworkDTO hw = homeworkService.getHomework(dbIndex, context);
+  HomeworkDTO hw = homeworkService.getHomework(dbIndex);
 
   await showModalBottomSheet(
     context: context,
@@ -126,20 +147,16 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
     ),
   );
 
-  await homeworkService.saveEditedHW(
-    date: hw.deadline,
-    priority: hw.priority.index,
-    subject: hw.subject,
-    text: hw.text,
-    description: hw.description,
-    dbIndex: dbIndex,
+  await homeworkService.edit(
+    hw.copyWith(timestamp: Timestamp.now()).convert(),
+    dbIndex,
   );
 
   return;
 }
 
 Future<void> editExam(BuildContext context, int dbIndex) async {
-  ExamDTO exam = examService.getExam(dbIndex, context);
+  ExamDTO exam = examService.getExam(dbIndex);
 
   await showModalBottomSheet(
     context: context,
@@ -164,33 +181,39 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       },
     ),
   );
-  await examService.saveEditedExam(
-    date: exam.deadline,
-    priority: exam.priority.index,
-    subject: exam.subject,
-    text: exam.text,
-    description: exam.description,
-    dbIndex: dbIndex,
+  await examService.edit(
+    Exam(
+      date: exam.deadline,
+      priority: exam.priority.index,
+      subjectDbIndex: exam.subject?.dbIndex,
+      text: exam.text,
+      description: exam.description,
+      fireId: exam.fireId,
+      isDeleted: exam.isDeleted,
+      timestamp: DateTime.now(),
+      completion: false
+    ),
+    exam.dbIndex,
   );
 
   return;
 }
 
-void changeCompletion(int dbIndex, bool value) {
-  homeworkService.changeCompletion(dbIndex, value);
+Future<void> changeCompletion(HomeworkDTO hw, bool value) async {
+  return homeworkService.changeCompletion(hw, value);
 }
 
 Future<void> deleteHw(
-    BuildContext context, int dbIndex, Function onDeleteRevert) async {
-  homeworkService.deleteHw(dbIndex);
+    BuildContext context, HomeworkDTO hw, Function onDeleteRevert) async {
+  homeworkService.delete(hw);
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: const Text('Homework deleted'),
       action: SnackBarAction(
         label: 'Undo',
-        onPressed: () {
-          homeworkService.revertLastlyDeletedHw();
+        onPressed: () async {
+          await homeworkService.revertDelete(hw.dbIndex);
           onDeleteRevert();
         },
       ),
@@ -201,8 +224,8 @@ Future<void> deleteHw(
 }
 
 Future<void> deleteExam(
-    BuildContext context, int dbIndex, Function onDeleteRevert) async {
-  examService.deleteExam(dbIndex);
+    BuildContext context, ExamDTO exam, Function onDeleteRevert) async {
+  examService.delete(exam);
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -210,7 +233,7 @@ Future<void> deleteExam(
       action: SnackBarAction(
         label: 'Undo',
         onPressed: () {
-          examService.revertLastlyDeletedExam();
+          examService.revertDelete(exam.dbIndex);
           onDeleteRevert();
         },
       ),
@@ -277,13 +300,13 @@ void switchDrawer({bool? onlyClose}) {
 void tryGettingNewHomeworks() async {
   try {
     await bakaService.getHomeworks(
-      onNewFound: (count) {
+      onNewFound: (numberOfNew) {
         if (navigatorKey.currentContext != null) {
           final context = navigatorKey.currentContext!;
 
           showMessage(
             context,
-            '$count new homework${count == 1 ? '' : 's'} found',
+            '$numberOfNew new homework${numberOfNew == 1 ? '' : 's'} found',
             duration: Duration(days: 100),
             actions: [
               FilledButton(
@@ -379,7 +402,7 @@ class _TasksAppState extends State<TasksApp> {
 
   void firstTimeOpeningApp() {
     // TODO - when done simply change the key of the value
-    // showingTutorial = true;
+    showingTutorial = false;
   }
 
   void refreshTheme() {
@@ -446,6 +469,7 @@ class _TasksAppState extends State<TasksApp> {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         final int dynamicSchemeVariant =
             settings.get(Setting.themeDynamicSchemeVariantInt);
+        final useOled = settings.get(Setting.themeUseOled);
 
         var defaultThemeLight = ColorScheme.fromSeed(
           seedColor: userColor,
@@ -460,7 +484,7 @@ class _TasksAppState extends State<TasksApp> {
               DynamicSchemeVariant.values[dynamicSchemeVariant],
         );
 
-        if (settings.get(Setting.themeUseMaterial)) {
+        if (settings.get(Setting.themeUseDeviceColor)) {
           if (lightDynamic != null && darkDynamic != null) {
             defaultThemeLight = lightDynamic;
             defaultThemeDark = darkDynamic;
@@ -473,7 +497,18 @@ class _TasksAppState extends State<TasksApp> {
         );
 
         final light = schemes.$1;
-        final dark = schemes.$2;
+        final dark = schemes.$2.copyWith(
+          surface: useOled ? Colors.black : null,
+          surfaceContainer: useOled ? Colors.black : null,
+          surfaceContainerLow:
+              useOled ? schemes.$2.surfaceContainerLow.darken(0.05) : null,
+          surfaceContainerHigh:
+              useOled ? schemes.$2.surfaceContainerHigh.darken(0.05) : null,
+          surfaceContainerHighest:
+              useOled ? schemes.$2.surfaceContainerHighest.darken(0.05) : null,
+          surfaceContainerLowest:
+              useOled ? schemes.$2.surfaceContainerLowest.darken(0.02) : null,
+        );
 
         return MaterialApp(
           navigatorKey: navigatorKey,
@@ -489,7 +524,8 @@ class _TasksAppState extends State<TasksApp> {
           locale: const Locale('en', 'GB'),
           // locale: const Locale('cs', 'CZ'),
           debugShowCheckedModeBanner: false,
-          showPerformanceOverlay: settings.get(Setting.showDebugInfo) && settings.get(Setting.debugShowPerformanceOverlay),
+          showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
+              settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(colorScheme: light),
           darkTheme: ThemeData(colorScheme: dark),
           themeMode: themeMode,

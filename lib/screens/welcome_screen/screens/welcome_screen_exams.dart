@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
@@ -27,13 +28,24 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
     }
 
     return ExamDTO(
-      subject: SubjectDTO(name: 'Subject', shortcut: 'Hw', dbIndex: 0),
+      subject: SubjectDTO(
+        name: 'Subject',
+        shortcut: 'Hw',
+        dbIndex: 0,
+        isDeleted: false,
+        bakaId: null,
+        fireId: null,
+        timestamp: Timestamp.now(),
+      ),
       text: text,
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
       completion: false,
       priority: TaskPriority(index),
       dbIndex: index,
+      fireId: '',
+      timestamp: Timestamp.now(),
+      isDeleted: false,
     );
   });
 

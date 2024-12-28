@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -34,6 +35,9 @@ class BakaHomework extends HomeworkDTO {
     required this.alreadyAdded,
     required this.alreadySeen,
     required this.bakaId,
+    required super.fireId,
+    required super.timestamp,
+    required super.isDeleted,
   });
 
   final String bakaId;
@@ -269,11 +273,16 @@ class BakaService {
         }
       }
 
-      listOfSubjects.add(Subject(
-        name: name,
-        shortcut: shortcut,
-        bakaId: bakaId,
-      ));
+      listOfSubjects.add(
+        Subject(
+          name: name,
+          shortcut: shortcut,
+          bakaId: bakaId,
+          fireId: null,
+          isDeleted: false,
+          timestamp: DateTime.now(),
+        ),
+      );
     }
 
     return listOfSubjects;
@@ -531,11 +540,16 @@ class BakaService {
       }
 
       if (!subjectExisted) {
-        var newSubject = await subjectService.addNewSubject(Subject(
-          name: name,
-          shortcut: shortcut,
-          bakaId: bakaId,
-        ));
+        var newSubject = await subjectService.addNewSubject(
+          Subject(
+            name: name,
+            shortcut: shortcut,
+            bakaId: bakaId,
+            fireId: null,
+            isDeleted: false,
+            timestamp: Timestamp.now().toDate(),
+          ),
+        );
         bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.dbIndex});
       }
     }
@@ -646,10 +660,12 @@ class BakaService {
           priority: TaskPriority(0),
           dbIndex: 0,
           description: null,
+          fireId: null,
+          isDeleted: false,
+          timestamp: Timestamp.now(),
         ),
       );
     }
-
 
     if (newHomeworks != 0 && onNewFound != null) {
       onNewFound(newHomeworks);

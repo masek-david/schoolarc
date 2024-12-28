@@ -37,28 +37,16 @@ class HomeworksDatabase {
   }
 
   /// puts/replaces homework at dbIndex with new one
-  Future<void> editHw(int dbIndex, Homework hw) async {
-    await _hwBox.put(dbIndex, hw);
-    return;
+  Future<void> editHw(int dbIndex, Homework hw) {
+    return _hwBox.put(dbIndex, hw);
   }
 
   void deleteHw(int dbIndex) {
     _hwBox.delete(dbIndex);
   }
 
-  void changeCompletion(int dbIndex, bool value) {
-    Homework hw = _hwBox.get(dbIndex);
-
-    _hwBox.put(
-      dbIndex,
-      Homework(
-        subjectDbIndex: hw.subjectDbIndex,
-        text: hw.text,
-        deadline: hw.deadline,
-        completion: value,
-        priority: hw.priority,
-        description: hw.description
-      ),
-    );
+  void deleteAllFromDisk(){
+    _hwBox.deleteFromDisk();
+    _hwSequenceBox.deleteFromDisk();
   }
 }

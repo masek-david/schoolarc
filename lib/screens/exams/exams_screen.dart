@@ -12,8 +12,8 @@ class ExamsScreen extends StatefulWidget {
 }
 
 class _ExamsScreenState extends State<ExamsScreen> {
-  late var examsByPriority = examService.sortByPriority(null);
-  late var completedExams = examService.getCompletedExams(null);
+  late var examsByPriority = examService.sortByPriority();
+  late var completedExams = examService.getCompletedExams();
 
   @override
   void didChangeDependencies() {
@@ -25,8 +25,8 @@ class _ExamsScreenState extends State<ExamsScreen> {
   void updateView() {
     if (mounted) {
       setState(() {
-        examsByPriority = examService.sortByPriority(context);
-        completedExams = examService.getCompletedExams(context);
+        examsByPriority = examService.sortByPriority();
+        completedExams = examService.getCompletedExams();
       });
     }
   }

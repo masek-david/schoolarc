@@ -87,10 +87,10 @@ class NotificationSender {
         .add(const Duration(days: 1));
 
     List<ExamDTO> examsForTommorow =
-        ExamService().getForDay(tommorowDate, null);
+        ExamService().getForDay(tommorowDate);
     List<HomeworkDTO> hwsForTommorow =
-        HomeworkService().getForDay(tommorowDate, null);
-    List<HomeworkDTO> missedHws = homeworkService.getMissedHw(null);
+        HomeworkService().getForDay(tommorowDate);
+    List<HomeworkDTO> missedHws = homeworkService.getMissedHw();
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';

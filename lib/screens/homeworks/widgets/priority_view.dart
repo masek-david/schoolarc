@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
@@ -49,9 +50,11 @@ class PriorityView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new homework',
         onPressed: () {
-          addTask(context, isHomework: true).then((value) {
-            updateView();
-          },);
+          addTask(context, isHomework: true).then(
+            (value) {
+              updateView();
+            },
+          );
           HapticFeedback.lightImpact();
         },
         enableFeedback: true,
@@ -64,66 +67,85 @@ class PriorityView extends StatelessWidget {
             visualDensity: VisualDensity.compact,
           ),
         ),
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          children: [
-            DragAndDropLists(
-              disableScrolling: true,
-              constrainDraggingAxis: false,
-              contentsWhenEmpty: const AnimatedStar(),
-              itemDivider: const SizedBox(height: 10),
-              listDivider: const SizedBox(height: 10),
-              lastListTargetSize: 0,
-              lastItemTargetHeight: 10,
-              listDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              onItemDraggingChanged: (item, dragging) {
-                if (dragging) HapticFeedback.heavyImpact();
-              },
-              onItemReorder: _onItemReorder,
-              onListReorder: (oldListIndex, newListIndex) {},
-              listGhost: const Placeholder(),
-              children: List.generate(
-                numberOfPriorityLists,
-                (index) =>
-                    _buildList(TaskPriority(3 - index), context),
-              ),
-            ),
-            ExpansionTile(
-              title: ExpansionTitle(
-                numberOfItems: completedHws.length,
-                titleText: 'Completed',
-              ),
-              shape: const Border(),
-              children: List.generate(
-                completedHws.length,
-                (index) {
-                  HomeworkDTO hw = completedHws[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: HomeworkTile(
-                      hw: hw,
-                      onChangedCompletion: (value) {
-                        changeCompletion(hw.dbIndex, value);
-                        updateView();
-                      },
-                      onDelete: () =>
-                          deleteHw(context, hw.dbIndex, () => updateView())
-                              .then(
-                        (value) => updateView(),
-                      ),
-                      onTap: () => editHw(context, hw.dbIndex).then(
-                        (value) => updateView(),
-                      ),
-                    ),
-                  );
+        child: RefreshIndicator(
+          notificationPredicate:
+              settings.get(Setting.useFirebase) ? (_) => true : (_) => false,
+          onRefresh: () async {
+            try {
+              return await firestoreService.syncAll().then(
+                (value) {
+                  if (context.mounted) {
+                    value.showSyncMessage(context);
+                  }
+                  updateView();
                 },
+              );
+            } on Object catch (e) {
+              if (context.mounted) {
+                showMessage(context, e.toString(), isError: true);
+              }
+              return;
+            }
+          },
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            children: [
+              DragAndDropLists(
+                disableScrolling: true,
+                constrainDraggingAxis: false,
+                contentsWhenEmpty: const AnimatedStar(),
+                itemDivider: const SizedBox(height: 10),
+                listDivider: const SizedBox(height: 10),
+                lastListTargetSize: 0,
+                lastItemTargetHeight: 10,
+                listDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                onItemDraggingChanged: (item, dragging) {
+                  if (dragging) HapticFeedback.heavyImpact();
+                },
+                onItemReorder: _onItemReorder,
+                onListReorder: (oldListIndex, newListIndex) {},
+                listGhost: const Placeholder(),
+                children: List.generate(
+                  numberOfPriorityLists,
+                  (index) => _buildList(TaskPriority(3 - index), context),
+                ),
               ),
-            ),
-            const SizedBox(height: 70),
-          ],
+              ExpansionTile(
+                title: ExpansionTitle(
+                  numberOfItems: completedHws.length,
+                  titleText: 'Completed',
+                ),
+                shape: const Border(),
+                children: List.generate(
+                  completedHws.length,
+                  (index) {
+                    HomeworkDTO hw = completedHws[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: HomeworkTile(
+                        hw: hw,
+                        onChangedCompletion: (value) async {
+                          await changeCompletion(hw, value);
+                          updateView();
+                        },
+                        onDelete: () =>
+                            deleteHw(context, hw, () => updateView()).then(
+                          (value) => updateView(),
+                        ),
+                        onTap: () => editHw(context, hw.dbIndex).then(
+                          (value) => updateView(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 70),
+            ],
+          ),
         ),
       ),
     );
@@ -153,8 +175,8 @@ class PriorityView extends StatelessWidget {
       child: AnimatedCompletionTile(
         hw: hw,
         onAnimationEnd: updateView,
-        onChangedCompletion: (value) => changeCompletion(hw.dbIndex, value),
-        onDelete: () => deleteHw(context, hw.dbIndex, () => updateView())
+        onChangedCompletion: (value) => changeCompletion(hw, value),
+        onDelete: () => deleteHw(context, hw, () => updateView())
             .then((value) => updateView()),
         onEdit: () => editHw(context, hw.dbIndex).then((value) => updateView()),
       ),
