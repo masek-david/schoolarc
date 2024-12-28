@@ -79,14 +79,8 @@ class SubjectService {
     return list;
   }
 
-  Future<SubjectDTO> addNewSubject(Subject subject,
-      {Timestamp? timestamp}) async {
-    final timestampToSave =
-        timestamp != null ? timestamp.toDate() : DateTime.now();
-
-    int dbIndex = await _db.addSubject(
-      subject.copyWith(timestamp: timestampToSave),
-    );
+  Future<SubjectDTO> addNewSubject(Subject subject) async {
+    int dbIndex = await _db.addSubject(subject);
 
     if (!subject.isDeleted) {
       _sequence.add(dbIndex);
@@ -94,9 +88,7 @@ class SubjectService {
     }
     _subjectDbIndexMap = _db.getDatabase();
 
-    return subject.convertToDTO(dbIndex).copyWith(
-          timestamp: Timestamp.fromDate(timestampToSave),
-        );
+    return subject.convertToDTO(dbIndex);
   }
 
   /// assign timestamp manually

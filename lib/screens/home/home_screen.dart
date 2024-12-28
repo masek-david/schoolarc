@@ -9,8 +9,11 @@ import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
+import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/firestore/firestore_service.dart';
+import 'package:school_manager/services/firestore/sync_message.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/widgets/exam_list.dart';
@@ -31,9 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late int examNumberOfIncomplete = examService.getNumberOfIncomplete();
 
   late var dateToShow = DateTime.now();
-  late var examToShow = examService.getForDay(dateToShow, null);
-  late var hwToShow = homeworkService.getForDay(dateToShow, null);
-  late var missedHw = homeworkService.getMissedHw(null);
+  late var examToShow = examService.getForDay(dateToShow);
+  late var hwToShow = homeworkService.getForDay(dateToShow);
+  late var missedHw = homeworkService.getMissedHw();
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
   late Future<TimeTableDTO?>? bakaTimetable;
@@ -45,9 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
       examNumberOfIncomplete = examService.getNumberOfIncomplete();
-      examToShow = examService.getForDay(dateToShow, context);
-      hwToShow = homeworkService.getForDay(dateToShow, context);
-      missedHw = homeworkService.getMissedHw(context);
+      examToShow = examService.getForDay(dateToShow);
+      hwToShow = homeworkService.getForDay(dateToShow);
+      missedHw = homeworkService.getMissedHw();
     });
   }
 
@@ -69,10 +72,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> refresh() async {
     tryGettingNewHomeworks();
 
-    await Future.wait([
+    final response = await Future.wait([
       refreshMeals(),
       refreshTimetable(),
+      if(settings.get(Setting.useFirebase)) firestoreService.syncAll(),
     ]);
+    
+    if (mounted && settings.get(Setting.useFirebase)) {
+      (response[2] as SyncMessage).showSyncMessage(context);
+    }
+    updateView();
+
     return;
   }
 
@@ -126,8 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
           .toLocal();
 
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = homeworkService.getForDay(dateToShow, context);
-      examToShow = examService.getForDay(dateToShow, context);
+      hwToShow = homeworkService.getForDay(dateToShow);
+      examToShow = examService.getForDay(dateToShow);
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
@@ -138,8 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: kDebugMode
               ? FloatingActionButton.extended(
                   onPressed: () {
-                    HomeworksDatabase().deleteAllFromDb();
+                    HomeworksDatabase().deleteAllFromDisk();
                     SubjectDatabase().deleteAllFromDisk();
+                    ExamDatabase().deleteAllFromDisk();
                   },
                   label: const Text('test'),
                   icon: const Icon(Icons.bug_report),

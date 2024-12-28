@@ -78,15 +78,14 @@ class Homework extends HiveObject {
     );
   }
 
-  HomeworkDTO convertToDTO(
-      int dbIndex, SubjectDTO? subject, TaskPriority priority) {
+  HomeworkDTO convertToDTO(int dbIndex, SubjectDTO? subject) {
     return HomeworkDTO(
       subject: subject,
       text: text,
       description: description,
       deadline: deadline,
       completion: completion,
-      priority: priority,
+      priority: TaskPriority(priority),
       dbIndex: dbIndex,
       fireId: fireId,
       timestamp: Timestamp.fromDate(timestamp),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
@@ -87,27 +88,32 @@ Future<void> addTask(
   }
 
   if (isHomework) {
-    await homeworkService.saveNew(Homework(
-      deadline: newTask!.deadline,
-      priority: newTask!.priority.index,
-      subjectDbIndex: newTask!.subject?.dbIndex,
-      text: newTask!.text,
-      completion: false,
-      description: newTask!.description,
-      fireId: newTask!.fireId,
-      isDeleted: newTask!.isDeleted,
-      timestamp: null,
-    ));
+    await homeworkService.saveNew(
+      Homework(
+        deadline: newTask!.deadline,
+        priority: newTask!.priority.index,
+        subjectDbIndex: newTask!.subject?.dbIndex,
+        text: newTask!.text,
+        completion: false,
+        description: newTask!.description,
+        fireId: newTask!.fireId,
+        isDeleted: newTask!.isDeleted,
+        timestamp: null,
+      ),
+    );
   } else {
-    await examService.saveNewExam(
-      date: newTask!.deadline,
-      priority: newTask!.priority.index,
-      subject: newTask!.subject,
-      text: newTask!.text,
-      fireId: newTask!.fireId,
-      isDeleted: newTask!.isDeleted,
-      timestamp: DateTime.now(),
-      description: newTask!.description,
+    await examService.saveNew(
+      Exam(
+        date: newTask!.deadline,
+        priority: newTask!.priority.index,
+        subjectDbIndex: newTask!.subject?.dbIndex,
+        text: newTask!.text,
+        fireId: newTask!.fireId,
+        isDeleted: newTask!.isDeleted,
+        completion: false,
+        timestamp: DateTime.now(),
+        description: newTask!.description,
+      ),
     );
   }
 
@@ -115,7 +121,7 @@ Future<void> addTask(
 }
 
 Future<void> editHw(BuildContext context, int dbIndex) async {
-  HomeworkDTO hw = homeworkService.getHomework(dbIndex, context);
+  HomeworkDTO hw = homeworkService.getHomework(dbIndex);
 
   await showModalBottomSheet(
     context: context,
@@ -150,7 +156,7 @@ Future<void> editHw(BuildContext context, int dbIndex) async {
 }
 
 Future<void> editExam(BuildContext context, int dbIndex) async {
-  ExamDTO exam = examService.getExam(dbIndex, context);
+  ExamDTO exam = examService.getExam(dbIndex);
 
   await showModalBottomSheet(
     context: context,
@@ -175,16 +181,19 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       },
     ),
   );
-  await examService.saveEditedExam(
-    date: exam.deadline,
-    priority: exam.priority.index,
-    subject: exam.subject,
-    text: exam.text,
-    description: exam.description,
-    dbIndex: dbIndex,
-    fireId: exam.fireId,
-    isDeleted: exam.isDeleted,
-    timestamp: DateTime.now(),
+  await examService.edit(
+    Exam(
+      date: exam.deadline,
+      priority: exam.priority.index,
+      subjectDbIndex: exam.subject?.dbIndex,
+      text: exam.text,
+      description: exam.description,
+      fireId: exam.fireId,
+      isDeleted: exam.isDeleted,
+      timestamp: DateTime.now(),
+      completion: false
+    ),
+    exam.dbIndex,
   );
 
   return;
@@ -215,8 +224,8 @@ Future<void> deleteHw(
 }
 
 Future<void> deleteExam(
-    BuildContext context, int dbIndex, Function onDeleteRevert) async {
-  examService.deleteExam(dbIndex);
+    BuildContext context, ExamDTO exam, Function onDeleteRevert) async {
+  examService.delete(exam);
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -224,7 +233,7 @@ Future<void> deleteExam(
       action: SnackBarAction(
         label: 'Undo',
         onPressed: () {
-          examService.revertLastlyDeletedExam();
+          examService.revertDelete(exam.dbIndex);
           onDeleteRevert();
         },
       ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -44,16 +45,19 @@ class RescheduleDragTarget extends StatelessWidget {
         if (details.data.runtimeType == ExamDTO) {
           final exam = details.data as ExamDTO;
           if (!exam.deadline.isSameDay(currentDate)) {
-            await examService.saveEditedExam(
-              date: currentDate.toLocal(),
-              priority: exam.priority.index,
-              subject: exam.subject,
-              text: exam.text,
-              description: exam.description,
-              dbIndex: exam.dbIndex,
-              fireId: exam.fireId,
-              isDeleted: exam.isDeleted,
-              timestamp: DateTime.now(),
+            await examService.edit(
+              Exam(
+                date: currentDate.toLocal(),
+                priority: exam.priority.index,
+                subjectDbIndex: exam.subject?.dbIndex,
+                text: exam.text,
+                completion: false,
+                description: exam.description,
+                fireId: exam.fireId,
+                isDeleted: exam.isDeleted,
+                timestamp: DateTime.now(),
+              ),
+              exam.dbIndex,
             );
             updateView();
           }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/homeworks/widgets/priority_view.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -13,8 +12,8 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworksScreenState extends State<HomeworksScreen> {
-  late var hwByPriority = homeworkService.sortByPriority(null);
-  late var completedHw = homeworkService.getCompletedHw(null);
+  late var hwByPriority = homeworkService.sortByPriority();
+  late var completedHw = homeworkService.getCompletedHw();
 
   @override
   void didChangeDependencies() {
@@ -26,8 +25,8 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
   void updateListView() {
     if (mounted) {
       setState(() {
-        hwByPriority = homeworkService.sortByPriority(context);
-        completedHw = homeworkService.getCompletedHw(context);
+        hwByPriority = homeworkService.sortByPriority();
+        completedHw = homeworkService.getCompletedHw();
       });
     }
   }
@@ -49,25 +48,6 @@ class _HomeworksScreenState extends State<HomeworksScreen> {
           appBar: WideScreenAppBar(
             isWideScreen: isWide,
             title: const Text('Homeworks'),
-            actions: [
-              LoadingIconButton(
-                icon: Icons.refresh,
-                onTap: () async {
-                  try {
-                    return await firestoreService.syncHomeworks().then(
-                      (value) {
-                        updateListView();
-                      },
-                    );
-                  } on Object catch (e) {
-                    if (context.mounted) {
-                      showMessage(context, e.toString(), isError: true);
-                    }
-                    return;
-                  }
-                },
-              ),
-            ],
           ),
           body: PriorityView(
             hwByPriority: hwByPriority,

@@ -1,16 +1,24 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/services/firestore/sync_message.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class FirestoreService {
   FirebaseAuth auth = FirebaseAuth.instance;
+  final message = SyncMessage();
 
+  late CollectionReference<Map<String, dynamic>> exams = FirebaseFirestore
+      .instance
+      .collection('users')
+      .doc(auth.currentUser?.uid)
+      .collection('exams');
   late CollectionReference<Map<String, dynamic>> homeworks = FirebaseFirestore
       .instance
       .collection('users')
@@ -41,9 +49,174 @@ class FirestoreService {
     return;
   }
 
-  Future<void> syncHomeworks() async {
+  // returns debug message how many were added
+  Future<SyncMessage> syncAll() async {
+    message.reset();
+
     await syncSubjects();
-    final localHomeworks = homeworkService.getAll(null);
+
+    await Future.wait([
+      syncExams(needsToSyncSubjects: false),
+      syncHomeworks(needsToSyncSubjects: false),
+    ]);
+
+    return message;
+  }
+
+  Widget getMessage(){
+    return message.toWidget();
+  }
+
+  // EXAMS
+
+  Future<void> syncExams({bool needsToSyncSubjects = true}) async {
+    if (needsToSyncSubjects) {
+      await syncSubjects();
+    }
+    final localExams = examService.getAll();
+    final fireExams = await _getAllExams();
+    final localSubjects = subjectService.getAllSubjects();
+
+    if (fireExams == null) {
+      return;
+    }
+
+    for (var localExam in localExams) {
+      final fireExamWithCorrectId = fireExams.where(
+        (fireHw) {
+          return fireHw.fireId == localExam.fireId;
+        },
+      );
+
+      // if it doesnt exist add it to firestore
+      if (fireExamWithCorrectId.isEmpty) {
+        message.examAddHive++;
+        final newFireExam = await addExam(localExam);
+
+        if (newFireExam == null) {
+          break;
+        }
+
+        await examService.edit(
+          localExam.copyWith(fireId: newFireExam.id).convert(),
+          localExam.dbIndex,
+        );
+        // if it exists check which one is newer, override the old one, if at the same time nothing
+      } else {
+        final localTime = localExam.timestamp.toDate();
+        final fireExam = fireExamWithCorrectId.first;
+        final fireTime = fireExam.timestamp;
+
+        if (fireTime.millisecondsSinceEpoch >
+            localTime.millisecondsSinceEpoch) {
+          message.examEditFire++;
+
+          examService.edit(
+            fireExam.copyWith(
+              subjectDbIndex: localSubjects
+                  .where(
+                    (element) => element.dbIndex == fireExam.subjectDbIndex,
+                  )
+                  .firstOrNull
+                  ?.dbIndex,
+              fireId: localExam.fireId,
+            ),
+            localExam.dbIndex,
+          );
+        } else if (fireTime.millisecondsSinceEpoch <
+            localTime.millisecondsSinceEpoch) {
+          message.examEditHive++;
+          await editExam(fireExam.fireId!, localExam);
+        }
+      }
+    }
+
+    for (var fireExam in fireExams) {
+      if (localExams.where(
+        (localExam) {
+          return localExam.fireId == fireExam.fireId;
+        },
+      ).isEmpty) {
+        message.examAddFire++;
+        await examService.saveNew(
+          fireExam.copyWith(
+            subjectDbIndex: localSubjects
+                .where(
+                  (element) => element.dbIndex == fireExam.subjectDbIndex,
+                )
+                .firstOrNull
+                ?.dbIndex,
+          ),
+        );
+      }
+    }
+
+    return;
+  }
+
+  Future<void> editExam(String fireId, ExamDTO exam) async {
+    return exams.doc(fireId).update({
+      'text': exam.text,
+      'isCompleted': exam.completion,
+      'deadline': exam.deadline,
+      'description': exam.description,
+      'priority': exam.priority.index,
+      'subjectId': exam.subject?.fireId,
+      'isDeleted': exam.isDeleted,
+      'timestamp': exam.timestamp,
+    });
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>>? addExam(ExamDTO exam) {
+    return exams.add({
+      'text': exam.text,
+      'isCompleted': exam.completion,
+      'deadline': exam.deadline,
+      'description': exam.description,
+      'priority': exam.priority.index,
+      'subjectId': exam.subject?.fireId,
+      'isDeleted': exam.isDeleted,
+      'timestamp': exam.timestamp,
+    });
+  }
+
+  Future<List<Exam>?> _getAllExams() async {
+    final query = await exams.get();
+    final localSubjects = subjectService.getAllSubjects();
+
+    List<Exam> examsList = [];
+
+    for (var element in query.docs) {
+      examsList.add(
+        Exam(
+          isDeleted: element['isDeleted'],
+          timestamp: (element['timestamp'] as Timestamp).toDate(),
+          fireId: element.id,
+          subjectDbIndex: localSubjects
+              .where(
+                (exam) => exam.fireId == element['subjectId'],
+              )
+              .firstOrNull
+              ?.dbIndex,
+          text: element['text'],
+          date: (element['deadline'] as Timestamp).toDate(),
+          completion: element['isCompleted'],
+          priority: element['priority'],
+          description: element['description'],
+        ),
+      );
+    }
+
+    return examsList;
+  }
+
+  // HOMEWORKS
+
+  Future<void> syncHomeworks({bool needsToSyncSubjects = true}) async {
+    if (needsToSyncSubjects) {
+      await syncSubjects();
+    }
+    final localHomeworks = homeworkService.getAll();
     final fireHomeworks = await _getAllHomeworks();
     final localSubjects = subjectService.getAllSubjects();
 
@@ -59,8 +232,8 @@ class FirestoreService {
       );
 
       // if it doesnt exist add it to firestore
-      if (fireHomeworkWithCorrectId.isEmpty) {  
-        print('adding hw from hive');
+      if (fireHomeworkWithCorrectId.isEmpty) {
+        message.hwAddHive++;
         final newFireHw = await addHomework(localHomework);
 
         if (newFireHw == null) {
@@ -79,7 +252,7 @@ class FirestoreService {
 
         if (fireTime.millisecondsSinceEpoch >
             localTime.millisecondsSinceEpoch) {
-          print('editing hw from firestore');
+          message.hwEditFire++;
 
           homeworkService.edit(
             fireHw.copyWith(
@@ -95,10 +268,8 @@ class FirestoreService {
           );
         } else if (fireTime.millisecondsSinceEpoch <
             localTime.millisecondsSinceEpoch) {
-          print('editing hw from hive');
+          message.hwEditHive++;
           await editHomework(fireHw.fireId!, localHomework);
-        } else {
-          print('hw same date');
         }
       }
     }
@@ -109,7 +280,7 @@ class FirestoreService {
           return localHw.fireId == fireHw.fireId;
         },
       ).isEmpty) {
-        print('adding hw from firestore');
+        message.hwAddFire++;
         await homeworkService.saveNew(
           fireHw.copyWith(
             subjectDbIndex: localSubjects
@@ -202,7 +373,7 @@ class FirestoreService {
 
       // if it doesnt exist in firebase add it there and save its new fireId
       if (fireSubjectsWithCorrectId.isEmpty) {
-        print('adding subject from hive');
+        message.subAddHive++;
         final newFireSubject = await addSubject(localSubject);
 
         if (newFireSubject == null) {
@@ -221,7 +392,7 @@ class FirestoreService {
 
         if (fireTime.millisecondsSinceEpoch >
             localTime.millisecondsSinceEpoch) {
-          print('editing subject from firestore');
+          message.subEditFire++;
 
           subjectService.editSubject(
             fireSubject
@@ -230,10 +401,9 @@ class FirestoreService {
           );
         } else if (fireTime.millisecondsSinceEpoch <
             localTime.millisecondsSinceEpoch) {
-          print('editing subject from hive');
+          message.subEditHive++;
+
           await editSubject(fireSubject.fireId!, localSubject.convert());
-        } else {
-          // print('subject same date');
         }
       }
     }
@@ -244,7 +414,7 @@ class FirestoreService {
           return localSubject.fireId == fireSubject.fireId;
         },
       ).isEmpty) {
-        print('adding subject from firestore');
+        message.subAddFire++;
         await subjectService.addNewSubject(fireSubject);
       }
     }

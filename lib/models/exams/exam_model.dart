@@ -53,14 +53,38 @@ class Exam extends HiveObject {
     }
   }
 
-  ExamDTO convertToDTO(
-      int dbIndex, SubjectDTO? subject, TaskPriority priority) {
+    Exam copyWith({
+    int? subjectDbIndex,
+    String? text,
+    DateTime? date,
+    bool? completion,
+    int? priority,
+    int? dbIndex,
+    String? description,
+    String? fireId,
+    DateTime? timestamp,
+    bool? isDeleted,
+  }) {
+    return Exam(
+      subjectDbIndex: subjectDbIndex ?? this.subjectDbIndex,
+      text: text ?? this.text,
+      date: date ?? this.date,
+      completion: completion ?? this.completion,
+      priority: priority ?? this.priority,
+      description: description ?? this.description,
+      fireId: fireId ?? this.fireId,
+      timestamp: timestamp ?? this.timestamp,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+
+  ExamDTO convertToDTO(int dbIndex, SubjectDTO? subject) {
     return ExamDTO(
       subject: subject,
       text: text,
       description: description,
       deadline: date,
-      priority: priority,
+      priority: TaskPriority(priority),
       dbIndex: dbIndex,
       completion: completion,
       fireId: fireId,

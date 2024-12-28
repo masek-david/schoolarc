@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
@@ -20,10 +18,6 @@ class HomeworkService {
 
   /// map with dbIndex and index in sequence, to return them to correct position
   final Map<int, int> hwsRemovedFromSequence = {};
-
-  Homework? lastlyDeletedHw;
-  int? lastlyDeletedHwDbIndex;
-  int? lastlyDeletedHwIndex;
 
   Future<void> changeCompletion(HomeworkDTO hw, bool value) async {
     return edit(
@@ -60,12 +54,11 @@ class HomeworkService {
   }
 
   /// returns even deleted
-  List<HomeworkDTO> getAll(BuildContext? context) {
+  List<HomeworkDTO> getAll() {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
     List<HomeworkDTO> list = [];
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = _getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -73,7 +66,6 @@ class HomeworkService {
           hw.convertToDTO(
             dbIndex,
             subjectDbIndex[hw.subjectDbIndex],
-            priorities[hw.priority],
           ),
         );
       },
@@ -82,19 +74,9 @@ class HomeworkService {
     return list;
   }
 
-  List<TaskPriority> _getPriorities(BuildContext? context) {
-    List<TaskPriority> priorities = [];
-
-    for (int i = 0; i < 4; i++) {
-      priorities.add(TaskPriority(i));
-    }
-
-    return priorities;
-  }
-
-  List<HomeworkDTO> getForDay(DateTime date, BuildContext? context) {
+  List<HomeworkDTO> getForDay(DateTime date) {
     final dateUtc = date.toUtc();
-    final hwByDate = sortByDate(context);
+    final hwByDate = sortByDate();
 
     final dateNoTime = DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
 
@@ -102,12 +84,11 @@ class HomeworkService {
   }
 
   /// returns map with datetime being only the date in UTC, not the time
-  Map<DateTime, List<HomeworkDTO>> sortByDate(BuildContext? context) {
+  Map<DateTime, List<HomeworkDTO>> sortByDate() {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
     Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = _getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, homework) {
@@ -123,7 +104,6 @@ class HomeworkService {
               homework.convertToDTO(
                 dbIndex,
                 subjectDbIndex[homework.subjectDbIndex],
-                priorities[homework.priority],
               ),
             );
           } else {
@@ -132,7 +112,6 @@ class HomeworkService {
               homework.convertToDTO(
                 dbIndex,
                 subjectDbIndex[homework.subjectDbIndex],
-                priorities[homework.priority],
               )
             ];
           }
@@ -148,12 +127,11 @@ class HomeworkService {
   }
 
   /// returns list of sorted homeworks for each priority
-  Map<int, List<HomeworkDTO>> sortByPriority(BuildContext? context) {
+  Map<int, List<HomeworkDTO>> sortByPriority() {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
     _hwDbIndexMap = _db.getDatabase();
     _sequence = _db.getSequence();
-    final priorities = _getPriorities(context);
 
     Map<int, List<HomeworkDTO>> hwPriorityMap = {
       0: <HomeworkDTO>[],
@@ -167,8 +145,10 @@ class HomeworkService {
         Homework hw = _hwDbIndexMap[list[i]]!;
         if (!hw.completion && !hw.isDeleted) {
           hwPriorityMap[priority]!.add(
-            hw.convertToDTO(list[i], subjectDbIndex[hw.subjectDbIndex],
-                priorities[hw.priority]),
+            hw.convertToDTO(
+              list[i],
+              subjectDbIndex[hw.subjectDbIndex],
+            ),
           );
         }
       }
@@ -177,12 +157,11 @@ class HomeworkService {
     return hwPriorityMap;
   }
 
-  List<HomeworkDTO> getCompletedHw(BuildContext? context) {
+  List<HomeworkDTO> getCompletedHw() {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
     List<HomeworkDTO> completedHw = [];
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = _getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -191,7 +170,6 @@ class HomeworkService {
             hw.convertToDTO(
               dbIndex,
               subjectDbIndex[hw.subjectDbIndex],
-              priorities[hw.priority],
             ),
           );
         }
@@ -201,12 +179,11 @@ class HomeworkService {
     return completedHw;
   }
 
-  List<HomeworkDTO> getMissedHw(BuildContext? context) {
+  List<HomeworkDTO> getMissedHw() {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
 
     List<HomeworkDTO> missedHw = [];
     _hwDbIndexMap = _db.getDatabase();
-    final priorities = _getPriorities(context);
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
@@ -215,7 +192,6 @@ class HomeworkService {
             hw.convertToDTO(
               dbIndex,
               subjectDbIndex[hw.subjectDbIndex],
-              priorities[hw.priority],
             ),
           );
         }
@@ -227,24 +203,26 @@ class HomeworkService {
 
   Future<void> delete(HomeworkDTO hw) {
     return edit(
-        hw
-            .copyWith(
-              isDeleted: true,
-              timestamp: Timestamp.now(),
-            )
-            .convert(),
-        hw.dbIndex);
+      hw
+          .copyWith(
+            isDeleted: true,
+            timestamp: Timestamp.now(),
+          )
+          .convert(),
+      hw.dbIndex,
+    );
   }
 
   Future<void> revertDelete(int dbIndex) {
     final hw = _db.getHomework(dbIndex);
 
     return edit(
-        hw.copyWith(
-          isDeleted: false,
-          timestamp: DateTime.now(),
-        ),
-        dbIndex);
+      hw.copyWith(
+        isDeleted: false,
+        timestamp: DateTime.now(),
+      ),
+      dbIndex,
+    );
   }
 
   /// returns id for the new hw
@@ -262,9 +240,10 @@ class HomeworkService {
   }
 
   Future<void> edit(Homework hw, int dbIndex) async {
-    int oldPriority = _db.getHomework(dbIndex).priority;
-    bool oldCompletion = _db.getHomework(dbIndex).completion;
-    bool oldIsDeleted = _db.getHomework(dbIndex).isDeleted;
+    final oldHw = _db.getHomework(dbIndex);
+    int oldPriority = oldHw.priority;
+    bool oldCompletion = oldHw.completion;
+    bool oldIsDeleted = oldHw.isDeleted;
 
     _sequence = _db.getSequence();
 
@@ -306,15 +285,13 @@ class HomeworkService {
     return;
   }
 
-  HomeworkDTO getHomework(int dbIndex, BuildContext? context) {
+  HomeworkDTO getHomework(int dbIndex) {
     final Map<int, SubjectDTO> subjectDbIndex = subjectService.getMap();
-
     Homework hw = _db.getHomework(dbIndex);
 
     return hw.convertToDTO(
       dbIndex,
       subjectDbIndex[hw.subjectDbIndex],
-      TaskPriority(hw.priority),
     );
   }
 

@@ -72,8 +72,11 @@ class PriorityView extends StatelessWidget {
               settings.get(Setting.useFirebase) ? (_) => true : (_) => false,
           onRefresh: () async {
             try {
-              return await firestoreService.syncHomeworks().then(
+              return await firestoreService.syncAll().then(
                 (value) {
+                  if (context.mounted) {
+                    value.showSyncMessage(context);
+                  }
                   updateView();
                 },
               );

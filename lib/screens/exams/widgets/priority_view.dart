@@ -2,6 +2,7 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
+import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -63,62 +64,81 @@ class PriorityView extends StatelessWidget {
             visualDensity: VisualDensity.compact,
           ),
         ),
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          children: [
-            DragAndDropLists(
-              disableScrolling: true,
-              constrainDraggingAxis: false,
-              contentsWhenEmpty: const AnimatedStar(),
-              itemDivider: const SizedBox(height: 10),
-              listDivider: const SizedBox(height: 10),
-              lastListTargetSize: 0,
-              lastItemTargetHeight: 10,
-              listDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              onItemDraggingChanged: (item, dragging) {
-                if (dragging) HapticFeedback.heavyImpact();
-              },
-              onItemReorder: _onItemReorder,
-              onListReorder: (oldListIndex, newListIndex) {},
-              listGhost: const Placeholder(),
-              children: List.generate(
-                numberOfPriorityLists,
-                (index) =>
-                    _buildList(TaskPriority(3 - index), context),
-              ),
-            ),
-            ExpansionTile(
-              title: ExpansionTitle(
-                numberOfItems: completedExams.length,
-                titleText: 'Completed',
-              ),
-              shape: const Border(),
-              children: List.generate(
-                completedExams.length,
-                (index) {
-                  ExamDTO exam = completedExams[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: ExamTile(
-                      exam: exam,
-                      onDelete: (context) =>
-                          deleteExam(context, exam.dbIndex, () => updateView())
-                              .then(
-                        (value) => updateView(),
-                      ),
-                      onEdit: () => editExam(context, exam.dbIndex).then(
-                        (value) => updateView(),
-                      ),
-                    ),
-                  );
+        child: RefreshIndicator(
+          notificationPredicate:
+              settings.get(Setting.useFirebase) ? (_) => true : (_) => false,
+          onRefresh: () async {
+            try {
+              return await firestoreService.syncAll().then(
+                (value) {
+                  if (context.mounted) {
+                    value.showSyncMessage(context);
+                  }
+                  updateView();
                 },
+              );
+            } on Object catch (e) {
+              if (context.mounted) {
+                showMessage(context, e.toString(), isError: true);
+              }
+              return;
+            }
+          },
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            children: [
+              DragAndDropLists(
+                disableScrolling: true,
+                constrainDraggingAxis: false,
+                contentsWhenEmpty: const AnimatedStar(),
+                itemDivider: const SizedBox(height: 10),
+                listDivider: const SizedBox(height: 10),
+                lastListTargetSize: 0,
+                lastItemTargetHeight: 10,
+                listDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                onItemDraggingChanged: (item, dragging) {
+                  if (dragging) HapticFeedback.heavyImpact();
+                },
+                onItemReorder: _onItemReorder,
+                onListReorder: (oldListIndex, newListIndex) {},
+                listGhost: const Placeholder(),
+                children: List.generate(
+                  numberOfPriorityLists,
+                  (index) => _buildList(TaskPriority(3 - index), context),
+                ),
               ),
-            ),
-            const SizedBox(height: 70),
-          ],
+              ExpansionTile(
+                title: ExpansionTitle(
+                  numberOfItems: completedExams.length,
+                  titleText: 'Completed',
+                ),
+                shape: const Border(),
+                children: List.generate(
+                  completedExams.length,
+                  (index) {
+                    ExamDTO exam = completedExams[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: ExamTile(
+                        exam: exam,
+                        onDelete: (context) =>
+                            deleteExam(context, exam, () => updateView()).then(
+                          (value) => updateView(),
+                        ),
+                        onEdit: () => editExam(context, exam.dbIndex).then(
+                          (value) => updateView(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 70),
+            ],
+          ),
         ),
       ),
     );
@@ -148,7 +168,7 @@ class PriorityView extends StatelessWidget {
       child: ExamTile(
         exam: exam,
         onDelete: (context) =>
-            deleteExam(context, exam.dbIndex, () => updateView()).then(
+            deleteExam(context, exam, () => updateView()).then(
           (value) => updateView(),
         ),
         onEdit: () => editExam(context, exam.dbIndex).then(

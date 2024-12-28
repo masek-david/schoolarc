@@ -280,7 +280,7 @@ class BakaService {
           bakaId: bakaId,
           fireId: null,
           isDeleted: false,
-          timestamp: Timestamp.now().toDate(),
+          timestamp: DateTime.now(),
         ),
       );
     }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/task_model.dart';
@@ -16,6 +17,20 @@ class ExamDTO extends Task {
     required super.timestamp,
     required super.isDeleted,
   });
+
+    Exam convert() {
+    return Exam(
+      fireId: fireId,
+      isDeleted: isDeleted,
+      subjectDbIndex: subject?.dbIndex,
+      text: text,
+      date: deadline,
+      completion: completion,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp.toDate(),
+    );
+  }
 
   ExamDTO copyWith({
     SubjectDTO? subject,
