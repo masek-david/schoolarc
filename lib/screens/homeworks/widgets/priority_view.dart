@@ -42,7 +42,7 @@ class PriorityView extends StatelessWidget {
     );
     completedHws.sort(
       (a, b) {
-        return b.deadline.compareTo(a.deadline);
+        return b.timestamp.compareTo(a.timestamp);
       },
     );
 

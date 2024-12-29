@@ -278,7 +278,7 @@ class HomeworkService {
     if (hw.priority != oldPriority && !hw.isDeleted && !hw.completion) {
       _sequence[oldPriority]!.remove(dbIndex);
       _sequence[hw.priority]!.add(dbIndex);
-      _db.saveSequence(_sequence);
+      await _db.saveSequence(_sequence);
     }
 
     NotificationSender.scheduleTommorrowNotification();

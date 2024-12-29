@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -60,7 +62,7 @@ class SyncMessage {
 
   Widget toWidget() {
     return DefaultTextStyle(
-      style: TextStyle(fontFamily: 'monospace'),
+      style: TextStyle(fontFamily: Platform.isIOS ? 'Courier' : 'monospace'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
