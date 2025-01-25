@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 
 class HomeworksDatabase {

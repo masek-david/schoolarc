@@ -35,6 +35,7 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
+import 'package:uuid/uuid.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -48,6 +49,7 @@ final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
 final firestoreService = FirestoreService();
+final uuid = Uuid();
 
 Future<void> addTask(
   BuildContext context, {

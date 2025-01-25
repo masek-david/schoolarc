@@ -1,27 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
-import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
-class SubjectsScreen extends StatefulWidget {
+class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});
 
   @override
-  State<SubjectsScreen> createState() => _SubjectsScreenState();
+  ConsumerState<SubjectsScreen> createState() => _SubjectsScreenState();
 }
 
-class _SubjectsScreenState extends State<SubjectsScreen> {
-  late List<SubjectDTO> subjectList = subjectService.getSortedList();
-
+class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController shortcutController = TextEditingController();
 
@@ -33,7 +32,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     super.dispose();
   }
 
-  void createNewSubject() {
+  void createNewSubject(WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => SubjectDialog(
@@ -41,21 +40,17 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () async {
-          SubjectDTO newSubject = await subjectService.addNewSubject(
-            Subject(
-              name: nameController.text,
-              shortcut: shortcutController.text,
-              fireId: null,
-              isDeleted: false,
-              timestamp: Timestamp.now().toDate(),
-              bakaId: null,
-            ),
-          );
-          setState(
-            () {
-              subjectList.add(newSubject);
-            },
-          );
+          ref.read(subjectNotifier.notifier).saveNew(
+                Subject(
+                  name: nameController.text,
+                  shortcut: shortcutController.text,
+                  fireId: null,
+                  isDeleted: false,
+                  timestamp: Timestamp.now().toDate(),
+                  bakaId: null,
+                  order: 0,
+                ),
+              );
         },
       ),
     ).then(
@@ -66,9 +61,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
-  void editSubject(int dbIndex) {
-    SubjectDTO subject = subjectService.getSubject(dbIndex);
-
+  void editSubject(SubjectDTO subject, WidgetRef ref) {
     nameController.text = subject.name;
     shortcutController.text = subject.shortcut;
 
@@ -87,18 +80,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             isDeleted: subject.isDeleted,
             fireId: subject.fireId,
             timestamp: Timestamp.now(),
+            order: subject.order,
           );
 
-          subjectService.editSubject(newSubject);
-          setState(
-            () {
-              subjectList[subjectList.indexWhere(
-                (element) {
-                  return element.dbIndex == newSubject.dbIndex;
-                },
-              )] = newSubject;
-            },
-          );
+          ref.read(subjectNotifier.notifier).edit(newSubject);
         },
       ),
     ).then(
@@ -109,33 +94,17 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
-  void deleteSubject(int dbIndex) {
-    SubjectDTO deletedSubject = subjectService.getSubject(dbIndex);
-    subjectService.deleteSubject(deletedSubject.dbIndex);
-    setState(() {
-      subjectList.removeWhere(
-        (element) {
-          return element.dbIndex == deletedSubject.dbIndex;
+  void deleteSubject(int dbIndex, WidgetRef ref) {
+    ref.read(subjectNotifier.notifier).deleteSubject(dbIndex);
+
+    showMessage(context, 'Subject deleted', actions: [
+      SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          ref.read(subjectNotifier.notifier).revertDelete(dbIndex);
         },
-      );
-    });
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Subject deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            subjectService.revertDelete(dbIndex);
-            if (mounted) {
-              setState(() {
-                subjectList = subjectService.getSortedList();
-              });
-            }
-          },
-        ),
       ),
-    );
+    ]);
   }
 
   @override
@@ -163,24 +132,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         context: context,
                         onPressed: () {
                           Navigator.pop(context);
-                          subjectService.deleteAllSubjects();
-                          setState(() {
-                            subjectList = subjectService.getSortedList();
-                          });
                         },
                         child: const Text('Delete'),
-                      ),
-                      adaptiveDialogButton(
-                        context: context,
-                        onPressed: () {
-                          SubjectDatabase().deleteAllFromDisk();
-
-                          Navigator.pop(context);
-                          setState(() {
-                            subjectList = subjectService.getSortedList();
-                          });
-                        },
-                        child: const Text('Hard delete'),
                       ),
                     ],
                   );
@@ -194,78 +147,74 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         tooltip: 'Add new subject',
         onPressed: () {
           HapticFeedback.mediumImpact();
-          createNewSubject();
+          createNewSubject(ref);
         },
         child: const Icon(Icons.add),
       ),
       body: SlidableAutoCloseBehavior(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: subjectList.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No subjects found. You can create new subjects by tapping the plus button.',
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : RefreshIndicator(
-                  notificationPredicate: settings.get(Setting.useFirebase)
-                      ? (_) => true
-                      : (_) => false,
-                  onRefresh: () async {
-                    try {
-                      return await FirestoreService().syncSubjects().then(
-                        (value) {
-                          if (mounted) {
-                            setState(() {
-                              subjectList = subjectService.getSortedList();
-                            });
-                          }
-                        },
-                      );
-                    } on Object catch (e) {
-                      if (context.mounted) {
-                        showMessage(context, e.toString(), isError: true);
-                      }
-                      return;
-                    }
-                  },
-                  child: ReorderableListView.builder(
-                    onReorderStart: (index) => HapticFeedback.lightImpact(),
-                    itemCount: subjectList.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == subjectList.length) {
-                        return const SizedBox(
-                          height: 100,
-                          key: Key('SubjectScreenSpacer'),
-                        );
-                      }
+          child: Consumer(builder: (context, ref, child) {
+            final subjects = ref.watch(subjectsSortedNotifier);
 
-                      SubjectDTO subject = subjectList[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        key: Key('$index'),
-                        child: SubjectTile(
-                          subject: subject,
-                          onTap: () => editSubject(subject.dbIndex),
-                          onDelete: () => deleteSubject(subject.dbIndex),
-                        ),
-                      );
-                    },
-                    onReorder: (int oldIndex, int newIndex) {
-                      if (oldIndex < newIndex) {
-                        newIndex -= 1;
+            return subjects.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No subjects found. You can create new subjects by tapping the plus button.',
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : RefreshIndicator(
+                    notificationPredicate: settings.get(Setting.useFirebase)
+                        ? (_) => true
+                        : (_) => false,
+                    onRefresh: () async {
+                      try {
+                        return await FirestoreService().syncSubjects();
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
                       }
-                      final SubjectDTO item = subjectList.removeAt(oldIndex);
-                      subjectService.changeSequence(oldIndex, newIndex);
-                      setState(
-                        () {
-                          subjectList.insert(newIndex, item);
-                        },
-                      );
                     },
-                  ),
-                ),
+                    child: ReorderableListView.builder(
+                      onReorderStart: (index) => HapticFeedback.lightImpact(),
+                      itemCount: subjects.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == subjects.length) {
+                          return const SizedBox(
+                            height: 100,
+                            key: Key('SubjectScreenSpacer'),
+                          );
+                        }
+
+                        SubjectDTO subject = subjects[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          key: Key('$index'),
+                          child: SubjectTile(
+                            subject: subject,
+                            onTap: () => editSubject(subject, ref),
+                            onDelete: () => deleteSubject(subject.dbIndex, ref),
+                          ),
+                        );
+                      },
+                      onReorder: (int oldIndex, int newIndex) {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+
+                        ref.read(subjectNotifier.notifier).reorder(
+                              oldIndex,
+                              newIndex,
+                              null,
+                              addTimestamp: true,
+                            );
+                      },
+                    ),
+                  );
+          }),
         ),
       ),
     );

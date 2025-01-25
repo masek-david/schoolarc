@@ -1,4 +1,4 @@
-// ignore: unused_import
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
@@ -75,9 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final response = await Future.wait([
       refreshMeals(),
       refreshTimetable(),
-      if(settings.get(Setting.useFirebase)) firestoreService.syncAll(),
+      if (settings.get(Setting.useFirebase)) firestoreService.syncAll(),
     ]);
-    
+
     if (mounted && settings.get(Setting.useFirebase)) {
       (response[2] as SyncMessage).showSyncMessage(context);
     }
@@ -151,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     HomeworksDatabase().deleteAllFromDisk();
                     SubjectDatabase().deleteAllFromDisk();
                     ExamDatabase().deleteAllFromDisk();
+                    FirebaseFirestore.instance.clearPersistence();
                   },
                   label: const Text('test'),
                   icon: const Icon(Icons.bug_report),

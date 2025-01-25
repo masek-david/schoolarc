@@ -17,7 +17,8 @@ class WelcomeScreenSubjects extends StatelessWidget {
         isDeleted: false,
         bakaId: null,
         fireId: null,
-        timestamp: Timestamp.now()
+        timestamp: Timestamp.now(),
+        order: 0,
       ),
       SubjectDTO(
         name: 'And another subject',
@@ -26,7 +27,8 @@ class WelcomeScreenSubjects extends StatelessWidget {
         isDeleted: false,
         bakaId: null,
         fireId: null,
-        timestamp: Timestamp.now()
+        timestamp: Timestamp.now(),
+        order: 0,
       ),
       SubjectDTO(
         name: 'You can delete and edit the same way as tasks',
@@ -35,7 +37,8 @@ class WelcomeScreenSubjects extends StatelessWidget {
         isDeleted: false,
         bakaId: null,
         fireId: null,
-        timestamp: Timestamp.now()
+        timestamp: Timestamp.now(),
+        order: 0,
       ),
     ];
 

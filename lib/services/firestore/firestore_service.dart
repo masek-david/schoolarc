@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/firestore/sync_message.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class FirestoreService {
   FirebaseAuth auth = FirebaseAuth.instance;
   final message = SyncMessage();
+  final ProviderContainer _container = ProviderContainer();
 
   late CollectionReference<Map<String, dynamic>> exams = FirebaseFirestore
       .instance
@@ -63,7 +66,7 @@ class FirestoreService {
     return message;
   }
 
-  Widget getMessage(){
+  Widget getMessage() {
     return message.toWidget();
   }
 
@@ -75,7 +78,7 @@ class FirestoreService {
     }
     final localExams = examService.getAll();
     final fireExams = await _getAllExams();
-    final localSubjects = subjectService.getAllSubjects();
+    final localSubjects = _container.read(subjectsSortedNotifier);
 
     if (fireExams == null) {
       return;
@@ -182,7 +185,7 @@ class FirestoreService {
 
   Future<List<Exam>?> _getAllExams() async {
     final query = await exams.get();
-    final localSubjects = subjectService.getAllSubjects();
+    final localSubjects = _container.read(subjectsSortedNotifier);
 
     List<Exam> examsList = [];
 
@@ -218,7 +221,7 @@ class FirestoreService {
     }
     final localHomeworks = homeworkService.getAll();
     final fireHomeworks = await _getAllHomeworks();
-    final localSubjects = subjectService.getAllSubjects();
+    final localSubjects = _container.read(subjectsSortedNotifier);
 
     if (fireHomeworks == null) {
       return;
@@ -326,7 +329,7 @@ class FirestoreService {
 
   Future<List<Homework>?> _getAllHomeworks() async {
     final query = await homeworks.get();
-    final localSubjects = subjectService.getAllSubjects();
+    final localSubjects = _container.read(subjectsSortedNotifier);
 
     List<Homework> homeworksList = [];
 
@@ -356,9 +359,13 @@ class FirestoreService {
 
   // SUBJECTS
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenToChanges() {
+    return subjects.snapshots();
+  }
+
   Future<void> syncSubjects() async {
     final fireSubjects = await _getSubjects();
-    final localSubjects = subjectService.getAllSubjects();
+    final localSubjects = _container.read(subjectsSortedNotifier);
 
     if (fireSubjects == null) {
       return;
@@ -374,15 +381,13 @@ class FirestoreService {
       // if it doesnt exist in firebase add it there and save its new fireId
       if (fireSubjectsWithCorrectId.isEmpty) {
         message.subAddHive++;
-        final newFireSubject = await addSubject(localSubject);
 
-        if (newFireSubject == null) {
-          break;
-        }
+        localSubject.fireId ??= uuid.v4();
+
+        await addSubject(localSubject);
 
         /// add fireId to local subject
-        subjectService
-            .editSubject(localSubject.copyWith(fireId: newFireSubject.id));
+        _container.read(subjectNotifier.notifier).edit(localSubject);
 
         // if it exists check which one is newer, override the old one, if at the same time nothing
       } else {
@@ -394,11 +399,11 @@ class FirestoreService {
             localTime.millisecondsSinceEpoch) {
           message.subEditFire++;
 
-          subjectService.editSubject(
-            fireSubject
-                .copyWith(timestamp: fireSubject.timestamp)
-                .convertToDTO(localSubject.dbIndex),
-          );
+          _container.read(subjectNotifier.notifier).edit(
+                fireSubject
+                    .copyWith(timestamp: fireSubject.timestamp)
+                    .convertToDTO(localSubject.dbIndex),
+              );
         } else if (fireTime.millisecondsSinceEpoch <
             localTime.millisecondsSinceEpoch) {
           message.subEditHive++;
@@ -415,32 +420,70 @@ class FirestoreService {
         },
       ).isEmpty) {
         message.subAddFire++;
-        await subjectService.addNewSubject(fireSubject);
+
+        await _container.read(subjectNotifier.notifier).saveNew(fireSubject);
       }
     }
 
     return;
   }
 
+  static void printC(String text) {
+    print('\u001b[1;96m$text');
+  }
+
+  Future<void> editSubjectBatch(List<SubjectDTO> updates) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var subject in updates) {
+      if (subject.fireId != null) {
+        final docRef = subjects.doc(subject.fireId);
+
+        printC('batch editing ${subject.name}: ${subject.order}');
+
+        batch.set(docRef, {
+          'name': subject.name,
+          'short': subject.shortcut,
+          'bakaId': subject.bakaId,
+          'isDeleted': subject.isDeleted,
+          'timestamp': subject.timestamp,
+          'order': subject.order,
+        });
+      }
+    }
+
+    await batch.commit();
+  }
+
   Future<void> editSubject(String fireId, Subject subject) async {
-    await subjects.doc(fireId).update({
+    printC('editing ${subject.name}: ${subject.order}');
+
+    await subjects.doc(fireId).set({
       'name': subject.name,
       'short': subject.shortcut,
       'bakaId': subject.bakaId,
       'isDeleted': subject.isDeleted,
       'timestamp': subject.timestamp,
+      'order': subject.order,
     });
   }
 
-  Future<DocumentReference<Map<String, dynamic>>>? addSubject(
-      SubjectDTO subject) {
-    return subjects.add({
-      'name': subject.name,
-      'short': subject.shortcut,
-      'bakaId': subject.bakaId,
-      'isDeleted': subject.isDeleted == true,
-      'timestamp': subject.timestamp,
-    });
+  Future<void> addSubject(SubjectDTO subject) async {
+    if (subject.fireId != null) {
+      printC('saving ${subject.name}: ${subject.order}');
+
+      await subjects.doc(subject.fireId).set({
+        'name': subject.name,
+        'short': subject.shortcut,
+        'bakaId': subject.bakaId,
+        'isDeleted': subject.isDeleted == true,
+        'timestamp': subject.timestamp,
+        'order': subject.order,
+      });
+    } else {
+      throw 'No fireId for subject: ${subject.toString()}';
+    }
+    return;
   }
 
   Future<List<Subject>?> _getSubjects() async {
@@ -457,6 +500,7 @@ class FirestoreService {
           isDeleted: element['isDeleted'],
           timestamp: (element['timestamp'] as Timestamp).toDate(),
           fireId: element.id,
+          order: element['order'],
         ),
       );
     }

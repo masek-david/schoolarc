@@ -11,15 +11,17 @@ class SubjectDTO {
     required this.fireId,
     required this.timestamp,
     required this.isDeleted,
+    required this.order,
   });
 
   String name;
   String shortcut;
   int dbIndex;
   String? bakaId;
-  final String? fireId;
-  final Timestamp timestamp;
-  final bool isDeleted;
+  String? fireId;
+  Timestamp timestamp;
+  bool isDeleted;
+  int order;
 
   Subject convert() {
     return Subject(
@@ -29,6 +31,7 @@ class SubjectDTO {
       fireId: fireId,
       isDeleted: isDeleted,
       timestamp: timestamp.toDate(),
+      order: order,
     );
   }
 
@@ -38,7 +41,7 @@ class SubjectDTO {
 
   @override
   String toString() {
-    return '$name, $shortcut, $bakaId';
+    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp';
   }
 
   bool containsText(String text) {
@@ -62,6 +65,7 @@ class SubjectDTO {
     String? bakaId,
     String? fireId,
     Timestamp? timestamp,
+    int? order,
   }) {
     return SubjectDTO(
       name: name ?? this.name,
@@ -71,6 +75,7 @@ class SubjectDTO {
       bakaId: bakaId ?? this.bakaId,
       fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
+      order: order ?? this.order,
     );
   }
 }

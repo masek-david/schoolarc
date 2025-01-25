@@ -28,8 +28,8 @@ class SubjectDatabase {
     return _subjectBox.add(subject);
   }
 
-  void saveEditedSubject(int dbIndex, Subject newSubject) {
-    _subjectBox.put(dbIndex, newSubject);
+  Future<void> saveEditedSubject(int dbIndex, Subject newSubject) {
+    return _subjectBox.put(dbIndex, newSubject);
   }
 
   void addTimestamp(Timestamp timestamp, int dbIndex) {

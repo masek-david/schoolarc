@@ -36,6 +36,7 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
         bakaId: null,
         fireId: null,
         timestamp: Timestamp.now(),
+        order: 0,
       ),
       text: text,
       description: null,

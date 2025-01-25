@@ -281,6 +281,7 @@ class BakaService {
           fireId: null,
           isDeleted: false,
           timestamp: DateTime.now(),
+          order: 0,
         ),
       );
     }
@@ -547,6 +548,7 @@ class BakaService {
             bakaId: bakaId,
             fireId: null,
             isDeleted: false,
+            order: 0,
             timestamp: Timestamp.now().toDate(),
           ),
         );

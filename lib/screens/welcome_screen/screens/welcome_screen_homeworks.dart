@@ -40,6 +40,7 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
         bakaId: null,
         fireId: null,
         timestamp: Timestamp.now(),
+        order: 0,
       ),
       text: text,
       description: null,
