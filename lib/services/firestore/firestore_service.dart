@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -56,11 +57,9 @@ class FirestoreService {
   Future<SyncMessage> syncAll() async {
     message.reset();
 
-    await syncSubjects();
-
     await Future.wait([
-      syncExams(needsToSyncSubjects: false),
-      syncHomeworks(needsToSyncSubjects: false),
+      syncExams(),
+      syncHomeworks(),
     ]);
 
     return message;
@@ -72,13 +71,10 @@ class FirestoreService {
 
   // EXAMS
 
-  Future<void> syncExams({bool needsToSyncSubjects = true}) async {
-    if (needsToSyncSubjects) {
-      await syncSubjects();
-    }
+  Future<void> syncExams() async {
     final localExams = examService.getAll();
     final fireExams = await _getAllExams();
-    final localSubjects = _container.read(subjectsSortedNotifier);
+    final localSubjects = _container.read(subjectsSortedProvider);
 
     if (fireExams == null) {
       return;
@@ -185,7 +181,7 @@ class FirestoreService {
 
   Future<List<Exam>?> _getAllExams() async {
     final query = await exams.get();
-    final localSubjects = _container.read(subjectsSortedNotifier);
+    final localSubjects = _container.read(subjectsSortedProvider);
 
     List<Exam> examsList = [];
 
@@ -215,13 +211,10 @@ class FirestoreService {
 
   // HOMEWORKS
 
-  Future<void> syncHomeworks({bool needsToSyncSubjects = true}) async {
-    if (needsToSyncSubjects) {
-      await syncSubjects();
-    }
+  Future<void> syncHomeworks() async {
     final localHomeworks = homeworkService.getAll();
     final fireHomeworks = await _getAllHomeworks();
-    final localSubjects = _container.read(subjectsSortedNotifier);
+    final localSubjects = _container.read(subjectsSortedProvider);
 
     if (fireHomeworks == null) {
       return;
@@ -329,7 +322,7 @@ class FirestoreService {
 
   Future<List<Homework>?> _getAllHomeworks() async {
     final query = await homeworks.get();
-    final localSubjects = _container.read(subjectsSortedNotifier);
+    final localSubjects = _container.read(subjectsSortedProvider);
 
     List<Homework> homeworksList = [];
 
@@ -363,70 +356,70 @@ class FirestoreService {
     return subjects.snapshots();
   }
 
-  Future<void> syncSubjects() async {
-    final fireSubjects = await _getSubjects();
-    final localSubjects = _container.read(subjectsSortedNotifier);
+  // Future<void> syncSubjects() async {
+  //   final fireSubjects = await getSubjects();
+  //   final localSubjects = _container.read(subjectsSortedNotifier);
 
-    if (fireSubjects == null) {
-      return;
-    }
+  //   if (fireSubjects == null) {
+  //     return;
+  //   }
 
-    for (var localSubject in localSubjects) {
-      final fireSubjectsWithCorrectId = fireSubjects.where(
-        (fireSubject) {
-          return fireSubject.fireId == localSubject.fireId;
-        },
-      );
+  //   for (var localSubject in localSubjects) {
+  //     final fireSubjectsWithCorrectId = fireSubjects.where(
+  //       (fireSubject) {
+  //         return fireSubject.fireId == localSubject.fireId;
+  //       },
+  //     );
 
-      // if it doesnt exist in firebase add it there and save its new fireId
-      if (fireSubjectsWithCorrectId.isEmpty) {
-        message.subAddHive++;
+  //     // if it doesnt exist in firebase add it there and save its new fireId
+  //     if (fireSubjectsWithCorrectId.isEmpty) {
+  //       message.subAddHive++;
 
-        localSubject.fireId ??= uuid.v4();
+  //       localSubject.fireId ??= uuid.v4();
 
-        await addSubject(localSubject);
+  //       await addSubject(localSubject);
 
-        /// add fireId to local subject
-        _container.read(subjectNotifier.notifier).edit(localSubject);
+  //       /// add fireId to local subject
+  //       _container.read(subjectNotifier.notifier).edit(localSubject);
 
-        // if it exists check which one is newer, override the old one, if at the same time nothing
-      } else {
-        final localTime = localSubject.timestamp.toDate();
-        final fireSubject = fireSubjectsWithCorrectId.first;
-        final fireTime = fireSubject.timestamp;
+  //       // if it exists check which one is newer, override the old one, if at the same time nothing
+  //     } else {
+  //       final localTime = localSubject.timestamp.toDate();
+  //       final fireSubject = fireSubjectsWithCorrectId.first;
+  //       final fireTime = fireSubject.timestamp;
 
-        if (fireTime.millisecondsSinceEpoch >
-            localTime.millisecondsSinceEpoch) {
-          message.subEditFire++;
+  //       if (fireTime.millisecondsSinceEpoch >
+  //           localTime.millisecondsSinceEpoch) {
+  //         message.subEditFire++;
 
-          _container.read(subjectNotifier.notifier).edit(
-                fireSubject
-                    .copyWith(timestamp: fireSubject.timestamp)
-                    .convertToDTO(localSubject.dbIndex),
-              );
-        } else if (fireTime.millisecondsSinceEpoch <
-            localTime.millisecondsSinceEpoch) {
-          message.subEditHive++;
+  //         _container.read(subjectNotifier.notifier).edit(
+  //               fireSubject
+  //                   .copyWith(timestamp: fireSubject.timestamp)
+  //                   .convertToDTO(localSubject.dbIndex),
+  //             );
+  //       } else if (fireTime.millisecondsSinceEpoch <
+  //           localTime.millisecondsSinceEpoch) {
+  //         message.subEditHive++;
 
-          await editSubject(fireSubject.fireId!, localSubject.convert());
-        }
-      }
-    }
+  //         await editSubject(fireSubject.fireId!, localSubject.convert());
+  //       }
+  //     }
+  //   }
 
-    for (var fireSubject in fireSubjects) {
-      if (localSubjects.where(
-        (localSubject) {
-          return localSubject.fireId == fireSubject.fireId;
-        },
-      ).isEmpty) {
-        message.subAddFire++;
+  //   for (var fireSubject in fireSubjects) {
+  //     if (localSubjects.where(
+  //       (localSubject) {
+  //         return localSubject.fireId == fireSubject.fireId;
+  //       },
+  //     ).isEmpty) {
+  //       message.subAddFire++;
 
-        await _container.read(subjectNotifier.notifier).saveNew(fireSubject);
-      }
-    }
+  //       await _container.read(subjectNotifier.notifier).saveNew(fireSubject);
+  //     }
+  //   }
 
-    return;
-  }
+  //   return;
+  // }
 
   static void printC(String text) {
     print('\u001b[1;96m$text');
@@ -452,41 +445,54 @@ class FirestoreService {
       }
     }
 
-    await batch.commit();
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      print(e.toString());
+    }
+    return;
   }
 
   Future<void> editSubject(String fireId, Subject subject) async {
     printC('editing ${subject.name}: ${subject.order}');
 
-    await subjects.doc(fireId).set({
-      'name': subject.name,
-      'short': subject.shortcut,
-      'bakaId': subject.bakaId,
-      'isDeleted': subject.isDeleted,
-      'timestamp': subject.timestamp,
-      'order': subject.order,
-    });
+    try {
+      await subjects.doc(fireId).set({
+        'name': subject.name,
+        'short': subject.shortcut,
+        'bakaId': subject.bakaId,
+        'isDeleted': subject.isDeleted,
+        'timestamp': subject.timestamp,
+        'order': subject.order,
+      });
+    } on Object catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> addSubject(SubjectDTO subject) async {
     if (subject.fireId != null) {
       printC('saving ${subject.name}: ${subject.order}');
 
-      await subjects.doc(subject.fireId).set({
-        'name': subject.name,
-        'short': subject.shortcut,
-        'bakaId': subject.bakaId,
-        'isDeleted': subject.isDeleted == true,
-        'timestamp': subject.timestamp,
-        'order': subject.order,
-      });
+      try {
+        await subjects.doc(subject.fireId).set({
+          'name': subject.name,
+          'short': subject.shortcut,
+          'bakaId': subject.bakaId,
+          'isDeleted': subject.isDeleted == true,
+          'timestamp': subject.timestamp,
+          'order': subject.order,
+        });
+      } on Object catch (error) {
+        print(error);
+      }
     } else {
       throw 'No fireId for subject: ${subject.toString()}';
     }
     return;
   }
 
-  Future<List<Subject>?> _getSubjects() async {
+  Future<List<Subject>?> getSubjects() async {
     final query = await subjects.get();
 
     List<Subject> subjectsList = [];

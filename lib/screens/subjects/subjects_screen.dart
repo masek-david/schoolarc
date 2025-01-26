@@ -4,14 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/firestore/firestore_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});
@@ -40,7 +38,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () async {
-          ref.read(subjectNotifier.notifier).saveNew(
+          ref.read(subjectsProvider.notifier).saveNew(
                 Subject(
                   name: nameController.text,
                   shortcut: shortcutController.text,
@@ -83,7 +81,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
             order: subject.order,
           );
 
-          ref.read(subjectNotifier.notifier).edit(newSubject);
+          ref.read(subjectsProvider.notifier).edit(newSubject);
         },
       ),
     ).then(
@@ -94,14 +92,14 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  void deleteSubject(int dbIndex, WidgetRef ref) {
-    ref.read(subjectNotifier.notifier).deleteSubject(dbIndex);
+  void deleteSubject(SubjectDTO subject, WidgetRef ref) {
+    ref.read(subjectsProvider.notifier).deleteSubject(subject.dbIndex);
 
-    showMessage(context, 'Subject deleted', actions: [
+    showMessage(context, 'Deleted subject ${subject.name}', actions: [
       SnackBarAction(
         label: 'Undo',
         onPressed: () {
-          ref.read(subjectNotifier.notifier).revertDelete(dbIndex);
+          ref.read(subjectsProvider.notifier).revertDelete(subject.dbIndex);
         },
       ),
     ]);
@@ -110,39 +108,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Subjects'),
-        actions: [
-          if (settings.get(Setting.showDebugInfo))
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  showDialogAdaptive(
-                    context: context,
-                    title: const Text('Delete all subjects?'),
-                    actions: [
-                      adaptiveDialogButton(
-                        context: context,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Close'),
-                      ),
-                      adaptiveDialogButton(
-                        context: context,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Delete'),
-                      ),
-                    ],
-                  );
-                });
-              },
-              child: const Text('Delete all'),
-            ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Subjects')),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new subject',
         onPressed: () {
@@ -155,7 +121,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Consumer(builder: (context, ref, child) {
-            final subjects = ref.watch(subjectsSortedNotifier);
+            final subjects = ref.watch(subjectsSortedProvider);
 
             return subjects.isEmpty
                 ? const Center(
@@ -170,7 +136,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         : (_) => false,
                     onRefresh: () async {
                       try {
-                        return await FirestoreService().syncSubjects();
+                        return await ref
+                            .read(subjectsProvider.notifier)
+                            .syncAll();
                       } on Object catch (e) {
                         if (context.mounted) {
                           showMessage(context, e.toString(), isError: true);
@@ -196,7 +164,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                           child: SubjectTile(
                             subject: subject,
                             onTap: () => editSubject(subject, ref),
-                            onDelete: () => deleteSubject(subject.dbIndex, ref),
+                            onDelete: () => deleteSubject(subject, ref),
                           ),
                         );
                       },
@@ -205,7 +173,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                           newIndex -= 1;
                         }
 
-                        ref.read(subjectNotifier.notifier).reorder(
+                        ref.read(subjectsProvider.notifier).reorder(
                               oldIndex,
                               newIndex,
                               null,

@@ -19,13 +19,16 @@ class SubjectService {
     _sequence = _db.getSequence();
     List<SubjectDTO> list = [];
 
-    for (int key in _sequence) {
-      SubjectDTO subject = _subjectDbIndexMap[key]!.convertToDTO(key);
-
-      if (!subject.isDeleted) {
-        list.add(subject);
-      }
-    }
+    _subjectDbIndexMap.forEach(
+      (key, value) {
+        if (!value.isDeleted) {
+          list.add(value.convertToDTO(key));
+        }
+      },
+    );
+    list.sort(
+      (a, b) => a.order.compareTo(b.order),
+    );
 
     return list;
   }

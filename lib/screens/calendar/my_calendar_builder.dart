@@ -172,7 +172,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
         return SizedBox();
       }
 
-      // Color markerColor = Theme.of(context).colorScheme.tertiary;
       List<HomeworkDTO> homeworks = [];
       List<ExamDTO> exams = [];
       for (var event in events) {
@@ -220,25 +219,26 @@ CalendarBuilders<Object?> myCalendarBuilder({
                 exams.length <= 8 ? exams.length : 8,
                 (index) {
                   ExamDTO exam = exams[index];
-                  String shortcut = exam.subject?.trimmedShortcut ?? '';
-                  Color color = exam.priority.getContainerColor(context);
 
                   return GestureDetector(
                     onTap: () => editExam(context, exam.dbIndex).then(
                       (value) => updateView(),
                     ),
-                    child: Container(
-                      width: double.maxFinite,
-                      margin: const EdgeInsets.all(2),
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                          color: color, borderRadius: BorderRadius.circular(6)),
-                      child: Text(
-                        '$shortcut ${exam.text}',
-                        style: const TextStyle(fontSize: 12),
-                        maxLines: 1,
-                        softWrap: false,
+                    child: LongPressDraggable(
+                      data: exam,
+                      feedbackOffset: Offset(0, -80),
+                      dragAnchorStrategy: (draggable, context, position) {
+                        return Offset(50, 60);
+                      },
+                      childWhenDragging: Opacity(
+                        opacity: 0.3,
+                        child: _buildExamTile(exam, context),
                       ),
+                      feedback: SizedBox(
+                        width: 100,
+                        child: _buildExamTile(exam, context),
+                      ),
+                      child: _buildExamTile(exam, context),
                     ),
                   );
                 },
@@ -248,5 +248,24 @@ CalendarBuilders<Object?> myCalendarBuilder({
         ],
       );
     },
+  );
+}
+
+Widget _buildExamTile(ExamDTO exam, BuildContext context) {
+  Color color = exam.priority.getContainerColor(context);
+  String shortcut = exam.subject?.trimmedShortcut ?? '';
+
+  return Container(
+    width: double.maxFinite,
+    margin: const EdgeInsets.all(2),
+    padding: const EdgeInsets.all(2),
+    decoration:
+        BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
+    child: Text(
+      '$shortcut ${exam.text}',
+      style: Theme.of(context).textTheme.bodySmall,
+      maxLines: 1,
+      softWrap: false,
+    ),
   );
 }

@@ -28,7 +28,7 @@ void main() async {
   PlatformDispatcher.instance.onError = (error, stack) {
     logsService
         .save('platform dispatcher: ${error.toString()}\n${stack.toString()}');
-    return !kDebugMode;
+    return true;
   };
 
   // init hive

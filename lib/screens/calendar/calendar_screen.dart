@@ -94,9 +94,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       selectedDay: _selectedDay,
       negativePageCount: negativePageCount,
       setFocusedDay: (date) {
-        setState(() {
-          _focusedDay = date;
-        });
+        if (mounted) {
+          setState(() {
+            _focusedDay = date;
+          });
+        }
       },
       updateView: updateView,
       calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,

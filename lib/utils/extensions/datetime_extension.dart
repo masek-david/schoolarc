@@ -1,6 +1,19 @@
 import 'package:intl/intl.dart';
 
 extension BetterDateTime on DateTime {
+  /// can ONLY add one month
+  DateTime addMonth(int months) {
+    int finalYear = year;
+    int finalMonth = month + months;
+
+    if (finalMonth > 12) {
+      finalYear++;
+      finalMonth = finalMonth - 12;
+    }
+
+    return copyWith(year: finalYear, month: finalMonth);
+  }
+
   bool isSameDay(DateTime comparedDate) {
     comparedDate = comparedDate.toLocal();
 

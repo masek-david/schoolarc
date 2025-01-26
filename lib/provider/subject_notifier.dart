@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -7,21 +6,22 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
-final subjectsSortedNotifier = Provider<List<SubjectDTO>>((ref) {
-  final subjects = ref.watch(subjectNotifier);
+final subjectsSortedProvider = Provider<List<SubjectDTO>>((ref) {
+  final subjects = ref.watch(subjectsProvider);
 
   // Filter out deleted subjects and sort based on the `order` field.
   return subjects.values.where((subject) => !subject.isDeleted).toList()
     ..sort((a, b) => (a.order).compareTo(b.order));
 });
 
-final subjectNotifier =
+final subjectsProvider =
     StateNotifierProvider<SubjectNotifier, Map<int, SubjectDTO>>((ref) {
   return SubjectNotifier(SubjectDatabase());
 });
 
 class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
   final SubjectDatabase _db;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listen;
 
   SubjectNotifier(this._db)
       : super(
@@ -31,32 +31,69 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
             },
           ),
         ) {
-    firestoreService.listenToChanges().listen(
-      (event) async {
-        Map<String, Subject> updatedSubjects = {};
+    listenToFirebase();
+  }
 
-        for (var change in event.docChanges) {
-          final doc = change.doc;
-          final fireSubject = Subject(
-            name: doc['name'],
-            shortcut: doc['short'],
-            bakaId: doc['bakaId'],
-            isDeleted: doc['isDeleted'],
-            timestamp: (doc['timestamp'] as Timestamp).toDate(),
-            fireId: doc.id,
-            order: doc['order'],
-          );
+  void listenToFirebase() async {
+    await listen?.cancel();
+    listen = firestoreService.listenToChanges().listen((event) async {
+      Map<String, Subject> updatedSubjects = {};
 
-          updatedSubjects[doc.id] = fireSubject;
-        }
-
-        updatedSubjects.forEach(
-          (key, value) async {
-            await checkFireSubject(value);
-          },
+      for (var change in event.docChanges) {
+        final doc = change.doc;
+        final fireSubject = Subject(
+          name: doc['name'],
+          shortcut: doc['short'],
+          bakaId: doc['bakaId'],
+          isDeleted: doc['isDeleted'],
+          timestamp: (doc['timestamp'] as Timestamp).toDate(),
+          fireId: doc.id,
+          order: doc['order'],
         );
+
+        updatedSubjects[doc.id] = fireSubject;
+      }
+
+      updatedSubjects.forEach(
+        (key, value) async {
+          await checkFireSubject(value);
+        },
+      );
+    }, onError: (error) {
+      print('error listening to firebase subjects: ${error.toString()}');
+    });
+  }
+
+  Future<void> syncAll() async {
+    listenToFirebase();
+    final fireSubjects = await firestoreService.getSubjects();
+
+    fireSubjects?.forEach(
+      (element) {
+        checkFireSubject(element);
       },
     );
+
+    state.forEach(
+      (key, value) {
+        if (value.fireId == null) {
+          edit(value);
+        } else {
+          bool isSynced = fireSubjects
+                  ?.where(
+                    (element) => element.fireId == value.fireId,
+                  )
+                  .firstOrNull !=
+              null;
+
+          if (!isSynced) {
+            edit(value);
+          }
+        }
+      },
+    );
+
+    return;
   }
 
 // saves new subject to state, to end if [addToEnd] is true
@@ -86,7 +123,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     // if there is a subject that already has the order of the newly added
     if (subjectWithSameOrder != null && !addToEnd) {
-      if (subject.timestamp.millisecondsSinceEpoch <
+      if (subject.timestamp.millisecondsSinceEpoch >
           subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
         // if the new one is newer, add it before old
         reorder(
@@ -114,7 +151,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     return;
   }
 
-  /// assign timestamp manually
+  /// assign timestamp manually, if no fireId, it will add it
   void edit(
     SubjectDTO editedSubject, {
     bool syncWithFire = true,
@@ -153,35 +190,6 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       }
     }
 
-    // final SubjectDTO? subjectWithSameOrder = state.values
-    //     .where((element) =>
-    //         element.order == editedSubject.order && !element.isDeleted)
-    //     .firstOrNull;
-    //
-    // // if there is a subject that already has the order of the newly added
-    // if (subjectWithSameOrder != null && checkForSameOrder) {
-    //   if (editedSubject.timestamp.millisecondsSinceEpoch <
-    //       subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
-    //     // if the new one is newer, add it before old
-    //     reorder(
-    //       null,
-    //       editedSubject.order,
-    //       editedSubject,
-    //       syncWithFire: syncWithFire,
-    //     );
-    //   } else {
-    //     // or add it after the old
-    //     editedSubject.order++;
-    //     _db.saveEditedSubject(editedSubject.dbIndex, editedSubject.convert());
-    //     reorder(
-    //       null,
-    //       editedSubject.order,
-    //       editedSubject,
-    //       syncWithFire: syncWithFire,
-    //     );
-    //   }
-    // }
-
     state = {...state, editedSubject.dbIndex: editedSubject};
     _db.saveEditedSubject(editedSubject.dbIndex, editedSubject.convert());
 
@@ -189,6 +197,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       if (editedSubject.fireId != null) {
         firestoreService.editSubject(
             editedSubject.fireId!, editedSubject.convert());
+      } else {
+        edit(editedSubject.copyWith(fireId: uuid.v4().toString()));
       }
     }
   }
