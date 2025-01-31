@@ -70,6 +70,10 @@ class SubjectTile extends StatelessWidget {
               children: [
                 if (settings.get(Setting.showDebugInfo))
                   Text(subject.dbIndex.toString()),
+                if (settings.get(Setting.showDebugInfo) && subject.isDeleted)
+                  Icon(Icons.delete),
+                if (settings.get(Setting.showDebugInfo))
+                  Text('order: ${subject.order.toString()}'),
                 SizedBox(
                   width: 50,
                   child: SubjectShortcut(subject: subject),
@@ -85,7 +89,11 @@ class SubjectTile extends StatelessWidget {
                   ),
                 if (subject.isFromBakalari &&
                     settings.get(Setting.showDebugInfo))
-                  Text(subject.bakaId ?? '')
+                  Text(subject.bakaId ?? ''),
+                if (subject.isDeleted && settings.get(Setting.showDebugInfo))
+                  Icon(Icons.delete),
+                if (settings.get(Setting.showDebugInfo))
+                  Text(subject.timestamp.millisecondsSinceEpoch.toString())
               ],
             ),
           ),

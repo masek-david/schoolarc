@@ -40,16 +40,18 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
         bakaId: null,
         fireId: null,
         timestamp: Timestamp.now(),
+        order: 0,
       ),
       text: text,
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
-      completion: false,
+      isCompleted: false,
       priority: TaskPriority(index),
       dbIndex: index,
       fireId: '',
       timestamp: Timestamp.now(),
       isDeleted: false,
+      order: 0,
     );
   });
 
@@ -110,7 +112,6 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
                       child: AnimatedCompletionTile(
                         hw: e,
                         slidableController: e.dbIndex == 0 ? _controller : null,
-                        onAnimationEnd: () {},
                         onChangedCompletion: (p0) {
                           if (p0) {
                             showMessage(context,

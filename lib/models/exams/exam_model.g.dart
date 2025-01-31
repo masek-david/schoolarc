@@ -24,8 +24,8 @@ class ExamAdapter extends TypeAdapter<Exam> {
       description: fields[5] as String?,
       date: fields[2] as DateTime,
       priority: fields[3] as int,
-      completion: fields[4] as bool,
       timestamp: fields[7] as DateTime?,
+      order: fields[9] == null ? 0 : fields[9] as int,
     );
   }
 
@@ -41,8 +41,6 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..write(obj.date)
       ..writeByte(3)
       ..write(obj.priority)
-      ..writeByte(4)
-      ..write(obj.completion)
       ..writeByte(5)
       ..write(obj.description)
       ..writeByte(6)
@@ -50,7 +48,9 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..writeByte(7)
       ..write(obj.timestamp)
       ..writeByte(8)
-      ..write(obj.isDeleted);
+      ..write(obj.isDeleted)
+      ..writeByte(9)
+      ..write(obj.order);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_dto_model.dart';
 import 'package:school_manager/models/timetable/table_model.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -20,7 +21,7 @@ class TimeTableDatabase {
       _table = tempTable as TimeTable;
     }
 
-    var subjects = subjectService.getMap();
+    var subjects = container.read(subjectsProvider);
 
     return _table.convertToDTO(subjects);
   }

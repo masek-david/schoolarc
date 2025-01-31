@@ -3,6 +3,8 @@ fix:
 
 
 =============================================================================================
+remove slide to delete?
+
 pridat permanent delete
 
 pridat export a import dat

@@ -1,33 +1,26 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/services/exams/exam_service.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/services/firestore/firestore_service.dart';
-import 'package:school_manager/services/homeworks/hw_service.dart';
-import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/logs_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
-import 'package:school_manager/services/subjects/subject_service.dart';
 import 'package:school_manager/services/timetable_database.dart';
-import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/theme_generate.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
@@ -35,212 +28,26 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
+import 'package:uuid/uuid.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
+final container = ProviderContainer();
 final settings = SettingsDatabase();
-final homeworkService = HomeworkService();
-final examService = ExamService();
-final subjectService = SubjectService();
 final timetableDatabase = TimeTableDatabase();
 final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
 final firestoreService = FirestoreService();
+final uuid = Uuid();
 
-Future<void> addTask(
-  BuildContext context, {
-  required bool isHomework,
-  DateTime? initialDate,
-}) async {
-  Task? newTask;
-
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialDate: initialDate,
-      onSave: (
-          {required date,
-          required priority,
-          subject,
-          required text,
-          required description}) {
-        newTask = Task(
-          subject: subject,
-          text: text,
-          deadline: date,
-          description: description,
-          completion: false,
-          priority: TaskPriority(priority),
-          dbIndex: 0,
-          fireId: null,
-          isDeleted: false,
-          timestamp: Timestamp.now(),
-        );
-      },
-    ),
-  );
-
-  if (newTask == null) {
-    return;
-  }
-
-  if (isHomework) {
-    await homeworkService.saveNew(
-      Homework(
-        deadline: newTask!.deadline,
-        priority: newTask!.priority.index,
-        subjectDbIndex: newTask!.subject?.dbIndex,
-        text: newTask!.text,
-        completion: false,
-        description: newTask!.description,
-        fireId: newTask!.fireId,
-        isDeleted: newTask!.isDeleted,
-        timestamp: null,
-      ),
-    );
-  } else {
-    await examService.saveNew(
-      Exam(
-        date: newTask!.deadline,
-        priority: newTask!.priority.index,
-        subjectDbIndex: newTask!.subject?.dbIndex,
-        text: newTask!.text,
-        fireId: newTask!.fireId,
-        isDeleted: newTask!.isDeleted,
-        completion: false,
-        timestamp: DateTime.now(),
-        description: newTask!.description,
-      ),
-    );
-  }
-
-  return;
-}
-
-Future<void> editHw(BuildContext context, int dbIndex) async {
-  HomeworkDTO hw = homeworkService.getHomework(dbIndex);
-
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialSubject: hw.subject,
-      initialPriority: hw.priority.index,
-      initialName: hw.text,
-      initialDate: hw.deadline,
-      initialDescription: hw.description,
-      onSave: (
-          {required date,
-          required priority,
-          subject,
-          required text,
-          required description}) {
-        hw.deadline = date;
-        hw.priority = TaskPriority(priority);
-        hw.subject = subject;
-        hw.text = text;
-        hw.description = description;
-      },
-    ),
-  );
-
-  await homeworkService.edit(
-    hw.copyWith(timestamp: Timestamp.now()).convert(),
-    dbIndex,
-  );
-
-  return;
-}
-
-Future<void> editExam(BuildContext context, int dbIndex) async {
-  ExamDTO exam = examService.getExam(dbIndex);
-
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialSubject: exam.subject,
-      initialPriority: exam.priority.index,
-      initialName: exam.text,
-      initialDescription: exam.description,
-      initialDate: exam.deadline,
-      onSave: (
-          {required date,
-          required priority,
-          subject,
-          required text,
-          required description}) {
-        exam.deadline = date;
-        exam.priority = TaskPriority(priority);
-        exam.subject = subject;
-        exam.text = text;
-        exam.description = description;
-      },
-    ),
-  );
-  await examService.edit(
-    Exam(
-      date: exam.deadline,
-      priority: exam.priority.index,
-      subjectDbIndex: exam.subject?.dbIndex,
-      text: exam.text,
-      description: exam.description,
-      fireId: exam.fireId,
-      isDeleted: exam.isDeleted,
-      timestamp: DateTime.now(),
-      completion: false
-    ),
-    exam.dbIndex,
-  );
-
-  return;
-}
-
-Future<void> changeCompletion(HomeworkDTO hw, bool value) async {
-  return homeworkService.changeCompletion(hw, value);
-}
-
-Future<void> deleteHw(
-    BuildContext context, HomeworkDTO hw, Function onDeleteRevert) async {
-  homeworkService.delete(hw);
-  ScaffoldMessenger.of(context).clearSnackBars();
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: const Text('Homework deleted'),
-      action: SnackBarAction(
-        label: 'Undo',
-        onPressed: () async {
-          await homeworkService.revertDelete(hw.dbIndex);
-          onDeleteRevert();
-        },
-      ),
-    ),
-  );
-
-  return;
-}
-
-Future<void> deleteExam(
-    BuildContext context, ExamDTO exam, Function onDeleteRevert) async {
-  examService.delete(exam);
-  ScaffoldMessenger.of(context).clearSnackBars();
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: const Text('Exam deleted'),
-      action: SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          examService.revertDelete(exam.dbIndex);
-          onDeleteRevert();
-        },
-      ),
-    ),
-  );
-
-  return;
+Future<void> syncAllTasks(WidgetRef ref) async {
+  Future.wait([
+    ref.read(subjectsProvider.notifier).syncAll(),
+    ref.read(hwProvider.notifier).syncAll(),
+    ref.read(examProvider.notifier).syncAll(),
+  ]);
 }
 
 void showMessage(

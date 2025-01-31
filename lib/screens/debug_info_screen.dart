@@ -11,12 +11,9 @@ class DbInfoScreen extends StatelessWidget {
   final ExamDatabase examDatabase = ExamDatabase();
   final subjectDatabase = SubjectDatabase();
 
-  late final examSequence = examDatabase.getSequence();
-  late final homeworkSequence = homeworksDatabase.getSequence();
   late final examDb = examDatabase.getDatabase();
   late final homeworkDb = homeworksDatabase.getDatabase();
   late final subjectsDb = subjectDatabase.getDatabase();
-  late final subjectsSequence = subjectDatabase.getSequence();
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +24,6 @@ class DbInfoScreen extends StatelessWidget {
         child: ListView(
           children: [
             const Text('SUBJECTS'),
-            const Divider(),
-            Text(subjectsSequence.toString()),
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -48,15 +43,6 @@ class DbInfoScreen extends StatelessWidget {
                         child: Text(item.shortcut),
                       ),
                       Expanded(child: Text(item.name)),
-                      if (entry.value.isDeleted)
-                        IconButton(
-                          onPressed: () {
-                            final seq = subjectDatabase.getSequence();
-                            seq.remove(entry.key);
-                            subjectDatabase.saveSequence(seq);
-                          },
-                          icon: Icon(Icons.delete),
-                        )
                     ],
                   ),
                 );
@@ -64,8 +50,6 @@ class DbInfoScreen extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             const Text('HOMEWORKS'),
-            const Divider(),
-            Text(homeworkSequence.toString()),
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -91,7 +75,7 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.completion) const Text('(completed)'),
+                      if (item.isCompleted) const Text('(completed)'),
                       if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
@@ -100,8 +84,6 @@ class DbInfoScreen extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             const Text('EXAMS'),
-            const Divider(),
-            Text(examSequence.toString()),
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -126,7 +108,6 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.completion) const Text('(completed)')
                     ],
                   ),
                 );

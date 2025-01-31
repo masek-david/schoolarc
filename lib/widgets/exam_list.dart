@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 
-class ExamList extends StatelessWidget {
+class ExamList extends ConsumerWidget {
   const ExamList({
     super.key,
+    required this.onDelete, 
+    required this.onEdit,
     required this.examList,
-    required this.updateView,
     this.draggable = false,
     this.showText = false,
     this.showDates = true,
@@ -17,29 +18,25 @@ class ExamList extends StatelessWidget {
   });
 
   final List<ExamDTO> examList;
-  final void Function() updateView;
+  final void Function(ExamDTO exam) onDelete;
+  final void Function(ExamDTO exam) onEdit;
   final bool draggable;
   final bool showText;
   final bool showDates;
   final String textFull;
   final String? textEmpty;
 
-  Widget buildTile(BuildContext context, ExamDTO exam) {
+  Widget buildTile(BuildContext context, WidgetRef ref, ExamDTO exam) {
     return ExamTile(
       exam: exam,
       showDeadline: false,
-      onDelete: (context) =>
-          deleteExam(context, exam, () => updateView()).then(
-        (value) => updateView(),
-      ),
-      onEdit: () => editExam(context, exam.dbIndex).then(
-        (value) => updateView(),
-      ),
+      onDelete: () => onDelete(exam),
+      onEdit: () => onEdit(exam),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (examList.isEmpty && showText)
         TextSeparator(
@@ -61,14 +58,14 @@ class ExamList extends StatelessWidget {
                         width: constraints.maxWidth,
                         child: Opacity(
                           opacity: 0.6,
-                          child: buildTile(context, exam),
+                          child: buildTile(context, ref, exam),
                         ),
                       ),
-                      child: buildTile(context, exam),
+                      child: buildTile(context, ref, exam),
                     );
                   },
                 )
-              : buildTile(context, exam),
+              : buildTile(context, ref, exam),
         );
       }),
     ]);

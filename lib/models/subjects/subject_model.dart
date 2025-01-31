@@ -13,6 +13,7 @@ class Subject extends HiveObject {
     required this.name,
     required this.shortcut,
     required this.bakaId,
+    required this.order,
   }) : timestamp = timestamp ?? DateTime.now() {
     if (timestamp == null) {
       saveSafe();
@@ -30,7 +31,9 @@ class Subject extends HiveObject {
   @HiveField(4)
   DateTime timestamp;
   @HiveField(5, defaultValue: false)
-  final bool isDeleted;
+  bool isDeleted;
+  @HiveField(6, defaultValue: 0)
+  int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -51,6 +54,7 @@ class Subject extends HiveObject {
       isDeleted: isDeleted == true,
       fireId: fireId,
       timestamp: Timestamp.fromDate(timestamp),
+      order: order,
     );
   }
 
@@ -62,6 +66,7 @@ class Subject extends HiveObject {
     String? bakaId,
     String? fireId,
     DateTime? timestamp,
+    int? order,
   }) {
     return Subject(
       name: name ?? this.name,
@@ -70,6 +75,7 @@ class Subject extends HiveObject {
       bakaId: bakaId ?? this.bakaId,
       fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
+      order: order ?? this.order,
     );
   }
 }

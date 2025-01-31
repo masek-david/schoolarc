@@ -23,13 +23,14 @@ class SubjectAdapter extends TypeAdapter<Subject> {
       name: fields[0] as String,
       shortcut: fields[1] as String,
       bakaId: fields[2] as String?,
+      order: fields[6] == null ? 0 : fields[6] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Subject obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SubjectAdapter extends TypeAdapter<Subject> {
       ..writeByte(4)
       ..write(obj.timestamp)
       ..writeByte(5)
-      ..write(obj.isDeleted);
+      ..write(obj.isDeleted)
+      ..writeByte(6)
+      ..write(obj.order);
   }
 
   @override

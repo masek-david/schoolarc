@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
 import 'package:school_manager/screens/calendar/widgets/pages_widget.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
@@ -7,11 +12,12 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
+import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
-class CalendarScreen extends StatefulWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
     this.showTommorrow = false,
@@ -20,14 +26,10 @@ class CalendarScreen extends StatefulWidget {
   final bool showTommorrow;
 
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
-  late var hwByDate = homeworkService.sortByDate();
-  late var missedHwList = homeworkService.getMissedHw();
-  late var examByDate = examService.sortByDate();
-
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   late DateTime _selectedDay = _focusedDay;
 
@@ -78,30 +80,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  void updateView() {
-    if (mounted) {
-      setState(() {
-        hwByDate = homeworkService.sortByDate();
-        examByDate = examService.sortByDate();
-        missedHwList = homeworkService.getMissedHw();
-      });
-    }
-  }
-
-  Widget buildCalendar(bool isWide) {
+  Widget buildCalendar(
+    bool isWide,
+    Map<DateTime, List<HomeworkDTO>> hws,
+    Map<DateTime, List<ExamDTO>> exams,
+  ) {
     return CalendarWidget(
+      onEdit: (exam) => editExam(context, ref, exam),
       focusedDay: _focusedDay,
       selectedDay: _selectedDay,
       negativePageCount: negativePageCount,
       setFocusedDay: (date) {
-        setState(() {
-          _focusedDay = date;
-        });
+        if (mounted) {
+          setState(() {
+            _focusedDay = date;
+          });
+        }
       },
-      updateView: updateView,
       calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
-      homeworks: hwByDate,
-      exams: examByDate,
+      homeworks: hws,
+      exams: exams,
       jumpToPage: (page) {
         _pageController.jumpToPage(page);
       },
@@ -120,8 +118,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget buildPages() {
+  Widget buildPages(
+    Map<DateTime, List<HomeworkDTO>> hws,
+    Map<DateTime, List<ExamDTO>> exams,
+    List<HomeworkDTO> missedHw,
+  ) {
     return PagesWidget(
+      examOnDelete: (exam) => deleteExam(context, ref, exam),
+      examOnEdit: (exam) => editExam(context, ref, exam),
+      hwOnChangedCompletion: (hw, value) => completeHw(context, ref, hw, value),
+      hwOnDelete: (hw) => deleteHw(context, ref, hw),
+      hwOnEdit: (hw) => editHw(context, ref, hw),
       pageController: _pageController,
       onPageChanged: (page) {
         setState(() {
@@ -133,11 +140,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         });
       },
       negativePageCount: negativePageCount,
-      hwByDate: hwByDate,
-      examByDate: examByDate,
-      missedHwList: missedHwList,
+      hwByDate: hws,
+      examByDate: exams,
+      missedHwList: missedHw,
       showMissed: showMissed,
-      updateView: updateView,
     );
   }
 
@@ -151,16 +157,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             icon: Icons.refresh,
             onTap: () async {
               try {
-                return await firestoreService.syncAll().then(
-                  (value) {
-                    if (mounted) {
-                      value.showSyncMessage(context);
-                    }
-                    updateView();
-                  },
-                );
+                await syncAllTasks(ref);
               } on Object catch (e) {
-                if (context.mounted) {
+                if (mounted) {
                   showMessage(context, e.toString(), isError: true);
                 }
                 return;
@@ -186,6 +185,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hws = ref.watch(hwDatesProvider);
+    final missedHws = ref.watch(hwMissedProvider);
+    final exams = ref.watch(examsDatesProvider);
+
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
@@ -198,25 +201,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
               FloatingActionButton.extended(
                 tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
                 heroTag: 'exam_btn',
-                onPressed: () => addTask(context,
-                        isHomework: false, initialDate: _selectedDay)
-                    .then(
-                  (value) => updateView(),
-                ),
+                onPressed: () =>
+                    addNewExam(context, ref, initialDate: _selectedDay),
                 icon: const Icon(Icons.add),
                 label: const Text('Exam'),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               FloatingActionButton.extended(
                 tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
                 heroTag: 'homework_btn',
-                onPressed: () => addTask(context,
-                        isHomework: true, initialDate: _selectedDay)
-                    .then(
-                  (value) => updateView(),
-                ),
+                onPressed: () =>
+                    addNewHw(context, ref, initialDate: _selectedDay),
                 icon: const Icon(Icons.add),
                 label: const Text('Homework'),
               ),
@@ -241,7 +236,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           borderRadius: BorderRadius.circular(16),
                           child: Scaffold(
                             appBar: buildAppBar(isWide),
-                            body: buildCalendar(isWide),
+                            body: buildCalendar(isWide, hws, exams),
                           ),
                         ),
                       ),
@@ -253,7 +248,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             borderRadius: BorderRadius.circular(16),
                             color: Theme.of(context).colorScheme.surface,
                           ),
-                          child: buildPages(),
+                          child: buildPages(hws, exams, missedHws),
                         ),
                       ),
                     ],
@@ -261,9 +256,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 )
               : Column(
                   children: [
-                    buildCalendar(isWide),
+                    buildCalendar(isWide, hws, exams),
                     const SizedBox(height: 4),
-                    Expanded(child: buildPages()),
+                    Expanded(child: buildPages(hws, exams, missedHws)),
                   ],
                 ),
         );

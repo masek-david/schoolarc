@@ -1,10 +1,10 @@
-import 'dart:ui';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/firebase_options.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/services/firestore/firebase_options.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/logs/log_model.dart';
@@ -34,7 +34,6 @@ void main() async {
   // init hive
   await Hive.initFlutter();
 
-  // open a box
   Hive.registerAdapter(HomeworkAdapter());
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
@@ -42,15 +41,11 @@ void main() async {
   Hive.registerAdapter(LessonTimesAdapter());
   Hive.registerAdapter(LogAdapter());
 
-  await Hive.openBox('tableBox');
   await Future.wait([
     Hive.openBox('subjectBox'),
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
-    // other data includes sequences
-    Hive.openBox('hwOtherData'),
-    Hive.openBox('examOtherData'),
-    Hive.openBox('subjectOtherData'),
+    Hive.openBox('tableBox'),
 
     Hive.openBox('bakaAddedHw'),
     Hive.openBox('bakaSeenHw'),
@@ -106,5 +101,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const TasksApp());
+  runApp(
+    ProviderScope(child: const TasksApp()),
+  );
 }

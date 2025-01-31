@@ -36,16 +36,18 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
         bakaId: null,
         fireId: null,
         timestamp: Timestamp.now(),
+        order: 0,
       ),
       text: text,
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
-      completion: false,
+      isCompleted: false,
       priority: TaskPriority(index),
       dbIndex: index,
       fireId: '',
       timestamp: Timestamp.now(),
       isDeleted: false,
+      order: 0
     );
   });
 
@@ -84,7 +86,7 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
                       padding: const EdgeInsets.all(8.0),
                       child: ExamTile(
                         exam: e,
-                        onDelete: (context) {
+                        onDelete: () {
                           showMessage(context, 'Exam would be deleted');
                         },
                         onEdit: () {

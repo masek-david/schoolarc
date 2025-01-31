@@ -11,7 +11,6 @@ class AnimatedCompletionTile extends StatefulWidget {
     this.draggable = false,
     required this.hw,
     this.slidableController,
-    required this.onAnimationEnd,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
@@ -21,16 +20,15 @@ class AnimatedCompletionTile extends StatefulWidget {
   final bool showDate;
   final bool draggable;
   final SlidableController? slidableController;
-  final Function onAnimationEnd;
-  final Function onDelete;
-  final Function onEdit;
-  final Function(bool value) onChangedCompletion;
+  final void Function() onDelete;
+  final void Function() onEdit;
+  final void Function(bool value) onChangedCompletion;
 
   @override
-  State<AnimatedCompletionTile> createState() => _AnimatedCompletionTileState();
+  State<AnimatedCompletionTile> createState() => AnimatedCompletionTileState();
 }
 
-class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
+class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
     with TickerProviderStateMixin {
   bool checkboxValue = false;
   int _lastVibrationTime = DateTime.now().millisecondsSinceEpoch;
@@ -71,19 +69,15 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
     if (_controller.status == AnimationStatus.forward) {
       _controller.animateBack(0, curve: Curves.easeOutSine).then(
         (value) {
-          widget.onAnimationEnd();
           _controller.reset();
         },
       );
     } else if (value) {
       _controller.animateTo(1, curve: Curves.easeInSine).then(
         (value) {
-          widget.onAnimationEnd();
           _controller.reset();
         },
       );
-    } else {
-      widget.onAnimationEnd();
     }
   }
 
@@ -139,8 +133,8 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
       showDeadline: widget.showDate,
       hw: widget.hw,
       slidableController: widget.slidableController,
-      onChangedCompletion: (value) async { 
-        await widget.onChangedCompletion(value);
+      onChangedCompletion: (value) async {
+        widget.onChangedCompletion(value);
         playAnimation(value);
       },
       onDelete: () => widget.onDelete(),

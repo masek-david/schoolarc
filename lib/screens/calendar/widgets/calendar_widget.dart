@@ -12,7 +12,6 @@ class CalendarWidget extends StatefulWidget {
     required this.focusedDay,
     required this.selectedDay,
     required this.negativePageCount,
-    required this.updateView,
     required this.calendarFormat,
     required this.jumpToPage,
     required this.onHeaderTapped,
@@ -20,9 +19,10 @@ class CalendarWidget extends StatefulWidget {
     required this.onPageChanged,
     required this.homeworks,
     required this.exams,
-    required this.setFocusedDay,
+    required this.setFocusedDay, required this.onEdit,
   });
 
+final void Function(ExamDTO exam) onEdit;
   final DateTime focusedDay;
   final DateTime selectedDay;
   final Map<DateTime, List<HomeworkDTO>> homeworks;
@@ -30,7 +30,6 @@ class CalendarWidget extends StatefulWidget {
   final int negativePageCount;
   final CalendarFormat calendarFormat;
   final void Function(DateTime date) setFocusedDay;
-  final void Function() updateView;
   final Function(int page) jumpToPage;
   final void Function(DateTime)? onHeaderTapped;
   final void Function(CalendarFormat)? onFormatChanged;
@@ -41,7 +40,8 @@ class CalendarWidget extends StatefulWidget {
 }
 
 class _CalendarWidgetState extends State<CalendarWidget> {
-  bool isHovering = false;
+  bool isHoveringLeft = false;
+  bool isHoveringRight = false;
 
   /// used for getting number of markers
   List<Object> getEventsForDay(DateTime day) {
@@ -90,7 +90,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         children: [
           TableCalendar(
             // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-            firstDay: DateTime(1),
+            firstDay: DateTime(0),
             lastDay: DateTime(5000),
             focusedDay: widget.focusedDay,
             availableGestures: AvailableGestures.horizontalSwipe,
@@ -102,16 +102,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             },
             rowHeight: 50 + maxNumberOfExamsPerDay * 25,
             calendarBuilders: myCalendarBuilder(
-              updateView: widget.updateView,
+              onEdit: (exam) => widget.onEdit(exam),
               currentDate: widget.focusedDay,
               showOutside: widget.calendarFormat.name == 'week',
             ),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-            ),
+            headerStyle: HeaderStyle(formatButtonVisible: false),
             calendarStyle: CalendarStyle(
               cellAlignment: Alignment.topCenter,
               markersAlignment: Alignment.topCenter,
+              tablePadding: EdgeInsets.symmetric(horizontal: 8),
             ),
             eventLoader: (day) {
               return getEventsForDay(day);
@@ -119,17 +118,17 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             selectedDayPredicate: (day) {
               // Use `selectedDayPredicate` to determine which day is currently selected.
               // If this returns true, then `day` will be marked as selected.
-          
+
               // Using `isSameDay` is recommended to disregard
               // the time-part of compared DateTime objects.
               return isSameDay(widget.selectedDay, day);
             },
             onDaySelected: (selectedDayNew, focusedDayNew) {
-              if (!selectedDayNew.isSameMonth(widget.selectedDay) &&
+              if (!selectedDayNew.isSameMonth(widget.focusedDay) &&
                   widget.calendarFormat.name == 'month') {
                 return;
               }
-          
+
               if (!isSameDay(selectedDayNew, widget.selectedDay)) {
                 // Call `setState()` when updating the selected day
                 DateTime now = DateTime.now();
@@ -140,7 +139,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     selectedDayNew.difference(nowOnlyDate).inDays;
                 int correctPageIndex =
                     widget.negativePageCount + dayDifferenceFromNow;
-          
+
                 widget.jumpToPage(correctPageIndex);
               }
             },
@@ -152,64 +151,58 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              DragTarget(
-                onMove: (details) async {
-                  if (isHovering) {
-                    return;
-                  }
-                  isHovering = true;
-      
-                  while (isHovering) {
-                    await Future.delayed(Duration(milliseconds: 1000));
-                    if (isHovering) {
-                      HapticFeedback.lightImpact();
-                      widget.setFocusedDay(
-                        widget.focusedDay.subtract(Duration(days: 7)),
-                      );
-                    }
-                  }
-                },
-                onLeave: (data) {
-                  isHovering = false;
-                },
-                builder: (context, candidateData, rejectedData) {
-                  return SizedBox(
-                    height: (100 + 25 * maxNumberOfExamsPerDay).toDouble(),
-                    width: 16,
-                  );
-                },
-              ),
-              DragTarget(
-                onMove: (details) async {
-                  if (isHovering) {
-                    return;
-                  }
-                  isHovering = true;
-                  
-                  while (isHovering) {
-                    await Future.delayed(Duration(milliseconds: 1000));
-                    if (isHovering) {
-                      HapticFeedback.lightImpact();
-                      widget.setFocusedDay(
-                        widget.focusedDay.add(Duration(days: 7)),
-                      );
-                    }
-                  }
-                },
-                onLeave: (data) {
-                  isHovering = false;
-                },
-                builder: (context, candidateData, rejectedData) {
-                  return SizedBox(
-                    height: (100 + 25 * maxNumberOfExamsPerDay).toDouble(),
-                    width: 16,
-                  );
-                },
-              ),
+              _buildScrollTarget(maxNumberOfExamsPerDay, true),
+              _buildScrollTarget(maxNumberOfExamsPerDay, false),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildScrollTarget(int maxNumberOfExamsPerDay, bool isLeft) {
+    return DragTarget(
+      onMove: (details) async {
+        if (isLeft ? isHoveringLeft : isHoveringRight) {
+          return;
+        }
+        if(isLeft){
+          isHoveringLeft = true;
+        } else{
+          isHoveringRight = true;
+        }
+
+        while (isLeft ? isHoveringLeft : isHoveringRight) {
+          await Future.delayed(Duration(milliseconds: 1000));
+          if (isLeft ? isHoveringLeft : isHoveringRight) {
+            HapticFeedback.lightImpact();
+            if (widget.calendarFormat.name == 'week') {
+              widget.setFocusedDay(
+                widget.focusedDay.add(Duration(days: isLeft ? -7 : 7)),
+              );
+            } else {
+              widget.setFocusedDay(
+                widget.focusedDay.addMonth(isLeft ? -1 : 1),
+              );
+            }
+          }
+        }
+      },
+      onLeave: (data) {
+       if(isLeft){
+          isHoveringLeft = false;
+        } else{
+          isHoveringRight = false;
+        }
+      },
+      builder: (context, candidateData, rejectedData) {
+        return SizedBox(
+          height: widget.calendarFormat.name == 'week'
+              ? (100 + 25 * maxNumberOfExamsPerDay).toDouble()
+              : (320 + 25 * maxNumberOfExamsPerDay * 5).toDouble(),
+          width: 20,
+        );
+      },
     );
   }
 }

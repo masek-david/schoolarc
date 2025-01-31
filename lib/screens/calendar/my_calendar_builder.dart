@@ -1,15 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
-  required void Function() updateView,
+  required void Function(ExamDTO exam) onEdit,
   required bool showOutside,
   required DateTime currentDate,
 }) {
@@ -22,7 +22,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
       return showOutside
           ? RescheduleDragTarget(
               currentDate: day,
-              updateView: updateView,
               builder: (context, candidateData, rejectedData) {
                 if (candidateData.isNotEmpty) {
                   HapticFeedback.selectionClick();
@@ -67,7 +66,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
       return RescheduleDragTarget(
         currentDate: day,
-        updateView: updateView,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
             HapticFeedback.selectionClick();
@@ -100,7 +98,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
     },
     defaultBuilder: (context, day, focusedDay) {
       return RescheduleDragTarget(
-        updateView: updateView,
         currentDate: day,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
@@ -135,7 +132,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return RescheduleDragTarget(
-        updateView: updateView,
         currentDate: day,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
@@ -172,7 +168,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
         return SizedBox();
       }
 
-      // Color markerColor = Theme.of(context).colorScheme.tertiary;
       List<HomeworkDTO> homeworks = [];
       List<ExamDTO> exams = [];
       for (var event in events) {
@@ -206,7 +201,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                         return Container(
                           margin: const EdgeInsets.all(1.2),
                           decoration: BoxDecoration(
-                            color: hw.completion
+                            color: hw.isCompleted
                                 ? markerColor.withAlpha(40)
                                 : markerColor,
                             shape: BoxShape.circle,
@@ -220,25 +215,24 @@ CalendarBuilders<Object?> myCalendarBuilder({
                 exams.length <= 8 ? exams.length : 8,
                 (index) {
                   ExamDTO exam = exams[index];
-                  String shortcut = exam.subject?.trimmedShortcut ?? '';
-                  Color color = exam.priority.getContainerColor(context);
 
                   return GestureDetector(
-                    onTap: () => editExam(context, exam.dbIndex).then(
-                      (value) => updateView(),
-                    ),
-                    child: Container(
-                      width: double.maxFinite,
-                      margin: const EdgeInsets.all(2),
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                          color: color, borderRadius: BorderRadius.circular(6)),
-                      child: Text(
-                        '$shortcut ${exam.text}',
-                        style: const TextStyle(fontSize: 12),
-                        maxLines: 1,
-                        softWrap: false,
+                    onTap: () => onEdit(exam),
+                    child: LongPressDraggable(
+                      data: exam,
+                      feedbackOffset: Offset(0, -80),
+                      dragAnchorStrategy: (draggable, context, position) {
+                        return Offset(50, 60);
+                      },
+                      childWhenDragging: Opacity(
+                        opacity: 0.3,
+                        child: _buildExamTile(exam, context),
                       ),
+                      feedback: SizedBox(
+                        width: 100,
+                        child: _buildExamTile(exam, context),
+                      ),
+                      child: _buildExamTile(exam, context),
                     ),
                   );
                 },
@@ -248,5 +242,24 @@ CalendarBuilders<Object?> myCalendarBuilder({
         ],
       );
     },
+  );
+}
+
+Widget _buildExamTile(ExamDTO exam, BuildContext context) {
+  Color color = exam.priority.getContainerColor(context);
+  String shortcut = exam.subject?.trimmedShortcut ?? '';
+
+  return Container(
+    width: double.maxFinite,
+    margin: const EdgeInsets.all(2),
+    padding: const EdgeInsets.all(2),
+    decoration:
+        BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
+    child: Text(
+      '$shortcut ${exam.text}',
+      style: Theme.of(context).textTheme.bodySmall,
+      maxLines: 1,
+      softWrap: false,
+    ),
   );
 }

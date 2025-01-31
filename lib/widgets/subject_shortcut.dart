@@ -18,7 +18,7 @@ class SubjectShortcut extends StatelessWidget {
         subject?.trimmedShortcut ?? '',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: color ?? Theme.of(context).colorScheme.onPrimaryContainer,
+          color: color ?? Theme.of(context).colorScheme.onSecondaryContainer,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
