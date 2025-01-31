@@ -11,50 +11,54 @@ class ExamDTO extends Task {
     required super.deadline,
     required super.priority,
     required super.dbIndex,
-    required super.completion,
+    required super.isCompleted,
     required super.description,
     required super.fireId,
     required super.timestamp,
     required super.isDeleted,
+    required super.order,
   });
 
-    Exam convert() {
+  Exam convert() {
     return Exam(
       fireId: fireId,
       isDeleted: isDeleted,
       subjectDbIndex: subject?.dbIndex,
       text: text,
       date: deadline,
-      completion: completion,
       priority: priority.index,
       description: description,
       timestamp: timestamp.toDate(),
+      order: order,
     );
   }
 
+  @override
   ExamDTO copyWith({
     SubjectDTO? subject,
     String? text,
     DateTime? deadline,
-    bool? completion,
+    bool? isCompleted,
     TaskPriority? priority,
     int? dbIndex,
     String? description,
     String? fireId,
     Timestamp? timestamp,
     bool? isDeleted,
+    int? order,
   }) {
     return ExamDTO(
       subject: subject ?? this.subject,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
-      completion: completion ?? this.completion,
+      isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       dbIndex: dbIndex ?? this.dbIndex,
       description: description ?? this.description,
       fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
+      order: order ?? this.order,
     );
   }
 }

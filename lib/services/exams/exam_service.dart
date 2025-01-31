@@ -19,26 +19,24 @@ class ExamService {
   /// map with dbIndex and index in sequence, to return them to correct position
   final Map<int, int> hwsRemovedFromSequence = {};
 
-  ExamService() {
-    markAllCompletedExams();
-  }
+  // ExamService() {
+  //   markAllCompletedExams();
+  // }
 
-  // projde vsechny testy a ty co uz probehly oznaci jako hotove
-  void markAllCompletedExams() {
-    Map<int, Exam> examList = _db.getDatabase();
+  // // projde vsechny testy a ty co uz probehly oznaci jako hotove
+  // void markAllCompletedExams() {
+  //   Map<int, Exam> examList = _db.getDatabase();
 
-    examList.forEach(
-      (dbIndex, exam) {
-        if (exam.completion == false) {
-          if (exam.date.isBeforeToday()) {
-            edit(exam.copyWith(completion: true), dbIndex);
-          }
-        }
-      },
-    );
+  //   examList.forEach(
+  //     (dbIndex, exam) {
+  //         if (exam.date.isBeforeToday()) {
+  //           edit(exam.copyWith(isCompleted: true), dbIndex);
+  //         }
+  //     },
+  //   );
 
-    _db.saveSequence(_sequence);
-  }
+  //   _db.saveSequence(_sequence);
+  // }
 
   /// edits the position and priority of a Exam at the provided index
   Future<void> changeSequence(
@@ -149,7 +147,7 @@ class ExamService {
     _sequence.forEach((priority, list) {
       for (int i = 0; i < list.length; i++) {
         Exam exam = _examDbIndexMap[list[i]]!;
-        if (!exam.completion && !exam.isDeleted) {
+        if (!exam.date.isBeforeToday() && !exam.isDeleted) {
           examPriorityMap[priority]!.add(
             exam.convertToDTO(
               list[i],
@@ -171,7 +169,7 @@ class ExamService {
 
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
-        if (exam.completion && !exam.isDeleted) {
+        if (exam.date.isBeforeToday() && !exam.isDeleted) {
           completedExams.add(
             exam.convertToDTO(
               dbIndex,
@@ -209,18 +207,12 @@ class ExamService {
     );
   }
 
-  /// returns id for the new exam, completion is set automatically, timestamp not
+  /// returns id for the new exam, isCompleted is set automatically, timestamp not
   Future<int> saveNew(Exam exam) async {
     final newExamId = await _db.addExam(exam);
 
-    if (exam.date.isBeforeToday()) {
-      exam.completion = true;
-    } else {
-      exam.completion = false;
-    }
-
     _examDbIndexMap[newExamId] = exam;
-    if (!exam.isDeleted && !exam.completion) {
+    if (!exam.isDeleted && !exam.date.isBeforeToday()) {
       _sequence[exam.priority]!.add(newExamId);
       await _db.saveSequence(_sequence);
     }
@@ -229,20 +221,14 @@ class ExamService {
     return newExamId;
   }
 
-  /// completion is set automaticaly
+  /// isCompleted is set automaticaly
   Future<void> edit(Exam exam, int dbIndex) async {
     final oldExam = _db.getExam(dbIndex);
     int oldPriority = oldExam.priority;
-    bool oldCompletion = oldExam.completion;
+    bool oldCompletion = oldExam.date.isBeforeToday();
     bool oldIsDeleted = oldExam.isDeleted;
 
     _sequence = _db.getSequence();
-
-    if (exam.date.isBeforeToday()) {
-      exam.completion = true;
-    } else {
-      exam.completion = false;
-    }
 
     await _db.editExam(dbIndex, exam);
     _examDbIndexMap.update(
@@ -250,8 +236,8 @@ class ExamService {
       (value) => exam,
     );
 
-    if (exam.isDeleted != oldIsDeleted || exam.completion != oldCompletion) {
-      if (exam.isDeleted || exam.completion) {
+    if (exam.isDeleted != oldIsDeleted || exam.date.isBeforeToday() != oldCompletion) {
+      if (exam.isDeleted || exam.date.isBeforeToday()) {
         // we need to remove it from sequence and save where it was
         hwsRemovedFromSequence[dbIndex] =
             _sequence[exam.priority]!.indexOf(dbIndex);
@@ -272,7 +258,7 @@ class ExamService {
       _db.saveSequence(_sequence);
     }
     // if priority changes we need to edit it in sequence
-    if (exam.priority != oldPriority && !exam.isDeleted && !exam.completion) {
+    if (exam.priority != oldPriority && !exam.isDeleted) {
       _sequence[oldPriority]!.remove(dbIndex);
       _sequence[exam.priority]!.add(dbIndex);
       _db.saveSequence(_sequence);
@@ -298,7 +284,7 @@ class ExamService {
 
     _examDbIndexMap.forEach(
       (dbIndex, exam) {
-        if (!exam.completion && !exam.isDeleted) {
+        if (!exam.isDeleted) {
           numberOfUncomplete++;
         }
       },

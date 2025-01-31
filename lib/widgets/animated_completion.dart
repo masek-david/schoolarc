@@ -27,10 +27,10 @@ class AnimatedCompletionTile extends StatefulWidget {
   final Function(bool value) onChangedCompletion;
 
   @override
-  State<AnimatedCompletionTile> createState() => _AnimatedCompletionTileState();
+  State<AnimatedCompletionTile> createState() => AnimatedCompletionTileState();
 }
 
-class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
+class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
     with TickerProviderStateMixin {
   bool checkboxValue = false;
   int _lastVibrationTime = DateTime.now().millisecondsSinceEpoch;
@@ -140,7 +140,7 @@ class _AnimatedCompletionTileState extends State<AnimatedCompletionTile>
       hw: widget.hw,
       slidableController: widget.slidableController,
       onChangedCompletion: (value) async { 
-        await widget.onChangedCompletion(value);
+        widget.onChangedCompletion(value);
         playAnimation(value);
       },
       onDelete: () => widget.onDelete(),

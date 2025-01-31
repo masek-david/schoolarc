@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +12,6 @@ import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/firestore/sync_message.dart';
-import 'package:school_manager/tasks_app.dart';
 
 class FirestoreService {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,6 +40,20 @@ class FirestoreService {
 
   Future<void> logIn({required String email, required String password}) async {
     await auth.signInWithEmailAndPassword(email: email, password: password);
+
+    exams = FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('exams');
+    homeworks = FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('homeworks');
+    subjects = FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('subjects');
+
     return;
   }
 
@@ -57,11 +71,6 @@ class FirestoreService {
   Future<SyncMessage> syncAll() async {
     message.reset();
 
-    await Future.wait([
-      syncExams(),
-      syncHomeworks(),
-    ]);
-
     return message;
   }
 
@@ -71,115 +80,64 @@ class FirestoreService {
 
   // EXAMS
 
-  Future<void> syncExams() async {
-    final localExams = examService.getAll();
-    final fireExams = await _getAllExams();
-    final localSubjects = _container.read(subjectsSortedProvider);
+  Stream<QuerySnapshot<Map<String, dynamic>>> examsListenToChanges() {
+    return exams.snapshots();
+  }
 
-    if (fireExams == null) {
-      return;
-    }
+  Future<void> editExams(List<ExamDTO> examsToUpdate) async {
+    final batch = FirebaseFirestore.instance.batch();
 
-    for (var localExam in localExams) {
-      final fireExamWithCorrectId = fireExams.where(
-        (fireHw) {
-          return fireHw.fireId == localExam.fireId;
-        },
-      );
+    for (var exam in examsToUpdate) {
+      if (exam.fireId != null) {
+        final docRef = exams.doc(exam.fireId);
 
-      // if it doesnt exist add it to firestore
-      if (fireExamWithCorrectId.isEmpty) {
-        message.examAddHive++;
-        final newFireExam = await addExam(localExam);
+        printC('batch editing ${exam.toString()}');
 
-        if (newFireExam == null) {
-          break;
-        }
-
-        await examService.edit(
-          localExam.copyWith(fireId: newFireExam.id).convert(),
-          localExam.dbIndex,
-        );
-        // if it exists check which one is newer, override the old one, if at the same time nothing
-      } else {
-        final localTime = localExam.timestamp.toDate();
-        final fireExam = fireExamWithCorrectId.first;
-        final fireTime = fireExam.timestamp;
-
-        if (fireTime.millisecondsSinceEpoch >
-            localTime.millisecondsSinceEpoch) {
-          message.examEditFire++;
-
-          examService.edit(
-            fireExam.copyWith(
-              subjectDbIndex: localSubjects
-                  .where(
-                    (element) => element.dbIndex == fireExam.subjectDbIndex,
-                  )
-                  .firstOrNull
-                  ?.dbIndex,
-              fireId: localExam.fireId,
-            ),
-            localExam.dbIndex,
-          );
-        } else if (fireTime.millisecondsSinceEpoch <
-            localTime.millisecondsSinceEpoch) {
-          message.examEditHive++;
-          await editExam(fireExam.fireId!, localExam);
-        }
+        batch.set(docRef, {
+          'text': exam.text,
+          'deadline': exam.deadline,
+          'description': exam.description,
+          'priority': exam.priority.index,
+          'subjectId': exam.subject?.fireId,
+          'isDeleted': exam.isDeleted,
+          'timestamp': exam.timestamp,
+          'order': exam.order,
+        });
       }
     }
 
-    for (var fireExam in fireExams) {
-      if (localExams.where(
-        (localExam) {
-          return localExam.fireId == fireExam.fireId;
-        },
-      ).isEmpty) {
-        message.examAddFire++;
-        await examService.saveNew(
-          fireExam.copyWith(
-            subjectDbIndex: localSubjects
-                .where(
-                  (element) => element.dbIndex == fireExam.subjectDbIndex,
-                )
-                .firstOrNull
-                ?.dbIndex,
-          ),
-        );
-      }
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      log(e.toString());
     }
-
     return;
   }
 
-  Future<void> editExam(String fireId, ExamDTO exam) async {
-    return exams.doc(fireId).update({
-      'text': exam.text,
-      'isCompleted': exam.completion,
-      'deadline': exam.deadline,
-      'description': exam.description,
-      'priority': exam.priority.index,
-      'subjectId': exam.subject?.fireId,
-      'isDeleted': exam.isDeleted,
-      'timestamp': exam.timestamp,
-    });
+  Future<void> addExam(ExamDTO exam) async {
+    if (exam.fireId != null) {
+      try {
+        printC('saving hw ${exam.toString()}');
+        await exams.doc(exam.fireId).set({
+          'text': exam.text,
+          'deadline': exam.deadline,
+          'description': exam.description,
+          'priority': exam.priority.index,
+          'subjectId': exam.subject?.fireId,
+          'isDeleted': exam.isDeleted,
+          'timestamp': exam.timestamp,
+          'order': exam.order,
+        });
+      } on Object catch (e) {
+        log(e.toString());
+      }
+    } else {
+      throw 'No fireId for exam: ${exam.toString()}';
+    }
+    return;
   }
 
-  Future<DocumentReference<Map<String, dynamic>>>? addExam(ExamDTO exam) {
-    return exams.add({
-      'text': exam.text,
-      'isCompleted': exam.completion,
-      'deadline': exam.deadline,
-      'description': exam.description,
-      'priority': exam.priority.index,
-      'subjectId': exam.subject?.fireId,
-      'isDeleted': exam.isDeleted,
-      'timestamp': exam.timestamp,
-    });
-  }
-
-  Future<List<Exam>?> _getAllExams() async {
+  Future<List<Exam>?> getAllExams() async {
     final query = await exams.get();
     final localSubjects = _container.read(subjectsSortedProvider);
 
@@ -199,9 +157,9 @@ class FirestoreService {
               ?.dbIndex,
           text: element['text'],
           date: (element['deadline'] as Timestamp).toDate(),
-          completion: element['isCompleted'],
           priority: element['priority'],
           description: element['description'],
+          order: element['order'],
         ),
       );
     }
@@ -211,116 +169,66 @@ class FirestoreService {
 
   // HOMEWORKS
 
-  Future<void> syncHomeworks() async {
-    final localHomeworks = homeworkService.getAll();
-    final fireHomeworks = await _getAllHomeworks();
-    final localSubjects = _container.read(subjectsSortedProvider);
+  Stream<QuerySnapshot<Map<String, dynamic>>> homeworksListenToChanges() {
+    return homeworks.snapshots();
+  }
 
-    if (fireHomeworks == null) {
-      return;
-    }
+  Future<void> editHomeworks(List<HomeworkDTO> hwsToUpdate) async {
+    final batch = FirebaseFirestore.instance.batch();
 
-    for (var localHomework in localHomeworks) {
-      final fireHomeworkWithCorrectId = fireHomeworks.where(
-        (fireHw) {
-          return fireHw.fireId == localHomework.fireId;
-        },
-      );
+    for (var homework in hwsToUpdate) {
+      if (homework.fireId != null) {
+        final docRef = homeworks.doc(homework.fireId);
 
-      // if it doesnt exist add it to firestore
-      if (fireHomeworkWithCorrectId.isEmpty) {
-        message.hwAddHive++;
-        final newFireHw = await addHomework(localHomework);
+        printC('batch editing ${homework.toString()}');
 
-        if (newFireHw == null) {
-          break;
-        }
-
-        await homeworkService.edit(
-          localHomework.copyWith(fireId: newFireHw.id).convert(),
-          localHomework.dbIndex,
-        );
-        // if it exists check which one is newer, override the old one, if at the same time nothing
-      } else {
-        final localTime = localHomework.timestamp.toDate();
-        final fireHw = fireHomeworkWithCorrectId.first;
-        final fireTime = fireHw.timestamp;
-
-        if (fireTime.millisecondsSinceEpoch >
-            localTime.millisecondsSinceEpoch) {
-          message.hwEditFire++;
-
-          homeworkService.edit(
-            fireHw.copyWith(
-              subjectDbIndex: localSubjects
-                  .where(
-                    (element) => element.dbIndex == fireHw.subjectDbIndex,
-                  )
-                  .firstOrNull
-                  ?.dbIndex,
-              fireId: localHomework.fireId,
-            ),
-            localHomework.dbIndex,
-          );
-        } else if (fireTime.millisecondsSinceEpoch <
-            localTime.millisecondsSinceEpoch) {
-          message.hwEditHive++;
-          await editHomework(fireHw.fireId!, localHomework);
-        }
+        batch.set(docRef, {
+          'text': homework.text,
+          'isCompleted': homework.isCompleted,
+          'deadline': homework.deadline,
+          'description': homework.description,
+          'priority': homework.priority.index,
+          'subjectId': homework.subject?.fireId,
+          'isDeleted': homework.isDeleted,
+          'timestamp': homework.timestamp,
+          'order': homework.order,
+        });
       }
     }
 
-    for (var fireHw in fireHomeworks) {
-      if (localHomeworks.where(
-        (localHw) {
-          return localHw.fireId == fireHw.fireId;
-        },
-      ).isEmpty) {
-        message.hwAddFire++;
-        await homeworkService.saveNew(
-          fireHw.copyWith(
-            subjectDbIndex: localSubjects
-                .where(
-                  (element) => element.dbIndex == fireHw.subjectDbIndex,
-                )
-                .firstOrNull
-                ?.dbIndex,
-          ),
-        );
-      }
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      log(e.toString());
     }
-
     return;
   }
 
-  Future<void> editHomework(String fireId, HomeworkDTO homework) async {
-    return homeworks.doc(fireId).update({
-      'text': homework.text,
-      'isCompleted': homework.completion,
-      'deadline': homework.deadline,
-      'description': homework.description,
-      'priority': homework.priority.index,
-      'subjectId': homework.subject?.fireId,
-      'isDeleted': homework.isDeleted,
-      'timestamp': homework.timestamp,
-    });
+  Future<void> addHomework(HomeworkDTO homework) async {
+    if (homework.fireId != null) {
+      try {
+        printC('saving hw ${homework.toString()}');
+        await homeworks.doc(homework.fireId).set({
+          'text': homework.text,
+          'isCompleted': homework.isCompleted,
+          'deadline': homework.deadline,
+          'description': homework.description,
+          'priority': homework.priority.index,
+          'subjectId': homework.subject?.fireId,
+          'isDeleted': homework.isDeleted,
+          'timestamp': homework.timestamp,
+          'order': homework.order,
+        });
+      } on Object catch (e) {
+        log(e.toString());
+      }
+    } else {
+      throw 'No fireId for homework: ${homework.toString()}';
+    }
+    return;
   }
 
-  Future<DocumentReference<Map<String, dynamic>>>? addHomework(
-      HomeworkDTO homework) {
-    return homeworks.add({
-      'text': homework.text,
-      'isCompleted': homework.completion,
-      'deadline': homework.deadline,
-      'description': homework.description,
-      'priority': homework.priority.index,
-      'subjectId': homework.subject?.fireId,
-      'isDeleted': homework.isDeleted,
-      'timestamp': homework.timestamp,
-    });
-  }
-
-  Future<List<Homework>?> _getAllHomeworks() async {
+  Future<List<Homework>?> getAllHomeworks() async {
     final query = await homeworks.get();
     final localSubjects = _container.read(subjectsSortedProvider);
 
@@ -340,9 +248,10 @@ class FirestoreService {
               ?.dbIndex,
           text: element['text'],
           deadline: (element['deadline'] as Timestamp).toDate(),
-          completion: element['isCompleted'],
+          isCompleted: element['isCompleted'],
           priority: element['priority'],
           description: element['description'],
+          order: element['order'],
         ),
       );
     }
@@ -352,74 +261,9 @@ class FirestoreService {
 
   // SUBJECTS
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> listenToChanges() {
+  Stream<QuerySnapshot<Map<String, dynamic>>> subjectsListenToChanges() {
     return subjects.snapshots();
   }
-
-  // Future<void> syncSubjects() async {
-  //   final fireSubjects = await getSubjects();
-  //   final localSubjects = _container.read(subjectsSortedNotifier);
-
-  //   if (fireSubjects == null) {
-  //     return;
-  //   }
-
-  //   for (var localSubject in localSubjects) {
-  //     final fireSubjectsWithCorrectId = fireSubjects.where(
-  //       (fireSubject) {
-  //         return fireSubject.fireId == localSubject.fireId;
-  //       },
-  //     );
-
-  //     // if it doesnt exist in firebase add it there and save its new fireId
-  //     if (fireSubjectsWithCorrectId.isEmpty) {
-  //       message.subAddHive++;
-
-  //       localSubject.fireId ??= uuid.v4();
-
-  //       await addSubject(localSubject);
-
-  //       /// add fireId to local subject
-  //       _container.read(subjectNotifier.notifier).edit(localSubject);
-
-  //       // if it exists check which one is newer, override the old one, if at the same time nothing
-  //     } else {
-  //       final localTime = localSubject.timestamp.toDate();
-  //       final fireSubject = fireSubjectsWithCorrectId.first;
-  //       final fireTime = fireSubject.timestamp;
-
-  //       if (fireTime.millisecondsSinceEpoch >
-  //           localTime.millisecondsSinceEpoch) {
-  //         message.subEditFire++;
-
-  //         _container.read(subjectNotifier.notifier).edit(
-  //               fireSubject
-  //                   .copyWith(timestamp: fireSubject.timestamp)
-  //                   .convertToDTO(localSubject.dbIndex),
-  //             );
-  //       } else if (fireTime.millisecondsSinceEpoch <
-  //           localTime.millisecondsSinceEpoch) {
-  //         message.subEditHive++;
-
-  //         await editSubject(fireSubject.fireId!, localSubject.convert());
-  //       }
-  //     }
-  //   }
-
-  //   for (var fireSubject in fireSubjects) {
-  //     if (localSubjects.where(
-  //       (localSubject) {
-  //         return localSubject.fireId == fireSubject.fireId;
-  //       },
-  //     ).isEmpty) {
-  //       message.subAddFire++;
-
-  //       await _container.read(subjectNotifier.notifier).saveNew(fireSubject);
-  //     }
-  //   }
-
-  //   return;
-  // }
 
   static void printC(String text) {
     print('\u001b[1;96m$text');
@@ -432,7 +276,7 @@ class FirestoreService {
       if (subject.fireId != null) {
         final docRef = subjects.doc(subject.fireId);
 
-        printC('batch editing ${subject.name}: ${subject.order}');
+        printC('batch editing subject ${subject.name}: ${subject.order}');
 
         batch.set(docRef, {
           'name': subject.name,
@@ -448,13 +292,14 @@ class FirestoreService {
     try {
       await batch.commit();
     } on Object catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
     return;
   }
 
+// TODO use only batch edit
   Future<void> editSubject(String fireId, Subject subject) async {
-    printC('editing ${subject.name}: ${subject.order}');
+    printC('editing subject ${subject.name}: ${subject.order}');
 
     try {
       await subjects.doc(fireId).set({
@@ -466,13 +311,13 @@ class FirestoreService {
         'order': subject.order,
       });
     } on Object catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 
   Future<void> addSubject(SubjectDTO subject) async {
     if (subject.fireId != null) {
-      printC('saving ${subject.name}: ${subject.order}');
+      printC('saving subject ${subject.name}: ${subject.order}');
 
       try {
         await subjects.doc(subject.fireId).set({
@@ -484,7 +329,7 @@ class FirestoreService {
           'order': subject.order,
         });
       } on Object catch (error) {
-        print(error);
+        log(error.toString());
       }
     } else {
       throw 'No fireId for subject: ${subject.toString()}';

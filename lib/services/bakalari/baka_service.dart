@@ -25,7 +25,7 @@ import 'package:school_manager/tasks_app.dart';
 
 class BakaHomework extends HomeworkDTO {
   BakaHomework({
-    required super.completion,
+    required super.isCompleted,
     required super.dbIndex,
     required super.deadline,
     required super.description,
@@ -38,6 +38,7 @@ class BakaHomework extends HomeworkDTO {
     required super.fireId,
     required super.timestamp,
     required super.isDeleted,
+    required super.order,
   });
 
   final String bakaId;
@@ -643,7 +644,7 @@ class BakaService {
       final String id = homework['ID'];
       final String text = homework['Content'];
       final DateTime deadline = DateTime.parse(homework['DateEnd']);
-      final bool completion = homework['Finished'];
+      final bool isCompleted = homework['Finished'];
 
       bool isSeen = bakaHomeworkService.isSeen(id);
       if (!isSeen) {
@@ -658,13 +659,14 @@ class BakaService {
           subject: subject,
           text: text,
           deadline: deadline,
-          completion: completion,
+          isCompleted: isCompleted,
           priority: TaskPriority(0),
           dbIndex: 0,
           description: null,
           fireId: null,
           isDeleted: false,
           timestamp: Timestamp.now(),
+          order: 0,
         ),
       );
     }

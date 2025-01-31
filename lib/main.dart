@@ -34,7 +34,6 @@ void main() async {
   // init hive
   await Hive.initFlutter();
 
-  // open a box
   Hive.registerAdapter(HomeworkAdapter());
   Hive.registerAdapter(ExamAdapter());
   Hive.registerAdapter(SubjectAdapter());
@@ -42,11 +41,11 @@ void main() async {
   Hive.registerAdapter(LessonTimesAdapter());
   Hive.registerAdapter(LogAdapter());
 
-  await Hive.openBox('tableBox');
   await Future.wait([
     Hive.openBox('subjectBox'),
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
+    Hive.openBox('tableBox'),
     // other data includes sequences
     Hive.openBox('hwOtherData'),
     Hive.openBox('examOtherData'),

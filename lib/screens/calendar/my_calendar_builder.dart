@@ -205,7 +205,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                         return Container(
                           margin: const EdgeInsets.all(1.2),
                           decoration: BoxDecoration(
-                            color: hw.completion
+                            color: hw.isCompleted
                                 ? markerColor.withAlpha(40)
                                 : markerColor,
                             shape: BoxShape.circle,

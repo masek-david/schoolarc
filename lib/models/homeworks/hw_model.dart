@@ -14,10 +14,11 @@ class Homework extends HiveObject {
     required this.subjectDbIndex,
     required this.text,
     required this.deadline,
-    required this.completion,
+    required this.isCompleted,
     required this.priority,
     required this.description,
     required DateTime? timestamp,
+    required this.order,
   }) : timestamp = timestamp ?? DateTime.now() {
     if (timestamp == null) {
       saveSafe();
@@ -31,7 +32,7 @@ class Homework extends HiveObject {
   @HiveField(2)
   DateTime deadline;
   @HiveField(3)
-  bool completion;
+  bool isCompleted;
   @HiveField(4)
   int priority;
   @HiveField(5)
@@ -42,6 +43,8 @@ class Homework extends HiveObject {
   DateTime timestamp;
   @HiveField(8, defaultValue: false)
   final bool isDeleted;
+  @HiveField(9, defaultValue: 0)
+  int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -53,28 +56,35 @@ class Homework extends HiveObject {
     }
   }
 
+  @override
+  String toString() {
+    return 'homework: $text, order: $order';
+  }
+
   Homework copyWith({
     int? subjectDbIndex,
     String? text,
     DateTime? deadline,
-    bool? completion,
+    bool? isCompleted,
     int? priority,
     int? dbIndex,
     String? description,
     String? fireId,
     DateTime? timestamp,
     bool? isDeleted,
+    int? order,
   }) {
     return Homework(
       subjectDbIndex: subjectDbIndex ?? this.subjectDbIndex,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
-      completion: completion ?? this.completion,
+      isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       description: description ?? this.description,
       fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
+      order: order ?? this.order,
     );
   }
 
@@ -84,12 +94,13 @@ class Homework extends HiveObject {
       text: text,
       description: description,
       deadline: deadline,
-      completion: completion,
+      isCompleted: isCompleted,
       priority: TaskPriority(priority),
       dbIndex: dbIndex,
       fireId: fireId,
       timestamp: Timestamp.fromDate(timestamp),
       isDeleted: isDeleted,
+      order: order,
     );
   }
 }

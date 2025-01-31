@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 part 'exam_model.g.dart';
 
@@ -16,8 +17,8 @@ class Exam extends HiveObject {
     required this.description,
     required this.date,
     required this.priority,
-    required this.completion,
     required DateTime? timestamp,
+    required this.order,
   }) : timestamp = timestamp ?? DateTime.now() {
     if (timestamp == null) {
       saveSafe();
@@ -32,8 +33,8 @@ class Exam extends HiveObject {
   DateTime date;
   @HiveField(3)
   int priority;
-  @HiveField(4)
-  bool completion;
+  // @HiveField(4)
+  // bool? completionNOTUSED;
   @HiveField(5)
   String? description;
   @HiveField(6)
@@ -42,6 +43,8 @@ class Exam extends HiveObject {
   DateTime timestamp;
   @HiveField(8, defaultValue: false)
   final bool isDeleted;
+  @HiveField(9, defaultValue: 0)
+  int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -53,28 +56,28 @@ class Exam extends HiveObject {
     }
   }
 
-    Exam copyWith({
+  Exam copyWith({
     int? subjectDbIndex,
     String? text,
     DateTime? date,
-    bool? completion,
     int? priority,
     int? dbIndex,
     String? description,
     String? fireId,
     DateTime? timestamp,
     bool? isDeleted,
+    int? order,
   }) {
     return Exam(
       subjectDbIndex: subjectDbIndex ?? this.subjectDbIndex,
       text: text ?? this.text,
       date: date ?? this.date,
-      completion: completion ?? this.completion,
       priority: priority ?? this.priority,
       description: description ?? this.description,
       fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
+      order: order ?? this.order,
     );
   }
 
@@ -86,10 +89,11 @@ class Exam extends HiveObject {
       deadline: date,
       priority: TaskPriority(priority),
       dbIndex: dbIndex,
-      completion: completion,
+      isCompleted: date.isBeforeToday(),
       fireId: fireId,
       timestamp: Timestamp.fromDate(timestamp),
       isDeleted: isDeleted,
+      order: order,
     );
   }
 }

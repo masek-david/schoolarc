@@ -22,17 +22,18 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       subjectDbIndex: fields[0] as int?,
       text: fields[1] as String,
       deadline: fields[2] as DateTime,
-      completion: fields[3] as bool,
+      isCompleted: fields[3] as bool,
       priority: fields[4] as int,
       description: fields[5] as String?,
       timestamp: fields[7] as DateTime?,
+      order: fields[9] == null ? 0 : fields[9] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Homework obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.subjectDbIndex)
       ..writeByte(1)
@@ -40,7 +41,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       ..writeByte(2)
       ..write(obj.deadline)
       ..writeByte(3)
-      ..write(obj.completion)
+      ..write(obj.isCompleted)
       ..writeByte(4)
       ..write(obj.priority)
       ..writeByte(5)
@@ -50,7 +51,9 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
       ..writeByte(7)
       ..write(obj.timestamp)
       ..writeByte(8)
-      ..write(obj.isDeleted);
+      ..write(obj.isDeleted)
+      ..writeByte(9)
+      ..write(obj.order);
   }
 
   @override

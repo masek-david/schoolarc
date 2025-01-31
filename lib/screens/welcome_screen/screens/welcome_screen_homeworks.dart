@@ -45,12 +45,13 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
       text: text,
       description: null,
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
-      completion: false,
+      isCompleted: false,
       priority: TaskPriority(index),
       dbIndex: index,
       fireId: '',
       timestamp: Timestamp.now(),
       isDeleted: false,
+      order: 0,
     );
   });
 

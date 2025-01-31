@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
-class FirestoreLoginScreen extends StatefulWidget {
+class FirestoreLoginScreen extends ConsumerStatefulWidget {
   const FirestoreLoginScreen({super.key});
 
   @override
-  State<FirestoreLoginScreen> createState() => _FirestoreLoginScreenState();
+  ConsumerState<FirestoreLoginScreen> createState() =>
+      _FirestoreLoginScreenState();
 }
 
-class _FirestoreLoginScreenState extends State<FirestoreLoginScreen> {
+class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -22,7 +27,10 @@ class _FirestoreLoginScreenState extends State<FirestoreLoginScreen> {
           children: [
             TextField(
               controller: emailController,
-              autofillHints: const [AutofillHints.email, AutofillHints.username],
+              autofillHints: const [
+                AutofillHints.email,
+                AutofillHints.username
+              ],
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15),
                 border: OutlineInputBorder(),
@@ -52,7 +60,7 @@ class _FirestoreLoginScreenState extends State<FirestoreLoginScreen> {
                   }
                   return;
                 }
-        
+
                 if (context.mounted) {
                   showMessage(context, 'Registered successfuly');
                 }
@@ -72,9 +80,20 @@ class _FirestoreLoginScreenState extends State<FirestoreLoginScreen> {
                   }
                   return;
                 }
-        
+
+                try {
+                  await ref.read(subjectsProvider.notifier).syncAll();
+                  await ref.read(hwProvider.notifier).syncAll();
+                  await ref.read(examProvider.notifier).syncAll();
+                } on Object catch (e) {
+                  if (context.mounted) {
+                    showMessage(context, e.toString(), isError: true);
+                  }
+                  return;
+                }
+
                 if (context.mounted) {
-                  showMessage(context, 'Logged in');
+                  showMessage(context, 'Logged in, everything has been synced');
                 }
               },
               child: Text('Log in'),
@@ -89,7 +108,7 @@ class _FirestoreLoginScreenState extends State<FirestoreLoginScreen> {
                   }
                   return;
                 }
-        
+
                 if (context.mounted) {
                   showMessage(context, 'Signed out');
                 }

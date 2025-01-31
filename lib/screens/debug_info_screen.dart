@@ -91,7 +91,7 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.completion) const Text('(completed)'),
+                      if (item.isCompleted) const Text('(completed)'),
                       if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
@@ -126,7 +126,6 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.completion) const Text('(completed)')
                     ],
                   ),
                 );

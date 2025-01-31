@@ -51,7 +51,7 @@ final logsService = LogsService();
 final firestoreService = FirestoreService();
 final uuid = Uuid();
 
-Future<void> addTask(
+Future<Task?> addTask(
   BuildContext context, {
   required bool isHomework,
   DateTime? initialDate,
@@ -74,19 +74,20 @@ Future<void> addTask(
           text: text,
           deadline: date,
           description: description,
-          completion: false,
+          isCompleted: false,
           priority: TaskPriority(priority),
           dbIndex: 0,
           fireId: null,
           isDeleted: false,
           timestamp: Timestamp.now(),
+          order: 0,
         );
       },
     ),
   );
 
   if (newTask == null) {
-    return;
+    return null;
   }
 
   if (isHomework) {
@@ -96,11 +97,12 @@ Future<void> addTask(
         priority: newTask!.priority.index,
         subjectDbIndex: newTask!.subject?.dbIndex,
         text: newTask!.text,
-        completion: false,
+        isCompleted: false,
         description: newTask!.description,
         fireId: newTask!.fireId,
         isDeleted: newTask!.isDeleted,
         timestamp: null,
+        order: 0,
       ),
     );
   } else {
@@ -112,14 +114,14 @@ Future<void> addTask(
         text: newTask!.text,
         fireId: newTask!.fireId,
         isDeleted: newTask!.isDeleted,
-        completion: false,
         timestamp: DateTime.now(),
         description: newTask!.description,
+        order: 0,
       ),
     );
   }
 
-  return;
+  return newTask;
 }
 
 Future<void> editHw(BuildContext context, int dbIndex) async {
@@ -193,7 +195,7 @@ Future<void> editExam(BuildContext context, int dbIndex) async {
       fireId: exam.fireId,
       isDeleted: exam.isDeleted,
       timestamp: DateTime.now(),
-      completion: false
+      order: exam.order,
     ),
     exam.dbIndex,
   );

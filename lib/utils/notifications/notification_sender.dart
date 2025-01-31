@@ -108,13 +108,13 @@ class NotificationSender {
 
     // creates text about hw
     hwsForTommorow.sort(
-        (a, b) => (a.completion == b.completion ? 0 : (a.completion ? 1 : -1)));
+        (a, b) => (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
     for (int i = 0; i < hwsForTommorow.length; i++) {
       HomeworkDTO hw = hwsForTommorow[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
-          '${hw.completion ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.isCompleted ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       homeworksTextList += '$hwText$lineBreak';
     }
@@ -125,7 +125,7 @@ class NotificationSender {
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String missedHwText =
-          '${hw.completion ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
+          '${hw.isCompleted ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
 
       missedHwTextList ??= '';
       missedHwTextList += '$missedHwText$lineBreak';

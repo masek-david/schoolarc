@@ -28,7 +28,7 @@ class ExamList extends StatelessWidget {
     return ExamTile(
       exam: exam,
       showDeadline: false,
-      onDelete: (context) =>
+      onDelete: () =>
           deleteExam(context, exam, () => updateView()).then(
         (value) => updateView(),
       ),

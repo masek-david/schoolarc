@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -6,17 +7,17 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
+final subjectsProvider =
+    StateNotifierProvider<SubjectNotifier, Map<int, SubjectDTO>>((ref) {
+  return SubjectNotifier(SubjectDatabase());
+});
+
 final subjectsSortedProvider = Provider<List<SubjectDTO>>((ref) {
   final subjects = ref.watch(subjectsProvider);
 
   // Filter out deleted subjects and sort based on the `order` field.
   return subjects.values.where((subject) => !subject.isDeleted).toList()
     ..sort((a, b) => (a.order).compareTo(b.order));
-});
-
-final subjectsProvider =
-    StateNotifierProvider<SubjectNotifier, Map<int, SubjectDTO>>((ref) {
-  return SubjectNotifier(SubjectDatabase());
 });
 
 class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
@@ -34,9 +35,9 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     listenToFirebase();
   }
 
-  void listenToFirebase() async {
+  Future<void> listenToFirebase() async {
     await listen?.cancel();
-    listen = firestoreService.listenToChanges().listen((event) async {
+    listen = firestoreService.subjectsListenToChanges().listen((event) async {
       Map<String, Subject> updatedSubjects = {};
 
       for (var change in event.docChanges) {
@@ -60,12 +61,12 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
         },
       );
     }, onError: (error) {
-      print('error listening to firebase subjects: ${error.toString()}');
+      log('error listening to firebase subjects: ${error.toString()}');
     });
   }
 
   Future<void> syncAll() async {
-    listenToFirebase();
+    await listenToFirebase();
     final fireSubjects = await firestoreService.getSubjects();
 
     fireSubjects?.forEach(
@@ -123,24 +124,17 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     // if there is a subject that already has the order of the newly added
     if (subjectWithSameOrder != null && !addToEnd) {
-      if (subject.timestamp.millisecondsSinceEpoch >
+      if (subject.timestamp.millisecondsSinceEpoch <
           subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
-        // if the new one is newer, add it before old
-        reorder(
-          null,
-          subject.order,
-          subject.convertToDTO(dbIndex),
-        );
-      } else {
-        // or add it after the old
+        // if the new one is older, add it after the old
         subject.order++;
         _db.saveEditedSubject(dbIndex, subject);
-        reorder(
-          null,
-          subject.order,
-          subject.convertToDTO(dbIndex),
-        );
       }
+      reorder(
+        null,
+        subject.order,
+        subject.convertToDTO(dbIndex),
+      );
     }
 
     state = {...state, dbIndex: subject.convertToDTO(dbIndex)};
@@ -292,8 +286,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     // if it doesnt exist in local, add it
     if (localSubject == null) {
-      print(
-          '\u001b[1;92madding from fire: ${fireSubject.name}: ${fireSubject.order}');
+      // print(
+      //     '\u001b[1;92madding from fire: ${fireSubject.name}: ${fireSubject.order}');
 
       await saveNew(
         fireSubject,
@@ -307,8 +301,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     final fireTime = fireSubject.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
-      print(
-          '\u001b[1;93mediting from fire: ${fireSubject.name}: ${fireSubject.order}');
+      // print(
+      //     '\u001b[1;93mediting from fire: ${fireSubject.name}: ${fireSubject.order}');
 
       edit(
         fireSubject.convertToDTO(localSubject.dbIndex),
@@ -317,12 +311,12 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       );
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
-      print(
-          '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
+      // print(
+      //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
       firestoreService.editSubject(fireSubject.fireId!, localSubject.convert());
     } else {
-      print('same date');
+      // print('same date');
     }
     return;
   }

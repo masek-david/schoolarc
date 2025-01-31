@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ExamDatabase().deleteAllFromDisk();
                     FirebaseFirestore.instance.clearPersistence();
                   },
-                  label: const Text('test'),
+                  label: const Text('delete from disk'),
                   icon: const Icon(Icons.bug_report),
                 )
               : null,

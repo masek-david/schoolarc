@@ -21,7 +21,7 @@ class BakaHwTile extends StatelessWidget {
     }
 
     if (hw.alreadyAdded) {
-      hw.completion = true;
+      hw.isCompleted = true;
     }
 
     return Padding(

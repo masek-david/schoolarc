@@ -178,12 +178,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           if (isLeft ? isHoveringLeft : isHoveringRight) {
             HapticFeedback.lightImpact();
             if (widget.calendarFormat.name == 'week') {
-              print('add week');
               widget.setFocusedDay(
                 widget.focusedDay.add(Duration(days: isLeft ? -7 : 7)),
               );
             } else {
-              print('add month');
               widget.setFocusedDay(
                 widget.focusedDay.addMonth(isLeft ? -1 : 1),
               );

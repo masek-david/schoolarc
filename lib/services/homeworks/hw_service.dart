@@ -24,7 +24,7 @@ class HomeworkService {
       hw
           .copyWith(
             timestamp: Timestamp.now(),
-            completion: value,
+            isCompleted: value,
           )
           .convert(),
       hw.dbIndex,
@@ -143,7 +143,7 @@ class HomeworkService {
     _sequence.forEach((priority, list) {
       for (int i = 0; i < list.length; i++) {
         Homework hw = _hwDbIndexMap[list[i]]!;
-        if (!hw.completion && !hw.isDeleted) {
+        if (!hw.isCompleted && !hw.isDeleted) {
           hwPriorityMap[priority]!.add(
             hw.convertToDTO(
               list[i],
@@ -165,7 +165,7 @@ class HomeworkService {
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
-        if (hw.completion && !hw.isDeleted) {
+        if (hw.isCompleted && !hw.isDeleted) {
           completedHw.add(
             hw.convertToDTO(
               dbIndex,
@@ -187,7 +187,7 @@ class HomeworkService {
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
-        if (hw.deadline.isBeforeToday() && !hw.completion && !hw.isDeleted) {
+        if (hw.deadline.isBeforeToday() && !hw.isCompleted && !hw.isDeleted) {
           missedHw.add(
             hw.convertToDTO(
               dbIndex,
@@ -230,7 +230,7 @@ class HomeworkService {
     final newHwId = await _db.addHw(hw);
 
     _hwDbIndexMap[newHwId] = hw;
-    if (!hw.isDeleted && !hw.completion) {
+    if (!hw.isDeleted && !hw.isCompleted) {
       _sequence[hw.priority]!.add(newHwId);
       await _db.saveSequence(_sequence);
     }
@@ -242,7 +242,7 @@ class HomeworkService {
   Future<void> edit(Homework hw, int dbIndex) async {
     final oldHw = _db.getHomework(dbIndex);
     int oldPriority = oldHw.priority;
-    bool oldCompletion = oldHw.completion;
+    bool oldCompletion = oldHw.isCompleted;
     bool oldIsDeleted = oldHw.isDeleted;
 
     _sequence = _db.getSequence();
@@ -253,8 +253,8 @@ class HomeworkService {
       (value) => hw,
     );
 
-    if (hw.isDeleted != oldIsDeleted || hw.completion != oldCompletion) {
-      if (hw.isDeleted || hw.completion) {
+    if (hw.isDeleted != oldIsDeleted || hw.isCompleted != oldCompletion) {
+      if (hw.isDeleted || hw.isCompleted) {
         // we need to remove it from sequence and save where it was
         hwsRemovedFromSequence[dbIndex] =
             _sequence[hw.priority]!.indexOf(dbIndex);
@@ -275,7 +275,7 @@ class HomeworkService {
       _db.saveSequence(_sequence);
     }
     // if priority changes we need to edit it in sequence
-    if (hw.priority != oldPriority && !hw.isDeleted && !hw.completion) {
+    if (hw.priority != oldPriority && !hw.isDeleted && !hw.isCompleted) {
       _sequence[oldPriority]!.remove(dbIndex);
       _sequence[hw.priority]!.add(dbIndex);
       await _db.saveSequence(_sequence);
@@ -302,7 +302,7 @@ class HomeworkService {
 
     _hwDbIndexMap.forEach(
       (dbIndex, hw) {
-        if (!hw.completion && !hw.isDeleted) {
+        if (!hw.isCompleted && !hw.isDeleted) {
           numberOfUncomplete++;
         }
       },

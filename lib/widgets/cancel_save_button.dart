@@ -32,7 +32,7 @@ class CancelSaveButton extends StatelessWidget {
           onPressed: () {
             HapticFeedback.lightImpact();
             onSave();
-            Navigator.pop(context);
+            Navigator.maybePop(context);
           },
           child: const Text('Save'),
         )

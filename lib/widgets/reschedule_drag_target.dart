@@ -51,11 +51,11 @@ class RescheduleDragTarget extends StatelessWidget {
                 priority: exam.priority.index,
                 subjectDbIndex: exam.subject?.dbIndex,
                 text: exam.text,
-                completion: false,
                 description: exam.description,
                 fireId: exam.fireId,
                 isDeleted: exam.isDeleted,
                 timestamp: DateTime.now(),
+                order: exam.order,
               ),
               exam.dbIndex,
             );

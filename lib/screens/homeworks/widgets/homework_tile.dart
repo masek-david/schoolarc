@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -34,12 +36,13 @@ class HomeworkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMissed = hw.deadline.isBeforeToday() && hw.completion == false;
+    final bool isMissed =
+        hw.deadline.isBeforeToday() && hw.isCompleted == false;
     final missedColor =
         Colors.red.harmonizeWith(Theme.of(context).primaryColor);
 
     double opacity = 1;
-    if (hw.completion == true) {
+    if (hw.isCompleted && !hw.isBeingAnimated) {
       opacity = 0.5;
     }
 
@@ -94,7 +97,7 @@ class HomeworkTile extends StatelessWidget {
                     )
                   : null,
               borderRadius: BorderRadius.circular(borderRadius),
-              color: hw.completion
+              color: hw.isCompleted && !hw.isBeingAnimated
                   ? Theme.of(context).colorScheme.surfaceContainerLowest
                   : Theme.of(context).colorScheme.surfaceContainerLow,
             ),
@@ -112,14 +115,27 @@ class HomeworkTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
+                        if (settings.get(Setting.showDebugInfo))
+                          Column(
+                            children: [
+                              Text('id: ${hw.dbIndex.toString()}'),
+                              Text(hw.order.toString()),
+                              if (hw.isBeingAnimated)
+                                Icon(
+                                  Icons.animation,
+                                  size: 10,
+                                )
+                            ],
+                          ),
                         Container(
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(borderRadius - padding),
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                           ),
                           child: SubjectShortcut(subject: hw.subject),
                         ),
@@ -134,6 +150,8 @@ class HomeworkTile extends StatelessWidget {
                           const SizedBox(width: 8),
                         Expanded(child: Text(hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
+                        if (settings.get(Setting.showDebugInfo))
+                          Text(hw.timestamp.millisecondsSinceEpoch.toString()),
                         if (showDeadline)
                           Text(
                             hw.deadline.dateText(),
@@ -146,10 +164,10 @@ class HomeworkTile extends StatelessWidget {
                         const SizedBox(width: 4),
                         if (showCompletion)
                           MyCheckbox(
-                            value: hw.completion,
+                            value: hw.isCompleted,
                             priority: hw.priority,
                             onChanged: onChangedCompletion,
-                            // must be heres
+                            // must be here
                             key: ValueKey('checkbox ${hw.dbIndex}'),
                           ),
                       ],
