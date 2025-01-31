@@ -46,10 +46,6 @@ void main() async {
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
     Hive.openBox('tableBox'),
-    // other data includes sequences
-    Hive.openBox('hwOtherData'),
-    Hive.openBox('examOtherData'),
-    Hive.openBox('subjectOtherData'),
 
     Hive.openBox('bakaAddedHw'),
     Hive.openBox('bakaSeenHw'),

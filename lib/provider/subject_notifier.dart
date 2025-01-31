@@ -98,7 +98,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
   }
 
 // saves new subject to state, to end if [addToEnd] is true
-  Future<void> saveNew(
+  Future<SubjectDTO> saveNew(
     Subject subject, {
     bool addToFire = true,
     bool addToEnd = true,
@@ -142,7 +142,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       await firestoreService.addSubject(subject.convertToDTO(0));
     }
 
-    return;
+    return subject.convertToDTO(dbIndex);
   }
 
   /// assign timestamp manually, if no fireId, it will add it
@@ -274,6 +274,16 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
   void revertDelete(int dbIndex) {
     deleteSubject(dbIndex, nowIsDeleted: false);
+  }
+
+  void deleteAll() {
+    state.forEach(
+      (key, value) {
+        if (!value.isDeleted) {
+          edit(value.copyWith(isDeleted: true));
+        }
+      },
+    );
   }
 
   /// checks and updates/adds subject from firestore

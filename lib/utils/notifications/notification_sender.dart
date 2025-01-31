@@ -3,9 +3,9 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/services/exams/exam_service.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/services/homeworks/hw_service.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
@@ -87,10 +87,9 @@ class NotificationSender {
         .add(const Duration(days: 1));
 
     List<ExamDTO> examsForTommorow =
-        ExamService().getForDay(tommorowDate);
-    List<HomeworkDTO> hwsForTommorow =
-        HomeworkService().getForDay(tommorowDate);
-    List<HomeworkDTO> missedHws = homeworkService.getMissedHw();
+        container.read(examsDatesProvider)[tommorowDate] ?? [];
+    List<HomeworkDTO> hwsForTommorow = container.read(hwDatesProvider)[tommorowDate] ?? [];
+    List<HomeworkDTO> missedHws = container.read(hwMissedProvider);
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';
@@ -107,8 +106,8 @@ class NotificationSender {
     }
 
     // creates text about hw
-    hwsForTommorow.sort(
-        (a, b) => (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
+    hwsForTommorow.sort((a, b) =>
+        (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
     for (int i = 0; i < hwsForTommorow.length; i++) {
       HomeworkDTO hw = hwsForTommorow[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();

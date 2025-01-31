@@ -1,65 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
 import 'package:school_manager/services/exams/exam_database.dart';
-import 'package:school_manager/services/firestore/firestore_service.dart';
-import 'package:school_manager/services/firestore/sync_message.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
+import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late int hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
-  late int examNumberOfIncomplete = examService.getNumberOfIncomplete();
-
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var dateToShow = DateTime.now();
-  late var examToShow = examService.getForDay(dateToShow);
-  late var hwToShow = homeworkService.getForDay(dateToShow);
-  late var missedHw = homeworkService.getMissedHw();
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
   late Future<TimeTableDTO?>? bakaTimetable;
   late Future<Map<DateTime, List<Meal>>>? meals;
-
-  late final fire = FirestoreService();
-
-  void updateView() {
-    setState(() {
-      hwNumberOfIncomplete = homeworkService.getNumberOfIncomplete();
-      examNumberOfIncomplete = examService.getNumberOfIncomplete();
-      examToShow = examService.getForDay(dateToShow);
-      hwToShow = homeworkService.getForDay(dateToShow);
-      missedHw = homeworkService.getMissedHw();
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    updateView();
-  }
 
   @override
   void initState() {
@@ -72,16 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> refresh() async {
     tryGettingNewHomeworks();
 
-    final response = await Future.wait([
-      refreshMeals(),
-      refreshTimetable(),
-      if (settings.get(Setting.useFirebase)) firestoreService.syncAll(),
-    ]);
-
-    if (mounted && settings.get(Setting.useFirebase)) {
-      (response[2] as SyncMessage).showSyncMessage(context);
+    try {
+      Future.wait([
+        refreshMeals(),
+        refreshTimetable(),
+        if (settings.get(Setting.useFirebase)) syncAllTasks(ref),
+      ]);
+    } on Object catch (e) {
+      showMessage(context, e.toString(), isError: true);
     }
-    updateView();
 
     return;
   }
@@ -124,8 +103,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    dateToShow = now;
+    final hws = ref.watch(hwDatesProvider);
+    final missedHw = ref.watch(hwMissedProvider);
+    final exams = ref.watch(examsDatesProvider);
+
+    List<HomeworkDTO> hwToShow = [];
+    List<ExamDTO> examToShow = [];
+
+    dateToShow = DateTime.now();
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
 
     bool showTommorrow = isLessonsEmpty(upcomingLessons);
@@ -136,8 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
           .toLocal();
 
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = homeworkService.getForDay(dateToShow);
-      examToShow = examService.getForDay(dateToShow);
+      hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
+      examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
 
@@ -184,8 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 children: [
                   Overview(
-                    hwNumberOfIncomplete: hwNumberOfIncomplete,
-                    examNumberOfIncomplete: examNumberOfIncomplete,
+                    hwNumberOfIncomplete: ref.read(hwSortedProvider).length,
+                    examNumberOfIncomplete: ref.read(examSortedProvider).length,
                     hwNumberOfMissed: missedHw.length,
                   ),
                   SizedBox(height: 24),
@@ -235,11 +220,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(12),
                                   child: HomeworkList(
+                                    onChangedCompletion: (hw, value) =>
+                                        completeHw(context, ref, hw, value),
+                                    onDelete: (hw) =>
+                                        deleteHw(context, ref, hw),
+                                    onEdit: (hw) => editHw(context, ref, hw),
                                     textFull: 'Missed homeworks',
                                     showText: true,
                                     showDates: true,
                                     hwList: missedHw,
-                                    updateListView: updateView,
                                   ),
                                 ),
                               ),
@@ -250,11 +239,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: ExamList(
+                                  onDelete: (exam) =>
+                                      deleteExam(context, ref, exam),
+                                  onEdit: (exam) =>
+                                      editExam(context, ref, exam),
                                   textFull: 'Exams $whenText',
                                   showText: true,
                                   showDates: false,
                                   examList: examToShow,
-                                  updateView: updateView,
                                 ),
                               ),
                             ),
@@ -265,11 +257,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: HomeworkList(
+                                  onChangedCompletion: (hw, value) =>
+                                      completeHw(context, ref, hw, value),
+                                  onDelete: (hw) => deleteHw(context, ref, hw),
+                                  onEdit: (hw) => editHw(context, ref, hw),
                                   textFull: 'Homeworks $whenText',
                                   showText: true,
                                   showDates: false,
                                   hwList: hwToShow,
-                                  updateListView: updateView,
                                 ),
                               ),
                             ),

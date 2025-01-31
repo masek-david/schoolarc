@@ -21,24 +21,24 @@ final examProvider =
 
 final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
   (ref) {
-    final hws = ref.watch(examProvider);
+    final exams = ref.watch(examProvider);
 
-    Map<int, List<ExamDTO>> hwPriorityMap = {
+    Map<int, List<ExamDTO>> examPriorityMap = {
       0: <ExamDTO>[],
       1: <ExamDTO>[],
       2: <ExamDTO>[],
       3: <ExamDTO>[],
     };
 
-    hws.forEach(
-      (key, hw) {
-        if (!hw.isDeleted && !hw.isCompleted) {
-          hwPriorityMap[hw.priority.index]!.add(hw);
+    exams.forEach(
+      (key, exam) {
+        if (!exam.isDeleted && !exam.isCompleted) {
+          examPriorityMap[exam.priority.index]!.add(exam);
         }
       },
     );
 
-    hwPriorityMap.forEach(
+    examPriorityMap.forEach(
       (key, value) {
         value.sort(
           (a, b) => a.order.compareTo(b.order),
@@ -46,7 +46,40 @@ final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
       },
     );
 
-    return hwPriorityMap;
+    return examPriorityMap;
+  },
+);
+
+final examsDatesProvider = Provider<Map<DateTime, List<ExamDTO>>>(
+  (ref) {
+    final exams = ref.watch(examProvider);
+
+    Map<DateTime, List<ExamDTO>> examsDateMap = {};
+
+    exams.forEach(
+      (dbIndex, exam) {
+        final examDeadlineUtc = exam.deadline;
+
+        DateTime dateNoTime = DateTime.utc(
+            examDeadlineUtc.year, examDeadlineUtc.month, examDeadlineUtc.day);
+
+        if (!exam.isDeleted) {
+          if (examsDateMap.containsKey(dateNoTime)) {
+            // If it exists, add the event to the existing list
+            examsDateMap[dateNoTime]!.add(exam);
+          } else {
+            // If it does not exist, create a new list with the exam
+            examsDateMap[dateNoTime] = [exam];
+          }
+        }
+      },
+    );
+
+    examsDateMap.forEach((key, value) {
+      value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+    });
+
+    return examsDateMap;
   },
 );
 
@@ -245,6 +278,10 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
   }) async {
     final old = state[editedExam.dbIndex]!;
 
+    editedExam = editedExam.copyWith(
+      isCompleted: editedExam.deadline.isBeforeToday(),
+    );
+
     if (checkOrder) {
       // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
       if (!((editedExam.isDeleted && old.isDeleted) ||
@@ -392,15 +429,15 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     return;
   }
 
-  void delete(ExamDTO hw) {
-    edit(hw.copyWith(timestamp: Timestamp.now(), isDeleted: true));
+  void delete(ExamDTO exam) {
+    edit(exam.copyWith(timestamp: Timestamp.now(), isDeleted: true));
   }
 
-  void revertDelete(ExamDTO hw) {
-    edit(hw.copyWith(timestamp: Timestamp.now(), isDeleted: false));
+  void revertDelete(ExamDTO exam) {
+    edit(exam.copyWith(timestamp: Timestamp.now(), isDeleted: false));
   }
 
-  /// checks and updates/adds hw from firestore
+  /// checks and updates/adds exam from firestore
   Future<void> checkFireExam(Exam fireExam) async {
     print('checking exam from fire: ${fireExam.toString()}');
 

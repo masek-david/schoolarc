@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
 class HomeworkList extends StatelessWidget {
   const HomeworkList({
     super.key,
     required this.hwList,
-    required this.updateListView,
     this.draggable = false,
     this.showText = false,
     this.showDates = true,
     this.textFull = 'Homeworks',
     this.textEmpty,
+    required this.onDelete,
+    required this.onEdit,
+    required this.onChangedCompletion,
   });
 
   final List<HomeworkDTO> hwList;
-  final Function() updateListView;
+  final void Function(HomeworkDTO hw) onDelete;
+  final void Function(HomeworkDTO hw) onEdit;
+  final void Function(HomeworkDTO hw, bool value) onChangedCompletion;
   final bool draggable;
   final bool showText;
   final bool showDates;
@@ -44,16 +47,9 @@ class HomeworkList extends StatelessWidget {
               hw: hw,
               draggable: draggable,
               showDate: showDates,
-              onChangedCompletion: (value) =>
-                  changeCompletion(hw, value),
-              onDelete: () =>
-                  deleteHw(context, hw, () => updateListView()).then(
-                (value) => updateListView(),
-              ),
-              onEdit: () => editHw(context, hw.dbIndex).then(
-                (value) => updateListView(),
-              ),
-              onAnimationEnd: updateListView,
+              onChangedCompletion: (value) => onChangedCompletion(hw, value),
+              onDelete: () => onDelete(hw),
+              onEdit: () => onEdit(hw),
             ),
           );
         }),

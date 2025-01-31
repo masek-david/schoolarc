@@ -1,15 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
-  required void Function() updateView,
+  required void Function(ExamDTO exam) onEdit,
   required bool showOutside,
   required DateTime currentDate,
 }) {
@@ -22,7 +22,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
       return showOutside
           ? RescheduleDragTarget(
               currentDate: day,
-              updateView: updateView,
               builder: (context, candidateData, rejectedData) {
                 if (candidateData.isNotEmpty) {
                   HapticFeedback.selectionClick();
@@ -67,7 +66,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
       return RescheduleDragTarget(
         currentDate: day,
-        updateView: updateView,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
             HapticFeedback.selectionClick();
@@ -100,7 +98,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
     },
     defaultBuilder: (context, day, focusedDay) {
       return RescheduleDragTarget(
-        updateView: updateView,
         currentDate: day,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
@@ -135,7 +132,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return RescheduleDragTarget(
-        updateView: updateView,
         currentDate: day,
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
@@ -221,9 +217,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                   ExamDTO exam = exams[index];
 
                   return GestureDetector(
-                    onTap: () => editExam(context, exam.dbIndex).then(
-                      (value) => updateView(),
-                    ),
+                    onTap: () => onEdit(exam),
                     child: LongPressDraggable(
                       data: exam,
                       feedbackOffset: Offset(0, -80),

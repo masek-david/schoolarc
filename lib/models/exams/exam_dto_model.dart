@@ -34,6 +34,11 @@ class ExamDTO extends Task {
   }
 
   @override
+  String toString() {
+    return 'exam: $text, ${subject?.shortcut}, order: $order, Hive: $dbIndex';
+  }
+
+  @override
   ExamDTO copyWith({
     SubjectDTO? subject,
     String? text,

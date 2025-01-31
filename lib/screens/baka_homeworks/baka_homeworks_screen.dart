@@ -1,25 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
-class BakaHomeworksScreen extends StatefulWidget {
+class BakaHomeworksScreen extends ConsumerStatefulWidget {
   const BakaHomeworksScreen({super.key});
 
   @override
-  State<BakaHomeworksScreen> createState() => _BakaHomeworksScreenState();
+  ConsumerState<BakaHomeworksScreen> createState() =>
+      _BakaHomeworksScreenState();
 }
 
-class _BakaHomeworksScreenState extends State<BakaHomeworksScreen> {
+class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
   late final homeworksFuture = bakaService.getHomeworks();
   var homeworks = <BakaHomework>[];
 
   void add(BuildContext context, BakaHomework hw) {
-    homeworkService.saveNew(
-      hw.copyWith(timestamp: Timestamp.now()).convert(),
-    );
+    ref.read(hwProvider.notifier).saveNew(
+          hw.copyWith(timestamp: Timestamp.now()).convert(),
+        );
+
     bakaHomeworkService.addedHomework(hw.bakaId);
 
     setState(() {

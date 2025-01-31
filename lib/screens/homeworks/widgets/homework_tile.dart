@@ -88,7 +88,8 @@ class HomeworkTile extends StatelessWidget {
                     ),
                   ],
                 ),
-          child: Container(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
             decoration: BoxDecoration(
               border: isMissed && borderIfMissed
                   ? Border.all(

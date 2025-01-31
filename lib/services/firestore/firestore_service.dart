@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
@@ -11,11 +10,9 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/firestore/sync_message.dart';
 
 class FirestoreService {
   FirebaseAuth auth = FirebaseAuth.instance;
-  final message = SyncMessage();
   final ProviderContainer _container = ProviderContainer();
 
   late CollectionReference<Map<String, dynamic>> exams = FirebaseFirestore
@@ -65,17 +62,6 @@ class FirestoreService {
       {required String email, required String password}) async {
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     return;
-  }
-
-  // returns debug message how many were added
-  Future<SyncMessage> syncAll() async {
-    message.reset();
-
-    return message;
-  }
-
-  Widget getMessage() {
-    return message.toWidget();
   }
 
   // EXAMS

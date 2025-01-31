@@ -12,7 +12,7 @@ class WelcomeScreenSubjects extends StatelessWidget {
     final subjects = [
       SubjectDTO(
         name: 'Name of the subject',
-        shortcut: 'Short',
+        shortcut: 'Name',
         dbIndex: 0,
         isDeleted: false,
         bakaId: null,
@@ -31,7 +31,7 @@ class WelcomeScreenSubjects extends StatelessWidget {
         order: 0,
       ),
       SubjectDTO(
-        name: 'You can delete and edit the same way as tasks',
+        name: 'You can delete and edit the same way as tasks (taping and sliding)',
         shortcut: 'Edit',
         dbIndex: 0,
         isDeleted: false,

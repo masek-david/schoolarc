@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/services/timetable_database.dart';
@@ -8,14 +10,14 @@ import 'package:school_manager/screens/timetable/timetable_settings.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
 
-class TimetableScreen extends StatefulWidget {
+class TimetableScreen extends ConsumerStatefulWidget {
   const TimetableScreen({super.key});
 
   @override
-  State<TimetableScreen> createState() => _TimetableScreenState();
+  ConsumerState<TimetableScreen> createState() => _TimetableScreenState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen> {
+class _TimetableScreenState extends ConsumerState<TimetableScreen> {
   late final _db = TimeTableDatabase();
 
   late var timeTable = _db.timeTable;
@@ -112,7 +114,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
         onSubjectTapped: (weekday, lessonIndex, lesson) {
           showSelectSubject(
               context: context,
-              subjects: subjectService.getSortedList(),
+              subjects: ref.read(subjectsSortedProvider),
               delete: () {
                 _db.deleteLessonAt(weekday, lessonIndex);
                 updateView();

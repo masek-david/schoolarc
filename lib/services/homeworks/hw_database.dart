@@ -4,24 +4,6 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 
 class HomeworksDatabase {
   final _hwBox = Hive.box('hwBox');
-  final _hwSequenceBox = Hive.box('hwOtherData');
-
-  /// returns list of homeworks dbIndexes for each priority
-  Map<int, List<int>> getSequence() {
-    var map = _hwSequenceBox.get('sequence') ??
-        {
-          0: <int>[],
-          1: <int>[],
-          2: <int>[],
-          3: <int>[],
-        };
-
-    return map.cast<int, List<int>>();
-  }
-
-  Future<void> saveSequence(Map<int, List<int>> sequence) async {
-    return await _hwSequenceBox.put('sequence', sequence);
-  }
 
   /// returns map of homeworks with their dbIndexes
   Map<int, Homework> getDatabase() {
@@ -48,6 +30,5 @@ class HomeworksDatabase {
 
   void deleteAllFromDisk(){
     _hwBox.deleteFromDisk();
-    _hwSequenceBox.deleteFromDisk();
   }
 }

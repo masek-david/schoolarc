@@ -4,13 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet%20_new.dart';
+import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -30,33 +29,6 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
   GlobalKey getTileKey(int id) {
     return _tileKeys.putIfAbsent(
         id, () => GlobalKey<AnimatedCompletionTileState>());
-  }
-
-  void delete(HomeworkDTO hw, WidgetRef ref) {
-    ref.read(hwProvider.notifier).delete(hw);
-
-    showMessage(context, 'Deleted homework ${hw.text}', actions: [
-      SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          ref.read(hwProvider.notifier).revertDelete(hw);
-        },
-      ),
-    ]);
-  }
-
-  void edit(HomeworkDTO hw, WidgetRef ref) async {
-    HomeworkDTO? edited = await showModalBottomSheet<HomeworkDTO>(
-      context: context,
-      builder: (context) => AddTaskBottomSheetNEW(
-        initialTask: hw,
-        autoSetDate: false,
-      ),
-    );
-
-    if (edited != null) {
-      ref.read(hwProvider.notifier).edit(edited);
-    }
   }
 
   @override
@@ -83,17 +55,7 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
             tooltip: 'Add new homework',
             onPressed: () async {
               HapticFeedback.lightImpact();
-              final newHw = await showModalBottomSheet<Task?>(
-                context: context,
-                builder: (context) => AddTaskBottomSheetNEW(
-                  initialTask: Task.empty(),
-                  autoSetDate: true,
-                ),
-              );
-
-              if (newHw != null) {
-                ref.read(hwProvider.notifier).saveNew(newHw.toHw());
-              }
+              addNewHw(context, ref);
             },
             enableFeedback: true,
             child: const Icon(Icons.add),
@@ -181,8 +143,8 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
                                     .read(hwProvider.notifier)
                                     .complete(hw, value);
                               },
-                              onDelete: () => delete(hw, ref),
-                              onTap: () => edit(hw, ref),
+                              onDelete: () => deleteHw(context, ref, hw),
+                              onTap: () => editHw(context, ref, hw),
                             ),
                           );
                         },
@@ -228,22 +190,20 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
     return DragAndDropItem(
       feedbackWidget: AnimatedCompletionTile(
         hw: hw,
-        onAnimationEnd: () {},
         onChangedCompletion: (value) {
           ref.read(hwProvider.notifier).complete(hw, value);
         },
-        onDelete: () => delete(hw, ref),
-        onEdit: () => edit(hw, ref),
+        onDelete: () => deleteHw(context, ref, hw),
+        onEdit: () => editHw(context, ref, hw),
       ),
       child: AnimatedCompletionTile(
         hw: hw,
         key: getTileKey(hw.dbIndex),
-        onAnimationEnd: () {},
         onChangedCompletion: (value) {
           ref.read(hwProvider.notifier).complete(hw, value);
         },
-        onDelete: () => delete(hw, ref),
-        onEdit: () => edit(hw, ref),
+        onDelete: () => deleteHw(context, ref, hw),
+        onEdit: () => editHw(context, ref, hw),
       ),
     );
   }

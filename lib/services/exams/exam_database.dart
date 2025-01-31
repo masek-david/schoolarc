@@ -3,23 +3,6 @@ import 'package:school_manager/models/exams/exam_model.dart';
 
 class ExamDatabase {
   final _examBox = Hive.box('examBox');
-  final _examSequenceBox = Hive.box('examOtherData');
-
-  /// returns list of Exams dbIndexes for each priority
-  Map<int, List<int>> getSequence() {
-    var map = _examSequenceBox.get('sequence') ??
-        {
-          0: <int>[],
-          1: <int>[],
-          2: <int>[],
-          3: <int>[],
-        };
-    return map.cast<int, List<int>>();
-  }
-
-  Future<void> saveSequence(Map<int, List<int>> sequence) {
-    return _examSequenceBox.put('sequence', sequence);
-  }
 
   /// returns map of Exams with their dbIndexes
   Map<int, Exam> getDatabase() {
@@ -42,6 +25,5 @@ class ExamDatabase {
 
   void deleteAllFromDisk() {
     _examBox.deleteFromDisk();
-    _examSequenceBox.deleteFromDisk();
   }
 }

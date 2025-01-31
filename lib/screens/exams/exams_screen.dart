@@ -4,13 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet%20_new.dart';
+import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -30,33 +29,6 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
   GlobalKey getTileKey(int id) {
     return _tileKeys.putIfAbsent(
         id, () => GlobalKey<AnimatedCompletionTileState>());
-  }
-
-  void delete(ExamDTO exam, WidgetRef ref) {
-    ref.read(examProvider.notifier).delete(exam);
-
-    showMessage(context, 'Deleted exan ${exam.text}', actions: [
-      SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          ref.read(examProvider.notifier).revertDelete(exam);
-        },
-      ),
-    ]);
-  }
-
-  void edit(ExamDTO hw, WidgetRef ref) async {
-    ExamDTO? edited = await showModalBottomSheet<ExamDTO>(
-      context: context,
-      builder: (context) => AddTaskBottomSheetNEW(
-        initialTask: hw,
-        autoSetDate: false,
-      ),
-    );
-
-    if (edited != null) {
-      ref.read(examProvider.notifier).edit(edited);
-    }
   }
 
   @override
@@ -83,17 +55,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
             tooltip: 'Add new exam',
             onPressed: () async {
               HapticFeedback.lightImpact();
-              final newExam = await showModalBottomSheet<Task?>(
-                context: context,
-                builder: (context) => AddTaskBottomSheetNEW(
-                  initialTask: Task.empty(),
-                  autoSetDate: true,
-                ),
-              );
-
-              if (newExam != null) {
-                ref.read(examProvider.notifier).saveNew(newExam.toExam());
-              }
+       
             },
             enableFeedback: true,
             child: const Icon(Icons.add),
@@ -176,8 +138,8 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                             padding: const EdgeInsets.only(bottom: 10),
                             child: ExamTile(
                               exam: exam,
-                              onDelete: () => delete(exam, ref),
-                              onEdit: () => edit(exam, ref),
+                              onDelete: () => deleteExam(context, ref, exam),
+                              onEdit: () => editExam(context, ref, exam),
                             ),
                           );
                         },
@@ -223,14 +185,14 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
     return DragAndDropItem(
       feedbackWidget: ExamTile(
         exam: exam,
-        onDelete: () => delete(exam, ref),
-        onEdit: () => edit(exam, ref),
+        onDelete: () => deleteExam(context, ref, exam),
+        onEdit: () => editExam(context, ref, exam),
       ),
       child: ExamTile(
         exam: exam,
         key: getTileKey(exam.dbIndex),
-        onDelete: () => delete(exam, ref),
-        onEdit: () => edit(exam, ref),
+        onDelete: () => deleteExam(context, ref, exam),
+        onEdit: () => editExam(context, ref, exam),
       ),
     );
   }

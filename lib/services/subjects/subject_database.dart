@@ -4,17 +4,6 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 
 class SubjectDatabase {
   final _subjectBox = Hive.box('subjectBox');
-  final _sequenceBox = Hive.box('subjectOtherData');
-
-  List<int> getSequence() {
-    final list = _sequenceBox.get('SEQUENCE') ?? <int>[];
-
-    return list.cast<int>();
-  }
-
-  void saveSequence(List<int> newSequence) {
-    _sequenceBox.put('SEQUENCE', newSequence);
-  }
 
   Map<int, Subject> getDatabase() {
     return _subjectBox.toMap().cast<int, Subject>();
@@ -45,6 +34,5 @@ class SubjectDatabase {
 
   void deleteAllFromDisk() {
     _subjectBox.deleteFromDisk();
-    _sequenceBox.deleteFromDisk();
   }
 }

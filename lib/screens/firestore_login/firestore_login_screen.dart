@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class FirestoreLoginScreen extends ConsumerStatefulWidget {
@@ -82,9 +79,7 @@ class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
                 }
 
                 try {
-                  await ref.read(subjectsProvider.notifier).syncAll();
-                  await ref.read(hwProvider.notifier).syncAll();
-                  await ref.read(examProvider.notifier).syncAll();
+                  await syncAllTasks(ref);
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);

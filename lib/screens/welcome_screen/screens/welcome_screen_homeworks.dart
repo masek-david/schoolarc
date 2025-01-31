@@ -112,7 +112,6 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
                       child: AnimatedCompletionTile(
                         hw: e,
                         slidableController: e.dbIndex == 0 ? _controller : null,
-                        onAnimationEnd: () {},
                         onChangedCompletion: (p0) {
                           if (p0) {
                             showMessage(context,

@@ -14,6 +14,7 @@ import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
@@ -294,18 +295,20 @@ class BakaService {
     final result = await _getAllSubjects();
     List<Subject> list = result;
     for (var element in list) {
-      subjectService.addNewSubject(element);
+      container.read(subjectsProvider.notifier).saveNew(element);
     }
     return;
   }
 
   Future<void> overwriteAllSubjects() async {
-    subjectService.deleteAllSubjects();
+    
+    
+    container.read(subjectsProvider.notifier).deleteAll();
     final result = await _getAllSubjects();
 
     List<Subject> list = result;
     for (var element in list) {
-      subjectService.addNewSubject(element);
+      container.read(subjectsProvider.notifier).saveNew(element);
     }
 
     return;
@@ -458,7 +461,7 @@ class BakaService {
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
-    final subjects = subjectService.getMap();
+    final subjects = container.read(subjectsProvider);
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
@@ -524,7 +527,7 @@ class BakaService {
   /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
   Future<Map<String, int>> _getSubjectsIdToIndex(
       List<dynamic> subjectsJson) async {
-    final subjects = subjectService.getSortedList();
+    final subjects = container.read(subjectsSortedProvider);
     Map<String, int> bakalariSubjectIdToSubjectIndex = {};
 
     for (var subjectJson in subjectsJson) {
@@ -542,7 +545,7 @@ class BakaService {
       }
 
       if (!subjectExisted) {
-        var newSubject = await subjectService.addNewSubject(
+        var newSubject = await container.read(subjectsProvider.notifier).saveNew(
           Subject(
             name: name,
             shortcut: shortcut,
@@ -630,16 +633,16 @@ class BakaService {
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
-    final subjects = subjectService.getSortedList();
+    final subjects = container.read(subjectsProvider);
 
     int newHomeworks = 0;
 
     for (var homework in homeworksJson) {
-      SubjectDTO subject = subjects.where(
-        (subject) {
-          return subject.bakaId == homework['Subject']['Id'];
+      SubjectDTO subject = subjects.entries.where(
+        (entry) {
+          return entry.value.bakaId == homework['Subject']['Id'];
         },
-      ).first;
+      ).first.value;
 
       final String id = homework['ID'];
       final String text = homework['Content'];

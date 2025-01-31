@@ -10,6 +10,7 @@ import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 final hwProvider =
     StateNotifierProvider<HwNotifier, Map<int, HomeworkDTO>>((ref) {
@@ -49,6 +50,39 @@ final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
   },
 );
 
+final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
+  (ref) {
+    final hws = ref.watch(hwProvider);
+
+    Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
+
+    hws.forEach(
+      (dbIndex, homework) {
+        final hwDeadlineUtc = homework.deadline;
+
+        DateTime dateNoTime = DateTime.utc(
+            hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
+
+        if (!homework.isDeleted) {
+          if (hwDateMap.containsKey(dateNoTime)) {
+            // If it exists, add the event to the existing list
+            hwDateMap[dateNoTime]!.add(homework);
+          } else {
+            // If it does not exist, create a new list with the exam
+            hwDateMap[dateNoTime] = [homework];
+          }
+        }
+      },
+    );
+
+    hwDateMap.forEach((key, value) {
+      value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+    });
+
+    return hwDateMap;
+  },
+);
+
 final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   (ref) {
     final hws = ref.watch(hwProvider);
@@ -66,6 +100,26 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
     list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     return list;
+  },
+);
+
+final hwMissedProvider = Provider<List<HomeworkDTO>>(
+  (ref) {
+    final hws = ref.watch(hwProvider);
+
+    List<HomeworkDTO> missedHw = [];
+
+    hws.forEach(
+      (dbIndex, hw) {
+        if (hw.deadline.isBeforeToday() && !hw.isDeleted &&
+            (!hw.isCompleted || hw.isBeingAnimated)) {
+          missedHw.add(hw);
+        }
+      },
+    );
+
+    missedHw.sort((a, b) => a.deadline.compareTo(b.deadline));
+    return missedHw;
   },
 );
 
@@ -432,7 +486,8 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     final fireTime = fireHw.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
-      print('\u001b[1;93mediting hw from fire: ${fireHw.text}: ${fireHw.order}');
+      print(
+          '\u001b[1;93mediting hw from fire: ${fireHw.text}: ${fireHw.order}');
 
       edit(
         fireHw.convertToDTO(localHw.dbIndex, subjects[fireHw.subjectDbIndex]),
@@ -441,7 +496,8 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       );
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
-      print('\u001b[1;93mediting hw from hive: ${fireHw.text}: ${fireHw.order}');
+      print(
+          '\u001b[1;93mediting hw from hive: ${fireHw.text}: ${fireHw.order}');
 
       firestoreService.editHomeworks([localHw.copyWith(fireId: fireHw.fireId)]);
     }

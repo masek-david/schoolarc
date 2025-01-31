@@ -12,7 +12,6 @@ class CalendarWidget extends StatefulWidget {
     required this.focusedDay,
     required this.selectedDay,
     required this.negativePageCount,
-    required this.updateView,
     required this.calendarFormat,
     required this.jumpToPage,
     required this.onHeaderTapped,
@@ -20,9 +19,10 @@ class CalendarWidget extends StatefulWidget {
     required this.onPageChanged,
     required this.homeworks,
     required this.exams,
-    required this.setFocusedDay,
+    required this.setFocusedDay, required this.onEdit,
   });
 
+final void Function(ExamDTO exam) onEdit;
   final DateTime focusedDay;
   final DateTime selectedDay;
   final Map<DateTime, List<HomeworkDTO>> homeworks;
@@ -30,7 +30,6 @@ class CalendarWidget extends StatefulWidget {
   final int negativePageCount;
   final CalendarFormat calendarFormat;
   final void Function(DateTime date) setFocusedDay;
-  final void Function() updateView;
   final Function(int page) jumpToPage;
   final void Function(DateTime)? onHeaderTapped;
   final void Function(CalendarFormat)? onFormatChanged;
@@ -103,7 +102,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             },
             rowHeight: 50 + maxNumberOfExamsPerDay * 25,
             calendarBuilders: myCalendarBuilder(
-              updateView: widget.updateView,
+              onEdit: (exam) => widget.onEdit(exam),
               currentDate: widget.focusedDay,
               showOutside: widget.calendarFormat.name == 'week',
             ),

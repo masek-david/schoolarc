@@ -18,8 +18,18 @@ class PagesWidget extends StatelessWidget {
     required this.examByDate,
     required this.missedHwList,
     required this.showMissed,
-    required this.updateView,
+    required this.examOnDelete,
+    required this.examOnEdit,
+    required this.hwOnEdit,
+    required this.hwOnDelete,
+    required this.hwOnChangedCompletion,
   });
+
+  final void Function(ExamDTO exam) examOnDelete;
+  final void Function(ExamDTO exam) examOnEdit;
+  final void Function(HomeworkDTO hw) hwOnEdit;
+  final void Function(HomeworkDTO hw) hwOnDelete;
+  final void Function(HomeworkDTO hw, bool value) hwOnChangedCompletion;
 
   final PageController pageController;
   final void Function(int)? onPageChanged;
@@ -29,7 +39,6 @@ class PagesWidget extends StatelessWidget {
   final Map<DateTime, List<ExamDTO>> examByDate;
   final List<HomeworkDTO> missedHwList;
   final bool showMissed;
-  final void Function() updateView;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +61,6 @@ class PagesWidget extends StatelessWidget {
 
         return RescheduleDragTarget(
           currentDate: date,
-          updateView: updateView,
           onMove: (details) {
             if (pageController.page?.round() != negativePageCount + daysToAdd) {
               pageController.animateToPage(
@@ -90,27 +98,32 @@ class PagesWidget extends StatelessWidget {
                               ),
                               children: [
                                 HomeworkList(
+                                  onChangedCompletion: hwOnChangedCompletion,
+                                  onDelete: hwOnDelete,
+                                  onEdit: hwOnEdit,
                                   draggable: true,
                                   hwList: missedHwList,
-                                  updateListView: updateView,
                                 )
                               ],
                             ),
                           ),
                         ),
                       ExamList(
+                        onEdit: examOnEdit,
+                        onDelete: examOnDelete,
                         showDates: false,
                         showText: true,
                         draggable: true,
                         examList: examListForDay,
-                        updateView: updateView,
                       ),
                       HomeworkList(
+                        onChangedCompletion: hwOnChangedCompletion,
+                        onDelete: hwOnDelete,
+                        onEdit: hwOnEdit,
                         showDates: false,
                         showText: true,
                         draggable: true,
                         hwList: hwListForDay,
-                        updateListView: updateView,
                       ),
                       const ListBottomSpacer(),
                       const ListBottomSpacer(),

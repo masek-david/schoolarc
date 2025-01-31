@@ -47,6 +47,12 @@ extension BetterDateTime on DateTime {
     return minute < 10 ? '0$minute' : minute.toString();
   }
 
+  DateTime toUtcOnlyDate() {
+    final dateUtc = toUtc();
+
+    return DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
+  }
+
   /// returns all days in this week
   List<DateTime> allDaysInThisWeek() {
     DateTime firstDay = subtract(Duration(days: weekday - 1));

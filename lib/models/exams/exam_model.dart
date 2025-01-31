@@ -33,8 +33,6 @@ class Exam extends HiveObject {
   DateTime date;
   @HiveField(3)
   int priority;
-  // @HiveField(4)
-  // bool? completionNOTUSED;
   @HiveField(5)
   String? description;
   @HiveField(6)
@@ -54,6 +52,11 @@ class Exam extends HiveObject {
     if (isInBox) {
       save();
     }
+  }
+
+  @override
+  String toString() {
+    return 'exam: $text, order: $order';
   }
 
   Exam copyWith({
