@@ -116,8 +116,15 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
           },
         )) {
     listenToFirebase();
+  }
 
-    // Future.microtask(computation)
+  Map<int, ExamDTO> get _dbState {
+    return _db.getDatabase().map(
+      (key, value) {
+        return MapEntry(
+            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+      },
+    );
   }
 
   Future<void> listenToFirebase() async {
@@ -173,7 +180,9 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
       },
     );
 
-    state = {...state, ...updated};
+    if (mounted) {
+      state = {...state, ...updated};
+    }
   }
 
   Future<void> syncAll() async {
@@ -214,7 +223,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      exam.order = state.values
+      exam.order = _dbState.values
           .where(
             (element) =>
                 !element.isDeleted &&
@@ -231,7 +240,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     int dbIndex = await _db.addExam(exam);
 
     final ExamDTO? examWithSameOrder = mounted
-        ? state.values
+        ? _dbState.values
             .where(
                 (element) => element.order == exam.order && !element.isDeleted)
             .firstOrNull
@@ -276,7 +285,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     /// [checkOrder] false only when editing from [reorder()]
     bool checkOrder = true,
   }) async {
-    final old = state[editedExam.dbIndex]!;
+    final old = _dbState[editedExam.dbIndex]!;
 
     editedExam = editedExam.copyWith(
       isCompleted: editedExam.deadline.isBeforeToday(),
@@ -326,14 +335,17 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     _db.editExam(editedExam.dbIndex, editedExam.convert());
 
     if (syncWithFire) {
-      if (editedExam.fireId != null) {
-        firestoreService.editExams([editedExam]);
-      } else {
-        edit(editedExam.copyWith(fireId: uuid.v4().toString()));
+      if (editedExam.fireId == null) {
+        editedExam = editedExam.copyWith(fireId: uuid.v4());
+
+        _db.editExam(editedExam.dbIndex, editedExam.convert());
       }
+      firestoreService.editExams([editedExam]);
     }
 
-    state = {...state, editedExam.dbIndex: editedExam};
+    if (mounted) {
+      state = {...state, editedExam.dbIndex: editedExam};
+    }
   }
 
   /// updates all with changed order, if [oldIndex] is null, it will only be added and [exam] cant be null, if [newIndex] is null, it will be only removed
@@ -350,7 +362,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
       throw '[oldIndex], [oldPriority] and [subject] are all null';
     }
 
-    var oldPriorityList = state.values
+    var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
@@ -358,7 +370,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
               element.priority.index == oldPriority,
         )
         .toList();
-    var newPriorityList = state.values
+    var newPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
@@ -396,7 +408,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     if (oldPriority != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
-        final oldExam = state[edited.dbIndex];
+        final oldExam = _dbState[edited.dbIndex];
 
         if (edited.order != oldExam?.order) {
           editedExams[edited.dbIndex] = edited;
@@ -405,7 +417,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
     }
     for (int i = 0; i < newPriorityList.length; i++) {
       final edited = newPriorityList[i].copyWith(order: i);
-      final oldExam = state[edited.dbIndex];
+      final oldExam = _dbState[edited.dbIndex];
 
       if (edited.order != oldExam?.order ||
           edited.priority.index != oldExam?.priority.index) {
@@ -425,7 +437,9 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
         )
         .toList());
 
-    state = {...state, ...editedExams};
+    if (mounted) {
+      state = {...state, ...editedExams};
+    }
     return;
   }
 
@@ -441,7 +455,7 @@ class ExamNotifier extends StateNotifier<Map<int, ExamDTO>> {
   Future<void> checkFireExam(Exam fireExam) async {
     print('checking exam from fire: ${fireExam.toString()}');
 
-    final localExam = state.values.where(
+    final localExam = _dbState.values.where(
       (element) {
         return element.fireId == fireExam.fireId;
       },

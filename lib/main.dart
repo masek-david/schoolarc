@@ -46,10 +46,8 @@ void main() async {
     Hive.openBox('hwBox'),
     Hive.openBox('examBox'),
     Hive.openBox('tableBox'),
-
     Hive.openBox('bakaAddedHw'),
     Hive.openBox('bakaSeenHw'),
-
     Hive.openBox('settings'),
     Hive.openBox('logBox'),
   ]);

@@ -1,8 +1,11 @@
 fix:
 
+fix bakaservice creating new homeworks even when they already exist
 
+add back animated star
 
 =============================================================================================
+
 remove slide to delete?
 
 pridat permanent delete

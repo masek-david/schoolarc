@@ -11,8 +11,8 @@ class FirestoreLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: 'mol.david498@gmail.com');
+  final passwordController = TextEditingController(text: 'poipoi123');
 
   @override
   Widget build(BuildContext context) {

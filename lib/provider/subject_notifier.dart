@@ -35,6 +35,14 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     listenToFirebase();
   }
 
+  Map<int, SubjectDTO> get _dbState {
+    return _db.getDatabase().map(
+      (key, value) {
+        return MapEntry(key, value.convertToDTO(key));
+      },
+    );
+  }
+
   Future<void> listenToFirebase() async {
     await listen?.cancel();
     listen = firestoreService.subjectsListenToChanges().listen((event) async {
@@ -75,7 +83,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       },
     );
 
-    state.forEach(
+    _dbState.forEach(
       (key, value) {
         if (value.fireId == null) {
           edit(value);
@@ -104,7 +112,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      subject.order = state.values
+      subject.order = _dbState.values
           .where(
             (element) => !element.isDeleted,
           )
@@ -117,7 +125,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     int dbIndex = await _db.addSubject(subject);
 
-    final SubjectDTO? subjectWithSameOrder = state.values
+    final SubjectDTO? subjectWithSameOrder = _dbState.values
         .where(
             (element) => element.order == subject.order && !element.isDeleted)
         .firstOrNull;
@@ -154,7 +162,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     /// [checkOrder] false only when editing from [reorder()]
     bool checkOrder = true,
   }) async {
-    final old = state[editedSubject.dbIndex]!;
+    final old = _dbState[editedSubject.dbIndex]!;
 
     if (checkOrder) {
       // if now is deleted
@@ -189,8 +197,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     if (syncWithFire) {
       if (editedSubject.fireId != null) {
-        firestoreService.editSubject(
-            editedSubject.fireId!, editedSubject.convert());
+        firestoreService.editSubjects(
+            [editedSubject.copyWith(fireId: editedSubject.fireId)]);
       } else {
         edit(editedSubject.copyWith(fireId: uuid.v4().toString()));
       }
@@ -209,7 +217,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       throw '[oldIndex] and [subject] are both null';
     }
 
-    var list = state.values
+    var list = _dbState.values
         .where(
           (element) => !element.isDeleted,
         )
@@ -218,7 +226,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     list.sort((a, b) => a.order.compareTo(b.order));
 
     if (oldIndex != null) {
-      subject = list.removeAt(oldIndex);
+      subject =
+          list.removeAt(oldIndex < list.length ? oldIndex : list.length - 1);
     }
     if (addTimestamp) {
       subject = subject!.copyWith(timestamp: Timestamp.now());
@@ -231,7 +240,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     for (int i = 0; i < list.length; i++) {
       final edited = list[i].copyWith(order: i);
-      final oldSubject = state[edited.dbIndex];
+      final oldSubject = _dbState[edited.dbIndex];
 
       if (edited.order != oldSubject?.order) {
         editedSubjects[edited.dbIndex] = edited;
@@ -240,7 +249,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
     state = {...state, ...editedSubjects};
 
-    firestoreService.editSubjectBatch(editedSubjects.values
+    firestoreService.editSubjects(editedSubjects.values
         .where(
           (element) => element.fireId != null,
         )
@@ -259,8 +268,9 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
     return;
   }
 
+// TODO remake as subjectDTO ???
   void deleteSubject(int dbIndex, {bool nowIsDeleted = true}) {
-    final subject = state[dbIndex];
+    final subject = _dbState[dbIndex];
 
     if (subject == null) {
       return;
@@ -288,7 +298,7 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
 
   /// checks and updates/adds subject from firestore
   Future<void> checkFireSubject(Subject fireSubject) async {
-    final localSubject = state.values.where(
+    final localSubject = _dbState.values.where(
       (element) {
         return element.fireId == fireSubject.fireId;
       },
@@ -324,7 +334,8 @@ class SubjectNotifier extends StateNotifier<Map<int, SubjectDTO>> {
       // print(
       //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
-      firestoreService.editSubject(fireSubject.fireId!, localSubject.convert());
+      firestoreService
+          .editSubjects([localSubject.copyWith(fireId: fireSubject.fireId)]);
     } else {
       // print('same date');
     }

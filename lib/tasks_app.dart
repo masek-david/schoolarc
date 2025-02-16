@@ -19,8 +19,10 @@ import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
+import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/theme_generate.dart';
+import 'package:school_manager/widgets/firebase_overlay.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
@@ -39,12 +41,12 @@ final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
-final firestoreService = FirestoreService();
+FirestoreService firestoreService = FirestoreService();
 final uuid = Uuid();
 
 Future<void> syncAllTasks(WidgetRef ref) async {
+  await ref.read(subjectsProvider.notifier).syncAll();
   Future.wait([
-    ref.read(subjectsProvider.notifier).syncAll(),
     ref.read(hwProvider.notifier).syncAll(),
     ref.read(examProvider.notifier).syncAll(),
   ]);
@@ -137,14 +139,14 @@ void tryGettingNewHomeworks() async {
   }
 }
 
-class TasksApp extends StatefulWidget {
+class TasksApp extends ConsumerStatefulWidget {
   const TasksApp({super.key});
 
   @override
-  State<TasksApp> createState() => _TasksAppState();
+  ConsumerState<TasksApp> createState() => _TasksAppState();
 }
 
-class _TasksAppState extends State<TasksApp> {
+class _TasksAppState extends ConsumerState<TasksApp> {
   late final _pageController = PageController(
     initialPage: _settings.get(Setting.initialAppPage),
   );
@@ -187,6 +189,8 @@ class _TasksAppState extends State<TasksApp> {
   void initState() {
     super.initState();
 
+    firestoreService = FirestoreService(ref: ref);
+
     if (_settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
@@ -203,6 +207,8 @@ class _TasksAppState extends State<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
+
+    NotificationSender.startListening();
 
     tryGettingNewHomeworks();
   }
@@ -354,6 +360,17 @@ class _TasksAppState extends State<TasksApp> {
             }
             return null;
           },
+          builder: (settings.get(Setting.debugShowFireOverlay))
+              ? (context, child) {
+                  return Stack(
+                    children: [
+                      child ?? SizedBox.shrink(),
+                      Positioned(
+                          top: 0, left: 0, right: 0, child: FirebaseOverlay()),
+                    ],
+                  );
+                }
+              : null,
           home: Stack(
             children: [
               Scaffold(

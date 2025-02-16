@@ -11,6 +11,7 @@ class AnimatedCompletionTile extends StatefulWidget {
     this.draggable = false,
     required this.hw,
     this.slidableController,
+    this.padding,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
@@ -20,6 +21,7 @@ class AnimatedCompletionTile extends StatefulWidget {
   final bool showDate;
   final bool draggable;
   final SlidableController? slidableController;
+  final EdgeInsetsGeometry? padding;
   final void Function() onDelete;
   final void Function() onEdit;
   final void Function(bool value) onChangedCompletion;
@@ -83,48 +85,51 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: ShaderMask(
-            blendMode: BlendMode.srcOver,
-            shaderCallback: (bounds) {
-              final color = widget.hw.priority.getColor(context).withAlpha(200);
-
-              return RadialGradient(
-                colors: [
-                  Colors.transparent,
-                  color,
-                  color,
-                  Colors.transparent,
-                ],
-                radius: _controller.value * 50,
-                center: Alignment(1.0 - (31 / bounds.width * 2), 0),
-              ).createShader(bounds);
-            },
-            child: child,
-          ),
-        );
-      },
-      child: widget.draggable
-          ? LayoutBuilder(
-              builder: (context, constraints) {
-                return LongPressDraggable(
-                  data: widget.hw,
-                  feedback: SizedBox(
-                    width: constraints.maxWidth,
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: buildTile(),
-                    ),
-                  ),
-                  child: buildTile(),
-                );
+    return Padding(
+      padding: widget.padding ?? EdgeInsets.all(0),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: ShaderMask(
+              blendMode: BlendMode.srcOver,
+              shaderCallback: (bounds) {
+                final color = widget.hw.priority.getColor(context).withAlpha(200);
+      
+                return RadialGradient(
+                  colors: [
+                    Colors.transparent,
+                    color,
+                    color,
+                    Colors.transparent,
+                  ],
+                  radius: _controller.value * 50,
+                  center: Alignment(1.0 - (31 / bounds.width * 2), 0),
+                ).createShader(bounds);
               },
-            )
-          : buildTile(),
+              child: child,
+            ),
+          );
+        },
+        child: widget.draggable
+            ? LayoutBuilder(
+                builder: (context, constraints) {
+                  return LongPressDraggable(
+                    data: widget.hw,
+                    feedback: SizedBox(
+                      width: constraints.maxWidth,
+                      child: Opacity(
+                        opacity: 0.6,
+                        child: buildTile(),
+                      ),
+                    ),
+                    child: buildTile(),
+                  );
+                },
+              )
+            : buildTile(),
+      ),
     );
   }
 
@@ -138,7 +143,7 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
         playAnimation(value);
       },
       onDelete: () => widget.onDelete(),
-      onTap: () => widget.onEdit(),
+      onEdit: () => widget.onEdit(),
     );
   }
 }

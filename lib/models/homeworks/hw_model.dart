@@ -58,7 +58,7 @@ class Homework extends HiveObject {
 
   @override
   String toString() {
-    return 'homework: $text, order: $order';
+    return 'homework: $text, order: $order, completed: $isCompleted, deleted: $isDeleted';
   }
 
   Homework copyWith({

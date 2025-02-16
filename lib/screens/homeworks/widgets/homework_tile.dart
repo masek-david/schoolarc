@@ -18,7 +18,7 @@ class HomeworkTile extends StatelessWidget {
     this.borderIfMissed = true,
     required this.onChangedCompletion,
     required this.onDelete,
-    required this.onTap,
+    required this.onEdit,
     this.showCompletion = true,
   });
 
@@ -29,7 +29,7 @@ class HomeworkTile extends StatelessWidget {
   final bool borderIfMissed;
   final void Function(bool) onChangedCompletion;
   final void Function()? onDelete;
-  final void Function() onTap;
+  final void Function() onEdit;
 
   final double borderRadius = 12;
   final double padding = 5;
@@ -105,7 +105,7 @@ class HomeworkTile extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: onTap,
+                onTap: onEdit,
                 borderRadius: BorderRadius.circular(borderRadius),
                 child: Opacity(
                   opacity: opacity,
@@ -152,7 +152,16 @@ class HomeworkTile extends StatelessWidget {
                         Expanded(child: Text(hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
                         if (settings.get(Setting.showDebugInfo))
-                          Text(hw.timestamp.millisecondsSinceEpoch.toString()),
+                          Column(
+                            children: [
+                              Text(
+                                hw.fireId ?? 'no fireId',
+                                style: TextStyle(fontSize: 8),
+                              ),
+                              Text(hw.timestamp.millisecondsSinceEpoch
+                                  .toString()),
+                            ],
+                          ),
                         if (showDeadline)
                           Text(
                             hw.deadline.dateText(),

@@ -2,18 +2,22 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class FirestoreService {
+  FirestoreService({this.ref});
+
   FirebaseAuth auth = FirebaseAuth.instance;
-  final ProviderContainer _container = ProviderContainer();
+  WidgetRef? ref;
 
   late CollectionReference<Map<String, dynamic>> exams = FirebaseFirestore
       .instance
@@ -67,6 +71,12 @@ class FirestoreService {
   // EXAMS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> examsListenToChanges() {
+    exams.snapshots().listen(
+      (event) {
+        ref?.read(firebaseActivityProvider.notifier).read(2);
+      },
+    ).onError((_) {});
+
     return exams.snapshots();
   }
 
@@ -76,8 +86,6 @@ class FirestoreService {
     for (var exam in examsToUpdate) {
       if (exam.fireId != null) {
         final docRef = exams.doc(exam.fireId);
-
-        printC('batch editing ${exam.toString()}');
 
         batch.set(docRef, {
           'text': exam.text,
@@ -91,6 +99,7 @@ class FirestoreService {
         });
       }
     }
+    ref?.read(firebaseActivityProvider.notifier).modify(2);
 
     try {
       await batch.commit();
@@ -103,7 +112,7 @@ class FirestoreService {
   Future<void> addExam(ExamDTO exam) async {
     if (exam.fireId != null) {
       try {
-        printC('saving hw ${exam.toString()}');
+        ref?.read(firebaseActivityProvider.notifier).add(2);
         await exams.doc(exam.fireId).set({
           'text': exam.text,
           'deadline': exam.deadline,
@@ -125,7 +134,9 @@ class FirestoreService {
 
   Future<List<Exam>?> getAllExams() async {
     final query = await exams.get();
-    final localSubjects = _container.read(subjectsSortedProvider);
+    ref?.read(firebaseActivityProvider.notifier).read(2);
+
+    final localSubjects = container.read(subjectsSortedProvider);
 
     List<Exam> examsList = [];
 
@@ -156,6 +167,12 @@ class FirestoreService {
   // HOMEWORKS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> homeworksListenToChanges() {
+    homeworks.snapshots().listen(
+      (event) {
+        ref?.read(firebaseActivityProvider.notifier).read(1);
+      },
+    ).onError((_) {});
+
     return homeworks.snapshots();
   }
 
@@ -165,8 +182,6 @@ class FirestoreService {
     for (var homework in hwsToUpdate) {
       if (homework.fireId != null) {
         final docRef = homeworks.doc(homework.fireId);
-
-        printC('batch editing ${homework.toString()}');
 
         batch.set(docRef, {
           'text': homework.text,
@@ -181,6 +196,7 @@ class FirestoreService {
         });
       }
     }
+    ref?.read(firebaseActivityProvider.notifier).modify(1);
 
     try {
       await batch.commit();
@@ -193,7 +209,7 @@ class FirestoreService {
   Future<void> addHomework(HomeworkDTO homework) async {
     if (homework.fireId != null) {
       try {
-        printC('saving hw ${homework.toString()}');
+        ref?.read(firebaseActivityProvider.notifier).add(1);
         await homeworks.doc(homework.fireId).set({
           'text': homework.text,
           'isCompleted': homework.isCompleted,
@@ -216,7 +232,9 @@ class FirestoreService {
 
   Future<List<Homework>?> getAllHomeworks() async {
     final query = await homeworks.get();
-    final localSubjects = _container.read(subjectsSortedProvider);
+    ref?.read(firebaseActivityProvider.notifier).read(1);
+
+    final localSubjects = container.read(subjectsSortedProvider);
 
     List<Homework> homeworksList = [];
 
@@ -248,21 +266,21 @@ class FirestoreService {
   // SUBJECTS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> subjectsListenToChanges() {
+    subjects.snapshots().listen(
+      (event) {
+        ref?.read(firebaseActivityProvider.notifier).read(0);
+      },
+    ).onError((_) {});
+
     return subjects.snapshots();
   }
 
-  static void printC(String text) {
-    print('\u001b[1;96m$text');
-  }
-
-  Future<void> editSubjectBatch(List<SubjectDTO> updates) async {
+  Future<void> editSubjects(List<SubjectDTO> updates) async {
     final batch = FirebaseFirestore.instance.batch();
 
     for (var subject in updates) {
       if (subject.fireId != null) {
         final docRef = subjects.doc(subject.fireId);
-
-        printC('batch editing subject ${subject.name}: ${subject.order}');
 
         batch.set(docRef, {
           'name': subject.name,
@@ -274,6 +292,7 @@ class FirestoreService {
         });
       }
     }
+    ref?.read(firebaseActivityProvider.notifier).modify(0);
 
     try {
       await batch.commit();
@@ -283,27 +302,9 @@ class FirestoreService {
     return;
   }
 
-// TODO use only batch edit
-  Future<void> editSubject(String fireId, Subject subject) async {
-    printC('editing subject ${subject.name}: ${subject.order}');
-
-    try {
-      await subjects.doc(fireId).set({
-        'name': subject.name,
-        'short': subject.shortcut,
-        'bakaId': subject.bakaId,
-        'isDeleted': subject.isDeleted,
-        'timestamp': subject.timestamp,
-        'order': subject.order,
-      });
-    } on Object catch (e) {
-      log(e.toString());
-    }
-  }
-
   Future<void> addSubject(SubjectDTO subject) async {
     if (subject.fireId != null) {
-      printC('saving subject ${subject.name}: ${subject.order}');
+      ref?.read(firebaseActivityProvider.notifier).add(0);
 
       try {
         await subjects.doc(subject.fireId).set({
@@ -325,6 +326,7 @@ class FirestoreService {
 
   Future<List<Subject>?> getSubjects() async {
     final query = await subjects.get();
+    ref?.read(firebaseActivityProvider.notifier).read(0);
 
     List<Subject> subjectsList = [];
 

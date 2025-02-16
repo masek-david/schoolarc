@@ -55,7 +55,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
             tooltip: 'Add new exam',
             onPressed: () async {
               HapticFeedback.lightImpact();
-       
+              addNewExam(context, ref);
             },
             enableFeedback: true,
             child: const Icon(Icons.add),

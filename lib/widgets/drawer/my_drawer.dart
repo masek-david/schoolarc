@@ -132,6 +132,19 @@ class MyDrawer extends StatelessWidget {
                         ),
                       ),
                     if (showDebug)
+                      SettingTile(
+                        label: 'Show firebase overlay',
+                        trailing: SwitchAction(
+                          initialValue:
+                              settings.get(Setting.debugShowFireOverlay),
+                          onChanged: (value) {
+                            settings.save(
+                                Setting.debugShowFireOverlay, value);
+                            setThemeMode();
+                          },
+                        ),
+                      ),
+                    if (showDebug)
                       MyDrawerButton(
                           text: 'View database',
                           icon: const Icon(Icons.data_array),

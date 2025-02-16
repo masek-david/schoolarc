@@ -68,7 +68,7 @@ class BakaHwTile extends StatelessWidget {
               showCompletion: false,
               onDelete: null,
               onChangedCompletion: (p0) {},
-              onTap: () {
+              onEdit: () {
                 showDialogAdaptive(
                   context: context,
                   title: Text(hw.subject?.name ?? ''),

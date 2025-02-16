@@ -111,7 +111,8 @@ final hwMissedProvider = Provider<List<HomeworkDTO>>(
 
     hws.forEach(
       (dbIndex, hw) {
-        if (hw.deadline.isBeforeToday() && !hw.isDeleted &&
+        if (hw.deadline.isBeforeToday() &&
+            !hw.isDeleted &&
             (!hw.isCompleted || hw.isBeingAnimated)) {
           missedHw.add(hw);
         }
@@ -136,6 +137,15 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
           },
         )) {
     listenToFirebase();
+  }
+
+  Map<int, HomeworkDTO> get _dbState {
+    return _db.getDatabase().map(
+      (key, value) {
+        return MapEntry(
+            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+      },
+    );
   }
 
   Future<void> listenToFirebase() async {
@@ -169,9 +179,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
       updatedHws.forEach(
         (key, value) async {
-          if (mounted) {
-            await checkFireHomework(value);
-          }
+          await checkFireHomework(value);
         },
       );
     }, onError: (error) {
@@ -217,7 +225,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      hw.order = state.values
+      hw.order = _dbState.values
           .where(
             (element) =>
                 !element.isDeleted &&
@@ -233,11 +241,9 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
     int dbIndex = await _db.addHw(hw);
 
-    final HomeworkDTO? hwWithSameOrder = mounted
-        ? state.values
-            .where((element) => element.order == hw.order && !element.isDeleted)
-            .firstOrNull
-        : null;
+    final HomeworkDTO? hwWithSameOrder = _dbState.values
+        .where((element) => element.order == hw.order && !element.isDeleted)
+        .firstOrNull;
     if (hwWithSameOrder != null && !addToEnd) {
       if (hw.timestamp.millisecondsSinceEpoch <
           hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
@@ -255,10 +261,13 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       );
     }
 
-    state = {
-      ...state,
-      dbIndex: hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex])
-    };
+    if (mounted) {
+      state = {
+        ...state,
+        dbIndex: hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex])
+      };
+    }
+
     if (addToFire) {
       await firestoreService
           .addHomework(hw.convertToDTO(0, subjects[hw.subjectDbIndex]));
@@ -279,7 +288,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     /// to delay updating state to let animation play, only to complete a hw
     bool stateUpdateDelay = false,
   }) async {
-    final old = state[editedHw.dbIndex]!;
+    final old = _dbState[editedHw.dbIndex]!;
 
     if (checkOrder && !stateUpdateDelay) {
       // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
@@ -325,26 +334,29 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     _db.editHw(editedHw.dbIndex, editedHw.convert());
 
     if (syncWithFire) {
-      if (editedHw.fireId != null) {
-        firestoreService.editHomeworks([editedHw]);
-      } else {
-        edit(editedHw.copyWith(fireId: uuid.v4().toString()));
+      if (editedHw.fireId == null) {
+        editedHw = editedHw.copyWith(fireId: uuid.v4());
+
+        _db.editHw(editedHw.dbIndex, editedHw.convert());
       }
+      firestoreService.editHomeworks([editedHw]);
     }
 
-    if (stateUpdateDelay) {
+    if (stateUpdateDelay && mounted) {
       state = {
         ...state,
         editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: true),
       };
 
       await Future.delayed(Duration(seconds: 1));
-      state = {
-        ...state,
-        editedHw.dbIndex:
-            state[editedHw.dbIndex]!.copyWith(isBeingAnimated: false),
-      };
-    } else {
+      if (mounted) {
+        state = {
+          ...state,
+          editedHw.dbIndex:
+              state[editedHw.dbIndex]!.copyWith(isBeingAnimated: false),
+        };
+      }
+    } else if (mounted) {
       state = {
         ...state,
         editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: false)
@@ -366,7 +378,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       throw '[oldIndex], [oldPriority] and [subject] are all null';
     }
 
-    var oldPriorityList = state.values
+    var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
@@ -374,7 +386,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
               element.priority.index == oldPriority,
         )
         .toList();
-    var newPriorityList = state.values
+    var newPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
@@ -397,6 +409,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       }
     }
     if (addTimestamp) {
+      // now the timestamp is
       homework = homework!.copyWith(timestamp: Timestamp.now());
     }
     // now homework cant be null
@@ -412,7 +425,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     if (oldPriority != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
-        final oldHw = state[edited.dbIndex];
+        final oldHw = _dbState[edited.dbIndex];
 
         if (edited.order != oldHw?.order) {
           editedHomeworks[edited.dbIndex] = edited;
@@ -421,7 +434,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     }
     for (int i = 0; i < newPriorityList.length; i++) {
       final edited = newPriorityList[i].copyWith(order: i);
-      final oldHw = state[edited.dbIndex];
+      final oldHw = _dbState[edited.dbIndex];
 
       if (edited.order != oldHw?.order ||
           edited.priority.index != oldHw?.priority.index) {
@@ -441,7 +454,9 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
         )
         .toList());
 
-    state = {...state, ...editedHomeworks};
+    if (mounted) {
+      state = {...state, ...editedHomeworks};
+    }
     return;
   }
 
@@ -463,8 +478,8 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
   /// checks and updates/adds hw from firestore
   Future<void> checkFireHomework(Homework fireHw) async {
     print('checking hw from fire: ${fireHw.toString()}');
-
-    final localHw = state.values.where(
+    
+    final localHw = _dbState.values.where(
       (element) {
         return element.fireId == fireHw.fireId;
       },
@@ -472,7 +487,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
     // if it doesnt exist in local, add it
     if (localHw == null) {
-      print('\u001b[1;92madding hw from fire: ${fireHw.text}: ${fireHw.order}');
+      print('\u001b[1;92madding hw from fire: ${fireHw.toString()}');
 
       await saveNew(
         fireHw,
@@ -486,8 +501,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     final fireTime = fireHw.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
-      print(
-          '\u001b[1;93mediting hw from fire: ${fireHw.text}: ${fireHw.order}');
+      print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
 
       edit(
         fireHw.convertToDTO(localHw.dbIndex, subjects[fireHw.subjectDbIndex]),
@@ -496,8 +510,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       );
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
-      print(
-          '\u001b[1;93mediting hw from hive: ${fireHw.text}: ${fireHw.order}');
+      print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
       firestoreService.editHomeworks([localHw.copyWith(fireId: fireHw.fireId)]);
     }

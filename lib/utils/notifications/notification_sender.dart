@@ -6,6 +6,7 @@ import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
@@ -15,6 +16,27 @@ import 'package:school_manager/utils/show_adaptive_dialog.dart';
 class NotificationSender {
   static const String tommorrowChannel = 'tommorrow_channel';
   static const String mainChannel = 'main_channel';
+
+  static void startListening() {
+    container.listen(
+      hwProvider,
+      (previous, next) {
+        scheduleTommorrowNotification();
+      },
+    );
+    container.listen(
+      examProvider,
+      (previous, next) {
+        scheduleTommorrowNotification();
+      },
+    );
+    container.listen(
+      subjectsProvider,
+      (previous, next) {
+        scheduleTommorrowNotification();
+      },
+    );
+  }
 
   static void scheduleTommorrowNotification({
     bool scheduled = true,
@@ -88,7 +110,8 @@ class NotificationSender {
 
     List<ExamDTO> examsForTommorow =
         container.read(examsDatesProvider)[tommorowDate] ?? [];
-    List<HomeworkDTO> hwsForTommorow = container.read(hwDatesProvider)[tommorowDate] ?? [];
+    List<HomeworkDTO> hwsForTommorow =
+        container.read(hwDatesProvider)[tommorowDate] ?? [];
     List<HomeworkDTO> missedHws = container.read(hwMissedProvider);
 
     final isIOS = Platform.isIOS;
