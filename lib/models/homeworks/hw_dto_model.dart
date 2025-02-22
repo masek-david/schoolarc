@@ -39,7 +39,7 @@ class HomeworkDTO extends Task {
 
   @override
   String toString() {
-    return 'homework: $text, ${subject?.shortcut}, order: $order, Hive: $dbIndex';
+    return 'homework: $text, ${subject?.shortcut}, order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
   }
 
   @override

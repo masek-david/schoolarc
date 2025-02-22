@@ -25,8 +25,8 @@ final firebaseActivityProvider =
   return FirebaseActivityNotifier();
 });
 
+/// 0: subject, 1: homeworks, 2: exams
 class FirebaseActivityNotifier extends StateNotifier<Map<int, Activity>> {
-  /// 0: subject, 1: homeworks, 2: exams
   FirebaseActivityNotifier()
       : super(
           {0: Activity(), 1: Activity(), 2: Activity()},

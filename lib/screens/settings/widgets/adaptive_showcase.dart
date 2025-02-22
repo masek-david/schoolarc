@@ -97,7 +97,7 @@ class _AdaptiveShowcaseState extends State<AdaptiveShowcase> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Close'),
+                          child: Text('Cancel'),
                         ),
                       ],
                     );
@@ -118,7 +118,7 @@ class _AdaptiveShowcaseState extends State<AdaptiveShowcase> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Close'),
+                          child: Text('Cancel'),
                         ),
                       ],
                     );

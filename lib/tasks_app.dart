@@ -11,10 +11,13 @@ import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
+import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/firestore/firestore_service.dart';
+import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/logs_service.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
+import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
@@ -34,7 +37,9 @@ import 'package:uuid/uuid.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
-final container = ProviderContainer();
+final homeworksDb = HomeworksDatabase();
+final examsDb = ExamDatabase();
+final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
 final timetableDatabase = TimeTableDatabase();
 final bakaService = BakaService();
@@ -207,8 +212,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
-
-    NotificationSender.startListening();
+    NotificationSender.scheduleTommorrowNotification();
 
     tryGettingNewHomeworks();
   }
@@ -366,7 +370,11 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                     children: [
                       child ?? SizedBox.shrink(),
                       Positioned(
-                          top: 0, left: 0, right: 0, child: FirebaseOverlay()),
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: FirebaseOverlay(),
+                      ),
                     ],
                   );
                 }

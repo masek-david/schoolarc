@@ -1,14 +1,14 @@
 fix:
 
-fix bakaservice creating new homeworks even when they already exist
-
-add back animated star
+create baka provider
 
 =============================================================================================
 
 remove slide to delete?
 
 pridat permanent delete
+
+pridat revert delete
 
 pridat export a import dat
 

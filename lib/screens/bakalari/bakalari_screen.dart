@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 
-class BakalariScreen extends StatefulWidget {
+class BakalariScreen extends ConsumerStatefulWidget {
   const BakalariScreen({
     super.key,
     this.showAppbar = true,
@@ -13,10 +14,10 @@ class BakalariScreen extends StatefulWidget {
   final bool showAppbar;
 
   @override
-  State<BakalariScreen> createState() => _BakalariScreenState();
+  ConsumerState<BakalariScreen> createState() => _BakalariScreenState();
 }
 
-class _BakalariScreenState extends State<BakalariScreen> {
+class _BakalariScreenState extends ConsumerState<BakalariScreen> {
   final _schoolController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -238,7 +239,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                             adaptiveDialogButton(
                               context: context,
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Close'),
+                              child: const Text('Cancel'),
                             ),
                             adaptiveDialogButton(
                               context: context,
@@ -248,7 +249,7 @@ class _BakalariScreenState extends State<BakalariScreen> {
                                   isLoading = true;
                                 });
 
-                                bakaService.importTimeTable().then((value) {
+                                bakaService.importTimeTable(ref).then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });

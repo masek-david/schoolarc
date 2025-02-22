@@ -34,7 +34,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
           .alreadyAdded = true;
     });
 
-    showMessage(context, 'Saved homework');
+    showMessage(context, 'Homeworks added');
   }
 
   @override

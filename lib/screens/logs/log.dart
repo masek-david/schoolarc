@@ -12,7 +12,7 @@ class LogScreen extends StatefulWidget {
 }
 
 class _LogScreenState extends State<LogScreen> {
-  double fontSize = 16;
+  double fontSize = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,10 @@ class _LogScreenState extends State<LogScreen> {
         child: SingleChildScrollView(
           child: Text(
             widget.log.log,
-            style: TextStyle(fontSize: fontSize),
+            style: TextStyle(
+              fontSize: fontSize,
+              fontFamily: 'Monospace',
+            ),
           ),
         ),
       ),

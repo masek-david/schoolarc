@@ -45,7 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
 
-    bakaTimetable = bakaService.getCurrentTimetable(DateTime.now());
+    bakaTimetable = bakaService.getCurrentTimetable(DateTime.now(), ref);
     meals = stravaService.getMeals();
   }
 
@@ -79,7 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> refreshTimetable() async {
     setState(() {
-      bakaTimetable = bakaService.getCurrentTimetable(dateToShow);
+      bakaTimetable = bakaService.getCurrentTimetable(dateToShow, ref);
     });
 
     try {

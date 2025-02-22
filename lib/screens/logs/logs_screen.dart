@@ -37,7 +37,7 @@ class _LogsScreenState extends State<LogsScreen> {
                 actions: [
                   adaptiveDialogButton(
                     context: context,
-                    child: Text('Close'),
+                    child: Text('Cancel'),
                     onPressed: () {
                       Navigator.pop(context);
                     },

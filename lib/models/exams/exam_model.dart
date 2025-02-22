@@ -56,7 +56,7 @@ class Exam extends HiveObject {
 
   @override
   String toString() {
-    return 'exam: $text, order: $order';
+    return 'exam: $text, order: $order, deleted: $isDeleted';
   }
 
   Exam copyWith({

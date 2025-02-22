@@ -93,13 +93,13 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   }
 
   void deleteSubject(SubjectDTO subject, WidgetRef ref) {
-    ref.read(subjectsProvider.notifier).deleteSubject(subject.dbIndex);
+    ref.read(subjectsProvider.notifier).deleteSubject(subject);
 
     showMessage(context, 'Deleted subject ${subject.name}', actions: [
       SnackBarAction(
         label: 'Undo',
         onPressed: () {
-          ref.read(subjectsProvider.notifier).revertDelete(subject.dbIndex);
+          ref.read(subjectsProvider.notifier).revertDelete(subject);
         },
       ),
     ]);

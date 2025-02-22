@@ -10,7 +10,6 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class FirestoreService {
@@ -71,12 +70,6 @@ class FirestoreService {
   // EXAMS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> examsListenToChanges() {
-    exams.snapshots().listen(
-      (event) {
-        ref?.read(firebaseActivityProvider.notifier).read(2);
-      },
-    ).onError((_) {});
-
     return exams.snapshots();
   }
 
@@ -136,7 +129,7 @@ class FirestoreService {
     final query = await exams.get();
     ref?.read(firebaseActivityProvider.notifier).read(2);
 
-    final localSubjects = container.read(subjectsSortedProvider);
+    final localSubjects = subjectsDb.getDatabase();
 
     List<Exam> examsList = [];
 
@@ -146,12 +139,12 @@ class FirestoreService {
           isDeleted: element['isDeleted'],
           timestamp: (element['timestamp'] as Timestamp).toDate(),
           fireId: element.id,
-          subjectDbIndex: localSubjects
+          subjectDbIndex: localSubjects.entries
               .where(
-                (exam) => exam.fireId == element['subjectId'],
+                (entry) => entry.value.fireId == element['subjectId'],
               )
               .firstOrNull
-              ?.dbIndex,
+              ?.key,
           text: element['text'],
           date: (element['deadline'] as Timestamp).toDate(),
           priority: element['priority'],
@@ -167,12 +160,6 @@ class FirestoreService {
   // HOMEWORKS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> homeworksListenToChanges() {
-    homeworks.snapshots().listen(
-      (event) {
-        ref?.read(firebaseActivityProvider.notifier).read(1);
-      },
-    ).onError((_) {});
-
     return homeworks.snapshots();
   }
 
@@ -234,7 +221,7 @@ class FirestoreService {
     final query = await homeworks.get();
     ref?.read(firebaseActivityProvider.notifier).read(1);
 
-    final localSubjects = container.read(subjectsSortedProvider);
+    final localSubjects = subjectsDb.getDatabase();
 
     List<Homework> homeworksList = [];
 
@@ -244,12 +231,12 @@ class FirestoreService {
           isDeleted: element['isDeleted'],
           timestamp: (element['timestamp'] as Timestamp).toDate(),
           fireId: element.id,
-          subjectDbIndex: localSubjects
+          subjectDbIndex: localSubjects.entries
               .where(
-                (homework) => homework.fireId == element['subjectId'],
+                (entry) => entry.value.fireId == element['subjectId'],
               )
               .firstOrNull
-              ?.dbIndex,
+              ?.key,
           text: element['text'],
           deadline: (element['deadline'] as Timestamp).toDate(),
           isCompleted: element['isCompleted'],
@@ -266,12 +253,6 @@ class FirestoreService {
   // SUBJECTS
 
   Stream<QuerySnapshot<Map<String, dynamic>>> subjectsListenToChanges() {
-    subjects.snapshots().listen(
-      (event) {
-        ref?.read(firebaseActivityProvider.notifier).read(0);
-      },
-    ).onError((_) {});
-
     return subjects.snapshots();
   }
 

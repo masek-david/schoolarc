@@ -33,7 +33,7 @@ class BakaHwTile extends StatelessWidget {
               if (hw.alreadyAdded) {
                 showDialogAdaptive(
                   context: context,
-                  title: Text('This homework has already been added'),
+                  title: Text('This homework has been already added'),
                   content: Text('Do you want to add it again?'),
                   actions: [
                     adaptiveDialogButton(
@@ -41,7 +41,7 @@ class BakaHwTile extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Close'),
+                      child: Text('Cancel'),
                     ),
                     adaptiveDialogButton(
                       context: context,
@@ -76,7 +76,7 @@ class BakaHwTile extends StatelessWidget {
                   actions: [
                     adaptiveDialogButton(
                       context: context,
-                      child: Text('Close'),
+                      child: Text('Cancel'),
                       onPressed: () {
                         Navigator.pop(context);
                       },

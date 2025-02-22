@@ -1,4 +1,4 @@
-import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,38 +10,60 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
-import 'package:school_manager/widgets/animated_completion.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
-class ExamsScreen extends ConsumerStatefulWidget {
-  const ExamsScreen({super.key});
+class _AnimatedReorderableListItem {
+  _AnimatedReorderableListItem({this.exam, this.priority}) {
+    assert(exam != null || priority != null);
+  }
 
-  @override
-  ConsumerState<ExamsScreen> createState() => _ExamsScreenState();
-}
+  ExamDTO? exam;
+  TaskPriority? priority;
 
-class _ExamsScreenState extends ConsumerState<ExamsScreen> {
-  final Map<int, GlobalKey<AnimatedCompletionTileState>> _tileKeys = {};
-
-  GlobalKey getTileKey(int id) {
-    return _tileKeys.putIfAbsent(
-        id, () => GlobalKey<AnimatedCompletionTileState>());
+  int get getPriority {
+    if (priority != null) {
+      return priority!.index;
+    }
+    return exam!.priority.index;
   }
 
   @override
-  Widget build(BuildContext context) {
+  String toString() {
+    return '${exam != null ? exam.toString() : ''} ${priority != null ? priority!.index.toString() : ''}';
+  }
+
+  bool isSameAs(_AnimatedReorderableListItem other) {
+    if (priority != null && other.priority != null) {
+      return priority!.index == other.priority!.index;
+    }
+
+    if (exam != null && other.exam != null) {
+      return exam!.dbIndex == other.exam!.dbIndex;
+    }
+
+    return false;
+  }
+}
+
+class ExamsScreen extends ConsumerWidget {
+  const ExamsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final examByPriority = ref.watch(examSortedProvider);
     final completedExams = ref.watch(examCompletedProvider);
 
-    int numberOfPriorityLists = 0;
-    examByPriority.forEach(
-      (priority, list) {
-        if (list.isNotEmpty) numberOfPriorityLists = 4;
-      },
-    );
+    final itemList = <_AnimatedReorderableListItem>[];
+    for (int i = 3; i >= 0; i--) {
+      itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(i)));
+      itemList.addAll(
+          examByPriority[i]!.map((e) => _AnimatedReorderableListItem(exam: e)));
+    }
+    itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(-1)));
+    final nonDraggableItems =
+        itemList.where((element) => element.exam == null).toList();
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -83,59 +105,44 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                     return;
                   }
                 },
-                child: ListView(
-                  children: [
-                    DragAndDropLists(
-                      disableScrolling: true,
-                      constrainDraggingAxis: false,
-                      contentsWhenEmpty: const AnimatedStar(),
-                      itemDivider: const SizedBox(height: 10),
-                      listDivider: const SizedBox(height: 10),
-                      lastListTargetSize: 0,
-                      lastItemTargetHeight: 20,
-                      listDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      onItemDraggingChanged: (item, dragging) {
-                        if (dragging) HapticFeedback.heavyImpact();
-                      },
-                      onItemReorder: (oldItemIndex, oldListIndex, newItemIndex,
-                          newListIndex) {
-                        int oldPriority = 3 - oldListIndex;
-                        int newPriority = 3 - newListIndex;
-                        ref.read(examProvider.notifier).reorder(
-                              oldItemIndex,
-                              newItemIndex,
-                              oldPriority,
-                              newPriority,
-                              null,
-                              addTimestamp: true,
+                child: itemList.length == 5
+                    ? ListView(children: [
+                        AnimatedStar(),
+                        _buildCompletedList(context, ref, completedExams)
+                      ])
+                    : AnimatedReorderableListView(
+                        items: itemList,
+                        lockedItems: [
+                          _AnimatedReorderableListItem(
+                              priority: TaskPriority(3))
+                        ],
+                        nonDraggableItems: nonDraggableItems,
+                        itemBuilder: (context, index) {
+                          final item = itemList[index];
+
+                          if (item.priority != null) {
+                            if (item.priority!.index == -1) {
+                              return _buildCompletedList(context, ref, completedExams);
+                            }
+                            return Padding(
+                              key: ValueKey(
+                                  'exam title: ${item.priority!.index}'),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: ExpansionTitle(
+                                titleText: item.priority!.name,
+                                titleTextColor: item.priority!.color,
+                              ),
                             );
-                      },
-                      onListReorder: (oldListIndex, newListIndex) {},
-                      listGhost: const Placeholder(),
-                      children: List.generate(
-                        numberOfPriorityLists,
-                        (index) => _buildList(
-                          examByPriority[3 - index]!,
-                          TaskPriority(3 - index),
-                          context,
-                          ref,
-                        ),
-                      ),
-                    ),
-                    ExpansionTile(
-                      title: ExpansionTitle(
-                        numberOfItems: completedExams.length,
-                        titleText: 'Completed',
-                      ),
-                      shape: const Border(),
-                      children: List.generate(
-                        completedExams.length,
-                        (index) {
-                          ExamDTO exam = completedExams[index];
+                          }
+
+                          final exam = item.exam!;
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                            // timestamp needs to be there, when the animation plays (on leave) and it should appear,
+                            // you would get multiple widgets used the same global key error
+                            key: ValueKey(
+                                'exam: ${exam.dbIndex} ${exam.timestamp}'),
+                            padding: EdgeInsets.symmetric(vertical: 4),
                             child: ExamTile(
                               exam: exam,
                               onDelete: () => deleteExam(context, ref, exam),
@@ -143,11 +150,32 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                             ),
                           );
                         },
+                        isSameItem: (a, b) => a.isSameAs(b),
+                        onReorder: (oldIndex, newIndex) {
+                          final item = itemList.removeAt(oldIndex);
+
+                          final newPriority =
+                              itemList[newIndex - 1].getPriority;
+                          int newOrder = 0;
+                          for (int i = 0; i < newIndex; i++) {
+                            if (itemList[i].exam?.priority.index ==
+                                newPriority) {
+                              newOrder++;
+                            }
+                          }
+
+                          if (item.exam != null) {
+                            ref.read(examProvider.notifier).reorder(
+                                  item.exam!.order,
+                                  newOrder,
+                                  item.exam!.priority.index,
+                                  newPriority,
+                                  null,
+                                  addTimestamp: true,
+                                );
+                          }
+                        },
                       ),
-                    ),
-                    ListBottomSpacer(),
-                  ],
-                ),
               ),
             ),
           ),
@@ -156,43 +184,31 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
     );
   }
 
-  DragAndDropListExpansion _buildList(List<ExamDTO> list, TaskPriority priority,
-      BuildContext context, WidgetRef ref) {
-    return DragAndDropListExpansion(
-      listKey: GlobalKey(),
-      leading: SizedBox(
-        width: 200,
-        child: ExpansionTitle(
-          titleText: priority.name,
-          titleTextColor: priority.getColor(context),
-          numberOfItems: null,
-          // numberOfItems: list.length,
+  Widget _buildCompletedList(
+      BuildContext context, WidgetRef ref, List<ExamDTO> completedExams) {
+    return Padding(
+      key: ValueKey('exam completed title'),
+      padding: const EdgeInsets.only(bottom: 70),
+      child: ExpansionTile(
+        title: ExpansionTitle(
+          numberOfItems: completedExams.length,
+          titleText: 'Completed',
         ),
-      ),
-      contentsWhenEmpty: const SizedBox(),
-      initiallyExpanded: true,
-      disableTopAndBottomBorders: true,
-      canDrag: false,
-      children: List.generate(
-        list.length,
-        (index) => _buildItem(list[index], context, ref),
-      ),
-    );
-  }
-
-  DragAndDropItem _buildItem(
-      ExamDTO exam, BuildContext context, WidgetRef ref) {
-    return DragAndDropItem(
-      feedbackWidget: ExamTile(
-        exam: exam,
-        onDelete: () => deleteExam(context, ref, exam),
-        onEdit: () => editExam(context, ref, exam),
-      ),
-      child: ExamTile(
-        exam: exam,
-        key: getTileKey(exam.dbIndex),
-        onDelete: () => deleteExam(context, ref, exam),
-        onEdit: () => editExam(context, ref, exam),
+        shape: const Border(),
+        children: List.generate(
+          completedExams.length,
+          (index) {
+            final exam = completedExams[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ExamTile(
+                exam: exam,
+                onDelete: () => deleteExam(context, ref, exam),
+                onEdit: () => editExam(context, ref, exam),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

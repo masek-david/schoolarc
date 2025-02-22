@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -224,98 +225,9 @@ class BakaService {
     settings.save(Setting.userName, fullName.replaceAll(',', '').split(' ')[1]);
   }
 
-  /// returns list of subjects from bakalari
-  Future<List<Subject>> _getAllSubjects() async {
-    if (!isLoggedIn) {
-      try {
-        await refreshLogin();
-      } on Object {
-        rethrow;
-      }
-    }
-
-    String schoolName = await this.schoolName;
-    final url = Uri(
-      scheme: 'https',
-      host: "$schoolName.bakalari.cz",
-      path: "/api/3/subjects",
-    );
-
-    Response response;
-    try {
-      response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": " Bearer $_accessToken",
-        },
-      );
-    } on SocketException {
-      throw ServiceException(
-          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
-    } on Object catch (e) {
-      throw ServiceException('An unexpected error occured: $e');
-    }
-
-    final parsedJson = json.decode(response.body);
-
-    List<dynamic> listOfSubjectsJson = parsedJson['Subjects'];
-    List<Subject> listOfSubjects = [];
-
-    for (var subjectJson in listOfSubjectsJson) {
-      String name = subjectJson['SubjectName'];
-      String shortcut = subjectJson['SubjectAbbrev'];
-      String bakaId = subjectJson['SubjectID'];
-
-      // checks for duplicates, will add the teachers surname to the subject name
-      for (var subject in listOfSubjects) {
-        if (subject.name == name && subject.shortcut == shortcut) {
-          String teacher = subjectJson['TeacherName'];
-          name += ' ${teacher.split(' ')[0]}';
-        }
-      }
-
-      listOfSubjects.add(
-        Subject(
-          name: name,
-          shortcut: shortcut,
-          bakaId: bakaId,
-          fireId: null,
-          isDeleted: false,
-          timestamp: DateTime.now(),
-          order: 0,
-        ),
-      );
-    }
-
-    return listOfSubjects;
-  }
-
-  Future<void> addAllSubjects() async {
-    final result = await _getAllSubjects();
-    List<Subject> list = result;
-    for (var element in list) {
-      container.read(subjectsProvider.notifier).saveNew(element);
-    }
-    return;
-  }
-
-  Future<void> overwriteAllSubjects() async {
-    
-    
-    container.read(subjectsProvider.notifier).deleteAll();
-    final result = await _getAllSubjects();
-
-    List<Subject> list = result;
-    for (var element in list) {
-      container.read(subjectsProvider.notifier).saveNew(element);
-    }
-
-    return;
-  }
 
   /// imports permanent timetable and saves it
-  Future<void> importTimeTable() async {
+  Future<void> importTimeTable(WidgetRef ref) async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -368,7 +280,7 @@ class BakaService {
     ).toList());
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson, ref);
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -394,7 +306,7 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTableDTO> getCurrentTimetable(DateTime date) async {
+  Future<TimeTableDTO> getCurrentTimetable(DateTime date, WidgetRef ref) async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -460,8 +372,10 @@ class BakaService {
     timeTable.dates = mondayDate.allDaysInThisWeek();
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
-    final subjects = container.read(subjectsProvider);
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson, ref);
+    final subjects = subjectsDb.getDatabase().map(
+          (key, value) => MapEntry(key, value.convertToDTO(key)),
+        );
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
@@ -526,8 +440,14 @@ class BakaService {
 
   /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
   Future<Map<String, int>> _getSubjectsIdToIndex(
-      List<dynamic> subjectsJson) async {
-    final subjects = container.read(subjectsSortedProvider);
+      List<dynamic> subjectsJson, WidgetRef ref) async {
+    final subjects = subjectsDb
+        .getDatabase()
+        .map(
+          (key, value) => MapEntry(key, value.convertToDTO(key)),
+        )
+        .values
+        .toList();
     Map<String, int> bakalariSubjectIdToSubjectIndex = {};
 
     for (var subjectJson in subjectsJson) {
@@ -545,17 +465,17 @@ class BakaService {
       }
 
       if (!subjectExisted) {
-        var newSubject = await container.read(subjectsProvider.notifier).saveNew(
-          Subject(
-            name: name,
-            shortcut: shortcut,
-            bakaId: bakaId,
-            fireId: null,
-            isDeleted: false,
-            order: 0,
-            timestamp: Timestamp.now().toDate(),
-          ),
-        );
+        var newSubject = await ref.read(subjectsProvider.notifier).saveNew(
+              Subject(
+                name: name,
+                shortcut: shortcut,
+                bakaId: bakaId,
+                fireId: null,
+                isDeleted: false,
+                order: 0,
+                timestamp: Timestamp.now().toDate(),
+              ),
+            );
         bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.dbIndex});
       }
     }
@@ -633,20 +553,25 @@ class BakaService {
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
-    final subjects = container.read(subjectsProvider);
+    final subjects = subjectsDb.getDatabase().map(
+          (key, value) => MapEntry(key, value.convertToDTO(key)),
+        );
 
     int newHomeworks = 0;
 
     for (var homework in homeworksJson) {
-      SubjectDTO subject = subjects.entries.where(
-        (entry) {
-          return entry.value.bakaId == homework['Subject']['Id'];
-        },
-      ).first.value;
+      SubjectDTO subject = subjects.entries
+          .where(
+            (entry) {
+              return entry.value.bakaId == homework['Subject']['Id'];
+            },
+          )
+          .first
+          .value;
 
       final String id = homework['ID'];
       final String text = homework['Content'];
-      final DateTime deadline = DateTime.parse(homework['DateEnd']);
+      final DateTime deadline = DateTime.parse(homework['DateEnd']).toLocal();
       final bool isCompleted = homework['Finished'];
 
       bool isSeen = bakaHomeworkService.isSeen(id);

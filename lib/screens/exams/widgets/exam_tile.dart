@@ -123,6 +123,12 @@ class ExamTile extends StatelessWidget {
                           ),
                         const SizedBox(width: 8),
                         Expanded(child: Text(exam.text, maxLines: 2)),
+                        if (settings.get(Setting.showDebugInfo))
+                          Column(
+                            children: [
+                              Text('ts: ${exam.timestamp.millisecondsSinceEpoch}'),
+                            ],
+                          ),
                         const SizedBox(width: 8),
                         if (showDeadline)
                           Text(

@@ -15,8 +15,8 @@ import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
-class AnimatedReorderableListItem {
-  AnimatedReorderableListItem({this.hw, this.priority}) {
+class _AnimatedReorderableListItem {
+  _AnimatedReorderableListItem({this.hw, this.priority}) {
     assert(hw != null || priority != null);
   }
 
@@ -35,9 +35,8 @@ class AnimatedReorderableListItem {
     return '${hw != null ? hw.toString() : ''} ${priority != null ? priority!.index.toString() : ''}';
   }
 
-  bool isSameAs(AnimatedReorderableListItem other) {
+  bool isSameAs(_AnimatedReorderableListItem other) {
     if (priority != null && other.priority != null) {
-      // print('${priority!.index}, hw:${hw?.dbIndex}; ${other.priority!.index}, hw:${other.hw?.dbIndex}, - same: ${priority!.index == other.priority!.index}');
       return priority!.index == other.priority!.index;
     }
 
@@ -49,39 +48,21 @@ class AnimatedReorderableListItem {
   }
 }
 
-class HomeworksScreen extends ConsumerStatefulWidget {
+class HomeworksScreen extends ConsumerWidget {
   const HomeworksScreen({super.key});
 
   @override
-  ConsumerState<HomeworksScreen> createState() => _HomeworksScreenState();
-}
-
-class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
-  final Map<int, GlobalKey<AnimatedCompletionTileState>> _tileKeys = {};
-  final Map<int, GlobalKey> _titleKeys = {};
-
-  GlobalKey getTileKey(int id) {
-    return _tileKeys.putIfAbsent(
-        id, () => GlobalKey<AnimatedCompletionTileState>());
-  }
-
-  GlobalKey getTitleKey(int priority) {
-    return _titleKeys.putIfAbsent(
-        priority, () => GlobalKey<AnimatedCompletionTileState>());
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hwByPriority = ref.watch(hwSortedProvider);
     final completedHws = ref.watch(hwCompletedProvider);
 
-    final itemList = <AnimatedReorderableListItem>[];
+    final itemList = <_AnimatedReorderableListItem>[];
     for (int i = 3; i >= 0; i--) {
-      itemList.add(AnimatedReorderableListItem(priority: TaskPriority(i)));
+      itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(i)));
       itemList.addAll(
-          hwByPriority[i]!.map((e) => AnimatedReorderableListItem(hw: e)));
+          hwByPriority[i]!.map((e) => _AnimatedReorderableListItem(hw: e)));
     }
-    itemList.add(AnimatedReorderableListItem(priority: TaskPriority(-1)));
+    itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(-1)));
     final nonDraggableItems =
         itemList.where((element) => element.hw == null).toList();
 
@@ -125,12 +106,16 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
                     return;
                   }
                 },
-                child: itemList.length == 4
-                    ? ListView(children: [AnimatedStar()])
+                child: itemList.length == 5
+                    ? ListView(children: [
+                        AnimatedStar(),
+                        _buildCompletedList(context, ref, completedHws),
+                      ])
                     : AnimatedReorderableListView(
                         items: itemList,
                         lockedItems: [
-                          AnimatedReorderableListItem(priority: TaskPriority(3))
+                          _AnimatedReorderableListItem(
+                              priority: TaskPriority(3))
                         ],
                         nonDraggableItems: nonDraggableItems,
                         itemBuilder: (context, index) {
@@ -138,42 +123,12 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
 
                           if (item.priority != null) {
                             if (item.priority!.index == -1) {
-                              return Padding(
-                                key: getTitleKey(-1),
-                                padding: const EdgeInsets.only(bottom: 70),
-                                child: ExpansionTile(
-                                  title: ExpansionTitle(
-                                    numberOfItems: completedHws.length,
-                                    titleText: 'Completed',
-                                  ),
-                                  shape: const Border(),
-                                  children: List.generate(
-                                    completedHws.length,
-                                    (index) {
-                                      HomeworkDTO hw = completedHws[index];
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: HomeworkTile(
-                                          hw: hw,
-                                          onChangedCompletion: (value) {
-                                            ref
-                                                .read(hwProvider.notifier)
-                                                .complete(hw, value);
-                                          },
-                                          onDelete: () =>
-                                              deleteHw(context, ref, hw),
-                                          onEdit: () =>
-                                              editHw(context, ref, hw),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
+                              return _buildCompletedList(
+                                  context, ref, completedHws);
                             }
                             return Padding(
-                              key: getTitleKey(item.priority!.index),
+                              key:
+                                  ValueKey('hw title: ${item.priority!.index}'),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               child: ExpansionTitle(
@@ -185,7 +140,9 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
 
                           final hw = item.hw!;
                           return AnimatedCompletionTile(
-                            key: getTileKey(hw.dbIndex),
+                            // timestamp needs to be there, when the animation plays (on leave) and it should appear,
+                            // you would get multiple widgets used the same global key error
+                            key: ValueKey('hw: ${hw.dbIndex} ${hw.timestamp}'),
                             hw: hw,
                             padding: EdgeInsets.symmetric(vertical: 4),
                             onChangedCompletion: (value) {
@@ -195,16 +152,6 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
                             onEdit: () => editHw(context, ref, hw),
                           );
                         },
-
-                        // removeItemBuilder: (child, animation) {
-                        //   return AbsorbPointer(
-                        //     child: AnimatedOpacity(
-                        //       opacity: animation.value,
-                        //       duration: Durations.extralong1,
-                        //       child: child,
-                        //     ),
-                        //   );
-                        // },
                         isSameItem: (a, b) => a.isSameAs(b),
                         onReorder: (oldIndex, newIndex) {
                           final item = itemList.removeAt(oldIndex);
@@ -235,6 +182,38 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildCompletedList(
+      BuildContext context, WidgetRef ref, List<HomeworkDTO> completedHws) {
+    return Padding(
+      key: ValueKey('hw completed title'),
+      padding: const EdgeInsets.only(bottom: 70),
+      child: ExpansionTile(
+        title: ExpansionTitle(
+          numberOfItems: completedHws.length,
+          titleText: 'Completed',
+        ),
+        shape: const Border(),
+        children: List.generate(
+          completedHws.length,
+          (index) {
+            final hw = completedHws[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: HomeworkTile(
+                hw: hw,
+                onChangedCompletion: (value) {
+                  ref.read(hwProvider.notifier).complete(hw, value);
+                },
+                onDelete: () => deleteHw(context, ref, hw),
+                onEdit: () => editHw(context, ref, hw),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

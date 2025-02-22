@@ -1,8 +1,41 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
+
+class TestDatetime extends StatefulWidget {
+  const TestDatetime({super.key});
+
+  @override
+  State<TestDatetime> createState() => _TestDatetimeState();
+}
+
+class _TestDatetimeState extends State<TestDatetime> {
+  Timer? timer;
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+        Duration(milliseconds: 100), (Timer t) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Text(DateTime.now().toString()),
+    );
+  }
+}
 
 class DbInfoScreen extends StatelessWidget {
   DbInfoScreen({super.key});
@@ -23,6 +56,7 @@ class DbInfoScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
+            TestDatetime(),
             const Text('SUBJECTS'),
             const Divider(),
             Column(

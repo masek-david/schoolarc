@@ -2,23 +2,22 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/notifications/notification_sender.dart';
 
 final hwProvider =
-    StateNotifierProvider<HwNotifier, Map<int, HomeworkDTO>>((ref) {
-  final subjects = ref.watch(subjectsProvider);
+    NotifierProvider<HwNotifier, Map<int, HomeworkDTO>>(HwNotifier.new);
 
-  return HwNotifier(HomeworksDatabase(), subjects);
-});
-
+// sorts by priorities (0-3), orders them
 final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
@@ -50,38 +49,44 @@ final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
   },
 );
 
+// key for each day is the utc value, with time being 0:00:00
 final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
-
-    hws.forEach(
-      (dbIndex, homework) {
-        final hwDeadlineUtc = homework.deadline;
-
-        DateTime dateNoTime = DateTime.utc(
-            hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
-
-        if (!homework.isDeleted) {
-          if (hwDateMap.containsKey(dateNoTime)) {
-            // If it exists, add the event to the existing list
-            hwDateMap[dateNoTime]!.add(homework);
-          } else {
-            // If it does not exist, create a new list with the exam
-            hwDateMap[dateNoTime] = [homework];
-          }
-        }
-      },
-    );
-
-    hwDateMap.forEach((key, value) {
-      value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
-    });
-
-    return hwDateMap;
+    return hwsSortByDate(hws);
   },
 );
+
+/// key for each day is the utc value, with time being 0:00:00
+Map<DateTime, List<HomeworkDTO>> hwsSortByDate(Map<int, HomeworkDTO> original) {
+  Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
+
+  original.forEach(
+    (dbIndex, homework) {
+      final hwDeadlineUtc = homework.deadline;
+
+      DateTime dateNoTime = DateTime.utc(
+          hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
+
+      if (!homework.isDeleted) {
+        if (hwDateMap.containsKey(dateNoTime)) {
+          // If it exists, add the event to the existing list
+          hwDateMap[dateNoTime]!.add(homework);
+        } else {
+          // If it does not exist, create a new list with the exam
+          hwDateMap[dateNoTime] = [homework];
+        }
+      }
+    },
+  );
+
+  hwDateMap.forEach((key, value) {
+    value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+  });
+
+  return hwDateMap;
+}
 
 final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   (ref) {
@@ -107,51 +112,74 @@ final hwMissedProvider = Provider<List<HomeworkDTO>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    List<HomeworkDTO> missedHw = [];
-
-    hws.forEach(
-      (dbIndex, hw) {
-        if (hw.deadline.isBeforeToday() &&
-            !hw.isDeleted &&
-            (!hw.isCompleted || hw.isBeingAnimated)) {
-          missedHw.add(hw);
-        }
-      },
-    );
-
-    missedHw.sort((a, b) => a.deadline.compareTo(b.deadline));
-    return missedHw;
+    return hwsGetMissed(hws);
   },
 );
 
-class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
-  final HomeworksDatabase _db;
-  Map<int, SubjectDTO> subjects;
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listen;
+List<HomeworkDTO> hwsGetMissed(Map<int, HomeworkDTO> original) {
+  List<HomeworkDTO> missedHw = [];
 
-  HwNotifier(this._db, this.subjects)
-      : super(_db.getDatabase().map(
-          (key, value) {
-            return MapEntry(
-                key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
-          },
-        )) {
-    listenToFirebase();
+  original.forEach(
+    (dbIndex, hw) {
+      if (hw.deadline.isBeforeToday() &&
+          !hw.isDeleted &&
+          (!hw.isCompleted || hw.isBeingAnimated)) {
+        missedHw.add(hw);
+      }
+    },
+  );
+
+  missedHw.sort((a, b) => a.deadline.compareTo(b.deadline));
+  return missedHw;
+}
+
+class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
+  Map<int, SubjectDTO> subjects = {};
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
+
+  @override
+  set state(Map<int, HomeworkDTO> newState) {
+    super.state = newState;
+    NotificationSender.scheduleTommorrowNotification();
   }
 
+  @override
+  Map<int, HomeworkDTO> build() {
+    // listen to subjectsProvider changes
+    ref.listen(subjectsProvider, (_, next) {
+      subjects = next;
+      _loadState();
+    });
+    subjects = ref.read(subjectsProvider);
+
+    listenToFirebase();
+
+    return _dbState;
+  }
+
+  void _loadState() {
+    state = _dbState;
+  }
+
+  /// returns state saved in database
   Map<int, HomeworkDTO> get _dbState {
-    return _db.getDatabase().map(
+    return homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(
-            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+          key,
+          value.convertToDTO(key, subjects[value.subjectDbIndex]),
+        );
       },
     );
   }
 
   Future<void> listenToFirebase() async {
-    await listen?.cancel();
+    await listenFirebase?.cancel();
 
-    listen = firestoreService.homeworksListenToChanges().listen((event) async {
+    listenFirebase =
+        firestoreService.homeworksListenToChanges().listen((event) async {
+      ref.read(firebaseActivityProvider.notifier).read(1);
+
       Map<String, Homework> updatedHws = {};
 
       for (var change in event.docChanges) {
@@ -187,7 +215,9 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     });
   }
 
+  /// checks all online and offline
   Future<void> syncAll() async {
+    _loadState();
     await listenToFirebase();
     final fireHws = await firestoreService.getAllHomeworks();
 
@@ -239,7 +269,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       hw = hw.copyWith(fireId: uuid.v4());
     }
 
-    int dbIndex = await _db.addHw(hw);
+    int dbIndex = await homeworksDb.addHw(hw);
 
     final HomeworkDTO? hwWithSameOrder = _dbState.values
         .where((element) => element.order == hw.order && !element.isDeleted)
@@ -249,7 +279,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
           hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
         // if the new one is older, add it after the old one
         hw.order++;
-        _db.editHw(dbIndex, hw);
+        homeworksDb.editHw(dbIndex, hw);
         // if the new one is newer, add it before old
       }
       reorder(
@@ -261,12 +291,10 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       );
     }
 
-    if (mounted) {
-      state = {
-        ...state,
-        dbIndex: hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex])
-      };
-    }
+    state = {
+      ...state,
+      dbIndex: hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex])
+    };
 
     if (addToFire) {
       await firestoreService
@@ -276,21 +304,17 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     return;
   }
 
-  /// assign timestamp manually, if no fireId, it will add it
+  /// assign timestamp manually, if no fireId, it will add it as now
   void edit(
     HomeworkDTO editedHw, {
     bool syncWithFire = true,
-    bool reorderAddTimestamp = true,
 
-    /// [checkOrder] false only when editing from [reorder()]
-    bool checkOrder = true,
-
-    /// to delay updating state to let animation play, only to complete a hw
+    /// to delay updating state to let animation play, only when completing a homework
     bool stateUpdateDelay = false,
   }) async {
     final old = _dbState[editedHw.dbIndex]!;
 
-    if (checkOrder && !stateUpdateDelay) {
+    if (!stateUpdateDelay) {
       // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
       if (!((editedHw.isDeleted && old.isDeleted) ||
           (editedHw.isCompleted && old.isCompleted))) {
@@ -331,36 +355,36 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       }
     }
 
-    _db.editHw(editedHw.dbIndex, editedHw.convert());
+    homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
 
     if (syncWithFire) {
       if (editedHw.fireId == null) {
         editedHw = editedHw.copyWith(fireId: uuid.v4());
 
-        _db.editHw(editedHw.dbIndex, editedHw.convert());
+        homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
       }
       firestoreService.editHomeworks([editedHw]);
     }
 
-    if (stateUpdateDelay && mounted) {
+    // if (stateUpdateDelay) {
+    if (old.isCompleted == false && editedHw.isCompleted == true) {
       state = {
         ...state,
         editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: true),
       };
 
       await Future.delayed(Duration(seconds: 1));
-      if (mounted) {
-        state = {
-          ...state,
-          editedHw.dbIndex:
-              state[editedHw.dbIndex]!.copyWith(isBeingAnimated: false),
-        };
-      }
-    } else if (mounted) {
+      state = {
+        ...state,
+        editedHw.dbIndex:
+            state[editedHw.dbIndex]!.copyWith(isBeingAnimated: false),
+      };
+    } else {
       state = {
         ...state,
         editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: false)
       };
+      state = Map.from(state);
     }
   }
 
@@ -409,7 +433,6 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
       }
     }
     if (addTimestamp) {
-      // now the timestamp is
       homework = homework!.copyWith(timestamp: Timestamp.now());
     }
     // now homework cant be null
@@ -444,7 +467,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
     editedHomeworks.forEach(
       (key, value) async {
-        _db.editHw(value.dbIndex, value.convert());
+        homeworksDb.editHw(value.dbIndex, value.convert());
       },
     );
 
@@ -454,9 +477,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
         )
         .toList());
 
-    if (mounted) {
-      state = {...state, ...editedHomeworks};
-    }
+    state = {...state, ...editedHomeworks};
     return;
   }
 
@@ -477,8 +498,8 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
   /// checks and updates/adds hw from firestore
   Future<void> checkFireHomework(Homework fireHw) async {
-    print('checking hw from fire: ${fireHw.toString()}');
-    
+    // print('checking hw from fire: ${fireHw.toString()}');
+
     final localHw = _dbState.values.where(
       (element) {
         return element.fireId == fireHw.fireId;
@@ -487,7 +508,7 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
 
     // if it doesnt exist in local, add it
     if (localHw == null) {
-      print('\u001b[1;92madding hw from fire: ${fireHw.toString()}');
+      // print('\u001b[1;92madding hw from fire: ${fireHw.toString()}');
 
       await saveNew(
         fireHw,
@@ -501,16 +522,15 @@ class HwNotifier extends StateNotifier<Map<int, HomeworkDTO>> {
     final fireTime = fireHw.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
-      print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
+      // print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
 
       edit(
         fireHw.convertToDTO(localHw.dbIndex, subjects[fireHw.subjectDbIndex]),
         syncWithFire: false,
-        checkOrder: true,
       );
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
-      print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
+      // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
       firestoreService.editHomeworks([localHw.copyWith(fireId: fireHw.fireId)]);
     }

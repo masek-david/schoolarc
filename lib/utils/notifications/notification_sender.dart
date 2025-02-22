@@ -6,7 +6,6 @@ import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
@@ -17,27 +16,7 @@ class NotificationSender {
   static const String tommorrowChannel = 'tommorrow_channel';
   static const String mainChannel = 'main_channel';
 
-  static void startListening() {
-    container.listen(
-      hwProvider,
-      (previous, next) {
-        scheduleTommorrowNotification();
-      },
-    );
-    container.listen(
-      examProvider,
-      (previous, next) {
-        scheduleTommorrowNotification();
-      },
-    );
-    container.listen(
-      subjectsProvider,
-      (previous, next) {
-        scheduleTommorrowNotification();
-      },
-    );
-  }
-
+  // find the correct date for the notification and schedule it
   static void scheduleTommorrowNotification({
     bool scheduled = true,
     Function(String text)? showSnackbar,
@@ -108,11 +87,26 @@ class NotificationSender {
             arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
         .add(const Duration(days: 1));
 
+    final subjects = subjectsDb.getDatabase().map(
+          (key, value) => MapEntry(key, value.convertToDTO(key)),
+        );
+    final hwsInDb = homeworksDb.getDatabase().map(
+      (key, value) {
+        return MapEntry(
+            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+      },
+    );
+    final examsInDb = examsDb.getDatabase().map(
+      (key, value) {
+        return MapEntry(
+            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+      },
+    );
     List<ExamDTO> examsForTommorow =
-        container.read(examsDatesProvider)[tommorowDate] ?? [];
+        examsSortByDate(examsInDb)[tommorowDate] ?? [];
     List<HomeworkDTO> hwsForTommorow =
-        container.read(hwDatesProvider)[tommorowDate] ?? [];
-    List<HomeworkDTO> missedHws = container.read(hwMissedProvider);
+        hwsSortByDate(hwsInDb)[tommorowDate] ?? [];
+    List<HomeworkDTO> missedHws = hwsGetMissed(hwsInDb);
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';
@@ -251,7 +245,7 @@ class NotificationSender {
                 adaptiveDialogButton(
                   context: context,
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
+                  child: const Text('Cancel'),
                 ),
                 adaptiveDialogButton(
                   context: context,

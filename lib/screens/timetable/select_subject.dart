@@ -38,7 +38,7 @@ class SelectSubjectDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Close'),
+          child: const Text('Cancel'),
         ),
         if (delete != null)
           TextButton(

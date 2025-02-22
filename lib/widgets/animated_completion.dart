@@ -58,6 +58,11 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
           _lastVibrationTime = currentTime; // Update the last vibration time
         }
       });
+
+
+      if(widget.hw.isBeingAnimated){
+        playAnimation(true);
+      }
   }
 
   @override

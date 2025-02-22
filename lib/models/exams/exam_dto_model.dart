@@ -35,7 +35,7 @@ class ExamDTO extends Task {
 
   @override
   String toString() {
-    return 'exam: $text, ${subject?.shortcut}, order: $order, Hive: $dbIndex';
+    return 'exam: $text, ${subject?.shortcut}, order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
@@ -7,21 +8,21 @@ import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/non_scrollable_refresh_indicator.dart';
 
-class CurrentTimetableScreen extends StatefulWidget {
+class CurrentTimetableScreen extends ConsumerStatefulWidget {
   const CurrentTimetableScreen({super.key});
 
   @override
-  State<CurrentTimetableScreen> createState() => _CurrentTimetableScreenState();
+  ConsumerState<CurrentTimetableScreen> createState() => _CurrentTimetableScreenState();
 }
 
-class _CurrentTimetableScreenState extends State<CurrentTimetableScreen> {
-  late var timetable = bakaService.getCurrentTimetable(date);
+class _CurrentTimetableScreenState extends ConsumerState<CurrentTimetableScreen> {
+  late var timetable = bakaService.getCurrentTimetable(date, ref);
   DateTime date = DateTime.now();
   bool isLoading = true;
   
   Future<void> refresh() async {
     setState(() {
-      timetable = bakaService.getCurrentTimetable(date);
+      timetable = bakaService.getCurrentTimetable(date, ref);
     });
 
     try {
