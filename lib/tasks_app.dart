@@ -230,19 +230,22 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   }
 
   void switchScreen({required int newScreenIndex}) {
+    double pageDiff =
+        ((_pageController.page ?? 0) - newScreenIndex.toDouble()).abs();
+
     late final pageSwitchAnimationDuration = Duration(
       milliseconds:
           (_settings.get(Setting.pageSwitchAnimationDuration) as double)
               .toInt(),
     );
 
-    if (pageSwitchAnimationDuration.inMilliseconds == 0) {
+    if (pageSwitchAnimationDuration.inMilliseconds == 0 || pageDiff == 0.0) {
       _pageController.jumpToPage(newScreenIndex);
     } else {
       _pageController.animateToPage(
         newScreenIndex,
         curve: Curves.easeInOut,
-        duration: pageSwitchAnimationDuration,
+        duration: pageSwitchAnimationDuration * pageDiff,
       );
     }
 
