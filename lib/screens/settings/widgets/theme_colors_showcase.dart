@@ -17,7 +17,7 @@ class ThemeColorsShowcase extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          const Text('App colors showcase:'),
+          const Text('This is how the app will look with these colors:'),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/screens/homeworks/widgets/hw_overlay.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
-class HomeworkTile extends StatelessWidget {
+class HomeworkTile extends StatefulWidget {
   const HomeworkTile({
     super.key,
     required this.hw,
@@ -31,18 +32,31 @@ class HomeworkTile extends StatelessWidget {
   final void Function()? onDelete;
   final void Function() onEdit;
 
-  final double borderRadius = 12;
-  final double padding = 5;
+  @override
+  State<HomeworkTile> createState() => _HomeworkTileState();
+}
+
+class _HomeworkTileState extends State<HomeworkTile> {
+  static const double borderRadius = 12;
+  static const double padding = 5;
+
+  final widgetKey = GlobalKey();
+  bool isShown = true;
+  bool expUseHwOverlay = settings.get(Setting.expUseHwOverlay);
 
   @override
   Widget build(BuildContext context) {
+    if (!isShown) {
+      return SizedBox(height: 60);
+    }
+
     final bool isMissed =
-        hw.deadline.isBeforeToday() && hw.isCompleted == false;
+        widget.hw.deadline.isBeforeToday() && widget.hw.isCompleted == false;
     final missedColor =
         Colors.red.harmonizeWith(Theme.of(context).primaryColor);
 
     double opacity = 1;
-    if (hw.isCompleted && !hw.isBeingAnimated) {
+    if (widget.hw.isCompleted && !widget.hw.isBeingAnimated) {
       opacity = 0.5;
     }
 
@@ -56,32 +70,32 @@ class HomeworkTile extends StatelessWidget {
 
         return Slidable(
           groupTag: '0',
-          controller: slidableController,
-          endActionPane: onDelete == null
+          enabled: !expUseHwOverlay,
+          controller: widget.slidableController,
+          endActionPane: widget.onDelete == null
               ? null
               : ActionPane(
                   motion: const StretchMotion(),
                   extentRatio: extentRatio,
                   children: [
-                    // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
-                    // workaround for flutter_slidable
                     Theme(
                       data: Theme.of(context).copyWith(
                         outlinedButtonTheme: OutlinedButtonThemeData(
                           style: ButtonStyle(
                             iconColor: WidgetStatePropertyAll(
-                                Theme.of(context).colorScheme.onError),
+                                Theme.of(context).colorScheme.onErrorContainer),
                           ),
                         ),
                       ),
                       child: SlidableAction(
                         onPressed: (context) {
                           HapticFeedback.lightImpact();
-                          onDelete!();
+                          widget.onDelete!();
                         },
                         icon: Icons.delete,
                         foregroundColor: Theme.of(context).colorScheme.onError,
-                        backgroundColor: Theme.of(context).colorScheme.error,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.errorContainer,
                         borderRadius: BorderRadius.circular(borderRadius),
                         flex: 10,
                       ),
@@ -89,24 +103,57 @@ class HomeworkTile extends StatelessWidget {
                   ],
                 ),
           child: AnimatedContainer(
+            key: widgetKey,
             duration: Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              border: isMissed && borderIfMissed
+              border: isMissed && widget.borderIfMissed
                   ? Border.all(
                       color: missedColor,
                       width: 2,
                     )
                   : null,
               borderRadius: BorderRadius.circular(borderRadius),
-              color: hw.isCompleted && !hw.isBeingAnimated
+              color: widget.hw.isCompleted && !widget.hw.isBeingAnimated
                   ? Theme.of(context).colorScheme.surfaceContainerLowest
                   : Theme.of(context).colorScheme.surfaceContainerLow,
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onEdit,
-                borderRadius: BorderRadius.circular(borderRadius),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: expUseHwOverlay
+                  ? () {
+                      final RenderBox renderBox = widgetKey.currentContext!
+                          .findRenderObject() as RenderBox;
+                      final Offset position = renderBox
+                          .localToGlobal(Offset.zero); // Get global position
+                      final Size size = renderBox.size; // Get widget size
+
+                      late final OverlayEntry overlay;
+                      overlay = OverlayEntry(
+                        builder: (context) {
+                          return HwOverlay(
+                            hw: widget.hw,
+                            position: position,
+                            size: size,
+                            onEdit: widget.onEdit,
+                            onDelete: widget.onDelete,
+                            onHide: () {
+                              overlay.remove();
+                              setState(() {
+                                isShown = true;
+                              });
+                            },
+                          );
+                        },
+                      );
+
+                      Overlay.of(context).insert(overlay);
+                      setState(() {
+                        isShown = false;
+                      });
+                    }
+                  : widget.onEdit,
+              child: Material(
+                color: Colors.transparent,
                 child: Opacity(
                   opacity: opacity,
                   // main row
@@ -119,9 +166,9 @@ class HomeworkTile extends StatelessWidget {
                         if (settings.get(Setting.showDebugInfo))
                           Column(
                             children: [
-                              Text('id: ${hw.dbIndex.toString()}'),
-                              Text(hw.order.toString()),
-                              if (hw.isBeingAnimated)
+                              Text('id: ${widget.hw.dbIndex.toString()}'),
+                              Text(widget.hw.order.toString()),
+                              if (widget.hw.isBeingAnimated)
                                 Icon(
                                   Icons.animation,
                                   size: 10,
@@ -138,33 +185,35 @@ class HomeworkTile extends StatelessWidget {
                                 .colorScheme
                                 .secondaryContainer,
                           ),
-                          child: SubjectShortcut(subject: hw.subject),
+                          child: SubjectShortcut(subject: widget.hw.subject),
                         ),
                         const SizedBox(width: 8),
-                        if (hw.description != null && hw.description != '')
+                        if (widget.hw.description != null &&
+                            widget.hw.description != '')
                           Icon(
                             Icons.notes,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
-                        if (hw.description != null && hw.description != '')
+                        if (widget.hw.description != null &&
+                            widget.hw.description != '')
                           const SizedBox(width: 8),
-                        Expanded(child: Text(hw.text, maxLines: 2)),
+                        Expanded(child: Text(widget.hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
                         if (settings.get(Setting.showDebugInfo))
                           Column(
                             children: [
                               Text(
-                                hw.fireId ?? 'no fireId',
+                                widget.hw.fireId ?? 'no fireId',
                                 style: TextStyle(fontSize: 8),
                               ),
-                              Text(hw.timestamp.millisecondsSinceEpoch
+                              Text(widget.hw.timestamp.millisecondsSinceEpoch
                                   .toString()),
                             ],
                           ),
-                        if (showDeadline)
+                        if (widget.showDeadline)
                           Text(
-                            hw.deadline.dateText(),
+                            widget.hw.deadline.dateText(),
                             maxLines: 2,
                             style: TextStyle(
                               color: isMissed ? missedColor : null,
@@ -172,13 +221,13 @@ class HomeworkTile extends StatelessWidget {
                             ),
                           ),
                         const SizedBox(width: 4),
-                        if (showCompletion)
+                        if (widget.showCompletion)
                           MyCheckbox(
-                            value: hw.isCompleted,
-                            priority: hw.priority,
-                            onChanged: onChangedCompletion,
+                            value: widget.hw.isCompleted,
+                            priority: widget.hw.priority,
+                            onChanged: widget.onChangedCompletion,
                             // must be here
-                            key: ValueKey('checkbox ${hw.dbIndex}'),
+                            key: ValueKey('checkbox ${widget.hw.dbIndex}'),
                           ),
                       ],
                     ),

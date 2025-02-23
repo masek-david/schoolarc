@@ -43,22 +43,22 @@ class ThemePage extends StatelessWidget {
             ),
           ),
           SettingTile(
-            label: 'Use device colors',
-            trailing: SwitchAction(
-              initialValue: settings.get(Setting.themeUseDeviceColor),
-              onChanged: (value) {
-                settings.save(Setting.themeUseDeviceColor, value);
-                refreshTheme();
-              },
-            ),
-          ),
-          SettingTile(
             label: 'OLED black',
             text: 'Works only in dark mode',
             trailing: SwitchAction(
               initialValue: settings.get(Setting.themeUseOled),
               onChanged: (value) {
                 settings.save(Setting.themeUseOled, value);
+                refreshTheme();
+              },
+            ),
+          ),
+          SettingTile(
+            label: 'Use device colors',
+            trailing: SwitchAction(
+              initialValue: settings.get(Setting.themeUseDeviceColor),
+              onChanged: (value) {
+                settings.save(Setting.themeUseDeviceColor, value);
                 refreshTheme();
               },
             ),

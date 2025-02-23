@@ -26,6 +26,7 @@ enum Setting {
   showDebugInfo,
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
+  expUseHwOverlay,
 }
 
 class SettingModel {
@@ -132,6 +133,10 @@ class SettingsDatabase {
       defaultValue: false,
       key: 'showDebugFire',
     ),
+    Setting.expUseHwOverlay: SettingModel(
+      defaultValue: false,
+      key: 'expHwOverlay',
+    )
   };
   final _settingsBox = Hive.box('settings');
 

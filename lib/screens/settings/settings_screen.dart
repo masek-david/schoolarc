@@ -152,6 +152,17 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),
+          if (settings.get(Setting.showDebugInfo))
+            SettingTile(
+              label: 'Use experimental homework tile overlay',
+              trailing: SwitchAction(
+                initialValue: settings.get(Setting.expUseHwOverlay),
+                onChanged: (value) {
+                  settings.save(Setting.expUseHwOverlay, value);
+                  refreshTheme();
+                },
+              ),
+            ),
         ],
       ),
     );
