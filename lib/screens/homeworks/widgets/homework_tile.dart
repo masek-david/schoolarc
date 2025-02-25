@@ -78,27 +78,17 @@ class _HomeworkTileState extends State<HomeworkTile> {
                   motion: const StretchMotion(),
                   extentRatio: extentRatio,
                   children: [
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        outlinedButtonTheme: OutlinedButtonThemeData(
-                          style: ButtonStyle(
-                            iconColor: WidgetStatePropertyAll(
-                                Theme.of(context).colorScheme.onErrorContainer),
-                          ),
-                        ),
-                      ),
-                      child: SlidableAction(
-                        onPressed: (context) {
-                          HapticFeedback.lightImpact();
-                          widget.onDelete!();
-                        },
-                        icon: Icons.delete,
-                        foregroundColor: Theme.of(context).colorScheme.onError,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.errorContainer,
-                        borderRadius: BorderRadius.circular(borderRadius),
-                        flex: 10,
-                      ),
+                    SlidableAction(
+                      onPressed: (context) {
+                        HapticFeedback.lightImpact();
+                        widget.onDelete!();
+                      },
+                      icon: Icons.delete,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      flex: 10,
                     ),
                   ],
                 ),

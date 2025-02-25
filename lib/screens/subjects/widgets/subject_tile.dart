@@ -33,25 +33,13 @@ class SubjectTile extends StatelessWidget {
                 motion: const StretchMotion(),
                 extentRatio: extentRatio,
                 children: [
-                  // https://github.com/letsar/flutter_slidable/issues/512#issuecomment-2540966428
-                  // workaround for flutter_slidable
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      outlinedButtonTheme: OutlinedButtonThemeData(
-                        style: ButtonStyle(
-                          iconColor: WidgetStatePropertyAll(
-                              Theme.of(context).colorScheme.onError),
-                        ),
-                      ),
-                    ),
-                    child: SlidableAction(
-                      onPressed: (context) => onDelete!(),
-                      icon: Icons.delete,
-                      foregroundColor: Theme.of(context).colorScheme.onError,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(10),
-                      flex: 10,
-                    ),
+                  SlidableAction(
+                    onPressed: (context) => onDelete!(),
+                    icon: Icons.delete,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    borderRadius: BorderRadius.circular(10),
+                    flex: 10,
                   ),
                 ],
               )

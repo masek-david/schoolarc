@@ -225,7 +225,6 @@ class BakaService {
     settings.save(Setting.userName, fullName.replaceAll(',', '').split(' ')[1]);
   }
 
-
   /// imports permanent timetable and saves it
   Future<void> importTimeTable(WidgetRef ref) async {
     if (!isLoggedIn) {
