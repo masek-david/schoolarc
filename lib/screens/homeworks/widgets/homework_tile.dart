@@ -21,6 +21,7 @@ class HomeworkTile extends StatefulWidget {
     required this.onDelete,
     required this.onEdit,
     this.showCompletion = true,
+    required this.onConvert,
   });
 
   final HomeworkDTO hw;
@@ -31,6 +32,7 @@ class HomeworkTile extends StatefulWidget {
   final void Function(bool) onChangedCompletion;
   final void Function()? onDelete;
   final void Function() onEdit;
+  final void Function()? onConvert;
 
   @override
   State<HomeworkTile> createState() => _HomeworkTileState();
@@ -72,6 +74,28 @@ class _HomeworkTileState extends State<HomeworkTile> {
           groupTag: '0',
           enabled: !expUseHwOverlay,
           controller: widget.slidableController,
+          startActionPane: widget.onConvert == null
+              ? null
+              : ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: extentRatio,
+                  children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        HapticFeedback.lightImpact();
+                        widget.onConvert!();
+                      },
+                      icon: Icons.swap_vertical_circle_outlined,
+                      label: 'To exam',
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onTertiaryContainer,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      flex: 10,
+                    ),
+                  ],
+                ),
           endActionPane: widget.onDelete == null
               ? null
               : ActionPane(
@@ -84,7 +108,8 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         widget.onDelete!();
                       },
                       icon: Icons.delete,
-                      foregroundColor: Theme.of(context).colorScheme.onError,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onErrorContainer,
                       backgroundColor:
                           Theme.of(context).colorScheme.errorContainer,
                       borderRadius: BorderRadius.circular(borderRadius),

@@ -8,6 +8,7 @@ import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -128,6 +129,8 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
 
     listenToFirebase();
 
+    scheduleMidnightTask();
+
     return _dbState;
   }
 
@@ -187,13 +190,27 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       log('error listening to firebase exams: ${error.toString()}');
     });
   }
+  
+  void scheduleMidnightTask() {
+  DateTime now = DateTime.now();
+  DateTime nextMidnight = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
+
+  Duration initialDelay = nextMidnight.difference(now);
+
+  Future.delayed(initialDelay, () {
+    checkAllIfCompleted();
+    Timer.periodic(const Duration(days: 1), (timer) {
+      checkAllIfCompleted();
+    });
+  });
+}
 
   void checkAllIfCompleted() {
     Map<int, ExamDTO> updated = {};
 
     state.forEach(
       (key, value) {
-        if (!value.isCompleted) {
+        if (!value.isCompleted && !value.isDeleted) {
           if (value.deadline.isBeforeToday()) {
             updated[key] = value.copyWith(isCompleted: true);
           }
@@ -258,26 +275,33 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       exam = exam.copyWith(fireId: uuid.v4());
     }
 
+    final originalState = _dbState;
     int dbIndex = await examsDb.addExam(exam);
 
-    final ExamDTO? examWithSameOrder = _dbState.values
-        .where((element) => element.order == exam.order && !element.isDeleted)
+    final ExamDTO? examWithSameOrder = originalState.values
+        .where((element) =>
+            element.order == exam.order &&
+            !element.isDeleted &&
+            !element.isCompleted)
         .firstOrNull;
-    if (examWithSameOrder != null && !addToEnd) {
-      if (exam.timestamp.millisecondsSinceEpoch <
-          examWithSameOrder.timestamp.millisecondsSinceEpoch) {
-        // if the new one is older, add it after the old one
-        exam.order++;
-        examsDb.editExam(dbIndex, exam);
-        // if the new one is newer, add it before old
+
+    if (!exam.isDeleted && exam.date.isBeforeToday()) {
+      if (examWithSameOrder != null && !addToEnd) {
+        if (exam.timestamp.millisecondsSinceEpoch <
+            examWithSameOrder.timestamp.millisecondsSinceEpoch) {
+          // if the new one is older, add it after the old one
+          exam.order++;
+          examsDb.editExam(dbIndex, exam);
+          // if the new one is newer, add it before old
+        }
+        reorder(
+          null,
+          exam.order,
+          null,
+          exam.priority,
+          exam.convertToDTO(dbIndex, subjects[exam.subjectDbIndex]),
+        );
       }
-      reorder(
-        null,
-        exam.order,
-        null,
-        exam.priority,
-        exam.convertToDTO(dbIndex, subjects[exam.subjectDbIndex]),
-      );
     }
 
     state = {
@@ -444,6 +468,11 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
 
     state = {...state, ...editedExams};
     return;
+  }
+
+  void convert(ExamDTO exam) {
+    delete(exam);
+    ref.read(hwProvider.notifier).saveNew(exam.toHw());
   }
 
   void delete(ExamDTO exam) {

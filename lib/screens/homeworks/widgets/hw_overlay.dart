@@ -102,6 +102,7 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                               onChangedCompletion: (p0) {},
                               onDelete: () {},
                               onEdit: () {},
+                              onConvert: () {},
                             ),
                             AnimatedOpacity(
                               opacity: fullSize ? 1.0 : 0,

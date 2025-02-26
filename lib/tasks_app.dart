@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,6 +9,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/baka_homeworks_service.dart';
 import 'package:school_manager/services/bakalari/baka_service.dart';
@@ -164,6 +166,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
   late bool showingTutorial;
+  bool showingFirebase = false;
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -190,6 +193,12 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
   }
 
+  void hideFirebase() {
+    setState(() {
+      showingFirebase = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -200,6 +209,11 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       firstTimeOpeningApp();
     } else {
       showingTutorial = false;
+    }
+
+    if (!firestoreService.isloggedIn && kIsWeb) {
+      showingFirebase = true;
+      settings.save(Setting.useFirebase, true);
     }
 
     // Only after at least the action method is set, the notification events are delivered
@@ -332,6 +346,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
         return MaterialApp(
           navigatorKey: navigatorKey,
+          title: 'School app',
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -424,9 +439,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                         pageIndex: currentPageIndex,
                       ),
               ),
-              if (showingTutorial)
-                WelcomeScreen(
-                  onEnd: endTutorial,
+              if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
+              if (showingFirebase)
+                FirestoreLoginScreen(
+                  onHide: hideFirebase,
                 ),
             ],
           ),

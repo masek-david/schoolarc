@@ -44,10 +44,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   late bool showMissed = settings.get(Setting.calendarShowMissed);
   final _resizeController = ResizableController();
-  final initialSizes = (settings.get(
-    Setting.calendarResizableContainerRatio,
-  ) as List<double>)
-      .map(
+  final List<ResizableSize> initialSizes = (List<double>.from(
+    settings.get(Setting.calendarResizableContainerRatio) as List<dynamic>,
+  )).map(
     (e) {
       return ResizableSize.ratio(e);
     },
@@ -126,9 +125,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return PagesWidget(
       examOnDelete: (exam) => deleteExam(context, ref, exam),
       examOnEdit: (exam) => editExam(context, ref, exam),
+      examOnConvert: (exam) => convertExam(context, ref, exam),
       hwOnChangedCompletion: (hw, value) => completeHw(context, ref, hw, value),
       hwOnDelete: (hw) => deleteHw(context, ref, hw),
       hwOnEdit: (hw) => editHw(context, ref, hw),
+      hwOnConvert: (hw) => convertHw(context, ref, hw),
       pageController: _pageController,
       onPageChanged: (page) {
         setState(() {

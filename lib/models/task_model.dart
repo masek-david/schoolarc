@@ -56,6 +56,7 @@ class Task {
       order: order,
     );
   }
+
   Exam toExam() {
     return Exam(
       fireId: fireId,

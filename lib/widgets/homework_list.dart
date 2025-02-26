@@ -14,11 +14,12 @@ class HomeworkList extends StatelessWidget {
     this.textEmpty,
     required this.onDelete,
     required this.onEdit,
-    required this.onChangedCompletion,
+    required this.onChangedCompletion, required this.onConvert,
   });
 
   final List<HomeworkDTO> hwList;
   final void Function(HomeworkDTO hw) onDelete;
+  final void Function(HomeworkDTO hw) onConvert;
   final void Function(HomeworkDTO hw) onEdit;
   final void Function(HomeworkDTO hw, bool value) onChangedCompletion;
   final bool draggable;
@@ -50,6 +51,7 @@ class HomeworkList extends StatelessWidget {
               onChangedCompletion: (value) => onChangedCompletion(hw, value),
               onDelete: () => onDelete(hw),
               onEdit: () => onEdit(hw),
+              onConvert: () => onConvert(hw),
             ),
           );
         }),

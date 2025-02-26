@@ -8,6 +8,7 @@ import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -219,11 +220,11 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
   Future<void> syncAll() async {
     _loadState();
     await listenToFirebase();
-    final fireHws = await firestoreService.getAllHomeworks();
+    final fireHws = await firestoreService.getAllHomeworks(subjects);
 
     fireHws?.forEach(
-      (element) {
-        checkFireHomework(element);
+      (element) async {
+        await checkFireHomework(element);
       },
     );
 
@@ -269,26 +270,33 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
       hw = hw.copyWith(fireId: uuid.v4());
     }
 
+    final originalState = _dbState;
     int dbIndex = await homeworksDb.addHw(hw);
 
-    final HomeworkDTO? hwWithSameOrder = _dbState.values
-        .where((element) => element.order == hw.order && !element.isDeleted)
+    final HomeworkDTO? hwWithSameOrder = originalState.values
+        .where((element) =>
+            element.order == hw.order &&
+            !element.isDeleted &&
+            !element.isCompleted)
         .firstOrNull;
-    if (hwWithSameOrder != null && !addToEnd) {
-      if (hw.timestamp.millisecondsSinceEpoch <
-          hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
-        // if the new one is older, add it after the old one
-        hw.order++;
-        homeworksDb.editHw(dbIndex, hw);
-        // if the new one is newer, add it before old
+        
+    if (!hw.isCompleted && !hw.isDeleted) {
+      if (hwWithSameOrder != null && !addToEnd) {
+        if (hw.timestamp.millisecondsSinceEpoch <
+            hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
+          // if the new one is older, add it after the old one
+          hw.order++;
+          homeworksDb.editHw(dbIndex, hw);
+          // if the new one is newer, add it before old
+        }
+        reorder(
+          null,
+          hw.order,
+          null,
+          hw.priority,
+          hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex]),
+        );
       }
-      reorder(
-        null,
-        hw.order,
-        null,
-        hw.priority,
-        hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex]),
-      );
     }
 
     state = {
@@ -366,7 +374,6 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
       firestoreService.editHomeworks([editedHw]);
     }
 
-    // if (stateUpdateDelay) {
     if (old.isCompleted == false && editedHw.isCompleted == true) {
       state = {
         ...state,
@@ -479,6 +486,11 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
 
     state = {...state, ...editedHomeworks};
     return;
+  }
+
+  void convert(HomeworkDTO hw) {
+    delete(hw);
+    ref.read(examProvider.notifier).saveNew(hw.toExam());
   }
 
   void complete(HomeworkDTO hw, bool nowIsCompleted) {

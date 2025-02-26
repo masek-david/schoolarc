@@ -38,6 +38,10 @@ class FirestoreService {
     return auth.currentUser != null;
   }
 
+  String? get userEmail {
+    return auth.currentUser?.email;
+  }
+
   Future<void> logIn({required String email, required String password}) async {
     await auth.signInWithEmailAndPassword(email: email, password: password);
 
@@ -74,6 +78,10 @@ class FirestoreService {
   }
 
   Future<void> editExams(List<ExamDTO> examsToUpdate) async {
+    if (examsToUpdate.isEmpty) {
+      return;
+    }
+
     final batch = FirebaseFirestore.instance.batch();
 
     for (var exam in examsToUpdate) {
@@ -164,6 +172,10 @@ class FirestoreService {
   }
 
   Future<void> editHomeworks(List<HomeworkDTO> hwsToUpdate) async {
+    if (hwsToUpdate.isEmpty) {
+      return;
+    }
+
     final batch = FirebaseFirestore.instance.batch();
 
     for (var homework in hwsToUpdate) {
@@ -217,11 +229,18 @@ class FirestoreService {
     return;
   }
 
-  Future<List<Homework>?> getAllHomeworks() async {
+  Future<List<Homework>?> getAllHomeworks(Map<int, SubjectDTO> subjects) async {
     final query = await homeworks.get();
     ref?.read(firebaseActivityProvider.notifier).read(1);
 
-    final localSubjects = subjectsDb.getDatabase();
+    Map<String, SubjectDTO> subjectMap = {};
+    subjectsDb.getDatabase().forEach(
+      (key, value) {
+        if (value.fireId != null) {
+          subjectMap[value.fireId!] = value.convertToDTO(key);
+        }
+      },
+    );
 
     List<Homework> homeworksList = [];
 
@@ -231,12 +250,7 @@ class FirestoreService {
           isDeleted: element['isDeleted'],
           timestamp: (element['timestamp'] as Timestamp).toDate(),
           fireId: element.id,
-          subjectDbIndex: localSubjects.entries
-              .where(
-                (entry) => entry.value.fireId == element['subjectId'],
-              )
-              .firstOrNull
-              ?.key,
+          subjectDbIndex: subjectMap[element['subjectId']]?.dbIndex,
           text: element['text'],
           deadline: (element['deadline'] as Timestamp).toDate(),
           isCompleted: element['isCompleted'],
@@ -257,6 +271,10 @@ class FirestoreService {
   }
 
   Future<void> editSubjects(List<SubjectDTO> updates) async {
+    if (updates.isEmpty) {
+      return;
+    }
+
     final batch = FirebaseFirestore.instance.batch();
 
     for (var subject in updates) {
@@ -305,7 +323,7 @@ class FirestoreService {
     return;
   }
 
-  Future<List<Subject>?> getSubjects() async {
+  Future<List<Subject>> getSubjects() async {
     final query = await subjects.get();
     ref?.read(firebaseActivityProvider.notifier).read(0);
 

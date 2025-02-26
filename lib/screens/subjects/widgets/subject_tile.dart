@@ -36,8 +36,8 @@ class SubjectTile extends StatelessWidget {
                   SlidableAction(
                     onPressed: (context) => onDelete!(),
                     icon: Icons.delete,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
-                    backgroundColor: Theme.of(context).colorScheme.error,
+                    foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(10),
                     flex: 10,
                   ),

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,6 +105,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
     final exams = ref.watch(examsDatesProvider);
+    final uncompletedHw = ref.watch(hwProvider).values.where(
+      (element) {
+        return !element.isDeleted &&
+            !element.isCompleted &&
+            !element.deadline.isBeforeToday();
+      },
+    ).length;
+    final upcomingExams = ref.watch(examProvider).values.where(
+      (element) {
+        return !element.isDeleted && !element.isCompleted;
+      },
+    ).length;
 
     List<HomeworkDTO> hwToShow = [];
     List<ExamDTO> examToShow = [];
@@ -136,7 +147,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     HomeworksDatabase().deleteAllFromDisk();
                     SubjectDatabase().deleteAllFromDisk();
                     ExamDatabase().deleteAllFromDisk();
-                    FirebaseFirestore.instance.clearPersistence();
+                    firestoreService.logOut();
+                    bakaService.logOut();
                   },
                   label: const Text('delete from disk'),
                   icon: const Icon(Icons.bug_report),
@@ -169,8 +181,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: ListView(
                 children: [
                   Overview(
-                    hwNumberOfIncomplete: ref.read(hwSortedProvider).length,
-                    examNumberOfIncomplete: ref.read(examSortedProvider).length,
+                    hwNumberOfIncomplete: uncompletedHw,
+                    examNumberOfIncomplete: upcomingExams,
                     hwNumberOfMissed: missedHw.length,
                   ),
                   SizedBox(height: 24),
@@ -224,6 +236,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         completeHw(context, ref, hw, value),
                                     onDelete: (hw) =>
                                         deleteHw(context, ref, hw),
+                                    onConvert: (hw) =>
+                                        convertHw(context, ref, hw),
                                     onEdit: (hw) => editHw(context, ref, hw),
                                     textFull: 'Missed homeworks',
                                     showText: true,
@@ -243,6 +257,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       deleteExam(context, ref, exam),
                                   onEdit: (exam) =>
                                       editExam(context, ref, exam),
+                                  onConvert: (exam) =>
+                                      convertExam(context, ref, exam),
                                   textFull: 'Exams $whenText',
                                   showText: true,
                                   showDates: false,
@@ -261,6 +277,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       completeHw(context, ref, hw, value),
                                   onDelete: (hw) => deleteHw(context, ref, hw),
                                   onEdit: (hw) => editHw(context, ref, hw),
+                                  onConvert: (hw) =>
+                                      convertHw(context, ref, hw),
                                   textFull: 'Homeworks $whenText',
                                   showText: true,
                                   showDates: false,

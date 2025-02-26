@@ -110,9 +110,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CancelSaveButton(
-                onSave: onSave,
-              ),
+              CancelSaveButton(onSave: onSave),
               const SizedBox(height: 15),
               Row(
                 children: [

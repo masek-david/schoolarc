@@ -65,7 +65,7 @@ class Overview extends StatelessWidget {
                 if (showMissed)
                   TextSpan(
                     text:
-                        '${numberWithNo(hwNumberOfMissed)} missed homework${hwNumberOfMissed != 1 ? 's' : ''}, ',
+                        '${numberWithNo(hwNumberOfMissed)}\u{00A0}missed homework${hwNumberOfMissed != 1 ? 's' : ''}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,
@@ -80,7 +80,7 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      ' upcoming homework${hwNumberOfIncomplete != 1 ? 's' : ''} and ',
+                      '\u{00A0}upcoming homework${hwNumberOfIncomplete != 1 ? 's' : ''} and ',
                 ),
                 TextSpan(
                   text: numberWithNo(examNumberOfIncomplete),
@@ -91,7 +91,7 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      ' upcoming exam${examNumberOfIncomplete != 1 ? 's' : ''}',
+                      '\u{00A0}upcoming exam${examNumberOfIncomplete != 1 ? 's' : ''}',
                 ),
               ],
             ),

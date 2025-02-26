@@ -15,12 +15,14 @@ class ExamTile extends StatelessWidget {
     this.showDeadline = true,
     required this.onDelete,
     required this.onEdit,
+    required this.onConvert,
   });
 
   final ExamDTO exam;
   final bool showDeadline;
   final void Function() onDelete;
   final void Function() onEdit;
+  final void Function()? onConvert;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,28 @@ class ExamTile extends StatelessWidget {
             const BorderRadius.horizontal(left: Radius.circular(1000)),
         child: Slidable(
           groupTag: '0',
+          startActionPane: onConvert == null
+              ? null
+              : ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: extentRatio,
+                  children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        HapticFeedback.lightImpact();
+                        onConvert!();
+                      },
+                      icon: Icons.swap_vertical_circle_outlined,
+                      label: 'To homework',
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onTertiaryContainer,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                      borderRadius: BorderRadius.circular(100),
+                      flex: 10,
+                    ),
+                  ],
+                ),
           endActionPane: ActionPane(
             motion: const StretchMotion(),
             extentRatio: extentRatio,
@@ -56,8 +80,8 @@ class ExamTile extends StatelessWidget {
                   onDelete();
                 },
                 icon: Icons.delete,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+                backgroundColor: Theme.of(context).colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(35),
                 flex: 10,
               ),
@@ -114,7 +138,8 @@ class ExamTile extends StatelessWidget {
                         if (settings.get(Setting.showDebugInfo))
                           Column(
                             children: [
-                              Text('ts: ${exam.timestamp.millisecondsSinceEpoch}'),
+                              Text(
+                                  'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
                             ],
                           ),
                         const SizedBox(width: 8),

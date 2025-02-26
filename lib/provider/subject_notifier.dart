@@ -74,30 +74,26 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     await listenToFirebase();
     final fireSubjects = await firestoreService.getSubjects();
 
-    fireSubjects?.forEach(
-      (element) {
-        checkFireSubject(element);
-      },
-    );
+    for (final element in fireSubjects) {
+      await checkFireSubject(element);
+    }
 
-    subjectsDbState.forEach(
-      (key, value) {
-        if (value.fireId == null) {
-          edit(value);
-        } else {
-          bool isSynced = fireSubjects
-                  ?.where(
-                    (element) => element.fireId == value.fireId,
-                  )
-                  .firstOrNull !=
-              null;
+    for (final subject in subjectsDbState.values) {
+      if (subject.fireId == null) {
+        await edit(subject);
+      } else {
+        bool isSynced = fireSubjects
+                .where(
+                  (element) => element.fireId == subject.fireId,
+                )
+                .firstOrNull !=
+            null;
 
-          if (!isSynced) {
-            edit(value);
-          }
+        if (!isSynced) {
+          await edit(subject);
         }
-      },
-    );
+      }
+    }
 
     return;
   }
@@ -128,18 +124,20 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
         .firstOrNull;
 
     // if there is a subject that already has the order of the newly added
-    if (subjectWithSameOrder != null && !addToEnd) {
-      if (subject.timestamp.millisecondsSinceEpoch <
-          subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
-        // if the new one is older, add it after the old
-        subject.order++;
-        subjectsDb.saveEditedSubject(dbIndex, subject);
+    if (!subject.isDeleted) {
+      if (subjectWithSameOrder != null && !addToEnd) {
+        if (subject.timestamp.millisecondsSinceEpoch <
+            subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
+          // if the new one is older, add it after the old
+          subject.order++;
+          subjectsDb.saveEditedSubject(dbIndex, subject);
+        }
+        reorder(
+          null,
+          subject.order,
+          subject.convertToDTO(dbIndex),
+        );
       }
-      reorder(
-        null,
-        subject.order,
-        subject.convertToDTO(dbIndex),
-      );
     }
 
     state = {...state, dbIndex: subject.convertToDTO(dbIndex)};
@@ -151,7 +149,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
   }
 
   /// assign timestamp manually, if no fireId, it will add it
-  void edit(
+  Future<void> edit(
     SubjectDTO editedSubject, {
     bool syncWithFire = true,
     bool reorderAddTimestamp = true,
@@ -195,7 +193,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
 
     if (syncWithFire) {
       if (editedSubject.fireId != null) {
-        firestoreService.editSubjects(
+        await firestoreService.editSubjects(
             [editedSubject.copyWith(fireId: editedSubject.fireId)]);
       } else {
         edit(editedSubject.copyWith(fireId: uuid.v4().toString()));

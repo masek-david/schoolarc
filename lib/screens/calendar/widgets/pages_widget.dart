@@ -23,12 +23,16 @@ class PagesWidget extends StatelessWidget {
     required this.hwOnEdit,
     required this.hwOnDelete,
     required this.hwOnChangedCompletion,
+    required this.hwOnConvert,
+    required this.examOnConvert,
   });
 
   final void Function(ExamDTO exam) examOnDelete;
   final void Function(ExamDTO exam) examOnEdit;
+  final void Function(ExamDTO exam) examOnConvert;
   final void Function(HomeworkDTO hw) hwOnEdit;
   final void Function(HomeworkDTO hw) hwOnDelete;
+  final void Function(HomeworkDTO hw) hwOnConvert;
   final void Function(HomeworkDTO hw, bool value) hwOnChangedCompletion;
 
   final PageController pageController;
@@ -100,6 +104,7 @@ class PagesWidget extends StatelessWidget {
                                 HomeworkList(
                                   onChangedCompletion: hwOnChangedCompletion,
                                   onDelete: hwOnDelete,
+                                  onConvert: hwOnConvert,
                                   onEdit: hwOnEdit,
                                   draggable: true,
                                   hwList: missedHwList,
@@ -111,6 +116,7 @@ class PagesWidget extends StatelessWidget {
                       ExamList(
                         onEdit: examOnEdit,
                         onDelete: examOnDelete,
+                        onConvert: examOnConvert,
                         showDates: false,
                         showText: true,
                         draggable: true,
@@ -120,6 +126,7 @@ class PagesWidget extends StatelessWidget {
                         onChangedCompletion: hwOnChangedCompletion,
                         onDelete: hwOnDelete,
                         onEdit: hwOnEdit,
+                        onConvert: hwOnConvert,
                         showDates: false,
                         showText: true,
                         draggable: true,

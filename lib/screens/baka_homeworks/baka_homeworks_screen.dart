@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/models/bakalari/baka_hw_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
@@ -19,10 +20,16 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
   late final homeworksFuture = bakaService.getHomeworks();
   var homeworks = <BakaHomework>[];
 
-  void add(BuildContext context, BakaHomework hw) {
-    ref.read(hwProvider.notifier).saveNew(
-          hw.copyWith(timestamp: Timestamp.now()).convert(),
-        );
+  void add(BuildContext context, BakaHomework hw, bool isHomework) {
+    if (isHomework) {
+      ref.read(hwProvider.notifier).saveNew(
+            hw.copyWith(timestamp: Timestamp.now(), isCompleted: false).toHw(),
+          );
+    } else {
+      ref.read(examProvider.notifier).saveNew(
+            hw.copyWith(timestamp: Timestamp.now()).toExam(),
+          );
+    }
 
     bakaHomeworkService.addedHomework(hw.bakaId);
 
@@ -34,7 +41,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
           .alreadyAdded = true;
     });
 
-    showMessage(context, 'Homeworks added');
+    showMessage(context, '${isHomework ? 'Homework' : 'Exam'} added');
   }
 
   @override
@@ -89,7 +96,8 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
 
                           return BakaHwTile(
                             hw: hw,
-                            onAdd: () => add(context, hw),
+                            onAddHw: () => add(context, hw, true),
+                            onAddExam: () => add(context, hw, false),
                           );
                         },
                       ),
@@ -102,7 +110,8 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
 
               return BakaHwTile(
                 hw: hw,
-                onAdd: () => add(context, hw),
+                onAddHw: () => add(context, hw, true),
+                onAddExam: () => add(context, hw, false),
               );
             },
           );

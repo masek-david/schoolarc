@@ -7,9 +7,10 @@ import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
 class ExamList extends ConsumerWidget {
   const ExamList({
     super.key,
-    required this.onDelete, 
+    required this.onDelete,
     required this.onEdit,
     required this.examList,
+    required this.onConvert,
     this.draggable = false,
     this.showText = false,
     this.showDates = true,
@@ -20,6 +21,7 @@ class ExamList extends ConsumerWidget {
   final List<ExamDTO> examList;
   final void Function(ExamDTO exam) onDelete;
   final void Function(ExamDTO exam) onEdit;
+  final void Function(ExamDTO exam) onConvert;
   final bool draggable;
   final bool showText;
   final bool showDates;
@@ -32,6 +34,7 @@ class ExamList extends ConsumerWidget {
       showDeadline: false,
       onDelete: () => onDelete(exam),
       onEdit: () => onEdit(exam),
+      onConvert: () => onConvert(exam),
     );
   }
 

@@ -43,6 +43,10 @@ void editHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) async {
   }
 }
 
+void convertHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) {
+  ref.read(hwProvider.notifier).convert(hw);
+}
+
 void completeHw(
     BuildContext context, WidgetRef ref, HomeworkDTO hw, bool value) {
   ref.read(hwProvider.notifier).complete(hw, value);
@@ -93,6 +97,10 @@ void editExam(BuildContext context, WidgetRef ref, ExamDTO exam) async {
   if (edited != null) {
     ref.read(examProvider.notifier).edit(edited);
   }
+}
+
+void convertExam(BuildContext context, WidgetRef ref, ExamDTO exam) {
+  ref.read(examProvider.notifier).convert(exam);
 }
 
 void deleteExam(BuildContext context, WidgetRef ref, ExamDTO exam) {

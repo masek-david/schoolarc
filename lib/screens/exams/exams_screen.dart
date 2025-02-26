@@ -112,6 +112,7 @@ class ExamsScreen extends ConsumerWidget {
                       ])
                     : AnimatedReorderableListView(
                         items: itemList,
+                        buildDefaultDragHandles: false,
                         lockedItems: [
                           _AnimatedReorderableListItem(
                               priority: TaskPriority(3))
@@ -147,6 +148,7 @@ class ExamsScreen extends ConsumerWidget {
                               exam: exam,
                               onDelete: () => deleteExam(context, ref, exam),
                               onEdit: () => editExam(context, ref, exam),
+                              onConvert: () => convertExam(context, ref, exam),
                             ),
                           );
                         },
@@ -205,6 +207,7 @@ class ExamsScreen extends ConsumerWidget {
                 exam: exam,
                 onDelete: () => deleteExam(context, ref, exam),
                 onEdit: () => editExam(context, ref, exam),
+                onConvert: () => convertExam(context, ref, exam),
               ),
             );
           },

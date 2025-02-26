@@ -113,6 +113,7 @@ class HomeworksScreen extends ConsumerWidget {
                       ])
                     : AnimatedReorderableListView(
                         items: itemList,
+                        buildDefaultDragHandles: false,
                         lockedItems: [
                           _AnimatedReorderableListItem(
                               priority: TaskPriority(3))
@@ -150,6 +151,7 @@ class HomeworksScreen extends ConsumerWidget {
                             },
                             onDelete: () => deleteHw(context, ref, hw),
                             onEdit: () => editHw(context, ref, hw),
+                            onConvert: () => convertHw(context, ref, hw),
                           );
                         },
                         isSameItem: (a, b) => a.isSameAs(b),
@@ -209,6 +211,7 @@ class HomeworksScreen extends ConsumerWidget {
                 },
                 onDelete: () => deleteHw(context, ref, hw),
                 onEdit: () => editHw(context, ref, hw),
+                onConvert: () => convertHw(context, ref, hw)
               ),
             );
           },

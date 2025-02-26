@@ -92,6 +92,9 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
                         onEdit: () {
                           showMessage(context, 'Now you could edit');
                         },
+                        onConvert: () {
+                          showMessage(context, 'Now you could convert this exam to homework');
+                        },
                       ),
                     );
                   },

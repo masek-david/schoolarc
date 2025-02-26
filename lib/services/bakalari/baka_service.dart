@@ -8,11 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/models/bakalari/lesson_time_baka.dart';
 import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -24,29 +24,6 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/tasks_app.dart';
-
-class BakaHomework extends HomeworkDTO {
-  BakaHomework({
-    required super.isCompleted,
-    required super.dbIndex,
-    required super.deadline,
-    required super.description,
-    required super.priority,
-    required super.subject,
-    required super.text,
-    required this.alreadyAdded,
-    required this.alreadySeen,
-    required this.bakaId,
-    required super.fireId,
-    required super.timestamp,
-    required super.isDeleted,
-    required super.order,
-  });
-
-  final String bakaId;
-  bool alreadyAdded;
-  final bool alreadySeen;
-}
 
 class BakaService {
   // sussy baka
@@ -148,10 +125,14 @@ class BakaService {
       saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
     } else {
       // it has to be overwriten if the user chooses
-      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, '');
-      saveToSecureStorage(SecureStorage.bakaSchoolNameKey, '');
-      saveToSecureStorage(SecureStorage.bakaUsernameKey, '');
+      logOut();
     }
+  }
+
+  void logOut() {
+    saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, '');
+    saveToSecureStorage(SecureStorage.bakaSchoolNameKey, '');
+    saveToSecureStorage(SecureStorage.bakaUsernameKey, '');
   }
 
   /// logs in, returns errors and sets this._refreshToken and this._accessToken

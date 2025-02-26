@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
@@ -8,11 +8,13 @@ class BakaHwTile extends StatelessWidget {
   const BakaHwTile({
     super.key,
     required this.hw,
-    required this.onAdd,
+    required this.onAddHw,
+    required this.onAddExam,
   });
 
   final BakaHomework hw;
-  final Function() onAdd;
+  final Function() onAddHw;
+  final Function() onAddExam;
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +47,24 @@ class BakaHwTile extends StatelessWidget {
                     ),
                     adaptiveDialogButton(
                       context: context,
+                      child: Text('Add as homework'),
                       onPressed: () {
+                        onAddHw();
                         Navigator.pop(context);
-                        onAdd();
                       },
-                      child: Text('Add'),
+                    ),
+                    adaptiveDialogButton(
+                      context: context,
+                      child: Text('Add as a exam'),
+                      onPressed: () {
+                        onAddExam();
+                        Navigator.pop(context);
+                      },
                     ),
                   ],
                 );
               } else {
-                onAdd();
+                onAddHw();
               }
             },
             icon: hw.alreadyAdded
@@ -63,10 +73,11 @@ class BakaHwTile extends StatelessWidget {
           ),
           Expanded(
             child: HomeworkTile(
-              hw: hw,
+              hw: hw.toHwDTO(),
               borderIfMissed: false,
               showCompletion: false,
               onDelete: null,
+              onConvert: null,
               onChangedCompletion: (p0) {},
               onEdit: () {
                 showDialogAdaptive(
@@ -83,9 +94,17 @@ class BakaHwTile extends StatelessWidget {
                     ),
                     adaptiveDialogButton(
                       context: context,
-                      child: Text('Add'),
+                      child: Text('Add as homework'),
                       onPressed: () {
-                        onAdd();
+                        onAddHw();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    adaptiveDialogButton(
+                      context: context,
+                      child: Text('Add as a exam'),
+                      onPressed: () {
+                        onAddExam();
                         Navigator.pop(context);
                       },
                     ),

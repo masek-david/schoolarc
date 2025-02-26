@@ -2,6 +2,8 @@ fix:
 
 create baka provider
 
+rework sync methods (force update newer)
+
 =============================================================================================
 
 remove slide to delete?

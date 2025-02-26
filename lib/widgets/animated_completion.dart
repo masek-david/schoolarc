@@ -15,6 +15,7 @@ class AnimatedCompletionTile extends StatefulWidget {
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
+    required this.onConvert,
   });
 
   final HomeworkDTO hw;
@@ -23,6 +24,7 @@ class AnimatedCompletionTile extends StatefulWidget {
   final SlidableController? slidableController;
   final EdgeInsetsGeometry? padding;
   final void Function() onDelete;
+  final void Function() onConvert;
   final void Function() onEdit;
   final void Function(bool value) onChangedCompletion;
 
@@ -59,10 +61,9 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
         }
       });
 
-
-      if(widget.hw.isBeingAnimated){
-        playAnimation(true);
-      }
+    if (widget.hw.isBeingAnimated) {
+      playAnimation(true);
+    }
   }
 
   @override
@@ -100,8 +101,9 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
             child: ShaderMask(
               blendMode: BlendMode.srcOver,
               shaderCallback: (bounds) {
-                final color = widget.hw.priority.getColor(context).withAlpha(200);
-      
+                final color =
+                    widget.hw.priority.getColor(context).withAlpha(200);
+
                 return RadialGradient(
                   colors: [
                     Colors.transparent,
@@ -149,6 +151,7 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
       },
       onDelete: () => widget.onDelete(),
       onEdit: () => widget.onEdit(),
+      onConvert: () => widget.onConvert(),
     );
   }
 }

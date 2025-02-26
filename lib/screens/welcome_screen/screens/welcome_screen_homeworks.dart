@@ -124,6 +124,9 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
                         onEdit: () {
                           showMessage(context, 'Now you could edit');
                         },
+                        onConvert: () {
+                          showMessage(context, 'Now you could convert this homework to exam');
+                        },
                       ),
                     );
                   },
