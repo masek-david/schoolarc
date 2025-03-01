@@ -10,6 +10,7 @@ import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/widgets/priority_picker.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -97,14 +98,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-
     return Container(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(12),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,43 +203,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
               ),
               const Divider(),
               SizedBox(
-                // listview musi mit vysku, kterou urci sizedbox
-                height: 40,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    bool isSelected = index == pickedPriority;
-                    TaskPriority priority = TaskPriority(index);
-                    final scheme = ColorScheme.fromSeed(
-                      seedColor: priority.getColor(context),
-                      brightness: brightness,
-                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                    );
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        selected: isSelected,
-                        onSelected: (value) => setState(
-                          () => pickedPriority = index,
-                        ),
-                        selectedColor: scheme.primaryContainer,
-                        backgroundColor: scheme.surfaceContainer,
-                        checkmarkColor: scheme.onPrimaryContainer,
-                        label: Text(
-                          priority.name,
-                          style: TextStyle(
-                            color: isSelected
-                                ? scheme.onPrimaryContainer
-                                : scheme.primary,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+                  // listview musi mit vysku, kterou urci sizedbox
+                  height: 40,
+                  child: PriorityPicker(
+                    pickedPriority: pickedPriority,
+                    onSelected: (value) => setState(() {
+                      pickedPriority = value;
+                    }),
+                  )),
               const Divider(),
               InkWell(
                 onTap: () async {

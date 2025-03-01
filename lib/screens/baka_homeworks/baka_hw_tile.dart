@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
+import 'package:school_manager/screens/baka_homeworks/baka_hw_add_bottom_sheet.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/tasks_app.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class BakaHwTile extends StatelessWidget {
   const BakaHwTile({
     super.key,
     required this.hw,
-    required this.onAddHw,
-    required this.onAddExam,
+    required this.onSave,
   });
 
   final BakaHomework hw;
-  final Function() onAddHw;
-  final Function() onAddExam;
+  final Function(bool isHomework, BakaHomework hw) onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -32,40 +30,11 @@ class BakaHwTile extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              if (hw.alreadyAdded) {
-                showDialogAdaptive(
-                  context: context,
-                  title: Text('This homework has been already added'),
-                  content: Text('Do you want to add it again?'),
-                  actions: [
-                    adaptiveDialogButton(
-                      context: context,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Cancel'),
-                    ),
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text('Add as homework'),
-                      onPressed: () {
-                        onAddHw();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text('Add as a exam'),
-                      onPressed: () {
-                        onAddExam();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-              } else {
-                onAddHw();
-              }
+              showModalBottomSheet(
+                context: context,
+                builder: (context) =>
+                    BakaHwAddBottomSheet(onSave: onSave, hw: hw),
+              );
             },
             icon: hw.alreadyAdded
                 ? const Icon(Icons.check_circle_outline)
@@ -80,35 +49,10 @@ class BakaHwTile extends StatelessWidget {
               onConvert: null,
               onChangedCompletion: (p0) {},
               onEdit: () {
-                showDialogAdaptive(
+                showModalBottomSheet(
                   context: context,
-                  title: Text(hw.subject?.name ?? ''),
-                  content: Text(hw.text),
-                  actions: [
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text('Cancel'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text('Add as homework'),
-                      onPressed: () {
-                        onAddHw();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text('Add as a exam'),
-                      onPressed: () {
-                        onAddExam();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                  builder: (context) =>
+                      BakaHwAddBottomSheet(onSave: onSave, hw: hw),
                 );
               },
             ),

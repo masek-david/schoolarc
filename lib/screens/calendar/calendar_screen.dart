@@ -44,13 +44,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   late bool showMissed = settings.get(Setting.calendarShowMissed);
   final _resizeController = ResizableController();
-  final List<ResizableSize> initialSizes = (List<double>.from(
-    settings.get(Setting.calendarResizableContainerRatio) as List<dynamic>,
-  )).map(
-    (e) {
-      return ResizableSize.ratio(e);
-    },
-  ).toList();
+  final List<double> initialRatios =
+      settings.get(Setting.calendarResizableContainerRatio);
 
   @override
   void initState() {
@@ -224,15 +219,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   child: ResizableContainer(
                     controller: _resizeController,
                     direction: Axis.horizontal,
-                    divider: ResizableDivider(
-                      thickness: 4,
-                      length: ResizableSize.pixels(60),
-                      padding: 12,
-                    ),
                     children: [
                       ResizableChild(
-                        minSize: 300,
-                        size: initialSizes[0],
+                        size: ResizableSize.ratio(initialRatios[0], min: 300),
+                        divider: ResizableDivider(
+                          thickness: 4,
+                          length: ResizableSize.pixels(60),
+                          padding: 12,
+                        ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Scaffold(
@@ -242,8 +236,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         ),
                       ),
                       ResizableChild(
-                        minSize: 300,
-                        size: initialSizes[1],
+                        size: ResizableSize.ratio(initialRatios[1], min: 300),
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),

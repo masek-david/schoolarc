@@ -27,37 +27,40 @@ class _TimetableSettingsState extends State<TimetableSettings> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SettingTile(
-          label: 'Show 7 day week',
-          trailing: SwitchAction(
-            initialValue: showWholeWeek,
-            onChanged: (value) {
-              setState(() {
-                widget.changeShowWholeWeek(value);
-                showWholeWeek = value;
-              });
-            },
+    return SizedBox(
+      height: 400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SettingTile(
+            label: 'Show 7 day week',
+            trailing: SwitchAction(
+              initialValue: showWholeWeek,
+              onChanged: (value) {
+                setState(() {
+                  widget.changeShowWholeWeek(value);
+                  showWholeWeek = value;
+                });
+              },
+            ),
           ),
-        ),
-        SettingTile(
-          label: 'Tile width',
-          trailing: SliderAction(
-            inititalValue: tileWidth.toDouble(),
-            min: 60,
-            max: 160,
-            divisions: 10,
-            onChanged: (value) {
-              setState(() {
-                widget.changeTileWidth(value);
-                tileWidth = value;
-              });
-            },
+          SettingTile(
+            label: 'Tile width',
+            newLineAction: SliderAction(
+              inititalValue: tileWidth.toDouble(),
+              min: 60,
+              max: 160,
+              divisions: 10,
+              onChanged: (value) {
+                setState(() {
+                  widget.changeTileWidth(value);
+                  tileWidth = value;
+                });
+              },
+            ),
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }

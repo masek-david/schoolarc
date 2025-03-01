@@ -17,7 +17,7 @@ class BakaHomeworksScreen extends ConsumerStatefulWidget {
 }
 
 class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
-  late final homeworksFuture = bakaService.getHomeworks();
+  late var homeworksFuture = bakaService.getHomeworks();
   var homeworks = <BakaHomework>[];
 
   void add(BuildContext context, BakaHomework hw, bool isHomework) {
@@ -58,7 +58,19 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return ErrorTile(error: snapshot.error);
+            return ErrorTile(
+              error: snapshot.error,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      homeworksFuture = bakaService.getHomeworks();
+                    });
+                  },
+                  icon: Icon(Icons.refresh),
+                ),
+              ],
+            );
           } else if (!snapshot.hasData) {
             return const Text('No data');
           }
@@ -96,8 +108,8 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
 
                           return BakaHwTile(
                             hw: hw,
-                            onAddHw: () => add(context, hw, true),
-                            onAddExam: () => add(context, hw, false),
+                            onSave: (isHomework, hw) =>
+                                add(context, hw, isHomework),
                           );
                         },
                       ),
@@ -110,8 +122,10 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
 
               return BakaHwTile(
                 hw: hw,
-                onAddHw: () => add(context, hw, true),
-                onAddExam: () => add(context, hw, false),
+                onSave: (isHomework, hw) {
+                  add(context, hw, isHomework);
+                  Navigator.pop(context);
+                },
               );
             },
           );

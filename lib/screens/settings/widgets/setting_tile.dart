@@ -27,6 +27,7 @@ class SettingTile extends StatelessWidget {
     return AbsorbPointer(
       absorbing: !enabled,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: highlighted ? const EdgeInsets.all(16) : EdgeInsets.all(0),

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -361,8 +363,16 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           debugShowCheckedModeBanner: false,
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
-          theme: ThemeData(colorScheme: light),
-          darkTheme: ThemeData(colorScheme: dark),
+          theme: ThemeData(
+            colorScheme: light,
+            sliderTheme: SliderThemeData(year2023: false),
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
+          ),
+          darkTheme: ThemeData(
+            colorScheme: dark,
+            sliderTheme: SliderThemeData(year2023: false),
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
+          ),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {

@@ -23,6 +23,7 @@ class FirebaseOverlay extends ConsumerWidget {
     });
 
     return Stack(
+      alignment: Alignment.topRight,
       children: [
         IgnorePointer(
           child: DefaultTextStyle(
