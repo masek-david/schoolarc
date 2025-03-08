@@ -61,6 +61,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   uuid: ^4.5.1
   animated_reorderable_list: ^1.1.5
+  home_widget: ^0.7.0+1
 
 dev_dependencies:
   flutter_test:

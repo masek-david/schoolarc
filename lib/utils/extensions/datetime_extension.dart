@@ -98,6 +98,17 @@ extension BetterDateTime on DateTime {
     return text;
   }
 
+  /// returns day of week if it is in less than 7 days, else date
+  String dayText() {
+    final localDate = toLocal();
+    final now = DateTime.now();
+
+    if(localDate.difference(now) < Duration(days: 6)){
+      return DateFormat.EEEE().format(localDate);
+    }
+    return dateText();
+  }
+
   String formattedDate() {
     String year = this.year == DateTime.now().year ? '' : this.year.toString();
     return '$day.$month.$year';

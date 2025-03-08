@@ -2,15 +2,19 @@ class Meal {
   Meal({
     required this.type,
     required this.name,
-    this.selected  =false,
+    this.selected = false,
   });
 
   String type;
   String name;
   bool? selected;
-  
+
   @override
-  String toString(){
+  String toString() {
     return '$type: $name, selected: $selected';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'name': name, 'selected': selected};
   }
 }

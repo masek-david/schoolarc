@@ -74,8 +74,7 @@ class StravaService {
               'lang': 'CZ',
               'zustatPrihlasen': false,
             }),
-          )
-          .timeout(const Duration(seconds: 10));
+          );
     } on Exception {
       rethrow;
     }
@@ -116,8 +115,7 @@ class StravaService {
               'podminka': '',
               'ignoreCert': ignoreCert,
             }),
-          )
-          .timeout(const Duration(seconds: 10));
+          );
     } on SocketException {
       throw ServiceException('Check your internet connection');
     } on Object {
@@ -173,7 +171,7 @@ class StravaService {
 
     Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 10));
+      response = await http.get(uri);
     } on SocketException {
       throw ServiceException('Check your internet connection');
     } on Object {

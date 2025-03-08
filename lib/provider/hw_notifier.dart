@@ -109,6 +109,26 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
+final hwUncompletedProvider = Provider<List<HomeworkDTO>>(
+  (ref) {
+    final hws = ref.watch(hwProvider);
+
+    final list = <HomeworkDTO>[];
+
+    hws.forEach(
+      (key, hw) {
+        if (!hw.isDeleted && !hw.isCompleted && !hw.isBeingAnimated) {
+          list.add(hw);
+        }
+      },
+    );
+
+    list.sort((a, b) => b.deadline.compareTo(a.deadline));
+
+    return list;
+  },
+);
+
 final hwMissedProvider = Provider<List<HomeworkDTO>>(
   (ref) {
     final hws = ref.watch(hwProvider);
