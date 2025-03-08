@@ -58,6 +58,21 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.8"
+    }
+}
+
+// we need 1.7.20
+// we have 1.8.22
+
+dependencies {
+    implementation "androidx.glance:glance-appwidget:1.0.0"
 }
 
 flutter {

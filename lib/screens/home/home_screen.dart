@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
@@ -100,6 +101,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return isEmpty;
   }
 
+  Future<void> updateWidget()async{
+    // HomeWidget.updateWidget();
+  }
+
   @override
   Widget build(BuildContext context) {
     final hws = ref.watch(hwDatesProvider);
@@ -184,6 +189,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     hwNumberOfIncomplete: uncompletedHw,
                     examNumberOfIncomplete: upcomingExams,
                     hwNumberOfMissed: missedHw.length,
+                  ),
+                  FilledButton(
+                    onPressed: updateWidget,
+                    child: Text('Widget!!'),
                   ),
                   SizedBox(height: 24),
                   Row(
