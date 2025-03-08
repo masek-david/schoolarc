@@ -101,8 +101,8 @@ class MealsCard extends StatelessWidget {
                           text: isLoading
                               ? 'Loading'
                               : empty
-                                  ? 'No meals for ${date.dateText().toLowerCase()}'
-                                  : 'Meals for ${date.dateText().toLowerCase()}',
+                                  ? 'No meals for ${date.dayText().toLowerCase()}'
+                                  : 'Meals for ${date.dayText().toLowerCase()}',
                           actions: [
                             LoadingIconButton(
                               icon: Icons.refresh,

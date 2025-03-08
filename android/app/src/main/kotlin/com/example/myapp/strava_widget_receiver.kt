@@ -1,7 +1,6 @@
-package es.antonborri.home_widget_example.glance
+package com.example.myapp
 
 import HomeWidgetGlanceWidgetReceiver
-import StravaWidget
 
 class StravaWidgetReceiver : HomeWidgetGlanceWidgetReceiver<StravaWidget>() {
     override val glanceAppWidget = StravaWidget()

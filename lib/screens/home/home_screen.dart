@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,14 +40,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
   late Future<TimeTableDTO?>? bakaTimetable;
-  late Future<Map<DateTime, List<Meal>>>? meals;
+  late Future<Map<DateTime, List<Meal>>>? mealsFuture;
 
   @override
   void initState() {
     super.initState();
 
     bakaTimetable = bakaService.getCurrentTimetable(DateTime.now(), ref);
-    meals = stravaService.getMeals();
+    mealsFuture = stravaService.getMeals().then(
+      (value) {
+        updateStravaWidget(value);
+        return value;
+      },
+    );
   }
 
   Future<void> refresh() async {
@@ -67,11 +73,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> refreshMeals() async {
     setState(() {
-      meals = stravaService.getMeals();
+      mealsFuture = stravaService.getMeals();
     });
 
     try {
-      await meals;
+      final meals = await mealsFuture;
+
+      if (meals != null) {
+        updateStravaWidget(meals);
+      }
     } catch (_) {}
 
     return;
@@ -101,8 +111,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return isEmpty;
   }
 
-  Future<void> updateWidget()async{
-    // HomeWidget.updateWidget();
+  void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
+    Map<String, dynamic> json = {};
+    meals.forEach(
+      (key, value) {
+        json[key.dayText()] = value
+            .map(
+              (e) => e.toJson(),
+            )
+            .toList();
+      },
+    );
+    HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
+    HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
+  }
+
+  void updateHwWidget() {
+    final hws = ref.read(hwUncompletedProvider);
+    List<dynamic> json = [];
+
+    for (var element in hws) {
+      json.add(element.toWidgetJson());
+    }
+
+    print(jsonEncode(json));
+
+    HomeWidget.saveWidgetData('hws', jsonEncode(json));
+    HomeWidget.updateWidget(name: 'HomeworksWidgetReceiver');
   }
 
   @override
@@ -190,10 +225,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     examNumberOfIncomplete: upcomingExams,
                     hwNumberOfMissed: missedHw.length,
                   ),
-                  FilledButton(
-                    onPressed: updateWidget,
-                    child: Text('Widget!!'),
-                  ),
+                  // FilledButton(
+                  //   onPressed: updateHwWidget,
+                  //   child: Text('hw widget'),
+                  // ),
                   SizedBox(height: 24),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +238,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Column(
                           children: [
                             MealsCard(
-                              meals: meals,
+                              meals: mealsFuture,
                               refresh: refreshMeals,
                             ),
                             TimetableCard(
@@ -222,7 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             if (!isWide)
                               MealsCard(
-                                meals: meals,
+                                meals: mealsFuture,
                                 refresh: refreshMeals,
                               ),
                             if (!isWide)

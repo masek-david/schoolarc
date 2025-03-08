@@ -3,6 +3,7 @@ import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 class Task {
   SubjectDTO? subject;
@@ -32,7 +33,7 @@ class Task {
   });
 
   Task.empty({DateTime? deadline})
-      : deadline = deadline ??  DateTime.now(),
+      : deadline = deadline ?? DateTime.now(),
         text = '',
         fireId = null,
         isCompleted = false,
@@ -69,6 +70,18 @@ class Task {
       timestamp: timestamp.toDate(),
       order: order,
     );
+  }
+
+  Map<String, dynamic> toWidgetJson() {
+    return {
+      'dbIndex': dbIndex,
+      'text': text,
+      'subject': subject?.shortcut ?? '',
+      'deadline': deadline.dateText(),
+      'isCompleted': isCompleted,
+      'priority': priority.index,
+      'hasDescription': description != null,
+    };
   }
 
   Task copyWith({
