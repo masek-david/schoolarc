@@ -171,9 +171,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
                 color: Colors.transparent,
                 child: Opacity(
                   opacity: opacity,
-                  // main row
                   child: Padding(
                     padding: EdgeInsets.all(padding),
+                    // main row
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,

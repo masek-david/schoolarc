@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -23,11 +27,13 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/services/widget_service.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/screen_size.dart';
+import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/utils/theme_generate.dart';
 import 'package:school_manager/widgets/firebase_overlay.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
@@ -39,8 +45,8 @@ import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
 import 'package:uuid/uuid.dart';
 
-final navigatorKey = GlobalKey<NavigatorState>();
-final scaffoldKey = GlobalKey<ScaffoldState>();
+var navigatorKey = GlobalKey<NavigatorState>();
+var scaffoldKey = GlobalKey<ScaffoldState>();
 final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
@@ -231,6 +237,17 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     NotificationSender.scheduleTommorrowNotification();
 
     tryGettingNewHomeworks();
+    checkLaunchOrigin();
+  }
+
+  Future<void> checkLaunchOrigin() async {
+    final url = await HomeWidget.initiallyLaunchedFromHomeWidget();
+
+    if (url?.host == 'create') {
+      if (mounted) {
+        addNewHw(context, ref);
+      }
+    }
   }
 
   void firstTimeOpeningApp() {
@@ -299,6 +316,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   Widget build(BuildContext context) {
     ScreenSize.init(context);
 
+    ref.listen<List<HomeworkDTO>>(hwUncompletedProvider, (previous, next) {
+      updateHwWidget(next);
+    });
+
     final isWide = ScreenSize.isWideScreen.value;
 
     return DynamicColorBuilder(
@@ -364,15 +385,23 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
-            colorScheme: light,
-            sliderTheme: SliderThemeData(year2023: false),
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
-          ),
+              colorScheme: light,
+              sliderTheme: SliderThemeData(year2023: false),
+              progressIndicatorTheme:
+                  ProgressIndicatorThemeData(year2023: false)),
           darkTheme: ThemeData(
-            colorScheme: dark,
-            sliderTheme: SliderThemeData(year2023: false),
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
-          ),
+              colorScheme: dark,
+              sliderTheme: SliderThemeData(year2023: false),
+              // TODO add ? 
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: <TargetPlatform, PageTransitionsBuilder>{
+                  // Set the predictive back transitions for Android.
+                  TargetPlatform.android:
+                      PredictiveBackPageTransitionsBuilder(),
+                },
+              ),
+              progressIndicatorTheme:
+                  ProgressIndicatorThemeData(year2023: false)),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {
@@ -384,6 +413,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
               case '/calendar':
                 showCalendar();
+                break;
+
+              case 'school://create':
+                print('now');
                 break;
 
               default:

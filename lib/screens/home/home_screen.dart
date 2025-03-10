@@ -126,20 +126,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
   }
 
-  void updateHwWidget() {
-    final hws = ref.read(hwUncompletedProvider);
-    List<dynamic> json = [];
-
-    for (var element in hws) {
-      json.add(element.toWidgetJson());
-    }
-
-    print(jsonEncode(json));
-
-    HomeWidget.saveWidgetData('hws', jsonEncode(json));
-    HomeWidget.updateWidget(name: 'HomeworksWidgetReceiver');
-  }
-
   @override
   Widget build(BuildContext context) {
     final hws = ref.watch(hwDatesProvider);
@@ -225,10 +211,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     examNumberOfIncomplete: upcomingExams,
                     hwNumberOfMissed: missedHw.length,
                   ),
-                  // FilledButton(
-                  //   onPressed: updateHwWidget,
-                  //   child: Text('hw widget'),
-                  // ),
                   SizedBox(height: 24),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

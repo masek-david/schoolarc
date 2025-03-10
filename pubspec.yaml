@@ -62,6 +62,11 @@ dependencies:
   uuid: ^4.5.1
   animated_reorderable_list: ^1.1.5
   home_widget: ^0.7.0+1
+  workmanager:
+    git:
+      url: https://github.com/fluttercommunity/flutter_workmanager.git
+      path: workmanager
+      ref: main
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,7 @@
 package com.example.myapp
 
-class hw_widget_receiver {
+import HomeWidgetGlanceWidgetReceiver
+
+class HwWidgetReceiver : HomeWidgetGlanceWidgetReceiver<HwWidget>() {
+    override val glanceAppWidget = HwWidget()
 }

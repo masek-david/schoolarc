@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
@@ -111,19 +113,25 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
 
 final hwUncompletedProvider = Provider<List<HomeworkDTO>>(
   (ref) {
-    final hws = ref.watch(hwProvider);
-
+    final hws = ref.watch(hwSortedProvider);
     final list = <HomeworkDTO>[];
 
-    hws.forEach(
-      (key, hw) {
-        if (!hw.isDeleted && !hw.isCompleted && !hw.isBeingAnimated) {
-          list.add(hw);
-        }
-      },
-    );
+    for (int i = 3; i >= 0; i--) {
+      list.addAll([...hws[i]!]);
+    }
 
-    list.sort((a, b) => b.deadline.compareTo(a.deadline));
+    // final hws = ref.watch(hwProvider);
+
+    // hws.forEach(
+    //   (key, hw) {
+    //     if (!hw.isDeleted && !hw.isCompleted && !hw.isBeingAnimated) {
+    //       list.add(hw);
+    //     }
+    //   },
+    // );
+
+    // list.sort((a, b) => b.deadline.compareTo(a.deadline));
+    // list.sort((a, b) => b.priority.index.compareTo(a.priority.index));
 
     return list;
   },
@@ -154,7 +162,8 @@ List<HomeworkDTO> hwsGetMissed(Map<int, HomeworkDTO> original) {
   return missedHw;
 }
 
-class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
+class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
+    with WidgetsBindingObserver {
   Map<int, SubjectDTO> subjects = {};
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
 
@@ -175,6 +184,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
 
     listenToFirebase();
 
+    WidgetsBinding.instance.addObserver(this);
     return _dbState;
   }
 
@@ -192,6 +202,22 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
         );
       },
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      try {
+        await Hive.box('hwBox').close();
+      } on Object {
+        // it shouldnt matter
+      }
+      await Hive.openBox('hwBox');
+
+      _loadState();
+    }
   }
 
   Future<void> listenToFirebase() async {
@@ -224,6 +250,10 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
         );
 
         updatedHws[doc.id] = fireHw;
+      }
+
+      if (!Hive.box('hwBox').isOpen) {
+        await Hive.openBox('hwBox');
       }
 
       updatedHws.forEach(
@@ -299,7 +329,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
             !element.isDeleted &&
             !element.isCompleted)
         .firstOrNull;
-        
+
     if (!hw.isCompleted && !hw.isDeleted) {
       if (hwWithSameOrder != null && !addToEnd) {
         if (hw.timestamp.millisecondsSinceEpoch <
@@ -333,7 +363,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
   }
 
   /// assign timestamp manually, if no fireId, it will add it as now
-  void edit(
+  Future<void> edit(
     HomeworkDTO editedHw, {
     bool syncWithFire = true,
 
@@ -383,7 +413,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
       }
     }
 
-    homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
+    await homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
 
     if (syncWithFire) {
       if (editedHw.fireId == null) {
@@ -513,8 +543,16 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
     ref.read(examProvider.notifier).saveNew(hw.toExam());
   }
 
-  void complete(HomeworkDTO hw, bool nowIsCompleted) {
-    edit(
+  Future<void> completeIndex(int dbIndex, bool nowIsCompleted) async {
+    final hw = _dbState[dbIndex];
+
+    if (hw != null) {
+      await complete(hw, nowIsCompleted);
+    }
+  }
+
+  Future<void> complete(HomeworkDTO hw, bool nowIsCompleted) async {
+    await edit(
       hw.copyWith(timestamp: Timestamp.now(), isCompleted: nowIsCompleted),
       stateUpdateDelay: nowIsCompleted,
     );
