@@ -11,7 +11,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/school_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 
 class MyDrawer extends StatelessWidget {
