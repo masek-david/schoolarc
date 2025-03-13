@@ -84,6 +84,17 @@ class Task {
     };
   }
 
+  bool containsText(String text) {
+    if (this.text.contains(text)) return true;
+    if (description != null && description!.contains(text)) {
+      return true;
+    }
+    if (subject != null && subject!.containsText(text)) {
+      return true;
+    }
+    return false;
+  }
+
   Task copyWith({
     SubjectDTO? subject,
     String? text,

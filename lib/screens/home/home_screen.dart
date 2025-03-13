@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
@@ -19,6 +17,7 @@ import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
+import 'package:school_manager/services/widget_service.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
@@ -109,21 +108,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
     return isEmpty;
-  }
-
-  void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
-    Map<String, dynamic> json = {};
-    meals.forEach(
-      (key, value) {
-        json[key.dayText()] = value
-            .map(
-              (e) => e.toJson(),
-            )
-            .toList();
-      },
-    );
-    HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
-    HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
   }
 
   @override

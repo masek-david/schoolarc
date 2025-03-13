@@ -262,7 +262,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
   }
 
-  void switchScreen({required int newScreenIndex}) {
+  void switchPage({required int newScreenIndex}) {
     double pageDiff =
         ((_pageController.page ?? 0) - newScreenIndex.toDouble()).abs();
 
@@ -316,7 +316,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   Widget build(BuildContext context) {
     ScreenSize.init(context);
 
-    ref.listen<List<HomeworkDTO>>(hwUncompletedProvider, (previous, next) {
+    ref.listen<List<HomeworkDTO>>(hwWidgetProvider, (previous, next) {
       updateHwWidget(next);
     });
 
@@ -392,7 +392,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           darkTheme: ThemeData(
               colorScheme: dark,
               sliderTheme: SliderThemeData(year2023: false),
-              // TODO add ? 
+              // TODO add ?
               pageTransitionsTheme: const PageTransitionsTheme(
                 builders: <TargetPlatform, PageTransitionsBuilder>{
                   // Set the predictive back transitions for Android.
@@ -413,10 +413,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
               case '/calendar':
                 showCalendar();
-                break;
-
-              case 'school://create':
-                print('now');
                 break;
 
               default:
@@ -449,7 +445,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                     children: [
                       if (isWide)
                         SideNavBar(
-                          onTap: switchScreen,
+                          onTap: switchPage,
                           pageIndex: currentPageIndex,
                         ),
                       WideScreenBorders(
@@ -472,21 +468,18 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                   ),
                 ),
                 drawer: MyDrawer(
-                  setThemeMode: refreshTheme,
+                  refreshTheme: refreshTheme,
                   startTutorial: startTutorial,
                 ),
                 bottomNavigationBar: isWide
                     ? null
                     : BottomNavBar(
-                        onTap: switchScreen,
+                        onTap: switchPage,
                         pageIndex: currentPageIndex,
                       ),
               ),
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
-              if (showingFirebase)
-                FirestoreLoginScreen(
-                  onHide: hideFirebase,
-                ),
+              if (showingFirebase) FirestoreLoginScreen(onHide: hideFirebase),
             ],
           ),
         );

@@ -7,11 +7,11 @@ import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifications_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
-import 'package:school_manager/school_app.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({

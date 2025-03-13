@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/firestore/firebase_options.dart';
+import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:workmanager/workmanager.dart';
 
 void updateHwWidget(List<HomeworkDTO> hws) {
@@ -22,6 +27,28 @@ void updateHwWidget(List<HomeworkDTO> hws) {
 
   HomeWidget.saveWidgetData('hw', jsonEncode(json));
   HomeWidget.updateWidget(name: 'HwWidgetReceiver');
+}
+
+void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
+  Map<String, dynamic> json = {};
+  final now = DateTime.now();
+
+  meals.forEach(
+    (key, value) {
+      // if it is after meal time, dont include meal for today
+      if (!key.isSameDay(now) ||
+          TimeOfDay.fromDateTime(now)
+              .isBefore(settings.getTimeOfDay(Setting.mealsShowTodayUntil))) {
+        json[key.dayText()] = value
+            .map(
+              (e) => e.toJson(),
+            )
+            .toList();
+      }
+    },
+  );
+  HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
+  HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
 }
 
 @pragma("vm:entry-point")
@@ -74,7 +101,7 @@ Future<void> _complete(
           .read(hwProvider.notifier)
           .completeIndex(dbIndex, isCompleted);
 
-      updateHwWidget(container.read(hwUncompletedProvider));
+      updateHwWidget(container.read(hwWidgetProvider));
 
       await Hive.box('hwBox').flush();
       await Hive.box('hwBox').close();

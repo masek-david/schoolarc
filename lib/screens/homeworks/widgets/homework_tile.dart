@@ -22,6 +22,7 @@ class HomeworkTile extends StatefulWidget {
     required this.onEdit,
     this.showCompletion = true,
     required this.onConvert,
+    this.expUseHwOverlay,
   });
 
   final HomeworkDTO hw;
@@ -29,6 +30,7 @@ class HomeworkTile extends StatefulWidget {
   final SlidableController? slidableController;
   final bool showCompletion;
   final bool borderIfMissed;
+  final bool? expUseHwOverlay;
   final void Function(bool) onChangedCompletion;
   final void Function()? onDelete;
   final void Function() onEdit;
@@ -44,7 +46,14 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
   final widgetKey = GlobalKey();
   bool isShown = true;
-  bool expUseHwOverlay = settings.get(Setting.expUseHwOverlay);
+  late bool expUseHwOverlay;
+
+  @override
+  void initState() {
+    expUseHwOverlay = widget.expUseHwOverlay ?? settings.get(Setting.expUseHwOverlay);
+    
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +73,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double extentRatio = 120 / constraints.maxWidth;
+        double extentRatio = 135 / constraints.maxWidth;
 
         if (extentRatio > 1) {
           extentRatio = 1;

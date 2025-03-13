@@ -11,17 +11,18 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
-import 'package:school_manager/school_app.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
+import 'package:school_manager/widgets/drawer/search_bar.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
     super.key,
-    required this.setThemeMode,
+    required this.refreshTheme,
     required this.startTutorial,
   });
 
-  final void Function() setThemeMode;
+  final void Function() refreshTheme;
   final void Function() startTutorial;
 
   void showSnackbar(BuildContext context, String text) {
@@ -42,6 +43,10 @@ class MyDrawer extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
               child: Text('School app', style: TextStyle(fontSize: 20)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
+              child: MySearchBar()
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -114,7 +119,7 @@ class MyDrawer extends StatelessWidget {
                           initialValue: settings.get(Setting.showDebugInfo),
                           onChanged: (value) {
                             settings.save(Setting.showDebugInfo, value);
-                            setThemeMode();
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -127,7 +132,7 @@ class MyDrawer extends StatelessWidget {
                           onChanged: (value) {
                             settings.save(
                                 Setting.debugShowPerformanceOverlay, value);
-                            setThemeMode();
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -138,9 +143,8 @@ class MyDrawer extends StatelessWidget {
                           initialValue:
                               settings.get(Setting.debugShowFireOverlay),
                           onChanged: (value) {
-                            settings.save(
-                                Setting.debugShowFireOverlay, value);
-                            setThemeMode();
+                            settings.save(Setting.debugShowFireOverlay, value);
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -183,7 +187,7 @@ class MyDrawer extends StatelessWidget {
                 navigatorKey.currentState?.push(
                   MaterialPageRoute(
                     builder: (context) => SettingsScreen(
-                      refreshTheme: setThemeMode,
+                      refreshTheme: refreshTheme,
                     ),
                   ),
                 );

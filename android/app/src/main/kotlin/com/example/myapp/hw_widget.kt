@@ -116,13 +116,14 @@ class HwWidget : GlanceAppWidget() {
 
         if (hws.isEmpty()) {
             Box(
-                modifier = GlanceModifier.background(GlanceTheme.colors.surface).fillMaxSize(),
+                modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground).fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "No meals found", style = TextStyle(color = GlanceTheme.colors.onBackground)
+                    "No homeworks found", style = TextStyle(color = GlanceTheme.colors.onBackground)
                 )
             }
+            return
         }
 
         Box(
@@ -180,20 +181,20 @@ class HwWidget : GlanceAppWidget() {
                     Spacer(modifier = GlanceModifier.size(62.dp))
                 }
             }
-            Box(
-                modifier = GlanceModifier.padding(8.dp).fillMaxSize(),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                Button(
-                    "+",
-                    style = TextStyle(fontSize = 24.sp),
-                    onClick = actionStartActivity<MainActivity>(
-                        context,
+//            Box(
+//                modifier = GlanceModifier.padding(8.dp).fillMaxSize(),
+//                contentAlignment = Alignment.BottomEnd
+//            ) {
+//                Button(
+//                    "+",
+//                    style = TextStyle(fontSize = 24.sp),
+//                    onClick = actionStartActivity<MainActivity>(
+//                        context,
 //                        Uri.parse("school://create")
-                    ),
-                    modifier = GlanceModifier.size(50.dp).padding(bottom = 2.dp, start = 1.dp)
-                )
-            }
+//                    ),
+//                    modifier = GlanceModifier.size(50.dp).padding(bottom = 2.dp, start = 1.dp)
+//                )
+//            }
         }
     }
 }

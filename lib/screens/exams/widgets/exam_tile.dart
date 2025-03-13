@@ -20,7 +20,7 @@ class ExamTile extends StatelessWidget {
 
   final ExamDTO exam;
   final bool showDeadline;
-  final void Function() onDelete;
+  final void Function()? onDelete;
   final void Function() onEdit;
   final void Function()? onConvert;
 
@@ -37,47 +37,44 @@ class ExamTile extends StatelessWidget {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      double extentRatio = 120 / constraints.maxWidth;
+      double extentRatio = 135 / constraints.maxWidth;
 
       if (extentRatio > 1) {
         extentRatio = 1;
       }
 
-      return ClipRRect(
-        borderRadius:
-            const BorderRadius.horizontal(left: Radius.circular(1000)),
-        child: Slidable(
-          groupTag: '0',
-          startActionPane: onConvert == null
-              ? null
-              : ActionPane(
-                  motion: const StretchMotion(),
-                  extentRatio: extentRatio,
-                  children: [
-                    SlidableAction(
-                      onPressed: (context) {
-                        HapticFeedback.lightImpact();
-                        onConvert!();
-                      },
-                      icon: Icons.swap_vertical_circle_outlined,
-                      label: 'To homework',
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onTertiaryContainer,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.tertiaryContainer,
-                      borderRadius: BorderRadius.circular(100),
-                      flex: 10,
-                    ),
-                  ],
-                ),
-          endActionPane: ActionPane(
-            motion: const StretchMotion(),
-            extentRatio: extentRatio,
-            children: [
+      return Slidable(
+        groupTag: '0',
+        startActionPane: onConvert == null
+            ? null
+            : ActionPane(
+                motion: const StretchMotion(),
+                extentRatio: extentRatio,
+                children: [
+                  SlidableAction(
+                    onPressed: (context) {
+                      HapticFeedback.lightImpact();
+                      onConvert!();
+                    },
+                    icon: Icons.swap_vertical_circle_outlined,
+                    label: 'To homework',
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onTertiaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.tertiaryContainer,
+                    borderRadius: BorderRadius.circular(100),
+                    flex: 10,
+                  ),
+                ],
+              ),
+        endActionPane: onDelete == null ? null : ActionPane(
+          motion: const StretchMotion(),
+          extentRatio: extentRatio,
+          children: [
               SlidableAction(
                 onPressed: (context) {
                   HapticFeedback.lightImpact();
-                  onDelete();
+                  onDelete!();
                 },
                 icon: Icons.delete,
                 foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
@@ -85,75 +82,72 @@ class ExamTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(35),
                 flex: 10,
               ),
-            ],
+          ],
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(35),
+            color: exam.isCompleted
+                ? Theme.of(context).colorScheme.surfaceContainerLowest
+                : Theme.of(context).colorScheme.surfaceContainerLow,
           ),
-          child: Container(
-            decoration: BoxDecoration(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onEdit,
               borderRadius: BorderRadius.circular(35),
-              color: exam.isCompleted
-                  ? Theme.of(context).colorScheme.surfaceContainerLowest
-                  : Theme.of(context).colorScheme.surfaceContainerLow,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onEdit,
-                borderRadius: BorderRadius.circular(35),
-                child: Opacity(
-                  opacity: opacity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        if (settings.get(Setting.showDebugInfo))
-                          Column(
-                            children: [
-                              Text('id: ${exam.dbIndex.toString()}'),
-                              Text(exam.order.toString()),
-                            ],
-                          ),
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              color: exam.priority.getContainerColor(context)),
-                          child: SubjectShortcut(
-                              subject: exam.subject,
-                              color:
-                                  exam.priority.getOnContainerColor(context)),
+              child: Opacity(
+                opacity: opacity,
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      if (settings.get(Setting.showDebugInfo))
+                        Column(
+                          children: [
+                            Text('id: ${exam.dbIndex.toString()}'),
+                            Text(exam.order.toString()),
+                          ],
                         ),
-                        if (exam.description != null && exam.description != '')
-                          const SizedBox(width: 8),
-                        if (exam.description != null && exam.description != '')
-                          Icon(
-                            Icons.notes,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: exam.priority.getContainerColor(context)),
+                        child: SubjectShortcut(
+                            subject: exam.subject,
+                            color: exam.priority.getOnContainerColor(context)),
+                      ),
+                      if (exam.description != null && exam.description != '')
                         const SizedBox(width: 8),
-                        Expanded(child: Text(exam.text, maxLines: 2)),
-                        if (settings.get(Setting.showDebugInfo))
-                          Column(
-                            children: [
-                              Text(
-                                  'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
-                            ],
-                          ),
-                        const SizedBox(width: 8),
-                        if (showDeadline)
-                          Text(
-                            exam.deadline.dateText(),
-                            maxLines: 2,
-                            style: TextStyle(
-                                color: isMissed ? missedColor : null,
-                                fontSize: 12),
-                          ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
+                      if (exam.description != null && exam.description != '')
+                        Icon(
+                          Icons.notes,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(exam.text, maxLines: 2)),
+                      if (settings.get(Setting.showDebugInfo))
+                        Column(
+                          children: [
+                            Text(
+                                'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
+                          ],
+                        ),
+                      const SizedBox(width: 8),
+                      if (showDeadline)
+                        Text(
+                          exam.deadline.dateText(),
+                          maxLines: 2,
+                          style: TextStyle(
+                              color: isMissed ? missedColor : null,
+                              fontSize: 12),
+                        ),
+                      const SizedBox(width: 8),
+                    ],
                   ),
                 ),
               ),

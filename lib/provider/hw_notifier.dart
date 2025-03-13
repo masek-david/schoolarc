@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
@@ -111,7 +112,7 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwUncompletedProvider = Provider<List<HomeworkDTO>>(
+final hwWidgetProvider = Provider<List<HomeworkDTO>>(
   (ref) {
     final hws = ref.watch(hwSortedProvider);
     final list = <HomeworkDTO>[];
@@ -119,19 +120,6 @@ final hwUncompletedProvider = Provider<List<HomeworkDTO>>(
     for (int i = 3; i >= 0; i--) {
       list.addAll([...hws[i]!]);
     }
-
-    // final hws = ref.watch(hwProvider);
-
-    // hws.forEach(
-    //   (key, hw) {
-    //     if (!hw.isDeleted && !hw.isCompleted && !hw.isBeingAnimated) {
-    //       list.add(hw);
-    //     }
-    //   },
-    // );
-
-    // list.sort((a, b) => b.deadline.compareTo(a.deadline));
-    // list.sort((a, b) => b.priority.index.compareTo(a.priority.index));
 
     return list;
   },
@@ -204,11 +192,12 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
     );
   }
 
+  // when reopening app, reload hive, to check for modified homework, only on android
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && Platform.isAndroid) {
       try {
         await Hive.box('hwBox').close();
       } on Object {

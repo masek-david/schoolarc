@@ -59,21 +59,27 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               FilledButton(
-                onPressed: () => widget.onSave(
-                  true,
-                  widget.hw.copyWith(
-                        priority: TaskPriority(pickedPriority),
-                      ),
-                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  widget.onSave(
+                    true,
+                    widget.hw.copyWith(
+                      priority: TaskPriority(pickedPriority),
+                    ),
+                  );
+                },
                 child: Text('Add as homework'),
               ),
               FilledButton(
-                onPressed: () => widget.onSave(
-                  false,
-                  widget.hw.copyWith(
-                        priority: TaskPriority(pickedPriority),
-                      ),
-                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  widget.onSave(
+                    false,
+                    widget.hw.copyWith(
+                      priority: TaskPriority(pickedPriority),
+                    ),
+                  );
+                },
                 child: Text('Add as a exam'),
               ),
             ],
