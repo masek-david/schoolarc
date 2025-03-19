@@ -32,6 +32,10 @@ class SubjectDatabase {
     );
   }
 
+  void delete(int dbKey){
+    _subjectBox.delete(dbKey);
+  }
+
   void deleteAllFromDisk() {
     _subjectBox.deleteFromDisk();
   }

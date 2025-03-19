@@ -17,7 +17,7 @@ import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
-import 'package:school_manager/services/widget_service.dart';
+import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
@@ -144,8 +144,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
       hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
       examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
+    } else {
+      hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
+      examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
+    bool showMeals = settings.get(Setting.homeShowMeals);
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -203,10 +207,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Flexible(
                             child: Column(
                           children: [
-                            MealsCard(
-                              meals: mealsFuture,
-                              refresh: refreshMeals,
-                            ),
+                            if (showMeals)
+                              MealsCard(
+                                meals: mealsFuture,
+                                refresh: refreshMeals,
+                              ),
                             TimetableCard(
                               refresh: refreshTimetable,
                               defaultTimeTable: defaultTimeTable,
@@ -221,7 +226,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (!isWide)
+                            if (!isWide && showMeals)
                               MealsCard(
                                 meals: mealsFuture,
                                 refresh: refreshMeals,

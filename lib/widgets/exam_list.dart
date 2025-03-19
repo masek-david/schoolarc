@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
+import 'package:school_manager/screens/exams/exam_tile.dart';
 
 class ExamList extends ConsumerWidget {
   const ExamList({
@@ -57,6 +58,7 @@ class ExamList extends ConsumerWidget {
                   builder: (context, constraints) {
                     return LongPressDraggable(
                       data: exam,
+                      onDragStarted: () => HapticFeedback.mediumImpact(),
                       feedback: SizedBox(
                         width: constraints.maxWidth,
                         child: Opacity(

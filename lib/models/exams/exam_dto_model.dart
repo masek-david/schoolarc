@@ -17,6 +17,7 @@ class ExamDTO extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
+    super.stateReaddingVersion,
   });
 
   Exam convert() {
@@ -35,7 +36,7 @@ class ExamDTO extends Task {
 
   @override
   String toString() {
-    return 'exam: $text, ${subject?.shortcut}, order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
+    return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
   }
 
   @override
@@ -51,6 +52,7 @@ class ExamDTO extends Task {
     Timestamp? timestamp,
     bool? isDeleted,
     int? order,
+    int? stateReaddingVersion,
   }) {
     return ExamDTO(
       subject: subject ?? this.subject,
@@ -64,6 +66,7 @@ class ExamDTO extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

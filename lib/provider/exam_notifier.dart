@@ -108,6 +108,23 @@ final examCompletedProvider = Provider<List<ExamDTO>>(
   },
 );
 
+final examDeletedProvider = Provider<List<ExamDTO>>(
+  (ref) {
+    final exams = ref.watch(examProvider);
+
+    final list = exams.values
+        .where(
+          (element) => element.isDeleted,
+        )
+        .toList();
+    list.sort(
+      (a, b) => a.timestamp.compareTo(b.timestamp),
+    );
+
+    return list;
+  },
+);
+
 class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   Map<int, SubjectDTO> subjects = {};
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
@@ -128,6 +145,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
     subjects = ref.read(subjectsProvider);
 
     listenToFirebase();
+    _checkForDeleted();
 
     scheduleMidnightTask();
 
@@ -190,20 +208,21 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       log('error listening to firebase exams: ${error.toString()}');
     });
   }
-  
+
+  /// at midnight update state with exams for yesterday being completed
   void scheduleMidnightTask() {
-  DateTime now = DateTime.now();
-  DateTime nextMidnight = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
+    DateTime now = DateTime.now();
+    DateTime nextMidnight = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
 
-  Duration initialDelay = nextMidnight.difference(now);
+    Duration initialDelay = nextMidnight.difference(now);
 
-  Future.delayed(initialDelay, () {
-    checkAllIfCompleted();
-    Timer.periodic(const Duration(days: 1), (timer) {
+    Future.delayed(initialDelay, () {
       checkAllIfCompleted();
+      Timer.periodic(const Duration(days: 1), (timer) {
+        checkAllIfCompleted();
+      });
     });
-  });
-}
+  }
 
   void checkAllIfCompleted() {
     Map<int, ExamDTO> updated = {};
@@ -232,6 +251,9 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
         checkFireExam(element);
       },
     );
+
+    await _checkForDeleted();
+    _loadState();
 
     state.forEach(
       (key, value) {
@@ -480,10 +502,38 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   }
 
   void revertDelete(ExamDTO exam) {
-    edit(exam.copyWith(timestamp: Timestamp.now(), isDeleted: false));
+    edit(
+      exam.copyWith(
+          timestamp: Timestamp.now(),
+          isDeleted: false,
+          stateReaddingVersion: exam.stateReaddingVersion + 1),
+    );
   }
 
-  /// checks and updates/adds exam from firestore
+  /// `_permanentDelete` must be called from build(), because it doesnt update the state
+  Future<void> _permanentDelete(List<ExamDTO> exams) async {
+    if (exams.isEmpty) return;
+    for (var element in exams) {
+      examsDb.delete(element.dbIndex);
+    }
+    await firestoreService.deleteExams(exams);
+  }
+
+  /// `_checkForDeleted` must be called from build(), because it doesnt update the state
+  Future<void> _checkForDeleted() async {
+    final now = DateTime.now();
+    List<ExamDTO> examsToDelete = [];
+
+    for (var exam in _dbState.values) {
+      if (exam.isDeleted &&
+          now.difference(exam.timestamp.toDate()) > Duration(days: 7)) {
+        examsToDelete.add(exam);
+      }
+    }
+    await _permanentDelete(examsToDelete);
+  }
+
+  /// checks and updates/adds exam from firestore, overwrites the newest version
   Future<void> checkFireExam(Exam fireExam) async {
     // print('checking exam from fire: ${fireExam.toString()}');
 

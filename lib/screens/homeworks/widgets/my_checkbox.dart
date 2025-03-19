@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/models/priority_model.dart';
 
-class MyCheckbox extends StatefulWidget {
+class MyCheckbox extends StatelessWidget {
   const MyCheckbox({
     required this.value,
     required this.priority,
@@ -12,31 +12,27 @@ class MyCheckbox extends StatefulWidget {
 
   final bool value;
   final TaskPriority priority;
-  final void Function(bool) onChanged;
+  final void Function(bool)? onChanged;
 
-  @override
-  State<MyCheckbox> createState() => _MyCheckboxState();
-}
-
-class _MyCheckboxState extends State<MyCheckbox> {
-  late bool checboxValue = widget.value;
-  
+  // late bool checboxValue = widget.value;
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
       scale: 1.3,
-      child: Checkbox(
-        value: checboxValue,
-        activeColor: widget.priority.getColor(context),
+      child: Checkbox( 
+        value: value,
+        activeColor: priority.getColor(context),
         checkColor: Colors.white,
-        side: BorderSide(color: widget.priority.getColor(context), width: 2.7),
+        side: BorderSide(color: priority.getColor(context), width: 2.7),
         shape: const CircleBorder(),
         onChanged: (value) {
-          HapticFeedback.mediumImpact();
-          widget.onChanged(value!);
-          setState(() {
-            checboxValue = value;
-          });
+          if (onChanged != null) {
+            HapticFeedback.mediumImpact();
+            onChanged!(value!);
+            // setState(() {
+            //   checboxValue = value;
+            // });
+          }
         },
       ),
     );

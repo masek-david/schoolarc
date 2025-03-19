@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
-import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
+import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class WelcomeScreenExams extends StatefulWidget {

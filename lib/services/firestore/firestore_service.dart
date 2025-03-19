@@ -77,6 +77,28 @@ class FirestoreService {
     return exams.snapshots();
   }
 
+  Future<void> deleteExams(List<ExamDTO> examsToDelete) async {
+    if (examsToDelete.isEmpty) {
+      return;
+    }
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var exam in examsToDelete) {
+      if (exam.fireId != null) {
+        final docRef = exams.doc(exam.fireId);
+        batch.delete(docRef);
+      }
+    }
+
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      log(e.toString());
+    }
+    return;
+  }
+
   Future<void> editExams(List<ExamDTO> examsToUpdate) async {
     if (examsToUpdate.isEmpty) {
       return;
@@ -169,6 +191,28 @@ class FirestoreService {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> homeworksListenToChanges() {
     return homeworks.snapshots();
+  }
+
+  Future<void> deleteHomeworks(List<HomeworkDTO> hwsToDelete) async {
+    if (hwsToDelete.isEmpty) {
+      return;
+    }
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var homework in hwsToDelete) {
+      if (homework.fireId != null) {
+        final docRef = homeworks.doc(homework.fireId);
+        batch.delete(docRef);
+      }
+    }
+
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      log(e.toString());
+    }
+    return;
   }
 
   Future<void> editHomeworks(List<HomeworkDTO> hwsToUpdate) async {
@@ -268,6 +312,28 @@ class FirestoreService {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> subjectsListenToChanges() {
     return subjects.snapshots();
+  }
+
+  Future<void> deleteSubjects(List<SubjectDTO> subjectsToDelete) async {
+    if (subjectsToDelete.isEmpty) {
+      return;
+    }
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var subject in subjectsToDelete) {
+      if (subject.fireId != null) {
+        final docRef = subjects.doc(subject.fireId);
+        batch.delete(docRef);
+      }
+    }
+
+    try {
+      await batch.commit();
+    } on Object catch (e) {
+      log(e.toString());
+    }
+    return;
   }
 
   Future<void> editSubjects(List<SubjectDTO> updates) async {

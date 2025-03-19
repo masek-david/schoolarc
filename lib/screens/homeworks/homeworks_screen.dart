@@ -77,7 +77,7 @@ class HomeworksScreen extends ConsumerWidget {
           floatingActionButton: FloatingActionButton(
             tooltip: 'Add new homework',
             onPressed: () async {
-              HapticFeedback.lightImpact();
+              HapticFeedback.mediumImpact();
               addNewHw(context, ref);
             },
             enableFeedback: true,
@@ -116,9 +116,11 @@ class HomeworksScreen extends ConsumerWidget {
                         buildDefaultDragHandles: false,
                         lockedItems: [
                           _AnimatedReorderableListItem(
-                              priority: TaskPriority(3))
+                            priority: TaskPriority(3),
+                          )
                         ],
                         nonDraggableItems: nonDraggableItems,
+                        onReorderStart: (p0) => HapticFeedback.mediumImpact(),
                         itemBuilder: (context, index) {
                           final item = itemList[index];
 
@@ -141,9 +143,10 @@ class HomeworksScreen extends ConsumerWidget {
 
                           final hw = item.hw!;
                           return AnimatedCompletionTile(
-                            // timestamp needs to be there, when the animation plays (on leave) and it should appear,
-                            // you would get multiple widgets used the same global key error
-                            key: ValueKey('hw: ${hw.dbIndex} ${hw.timestamp}'),
+                            // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                            // Multiple widgets use the same globalkey error
+                            key: ValueKey(
+                                'hw: ${hw.dbIndex} ${hw.stateReaddingVersion}'),
                             hw: hw,
                             padding: EdgeInsets.symmetric(vertical: 4),
                             onChangedCompletion: (value) {
@@ -152,6 +155,15 @@ class HomeworksScreen extends ConsumerWidget {
                             onDelete: () => deleteHw(context, ref, hw),
                             onEdit: () => editHw(context, ref, hw),
                             onConvert: () => convertHw(context, ref, hw),
+                          );
+                        },
+                        removeItemBuilder: (child, animation) {
+                          // we need custom remove item painter, to absorb pointer, the user mustnt 
+                          // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
+                          
+                          return FadeTransition(
+                            opacity: animation,
+                            child: AbsorbPointer(child: child),
                           );
                         },
                         isSameItem: (a, b) => a.isSameAs(b),
@@ -205,14 +217,13 @@ class HomeworksScreen extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: HomeworkTile(
-                hw: hw,
-                onChangedCompletion: (value) {
-                  ref.read(hwProvider.notifier).complete(hw, value);
-                },
-                onDelete: () => deleteHw(context, ref, hw),
-                onEdit: () => editHw(context, ref, hw),
-                onConvert: () => convertHw(context, ref, hw)
-              ),
+                  hw: hw,
+                  onChangedCompletion: (value) {
+                    ref.read(hwProvider.notifier).complete(hw, value);
+                  },
+                  onDelete: () => deleteHw(context, ref, hw),
+                  onEdit: () => editHw(context, ref, hw),
+                  onConvert: () => convertHw(context, ref, hw)),
             );
           },
         ),

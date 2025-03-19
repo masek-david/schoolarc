@@ -15,14 +15,14 @@ class HomeworkTile extends StatefulWidget {
     super.key,
     required this.hw,
     this.showDeadline = true,
-    this.slidableController,
     this.borderIfMissed = true,
+    this.showCompletion = true,
+    this.expUseHwOverlay,
+    this.slidableController,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
-    this.showCompletion = true,
     required this.onConvert,
-    this.expUseHwOverlay,
   });
 
   final HomeworkDTO hw;
@@ -31,7 +31,7 @@ class HomeworkTile extends StatefulWidget {
   final bool showCompletion;
   final bool borderIfMissed;
   final bool? expUseHwOverlay;
-  final void Function(bool) onChangedCompletion;
+  final void Function(bool)? onChangedCompletion;
   final void Function()? onDelete;
   final void Function() onEdit;
   final void Function()? onConvert;

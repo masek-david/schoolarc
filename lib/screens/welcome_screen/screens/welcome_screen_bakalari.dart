@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
+import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 
 class WelcomeScreenBakalari extends StatelessWidget {
   const WelcomeScreenBakalari({super.key});
@@ -19,7 +19,7 @@ class WelcomeScreenBakalari extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 50),
-            const Expanded(child: BakalariScreen(showAppbar: false,))
+            const Expanded(child: BakaLoginScreen(showAppbar: false,))
           ],
         ),
       )),

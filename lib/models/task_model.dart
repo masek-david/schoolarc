@@ -4,6 +4,7 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 
 class Task {
   SubjectDTO? subject;
@@ -18,6 +19,11 @@ class Task {
   final bool isDeleted;
   int order;
 
+  /// stateReaddingVersion changes when the task is re-added, so it doesnt trigger
+  /// Multiple widgets use the same globalkey error in AnimatedReorderableListView
+  /// it is used in a global key there
+  final int stateReaddingVersion;
+
   Task({
     required this.fireId,
     required this.timestamp,
@@ -30,6 +36,7 @@ class Task {
     required this.dbIndex,
     required this.description,
     required this.order,
+    this.stateReaddingVersion = 0,
   });
 
   Task.empty({DateTime? deadline})
@@ -41,7 +48,8 @@ class Task {
         dbIndex = 0,
         isDeleted = false,
         order = 0,
-        timestamp = Timestamp.now();
+        timestamp = Timestamp.now(),
+        stateReaddingVersion = 0;
 
   Homework toHw() {
     return Homework(
@@ -85,8 +93,12 @@ class Task {
   }
 
   bool containsText(String text) {
-    if (this.text.contains(text)) return true;
-    if (description != null && description!.contains(text)) {
+    text = text.withoutDiacriticalMarks.toLowerCase();
+    if (this.text.withoutDiacriticalMarks.toLowerCase().contains(text)) {
+      return true;
+    }
+    if (description != null &&
+        description!.withoutDiacriticalMarks.toLowerCase().contains(text)) {
       return true;
     }
     if (subject != null && subject!.containsText(text)) {
@@ -107,6 +119,7 @@ class Task {
     Timestamp? timestamp,
     bool? isDeleted,
     int? order,
+    int? stateReaddingVersion,
   }) {
     return Task(
       subject: subject ?? this.subject,
@@ -120,6 +133,7 @@ class Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

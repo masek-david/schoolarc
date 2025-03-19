@@ -1,3 +1,4 @@
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -146,21 +147,16 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         return;
                       }
                     },
-                    child: ReorderableListView.builder(
-                      onReorderStart: (index) => HapticFeedback.lightImpact(),
-                      itemCount: subjects.length + 1,
+                    child: AnimatedReorderableListView(
+                      onReorderStart: (index) => HapticFeedback.mediumImpact(),
+                      items: subjects,
+                      isSameItem: (a, b) => a.dbIndex == b.dbIndex,
+                      padding: EdgeInsets.only(bottom: 100),
                       itemBuilder: (context, index) {
-                        if (index == subjects.length) {
-                          return const SizedBox(
-                            height: 100,
-                            key: Key('SubjectScreenSpacer'),
-                          );
-                        }
-
                         SubjectDTO subject = subjects[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          key: Key('$index'),
+                          key: Key('Sub: ${subject.dbIndex}'),
                           child: SubjectTile(
                             subject: subject,
                             onTap: () => editSubject(subject, ref),
@@ -169,10 +165,6 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         );
                       },
                       onReorder: (int oldIndex, int newIndex) {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-
                         ref.read(subjectsProvider.notifier).reorder(
                               oldIndex,
                               newIndex,

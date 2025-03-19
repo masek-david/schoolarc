@@ -45,6 +45,16 @@ class _HomeSettingsState extends State<HomeSettings> {
             },
           ),
         ),
+        SettingTile(
+          label: 'Show meals',
+          trailing: SwitchAction(
+            initialValue: settings.get(Setting.homeShowMeals),
+            onChanged: (value) {
+              settings.save(Setting.homeShowMeals, value);
+              widget.onChanged();
+            },
+          ),
+        ),
       ],
     );
   }

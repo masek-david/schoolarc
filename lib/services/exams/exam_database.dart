@@ -23,6 +23,10 @@ class ExamDatabase {
     return _examBox.put(dbKey, exam);
   }
 
+  void delete(int dbKey){
+    _examBox.delete(dbKey);
+  }
+
   void deleteAllFromDisk() {
     _examBox.deleteFromDisk();
   }

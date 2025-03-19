@@ -21,16 +21,14 @@ class Activity {
 }
 
 final firebaseActivityProvider =
-    StateNotifierProvider<FirebaseActivityNotifier, Map<int, Activity>>((ref) {
-  return FirebaseActivityNotifier();
-});
+    NotifierProvider<FirebaseActivityNotifier, Map<int, Activity>>(FirebaseActivityNotifier.new);
 
 /// 0: subject, 1: homeworks, 2: exams
-class FirebaseActivityNotifier extends StateNotifier<Map<int, Activity>> {
-  FirebaseActivityNotifier()
-      : super(
-          {0: Activity(), 1: Activity(), 2: Activity()},
-        );
+class FirebaseActivityNotifier extends Notifier<Map<int, Activity>> {
+  @override
+  Map<int, Activity> build() {
+    return {0: Activity(), 1: Activity(), 2: Activity()};
+  }
 
   void add(int i) {
     assert(i >= 0 && i <= 2);

@@ -9,7 +9,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
@@ -27,13 +26,12 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
-import 'package:school_manager/services/widget_service.dart';
+import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/screen_size.dart';
-import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/utils/theme_generate.dart';
 import 'package:school_manager/widgets/firebase_overlay.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
@@ -163,18 +161,17 @@ class TasksApp extends ConsumerStatefulWidget {
 
 class _TasksAppState extends ConsumerState<TasksApp> {
   late final _pageController = PageController(
-    initialPage: _settings.get(Setting.initialAppPage),
+    initialPage: settings.get(Setting.initialAppPage),
   );
-  final Key _key = GlobalKey();
+  final Key _pageViewKey = GlobalKey();
 
-  final SettingsDatabase _settings = SettingsDatabase();
-  late int currentPageIndex = _settings.get(Setting.initialAppPage);
+  late int currentPageIndex = settings.get(Setting.initialAppPage);
   bool calendarShowTommorrow = false;
 
-  late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
+  late ThemeMode themeMode = _getThemeMode(settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
   late bool showingTutorial;
-  bool showingFirebase = false;
+  bool showingFirebaseLoginScreen = false;
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -203,7 +200,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
   void hideFirebase() {
     setState(() {
-      showingFirebase = false;
+      showingFirebaseLoginScreen = false;
     });
   }
 
@@ -211,16 +208,17 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   void initState() {
     super.initState();
 
+    // add riverpod reference to firestore service, need to update firebaseOverlay
     firestoreService = FirestoreService(ref: ref);
 
-    if (_settings.firstTimeOpeningApp) {
+    if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
       showingTutorial = false;
     }
 
     if (!firestoreService.isloggedIn && kIsWeb) {
-      showingFirebase = true;
+      showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }
 
@@ -237,21 +235,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     NotificationSender.scheduleTommorrowNotification();
 
     tryGettingNewHomeworks();
-    checkLaunchOrigin();
-  }
-
-  Future<void> checkLaunchOrigin() async {
-    final url = await HomeWidget.initiallyLaunchedFromHomeWidget();
-
-    if (url?.host == 'create') {
-      if (mounted) {
-        addNewHw(context, ref);
-      }
-    }
   }
 
   void firstTimeOpeningApp() {
-    // TODO - when done simply change the key of the value
+    // TODO - when done simply change the key of the value in db
     showingTutorial = false;
   }
 
@@ -268,8 +255,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
     late final pageSwitchAnimationDuration = Duration(
       milliseconds:
-          (_settings.get(Setting.pageSwitchAnimationDuration) as double)
-              .toInt(),
+          (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt(),
     );
 
     if (pageSwitchAnimationDuration.inMilliseconds == 0 || pageDiff == 0.0) {
@@ -451,7 +437,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                       WideScreenBorders(
                         show: isWide && settings.get(Setting.showAppOverlay),
                         child: PageView(
-                          key: _key,
+                          key: _pageViewKey,
                           physics: const NeverScrollableScrollPhysics(),
                           controller: _pageController,
                           children: [
@@ -479,7 +465,8 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                       ),
               ),
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
-              if (showingFirebase) FirestoreLoginScreen(onHide: hideFirebase),
+              if (showingFirebaseLoginScreen)
+                FirestoreLoginScreen(onHide: hideFirebase),
             ],
           ),
         );

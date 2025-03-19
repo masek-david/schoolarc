@@ -2,9 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
-import 'package:school_manager/screens/meals/meals_screen.dart';
+import 'package:school_manager/screens/recently_deleted_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/screens/current_timetable/current_timetable.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
@@ -64,7 +63,7 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     MyDrawerButton(
-                      text: 'Timetable',
+                      text: 'Permanent timetable',
                       icon: const Icon(Icons.calendar_month),
                       onTap: () {
                         navigatorKey.currentState?.push(
@@ -75,18 +74,18 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
-                    MyDrawerButton(
-                      text: 'Current Timetable',
-                      icon: const Icon(Icons.calendar_today_rounded),
-                      onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const CurrentTimetableScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                    // MyDrawerButton(
+                    //   text: 'Current Timetable',
+                    //   icon: const Icon(Icons.calendar_today_rounded),
+                    //   onTap: () {
+                    //     navigatorKey.currentState?.push(
+                    //       MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             const CurrentTimetableScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     MyDrawerButton(
                       text: 'Homeworks from Bakaláři',
                       icon: const Icon(Icons.home_work_outlined),
@@ -99,13 +98,24 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
+                    // MyDrawerButton(
+                    //   text: 'Meals',
+                    //   icon: const Icon(Icons.food_bank_outlined),
+                    //   onTap: () {
+                    //     navigatorKey.currentState?.push(
+                    //       MaterialPageRoute(
+                    //         builder: (context) => MealsScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     MyDrawerButton(
-                      text: 'Meals',
-                      icon: const Icon(Icons.food_bank_outlined),
+                      text: 'Recently deleted',
+                      icon: const Icon(Icons.delete_forever),
                       onTap: () {
                         navigatorKey.currentState?.push(
                           MaterialPageRoute(
-                            builder: (context) => MealsScreen(),
+                            builder: (context) => RecentlyDeletedScreen(),
                           ),
                         );
                       },

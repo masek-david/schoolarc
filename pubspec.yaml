@@ -67,6 +67,7 @@ dependencies:
       url: https://github.com/fluttercommunity/flutter_workmanager.git
       path: workmanager
       ref: main
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

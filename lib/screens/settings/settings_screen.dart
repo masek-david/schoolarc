@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/bakalari/bakalari_screen.dart';
+import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
@@ -71,7 +71,7 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.hexagon_outlined,
             onTap: () => navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (context) => const BakalariScreen(),
+                builder: (context) => const BakaLoginScreen(),
               ),
             ),
           ),

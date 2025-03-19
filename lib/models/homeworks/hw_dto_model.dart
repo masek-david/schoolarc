@@ -17,10 +17,11 @@ class HomeworkDTO extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
+    super.stateReaddingVersion = 0,
     this.isBeingAnimated = false,
   });
 
-  bool isBeingAnimated = false;
+  bool isBeingAnimated;
 
   Homework convert() {
     return Homework(
@@ -39,7 +40,7 @@ class HomeworkDTO extends Task {
 
   @override
   String toString() {
-    return 'homework: $text, ${subject?.shortcut}, order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
+    return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
   }
 
   @override
@@ -56,6 +57,7 @@ class HomeworkDTO extends Task {
     bool? isDeleted,
     int? order,
     bool? isBeingAnimated,
+    int? stateReaddingVersion
   }) {
     return HomeworkDTO(
       subject: subject ?? this.subject,
@@ -70,6 +72,7 @@ class HomeworkDTO extends Task {
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
       isBeingAnimated: isBeingAnimated ?? this.isBeingAnimated,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

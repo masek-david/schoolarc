@@ -22,7 +22,7 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final errorC = Theme.of(context).colorScheme.error;
+    final errorColor = Theme.of(context).colorScheme.error;
 
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -48,10 +48,10 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
             Row(
               spacing: 8,
               children: [
-                Icon(Icons.info, color: errorC),
+                Icon(Icons.info, color: errorColor),
                 Text(
                   'This homework has been already added',
-                  style: TextStyle(color: errorC),
+                  style: TextStyle(color: errorColor),
                 ),
               ],
             ),

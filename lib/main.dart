@@ -12,7 +12,7 @@ import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/table_model.dart';
-import 'package:school_manager/services/widget_service.dart';
+import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workmanager/workmanager.dart';

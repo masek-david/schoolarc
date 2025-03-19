@@ -116,7 +116,8 @@ class HwWidget : GlanceAppWidget() {
 
         if (hws.isEmpty()) {
             Box(
-                modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground).fillMaxSize(),
+                modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

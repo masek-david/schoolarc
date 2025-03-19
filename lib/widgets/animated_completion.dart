@@ -124,6 +124,7 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
                 builder: (context, constraints) {
                   return LongPressDraggable(
                     data: widget.hw,
+                    onDragStarted: () => HapticFeedback.mediumImpact(),
                     feedback: SizedBox(
                       width: constraints.maxWidth,
                       child: Opacity(
