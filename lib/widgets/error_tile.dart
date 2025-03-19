@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
-import 'package:school_manager/screens/strava_cz/strava_settings_screen.dart';
+import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class ErrorTile extends StatelessWidget {
@@ -65,7 +65,7 @@ class ErrorTile extends StatelessWidget {
             onPressed: () {
               navigatorKey.currentState?.push(MaterialPageRoute(
                 builder: (context) {
-                  return const StravaSettingsScreen();
+                  return const StravaLoginScreen();
                 },
               ));
             },

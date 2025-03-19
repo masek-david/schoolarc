@@ -23,6 +23,7 @@ enum Setting {
   userName,
   homeShowUserName,
   homeShowMeals,
+  homeShowBaka,
   useFirebase,
   showDebugInfo,
   debugShowPerformanceOverlay,
@@ -121,6 +122,10 @@ class SettingsDatabase {
     Setting.homeShowMeals: SettingModel(
       defaultValue: true,
       key: 'homeShowMeals',
+    ),
+    Setting.homeShowBaka: SettingModel(
+      defaultValue: true,
+      key: 'homeShowBaka',
     ),
     Setting.useFirebase: SettingModel(
       defaultValue: false,

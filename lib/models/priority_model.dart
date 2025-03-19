@@ -2,29 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
 class TaskPriority {
-  final int index;
+  late final int index;
   late String name;
   late Color color;
   late String htmlIcon;
 
-  TaskPriority(this.index) {
+  TaskPriority(int index) {
     switch (index) {
       case 3:
         color = Colors.red;
         htmlIcon = '\uD83D\uDD34';
         name = 'High';
+        this.index = 3;
       case 2:
         color = Colors.orange;
         htmlIcon = '\uD83D\uDFE0';
         name = 'Medium';
+        this.index = 2;
       case 1:
         color = Colors.green;
         htmlIcon = '\uD83D\uDFE2';
         name = 'Low';
+        this.index = 1;
       default:
         color = Colors.blue;
         htmlIcon = '\uD83D\uDD35';
         name = 'No priority';
+        this.index = 0;
     }
   }
 

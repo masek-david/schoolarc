@@ -111,9 +111,10 @@ class ExamTile extends StatelessWidget {
                             Text(exam.order.toString()),
                           ],
                         ),
-                      Container(
+                      AnimatedContainer(
                         width: 50,
                         height: 50,
+                        duration: Duration(milliseconds: 300),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
                             color: exam.priority.getContainerColor(context)),

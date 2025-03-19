@@ -1,8 +1,9 @@
+
 import 'package:hive/hive.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
-import 'package:school_manager/models/timetable/table_model.dart';
+import 'package:school_manager/models/timetable/timetable_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 

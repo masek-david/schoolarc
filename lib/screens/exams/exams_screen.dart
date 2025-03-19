@@ -20,23 +20,23 @@ class _AnimatedReorderableListItem {
   }
 
   ExamDTO? exam;
-  TaskPriority? priority;
+  int? priority;
 
   int get getPriority {
     if (priority != null) {
-      return priority!.index;
+      return priority!;
     }
     return exam!.priority.index;
   }
 
   @override
   String toString() {
-    return '${exam != null ? exam.toString() : ''} ${priority != null ? priority!.index.toString() : ''}';
+    return '${exam != null ? exam.toString() : ''} ${priority != null ? priority!.toString() : ''}';
   }
 
   bool isSameAs(_AnimatedReorderableListItem other) {
     if (priority != null && other.priority != null) {
-      return priority!.index == other.priority!.index;
+      return priority! == other.priority!;
     }
 
     if (exam != null && other.exam != null) {
@@ -57,11 +57,11 @@ class ExamsScreen extends ConsumerWidget {
 
     final itemList = <_AnimatedReorderableListItem>[];
     for (int i = 3; i >= 0; i--) {
-      itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(i)));
+      itemList.add(_AnimatedReorderableListItem(priority: i));
       itemList.addAll(
           examByPriority[i]!.map((e) => _AnimatedReorderableListItem(exam: e)));
     }
-    itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(-1)));
+    itemList.add(_AnimatedReorderableListItem(priority: -1));
     final nonDraggableItems =
         itemList.where((element) => element.exam == null).toList();
 
@@ -114,8 +114,8 @@ class ExamsScreen extends ConsumerWidget {
                         items: itemList,
                         buildDefaultDragHandles: false,
                         lockedItems: [
-                          _AnimatedReorderableListItem(
-                              priority: TaskPriority(3))
+                          _AnimatedReorderableListItem(priority: 3),
+                          _AnimatedReorderableListItem(priority: -1),
                         ],
                         nonDraggableItems: nonDraggableItems,
                         onReorderStart: (p0) => HapticFeedback.mediumImpact(),
@@ -123,18 +123,19 @@ class ExamsScreen extends ConsumerWidget {
                           final item = itemList[index];
 
                           if (item.priority != null) {
-                            if (item.priority!.index == -1) {
+                            if (item.priority! == -1) {
                               return _buildCompletedList(
                                   context, ref, completedExams);
                             }
+
+                            final priority = TaskPriority(item.priority!);
                             return Padding(
-                              key: ValueKey(
-                                  'exam title: ${item.priority!.index}'),
+                              key: ValueKey('exam title: ${item.priority!}'),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               child: ExpansionTitle(
-                                titleText: item.priority!.name,
-                                titleTextColor: item.priority!.color,
+                                titleText: priority.name,
+                                titleTextColor: priority.getColor(context),
                               ),
                             );
                           }
@@ -160,6 +161,7 @@ class ExamsScreen extends ConsumerWidget {
 
                           final newPriority =
                               itemList[newIndex - 1].getPriority;
+
                           int newOrder = 0;
                           for (int i = 0; i < newIndex; i++) {
                             if (itemList[i].exam?.priority.index ==

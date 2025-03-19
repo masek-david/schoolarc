@@ -6,7 +6,7 @@ import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
@@ -150,6 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
     bool showMeals = settings.get(Setting.homeShowMeals);
+    bool showBaka = settings.get(Setting.homeShowBaka);
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -233,9 +234,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             if (!isWide)
                               TimetableCard(
-                                refresh: refreshTimetable,
+                                refresh: showBaka ? refreshTimetable : null,
                                 defaultTimeTable: defaultTimeTable,
-                                bakaTimetable: bakaTimetable,
+                                bakaTimetable: showBaka ? bakaTimetable : null,
                                 dateToShow: dateToShow,
                                 whenText: whenText,
                               ),

@@ -21,23 +21,23 @@ class _AnimatedReorderableListItem {
   }
 
   HomeworkDTO? hw;
-  TaskPriority? priority;
+  int? priority;
 
   int get getPriority {
     if (priority != null) {
-      return priority!.index;
+      return priority!;
     }
     return hw!.priority.index;
   }
 
   @override
   String toString() {
-    return '${hw != null ? hw.toString() : ''} ${priority != null ? priority!.index.toString() : ''}';
+    return '${hw != null ? hw.toString() : ''} ${priority != null ? priority!.toString() : ''}';
   }
 
   bool isSameAs(_AnimatedReorderableListItem other) {
     if (priority != null && other.priority != null) {
-      return priority!.index == other.priority!.index;
+      return priority! == other.priority!;
     }
 
     if (hw != null && other.hw != null) {
@@ -58,11 +58,11 @@ class HomeworksScreen extends ConsumerWidget {
 
     final itemList = <_AnimatedReorderableListItem>[];
     for (int i = 3; i >= 0; i--) {
-      itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(i)));
+      itemList.add(_AnimatedReorderableListItem(priority: i));
       itemList.addAll(
           hwByPriority[i]!.map((e) => _AnimatedReorderableListItem(hw: e)));
     }
-    itemList.add(_AnimatedReorderableListItem(priority: TaskPriority(-1)));
+    itemList.add(_AnimatedReorderableListItem(priority: -1));
     final nonDraggableItems =
         itemList.where((element) => element.hw == null).toList();
 
@@ -115,9 +115,8 @@ class HomeworksScreen extends ConsumerWidget {
                         items: itemList,
                         buildDefaultDragHandles: false,
                         lockedItems: [
-                          _AnimatedReorderableListItem(
-                            priority: TaskPriority(3),
-                          )
+                          _AnimatedReorderableListItem(priority: 3),
+                          _AnimatedReorderableListItem(priority: -1),
                         ],
                         nonDraggableItems: nonDraggableItems,
                         onReorderStart: (p0) => HapticFeedback.mediumImpact(),
@@ -125,18 +124,19 @@ class HomeworksScreen extends ConsumerWidget {
                           final item = itemList[index];
 
                           if (item.priority != null) {
-                            if (item.priority!.index == -1) {
+                            if (item.priority! == -1) {
                               return _buildCompletedList(
                                   context, ref, completedHws);
                             }
+
+                            final priority = TaskPriority(item.priority!);
                             return Padding(
-                              key:
-                                  ValueKey('hw title: ${item.priority!.index}'),
+                              key: ValueKey('hw title: ${item.priority!}'),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               child: ExpansionTitle(
-                                titleText: item.priority!.name,
-                                titleTextColor: item.priority!.color,
+                                titleText: priority.name,
+                                titleTextColor: priority.getColor(context),
                               ),
                             );
                           }
@@ -158,9 +158,9 @@ class HomeworksScreen extends ConsumerWidget {
                           );
                         },
                         removeItemBuilder: (child, animation) {
-                          // we need custom remove item painter, to absorb pointer, the user mustnt 
+                          // we need custom remove item painter, to absorb pointer, the user mustnt
                           // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
-                          
+
                           return FadeTransition(
                             opacity: animation,
                             child: AbsorbPointer(child: child),

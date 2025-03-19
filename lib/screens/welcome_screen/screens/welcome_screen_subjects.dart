@@ -12,7 +12,7 @@ class WelcomeScreenSubjects extends StatelessWidget {
     final subjects = [
       SubjectDTO(
         name: 'Name of the subject',
-        shortcut: 'Name',
+        shortcut: 'Short',
         dbIndex: 0,
         isDeleted: false,
         bakaId: null,
@@ -48,13 +48,13 @@ class WelcomeScreenSubjects extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Each homework and exam can be assigned to one subject:',
+              'Each homework and exam can be have one subject:',
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
             Text(
-              'You can create more subjects in Subjects page in the drawer',
+              'You can create subjects in Subjects page in the drawer',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 50),

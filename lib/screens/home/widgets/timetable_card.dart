@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
@@ -33,7 +33,7 @@ class TimetableCard extends StatelessWidget {
     required this.whenText,
   });
 
-  final void Function() refresh;
+  final void Function()? refresh;
   final TimeTableDTO defaultTimeTable;
   final Future<TimeTableDTO?>? bakaTimetable;
   final DateTime dateToShow;
@@ -53,7 +53,7 @@ class TimetableCard extends StatelessWidget {
         }
 
         TimeTableDTO timetable = defaultTimeTable;
-        if (snapshot.data != null) {
+        if (snapshot.data != null && refresh != null) {
           timetable = snapshot.data!;
         }
 
@@ -70,13 +70,14 @@ class TimetableCard extends StatelessWidget {
                 TextSeparator(
                   text: 'Lessons $whenText',
                   actions: [
-                    LoadingIconButton(
-                      icon: Icons.refresh,
-                      isLoading: isLoading,
-                      onTap: () async {
-                        return refresh();
-                      },
-                    ),
+                    if (refresh != null)
+                      LoadingIconButton(
+                        icon: Icons.refresh,
+                        isLoading: isLoading,
+                        onTap: () async {
+                          return refresh!();
+                        },
+                      ),
                     IconButton(
                       onPressed: () {
                         navigatorKey.currentState?.push(
@@ -128,7 +129,9 @@ class TimetableCard extends StatelessWidget {
                                     SizedBox(
                                       height: 100,
                                       child: TimetableTile(
-                                        isHighlighted: entry.key.isActive && dateToShow.isSameDay(DateTime.now()),
+                                        isHighlighted: entry.key.isActive &&
+                                            dateToShow
+                                                .isSameDay(DateTime.now()),
                                         lesson: entry.value,
                                         columnWidth: 80,
                                         onTap: (lesson) =>

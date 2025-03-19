@@ -2,9 +2,9 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 
-part 'table_model.g.dart';
+part 'timetable_model.g.dart';
 
 @HiveType(typeId: 3)
 class TimeTable {

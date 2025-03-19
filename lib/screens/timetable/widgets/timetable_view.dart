@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/table_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 
@@ -57,6 +57,7 @@ class TimetableView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(
                   showWholeWeek ? table.length + 1 : table.length - 2 + 1,
+                  
                   (rowIndex) {
                     if (rowIndex == 0) {
                       return Row(

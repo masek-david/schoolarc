@@ -3,15 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
-class StravaSettingsScreen extends StatefulWidget {
-  const StravaSettingsScreen({super.key});
+class StravaLoginScreen extends StatefulWidget {
+  const StravaLoginScreen({super.key});
 
   @override
-  State<StravaSettingsScreen> createState() => _StravaSettingsScreenState();
+  State<StravaLoginScreen> createState() => _StravaLoginScreenState();
 }
 
-class _StravaSettingsScreenState extends State<StravaSettingsScreen> {
+class _StravaLoginScreenState extends State<StravaLoginScreen> {
   final _canteenController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -38,24 +39,49 @@ class _StravaSettingsScreenState extends State<StravaSettingsScreen> {
     getInfoFromStorage();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Login to Strava CZ'),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
             const SizedBox(height: 4),
-            TextField(
-              keyboardType: TextInputType.number,
-              controller: _canteenController,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'School canteen id',
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _canteenController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(15),
+                      border: OutlineInputBorder(),
+                      labelText: 'School canteen id',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    showDialogAdaptive(
+                      context: context,
+                      title: Text('School canteen id'),
+                      content: Text(
+                          'School canteen id is 4 digit number you use to login to your strava app.'),
+                      actions: [
+                        adaptiveDialogButton(
+                          context: context,
+                          child: Text('Close'),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    );
+                  },
+                  icon: Icon(Icons.info_outline),
+                ),
+              ],
             ),
             if (settings.get(Setting.showDebugInfo))
               Row(

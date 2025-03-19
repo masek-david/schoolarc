@@ -55,6 +55,16 @@ class _HomeSettingsState extends State<HomeSettings> {
             },
           ),
         ),
+        SettingTile(
+          label: 'Show Bakaláři timetable',
+          trailing: SwitchAction(
+            initialValue: settings.get(Setting.homeShowBaka),
+            onChanged: (value) {
+              settings.save(Setting.homeShowBaka, value);
+              widget.onChanged();
+            },
+          ),
+        ),
       ],
     );
   }

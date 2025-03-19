@@ -50,8 +50,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
   @override
   void initState() {
-    expUseHwOverlay = widget.expUseHwOverlay ?? settings.get(Setting.expUseHwOverlay);
-    
+    expUseHwOverlay =
+        widget.expUseHwOverlay ?? settings.get(Setting.expUseHwOverlay);
+
     super.initState();
   }
 
@@ -74,11 +75,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
     return LayoutBuilder(
       builder: (context, constraints) {
         double extentRatio = 135 / constraints.maxWidth;
-
+    
         if (extentRatio > 1) {
           extentRatio = 1;
         }
-
+    
         return Slidable(
           groupTag: '0',
           enabled: !expUseHwOverlay,
@@ -150,7 +151,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                       final Offset position = renderBox
                           .localToGlobal(Offset.zero); // Get global position
                       final Size size = renderBox.size; // Get widget size
-
+    
                       late final OverlayEntry overlay;
                       overlay = OverlayEntry(
                         builder: (context) {
@@ -169,7 +170,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                           );
                         },
                       );
-
+    
                       Overlay.of(context).insert(overlay);
                       setState(() {
                         isShown = false;
@@ -216,8 +217,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             widget.hw.description != '')
                           Icon(
                             Icons.notes,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
                           ),
                         if (widget.hw.description != null &&
                             widget.hw.description != '')
