@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -23,6 +26,7 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
@@ -39,8 +43,8 @@ import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
 import 'package:uuid/uuid.dart';
 
-final navigatorKey = GlobalKey<NavigatorState>();
-final scaffoldKey = GlobalKey<ScaffoldState>();
+var navigatorKey = GlobalKey<NavigatorState>();
+var scaffoldKey = GlobalKey<ScaffoldState>();
 final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
@@ -157,18 +161,17 @@ class TasksApp extends ConsumerStatefulWidget {
 
 class _TasksAppState extends ConsumerState<TasksApp> {
   late final _pageController = PageController(
-    initialPage: _settings.get(Setting.initialAppPage),
+    initialPage: settings.get(Setting.initialAppPage),
   );
-  final Key _key = GlobalKey();
+  final Key _pageViewKey = GlobalKey();
 
-  final SettingsDatabase _settings = SettingsDatabase();
-  late int currentPageIndex = _settings.get(Setting.initialAppPage);
+  late int currentPageIndex = settings.get(Setting.initialAppPage);
   bool calendarShowTommorrow = false;
 
-  late ThemeMode themeMode = _getThemeMode(_settings.get(Setting.themeMode));
+  late ThemeMode themeMode = _getThemeMode(settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
   late bool showingTutorial;
-  bool showingFirebase = false;
+  bool showingFirebaseLoginScreen = false;
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -197,7 +200,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
   void hideFirebase() {
     setState(() {
-      showingFirebase = false;
+      showingFirebaseLoginScreen = false;
     });
   }
 
@@ -205,16 +208,17 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   void initState() {
     super.initState();
 
+    // add riverpod reference to firestore service, need to update firebaseOverlay
     firestoreService = FirestoreService(ref: ref);
 
-    if (_settings.firstTimeOpeningApp) {
+    if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
       showingTutorial = false;
     }
 
     if (!firestoreService.isloggedIn && kIsWeb) {
-      showingFirebase = true;
+      showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }
 
@@ -234,7 +238,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    // TODO - when done simply change the key of the value
+    // TODO - when done simply change the key of the value in db
     showingTutorial = false;
   }
 
@@ -245,14 +249,13 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
   }
 
-  void switchScreen({required int newScreenIndex}) {
+  void switchPage({required int newScreenIndex}) {
     double pageDiff =
         ((_pageController.page ?? 0) - newScreenIndex.toDouble()).abs();
 
     late final pageSwitchAnimationDuration = Duration(
       milliseconds:
-          (_settings.get(Setting.pageSwitchAnimationDuration) as double)
-              .toInt(),
+          (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt(),
     );
 
     if (pageSwitchAnimationDuration.inMilliseconds == 0 || pageDiff == 0.0) {
@@ -298,6 +301,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.init(context);
+
+    ref.listen<List<HomeworkDTO>>(hwWidgetProvider, (previous, next) {
+      updateHwWidget(next);
+    });
 
     final isWide = ScreenSize.isWideScreen.value;
 
@@ -364,15 +371,23 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
-            colorScheme: light,
-            sliderTheme: SliderThemeData(year2023: false),
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
-          ),
+              colorScheme: light,
+              sliderTheme: SliderThemeData(year2023: false),
+              progressIndicatorTheme:
+                  ProgressIndicatorThemeData(year2023: false)),
           darkTheme: ThemeData(
-            colorScheme: dark,
-            sliderTheme: SliderThemeData(year2023: false),
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false)
-          ),
+              colorScheme: dark,
+              sliderTheme: SliderThemeData(year2023: false),
+              // TODO add ?
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: <TargetPlatform, PageTransitionsBuilder>{
+                  // Set the predictive back transitions for Android.
+                  TargetPlatform.android:
+                      PredictiveBackPageTransitionsBuilder(),
+                },
+              ),
+              progressIndicatorTheme:
+                  ProgressIndicatorThemeData(year2023: false)),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {
@@ -416,13 +431,13 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                     children: [
                       if (isWide)
                         SideNavBar(
-                          onTap: switchScreen,
+                          onTap: switchPage,
                           pageIndex: currentPageIndex,
                         ),
                       WideScreenBorders(
                         show: isWide && settings.get(Setting.showAppOverlay),
                         child: PageView(
-                          key: _key,
+                          key: _pageViewKey,
                           physics: const NeverScrollableScrollPhysics(),
                           controller: _pageController,
                           children: [
@@ -439,21 +454,19 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                   ),
                 ),
                 drawer: MyDrawer(
-                  setThemeMode: refreshTheme,
+                  refreshTheme: refreshTheme,
                   startTutorial: startTutorial,
                 ),
                 bottomNavigationBar: isWide
                     ? null
                     : BottomNavBar(
-                        onTap: switchScreen,
+                        onTap: switchPage,
                         pageIndex: currentPageIndex,
                       ),
               ),
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
-              if (showingFirebase)
-                FirestoreLoginScreen(
-                  onHide: hideFirebase,
-                ),
+              if (showingFirebaseLoginScreen)
+                FirestoreLoginScreen(onHide: hideFirebase),
             ],
           ),
         );

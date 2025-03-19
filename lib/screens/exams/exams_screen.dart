@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/screens/exams/widgets/exam_tile.dart';
+import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -76,7 +76,7 @@ class ExamsScreen extends ConsumerWidget {
           floatingActionButton: FloatingActionButton(
             tooltip: 'Add new exam',
             onPressed: () async {
-              HapticFeedback.lightImpact();
+              HapticFeedback.mediumImpact();
               addNewExam(context, ref);
             },
             enableFeedback: true,
@@ -118,12 +118,14 @@ class ExamsScreen extends ConsumerWidget {
                               priority: TaskPriority(3))
                         ],
                         nonDraggableItems: nonDraggableItems,
+                        onReorderStart: (p0) => HapticFeedback.mediumImpact(),
                         itemBuilder: (context, index) {
                           final item = itemList[index];
 
                           if (item.priority != null) {
                             if (item.priority!.index == -1) {
-                              return _buildCompletedList(context, ref, completedExams);
+                              return _buildCompletedList(
+                                  context, ref, completedExams);
                             }
                             return Padding(
                               key: ValueKey(
@@ -139,10 +141,10 @@ class ExamsScreen extends ConsumerWidget {
 
                           final exam = item.exam!;
                           return Padding(
-                            // timestamp needs to be there, when the animation plays (on leave) and it should appear,
-                            // you would get multiple widgets used the same global key error
+                            // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                            // Multiple widgets use the same globalkey error
                             key: ValueKey(
-                                'exam: ${exam.dbIndex} ${exam.timestamp}'),
+                                'exam: ${exam.dbIndex} ${exam.stateReaddingVersion}'),
                             padding: EdgeInsets.symmetric(vertical: 4),
                             child: ExamTile(
                               exam: exam,

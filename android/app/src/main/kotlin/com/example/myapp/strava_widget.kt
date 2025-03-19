@@ -63,7 +63,8 @@ class StravaWidget : GlanceAppWidget() {
 
         if (meals.isEmpty()) {
             Box(
-                modifier = GlanceModifier.background(GlanceTheme.colors.surface).fillMaxSize(),
+                modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -71,9 +72,10 @@ class StravaWidget : GlanceAppWidget() {
                     style = TextStyle(color = GlanceTheme.colors.onBackground)
                 )
             }
+            return
         }
 
-        Box(modifier = GlanceModifier.background(GlanceTheme.colors.surfaceVariant)) {
+        Box(modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground)) {
             LazyColumn {
                 items(meals) { mealDay ->
                     Box(

@@ -36,53 +36,56 @@ class SubjectTile extends StatelessWidget {
                   SlidableAction(
                     onPressed: (context) => onDelete!(),
                     icon: Icons.delete,
-                    foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onErrorContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(10),
                     flex: 10,
                   ),
                 ],
               )
             : null,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.surfaceContainer,
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                if (settings.get(Setting.showDebugInfo))
-                  Text(subject.dbIndex.toString()),
-                if (settings.get(Setting.showDebugInfo) && subject.isDeleted)
-                  Icon(Icons.delete),
-                if (settings.get(Setting.showDebugInfo))
-                  Text('order: ${subject.order.toString()}'),
-                SizedBox(
-                  width: 50,
-                  child: SubjectShortcut(subject: subject),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(subject.name),
-                ),
-                if (subject.isFromBakalari)
-                  Icon(
-                    Icons.hexagon,
-                    color: Theme.of(context).colorScheme.surfaceBright,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: onTap,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.surfaceContainer,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (settings.get(Setting.showDebugInfo))
+                    Text(subject.dbIndex.toString()),
+                  if (settings.get(Setting.showDebugInfo) && subject.isDeleted)
+                    Icon(Icons.delete),
+                  if (settings.get(Setting.showDebugInfo))
+                    Text('order: ${subject.order.toString()}'),
+                  SizedBox(
+                    width: 50,
+                    child: SubjectShortcut(subject: subject),
                   ),
-                if (subject.isFromBakalari &&
-                    settings.get(Setting.showDebugInfo))
-                  Text(subject.bakaId ?? ''),
-                if (subject.isDeleted && settings.get(Setting.showDebugInfo))
-                  Icon(Icons.delete),
-                if (settings.get(Setting.showDebugInfo))
-                  Text(subject.timestamp.millisecondsSinceEpoch.toString())
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(subject.name),
+                  ),
+                  if (subject.isFromBakalari)
+                    Icon(
+                      Icons.hexagon,
+                      color: Theme.of(context).colorScheme.surfaceBright,
+                    ),
+                  if (subject.isFromBakalari &&
+                      settings.get(Setting.showDebugInfo))
+                    Text(subject.bakaId ?? ''),
+                  if (settings.get(Setting.showDebugInfo))
+                    Text(subject.timestamp.millisecondsSinceEpoch.toString()),
+                ],
+              ),
             ),
           ),
         ),

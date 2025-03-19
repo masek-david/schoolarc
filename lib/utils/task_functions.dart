@@ -18,7 +18,7 @@ Future<void> addNewHw(
     isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
-      autoSetDate: true,
+      autoSetDate: initialDate == null,
     ),
   );
 
@@ -75,7 +75,7 @@ Future<void> addNewExam(
     isScrollControlled: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
-      autoSetDate: true,
+      autoSetDate: initialDate == null,
     ),
   );
 

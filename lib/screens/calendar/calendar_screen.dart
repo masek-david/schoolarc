@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
@@ -197,8 +198,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               FloatingActionButton.extended(
                 tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
                 heroTag: 'exam_btn',
-                onPressed: () =>
-                    addNewExam(context, ref, initialDate: _selectedDay),
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  addNewExam(context, ref, initialDate: _selectedDay);
+                },
                 icon: const Icon(Icons.add),
                 label: const Text('Exam'),
               ),
@@ -206,8 +209,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               FloatingActionButton.extended(
                 tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
                 heroTag: 'homework_btn',
-                onPressed: () =>
-                    addNewHw(context, ref, initialDate: _selectedDay),
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  addNewHw(context, ref, initialDate: _selectedDay);
+                },
                 icon: const Icon(Icons.add),
                 label: const Text('Homework'),
               ),

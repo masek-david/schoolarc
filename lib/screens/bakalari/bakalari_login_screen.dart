@@ -5,8 +5,8 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 
-class BakalariScreen extends ConsumerStatefulWidget {
-  const BakalariScreen({
+class BakaLoginScreen extends ConsumerStatefulWidget {
+  const BakaLoginScreen({
     super.key,
     this.showAppbar = true,
   });
@@ -14,10 +14,10 @@ class BakalariScreen extends ConsumerStatefulWidget {
   final bool showAppbar;
 
   @override
-  ConsumerState<BakalariScreen> createState() => _BakalariScreenState();
+  ConsumerState<BakaLoginScreen> createState() => _BakalariScreenState();
 }
 
-class _BakalariScreenState extends ConsumerState<BakalariScreen> {
+class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   final _schoolController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -41,15 +41,19 @@ class _BakalariScreenState extends ConsumerState<BakalariScreen> {
   void initState() {
     super.initState();
 
-    setState(() {
-      isLoading = true;
-    });
-
     loadLoginInfo();
+    tryLogin();
+  }
 
-    bakaService.refreshLogin().then((value) {
-      onLoginSuccess();
-    }, onError: onError);
+  Future<void> tryLogin() async {
+    if (await bakaService.schoolName != '') {
+      setState(() {
+        isLoading = true;
+      });
+      bakaService.refreshLogin().then((value) {
+        onLoginSuccess();
+      }, onError: onError);
+    }
   }
 
   void loadLoginInfo() async {

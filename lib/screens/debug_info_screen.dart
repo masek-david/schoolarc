@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/services/exams/exam_database.dart';
-import 'package:school_manager/services/homeworks/hw_database.dart';
-import 'package:school_manager/services/subjects/subject_database.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class TestDatetime extends StatefulWidget {
   const TestDatetime({super.key});
@@ -32,7 +30,10 @@ class _TestDatetimeState extends State<TestDatetime> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Text(DateTime.now().toString()),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(DateTime.now().toString()),
+      ),
     );
   }
 }
@@ -40,13 +41,9 @@ class _TestDatetimeState extends State<TestDatetime> {
 class DbInfoScreen extends StatelessWidget {
   DbInfoScreen({super.key});
 
-  final HomeworksDatabase homeworksDatabase = HomeworksDatabase();
-  final ExamDatabase examDatabase = ExamDatabase();
-  final subjectDatabase = SubjectDatabase();
-
-  late final examDb = examDatabase.getDatabase();
-  late final homeworkDb = homeworksDatabase.getDatabase();
-  late final subjectsDb = subjectDatabase.getDatabase();
+  late final exams = examsDb.getDatabase();
+  late final hws = homeworksDb.getDatabase();
+  late final subjects = subjectsDb.getDatabase();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +58,7 @@ class DbInfoScreen extends StatelessWidget {
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: subjectsDb.entries.map((entry) {
+              children: subjects.entries.map((entry) {
                 var item = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -77,6 +74,7 @@ class DbInfoScreen extends StatelessWidget {
                         child: Text(item.shortcut),
                       ),
                       Expanded(child: Text(item.name)),
+                      if (item.isDeleted) Icon(Icons.delete)
                     ],
                   ),
                 );
@@ -87,7 +85,7 @@ class DbInfoScreen extends StatelessWidget {
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: homeworkDb.entries.map((entry) {
+              children: hws.entries.map((entry) {
                 var item = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -109,7 +107,7 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.isCompleted) const Text('(completed)'),
+                      if (item.isCompleted) Icon(Icons.check),
                       if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
@@ -121,7 +119,7 @@ class DbInfoScreen extends StatelessWidget {
             const Divider(),
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: examDb.entries.map((entry) {
+              children: exams.entries.map((entry) {
                 var item = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -142,6 +140,7 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
+                      if (entry.value.isDeleted) Icon(Icons.delete),
                     ],
                   ),
                 );

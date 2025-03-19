@@ -2,9 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
-import 'package:school_manager/screens/meals/meals_screen.dart';
+import 'package:school_manager/screens/recently_deleted_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/screens/current_timetable/current_timetable.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
@@ -13,15 +12,16 @@ import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
+import 'package:school_manager/widgets/drawer/search_bar.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
     super.key,
-    required this.setThemeMode,
+    required this.refreshTheme,
     required this.startTutorial,
   });
 
-  final void Function() setThemeMode;
+  final void Function() refreshTheme;
   final void Function() startTutorial;
 
   void showSnackbar(BuildContext context, String text) {
@@ -43,6 +43,10 @@ class MyDrawer extends StatelessWidget {
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
               child: Text('School app', style: TextStyle(fontSize: 20)),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
+              child: MySearchBar()
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -59,7 +63,7 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     MyDrawerButton(
-                      text: 'Timetable',
+                      text: 'Permanent timetable',
                       icon: const Icon(Icons.calendar_month),
                       onTap: () {
                         navigatorKey.currentState?.push(
@@ -70,18 +74,18 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
-                    MyDrawerButton(
-                      text: 'Current Timetable',
-                      icon: const Icon(Icons.calendar_today_rounded),
-                      onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const CurrentTimetableScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                    // MyDrawerButton(
+                    //   text: 'Current Timetable',
+                    //   icon: const Icon(Icons.calendar_today_rounded),
+                    //   onTap: () {
+                    //     navigatorKey.currentState?.push(
+                    //       MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             const CurrentTimetableScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     MyDrawerButton(
                       text: 'Homeworks from Bakaláři',
                       icon: const Icon(Icons.home_work_outlined),
@@ -94,13 +98,24 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
+                    // MyDrawerButton(
+                    //   text: 'Meals',
+                    //   icon: const Icon(Icons.food_bank_outlined),
+                    //   onTap: () {
+                    //     navigatorKey.currentState?.push(
+                    //       MaterialPageRoute(
+                    //         builder: (context) => MealsScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     MyDrawerButton(
-                      text: 'Meals',
-                      icon: const Icon(Icons.food_bank_outlined),
+                      text: 'Recently deleted',
+                      icon: const Icon(Icons.delete_forever),
                       onTap: () {
                         navigatorKey.currentState?.push(
                           MaterialPageRoute(
-                            builder: (context) => MealsScreen(),
+                            builder: (context) => RecentlyDeletedScreen(),
                           ),
                         );
                       },
@@ -114,7 +129,7 @@ class MyDrawer extends StatelessWidget {
                           initialValue: settings.get(Setting.showDebugInfo),
                           onChanged: (value) {
                             settings.save(Setting.showDebugInfo, value);
-                            setThemeMode();
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -127,7 +142,7 @@ class MyDrawer extends StatelessWidget {
                           onChanged: (value) {
                             settings.save(
                                 Setting.debugShowPerformanceOverlay, value);
-                            setThemeMode();
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -138,9 +153,8 @@ class MyDrawer extends StatelessWidget {
                           initialValue:
                               settings.get(Setting.debugShowFireOverlay),
                           onChanged: (value) {
-                            settings.save(
-                                Setting.debugShowFireOverlay, value);
-                            setThemeMode();
+                            settings.save(Setting.debugShowFireOverlay, value);
+                            refreshTheme();
                           },
                         ),
                       ),
@@ -183,7 +197,7 @@ class MyDrawer extends StatelessWidget {
                 navigatorKey.currentState?.push(
                   MaterialPageRoute(
                     builder: (context) => SettingsScreen(
-                      refreshTheme: setThemeMode,
+                      refreshTheme: refreshTheme,
                     ),
                   ),
                 );

@@ -19,6 +19,25 @@ final subjectsSortedProvider = Provider<List<SubjectDTO>>((ref) {
     ..sort((a, b) => (a.order).compareTo(b.order));
 });
 
+final subjectsDeletedProvider = Provider<List<SubjectDTO>>(
+  (ref) {
+    final subjects = ref.watch(subjectsProvider);
+
+    final list = <SubjectDTO>[];
+
+    subjects.forEach(
+      (key, value) {
+        if (value.isDeleted) {
+          list.add(value);
+        }
+      },
+    );
+    list.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return list;
+  },
+);
+
 class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
 
@@ -26,10 +45,12 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
   Map<int, SubjectDTO> build() {
     listenToFirebase();
 
-    return subjectsDbState;
+    _checkForDeleted();
+
+    return _dbState;
   }
 
-  Map<int, SubjectDTO> get subjectsDbState {
+  Map<int, SubjectDTO> get _dbState {
     return subjectsDb.getDatabase().map(
       (key, value) {
         return MapEntry(key, value.convertToDTO(key));
@@ -78,7 +99,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
       await checkFireSubject(element);
     }
 
-    for (final subject in subjectsDbState.values) {
+    for (final subject in _dbState.values) {
       if (subject.fireId == null) {
         await edit(subject);
       } else {
@@ -105,7 +126,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      subject.order = subjectsDbState.values
+      subject.order = _dbState.values
           .where(
             (element) => !element.isDeleted,
           )
@@ -118,7 +139,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
 
     int dbIndex = await subjectsDb.addSubject(subject);
 
-    final SubjectDTO? subjectWithSameOrder = subjectsDbState.values
+    final SubjectDTO? subjectWithSameOrder = _dbState.values
         .where(
             (element) => element.order == subject.order && !element.isDeleted)
         .firstOrNull;
@@ -157,7 +178,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     /// [checkOrder] false only when editing from [reorder()]
     bool checkOrder = true,
   }) async {
-    final old = subjectsDbState[editedSubject.dbIndex]!;
+    final old = _dbState[editedSubject.dbIndex]!;
 
     if (checkOrder) {
       // if now is deleted
@@ -213,7 +234,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
       throw '[oldIndex] and [subject] are both null';
     }
 
-    var list = subjectsDbState.values
+    var list = _dbState.values
         .where(
           (element) => !element.isDeleted,
         )
@@ -236,7 +257,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
 
     for (int i = 0; i < list.length; i++) {
       final edited = list[i].copyWith(order: i);
-      final oldSubject = subjectsDbState[edited.dbIndex];
+      final oldSubject = _dbState[edited.dbIndex];
 
       if (edited.order != oldSubject?.order) {
         editedSubjects[edited.dbIndex] = edited;
@@ -285,9 +306,34 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     );
   }
 
+  
+  /// `_permanentDelete` must be called from build(), because it doesnt update the state
+  /// deletes from cloud and local, other devices must delete it themself
+  Future<void> _permanentDelete(List<SubjectDTO> subjects) async {
+    if (subjects.isEmpty) return;
+    for (var element in subjects) {
+      subjectsDb.delete(element.dbIndex);
+    }
+    await firestoreService.deleteSubjects(subjects);
+  }
+
+  /// `_checkForDeleted` must be called from build(), because it doesnt update the state
+  Future<void> _checkForDeleted() async {
+    final now = DateTime.now();
+    List<SubjectDTO> hwsToDelete = [];
+
+    for (var hw in _dbState.values) {
+      if (hw.isDeleted &&
+          now.difference(hw.timestamp.toDate()) > Duration(days: 7)) {
+        hwsToDelete.add(hw);
+      }
+    }
+    await _permanentDelete(hwsToDelete);
+  }
+
   /// checks and updates/adds subject from firestore
   Future<void> checkFireSubject(Subject fireSubject) async {
-    final localSubject = subjectsDbState.values.where(
+    final localSubject = _dbState.values.where(
       (element) {
         return element.fireId == fireSubject.fireId;
       },

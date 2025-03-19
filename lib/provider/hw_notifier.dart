@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
@@ -109,21 +112,14 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwUncompletedProvider = Provider<List<HomeworkDTO>>(
+final hwWidgetProvider = Provider<List<HomeworkDTO>>(
   (ref) {
-    final hws = ref.watch(hwProvider);
-
+    final hws = ref.watch(hwSortedProvider);
     final list = <HomeworkDTO>[];
 
-    hws.forEach(
-      (key, hw) {
-        if (!hw.isDeleted && !hw.isCompleted && !hw.isBeingAnimated) {
-          list.add(hw);
-        }
-      },
-    );
-
-    list.sort((a, b) => b.deadline.compareTo(a.deadline));
+    for (int i = 3; i >= 0; i--) {
+      list.addAll([...hws[i]!]);
+    }
 
     return list;
   },
@@ -134,6 +130,23 @@ final hwMissedProvider = Provider<List<HomeworkDTO>>(
     final hws = ref.watch(hwProvider);
 
     return hwsGetMissed(hws);
+  },
+);
+
+final hwDeletedProvider = Provider<List<HomeworkDTO>>(
+  (ref) {
+    final hws = ref.watch(hwProvider);
+
+    final list = hws.values
+        .where(
+          (element) => element.isDeleted,
+        )
+        .toList();
+    list.sort(
+      (a, b) => a.timestamp.compareTo(b.timestamp),
+    );
+
+    return list;
   },
 );
 
@@ -154,7 +167,8 @@ List<HomeworkDTO> hwsGetMissed(Map<int, HomeworkDTO> original) {
   return missedHw;
 }
 
-class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
+class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
+    with WidgetsBindingObserver {
   Map<int, SubjectDTO> subjects = {};
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
 
@@ -174,7 +188,9 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
     subjects = ref.read(subjectsProvider);
 
     listenToFirebase();
+    _checkForDeleted();
 
+    WidgetsBinding.instance.addObserver(this);
     return _dbState;
   }
 
@@ -192,6 +208,23 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
         );
       },
     );
+  }
+
+  // when reopening app, reload hive, to check for modified homework, only on android
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed && Platform.isAndroid) {
+      try {
+        await Hive.box('hwBox').close();
+      } on Object {
+        // it shouldnt matter
+      }
+      await Hive.openBox('hwBox');
+
+      _loadState();
+    }
   }
 
   Future<void> listenToFirebase() async {
@@ -226,6 +259,10 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
         updatedHws[doc.id] = fireHw;
       }
 
+      if (!Hive.box('hwBox').isOpen) {
+        await Hive.openBox('hwBox');
+      }
+
       updatedHws.forEach(
         (key, value) async {
           await checkFireHomework(value);
@@ -247,6 +284,9 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
         await checkFireHomework(element);
       },
     );
+
+    await _checkForDeleted();
+    _loadState();
 
     state.forEach(
       (key, value) {
@@ -299,7 +339,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
             !element.isDeleted &&
             !element.isCompleted)
         .firstOrNull;
-        
+
     if (!hw.isCompleted && !hw.isDeleted) {
       if (hwWithSameOrder != null && !addToEnd) {
         if (hw.timestamp.millisecondsSinceEpoch <
@@ -333,16 +373,16 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
   }
 
   /// assign timestamp manually, if no fireId, it will add it as now
-  void edit(
+  Future<void> edit(
     HomeworkDTO editedHw, {
     bool syncWithFire = true,
 
-    /// to delay updating state to let animation play, only when completing a homework
-    bool stateUpdateDelay = false,
+    /// this is true when completing a task, it wont reorder others
+    bool disableReorder = false,
   }) async {
     final old = _dbState[editedHw.dbIndex]!;
 
-    if (!stateUpdateDelay) {
+    if (!disableReorder) {
       // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
       if (!((editedHw.isDeleted && old.isDeleted) ||
           (editedHw.isCompleted && old.isCompleted))) {
@@ -383,7 +423,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
       }
     }
 
-    homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
+    await homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
 
     if (syncWithFire) {
       if (editedHw.fireId == null) {
@@ -394,7 +434,12 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
       firestoreService.editHomeworks([editedHw]);
     }
 
-    if (old.isCompleted == false && editedHw.isCompleted == true) {
+    final isNew = editedHw.timestamp.toDate().difference(DateTime.now()) <
+        Duration(seconds: 1);
+    final bool shouldPlayAnimation =
+        old.isCompleted == false && editedHw.isCompleted == true && isNew;
+
+    if (shouldPlayAnimation) {
       state = {
         ...state,
         editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: true),
@@ -513,10 +558,18 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
     ref.read(examProvider.notifier).saveNew(hw.toExam());
   }
 
-  void complete(HomeworkDTO hw, bool nowIsCompleted) {
-    edit(
+  Future<void> completeIndex(int dbIndex, bool nowIsCompleted) async {
+    final hw = _dbState[dbIndex];
+
+    if (hw != null) {
+      await complete(hw, nowIsCompleted);
+    }
+  }
+
+  Future<void> complete(HomeworkDTO hw, bool nowIsCompleted) async {
+    await edit(
       hw.copyWith(timestamp: Timestamp.now(), isCompleted: nowIsCompleted),
-      stateUpdateDelay: nowIsCompleted,
+      disableReorder: nowIsCompleted,
     );
   }
 
@@ -525,10 +578,38 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>> {
   }
 
   void revertDelete(HomeworkDTO hw) {
-    edit(hw.copyWith(timestamp: Timestamp.now(), isDeleted: false));
+    edit(
+      hw.copyWith(
+          timestamp: Timestamp.now(),
+          isDeleted: false,
+          stateReaddingVersion: hw.stateReaddingVersion + 1),
+    );
   }
 
-  /// checks and updates/adds hw from firestore
+  /// `_permanentDelete` must be called from build(), because it doesnt update the state
+  Future<void> _permanentDelete(List<HomeworkDTO> hws) async {
+    if (hws.isEmpty) return;
+    for (var element in hws) {
+      homeworksDb.deleteHw(element.dbIndex);
+    }
+    await firestoreService.deleteHomeworks(hws);
+  }
+
+  /// `_checkForDeleted` must be called from build(), because it doesnt update the state
+  Future<void> _checkForDeleted() async {
+    final now = DateTime.now();
+    List<HomeworkDTO> hwsToDelete = [];
+
+    for (var hw in _dbState.values) {
+      if (hw.isDeleted &&
+          now.difference(hw.timestamp.toDate()) > Duration(days: 7)) {
+        hwsToDelete.add(hw);
+      }
+    }
+    await _permanentDelete(hwsToDelete);
+  }
+
+  /// checks and updates/adds hw from firestore, overwrites the newest version
   Future<void> checkFireHomework(Homework fireHw) async {
     // print('checking hw from fire: ${fireHw.toString()}');
 

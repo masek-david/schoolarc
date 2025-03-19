@@ -15,12 +15,13 @@ class HomeworkTile extends StatefulWidget {
     super.key,
     required this.hw,
     this.showDeadline = true,
-    this.slidableController,
     this.borderIfMissed = true,
+    this.showCompletion = true,
+    this.expUseHwOverlay,
+    this.slidableController,
     required this.onChangedCompletion,
     required this.onDelete,
     required this.onEdit,
-    this.showCompletion = true,
     required this.onConvert,
   });
 
@@ -29,7 +30,8 @@ class HomeworkTile extends StatefulWidget {
   final SlidableController? slidableController;
   final bool showCompletion;
   final bool borderIfMissed;
-  final void Function(bool) onChangedCompletion;
+  final bool? expUseHwOverlay;
+  final void Function(bool)? onChangedCompletion;
   final void Function()? onDelete;
   final void Function() onEdit;
   final void Function()? onConvert;
@@ -44,7 +46,14 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
   final widgetKey = GlobalKey();
   bool isShown = true;
-  bool expUseHwOverlay = settings.get(Setting.expUseHwOverlay);
+  late bool expUseHwOverlay;
+
+  @override
+  void initState() {
+    expUseHwOverlay = widget.expUseHwOverlay ?? settings.get(Setting.expUseHwOverlay);
+    
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +73,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double extentRatio = 120 / constraints.maxWidth;
+        double extentRatio = 135 / constraints.maxWidth;
 
         if (extentRatio > 1) {
           extentRatio = 1;
@@ -171,9 +180,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
                 color: Colors.transparent,
                 child: Opacity(
                   opacity: opacity,
-                  // main row
                   child: Padding(
                     padding: EdgeInsets.all(padding),
+                    // main row
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,

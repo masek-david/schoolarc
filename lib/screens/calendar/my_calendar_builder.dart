@@ -220,6 +220,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                     onTap: () => onEdit(exam),
                     child: LongPressDraggable(
                       data: exam,
+                      onDragStarted: () => HapticFeedback.mediumImpact(),
                       feedbackOffset: Offset(0, -80),
                       dragAnchorStrategy: (draggable, context, position) {
                         return Offset(50, 60);

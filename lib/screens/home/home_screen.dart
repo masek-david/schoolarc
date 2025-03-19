@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
@@ -19,6 +17,7 @@ import 'package:school_manager/services/exams/exam_database.dart';
 import 'package:school_manager/services/homeworks/hw_database.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/subjects/subject_database.dart';
+import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
@@ -111,35 +110,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return isEmpty;
   }
 
-  void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
-    Map<String, dynamic> json = {};
-    meals.forEach(
-      (key, value) {
-        json[key.dayText()] = value
-            .map(
-              (e) => e.toJson(),
-            )
-            .toList();
-      },
-    );
-    HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
-    HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
-  }
-
-  void updateHwWidget() {
-    final hws = ref.read(hwUncompletedProvider);
-    List<dynamic> json = [];
-
-    for (var element in hws) {
-      json.add(element.toWidgetJson());
-    }
-
-    print(jsonEncode(json));
-
-    HomeWidget.saveWidgetData('hws', jsonEncode(json));
-    HomeWidget.updateWidget(name: 'HomeworksWidgetReceiver');
-  }
-
   @override
   Widget build(BuildContext context) {
     final hws = ref.watch(hwDatesProvider);
@@ -174,8 +144,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
       hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
       examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
+    } else {
+      hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
+      examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
     }
     String whenText = showTommorrow ? 'tommorrow' : 'today';
+    bool showMeals = settings.get(Setting.homeShowMeals);
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -225,10 +199,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     examNumberOfIncomplete: upcomingExams,
                     hwNumberOfMissed: missedHw.length,
                   ),
-                  // FilledButton(
-                  //   onPressed: updateHwWidget,
-                  //   child: Text('hw widget'),
-                  // ),
                   SizedBox(height: 24),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,10 +207,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Flexible(
                             child: Column(
                           children: [
-                            MealsCard(
-                              meals: mealsFuture,
-                              refresh: refreshMeals,
-                            ),
+                            if (showMeals)
+                              MealsCard(
+                                meals: mealsFuture,
+                                refresh: refreshMeals,
+                              ),
                             TimetableCard(
                               refresh: refreshTimetable,
                               defaultTimeTable: defaultTimeTable,
@@ -255,7 +226,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (!isWide)
+                            if (!isWide && showMeals)
                               MealsCard(
                                 meals: mealsFuture,
                                 refresh: refreshMeals,
