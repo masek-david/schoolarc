@@ -30,12 +30,14 @@ class ExamList extends ConsumerWidget {
   final String? textEmpty;
 
   Widget buildTile(BuildContext context, WidgetRef ref, ExamDTO exam) {
-    return ExamTile(
-      exam: exam,
-      showDeadline: false,
-      onDelete: () => onDelete(exam),
-      onEdit: () => onEdit(exam),
-      onConvert: () => onConvert(exam),
+    return ClipRect(
+      child: ExamTile(
+        exam: exam,
+        showDeadline: false,
+        onDelete: () => onDelete(exam),
+        onEdit: () => onEdit(exam),
+        onConvert: () => onConvert(exam),
+      ),
     );
   }
 

@@ -67,23 +67,27 @@ class ExamTile extends StatelessWidget {
                   ),
                 ],
               ),
-        endActionPane: onDelete == null ? null : ActionPane(
-          motion: const StretchMotion(),
-          extentRatio: extentRatio,
-          children: [
-              SlidableAction(
-                onPressed: (context) {
-                  HapticFeedback.lightImpact();
-                  onDelete!();
-                },
-                icon: Icons.delete,
-                foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-                backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                borderRadius: BorderRadius.circular(35),
-                flex: 10,
+        endActionPane: onDelete == null
+            ? null
+            : ActionPane(
+                motion: const StretchMotion(),
+                extentRatio: extentRatio,
+                children: [
+                  SlidableAction(
+                    onPressed: (context) {
+                      HapticFeedback.lightImpact();
+                      onDelete!();
+                    },
+                    icon: Icons.delete,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onErrorContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(35),
+                    flex: 10,
+                  ),
+                ],
               ),
-          ],
-        ),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),

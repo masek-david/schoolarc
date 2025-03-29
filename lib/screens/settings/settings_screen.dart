@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
+import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
@@ -30,6 +31,8 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool showDebug = settings.get(Setting.showDebugInfo);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -123,11 +126,11 @@ class SettingsScreen extends StatelessWidget {
           ),
           Divider(),
           SettingTile(
-            label: 'View app logs',
-            icon: Icons.data_array,
+            label: 'View app changelog',
+            icon: Icons.data_object,
             onTap: () => navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (context) => const LogsScreen(),
+                builder: (context) => const ChangelogScreen(),
               ),
             ),
           ),
@@ -141,7 +144,17 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ),
-          if (settings.get(Setting.showDebugInfo))
+          if (showDebug)
+            SettingTile(
+              label: 'View app logs',
+              icon: Icons.data_array,
+              onTap: () => navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (context) => const LogsScreen(),
+                ),
+              ),
+            ),
+          if (showDebug)
             SettingTile(
               label: 'Use firebase',
               trailing: SwitchAction(
@@ -152,7 +165,7 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),
-          if (settings.get(Setting.showDebugInfo))
+          if (showDebug)
             SettingTile(
               label: 'Use experimental homework tile overlay',
               trailing: SwitchAction(
@@ -163,6 +176,13 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),
+          Center(
+            child: Text(
+              '${packageInfo.version} build ${packageInfo.buildNumber}',
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest),
+            ),
+          )
         ],
       ),
     );

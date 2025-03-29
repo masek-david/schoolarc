@@ -26,6 +26,19 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+android.applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+        if (variant.buildType.name == "release") {
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            def versionName = variant.versionName
+            def newName = "${versionName}-${abi}.apk"
+            if (abi != null) {
+                outputFileName = newName
+            }
+        }
+    }
+}
+
 android {
     namespace = "com.example.myapp"
     compileSdk = flutter.compileSdkVersion

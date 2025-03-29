@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:home_widget/home_widget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_manager/services/firestore/firebase_options.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
@@ -17,7 +20,6 @@ import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workmanager/workmanager.dart';
-
 void main() async {
   FlutterError.onError = (details) async {
     FlutterError.presentError(details); // Current error
@@ -101,20 +103,16 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  packageInfo = await PackageInfo.fromPlatform();
 
-  HomeWidget.registerInteractivityCallback(backgroundCallback);
+  if (!kIsWeb && Platform.isAndroid) {
+    HomeWidget.registerInteractivityCallback(backgroundCallback);
 
-  Workmanager().initialize(
-    myCallbackDispatcher,
-    isInDebugMode: true,
-  );
-
-  // var launchUri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-
-  // if (launchUri?.host == 'create') {
-  //   runApp(TestApp());
-  //   return;
-  // }
+    Workmanager().initialize(
+      myCallbackDispatcher,
+      isInDebugMode: true,
+    );
+  }
 
   runApp(
     ProviderScope(child: const TasksApp()),

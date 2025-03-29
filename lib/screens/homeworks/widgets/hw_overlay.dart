@@ -13,12 +13,14 @@ class HwOverlay extends StatefulWidget {
     required this.onHide,
     required this.onEdit,
     required this.onDelete,
+    required this.onConvert,
   });
 
   final HomeworkDTO hw;
   final Offset position;
   final Size size;
   final void Function() onEdit;
+  final void Function()? onConvert;
   final void Function()? onDelete;
   final void Function() onHide;
 
@@ -74,7 +76,7 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
           child: GestureDetector(
             onTap: () {
               close();
-              widget.onEdit();
+              // widget.onEdit();
             },
             child: Material(
               color: Colors.transparent,
@@ -101,7 +103,10 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                               hw: widget.hw,
                               onChangedCompletion: (p0) {},
                               onDelete: () {},
-                              onEdit: () {},
+                              onEdit: () {
+                                close();
+                                widget.onEdit();
+                              },
                               onConvert: () {},
                             ),
                             AnimatedOpacity(
@@ -132,15 +137,24 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                           label: Text('Edit'),
                           icon: Icon(Icons.edit),
                         ),
+                        if (widget.onConvert != null)
+                        FilledButton.tonalIcon(
+                          onPressed: () {
+                            close();
+                            widget.onConvert!();
+                          },
+                          label: Text('Convert to exam'),
+                          icon: Icon(Icons.swap_vert_circle_outlined),
+                        ),
                         if (widget.onDelete != null)
-                          FilledButton.tonalIcon(
-                            onPressed: () {
-                              close();
-                              widget.onDelete!();
-                            },
-                            label: Text('Delete'),
-                            icon: Icon(Icons.delete),
-                          ),
+                        FilledButton.tonalIcon(
+                          onPressed: () {
+                            close();
+                            widget.onDelete!();
+                          },
+                          label: Text('Delete'),
+                          icon: Icon(Icons.delete),
+                        ),
                       ],
                     ),
                   ),

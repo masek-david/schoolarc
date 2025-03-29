@@ -73,6 +73,8 @@ class ExamsScreen extends ConsumerWidget {
             isWideScreen: isWide,
             title: const Text('Exams'),
           ),
+          floatingActionButtonLocation:
+              isWide ? FloatingActionButtonLocation.endDocked : null,
           floatingActionButton: FloatingActionButton(
             tooltip: 'Add new exam',
             onPressed: () async {

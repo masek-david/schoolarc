@@ -31,6 +31,7 @@ class TimetableCard extends StatelessWidget {
     required this.bakaTimetable,
     required this.dateToShow,
     required this.whenText,
+    required this.showOnline,
   });
 
   final void Function()? refresh;
@@ -38,6 +39,7 @@ class TimetableCard extends StatelessWidget {
   final Future<TimeTableDTO?>? bakaTimetable;
   final DateTime dateToShow;
   final String whenText;
+  final bool showOnline;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class TimetableCard extends StatelessWidget {
         }
 
         TimeTableDTO timetable = defaultTimeTable;
-        if (snapshot.data != null && refresh != null) {
+        if (snapshot.data != null && refresh != null && showOnline) {
           timetable = snapshot.data!;
         }
 
@@ -70,13 +72,17 @@ class TimetableCard extends StatelessWidget {
                 TextSeparator(
                   text: 'Lessons $whenText',
                   actions: [
-                    if (refresh != null)
-                      LoadingIconButton(
-                        icon: Icons.refresh,
-                        isLoading: isLoading,
-                        onTap: () async {
-                          return refresh!();
-                        },
+                    if (refresh != null && showOnline)
+                      AnimatedOpacity(
+                        duration: Durations.medium1,
+                        opacity: showOnline ? 1 : 0,
+                        child: LoadingIconButton(
+                          icon: Icons.refresh,
+                          isLoading: isLoading,
+                          onTap: () async {
+                            return refresh!();
+                          },
+                        ),
                       ),
                     IconButton(
                       onPressed: () {
@@ -91,12 +97,16 @@ class TimetableCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (error != null)
-                  ErrorTile(
-                    error: error,
-                    text:
-                        'Couldn\'t connect to bakaláři, loaded permanent timetable',
+                AnimatedSize(
+                  duration: Durations.medium1,
+                  child: SizedBox(
+                    height: error != null && showOnline ? null : 0,
+                    child: ErrorTile(
+                      error: error,
+                      text: 'Viewing offline timetable',
+                    ),
                   ),
+                ),
                 const SizedBox(height: 10),
                 areThereUpcomingLessons
                     ? SingleChildScrollView(

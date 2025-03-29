@@ -161,6 +161,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             size: size,
                             onEdit: widget.onEdit,
                             onDelete: widget.onDelete,
+                            onConvert: widget.onConvert,
                             onHide: () {
                               overlay.remove();
                               setState(() {

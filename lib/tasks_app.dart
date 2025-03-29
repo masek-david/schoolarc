@@ -9,6 +9,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
@@ -56,6 +57,7 @@ final stravaService = StravaService();
 final logsService = LogsService();
 FirestoreService firestoreService = FirestoreService();
 final uuid = Uuid();
+late PackageInfo packageInfo;
 
 Future<void> syncAllTasks(WidgetRef ref) async {
   await ref.read(subjectsProvider.notifier).syncAll();
@@ -379,13 +381,13 @@ class _TasksAppState extends ConsumerState<TasksApp> {
               colorScheme: dark,
               sliderTheme: SliderThemeData(year2023: false),
               // TODO add ?
-              pageTransitionsTheme: const PageTransitionsTheme(
-                builders: <TargetPlatform, PageTransitionsBuilder>{
-                  // Set the predictive back transitions for Android.
-                  TargetPlatform.android:
-                      PredictiveBackPageTransitionsBuilder(),
-                },
-              ),
+              // pageTransitionsTheme: const PageTransitionsTheme(
+              //   builders: <TargetPlatform, PageTransitionsBuilder>{
+              //     // Set the predictive back transitions for Android.
+              //     TargetPlatform.android:
+              //         PredictiveBackPageTransitionsBuilder(),
+              //   },
+              // ),
               progressIndicatorTheme:
                   ProgressIndicatorThemeData(year2023: false)),
           themeMode: themeMode,

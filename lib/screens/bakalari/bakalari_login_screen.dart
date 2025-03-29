@@ -229,6 +229,28 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       },
                 child: const Text("Log in"),
               ),
+              if (isLoggedIn)
+                OutlinedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          refreshIndicatorKey.currentState?.show();
+                          setState(() {
+                            isLoading = true;
+                            isLoggedIn = false;
+                          });
+
+                          try {
+                            await bakaService.logOut();
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } catch (e) {
+                            onError(e);
+                          }
+                        },
+                  child: const Text("Log out"),
+                ),
               const Divider(),
               OutlinedButton(
                 onPressed: isLoggedIn && !isLoading

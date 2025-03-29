@@ -74,6 +74,8 @@ class HomeworksScreen extends ConsumerWidget {
             isWideScreen: isWide,
             title: const Text('Homeworks'),
           ),
+          floatingActionButtonLocation:
+              isWide ? FloatingActionButtonLocation.endDocked : null,
           floatingActionButton: FloatingActionButton(
             tooltip: 'Add new homework',
             onPressed: () async {

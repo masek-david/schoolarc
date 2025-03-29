@@ -38,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var dateToShow = DateTime.now();
 
   late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
-  late Future<TimeTableDTO?>? bakaTimetable;
+  Future<TimeTableDTO?>? bakaTimetable;
   late Future<Map<DateTime, List<Meal>>>? mealsFuture;
 
   @override
@@ -156,6 +156,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
         return Scaffold(
+          floatingActionButtonLocation:
+              isWide ? FloatingActionButtonLocation.endDocked : null,
           floatingActionButton: kDebugMode
               ? FloatingActionButton.extended(
                   onPressed: () {
@@ -208,17 +210,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Flexible(
                             child: Column(
                           children: [
-                            if (showMeals)
-                              MealsCard(
-                                meals: mealsFuture,
-                                refresh: refreshMeals,
-                              ),
+                            MealsCard(
+                              isVisible: showMeals,
+                              meals: mealsFuture,
+                              refresh: refreshMeals,
+                            ),
                             TimetableCard(
                               refresh: refreshTimetable,
                               defaultTimeTable: defaultTimeTable,
                               bakaTimetable: bakaTimetable,
                               dateToShow: dateToShow,
                               whenText: whenText,
+                              showOnline: showBaka,
                             ),
                           ],
                         )),
@@ -227,18 +230,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (!isWide && showMeals)
+                            if (!isWide)
                               MealsCard(
+                                isVisible: showMeals,
                                 meals: mealsFuture,
                                 refresh: refreshMeals,
                               ),
                             if (!isWide)
                               TimetableCard(
-                                refresh: showBaka ? refreshTimetable : null,
+                                refresh: refreshTimetable,
                                 defaultTimeTable: defaultTimeTable,
-                                bakaTimetable: showBaka ? bakaTimetable : null,
+                                bakaTimetable: bakaTimetable,
                                 dateToShow: dateToShow,
                                 whenText: whenText,
+                                showOnline: showBaka,
                               ),
                             if (missedHw.isNotEmpty)
                               Card(

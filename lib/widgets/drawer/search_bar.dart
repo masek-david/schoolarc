@@ -8,6 +8,7 @@ import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
+import 'package:school_manager/utils/task_functions.dart';
 
 class MySearchBar extends ConsumerWidget {
   const MySearchBar({super.key});
@@ -16,18 +17,31 @@ class MySearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hw = <HomeworkDTO>[];
-    ref.watch(hwSortedProvider).values.forEach(
-      (element) {
-        hw.insertAll(0, element);
-      },
-    );
-    final exams = <ExamDTO>[];
-    ref.watch(examSortedProvider).values.forEach(
-      (element) {
-        exams.insertAll(0, element);
-      },
-    );
+    final hws = ref
+        .watch(hwProvider)
+        .values
+        .where((element) => !element.isDeleted)
+        .toList();
+    final exams = ref
+        .watch(examProvider)
+        .values
+        .where((element) => !element.isDeleted)
+        .toList();
+
+    final tasks = [...hws, ...exams];
+
+    tasks.sort((a, b) {
+      if (a.isCompleted != b.isCompleted) {
+        return (a.isCompleted ? 1 : 0).compareTo((b.isCompleted ? 1 : 0));
+      }
+      if (a.priority.index != b.priority.index) {
+        return b.priority.index.compareTo(a.priority.index);
+      }
+      if (a.order != b.order) {
+        return a.order.compareTo(b.order);
+      }
+      return 0;
+    });
     final subjects = ref.watch(subjectsSortedProvider);
 
     return SearchAnchor.bar(
@@ -36,47 +50,50 @@ class MySearchBar extends ConsumerWidget {
         if (text == '') return [];
         List<Widget> list = [];
 
-        hw
+        tasks
             .where(
-              (element) => element.containsText(text) && !element.isDeleted,
-            )
+          (task) => task.containsText(text) && !task.isDeleted,
+        )
             .forEach(
-              (element) => list.add(Padding(
+          (task) {
+            late Widget item;
+            if (task.runtimeType == HomeworkDTO) {
+              item = HomeworkTile(
+                hw: task as HomeworkDTO,
+                onChangedCompletion: (p0) {},
+                onDelete: null,
+                onEdit: () {
+                  editHw(context, ref, task);
+                },
+                onConvert: null,
+                expUseHwOverlay: true,
+              );
+            } else {
+              item = ExamTile(
+                exam: task as ExamDTO,
+                onDelete: null,
+                onEdit: () {},
+                onConvert: null,
+              );
+            }
+
+            list.add(
+              Padding(
                 padding: itemPadding,
-                child: HomeworkTile(
-                  hw: element,
-                  onChangedCompletion: (p0) {},
-                  onDelete: null,
-                  onEdit: () {},
-                  onConvert: null,
-                  expUseHwOverlay: true,
-                ),
-              )),
+                child: item,
+              ),
             );
-        exams
-            .where(
-              (element) => element.containsText(text) && !element.isDeleted,
-            )
-            .forEach(
-              (element) => list.add(Padding(
-                padding: itemPadding,
-                child: ExamTile(
-                  exam: element,
-                  onDelete: null,
-                  onEdit: () {},
-                  onConvert: null,
-                ),
-              )),
-            );
+          },
+        );
         subjects
             .where(
-              (element) => element.containsText(text) && !element.isDeleted,
+              (subject) => subject.containsText(text) && !subject.isDeleted,
             )
             .forEach(
-              (element) => list.add(Padding(
+              (subject) => list.add(Padding(
                 padding: itemPadding,
                 child: SubjectTile(
-                  subject: element,
+                  subject: subject,
                   onTap: () {},
                   onDelete: null,
                 ),

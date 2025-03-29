@@ -191,6 +191,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       builder: (context, isWide, child) {
         return Scaffold(
           appBar: isWide ? null : buildAppBar(isWide),
+          floatingActionButtonLocation: isWide ? FloatingActionButtonLocation.endDocked : null,
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -220,6 +221,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
           body: isWide
               ? Container(
+                  // this is what is shown behind the resizable container
                   color: Theme.of(context).colorScheme.surfaceContainer,
                   child: ResizableContainer(
                     controller: _resizeController,
@@ -233,7 +235,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           padding: 12,
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           child: Scaffold(
                             appBar: buildAppBar(isWide),
                             body: buildCalendar(isWide, hws, exams),
@@ -244,7 +246,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         size: ResizableSize.ratio(initialRatios[1], min: 300),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             color: Theme.of(context).colorScheme.surface,
                           ),
                           child: buildPages(hws, exams, missedHws),

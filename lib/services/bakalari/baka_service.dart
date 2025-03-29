@@ -129,10 +129,16 @@ class BakaService {
     }
   }
 
-  void logOut() {
-    saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, '');
-    saveToSecureStorage(SecureStorage.bakaSchoolNameKey, '');
-    saveToSecureStorage(SecureStorage.bakaUsernameKey, '');
+  Future<void> logOut() async {
+    _accessToken = null;
+    _refreshToken = null;
+    _tokenExpiration = null;
+    
+    Future.wait([
+      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, ''),
+      saveToSecureStorage(SecureStorage.bakaSchoolNameKey, ''),
+      saveToSecureStorage(SecureStorage.bakaUsernameKey, ''),
+    ]);
   }
 
   /// logs in, returns errors and sets this._refreshToken and this._accessToken
@@ -146,7 +152,7 @@ class BakaService {
       );
     } on SocketException catch (_) {
       throw ServiceException(
-          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
+          'Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -179,6 +185,10 @@ class BakaService {
   }
 
   Future<void> loadName() async {
+    if(settings.get(Setting.userName) != null){
+      return;
+    }
+    
     Response response;
     try {
       String schoolName = await this.schoolName;
@@ -234,7 +244,7 @@ class BakaService {
       );
     } on SocketException {
       throw ServiceException(
-          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
+          'Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -324,7 +334,7 @@ class BakaService {
       });
     } on SocketException {
       throw ServiceException(
-          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
+          'Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -523,7 +533,7 @@ class BakaService {
       });
     } on SocketException {
       throw ServiceException(
-          'Check your internet connection. \nCouldn\'t connect to the address: $url.');
+          'Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }

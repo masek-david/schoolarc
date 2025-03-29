@@ -16,9 +16,11 @@ class MealsCard extends StatelessWidget {
     super.key,
     required this.meals,
     required this.refresh,
+    required this.isVisible,
   });
 
   final Future<Map<DateTime, List<Meal>>>? meals;
+  final bool isVisible;
   final Future<void> Function() refresh;
 
   final PageController _pageController = PageController();
@@ -35,122 +37,128 @@ class MealsCard extends StatelessWidget {
 
     final todayLocal000 = DateTime(now.year, now.month, now.day, 0, 0);
 
-    return FutureBuilder(
-      future: meals,
-      builder: (context, snapshot) {
-        bool isLoading = false;
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          isLoading = true;
-        } else if (snapshot.hasError) {
-          return ErrorTile(
-            error: snapshot.error,
-            text: 'Meals couldn\'t be loaded',
-            actions: [
-              LoadingIconButton(
-                icon: Icons.refresh,
-                onTap: () => refresh(),
-                isLoading: isLoading,
-              ),
-              IconButton(
-                onPressed: () {
-                  navigatorKey.currentState?.push(MaterialPageRoute(
-                    builder: (context) => MealsScreen(),
-                  ));
-                },
-                icon: const Icon(
-                  Icons.keyboard_arrow_right_rounded,
-                ),
-              ),
-            ],
-          );
-        } else if (!snapshot.hasData) {
-          return const Center(child: Text('No meals found'));
-        }
-
-        int pagesCount = snapshot.data?.keys.length ?? 1;
-        if (pagesCount == 0) {
-          pagesCount = 1;
-        }
-
-        return Card(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ExpandablePageView.builder(
-                animateFirstPage: true,
-                controller: _pageController,
-                animationDuration: Durations.medium2,
-                itemCount: pagesCount,
-                itemBuilder: (context, index) {
-                  final date = todayLocal000
-                      .toUtc()
-                      .add(Duration(days: index))
-                      .toLocal();
-
-                  final mealsForToday = snapshot.data?[date];
-                  final bool empty = mealsForToday == null;
-
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextSeparator(
-                          text: isLoading
-                              ? 'Loading'
-                              : empty
-                                  ? 'No meals for ${date.dayText().toLowerCase()}'
-                                  : 'Meals for ${date.dayText().toLowerCase()}',
-                          actions: [
-                            LoadingIconButton(
-                              icon: Icons.refresh,
-                              onTap: () => refresh(),
-                              isLoading: isLoading,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                navigatorKey.currentState
-                                    ?.push(MaterialPageRoute(
-                                  builder: (context) => MealsScreen(),
-                                ));
-                              },
-                              icon: const Icon(
-                                Icons.keyboard_arrow_right_rounded,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // if (empty) SizedBox(height: 8),
-                        if (!empty)
-                          ...mealsForToday.map((meal) {
-                            return MealTile(meal: meal);
-                          }),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              if (snapshot.data?.keys.length != null)
-                if (snapshot.data!.keys.length > 1)
-                  SmoothPageIndicator(
-                    controller: _pageController,
-                    count: snapshot.data?.keys.length ?? 0,
-                    effect: ScrollingDotsEffect(
-                      activeDotColor: Theme.of(context).colorScheme.tertiary,
-                      dotColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      maxVisibleDots: 7,
-                      dotHeight: 4,
-                      dotWidth: 16,
+    return AnimatedSize(
+      duration: Durations.medium1,
+      child: SizedBox(
+        height: isVisible ? null : 0,
+        child: FutureBuilder(
+          future: meals,
+          builder: (context, snapshot) {
+            bool isLoading = false;
+        
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              isLoading = true;
+            } else if (snapshot.hasError) {
+              return ErrorTile(
+                error: snapshot.error,
+                text: 'Meals couldn\'t be loaded',
+                actions: [
+                  LoadingIconButton(
+                    icon: Icons.refresh,
+                    onTap: () => refresh(),
+                    isLoading: isLoading,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => MealsScreen(),
+                      ));
+                    },
+                    icon: const Icon(
+                      Icons.keyboard_arrow_right_rounded,
                     ),
                   ),
-              const SizedBox(height: 5),
-            ],
-          ),
-        );
-      },
+                ],
+              );
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No meals found'));
+            }
+        
+            int pagesCount = snapshot.data?.keys.length ?? 1;
+            if (pagesCount == 0) {
+              pagesCount = 1;
+            }
+        
+            return Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ExpandablePageView.builder(
+                    animateFirstPage: true,
+                    controller: _pageController,
+                    animationDuration: Durations.medium2,
+                    itemCount: pagesCount,
+                    itemBuilder: (context, index) {
+                      final date = todayLocal000
+                          .toUtc()
+                          .add(Duration(days: index))
+                          .toLocal();
+        
+                      final mealsForToday = snapshot.data?[date];
+                      final bool empty = mealsForToday == null;
+        
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextSeparator(
+                              text: isLoading
+                                  ? 'Loading'
+                                  : empty
+                                      ? 'No meals for ${date.dayText().toLowerCase()}'
+                                      : 'Meals for ${date.dayText().toLowerCase()}',
+                              actions: [
+                                LoadingIconButton(
+                                  icon: Icons.refresh,
+                                  onTap: () => refresh(),
+                                  isLoading: isLoading,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    navigatorKey.currentState
+                                        ?.push(MaterialPageRoute(
+                                      builder: (context) => MealsScreen(),
+                                    ));
+                                  },
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_right_rounded,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // if (empty) SizedBox(height: 8),
+                            if (!empty)
+                              ...mealsForToday.map((meal) {
+                                return MealTile(meal: meal);
+                              }),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  if (snapshot.data?.keys.length != null)
+                    if (snapshot.data!.keys.length > 1)
+                      SmoothPageIndicator(
+                        controller: _pageController,
+                        count: snapshot.data?.keys.length ?? 0,
+                        effect: ScrollingDotsEffect(
+                          activeDotColor: Theme.of(context).colorScheme.tertiary,
+                          dotColor:
+                              Theme.of(context).colorScheme.surfaceContainerHighest,
+                          maxVisibleDots: 7,
+                          dotHeight: 4,
+                          dotWidth: 16,
+                        ),
+                      ),
+                  const SizedBox(height: 5),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

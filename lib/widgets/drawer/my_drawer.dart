@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/recently_deleted_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
@@ -44,9 +45,8 @@ class MyDrawer extends StatelessWidget {
               child: Text('School app', style: TextStyle(fontSize: 20)),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
-              child: MySearchBar()
-            ),
+                padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
+                child: MySearchBar()),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -203,6 +203,22 @@ class MyDrawer extends StatelessWidget {
                 );
               },
             ),
+            if (showDebug)
+              GestureDetector(
+                onTap: () => navigatorKey.currentState?.push(MaterialPageRoute(
+                  builder: (context) => ChangelogScreen(),
+                )),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Text(
+                    '${packageInfo.version} build ${packageInfo.buildNumber}',
+                    style: TextStyle(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerLowest,
+                    ),
+                  ),
+                ),
+              )
           ],
         ),
       ),

@@ -26,7 +26,7 @@ void updateHwWidget(List<HomeworkDTO> hws) {
   }
 
   HomeWidget.saveWidgetData('hw', jsonEncode(json));
-  HomeWidget.updateWidget(name: 'HwWidgetReceiver');
+  HomeWidget.updateWidget(androidName: 'HwWidgetReceiver');
 }
 
 void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
@@ -48,7 +48,7 @@ void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
     },
   );
   HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
-  HomeWidget.updateWidget(name: 'StravaWidgetReceiver');
+  HomeWidget.updateWidget(androidName: 'StravaWidgetReceiver');
 }
 
 @pragma("vm:entry-point")
@@ -105,7 +105,6 @@ Future<void> _complete(
 
       await Hive.box('hwBox').flush();
       await Hive.box('hwBox').close();
-      print('background work done');
       return;
     }
   }
