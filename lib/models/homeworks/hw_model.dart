@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 
 part 'hw_model.g.dart';
 
@@ -26,25 +27,25 @@ class Homework extends HiveObject {
   }
 
   @HiveField(0)
-  int? subjectDbIndex;
+  final int? subjectDbIndex;
   @HiveField(1)
-  String text;
+  final String text;
   @HiveField(2)
-  DateTime deadline;
+  final DateTime deadline;
   @HiveField(3)
-  bool isCompleted;
+  final bool isCompleted;
   @HiveField(4)
-  int priority;
+  final int priority;
   @HiveField(5)
-  String? description;
+  final String? description;
   @HiveField(6)
   final String? fireId;
   @HiveField(7)
-  DateTime timestamp;
+  final DateTime timestamp;
   @HiveField(8, defaultValue: false)
   final bool isDeleted;
   @HiveField(9, defaultValue: 0)
-  int order;
+  final int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -60,6 +61,35 @@ class Homework extends HiveObject {
   String toString() {
     return 'homework: $text, order: $order, completed: $isCompleted, deleted: $isDeleted';
   }
+
+  // TODO remove parameter
+  Map<String, dynamic> toJson(Map<int, Subject> subjects) {
+    return {
+      'text': text,
+      'subjectId': subjects[subjectDbIndex]?.fireId,
+      'date': deadline.toUtc().toIso8601String(),
+      'priority': priority,
+      'description': description,
+      'id': fireId,
+      'order': order,
+      'isDeleted': isDeleted,
+      'isCompleted': isCompleted,
+    };
+  }
+
+  Homework.fromJson(Map<String, dynamic> json)
+      : subjectDbIndex = null,
+        // TODO just uncomment in 2.0.0
+        // : subjectDbIndex = json['subjectId'],
+        text = json['text'],
+        deadline = DateTime.parse(json['date']),
+        priority = json['priority'],
+        description = json['description'],
+        fireId = json['id'],
+        order = json['order'],
+        isDeleted = json['isDeleted'],
+        isCompleted = json['isCompleted'],
+        timestamp = DateTime.now();
 
   Homework copyWith({
     int? subjectDbIndex,

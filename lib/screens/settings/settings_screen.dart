@@ -4,6 +4,7 @@ import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
+import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
 import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
@@ -144,6 +145,7 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ),
+          if (showDebug) ImportExportRow(),
           if (showDebug)
             SettingTile(
               label: 'View app logs',

@@ -317,14 +317,15 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      hw.order = _dbState.values
-          .where(
-            (element) =>
-                !element.isDeleted &&
-                !element.isCompleted &&
-                element.priority.index == hw.priority,
-          )
-          .length;
+      hw = hw.copyWith(
+          order: _dbState.values
+              .where(
+                (element) =>
+                    !element.isDeleted &&
+                    !element.isCompleted &&
+                    element.priority.index == hw.priority,
+              )
+              .length);
     }
 
     if (addToFire) {
@@ -346,7 +347,7 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
         if (hw.timestamp.millisecondsSinceEpoch <
             hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
           // if the new one is older, add it after the old one
-          hw.order++;
+          hw = hw.copyWith(order: hw.order + 1);
           homeworksDb.editHw(dbIndex, hw);
           // if the new one is newer, add it before old
         }

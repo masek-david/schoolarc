@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 part 'exam_model.g.dart';
@@ -26,15 +27,15 @@ class Exam extends HiveObject {
   }
 
   @HiveField(0)
-  int? subjectDbIndex;
+  final int? subjectDbIndex;
   @HiveField(1)
-  String text;
+  final String text;
   @HiveField(2)
-  DateTime date;
+  final DateTime date;
   @HiveField(3)
-  int priority;
+  final int priority;
   @HiveField(5)
-  String? description;
+  final String? description;
   @HiveField(6)
   final String? fireId;
   @HiveField(7)
@@ -42,7 +43,7 @@ class Exam extends HiveObject {
   @HiveField(8, defaultValue: false)
   final bool isDeleted;
   @HiveField(9, defaultValue: 0)
-  int order;
+  final int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -58,6 +59,33 @@ class Exam extends HiveObject {
   String toString() {
     return 'exam: $text, order: $order, deleted: $isDeleted';
   }
+
+  // TODO remove parameter
+  Map<String, dynamic> toJson(Map<int, Subject> subjects) {
+    return {
+      'text': text,
+      'subjectId': subjects[subjectDbIndex]?.fireId,
+      'date': date.toUtc().toIso8601String(),
+      'priority': priority,
+      'description': description,
+      'id': fireId,
+      'order': order,
+      'isDeleted': isDeleted,
+    };
+  }
+
+  Exam.fromJson(Map<String, dynamic> json)
+      : subjectDbIndex = null,
+        // TODO just uncomment in 2.0.0
+        // : subjectDbIndex = json['subjectId'],
+        text = json['text'],
+        date = DateTime.parse(json['date']),
+        priority = json['priority'],
+        description = json['description'],
+        fireId = json['id'],
+        order = json['order'],
+        isDeleted = json['isDeleted'],
+        timestamp = DateTime.now();
 
   Exam copyWith({
     int? subjectDbIndex,
