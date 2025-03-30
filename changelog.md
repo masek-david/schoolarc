@@ -1,4 +1,10 @@
+## [1.1.0]() - 2025-03-30
+### Added
+- Added option for exporting app data, including subjects, homework and exams
 
+### Changed
+
+### Fixed
 
 ---
 

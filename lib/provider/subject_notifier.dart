@@ -126,11 +126,12 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      subject.order = _dbState.values
-          .where(
-            (element) => !element.isDeleted,
-          )
-          .length;
+      subject = subject.copyWith(
+          order: _dbState.values
+              .where(
+                (element) => !element.isDeleted,
+              )
+              .length);
     }
 
     if (addToFire) {
@@ -150,7 +151,7 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
         if (subject.timestamp.millisecondsSinceEpoch <
             subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
           // if the new one is older, add it after the old
-          subject.order++;
+          subject = subject.copyWith(order: subject.order + 1);
           subjectsDb.saveEditedSubject(dbIndex, subject);
         }
         reorder(
@@ -306,7 +307,6 @@ class SubjectNotifier extends Notifier<Map<int, SubjectDTO>> {
     );
   }
 
-  
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
   /// deletes from cloud and local, other devices must delete it themself
   Future<void> _permanentDelete(List<SubjectDTO> subjects) async {

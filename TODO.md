@@ -21,19 +21,21 @@ pass datetime better to widget
 
 remove slide to delete?
 
-pridat strava login do welcome
-
-pridat export a import dat
-
 info o bakalarich
 
 test timezones
+
+kouknout znova na kod pro urcovani vysky radek v kalendari
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # version 2.0.0
-- change package name (io.github.the-david-dev.school ???)
+- change package name (io.github.thedaviddev.school ???)
+- move to hivece
 - fix dates (save them just as utc)
 - move to supabase
+- remove old migration stuff
+- tutorial
+- ask for notification permission

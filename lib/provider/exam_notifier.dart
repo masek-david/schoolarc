@@ -283,14 +283,14 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      exam.order = _dbState.values
+      exam = exam.copyWith(order: _dbState.values
           .where(
             (element) =>
                 !element.isDeleted &&
                 !element.isCompleted &&
                 element.priority.index == exam.priority,
           )
-          .length;
+          .length);
     }
 
     if (addToFire) {
@@ -312,7 +312,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
         if (exam.timestamp.millisecondsSinceEpoch <
             examWithSameOrder.timestamp.millisecondsSinceEpoch) {
           // if the new one is older, add it after the old one
-          exam.order++;
+          exam = exam.copyWith(order: exam.order + 1);
           examsDb.editExam(dbIndex, exam);
           // if the new one is newer, add it before old
         }

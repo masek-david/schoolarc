@@ -29,11 +29,11 @@ class Subject extends HiveObject {
   @HiveField(3)
   final String? fireId;
   @HiveField(4)
-  DateTime timestamp;
+  final DateTime timestamp;
   @HiveField(5, defaultValue: false)
-  bool isDeleted;
+  final bool isDeleted;
   @HiveField(6, defaultValue: 0)
-  int order;
+  final int order;
 
   /// saves this as it is now to hive
   void saveSafe() async {
@@ -44,6 +44,26 @@ class Subject extends HiveObject {
       save();
     }
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'shortcut': shortcut,
+      'bakaId': bakaId,
+      'id': fireId,
+      'order': order,
+      'isDeleted': isDeleted,
+    };
+  }
+
+  Subject.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        shortcut = json['shortcut'],
+        bakaId = json['bakaId'],
+        fireId = json['id'],
+        order = json['order'],
+        isDeleted = json['isDeleted'],
+        timestamp = DateTime.now();
 
   SubjectDTO convertToDTO(int dbIndex) {
     return SubjectDTO(
