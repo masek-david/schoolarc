@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
@@ -31,8 +31,8 @@ class _WelcomeScreenHomeworksState extends State<WelcomeScreenHomeworks>
         text = 'Check to complete  ->';
     }
 
-    return HomeworkDTO(
-      subject: SubjectDTO(
+    return Homework(
+      subject: Subject(
         name: 'Subject',
         shortcut: 'Hw',
         id: '0',

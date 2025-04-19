@@ -14,12 +14,12 @@ import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/models/timetable/timetable_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -294,7 +294,7 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTableDTO> getCurrentTimetable(DateTime date, WidgetRef ref) async {
+  Future<TimeTable> getCurrentTimetable(DateTime date, WidgetRef ref) async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -350,7 +350,7 @@ class BakaService {
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
-    TimeTableDTO timeTable = TimeTableDTO(
+    TimeTable timeTable = TimeTable(
         lessonTimes: lessons.map(
       (lessonTime) {
         return lessonTime.toLessonTimes();
@@ -445,13 +445,14 @@ class BakaService {
 
       if (!subjectExisted) {
         var newSubject = await ref.read(subjectsProvider.notifier).saveNew(
-              Subject(
+              SubjectEntity(
                 name: name,
                 shortcut: shortcut,
                 bakaId: bakaId,
                 isDeleted: false,
                 order: 0,
-                timestamp: DateTime.now().toUtc(),
+                timestamp: DateTime.now().toUtc()
+                ,
               ),
             );
         bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.id});
@@ -535,7 +536,7 @@ class BakaService {
     int newHomeworks = 0;
 
     for (var homework in homeworksJson) {
-      SubjectDTO subject = subjects.entries
+      Subject subject = subjects.entries
           .where(
             (entry) {
               return entry.value.bakaId == homework['Subject']['Id'];

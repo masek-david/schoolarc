@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_id_model.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 
 class FirebaseService {
@@ -32,7 +32,7 @@ class FirebaseService {
     return auth.currentUser?.email;
   }
 
-  Future<void> testRealtime(SubjectDTO subject) async {
+  Future<void> testRealtime(Subject subject) async {
     subjects.child(subject.id).update(subject.toFireJson());
 
     return;
@@ -77,7 +77,7 @@ class FirebaseService {
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteExams(List<ExamDTO> examsToDelete) async {
+  Future<void> deleteExams(List<Exam> examsToDelete) async {
     if (examsToDelete.isEmpty) return;
 
     final Map<String, dynamic> updates = {
@@ -92,7 +92,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> editExams(List<ExamDTO> examsToUpdate) async {
+  Future<void> editExams(List<Exam> examsToUpdate) async {
     if (examsToUpdate.isEmpty) return;
 
     final updates = {
@@ -108,7 +108,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> addExam(ExamDTO exam) async {
+  Future<void> addExam(Exam exam) async {
     try {
       await exams.child(exam.id).update(exam.toFireJson());
 
@@ -152,7 +152,7 @@ class FirebaseService {
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteHomeworks(List<HomeworkDTO> hwsToDelete) async {
+  Future<void> deleteHomeworks(List<Homework> hwsToDelete) async {
     if (hwsToDelete.isEmpty) return;
 
     final Map<String, dynamic> updates = {
@@ -167,7 +167,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> editHomeworks(List<HomeworkDTO> hwsToUpdate) async {
+  Future<void> editHomeworks(List<Homework> hwsToUpdate) async {
     if (hwsToUpdate.isEmpty) return;
 
     final updates = {
@@ -183,7 +183,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> addHomework(HomeworkDTO homework) async {
+  Future<void> addHomework(Homework homework) async {
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
 
@@ -213,22 +213,22 @@ class FirebaseService {
 
   // SUBJECTS
 
-  Stream<SubjectDTO> listenSubjectsR() {
+  Stream<Subject> listenSubjectsR() {
     final added = subjects.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return SubjectDTO.fromFireJson(json);
+      return Subject.fromFireJson(json);
     });
     final changed = subjects.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return SubjectDTO.fromFireJson(json);
+      return Subject.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteSubjects(List<SubjectDTO> subjectsToDelete) async {
+  Future<void> deleteSubjects(List<Subject> subjectsToDelete) async {
     if (subjectsToDelete.isEmpty) return;
 
     final Map<String, dynamic> updates = {
@@ -243,7 +243,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> editSubjects(List<SubjectDTO> subjectsToUpdate) async {
+  Future<void> editSubjects(List<Subject> subjectsToUpdate) async {
     if (subjectsToUpdate.isEmpty) return;
 
     final updates = {
@@ -259,7 +259,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> addSubject(SubjectDTO subject) async {
+  Future<void> addSubject(Subject subject) async {
     try {
       await subjects.child(subject.id).update(subject.toFireJson());
 
@@ -270,15 +270,15 @@ class FirebaseService {
     return;
   }
 
-  Future<List<SubjectDTO>> getSubjects() async {
-    List<SubjectDTO> subjectsList = [];
+  Future<List<Subject>> getSubjects() async {
+    List<Subject> subjectsList = [];
     try {
       final snapshot = await subjects.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        subjectsList.add(SubjectDTO.fromFireJson(json));
+        subjectsList.add(Subject.fromFireJson(json));
       });
     } catch (e) {
       log(e.toString());

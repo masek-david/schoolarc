@@ -1,6 +1,6 @@
-import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
 
-class ExamWithID extends Exam {
+class ExamWithID extends ExamEntity {
   ExamWithID({
     required super.text,
     required super.description,

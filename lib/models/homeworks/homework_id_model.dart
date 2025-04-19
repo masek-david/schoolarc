@@ -1,6 +1,6 @@
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 
-class HomeworkWithID extends Homework {
+class HomeworkWithID extends HomeworkEntity {
   HomeworkWithID({
     required super.deadline,
     required super.text,

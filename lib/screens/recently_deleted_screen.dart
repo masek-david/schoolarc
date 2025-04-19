@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -25,21 +25,21 @@ class RecentlyDeletedScreen extends ConsumerWidget {
     Function onRevert = () => throw 'No valid item';
 
     switch (item.runtimeType) {
-      case const (HomeworkDTO):
+      case const (Homework):
         {
-          final hw = item as HomeworkDTO;
+          final hw = item as Homework;
           itemName = hw.text;
           onRevert = () => ref.read(hwProvider.notifier).revertDelete(hw);
         }
-      case const (ExamDTO):
+      case const (Exam):
         {
-          final exam = item as ExamDTO;
+          final exam = item as Exam;
           itemName = exam.text;
           onRevert = () => ref.read(examProvider.notifier).revertDelete(exam);
         }
-      case const (SubjectDTO):
+      case const (Subject):
         {
-          final subject = item as SubjectDTO;
+          final subject = item as Subject;
           itemName = subject.name;
           onRevert =
               () => ref.read(subjectsProvider.notifier).revertDelete(subject);
@@ -106,10 +106,10 @@ class RecentlyDeletedScreen extends ConsumerWidget {
 
           Widget? tile;
           switch (item.runtimeType) {
-            case const (HomeworkDTO):
+            case const (Homework):
               {
                 daysLeft =
-                    7 + (item as HomeworkDTO).timestamp.difference(now).inDays;
+                    7 + (item as Homework).timestamp.difference(now).inDays;
                 tile = HomeworkTile(
                   hw: item,
                   borderIfMissed: false,
@@ -119,10 +119,10 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                   onConvert: null,
                 );
               }
-            case const (ExamDTO):
+            case const (Exam):
               {
                 daysLeft =
-                    7 + (item as ExamDTO).timestamp.difference(now).inDays;
+                    7 + (item as Exam).timestamp.difference(now).inDays;
                 tile = ExamTile(
                   exam: item,
                   onDelete: null,
@@ -130,10 +130,10 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                   onConvert: null,
                 );
               }
-            case const (SubjectDTO):
+            case const (Subject):
               {
                 daysLeft =
-                    7 + (item as SubjectDTO).timestamp.difference(now).inDays;
+                    7 + (item as Subject).timestamp.difference(now).inDays;
                 tile = SubjectTile(
                   subject: item,
                   onDelete: kDebugMode

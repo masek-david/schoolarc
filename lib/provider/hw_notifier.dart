@@ -8,10 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -19,18 +19,18 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 final hwProvider =
-    NotifierProvider<HwNotifier, Map<String, HomeworkDTO>>(HwNotifier.new);
+    NotifierProvider<HwNotifier, Map<String, Homework>>(HwNotifier.new);
 
 // sorts by priorities (0-3), orders them
-final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
+final hwSortedProvider = Provider<Map<int, List<Homework>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    Map<int, List<HomeworkDTO>> hwPriorityMap = {
-      0: <HomeworkDTO>[],
-      1: <HomeworkDTO>[],
-      2: <HomeworkDTO>[],
-      3: <HomeworkDTO>[],
+    Map<int, List<Homework>> hwPriorityMap = {
+      0: <Homework>[],
+      1: <Homework>[],
+      2: <Homework>[],
+      3: <Homework>[],
     };
 
     hws.forEach(
@@ -54,7 +54,7 @@ final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
 );
 
 // key for each day is the utc value, with time being 0:00:00
-final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
+final hwDatesProvider = Provider<Map<DateTime, List<Homework>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -63,9 +63,9 @@ final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
 );
 
 /// key for each day is the local date value, with time being 0:00:00
-Map<DateTime, List<HomeworkDTO>> hwsSortByDate(
-    Map<String, HomeworkDTO> original) {
-  Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
+Map<DateTime, List<Homework>> hwsSortByDate(
+    Map<String, Homework> original) {
+  Map<DateTime, List<Homework>> hwDateMap = {};
 
   original.forEach(
     (dbIndex, homework) {
@@ -94,11 +94,11 @@ Map<DateTime, List<HomeworkDTO>> hwsSortByDate(
   return hwDateMap;
 }
 
-final hwCompletedProvider = Provider<List<HomeworkDTO>>(
+final hwCompletedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    final list = <HomeworkDTO>[];
+    final list = <Homework>[];
 
     hws.forEach(
       (key, hw) {
@@ -114,10 +114,10 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwWidgetProvider = Provider<List<HomeworkDTO>>(
+final hwWidgetProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwSortedProvider);
-    final list = <HomeworkDTO>[];
+    final list = <Homework>[];
 
     for (int i = 3; i >= 0; i--) {
       list.addAll([...hws[i]!]);
@@ -127,7 +127,7 @@ final hwWidgetProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwMissedProvider = Provider<List<HomeworkDTO>>(
+final hwMissedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -135,7 +135,7 @@ final hwMissedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwDeletedProvider = Provider<List<HomeworkDTO>>(
+final hwDeletedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -152,8 +152,8 @@ final hwDeletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-List<HomeworkDTO> hwsGetMissed(Map<String, HomeworkDTO> original) {
-  List<HomeworkDTO> missedHw = [];
+List<Homework> hwsGetMissed(Map<String, Homework> original) {
+  List<Homework> missedHw = [];
 
   original.forEach(
     (dbIndex, hw) {
@@ -169,13 +169,13 @@ List<HomeworkDTO> hwsGetMissed(Map<String, HomeworkDTO> original) {
   return missedHw;
 }
 
-class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
+class HwNotifier extends Notifier<Map<String, Homework>>
     with WidgetsBindingObserver {
-  Map<String, SubjectDTO> subjects = {};
+  Map<String, Subject> subjects = {};
   StreamSubscription<HomeworkWithID>? listenFirebase;
 
   @override
-  Map<String, HomeworkDTO> build() {
+  Map<String, Homework> build() {
     // listen to subjectsProvider changes
     ref.listen(subjectsProvider, (_, next) {
       subjects = next;
@@ -195,12 +195,12 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
   }
 
   /// returns state saved in database
-  Map<String, HomeworkDTO> get _dbState {
+  Map<String, Homework> get _dbState {
     return homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(
           key,
-          value.convertToDTO(key, subjects[value.subjectId]),
+          value.convert(key, subjects[value.subjectId]),
         );
       },
     );
@@ -274,7 +274,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
   }
 
   Future<void> saveNew(
-    Homework hw, {
+    HomeworkEntity hw, {
     // if null, new id is generated
     String? overrideId,
     bool addToFire = true,
@@ -298,7 +298,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
     final originalState = _dbState;
     await homeworksDb.addHw(id, hw);
 
-    final HomeworkDTO? hwWithSameOrder = originalState.values
+    final Homework? hwWithSameOrder = originalState.values
         .where((element) =>
             element.order == hw.order &&
             !element.isDeleted &&
@@ -319,16 +319,16 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
           hw.order,
           null,
           hw.priority,
-          hw.convertToDTO(id, subjects[hw.subjectId]),
+          hw.convert(id, subjects[hw.subjectId]),
         );
       }
     }
 
-    state = {...state, id: hw.convertToDTO(id, subjects[hw.subjectId])};
+    state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
 
     if (addToFire) {
       await firebaseService
-          .addHomework(hw.convertToDTO(id, subjects[hw.subjectId]));
+          .addHomework(hw.convert(id, subjects[hw.subjectId]));
     }
 
     return;
@@ -336,7 +336,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
 
   /// assign timestamp manually, if no id, it will add it as now
   Future<void> edit(
-    HomeworkDTO editedHw, {
+    Homework editedHw, {
     bool syncWithFire = true,
 
     /// this is true when completing a task, it wont reorder others
@@ -422,7 +422,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
     int? newIndex,
     int? oldPriority,
     int? newPriority,
-    HomeworkDTO? homework, {
+    Homework? homework, {
     /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
     bool addTimestamp = false,
   }) async {
@@ -471,7 +471,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
           homework);
     }
 
-    final editedHomeworks = <String, HomeworkDTO>{};
+    final editedHomeworks = <String, Homework>{};
 
     if (oldPriority != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
@@ -505,7 +505,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
     return;
   }
 
-  void convert(HomeworkDTO hw) {
+  void convert(Homework hw) {
     delete(hw);
     ref.read(examProvider.notifier).saveNew(hw.toExam());
   }
@@ -518,7 +518,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
     }
   }
 
-  Future<void> complete(HomeworkDTO hw, bool nowIsCompleted) async {
+  Future<void> complete(Homework hw, bool nowIsCompleted) async {
     await edit(
       hw.copyWith(
           timestamp: DateTime.now().toUtc(), isCompleted: nowIsCompleted),
@@ -526,11 +526,11 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
     );
   }
 
-  void delete(HomeworkDTO hw) {
+  void delete(Homework hw) {
     edit(hw.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(HomeworkDTO hw) {
+  void revertDelete(Homework hw) {
     edit(
       hw.copyWith(
           timestamp: DateTime.now().toUtc(),
@@ -540,7 +540,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
   }
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  Future<void> _permanentDelete(List<HomeworkDTO> hws) async {
+  Future<void> _permanentDelete(List<Homework> hws) async {
     if (hws.isEmpty) return;
     for (var element in hws) {
       homeworksDb.deleteHw(element.id);
@@ -551,7 +551,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<HomeworkDTO> hwsToDelete = [];
+    List<Homework> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
       if (hw.isDeleted && now.difference(hw.timestamp) > Duration(days: 7)) {
@@ -591,7 +591,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkDTO>>
       // print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
 
       edit(
-        fireHw.convertToDTO(fireHw.id, subjects[fireHw.subjectId]),
+        fireHw.convert(fireHw.id, subjects[fireHw.subjectId]),
         syncWithFire: false,
       );
     } else if (fireTime.millisecondsSinceEpoch <

@@ -1,39 +1,103 @@
 
-import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 
-class Subject extends HiveObject {
+class Subject {
   Subject({
-    required this.timestamp,
-    required this.isDeleted,
     required this.name,
     required this.shortcut,
+    required this.id,
     required this.bakaId,
+    required this.timestamp,
+    required this.isDeleted,
     required this.order,
   });
 
-  final String name;
-  final String shortcut;
-  final String? bakaId;
-  final DateTime timestamp;
-  final bool isDeleted;
-  final int order;
+  String name;
+  String shortcut;
+  String id;
+  String? bakaId;
+  DateTime timestamp;
+  bool isDeleted;
+  int order;
 
-  SubjectDTO convertToDTO(String id) {
-    return SubjectDTO(
-      id: id,
+  SubjectEntity convert() {
+    return SubjectEntity(
       name: name,
       shortcut: shortcut,
       bakaId: bakaId,
-      isDeleted: isDeleted == true,
+      isDeleted: isDeleted,
       timestamp: timestamp,
       order: order,
     );
   }
 
+  String get trimmedShortcut {
+    return shortcut.trim();
+  }
+
+  @override
+  String toString() {
+    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp';
+  }
+
+  bool containsText(String text) {
+    return name.withoutDiacriticalMarks.toLowerCase().contains(
+              text.withoutDiacriticalMarks.toLowerCase(),
+            ) ||
+        shortcut.withoutDiacriticalMarks.toLowerCase().contains(
+              text.withoutDiacriticalMarks.toLowerCase(),
+            );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'shortcut': shortcut,
+      'bakaId': bakaId,
+      'id': id,
+      'order': order,
+      'isDeleted': isDeleted,
+    };
+  }
+
+  Subject.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        id = json['id'],
+        shortcut = json['shortcut'],
+        bakaId = json['bakaId'],
+        order = json['order'],
+        isDeleted = json['isDeleted'],
+        timestamp = DateTime.now().toUtc();
+
+  Map<String, dynamic> toFireJson() {
+    return {
+      'n': name,
+      's': shortcut,
+      'b': bakaId,
+      'o': order,
+      'd': isDeleted,
+      't': timestamp.toIso8601String(),
+    };
+  }
+
+  Subject.fromFireJson(Map<String, dynamic>  json)
+      : name = json['n'],
+        id = json['id'],
+        shortcut = json['s'],
+        bakaId = json['b'],
+        order = json['o'],
+        isDeleted = json['d'],
+        timestamp = DateTime.parse(json['t']);
+
+  bool get isFromBakalari {
+    return bakaId != null && bakaId != '';
+  }
+
   Subject copyWith({
     String? name,
     String? shortcut,
+    String? id,
     bool? isDeleted,
     String? bakaId,
     DateTime? timestamp,
@@ -42,6 +106,7 @@ class Subject extends HiveObject {
     return Subject(
       name: name ?? this.name,
       shortcut: shortcut ?? this.shortcut,
+      id: id ?? this.id,
       isDeleted: isDeleted ?? this.isDeleted,
       bakaId: bakaId ?? this.bakaId,
       timestamp: timestamp ?? this.timestamp,

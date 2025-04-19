@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/timetable_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
@@ -37,8 +37,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var dateToShow = DateTime.now();
 
-  late TimeTableDTO defaultTimeTable = timetableDatabase.timeTable;
-  Future<TimeTableDTO?>? bakaTimetable;
+  late TimeTable defaultTimeTable = timetableDatabase.timeTable;
+  Future<TimeTable?>? bakaTimetable;
   late Future<Map<DateTime, List<Meal>>>? mealsFuture;
 
   @override
@@ -128,8 +128,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     ).length;
 
-    List<HomeworkDTO> hwToShow = [];
-    List<ExamDTO> examToShow = [];
+    List<Homework> hwToShow = [];
+    List<Exam> examToShow = [];
 
     dateToShow = DateTime.now();
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
@@ -203,7 +203,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     hwNumberOfMissed: missedHw.length,
                   ),
                   SizedBox(height: 24),
-                  Row(
+                  Row
+                  (
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isWide)

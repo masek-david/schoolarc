@@ -1,5 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 
 class SubjectShortcut extends StatelessWidget {
   const SubjectShortcut({
@@ -8,7 +9,7 @@ class SubjectShortcut extends StatelessWidget {
     this.color,
   });
 
-  final SubjectDTO? subject;
+  final Subject? subject;
   final Color? color;
 
   @override

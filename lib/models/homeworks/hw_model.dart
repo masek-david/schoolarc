@@ -1,88 +1,87 @@
-
-import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/task_model.dart';
 
-class Homework extends HiveObject {
+class Homework extends Task {
   Homework({
-    required this.text,
-    required this.description,
-    required this.subjectId,
-    required this.deadline,
-    required this.priority,
-    required this.order,
-    required this.isCompleted,
-    required this.isDeleted,
-    required this.timestamp,
+    required super.subject,
+    required super.text,
+    required super.deadline,
+    required super.isCompleted,
+    required super.priority,
+    required super.id,
+    required super.description,
+    required super.timestamp,
+    required super.isDeleted,
+    required super.order,
+    super.stateReaddingVersion = 0,
+    this.isBeingAnimated = false,
   });
 
-  final String text;
-  final String? description;
-  final String? subjectId;
-  final DateTime deadline;
-  final int priority;
-  final int order;
-  final bool isCompleted;
-  final bool isDeleted;
-  final DateTime timestamp;
+  bool isBeingAnimated;
+
+  HomeworkEntity convert() {
+    return HomeworkEntity(
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      deadline: deadline,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
+      order: order,
+    );
+  }
 
   @override
   String toString() {
-    return 'homework: $text, order: $order, completed: $isCompleted, deleted: $isDeleted';
+    return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
   }
 
-  Map<String, dynamic> toJson(String id) {
+  Map<String, dynamic> toFireJson() {
     return {
-      'id': id,
-      'text': text,
-      'subjectId': subjectId,
-      'date': deadline.toUtc().toIso8601String(),
-      'priority': priority,
-      'description': description,
-      'order': order,
-      'isDeleted': isDeleted,
-      'isCompleted': isCompleted,
+      'n': text,
+      't': description,
+      's': subject?.id,
+      'd': deadline.toIso8601String(),
+      'p': priority.index,
+      'o': order,
+      'c': isCompleted,
+      'del': isDeleted,
+      'tm': timestamp.toIso8601String(),
     };
   }
 
-  Homework copyWith({
-    String? subjectId,
-    String? text,
-    DateTime? deadline,
-    bool? isCompleted,
-    int? priority,
-    int? dbIndex,
-    String? description,
-    DateTime? timestamp,
-    bool? isDeleted,
-    int? order,
-  }) {
+  @override
+  Homework copyWith(
+      {Subject? subject,
+      String? text,
+      DateTime? deadline,
+      bool? isCompleted,
+      TaskPriority? priority,
+      String? id,
+      String? description,
+      String? fireId,
+      DateTime? timestamp,
+      bool? isDeleted,
+      int? order,
+      bool? isBeingAnimated,
+      int? stateReaddingVersion}) {
     return Homework(
-      subjectId: subjectId ?? this.subjectId,
+      subject: subject ?? this.subject,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
+      id: id ?? this.id,
       description: description ?? this.description,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-    );
-  }
-
-  HomeworkDTO convertToDTO(String id, SubjectDTO? subject) {
-    return HomeworkDTO(
-      subject: subject,
-      text: text,
-      description: description,
-      deadline: deadline,
-      isCompleted: isCompleted,
-      priority: TaskPriority(priority),
-      id: id,
-      timestamp: timestamp,
-      isDeleted: isDeleted,
-      order: order,
+      isBeingAnimated: isBeingAnimated ?? this.isBeingAnimated,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

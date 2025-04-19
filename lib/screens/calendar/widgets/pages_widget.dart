@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -27,21 +27,21 @@ class PagesWidget extends StatelessWidget {
     required this.examOnConvert,
   });
 
-  final void Function(ExamDTO exam) examOnDelete;
-  final void Function(ExamDTO exam) examOnEdit;
-  final void Function(ExamDTO exam) examOnConvert;
-  final void Function(HomeworkDTO hw) hwOnEdit;
-  final void Function(HomeworkDTO hw) hwOnDelete;
-  final void Function(HomeworkDTO hw) hwOnConvert;
-  final void Function(HomeworkDTO hw, bool value) hwOnChangedCompletion;
+  final void Function(Exam exam) examOnDelete;
+  final void Function(Exam exam) examOnEdit;
+  final void Function(Exam exam) examOnConvert;
+  final void Function(Homework hw) hwOnEdit;
+  final void Function(Homework hw) hwOnDelete;
+  final void Function(Homework hw) hwOnConvert;
+  final void Function(Homework hw, bool value) hwOnChangedCompletion;
 
   final PageController pageController;
   final void Function(int)? onPageChanged;
   final int negativePageCount;
 
-  final Map<DateTime, List<HomeworkDTO>> hwByDate;
-  final Map<DateTime, List<ExamDTO>> examByDate;
-  final List<HomeworkDTO> missedHwList;
+  final Map<DateTime, List<Homework>> hwByDate;
+  final Map<DateTime, List<Exam>> examByDate;
+  final List<Homework> missedHwList;
   final bool showMissed;
 
   @override
@@ -58,8 +58,8 @@ class PagesWidget extends StatelessWidget {
         final dateUtc = nowOnlyDate.add(Duration(days: daysToAdd));
         final date = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
 
-        List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
-        List<ExamDTO> examListForDay = examByDate[date] ?? [];
+        List<Homework> hwListForDay = hwByDate[date] ?? [];
+        List<Exam> examListForDay = examByDate[date] ?? [];
 
         final bool showMissed =
             missedHwList.isNotEmpty && !date.isBeforeToday() && this.showMissed;

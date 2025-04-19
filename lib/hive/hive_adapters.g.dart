@@ -6,24 +6,24 @@ part of 'hive_adapters.dart';
 // AdaptersGenerator
 // **************************************************************************
 
-class TimeTableAdapter extends TypeAdapter<TimeTable> {
+class TimeTableAdapter extends TypeAdapter<TimeTableEntity> {
   @override
   final int typeId = 3;
 
   @override
-  TimeTable read(BinaryReader reader) {
+  TimeTableEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return TimeTable(
+    return TimeTableEntity(
       (fields[0] as List).cast<LessonTimes>(),
     )..table =
         (fields[1] as List).map((e) => (e as List).cast<String?>()).toList();
   }
 
   @override
-  void write(BinaryWriter writer, TimeTable obj) {
+  void write(BinaryWriter writer, TimeTableEntity obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -43,17 +43,17 @@ class TimeTableAdapter extends TypeAdapter<TimeTable> {
           typeId == other.typeId;
 }
 
-class HomeworkAdapter extends TypeAdapter<Homework> {
+class HomeworkAdapter extends TypeAdapter<HomeworkEntity> {
   @override
   final int typeId = 4;
 
   @override
-  Homework read(BinaryReader reader) {
+  HomeworkEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Homework(
+    return HomeworkEntity(
       text: fields[1] as String,
       description: fields[2] as String?,
       subjectId: fields[3] as String?,
@@ -67,7 +67,7 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
   }
 
   @override
-  void write(BinaryWriter writer, Homework obj) {
+  void write(BinaryWriter writer, HomeworkEntity obj) {
     writer
       ..writeByte(9)
       ..writeByte(1)
@@ -101,17 +101,17 @@ class HomeworkAdapter extends TypeAdapter<Homework> {
           typeId == other.typeId;
 }
 
-class ExamAdapter extends TypeAdapter<Exam> {
+class ExamAdapter extends TypeAdapter<ExamEntity> {
   @override
   final int typeId = 5;
 
   @override
-  Exam read(BinaryReader reader) {
+  ExamEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Exam(
+    return ExamEntity(
       isDeleted: fields[7] as bool,
       subjectId: fields[1] as String?,
       text: fields[2] as String,
@@ -124,7 +124,7 @@ class ExamAdapter extends TypeAdapter<Exam> {
   }
 
   @override
-  void write(BinaryWriter writer, Exam obj) {
+  void write(BinaryWriter writer, ExamEntity obj) {
     writer
       ..writeByte(8)
       ..writeByte(1)
@@ -193,17 +193,17 @@ class LogAdapter extends TypeAdapter<Log> {
           typeId == other.typeId;
 }
 
-class SubjectAdapter extends TypeAdapter<Subject> {
+class SubjectAdapter extends TypeAdapter<SubjectEntity> {
   @override
   final int typeId = 7;
 
   @override
-  Subject read(BinaryReader reader) {
+  SubjectEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Subject(
+    return SubjectEntity(
       timestamp: fields[4] as DateTime,
       isDeleted: fields[5] as bool,
       name: fields[0] as String,
@@ -214,7 +214,7 @@ class SubjectAdapter extends TypeAdapter<Subject> {
   }
 
   @override
-  void write(BinaryWriter writer, Subject obj) {
+  void write(BinaryWriter writer, SubjectEntity obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)

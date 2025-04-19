@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -22,11 +22,11 @@ class CalendarWidget extends StatefulWidget {
     required this.setFocusedDay, required this.onEdit,
   });
 
-final void Function(ExamDTO exam) onEdit;
+final void Function(Exam exam) onEdit;
   final DateTime focusedDay;
   final DateTime selectedDay;
-  final Map<DateTime, List<HomeworkDTO>> homeworks;
-  final Map<DateTime, List<ExamDTO>> exams;
+  final Map<DateTime, List<Homework>> homeworks;
+  final Map<DateTime, List<Exam>> exams;
   final int negativePageCount;
   final CalendarFormat calendarFormat;
   final void Function(DateTime date) setFocusedDay;

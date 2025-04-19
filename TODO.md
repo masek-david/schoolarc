@@ -5,32 +5,33 @@
 - na ipadu nevolat widget update
 
 # version 2.0.0
-- ⬜ change package name (cz.masci ???)
+- ✅ change package name (cz.masci.schoolarc)
 - ✅ check widget
 - ✅ move to hivece
 - ✅ remove old migration stuff
 - ✅ importing
 - ✅ fix dates (save them just as utc)
     - ⬜ test timezones
-- ⬜ move to supabase
+- ✅ move to realtime database
 - ⬜ ? refactor timetable models
 - ✅ rework notifications - scheduling on app leave
     - ⬜ turn off notifications for weekend
 
 
 optional:
-- ⬜ when should the widget be updated??
-- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
-- ⬜ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object) + PREJMENOVAT TO V PRACI
+- ✅ when should the widget be updated??
 - ⬜ rework reorder methods (dont include old priority, old index, instead the HomeworkDTO)
+- ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
 - ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
+- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create baka provider
 - ⬜ create settings for initial task 
+- ⬜ add google sign in 
 - ⬜ remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
     
 settings:
@@ -50,8 +51,6 @@ web features
 - ⬜ keyboard shortcuts
 
 # maybe
-- v kalendari psat v teckach aspon treba predmety ???
-
 - create baka provider
 - ? remake app isWide as riverpod provider
  

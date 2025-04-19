@@ -1,15 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
-  required void Function(ExamDTO exam) onEdit,
+  required void Function(Exam exam) onEdit,
   required bool showOutside,
   required DateTime currentDate,
 }) {
@@ -168,14 +167,14 @@ CalendarBuilders<Object?> myCalendarBuilder({
         return SizedBox();
       }
 
-      List<HomeworkDTO> homeworks = [];
-      List<ExamDTO> exams = [];
+      List<Homework> homeworks = [];
+      List<Exam> exams = [];
       for (var event in events) {
-        if (event is HomeworkDTO) {
+        if (event is Homework) {
           // if (!event.completion) {
           homeworks.add(event);
           // }
-        } else if (event is ExamDTO) {
+        } else if (event is Exam) {
           exams.add(event);
         }
       }
@@ -195,7 +194,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                       children: List.generate(
                           homeworks.length <= 5 ? homeworks.length : 5,
                           (index) {
-                        HomeworkDTO hw = homeworks[index];
+                        Homework hw = homeworks[index];
                         Color markerColor = hw.priority.getColor(context);
 
                         return Container(
@@ -214,7 +213,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
               ...List.generate(
                 exams.length <= 8 ? exams.length : 8,
                 (index) {
-                  ExamDTO exam = exams[index];
+                  Exam exam = exams[index];
 
                   return GestureDetector(
                     onTap: () => onEdit(exam),
@@ -246,7 +245,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
   );
 }
 
-Widget _buildExamTile(ExamDTO exam, BuildContext context) {
+Widget _buildExamTile(Exam exam, BuildContext context) {
   Color color = exam.priority.getContainerColor(context);
   String shortcut = exam.subject?.trimmedShortcut ?? '';
 

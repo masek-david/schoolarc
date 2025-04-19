@@ -1,93 +1,80 @@
-
-import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/task_model.dart';
 
-class Exam extends HiveObject {
+class Exam extends Task {
   Exam({
-    required this.isDeleted,
-    required this.subjectId,
-    required this.text,
-    required this.description,
-    required this.date,
-    required this.priority,
-    required this.timestamp,
-    required this.order,
+    required super.subject,
+    required super.text,
+    required super.deadline,
+    required super.priority,
+    required super.id,
+    required super.isCompleted,
+    required super.description,
+    required super.timestamp,
+    required super.isDeleted,
+    required super.order,
+    super.stateReaddingVersion,
   });
 
-  final String? subjectId;
-  final String text;
-  final DateTime date;
-  final int priority;
-  final String? description;
-  final DateTime timestamp;
-  final bool isDeleted;
-  final int order;
+  ExamEntity convert() {
+    return ExamEntity(
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      date: deadline,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
+      order: order,
+    );
+  }
 
   @override
   String toString() {
-    return 'exam: $text, order: $order, deleted: $isDeleted';
+    return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
   }
 
-  Map<String, dynamic> toJson(String id) {
+  Map<String, dynamic> toFireJson() {
     return {
-      'text': text,
-      'subjectId': subjectId,
-      'date': date.toUtc().toIso8601String(),
-      'priority': priority,
-      'description': description,
-      'id': id,
-      'order': order,
-      'isDeleted': isDeleted,
+      'n': text,
+      't': description,
+      's': subject?.id,
+      'd': deadline.toIso8601String(),
+      'p': priority.index,
+      'o': order,
+      'del': isDeleted,
+      'tm': timestamp.toIso8601String(),
     };
   }
 
-  // Exam.fromJson(Map<String, dynamic> json)
-  //     : subjectId = json['subjectId'],
-  //       text = json['text'],
-  //       date = DateTime.parse(json['date']),
-  //       priority = json['priority'],
-  //       description = json['description'],
-  //       order = json['order'],
-  //       isDeleted = json['isDeleted'],
-  //       timestamp = DateTime.now();
-
+  @override
   Exam copyWith({
-    String? subjectId,
+    Subject? subject,
     String? text,
-    DateTime? date,
-    int? priority,
+    DateTime? deadline,
+    bool? isCompleted,
+    TaskPriority? priority,
+    String? id,
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
+    int? stateReaddingVersion,
   }) {
     return Exam(
-      subjectId: subjectId ?? this.subjectId,
+      subject: subject ?? this.subject,
       text: text ?? this.text,
-      date: date ?? this.date,
+      deadline: deadline ?? this.deadline,
+      isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
+      id: id ?? this.id,
       description: description ?? this.description,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-    );
-  }
-
-  ExamDTO convertToDTO(String id, SubjectDTO? subject) {
-    return ExamDTO(
-      id: id,
-      subject: subject,
-      text: text,
-      description: description,
-      deadline: date,
-      priority: TaskPriority(priority),
-      isCompleted: date.isBeforeToday(),
-      timestamp: timestamp,
-      isDeleted: isDeleted,
-      order: order,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
 class HwOverlay extends StatefulWidget {
@@ -16,7 +16,7 @@ class HwOverlay extends StatefulWidget {
     required this.onConvert,
   });
 
-  final HomeworkDTO hw;
+  final Homework hw;
   final Offset position;
   final Size size;
   final void Function() onEdit;

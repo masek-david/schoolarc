@@ -2,7 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/hw_overlay.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -25,7 +25,7 @@ class HomeworkTile extends StatefulWidget {
     required this.onConvert,
   });
 
-  final HomeworkDTO hw;
+  final Homework hw;
   final bool showDeadline;
   final SlidableController? slidableController;
   final bool showCompletion;

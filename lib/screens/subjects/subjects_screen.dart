@@ -7,9 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
-import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -41,7 +41,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         shortcutController: shortcutController,
         onSave: () async {
           ref.read(subjectsProvider.notifier).saveNew(
-                Subject(
+                SubjectEntity(
                   name: nameController.text,
                   shortcut: shortcutController.text,
                   isDeleted: false,
@@ -60,7 +60,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  void editSubject(SubjectDTO subject, WidgetRef ref) {
+  void editSubject(Subject subject, WidgetRef ref) {
     nameController.text = subject.name;
     shortcutController.text = subject.shortcut;
 
@@ -71,7 +71,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () {
-          SubjectDTO newSubject = SubjectDTO(
+          Subject newSubject = Subject(
             name: nameController.text,
             shortcut: shortcutController.text,
             id: subject.id,
@@ -92,7 +92,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  void deleteSubject(SubjectDTO subject, WidgetRef ref) {
+  void deleteSubject(Subject subject, WidgetRef ref) {
     ref.read(subjectsProvider.notifier).deleteSubject(subject);
 
     showMessage(context, 'Deleted subject ${subject.name}', actions: [
@@ -144,6 +144,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
             final subjects = ref.watch(subjectsSortedProvider);
 
             return subjects.isEmpty
+            
                 ? const Center(
                     child: Text(
                       'No subjects found. You can create new subjects by tapping the plus button.',
@@ -161,7 +162,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                       isSameItem: (a, b) => a.id == b.id,
                       padding: EdgeInsets.only(bottom: 100),
                       itemBuilder: (context, index) {
-                        SubjectDTO subject = subjects[index];
+                        Subject subject = subjects[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           key: Key('Sub: ${subject.id}'),

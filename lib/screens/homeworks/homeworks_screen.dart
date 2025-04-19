@@ -2,7 +2,7 @@ import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
@@ -20,7 +20,7 @@ class _AnimatedReorderableListItem {
     assert(hw != null || priority != null);
   }
 
-  HomeworkDTO? hw;
+  Homework? hw;
   int? priority;
 
   int get getPriority {
@@ -202,7 +202,7 @@ class HomeworksScreen extends ConsumerWidget {
   }
 
   Widget _buildCompletedList(
-      BuildContext context, WidgetRef ref, List<HomeworkDTO> completedHws) {
+      BuildContext context, WidgetRef ref, List<Homework> completedHws) {
     return Padding(
       key: ValueKey('hw completed title'),
       padding: const EdgeInsets.only(bottom: 70),

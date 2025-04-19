@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/timetable_database.dart';
@@ -33,11 +33,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       TextEditingValue(text: widget.initialTask.text));
   late final descriptionController = TextEditingController.fromValue(
       TextEditingValue(text: widget.initialTask.description ?? ''));
-  late SubjectDTO? pickedSubject = widget.initialTask.subject;
+  late Subject? pickedSubject = widget.initialTask.subject;
   late DateTime pickedDate = widget.initialTask.deadline;
   late int pickedPriority = widget.initialTask.priority.index;
 
-  late List<SubjectDTO> subjects = ref.read(subjectsSortedProvider);
+  late List<Subject> subjects = ref.read(subjectsSortedProvider);
   final _timetable = TimeTableDatabase().timeTable;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(
@@ -59,7 +59,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     );
   }
 
-  void setSubject(SubjectDTO? subject) {
+  void setSubject(Subject? subject) {
     setState(() {
       pickedSubject = subject;
       if (widget.autoSetDate && subject != null) {
@@ -156,7 +156,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                 ],
               ),
               const SizedBox(height: 10),
-              Autocomplete<SubjectDTO>(
+              Autocomplete<Subject>(
                 fieldViewBuilder: (context, textEditingController, focusNode,
                     onFieldSubmitted) {
                   return TextField(

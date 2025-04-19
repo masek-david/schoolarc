@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -26,24 +26,26 @@ class RescheduleDragTarget extends ConsumerWidget {
     return DragTarget(
       onMove: onMove,
       onAcceptWithDetails: (details) async {
-        if (details.data.runtimeType == HomeworkDTO) {
-          final hw = details.data as HomeworkDTO;
+        if (details.data.runtimeType == Homework) {
+          final hw = details.data as Homework;
           if (!hw.deadline.isSameDay(currentDate)) {
             ref.read(hwProvider.notifier).edit(
                   hw.copyWith(
                     deadline: currentDate.toLocal(),
-                    timestamp: DateTime.now().toUtc(),
+                    timestamp: DateTime.now().toUtc()
+                    ,
                   ),
                 );
           }
         }
-        if (details.data.runtimeType == ExamDTO) {
-          final exam = details.data as ExamDTO;
+        if (details.data.runtimeType == Exam) {
+          final exam = details.data as Exam;
           if (!exam.deadline.isSameDay(currentDate)) {
             ref.read(examProvider.notifier).edit(
                   exam.copyWith(
                     deadline: currentDate.toLocal(),
-                    timestamp: DateTime.now().toUtc(),
+                    timestamp: DateTime.now().toUtc()
+                    ,
                   ),
                 );
           }

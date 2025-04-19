@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/hive/hive_registrar.g.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
@@ -17,7 +17,7 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:workmanager/workmanager.dart';
 
-void updateHwWidget(List<HomeworkDTO> hws) {
+void updateHwWidget(List<Homework> hws) {
   if(kIsWeb || !Platform.isAndroid) return;
   
   List<dynamic> json = [];

@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/hive/hive_init.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
@@ -130,27 +130,27 @@ class NotificationSender {
     final hwsInDb = homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(
-            key, value.convertToDTO(key, subjects[value.subjectId]));
+            key, value.convert(key, subjects[value.subjectId]));
       },
     );
     final examsInDb = examsDb.getDatabase().map(
       (key, value) {
         return MapEntry(
-            key, value.convertToDTO(key, subjects[value.subjectId]));
+            key, value.convert(key, subjects[value.subjectId]));
       },
     );
-    List<ExamDTO> examsFortomorrow =
+    List<Exam> examsFortomorrow =
         examsSortByDate(examsInDb)[tomorrowDate] ?? [];
-    List<HomeworkDTO> hwsFortomorrow =
+    List<Homework> hwsFortomorrow =
         hwsSortByDate(hwsInDb)[tomorrowDate] ?? [];
-    List<HomeworkDTO> missedHws = hwsGetMissed(hwsInDb);
+    List<Homework> missedHws = hwsGetMissed(hwsInDb);
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';
 
     // creates text for notification for exam
     for (int i = 0; i < examsFortomorrow.length; i++) {
-      ExamDTO exam = examsFortomorrow[i];
+      Exam exam = examsFortomorrow[i];
       String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
 
       String examText =
@@ -163,7 +163,7 @@ class NotificationSender {
     hwsFortomorrow.sort((a, b) =>
         (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
     for (int i = 0; i < hwsFortomorrow.length; i++) {
-      HomeworkDTO hw = hwsFortomorrow[i];
+      Homework hw = hwsFortomorrow[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
@@ -174,7 +174,7 @@ class NotificationSender {
 
     missedHws.sort((a, b) => a.deadline.compareTo(b.deadline));
     for (int i = 0; i < missedHws.length; i++) {
-      HomeworkDTO hw = missedHws[i];
+      Homework hw = missedHws[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String missedHwText =

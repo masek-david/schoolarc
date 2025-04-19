@@ -1,6 +1,6 @@
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/task_model.dart';
 
 class BakaHomework extends Task {
@@ -25,8 +25,8 @@ class BakaHomework extends Task {
   bool alreadyAdded;
   final bool alreadySeen;
 
-  HomeworkDTO toHwDTO() {
-    return HomeworkDTO(
+  Homework toNormalHw() {
+    return Homework(
         subject: subject,
         text: text,
         deadline: deadline,
@@ -46,7 +46,7 @@ class BakaHomework extends Task {
     DateTime? deadline,
     String? description,
     TaskPriority? priority,
-    SubjectDTO? subject,
+    Subject? subject,
     String? text,
     String? fireId,
     DateTime? timestamp,

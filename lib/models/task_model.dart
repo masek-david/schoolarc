@@ -1,7 +1,7 @@
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 
@@ -9,7 +9,7 @@ class Task {
   final String id;
   final String text;
   final String? description;
-  final SubjectDTO? subject;
+  final Subject? subject;
   final DateTime deadline;
   final TaskPriority priority;
   final int order;
@@ -49,8 +49,8 @@ class Task {
         timestamp = DateTime.now().toUtc(),
         stateReaddingVersion = 0;
 
-  Homework toHw() {
-    return Homework(
+  HomeworkEntity toHw() {
+    return HomeworkEntity(
       // id: id,
       isDeleted: isDeleted,
       subjectId: subject?.id,
@@ -64,8 +64,8 @@ class Task {
     );
   }
 
-  Exam toExam() {
-    return Exam(
+  ExamEntity toExam() {
+    return ExamEntity(
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
@@ -105,7 +105,7 @@ class Task {
   }
 
   Task copyWith({
-    SubjectDTO? subject,
+    Subject? subject,
     String? text,
     DateTime? deadline,
     bool? isCompleted,

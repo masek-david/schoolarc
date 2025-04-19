@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
@@ -77,8 +77,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Widget buildCalendar(
     bool isWide,
-    Map<DateTime, List<HomeworkDTO>> hws,
-    Map<DateTime, List<ExamDTO>> exams,
+    Map<DateTime, List<Homework>> hws,
+    Map<DateTime, List<Exam>> exams,
   ) {
     return CalendarWidget(
       onEdit: (exam) => editExam(context, ref, exam),
@@ -114,9 +114,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Widget buildPages(
-    Map<DateTime, List<HomeworkDTO>> hws,
-    Map<DateTime, List<ExamDTO>> exams,
-    List<HomeworkDTO> missedHw,
+    Map<DateTime, List<Homework>> hws,
+    Map<DateTime, List<Exam>> exams,
+    List<Homework> missedHw,
   ) {
     return PagesWidget(
       examOnDelete: (exam) => deleteExam(context, ref, exam),

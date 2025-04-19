@@ -38,7 +38,7 @@ class BakaHwTile extends StatelessWidget {
           ),
           Expanded(
             child: HomeworkTile(
-              hw: hw.copyWith(isCompleted: hw.alreadyAdded).toHwDTO(),
+              hw: hw.copyWith(isCompleted: hw.alreadyAdded).toNormalHw(),
               borderIfMissed: false,
               showCompletion: false,
               onDelete: null,

@@ -2,7 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -18,7 +18,7 @@ class ExamTile extends StatelessWidget {
     required this.onConvert,
   });
 
-  final ExamDTO exam;
+  final Exam exam;
   final bool showDeadline;
   final void Function()? onDelete;
   final void Function() onEdit;

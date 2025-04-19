@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 
 class TimeTableLesson {
   TimeTableLesson({
@@ -13,7 +13,7 @@ class TimeTableLesson {
 
   TimeTableLesson.empty();
 
-  SubjectDTO? subject;
+  Subject? subject;
   BakaChange? change;
   String? room;
   Teacher? teacher;

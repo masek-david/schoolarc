@@ -3,10 +3,10 @@ import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/exams/exam_id_model.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -14,18 +14,18 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
 final examProvider =
-    NotifierProvider<ExamNotifier, Map<String, ExamDTO>>(ExamNotifier.new);
+    NotifierProvider<ExamNotifier, Map<String, Exam>>(ExamNotifier.new);
 
 // sorts by priorities (0-3), orders them
-final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
+final examSortedProvider = Provider<Map<int, List<Exam>>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
-    Map<int, List<ExamDTO>> examPriorityMap = {
-      0: <ExamDTO>[],
-      1: <ExamDTO>[],
-      2: <ExamDTO>[],
-      3: <ExamDTO>[],
+    Map<int, List<Exam>> examPriorityMap = {
+      0: <Exam>[],
+      1: <Exam>[],
+      2: <Exam>[],
+      3: <Exam>[],
     };
 
     exams.forEach(
@@ -49,7 +49,7 @@ final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
 );
 
 // key for each day is the utc value, with time being 0:00:00
-final examsDatesProvider = Provider<Map<DateTime, List<ExamDTO>>>(
+final examsDatesProvider = Provider<Map<DateTime, List<Exam>>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
@@ -58,8 +58,8 @@ final examsDatesProvider = Provider<Map<DateTime, List<ExamDTO>>>(
 );
 
 // key for each day is the local date value, with time being 0:00:00
-Map<DateTime, List<ExamDTO>> examsSortByDate(Map<String, ExamDTO> original) {
-  Map<DateTime, List<ExamDTO>> examsDateMap = {};
+Map<DateTime, List<Exam>> examsSortByDate(Map<String, Exam> original) {
+  Map<DateTime, List<Exam>> examsDateMap = {};
 
   original.forEach(
     (dbIndex, exam) {
@@ -88,11 +88,11 @@ Map<DateTime, List<ExamDTO>> examsSortByDate(Map<String, ExamDTO> original) {
   return examsDateMap;
 }
 
-final examCompletedProvider = Provider<List<ExamDTO>>(
+final examCompletedProvider = Provider<List<Exam>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
-    final list = <ExamDTO>[];
+    final list = <Exam>[];
 
     exams.forEach(
       (key, exam) {
@@ -108,7 +108,7 @@ final examCompletedProvider = Provider<List<ExamDTO>>(
   },
 );
 
-final examDeletedProvider = Provider<List<ExamDTO>>(
+final examDeletedProvider = Provider<List<Exam>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
@@ -125,12 +125,12 @@ final examDeletedProvider = Provider<List<ExamDTO>>(
   },
 );
 
-class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
-  Map<String, SubjectDTO> subjects = {};
+class ExamNotifier extends Notifier<Map<String, Exam>> {
+  Map<String, Subject> subjects = {};
   StreamSubscription<ExamWithID>? listenFirebase;
 
   @override
-  Map<String, ExamDTO> build() {
+  Map<String, Exam> build() {
     // listen to subjectsProvider changes
     ref.listen(subjectsProvider, (_, next) {
       subjects = next;
@@ -151,12 +151,12 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
   }
 
   // returns state saved in database
-  Map<String, ExamDTO> get _dbState {
+  Map<String, Exam> get _dbState {
     return examsDb.getDatabase().map(
       (key, value) {
         return MapEntry(
           key,
-          value.convertToDTO(key, subjects[value.subjectId]),
+          value.convert(key, subjects[value.subjectId]),
         );
       },
     );
@@ -190,7 +190,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
   }
 
   void checkAllIfCompleted() {
-    Map<String, ExamDTO> updated = {};
+    Map<String, Exam> updated = {};
 
     state.forEach(
       (key, value) {
@@ -239,7 +239,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
   }
 
   Future<void> saveNew(
-    Exam exam, {
+    ExamEntity exam, {
     // if null, new id is generated
     String? overrideId,
     bool addToFire = true,
@@ -263,7 +263,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
     final originalState = _dbState;
     await examsDb.addExam(id, exam);
 
-    final ExamDTO? examWithSameOrder = originalState.values
+    final Exam? examWithSameOrder = originalState.values
         .where((element) =>
             element.order == exam.order &&
             !element.isDeleted &&
@@ -284,22 +284,22 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
           exam.order,
           null,
           exam.priority,
-          exam.convertToDTO(id, subjects[exam.subjectId]),
+          exam.convert(id, subjects[exam.subjectId]),
         );
       }
     }
 
-    state = {...state, id: exam.convertToDTO(id, subjects[exam.subjectId])};
+    state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
     if (addToFire) {
       await firebaseService
-          .addExam(exam.convertToDTO(id, subjects[exam.subjectId]));
+          .addExam(exam.convert(id, subjects[exam.subjectId]));
     }
 
     return;
   }
 
   /// assign timestamp manually, if no id, it will add it as now
-  void edit(ExamDTO editedExam, {bool syncWithFire = true}) async {
+  void edit(Exam editedExam, {bool syncWithFire = true}) async {
     final old = _dbState[editedExam.id]!;
 
     editedExam = editedExam.copyWith(
@@ -360,7 +360,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
     int? newIndex,
     int? oldPriority,
     int? newPriority,
-    ExamDTO? exam, {
+    Exam? exam, {
     /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
     bool addTimestamp = false,
   }) async {
@@ -409,7 +409,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
           exam);
     }
 
-    final editedExams = <String, ExamDTO>{};
+    final editedExams = <String, Exam>{};
 
     if (oldPriority != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
@@ -443,16 +443,16 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
     return;
   }
 
-  void convert(ExamDTO exam) {
+  void convert(Exam exam) {
     delete(exam);
     ref.read(hwProvider.notifier).saveNew(exam.toHw());
   }
 
-  void delete(ExamDTO exam) {
+  void delete(Exam exam) {
     edit(exam.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(ExamDTO exam) {
+  void revertDelete(Exam exam) {
     edit(
       exam.copyWith(
           timestamp: DateTime.now().toUtc(),
@@ -462,7 +462,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
   }
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  Future<void> _permanentDelete(List<ExamDTO> exams) async {
+  Future<void> _permanentDelete(List<Exam> exams) async {
     if (exams.isEmpty) return;
     for (var element in exams) {
       examsDb.delete(element.id);
@@ -473,7 +473,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<ExamDTO> examsToDelete = [];
+    List<Exam> examsToDelete = [];
 
     for (var exam in _dbState.values) {
       if (exam.isDeleted &&
@@ -516,7 +516,7 @@ class ExamNotifier extends Notifier<Map<String, ExamDTO>> {
       //     '\u001b[1;93mediting exam from fire: ${fireExam.toString()}');
 
       edit(
-        fireExam.convertToDTO(fireExam.id, subjects[fireExam.subjectId]),
+        fireExam.convert(fireExam.id, subjects[fireExam.subjectId]),
         syncWithFire: false,
       );
     } else if (fireTime.millisecondsSinceEpoch <

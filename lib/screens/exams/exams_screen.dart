@@ -2,7 +2,7 @@ import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
@@ -19,7 +19,7 @@ class _AnimatedReorderableListItem {
     assert(exam != null || priority != null);
   }
 
-  ExamDTO? exam;
+  Exam? exam;
   int? priority;
 
   int get getPriority {
@@ -193,7 +193,7 @@ class ExamsScreen extends ConsumerWidget {
   }
 
   Widget _buildCompletedList(
-      BuildContext context, WidgetRef ref, List<ExamDTO> completedExams) {
+      BuildContext context, WidgetRef ref, List<Exam> completedExams) {
     return Padding(
       key: ValueKey('exam completed title'),
       padding: const EdgeInsets.only(bottom: 70),

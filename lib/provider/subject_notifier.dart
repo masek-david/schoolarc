@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
 final subjectsProvider =
-    NotifierProvider<SubjectNotifier, Map<String, SubjectDTO>>(
+    NotifierProvider<SubjectNotifier, Map<String, Subject>>(
         SubjectNotifier.new);
 
-final subjectsSortedProvider = Provider<List<SubjectDTO>>((ref) {
+final subjectsSortedProvider = Provider<List<Subject>>((ref) {
   final subjects = ref.watch(subjectsProvider);
 
   // Filter out deleted subjects and sort based on the `order` field.
@@ -19,11 +19,11 @@ final subjectsSortedProvider = Provider<List<SubjectDTO>>((ref) {
     ..sort((a, b) => (a.order).compareTo(b.order));
 });
 
-final subjectsDeletedProvider = Provider<List<SubjectDTO>>(
+final subjectsDeletedProvider = Provider<List<Subject>>(
   (ref) {
     final subjects = ref.watch(subjectsProvider);
 
-    final list = <SubjectDTO>[];
+    final list = <Subject>[];
 
     subjects.forEach(
       (key, value) {
@@ -38,11 +38,11 @@ final subjectsDeletedProvider = Provider<List<SubjectDTO>>(
   },
 );
 
-class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
-  StreamSubscription<SubjectDTO>? listenFirebase;
+class SubjectNotifier extends Notifier<Map<String, Subject>> {
+  StreamSubscription<Subject>? listenFirebase;
 
   @override
-  Map<String, SubjectDTO> build() {
+  Map<String, Subject> build() {
     listenToFirebase();
 
     _checkForDeleted();
@@ -50,7 +50,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
     return _dbState;
   }
 
-  Map<String, SubjectDTO> get _dbState {
+  Map<String, Subject> get _dbState {
     return subjectsDb.getDatabase();
   }
 
@@ -91,8 +91,8 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
   }
 
   /// saves new subject to state, to end if [addToEnd] is true
-  Future<SubjectDTO> saveNew(
-    Subject subject, {
+  Future<Subject> saveNew(
+    SubjectEntity subject, {
     // if null, new id is generated
     String? overrideId,
     bool addToFire = true,
@@ -112,7 +112,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
 
     await subjectsDb.addSubject(id, subject);
 
-    final SubjectDTO? subjectWithSameOrder = _dbState.values
+    final Subject? subjectWithSameOrder = _dbState.values
         .where(
             (element) => element.order == subject.order && !element.isDeleted)
         .firstOrNull;
@@ -129,22 +129,22 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
         reorder(
           null,
           subject.order,
-          subject.convertToDTO(id),
+          subject.convert(id),
         );
       }
     }
 
-    state = {...state, id: subject.convertToDTO(id)};
+    state = {...state, id: subject.convert(id)};
     if (addToFire) {
-      await firebaseService.addSubject(subject.convertToDTO(id));
+      await firebaseService.addSubject(subject.convert(id));
     }
 
-    return subject.convertToDTO(id);
+    return subject.convert(id);
   }
 
   /// assign timestamp manually, if no fireId, it will add it
   Future<void> edit(
-    SubjectDTO editedSubject, {
+    Subject editedSubject, {
     bool syncWithFire = true,
     bool reorderAddTimestamp = true,
 
@@ -194,7 +194,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
   Future<void> reorder(
     int? oldIndex,
     int? newIndex,
-    SubjectDTO? subject, {
+    Subject? subject, {
     /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
     bool addTimestamp = false,
   }) async {
@@ -221,7 +221,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
       list.insert(newIndex > list.length ? list.length : newIndex, subject!);
     }
 
-    final editedSubjects = <String, SubjectDTO>{};
+    final editedSubjects = <String, Subject>{};
 
     for (int i = 0; i < list.length; i++) {
       final edited = list[i].copyWith(order: i);
@@ -249,14 +249,14 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
     return;
   }
 
-  void deleteSubject(SubjectDTO subject, {bool nowIsDeleted = true}) {
+  void deleteSubject(Subject subject, {bool nowIsDeleted = true}) {
     edit(subject.copyWith(
       isDeleted: nowIsDeleted,
       timestamp: DateTime.now().toUtc(),
     ));
   }
 
-  void revertDelete(SubjectDTO subject) {
+  void revertDelete(Subject subject) {
     deleteSubject(subject, nowIsDeleted: false);
   }
 
@@ -272,7 +272,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
   /// deletes from cloud and local, other devices must delete it themself
-  Future<void> _permanentDelete(List<SubjectDTO> subjects) async {
+  Future<void> _permanentDelete(List<Subject> subjects) async {
     if (subjects.isEmpty) return;
     for (var element in subjects) {
       subjectsDb.delete(element.id);
@@ -283,7 +283,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<SubjectDTO> hwsToDelete = [];
+    List<Subject> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
       if (hw.isDeleted && now.difference(hw.timestamp) > Duration(days: 7)) {
@@ -294,7 +294,7 @@ class SubjectNotifier extends Notifier<Map<String, SubjectDTO>> {
   }
 
   /// checks and updates/adds subject from firestore
-  Future<void> checkFireSubject(SubjectDTO fireSubject) async {
+  Future<void> checkFireSubject(Subject fireSubject) async {
     final localSubject = _dbState.values.where(
       (element) {
         return element.id == fireSubject.id;

@@ -1,7 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 
 class AnimatedCompletionTile extends StatefulWidget {
@@ -18,7 +19,7 @@ class AnimatedCompletionTile extends StatefulWidget {
     required this.onConvert,
   });
 
-  final HomeworkDTO hw;
+  final Homework hw;
   final bool showDate;
   final bool draggable;
   final SlidableController? slidableController;
