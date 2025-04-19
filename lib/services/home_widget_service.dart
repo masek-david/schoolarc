@@ -31,6 +31,7 @@ void updateHwWidget(List<Homework> hws) {
 }
 
 void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
+  if(kIsWeb || !Platform.isAndroid) return;
   Map<String, dynamic> json = {};
   final now = DateTime.now();
 

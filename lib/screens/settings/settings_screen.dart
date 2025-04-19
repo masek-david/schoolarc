@@ -139,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
+          if (showDebug)
           Divider(),
           if (showDebug || kDebugMode)
             SettingTile.withSwitch(
