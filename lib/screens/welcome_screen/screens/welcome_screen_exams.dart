@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
@@ -31,11 +31,10 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
       subject: SubjectDTO(
         name: 'Subject',
         shortcut: 'Hw',
-        dbIndex: 0,
+        id: '0',
         isDeleted: false,
         bakaId: null,
-        fireId: null,
-        timestamp: Timestamp.now(),
+        timestamp: DateTime.now().toUtc(),
         order: 0,
       ),
       text: text,
@@ -43,9 +42,8 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
       deadline: DateTime.now().toUtc().add(const Duration(days: 1)).toLocal(),
       isCompleted: false,
       priority: TaskPriority(index),
-      dbIndex: index,
-      fireId: '',
-      timestamp: Timestamp.now(),
+      id: index.toString(),
+      timestamp: DateTime.now().toUtc(),
       isDeleted: false,
       order: 0
     );
@@ -82,7 +80,7 @@ class _WelcomeScreenExamsState extends State<WelcomeScreenExams>
                 ...homeworks.map(
                   (e) {
                     return Padding(
-                      key: Key('welcome_hw_${e.dbIndex}'),
+                      key: Key('welcome_hw_${e.id}'),
                       padding: const EdgeInsets.all(8.0),
                       child: ExamTile(
                         exam: e,

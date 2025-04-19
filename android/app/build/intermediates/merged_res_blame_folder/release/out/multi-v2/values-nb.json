@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.myapp-mergeReleaseResources-44:/values-nb/values-nb.xml",
+            "outputFile": "cz.masci.schoolarc-mergeReleaseResources-44:/values-nb/values-nb.xml",
             "map": [
                 {
                     "source": "C:\\Users\\molda\\.gradle\\caches\\transforms-3\\c3e4df35cd841670c64f7047fdf45059\\transformed\\material-1.11.0\\res\\values-nb\\values-nb.xml",

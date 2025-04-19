@@ -1,41 +1,59 @@
-fix:
+# FIX
 
-create baka provider
-
-? refactor timetable models
-
-=============================================================================================
-
-rework tutorial (is it necessary to teach every interaction??)
-
-rework switch action and settings screen(statemanagement)
-
-tapping on any setting tile should trigger its switch
-
-onHover
-keyboard shortcuts
-
-pass datetime better to widget
-
-? remake app isWide as riverpod provider
-
-remove slide to delete?
-
-info o bakalarich
-
-test timezones
-
-kouknout znova na kod pro urcovani vysky radek v kalendari
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+- kouknout znova na kod pro urcovani vysky radek v kalendari
+- na ipadu jsou tasky v kalendari moc dlouhy
+- na ipadu nevolat widget update
 
 # version 2.0.0
-- change package name (io.github.thedaviddev.school ???)
-- move to hivece
-- fix dates (save them just as utc)
-- move to supabase
-- remove old migration stuff
-- tutorial
-- ask for notification permission
+- ⬜ change package name (cz.masci ???)
+- ✅ check widget
+- ✅ move to hivece
+- ✅ remove old migration stuff
+- ✅ importing
+- ✅ fix dates (save them just as utc)
+    - ⬜ test timezones
+- ⬜ move to supabase
+- ⬜ ? refactor timetable models
+- ✅ rework notifications - scheduling on app leave
+    - ⬜ turn off notifications for weekend
+
+
+optional:
+- ⬜ when should the widget be updated??
+- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object) + PREJMENOVAT TO V PRACI
+- ⬜ rework reorder methods (dont include old priority, old index, instead the HomeworkDTO)
+- ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
+- ⬜ rework tutorial (is it necessary to teach every interaction??)
+- ⬜ rethink addnewtask bottom sheet
+    - ⬜ prevent from accidental scroll closing 
+    - ⬜ fix the scrolling
+- ⬜ fix the frequency when is app searching for baka homeworks
+- ⬜ create baka provider
+- ⬜ create settings for initial task 
+- ⬜ remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
+    
+settings:
+- ✅ rework switch action and settings screen(state management)
+- ✅ tapping on any setting tile should trigger its switch
+- ✅ when choosing app theme, show its type (vibrant,...)
+
+new features:
+- ⬜ ask for notification permission when launching app for first time, maybe periodicaly
+- ⬜ meals notifications
+- ⬜ add option to mark day in calendar as empty (weekends, holidays)
+
+web features
+- ⬜ web - spatne se horizontalne scrolluje, pridat tlacitka
+- ⬜ web FAB jsou divne dole, asi protoze tlacitka na webu nemaj margin
+- ⬜ onHover
+- ⬜ keyboard shortcuts
+
+# maybe
+- v kalendari psat v teckach aspon treba predmety ???
+
+- create baka provider
+- ? remake app isWide as riverpod provider
+ 
+- remove slide to delete?
+- pass datetime better to widget (pass it as datetime, not a string) why???

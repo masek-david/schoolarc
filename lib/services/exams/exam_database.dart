@@ -1,30 +1,31 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 
 class ExamDatabase {
-  final _examBox = Hive.box('examBox');
+  final _examBox = Hive.box(examBox);
 
   /// returns map of Exams with their dbIndexes
-  Map<int, Exam> getDatabase() {
-    return _examBox.toMap().cast<int, Exam>();
+  Map<String, Exam> getDatabase() {
+    return _examBox.toMap().cast<String, Exam>();
   }
 
-  Exam getExam(int dbKey) {
-    return _examBox.get(dbKey);
+  Exam getExam(String id) {
+    return _examBox.get(id);
   }
 
-  /// adds new Exam and returns dbIndex of the new Exam
-  Future<int> addExam(Exam exam) async {
-    return await _examBox.add(exam);
+  /// adds new Exam
+  Future<void> addExam(String id, Exam exam) async {
+    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
   }
 
   /// puts/replaces Exam at dbIndex with new one
-  Future<void> editExam(int dbKey, Exam exam) {
-    return _examBox.put(dbKey, exam);
+  Future<void> editExam(String id, Exam exam) {
+    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
   }
 
-  void delete(int dbKey){
-    _examBox.delete(dbKey);
+  void delete(String id) {
+    _examBox.delete(id);
   }
 
   void deleteAllFromDisk() {

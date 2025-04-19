@@ -1,19 +1,14 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 
-part 'timetable_model.g.dart';
-
-@HiveType(typeId: 3)
-class TimeTable {
+class TimeTable extends HiveObject {
   // index and times for lessons times
-  @HiveField(0)
   List<LessonTimes> lessonTimes = [];
   // list of 7 days, for each day there are as many hours as specified in lessontimes, they are null if empty, and store index of the subject
-  @HiveField(1)
-  late List<List<int?>> table;
+  late List<List<String?>> table;
 
   TimeTable(this.lessonTimes) {
     table = List.generate(
@@ -28,7 +23,7 @@ class TimeTable {
     );
   }
 
-  TimeTableDTO convertToDTO(Map<int, SubjectDTO> subjects) {
+  TimeTableDTO convertToDTO(Map<String, SubjectDTO> subjects) {
     var convertedTable = table.map(
       (day) {
         return day.map(

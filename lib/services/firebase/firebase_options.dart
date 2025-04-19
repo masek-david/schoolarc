@@ -46,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '34953784161',
     projectId: 'school-903c8',
     authDomain: 'school-903c8.firebaseapp.com',
+    databaseURL: "https://school-903c8-default-rtdb.europe-west1.firebasedatabase.app",
     storageBucket: 'school-903c8.firebasestorage.app',
     measurementId: 'G-MMJH1YMZLT',
   );
@@ -64,7 +65,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '34953784161',
     projectId: 'school-903c8',
     storageBucket: 'school-903c8.firebasestorage.app',
-    iosBundleId: 'com.example.schoolManager',
+    iosBundleId: 'cz.masci.schoolarc',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '34953784161',
     projectId: 'school-903c8',
     storageBucket: 'school-903c8.firebasestorage.app',
-    iosBundleId: 'com.example.schoolManager',
+    iosBundleId: 'cz.masci.schoolarc',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

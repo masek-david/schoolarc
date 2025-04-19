@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -7,7 +6,7 @@ import 'package:school_manager/models/task_model.dart';
 class BakaHomework extends Task {
   BakaHomework({
     required super.isCompleted,
-    required super.dbIndex,
+    required super.id,
     required super.deadline,
     required super.description,
     required super.priority,
@@ -16,7 +15,6 @@ class BakaHomework extends Task {
     required this.alreadyAdded,
     required this.alreadySeen,
     required this.bakaId,
-    required super.fireId,
     required super.timestamp,
     required super.isDeleted,
     required super.order,
@@ -34,9 +32,8 @@ class BakaHomework extends Task {
         deadline: deadline,
         isCompleted: isCompleted,
         priority: priority,
-        dbIndex: dbIndex,
+        id: id,
         description: description,
-        fireId: fireId,
         timestamp: timestamp,
         isDeleted: isDeleted,
         order: order);
@@ -45,14 +42,14 @@ class BakaHomework extends Task {
   @override
   BakaHomework copyWith({
     bool? isCompleted,
-    int? dbIndex,
+    String? id,
     DateTime? deadline,
     String? description,
     TaskPriority? priority,
     SubjectDTO? subject,
     String? text,
     String? fireId,
-    Timestamp? timestamp,
+    DateTime? timestamp,
     bool? isDeleted,
     int? order,
     int? stateReaddingVersion,
@@ -62,7 +59,7 @@ class BakaHomework extends Task {
   }) {
     return BakaHomework(
       isCompleted: isCompleted ?? this.isCompleted,
-      dbIndex: dbIndex ?? this.dbIndex,
+      id: id ?? this.id,
       deadline: deadline ?? this.deadline,
       description: description ?? this.description,
       priority: priority ?? this.priority,
@@ -71,7 +68,6 @@ class BakaHomework extends Task {
       alreadyAdded: alreadyAdded ?? this.alreadyAdded,
       alreadySeen: alreadySeen ?? this.alreadySeen,
       bakaId: bakaId ?? this.bakaId,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,

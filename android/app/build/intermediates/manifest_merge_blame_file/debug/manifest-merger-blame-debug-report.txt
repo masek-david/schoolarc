@@ -1,6 +1,6 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-3    package="com.example.myapp"
+3    package="cz.masci.schoolarc"
 4    android:versionCode="1"
 5    android:versionName="1.0.0" >
 6
@@ -57,12 +57,12 @@
 38
 39    <permission
 39-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
-40        android:name="com.example.myapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+40        android:name="cz.masci.schoolarc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
 40-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
 41        android:protectionLevel="signature" />
 41-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
 42
-43    <uses-permission android:name="com.example.myapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- for android -->
+43    <uses-permission android:name="cz.masci.schoolarc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- for android -->
 43-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
 43-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
 44    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
@@ -127,7 +127,7 @@
 70        android:icon="@mipmap/ic_launcher"
 71        android:label="School app" >
 72        <activity
-73            android:name="com.example.myapp.MainActivity"
+73            android:name="cz.masci.schoolarc.MainActivity"
 74            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
 75            android:exported="true"
 76            android:hardwareAccelerated="true"
@@ -266,7 +266,7 @@
 157-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
 158            android:name="androidx.startup.InitializationProvider"
 158-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
-159            android:authorities="com.example.myapp.androidx-startup"
+159            android:authorities="cz.masci.schoolarc.androidx-startup"
 159-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
 160            android:exported="false" >
 160-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37

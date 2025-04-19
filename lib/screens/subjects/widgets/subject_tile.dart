@@ -60,8 +60,6 @@ class SubjectTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if (settings.get(Setting.showDebugInfo))
-                    Text(subject.dbIndex.toString()),
                   if (settings.get(Setting.showDebugInfo) && subject.isDeleted)
                     Icon(Icons.delete),
                   if (settings.get(Setting.showDebugInfo))
@@ -74,16 +72,20 @@ class SubjectTile extends StatelessWidget {
                   Expanded(
                     child: Text(subject.name),
                   ),
-                  if (subject.isFromBakalari)
-                    Icon(
-                      Icons.hexagon,
-                      color: Theme.of(context).colorScheme.surfaceBright,
-                    ),
-                  if (subject.isFromBakalari &&
-                      settings.get(Setting.showDebugInfo))
-                    Text(subject.bakaId ?? ''),
                   if (settings.get(Setting.showDebugInfo))
-                    Text(subject.timestamp.millisecondsSinceEpoch.toString()),
+                    Text(subject.id.toString(), style: TextStyle(fontSize: 10),),
+                  if (subject.isFromBakalari)
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(
+                          Icons.hexagon,
+                          color: Theme.of(context).colorScheme.surfaceBright,
+                        ),
+                        if (settings.get(Setting.showDebugInfo))
+                          Text(subject.bakaId ?? ''),
+                      ],
+                    ),
                 ],
               ),
             ),

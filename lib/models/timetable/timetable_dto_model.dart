@@ -64,7 +64,7 @@ class TimeTableDTO {
     for (int i = date.weekday - 1; i < 100; i++) {
       date = date.add(const Duration(days: 1));
       var listOfSubjects = table[date.weekday - 1].where((element) {
-        bool contains = element.subject?.dbIndex == subject.dbIndex;
+        bool contains = element.subject?.id == subject.id;
         return contains;
       });
       if (listOfSubjects.isNotEmpty) {

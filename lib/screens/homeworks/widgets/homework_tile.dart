@@ -192,12 +192,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         if (settings.get(Setting.showDebugInfo))
                           Column(
                             children: [
-                              Text('id: ${widget.hw.dbIndex.toString()}'),
                               Text(widget.hw.order.toString()),
                               if (widget.hw.isBeingAnimated)
                                 Icon(
                                   Icons.animation,
-                                  size: 10,
+                                  size: 15,
                                 )
                             ],
                           ),
@@ -231,7 +230,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                           Column(
                             children: [
                               Text(
-                                widget.hw.fireId ?? 'no fireId',
+                                widget.hw.id,
                                 style: TextStyle(fontSize: 8),
                               ),
                               Text(widget.hw.timestamp.millisecondsSinceEpoch
@@ -254,7 +253,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             priority: widget.hw.priority,
                             onChanged: widget.onChangedCompletion,
                             // must be here
-                            key: ValueKey('checkbox ${widget.hw.dbIndex}'),
+                            key: ValueKey('checkbox ${widget.hw.id}'),
                           ),
                       ],
                     ),

@@ -41,7 +41,7 @@ class _AnimatedReorderableListItem {
     }
 
     if (hw != null && other.hw != null) {
-      return hw!.dbIndex == other.hw!.dbIndex;
+      return hw!.id == other.hw!.id;
     }
 
     return false;
@@ -148,7 +148,7 @@ class HomeworksScreen extends ConsumerWidget {
                             // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
                             // Multiple widgets use the same globalkey error
                             key: ValueKey(
-                                'hw: ${hw.dbIndex} ${hw.stateReaddingVersion}'),
+                                'hw: ${hw.id} ${hw.stateReaddingVersion}'),
                             hw: hw,
                             padding: EdgeInsets.symmetric(vertical: 4),
                             onChangedCompletion: (value) {

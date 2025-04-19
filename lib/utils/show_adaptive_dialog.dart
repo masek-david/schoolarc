@@ -6,10 +6,12 @@ Future<T> showDialogAdaptive<T>({
   Widget? title,
   Widget? content,
   List<Widget>? actions,
+  bool? dismissible,
 }) async {
   if (showCupertino(context)) {
     return await showCupertinoDialog(
       context: context,
+      barrierDismissible: dismissible ?? false,
       builder: (context) {
         return _builder(context, title, content, actions);
       },
@@ -17,6 +19,7 @@ Future<T> showDialogAdaptive<T>({
   } else {
     return await showDialog(
       context: context,
+      barrierDismissible: dismissible ?? true,
       builder: (context) {
         return _builder(context, title, content, actions);
       },

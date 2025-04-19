@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
@@ -9,6 +10,7 @@ import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class RecentlyDeletedScreen extends ConsumerWidget {
@@ -106,12 +108,8 @@ class RecentlyDeletedScreen extends ConsumerWidget {
           switch (item.runtimeType) {
             case const (HomeworkDTO):
               {
-                daysLeft = 7 +
-                    (item as HomeworkDTO)
-                        .timestamp
-                        .toDate()
-                        .difference(now)
-                        .inDays;
+                daysLeft =
+                    7 + (item as HomeworkDTO).timestamp.difference(now).inDays;
                 tile = HomeworkTile(
                   hw: item,
                   borderIfMissed: false,
@@ -123,8 +121,8 @@ class RecentlyDeletedScreen extends ConsumerWidget {
               }
             case const (ExamDTO):
               {
-                daysLeft = 7 +
-                    (item as ExamDTO).timestamp.toDate().difference(now).inDays;
+                daysLeft =
+                    7 + (item as ExamDTO).timestamp.difference(now).inDays;
                 tile = ExamTile(
                   exam: item,
                   onDelete: null,
@@ -134,15 +132,16 @@ class RecentlyDeletedScreen extends ConsumerWidget {
               }
             case const (SubjectDTO):
               {
-                daysLeft = 7 +
-                    (item as SubjectDTO)
-                        .timestamp
-                        .toDate()
-                        .difference(now)
-                        .inDays;
+                daysLeft =
+                    7 + (item as SubjectDTO).timestamp.difference(now).inDays;
                 tile = SubjectTile(
                   subject: item,
-                  onDelete: null,
+                  onDelete: kDebugMode
+                      ? () {
+                          subjectsDb.delete(item.id);
+                          firebaseService.deleteSubjects([item]);
+                        }
+                      : null,
                   onTap: () => recover(context: context, ref: ref, item: item),
                 );
               }

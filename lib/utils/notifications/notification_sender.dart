@@ -1,7 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
 import 'package:school_manager/models/homeworks/hw_dto_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
@@ -12,34 +15,70 @@ import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
-class NotificationSender {
-  static const String tommorrowChannel = 'tommorrow_channel';
-  static const String mainChannel = 'main_channel';
+const String tomorrowChannel = 'tomorrow_channel';
+const String mainChannel = 'main_channel';
 
+Future<void> initNotifications() async {
+  await AwesomeNotifications().initialize(
+    // set the icon to null if you want to use the default app icon
+    'resource://drawable/res_app_icon',
+    [
+      NotificationChannel(
+        onlyAlertOnce: true,
+        channelGroupKey: tomorrowChannel,
+        channelKey: tomorrowChannel,
+        channelName: 'Upcoming day notifications',
+        channelDescription: 'Here you will find upcoming exams and homeworks',
+        defaultColor: Colors.transparent,
+        ledColor: Colors.blue,
+      ),
+      NotificationChannel(
+        onlyAlertOnce: true,
+        channelGroupKey: mainChannel,
+        channelKey: mainChannel,
+        channelName: 'Main channel',
+        channelDescription: 'Main channel for notifications',
+        defaultColor: Colors.transparent,
+        ledColor: Colors.blue,
+      ),
+    ],
+    // Channel groups are only visual and are not required
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupKey: tomorrowChannel,
+        channelGroupName: 'Upcoming day',
+      ),
+    ],
+    debug: kDebugMode,
+  );
+}
+
+class NotificationSender {
   // find the correct date for the notification and schedule it
-  static void scheduleTommorrowNotification({
+  static void scheduletomorrowNotification({
     bool scheduled = true,
     Function(String text)? showSnackbar,
   }) async {
-    AwesomeNotifications().cancelSchedulesByChannelKey(tommorrowChannel);
+    await initHive();
 
-    if (!await areNotificationsAllowed(tommorrowChannel)) {
+    if (!await areNotificationsAllowed(tomorrowChannel)) {
       return;
     }
 
-    final settings = SettingsDatabase();
-    if (!settings.get(Setting.tommorowNotificationEnabled)) {
-      AwesomeNotifications().cancelSchedulesByChannelKey(tommorrowChannel);
+    if (!settings.get(Setting.tomorrowNotificationEnabled)) {
+      AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
       return;
     }
 
-    DateTime? tommorowDate;
+    DateTime? tomorrowDate;
     // sets correct schedule time and date
     if (scheduled) {
       TimeOfDay notificationTimeOfDay =
-          settings.getTimeOfDay(Setting.tommorowNotificationTime);
-      DateTime notificationTime = DateTime(
-              1, 1, 1, notificationTimeOfDay.hour, notificationTimeOfDay.minute)
+          settings.getTimeOfDay(Setting.tomorrowNotificationTime);
+
+      DateTime now = DateTime.now();
+      DateTime notificationTime = DateTime(now.year, now.month, now.day,
+              notificationTimeOfDay.hour, notificationTimeOfDay.minute)
           .toUtc();
       DateTime nowUTC = DateTime.now().toUtc();
       DateTime notificationDateTime = DateTime.utc(
@@ -50,23 +89,23 @@ class NotificationSender {
         notificationTime.minute,
       );
 
-      // if the notification is being set up after it would come today, it will be set to come tommorow
+      // if the notification is being set up after it would come today, it will be set to come tomorrow
       if (notificationDateTime.isBefore(nowUTC)) {
         notificationDateTime = notificationDateTime.add(const Duration(
           days: 1,
         ));
       }
 
-      tommorowDate = notificationDateTime;
+      tomorrowDate = notificationDateTime;
     }
 
     _scheduleNotificationForDay(
-      arriveDateTime: tommorowDate,
+      arriveDateTime: tomorrowDate,
       showSnackbar: showSnackbar,
     );
   }
 
-  // schedules notification with info about tommorrow (doesn't need to be provided) for provided date
+  // schedules notification with info about tomorrow (doesn't need to be provided) for provided date
   static void _scheduleNotificationForDay({
     Function(String text)? showSnackbar,
     required DateTime? arriveDateTime,
@@ -83,37 +122,35 @@ class NotificationSender {
     String homeworksTextList = '';
     String? missedHwTextList;
 
-    DateTime tommorowDate = DateTime.utc(
-            arriveDateTime.year, arriveDateTime.month, arriveDateTime.day)
-        .add(const Duration(days: 1));
+    final dateUtc = arriveDateTime.add(Duration(days: 1));
+    final tomorrowDate = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
 
-    final subjects = subjectsDb.getDatabase().map(
-          (key, value) => MapEntry(key, value.convertToDTO(key)),
-        );
+    await initHive();
+    final subjects = subjectsDb.getDatabase();
     final hwsInDb = homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(
-            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+            key, value.convertToDTO(key, subjects[value.subjectId]));
       },
     );
     final examsInDb = examsDb.getDatabase().map(
       (key, value) {
         return MapEntry(
-            key, value.convertToDTO(key, subjects[value.subjectDbIndex]));
+            key, value.convertToDTO(key, subjects[value.subjectId]));
       },
     );
-    List<ExamDTO> examsForTommorow =
-        examsSortByDate(examsInDb)[tommorowDate] ?? [];
-    List<HomeworkDTO> hwsForTommorow =
-        hwsSortByDate(hwsInDb)[tommorowDate] ?? [];
+    List<ExamDTO> examsFortomorrow =
+        examsSortByDate(examsInDb)[tomorrowDate] ?? [];
+    List<HomeworkDTO> hwsFortomorrow =
+        hwsSortByDate(hwsInDb)[tomorrowDate] ?? [];
     List<HomeworkDTO> missedHws = hwsGetMissed(hwsInDb);
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';
 
     // creates text for notification for exam
-    for (int i = 0; i < examsForTommorow.length; i++) {
-      ExamDTO exam = examsForTommorow[i];
+    for (int i = 0; i < examsFortomorrow.length; i++) {
+      ExamDTO exam = examsFortomorrow[i];
       String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
 
       String examText =
@@ -123,10 +160,10 @@ class NotificationSender {
     }
 
     // creates text about hw
-    hwsForTommorow.sort((a, b) =>
+    hwsFortomorrow.sort((a, b) =>
         (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
-    for (int i = 0; i < hwsForTommorow.length; i++) {
-      HomeworkDTO hw = hwsForTommorow[i];
+    for (int i = 0; i < hwsFortomorrow.length; i++) {
+      HomeworkDTO hw = hwsFortomorrow[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
 
       String hwText =
@@ -148,37 +185,38 @@ class NotificationSender {
     }
 
     notificationText =
-        '${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTommorow.isEmpty ? 'No exams tommorrow' : '<b>Exams:</b>'}$lineBreak$examsTextList $lineBreak${hwsForTommorow.isEmpty ? 'No homeworks for tommorrow' : '<b>Homeworks:</b>'}$lineBreak$homeworksTextList';
+        '${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsFortomorrow.isEmpty ? 'No exams tomorrow' : '<b>Exams:</b>'}$lineBreak$examsTextList $lineBreak${hwsFortomorrow.isEmpty ? 'No homeworks for tomorrow' : '<b>Homeworks:</b>'}$lineBreak$homeworksTextList';
 
     String summary = '';
 
     if (missedHws.isNotEmpty) {
       summary += '${missedHws.length} missed';
     }
-    if (hwsForTommorow.isNotEmpty) {
+    if (hwsFortomorrow.isNotEmpty) {
       if (summary != '') {
         summary += ', ';
       }
       summary +=
-          '${hwsForTommorow.length} homework${hwsForTommorow.length == 1 ? '' : 's'}';
+          '${hwsFortomorrow.length} homework${hwsFortomorrow.length == 1 ? '' : 's'}';
     }
-    if (examsForTommorow.isNotEmpty) {
+    if (examsFortomorrow.isNotEmpty) {
       if (!summary.endsWith(', ')) {
         summary += ', ';
       }
       summary +=
-          '${examsForTommorow.length} exam${examsForTommorow.length == 1 ? '' : 's'}';
+          '${examsFortomorrow.length} exam${examsFortomorrow.length == 1 ? '' : 's'}';
     }
 
+    AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
     await AwesomeNotifications().createNotification(
       schedule: arriveSchedule,
       content: NotificationContent(
         color: Colors.transparent,
         id: 11,
         badge: 0,
-        channelKey: tommorrowChannel,
+        channelKey: tomorrowChannel,
         summary: summary,
-        title: 'Tommorrow:',
+        title: 'Tomorrow:',
         body: notificationText,
         autoDismissible: false,
         category: NotificationCategory.Reminder,
@@ -186,13 +224,11 @@ class NotificationSender {
       ),
     );
 
-    debugPrintStack(
-        label:
-            '\u001b[1;42m\u001b[1;30mTommorrow notification scheduled for: ${arriveDateTime.toString()}, in ${arriveDateTime.timeZoneName}');
+    log('\u001b[1;42m\u001b[1;30mtomorrow notification scheduled for: ${arriveDateTime.toString()}, in ${arriveDateTime.timeZoneName}');
 
     if (showSnackbar != null) {
       showSnackbar(
-          'Next notification will arrive ${arriveDateTime.isSameDay(DateTime.now().toUtc()) ? 'today' : 'tommorrow'} at around ${arriveDateTime.toLocal().hour}:${arriveDateTime.toLocal().minuteStartingWithZero()}');
+          'Next notification will arrive ${arriveDateTime.isSameDay(DateTime.now().toUtc()) ? 'today' : 'tomorrow'} at around ${arriveDateTime.toLocal().hour}:${arriveDateTime.toLocal().minuteStartingWithZero()}');
     }
   }
 

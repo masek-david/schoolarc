@@ -72,27 +72,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     setState(() {
       isLoading = false;
     });
-    showMessage(error.toString(), isError: true);
-  }
-
-  void showMessage(String message, {bool isError = false}) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor:
-              isError ? Theme.of(context).colorScheme.errorContainer : null,
-          content: Text(
-            message,
-            style: TextStyle(
-              color: isError
-                  ? Theme.of(context).colorScheme.onErrorContainer
-                  : null,
-            ),
-          ),
-        ),
-      );
-    }
+    showMessage(context, error.toString(), isError: true);
   }
 
   bool canLogin() {
@@ -195,11 +175,31 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                   Checkbox(
                     value: keepLoggedIn,
                     onChanged: !isLoading
-                        ? (value) {
+                        ? (value) async {
+                            if (!value!) {
+                              value = await showDialogAdaptive(
+                                  context: context,
+                                  title: Text('Remember me?'),
+                                  content: Text(
+                                      'If you disable this setting, you will only be able to import your timetable'),
+                                  actions: [
+                                    adaptiveDialogButton(
+                                      context: context,
+                                      child: Text('Cancel'),
+                                      onPressed: () => Navigator.pop(context, true),
+                                    ),
+                                    adaptiveDialogButton(
+                                      context: context,
+                                      child: Text('Continue'),
+                                      onPressed: () => Navigator.pop(context, false),
+                                    ),
+                                  ]);
+                            }
+
                             setState(() {
                               keepLoggedIn = value!;
                             });
-                            settings.save(Setting.bakaKeepLoggedIn, value!);
+                            settings.save(Setting.bakaKeepLoggedIn, value);
                           }
                         : null,
                   )

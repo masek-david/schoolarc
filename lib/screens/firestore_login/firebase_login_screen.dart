@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/tasks_app.dart';
 
-class FirestoreLoginScreen extends ConsumerStatefulWidget {
-  const FirestoreLoginScreen({
+class FirebaseLoginScreen extends ConsumerStatefulWidget {
+  const FirebaseLoginScreen({
     super.key,
     this.onHide,
   });
@@ -11,13 +11,13 @@ class FirestoreLoginScreen extends ConsumerStatefulWidget {
   final void Function()? onHide;
 
   @override
-  ConsumerState<FirestoreLoginScreen> createState() =>
+  ConsumerState<FirebaseLoginScreen> createState() =>
       _FirestoreLoginScreenState();
 }
 
-class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
+class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
   final emailController =
-      TextEditingController(text: firestoreService.userEmail ?? '');
+      TextEditingController(text: firebaseService.userEmail ?? '');
   final passwordController = TextEditingController();
 
   @override
@@ -59,7 +59,7 @@ class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
             OutlinedButton(
               onPressed: () async {
                 try {
-                  await firestoreService.createUser(
+                  await firebaseService.createUser(
                     email: emailController.text,
                     password: passwordController.text,
                   );
@@ -79,7 +79,7 @@ class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
             OutlinedButton(
               onPressed: () async {
                 try {
-                  await firestoreService.logIn(
+                  await firebaseService.logIn(
                     email: emailController.text,
                     password: passwordController.text,
                   );
@@ -108,7 +108,7 @@ class _FirestoreLoginScreenState extends ConsumerState<FirestoreLoginScreen> {
             OutlinedButton(
               onPressed: () async {
                 try {
-                  await firestoreService.logOut();
+                  await firebaseService.logOut();
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);

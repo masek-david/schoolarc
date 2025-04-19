@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.myapp-mergeDebugResources-47:/values-am/values-am.xml",
+            "outputFile": "cz.masci.schoolarc-mergeDebugResources-47:/values-am/values-am.xml",
             "map": [
                 {
                     "source": "C:\\Users\\molda\\.gradle\\caches\\transforms-3\\01850c3cf1e8b112cb5a35ac91789a20\\transformed\\appcompat-1.6.1\\res\\values-am\\values-am.xml",

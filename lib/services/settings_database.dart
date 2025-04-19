@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 enum Setting {
@@ -10,13 +10,13 @@ enum Setting {
   initialAppPage,
   pageSwitchAnimationDuration,
   showAppOverlay,
-  tommorowNotificationEnabled,
-  tommorowNotificationTime,
+  tomorrowNotificationEnabled,
+  tomorrowNotificationTime,
   themeMode,
   timeTableShowWholeWeek,
   timeTableTileWidth,
   bakaKeepLoggedIn,
-  calendarInitialIsTommorrow,
+  calendarInitialIstomorrow,
   calendarShowMissed,
   calendarResizableContainerRatio,
   mealsShowTodayUntil,
@@ -72,13 +72,13 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'showOverlay',
     ),
-    Setting.tommorowNotificationEnabled: SettingModel(
+    Setting.tomorrowNotificationEnabled: SettingModel(
       defaultValue: true,
-      key: 'tommorowNotificationEnabled',
+      key: 'tomorrowNotificationEnabled',
     ),
-    Setting.tommorowNotificationTime: SettingModel(
-        defaultValue: const TimeOfDay(hour: 18, minute: 00).toDateTime(),
-        key: 'tommorrowNotificationTime'),
+    Setting.tomorrowNotificationTime: SettingModel(
+        defaultValue: const TimeOfDay(hour: 18, minute: 00).toInt(),
+        key: 'tomorrowNotificationTime'),
     Setting.themeMode: SettingModel(
       defaultValue: null,
       key: 'themeMode',
@@ -95,9 +95,9 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'bakaKeepLoggedIn',
     ),
-    Setting.calendarInitialIsTommorrow: SettingModel(
+    Setting.calendarInitialIstomorrow: SettingModel(
       defaultValue: true,
-      key: 'calendarInitialIsTommorrow',
+      key: 'calendarInitialIstomorrow',
     ),
     Setting.calendarShowMissed: SettingModel(
       defaultValue: true,
@@ -108,7 +108,7 @@ class SettingsDatabase {
       key: 'calendarResizeRatio',
     ),
     Setting.mealsShowTodayUntil: SettingModel(
-      defaultValue: const TimeOfDay(hour: 14, minute: 30).toDateTime(),
+      defaultValue: const TimeOfDay(hour: 14, minute: 30).toInt(),
       key: 'mealsShowTodayUntil',
     ),
     Setting.userName: SettingModel(
@@ -155,18 +155,18 @@ class SettingsDatabase {
     if (settingModel == null) {
       throw 'No setting found for enum $setting';
     }
-    if (settingModel.defaultValue.runtimeType != DateTime) {
-      throw 'The setting $setting is\'t of type TimeOfDay';
+    if (settingModel.defaultValue.runtimeType != int) {
+      throw 'The setting $setting isn\'t of type TimeOfDay';
     }
 
-    DateTime? date = _settingsBox.get(settingModel.key);
+    int? timeInInt = _settingsBox.get(settingModel.key);
 
-    if (date == null) {
-      date = get(setting);
-      _settingsBox.put(settingModel.key, date);
+    if (timeInInt == null) {
+      timeInInt = get(setting);
+      _settingsBox.put(settingModel.key, timeInInt);
     }
 
-    return TimeOfDay.fromDateTime(date!);
+    return timeOfDayFromInt(timeInInt!);
   }
 
   dynamic get(Setting setting) {
@@ -200,7 +200,7 @@ class SettingsDatabase {
       throw 'No setting found for enum $setting';
     }
 
-    _settingsBox.put(settingModel.key, value.toDateTime());
+    _settingsBox.put(settingModel.key, value.toInt());
   }
 
   bool get firstTimeOpeningApp {

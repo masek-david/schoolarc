@@ -20,10 +20,6 @@ class BakaHwTile extends StatelessWidget {
       bakaHomeworkService.seenHomework(hw.bakaId);
     }
 
-    if (hw.alreadyAdded) {
-      hw.isCompleted = true;
-    }
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -42,7 +38,7 @@ class BakaHwTile extends StatelessWidget {
           ),
           Expanded(
             child: HomeworkTile(
-              hw: hw.toHwDTO(),
+              hw: hw.copyWith(isCompleted: hw.alreadyAdded).toHwDTO(),
               borderIfMissed: false,
               showCompletion: false,
               onDelete: null,

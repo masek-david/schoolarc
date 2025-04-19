@@ -35,8 +35,9 @@ extension BetterDateTime on DateTime {
 
   /// vrati true pokud je date vcera a drive, false pokud dnes
   bool isBeforeToday() {
+    final local = toLocal();
     DateTime now = DateTime.now();
-    DateTime dateOnlyDate = DateTime(year, month, day);
+    DateTime dateOnlyDate = DateTime(local.year, local.month, local.day);
     DateTime nowOnlyDate = DateTime(now.year, now.month, now.day);
 
     return dateOnlyDate.isBefore(nowOnlyDate) &&
@@ -78,7 +79,7 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tommorow
+  /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tomorrow
   String dateText() {
     final localDate = toLocal();
     final now = DateTime.now();
@@ -90,7 +91,7 @@ extension BetterDateTime on DateTime {
     } else if (localDate.isSameDay(now)) {
       text = 'Today';
     } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
-      text = 'Tommorow';
+      text = 'Tomorrow';
     } else if (localDate
         .isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
       text = 'Yesterday';
@@ -103,14 +104,15 @@ extension BetterDateTime on DateTime {
     final localDate = toLocal();
     final now = DateTime.now();
 
-    if(localDate.difference(now) < Duration(days: 6)){
+    if (localDate.difference(now) < Duration(days: 6)) {
       return DateFormat.EEEE().format(localDate);
     }
     return dateText();
   }
 
   String formattedDate() {
-    String year = this.year == DateTime.now().year ? '' : this.year.toString();
-    return '$day.$month.$year';
+    final local = toLocal();
+    String year = local.year == DateTime.now().year ? '' : local.year.toString();
+    return '${local.day}.${local.month}.$year';
   }
 }

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
-part 'lesson_times_model.g.dart';
-
-@HiveType(typeId: 4)
-class LessonTimes {
-  @HiveField(0)
+class LessonTimes extends HiveObject {
   late DateTime _startTime;
-  @HiveField(1)
   late DateTime _endTime;
-  @HiveField(2)
   String name;
 
   LessonTimes.fromTimeOfDay({

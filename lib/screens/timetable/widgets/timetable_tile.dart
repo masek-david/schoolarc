@@ -61,9 +61,9 @@ class TimetableTile extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (lesson?.subject?.dbIndex != null &&
+                    if (lesson?.subject?.id != null &&
                         settings.get(Setting.showDebugInfo))
-                      Text('db: ${lesson?.subject?.dbIndex.toString()}'),
+                      Text('db: ${lesson?.subject?.id.toString()}'),
                     if (lesson?.subject?.isFromBakalari == true &&
                         settings.get(Setting.showDebugInfo))
                       Text('baka: ${lesson?.subject?.bakaId}'),

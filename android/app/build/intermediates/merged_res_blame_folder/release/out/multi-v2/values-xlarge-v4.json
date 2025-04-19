@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.myapp-mergeReleaseResources-44:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "cz.masci.schoolarc-mergeReleaseResources-44:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
                     "source": "C:\\Users\\molda\\.gradle\\caches\\transforms-3\\01850c3cf1e8b112cb5a35ac91789a20\\transformed\\appcompat-1.6.1\\res\\values-xlarge-v4\\values-xlarge-v4.xml",

@@ -1,30 +1,21 @@
-package com.example.myapp
+package cz.masci.schoolarc
 
 import HomeWidgetGlanceState
 import HomeWidgetGlanceStateDefinition
 import Homework
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.glance.BackgroundModifier
-import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalSize
-import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.action
 import androidx.glance.action.actionParametersOf
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.CheckBox
-import androidx.glance.appwidget.CheckBoxColors
 import androidx.glance.appwidget.CheckboxDefaults
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
@@ -46,7 +37,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
-import androidx.glance.layout.wrapContentSize
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -55,9 +45,8 @@ import androidx.glance.text.TextStyle
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
-import es.antonborri.home_widget.actionStartActivity
 
-public fun getPriorityColor(index: Int): Color {
+fun getPriorityColor(index: Int): Color {
     when (index) {
         3 -> return Color(217, 82, 65)
         2 -> return Color(255, 152, 0)
@@ -72,7 +61,7 @@ class CompleteAction : ActionCallback {
     ) {
         val isCompleted =
             parameters.get<Boolean>(ActionParameters.Key("android.widget.extra.CHECKED"))
-        val dbIndex = parameters[dbIndexKey]
+        val dbIndex = parameters[idKey]
         println("$dbIndex; completed: $isCompleted")
 
         val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(
@@ -83,7 +72,7 @@ class CompleteAction : ActionCallback {
     }
 }
 
-val dbIndexKey = ActionParameters.Key<Int>("dbIndex")
+val idKey = ActionParameters.Key<String>("id")
 
 class HwWidget : GlanceAppWidget() {
 
@@ -95,13 +84,13 @@ class HwWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                GlanceContent(context, currentState())
+                GlanceContent(currentState())
             }
         }
     }
 
     @Composable
-    private fun GlanceContent(context: Context, currentState: HomeWidgetGlanceState) {
+    private fun GlanceContent(currentState: HomeWidgetGlanceState) {
         val size = LocalSize.current
 
         var hws: MutableList<Homework> = mutableListOf()
@@ -167,7 +156,7 @@ class HwWidget : GlanceAppWidget() {
                             CheckBox(
                                 hw.isCompleted,
                                 actionRunCallback<CompleteAction>(
-                                    parameters = actionParametersOf(dbIndexKey to hw.dbIndex)
+                                    parameters = actionParametersOf(idKey to hw.id)
                                 ),
                                 colors = CheckboxDefaults.colors(
                                     checkedColor = getPriorityColor(hw.priority),

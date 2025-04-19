@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_dto_model.dart';
@@ -32,7 +32,7 @@ class RescheduleDragTarget extends ConsumerWidget {
             ref.read(hwProvider.notifier).edit(
                   hw.copyWith(
                     deadline: currentDate.toLocal(),
-                    timestamp: Timestamp.now(),
+                    timestamp: DateTime.now().toUtc(),
                   ),
                 );
           }
@@ -43,7 +43,7 @@ class RescheduleDragTarget extends ConsumerWidget {
             ref.read(examProvider.notifier).edit(
                   exam.copyWith(
                     deadline: currentDate.toLocal(),
-                    timestamp: Timestamp.now(),
+                    timestamp: DateTime.now().toUtc(),
                   ),
                 );
           }

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
-import 'package:school_manager/screens/settings/widgets/time_picker_action.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -18,52 +16,62 @@ class HomeSettings extends StatefulWidget {
 }
 
 class _HomeSettingsState extends State<HomeSettings> {
+  bool showMyName = settings.get(Setting.homeShowUserName);
+  bool showMeals = settings.get(Setting.homeShowMeals);
+  bool showBaka = settings.get(Setting.homeShowBaka);
+  TimeOfDay lunchTime = settings.getTimeOfDay(Setting.mealsShowTodayUntil);
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SettingTile(
-          label: 'Lunch time',
-          text: 'When meals for next day appear',
-          trailing: TimePickerAction(
-            initialTime: settings.getTimeOfDay(Setting.mealsShowTodayUntil),
-            onChanged: (time) {
-              settings.saveTimeOfDay(Setting.mealsShowTodayUntil, time);
-              widget.onChanged();
-            },
-          ),
+        SettingTile.withTimePicker(
+          title: 'Lunch time',
+          subtitle: 'When meals for next day appear',
+          time: lunchTime,
+          onChanged: (value) {
+            settings.saveTimeOfDay(Setting.mealsShowTodayUntil, value);
+            setState(() {
+              lunchTime = value;
+            });
+            widget.onChanged();
+          },
         ),
-        SettingTile(
-          label: 'Show my name',
-          text: 'If enabled and logged in to Bakaláři, you will be greeted with your name',
-          trailing: SwitchAction(
-            initialValue: settings.get(Setting.homeShowUserName),
-            onChanged: (value) {
-              settings.save(Setting.homeShowUserName, value);
-              widget.onChanged();
-            },
-          ),
+        SettingTile.withSwitch(
+          title: 'Show my name',
+          subtitle:
+              'If enabled and logged in to Bakaláři, you will be greeted with your name',
+          value: showMyName,
+          onChanged: (value) {
+            settings.save(Setting.homeShowUserName, value);
+            setState(() {
+              showMyName = value;
+            });
+            widget.onChanged();
+          },
         ),
-        SettingTile(
-          label: 'Show meals',
-          trailing: SwitchAction(
-            initialValue: settings.get(Setting.homeShowMeals),
-            onChanged: (value) {
-              settings.save(Setting.homeShowMeals, value);
-              widget.onChanged();
-            },
-          ),
+        SettingTile.withSwitch(
+          title: 'Show meals',
+          value: showMeals,
+          onChanged: (value) {
+            settings.save(Setting.homeShowMeals, value);
+            setState(() {
+              showMeals = value;
+            });
+            widget.onChanged();
+          },
         ),
-        SettingTile(
-          label: 'Show Bakaláři timetable',
-          trailing: SwitchAction(
-            initialValue: settings.get(Setting.homeShowBaka),
-            onChanged: (value) {
-              settings.save(Setting.homeShowBaka, value);
-              widget.onChanged();
-            },
-          ),
+        SettingTile.withSwitch(
+          title: 'Show Bakaláři timetable',
+          value: showBaka,
+          onChanged: (value) {
+            settings.save(Setting.homeShowBaka, value);
+            setState(() {
+              showBaka = value;
+            });
+            widget.onChanged();
+          },
         ),
       ],
     );

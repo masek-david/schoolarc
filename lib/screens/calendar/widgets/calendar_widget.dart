@@ -46,10 +46,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   /// used for getting number of markers
   List<Object> getEventsForDay(DateTime day) {
     final currentExams =
-        widget.exams[DateTime.utc(day.year, day.month, day.day)] ?? [];
+        widget.exams[DateTime(day.year, day.month, day.day)] ?? [];
 
     List<Object> listOfEvents = [
-      ...widget.homeworks[DateTime.utc(day.year, day.month, day.day)] ?? [],
+      ...widget.homeworks[DateTime(day.year, day.month, day.day)] ?? [],
       ...currentExams
     ];
     return listOfEvents;
@@ -68,7 +68,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
     for (DateTime date in days) {
       int examsInDate =
-          widget.exams[DateTime.utc(date.year, date.month, date.day)]?.length ??
+          widget.exams[DateTime(date.year, date.month, date.day)]?.length ??
               0;
 
       if (examsInDate > examsCount) {

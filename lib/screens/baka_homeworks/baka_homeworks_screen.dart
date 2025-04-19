@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
@@ -23,11 +23,11 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
   void add(BuildContext context, BakaHomework hw, bool isHomework) {
     if (isHomework) {
       ref.read(hwProvider.notifier).saveNew(
-            hw.copyWith(timestamp: Timestamp.now(), isCompleted: false).toHw(),
+            hw.copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false).toHw(),
           );
     } else {
       ref.read(examProvider.notifier).saveNew(
-            hw.copyWith(timestamp: Timestamp.now()).toExam(),
+            hw.copyWith(timestamp: DateTime.now().toUtc()).toExam(),
           );
     }
 

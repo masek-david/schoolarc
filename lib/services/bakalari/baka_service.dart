@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -133,7 +133,7 @@ class BakaService {
     _accessToken = null;
     _refreshToken = null;
     _tokenExpiration = null;
-    
+
     Future.wait([
       saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, ''),
       saveToSecureStorage(SecureStorage.bakaSchoolNameKey, ''),
@@ -151,8 +151,7 @@ class BakaService {
         body: body,
       );
     } on SocketException catch (_) {
-      throw ServiceException(
-          'Check your internet connection');
+      throw ServiceException('Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -185,10 +184,10 @@ class BakaService {
   }
 
   Future<void> loadName() async {
-    if(settings.get(Setting.userName) != null){
+    if (settings.get(Setting.userName) != null) {
       return;
     }
-    
+
     Response response;
     try {
       String schoolName = await this.schoolName;
@@ -243,8 +242,7 @@ class BakaService {
         },
       );
     } on SocketException {
-      throw ServiceException(
-          'Check your internet connection');
+      throw ServiceException('Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -281,7 +279,7 @@ class BakaService {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
         String subjectIdBaka = subjectJson['SubjectId'];
-        int subjectIndex = bakaIdToSubjectIndex[subjectIdBaka]!;
+        String subjectId = bakaIdToSubjectIndex[subjectIdBaka]!;
         int hourId = subjectJson['HourId'];
 
         _timetableDb.newLessonAt(
@@ -289,7 +287,7 @@ class BakaService {
           lessons.indexWhere(
             (lesson) => lesson.id == hourId,
           ),
-          subjectIndex,
+          subjectId,
         );
       }
     }
@@ -333,8 +331,7 @@ class BakaService {
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException(
-          'Check your internet connection');
+      throw ServiceException('Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -363,9 +360,7 @@ class BakaService {
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson, ref);
-    final subjects = subjectsDb.getDatabase().map(
-          (key, value) => MapEntry(key, value.convertToDTO(key)),
-        );
+    final subjects = subjectsDb.getDatabase();
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
@@ -395,7 +390,7 @@ class BakaService {
         String? subjectIdBaka = subjectJson['SubjectId'];
         String? teacherId = subjectJson['TeacherId'];
         String? roomId = subjectJson['RoomId'];
-        int? subjectIndex = bakaIdToSubjectIndex[subjectIdBaka];
+        String? subjectId = bakaIdToSubjectIndex[subjectIdBaka];
         int hourId = subjectJson['HourId'];
         final changeJson = subjectJson['Change'];
 
@@ -409,7 +404,7 @@ class BakaService {
           );
         }
 
-        final subject = subjects[subjectIndex];
+        final subject = subjects[subjectId];
 
         final teacher = teachersMap[teacherId];
         final room = roomsMap[roomId];
@@ -429,16 +424,10 @@ class BakaService {
   }
 
   /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
-  Future<Map<String, int>> _getSubjectsIdToIndex(
+  Future<Map<String, String>> _getSubjectsIdToIndex(
       List<dynamic> subjectsJson, WidgetRef ref) async {
-    final subjects = subjectsDb
-        .getDatabase()
-        .map(
-          (key, value) => MapEntry(key, value.convertToDTO(key)),
-        )
-        .values
-        .toList();
-    Map<String, int> bakalariSubjectIdToSubjectIndex = {};
+    final subjects = subjectsDb.getDatabase().values.toList();
+    Map<String, String> bakalariSubjectIdToSubjectIndex = {};
 
     for (var subjectJson in subjectsJson) {
       String bakaId = subjectJson['Id'];
@@ -448,7 +437,7 @@ class BakaService {
 
       for (var subject in subjects) {
         if (subject.bakaId == bakaId) {
-          bakalariSubjectIdToSubjectIndex.addAll({bakaId: subject.dbIndex});
+          bakalariSubjectIdToSubjectIndex.addAll({bakaId: subject.id});
           subjectExisted = true;
           break;
         }
@@ -460,13 +449,12 @@ class BakaService {
                 name: name,
                 shortcut: shortcut,
                 bakaId: bakaId,
-                fireId: null,
                 isDeleted: false,
                 order: 0,
-                timestamp: Timestamp.now().toDate(),
+                timestamp: DateTime.now().toUtc(),
               ),
             );
-        bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.dbIndex});
+        bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.id});
       }
     }
 
@@ -532,8 +520,7 @@ class BakaService {
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException(
-          'Check your internet connection');
+      throw ServiceException('Check your internet connection');
     } catch (e) {
       throw ServiceException('An unexpected error occurred: $e');
     }
@@ -543,9 +530,7 @@ class BakaService {
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
-    final subjects = subjectsDb.getDatabase().map(
-          (key, value) => MapEntry(key, value.convertToDTO(key)),
-        );
+    final subjects = subjectsDb.getDatabase();
 
     int newHomeworks = 0;
 
@@ -579,11 +564,10 @@ class BakaService {
           deadline: deadline,
           isCompleted: isCompleted,
           priority: TaskPriority(0),
-          dbIndex: 0,
           description: null,
-          fireId: null,
+          id: id,
           isDeleted: false,
-          timestamp: Timestamp.now(),
+          timestamp: DateTime.now().toUtc(),
           order: 0,
         ),
       );

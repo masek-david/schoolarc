@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +54,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
         description: descriptionController.text,
         deadline: pickedDate,
         priority: TaskPriority(pickedPriority),
-        timestamp: Timestamp.now(),
+        timestamp: DateTime.now().toUtc(),
       ),
     );
   }
@@ -80,7 +80,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       if (pickedSubject != null) {
         Scrollable.ensureVisible(
           keysList[subjects.indexWhere(
-            (element) => pickedSubject!.dbIndex == element.dbIndex,
+            (element) => pickedSubject!.id == element.id,
           )]
               .currentContext!,
           duration: const Duration(milliseconds: 500),
@@ -137,8 +137,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
                               key: keysList[index],
-                              selected: pickedSubject?.dbIndex ==
-                                  subjects[index].dbIndex,
+                              selected: pickedSubject?.id ==
+                                  subjects[index].id,
                               label: Text(subjects[index].name),
                               onSelected: (value) {
                                 if (!value) {
@@ -239,7 +239,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                         style: TextStyle(fontSize: 16),
                       ),
                       Text(
-                        '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
+                        pickedDate.formattedDate(),
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],

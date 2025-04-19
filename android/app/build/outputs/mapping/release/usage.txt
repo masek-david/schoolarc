@@ -11513,24 +11513,24 @@ androidx.window.reflection.ReflectionUtils:
     public final boolean validateImplementation$window_release(java.lang.Class,java.lang.Class)
     public static synthetic boolean validateReflection$window_release$default(java.lang.String,kotlin.jvm.functions.Function0,int,java.lang.Object)
 androidx.window.reflection.WindowExtensionsConstants
-com.example.myapp.BuildConfig
-com.example.myapp.R$anim
-com.example.myapp.R$animator
-com.example.myapp.R$attr
-com.example.myapp.R$bool
-com.example.myapp.R$color
-com.example.myapp.R$dimen
-com.example.myapp.R$drawable
-com.example.myapp.R$id
-com.example.myapp.R$integer
-com.example.myapp.R$interpolator
-com.example.myapp.R$layout
-com.example.myapp.R$mipmap
-com.example.myapp.R$plurals
-com.example.myapp.R$string
-com.example.myapp.R$style
-com.example.myapp.R$styleable
-com.example.myapp.R
+cz.masci.schoolarc.BuildConfig
+cz.masci.schoolarc.R$anim
+cz.masci.schoolarc.R$animator
+cz.masci.schoolarc.R$attr
+cz.masci.schoolarc.R$bool
+cz.masci.schoolarc.R$color
+cz.masci.schoolarc.R$dimen
+cz.masci.schoolarc.R$drawable
+cz.masci.schoolarc.R$id
+cz.masci.schoolarc.R$integer
+cz.masci.schoolarc.R$interpolator
+cz.masci.schoolarc.R$layout
+cz.masci.schoolarc.R$mipmap
+cz.masci.schoolarc.R$plurals
+cz.masci.schoolarc.R$string
+cz.masci.schoolarc.R$style
+cz.masci.schoolarc.R$styleable
+cz.masci.schoolarc.R
 com.google.android.material.R$anim
 com.google.android.material.R$animator:
     public static final int design_appbar_state_list_animator

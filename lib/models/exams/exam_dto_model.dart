@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -10,10 +9,9 @@ class ExamDTO extends Task {
     required super.text,
     required super.deadline,
     required super.priority,
-    required super.dbIndex,
+    required super.id,
     required super.isCompleted,
     required super.description,
-    required super.fireId,
     required super.timestamp,
     required super.isDeleted,
     required super.order,
@@ -22,21 +20,33 @@ class ExamDTO extends Task {
 
   Exam convert() {
     return Exam(
-      fireId: fireId,
       isDeleted: isDeleted,
-      subjectDbIndex: subject?.dbIndex,
+      subjectId: subject?.id,
       text: text,
       date: deadline,
       priority: priority.index,
       description: description,
-      timestamp: timestamp.toDate(),
+      timestamp: timestamp,
       order: order,
     );
   }
 
   @override
   String toString() {
-    return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
+    return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
+  }
+
+  Map<String, dynamic> toFireJson() {
+    return {
+      'n': text,
+      't': description,
+      's': subject?.id,
+      'd': deadline.toIso8601String(),
+      'p': priority.index,
+      'o': order,
+      'del': isDeleted,
+      'tm': timestamp.toIso8601String(),
+    };
   }
 
   @override
@@ -46,10 +56,9 @@ class ExamDTO extends Task {
     DateTime? deadline,
     bool? isCompleted,
     TaskPriority? priority,
-    int? dbIndex,
+    String? id,
     String? description,
-    String? fireId,
-    Timestamp? timestamp,
+    DateTime? timestamp,
     bool? isDeleted,
     int? order,
     int? stateReaddingVersion,
@@ -60,9 +69,8 @@ class ExamDTO extends Task {
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
-      dbIndex: dbIndex ?? this.dbIndex,
+      id: id ?? this.id,
       description: description ?? this.description,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,

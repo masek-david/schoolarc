@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 
@@ -6,9 +6,8 @@ class SubjectDTO {
   SubjectDTO({
     required this.name,
     required this.shortcut,
-    required this.dbIndex,
+    required this.id,
     required this.bakaId,
-    required this.fireId,
     required this.timestamp,
     required this.isDeleted,
     required this.order,
@@ -16,10 +15,9 @@ class SubjectDTO {
 
   String name;
   String shortcut;
-  int dbIndex;
+  String id;
   String? bakaId;
-  String? fireId;
-  Timestamp timestamp;
+  DateTime timestamp;
   bool isDeleted;
   int order;
 
@@ -28,9 +26,8 @@ class SubjectDTO {
       name: name,
       shortcut: shortcut,
       bakaId: bakaId,
-      fireId: fireId,
       isDeleted: isDeleted,
-      timestamp: timestamp.toDate(),
+      timestamp: timestamp,
       order: order,
     );
   }
@@ -53,6 +50,46 @@ class SubjectDTO {
             );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'shortcut': shortcut,
+      'bakaId': bakaId,
+      'id': id,
+      'order': order,
+      'isDeleted': isDeleted,
+    };
+  }
+
+  SubjectDTO.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        id = json['id'],
+        shortcut = json['shortcut'],
+        bakaId = json['bakaId'],
+        order = json['order'],
+        isDeleted = json['isDeleted'],
+        timestamp = DateTime.now().toUtc();
+
+  Map<String, dynamic> toFireJson() {
+    return {
+      'n': name,
+      's': shortcut,
+      'b': bakaId,
+      'o': order,
+      'd': isDeleted,
+      't': timestamp.toIso8601String(),
+    };
+  }
+
+  SubjectDTO.fromFireJson(Map<String, dynamic>  json)
+      : name = json['n'],
+        id = json['id'],
+        shortcut = json['s'],
+        bakaId = json['b'],
+        order = json['o'],
+        isDeleted = json['d'],
+        timestamp = DateTime.parse(json['t']);
+
   bool get isFromBakalari {
     return bakaId != null && bakaId != '';
   }
@@ -60,20 +97,18 @@ class SubjectDTO {
   SubjectDTO copyWith({
     String? name,
     String? shortcut,
-    int? dbIndex,
+    String? id,
     bool? isDeleted,
     String? bakaId,
-    String? fireId,
-    Timestamp? timestamp,
+    DateTime? timestamp,
     int? order,
   }) {
     return SubjectDTO(
       name: name ?? this.name,
       shortcut: shortcut ?? this.shortcut,
-      dbIndex: dbIndex ?? this.dbIndex,
+      id: id ?? this.id,
       isDeleted: isDeleted ?? this.isDeleted,
       bakaId: bakaId ?? this.bakaId,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
     );

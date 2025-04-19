@@ -1,5 +1,6 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,9 +44,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                 Subject(
                   name: nameController.text,
                   shortcut: shortcutController.text,
-                  fireId: null,
                   isDeleted: false,
-                  timestamp: Timestamp.now().toDate(),
+                  timestamp: DateTime.now().toUtc(),
                   bakaId: null,
                   order: 0,
                 ),
@@ -74,11 +74,10 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
           SubjectDTO newSubject = SubjectDTO(
             name: nameController.text,
             shortcut: shortcutController.text,
-            dbIndex: subject.dbIndex,
+            id: subject.id,
             bakaId: subject.bakaId,
             isDeleted: subject.isDeleted,
-            fireId: subject.fireId,
-            timestamp: Timestamp.now(),
+            timestamp: DateTime.now().toUtc(),
             order: subject.order,
           );
 
@@ -106,10 +105,30 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     ]);
   }
 
+  Future<void> onRefresh() async {
+    try {
+      return await ref.read(subjectsProvider.notifier).syncAll();
+    } on Object catch (e) {
+      if (context.mounted) {
+        showMessage(context, e.toString(), isError: true);
+      }
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Subjects')),
+      appBar: AppBar(
+        title: const Text('Subjects'),
+        actions: [
+          if (kIsWeb && settings.get(Setting.useFirebase))
+            IconButton(
+              onPressed: onRefresh,
+              icon: Icon(Icons.refresh_outlined),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new subject',
         onPressed: () {
@@ -135,28 +154,17 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                     notificationPredicate: settings.get(Setting.useFirebase)
                         ? (_) => true
                         : (_) => false,
-                    onRefresh: () async {
-                      try {
-                        return await ref
-                            .read(subjectsProvider.notifier)
-                            .syncAll();
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          showMessage(context, e.toString(), isError: true);
-                        }
-                        return;
-                      }
-                    },
+                    onRefresh: onRefresh,
                     child: AnimatedReorderableListView(
                       onReorderStart: (index) => HapticFeedback.mediumImpact(),
                       items: subjects,
-                      isSameItem: (a, b) => a.dbIndex == b.dbIndex,
+                      isSameItem: (a, b) => a.id == b.id,
                       padding: EdgeInsets.only(bottom: 100),
                       itemBuilder: (context, index) {
                         SubjectDTO subject = subjects[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          key: Key('Sub: ${subject.dbIndex}'),
+                          key: Key('Sub: ${subject.id}'),
                           child: SubjectTile(
                             subject: subject,
                             onTap: () => editSubject(subject, ref),

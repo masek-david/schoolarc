@@ -109,12 +109,7 @@ class ExamTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       if (settings.get(Setting.showDebugInfo))
-                        Column(
-                          children: [
-                            Text('id: ${exam.dbIndex.toString()}'),
-                            Text(exam.order.toString()),
-                          ],
-                        ),
+                        Text(exam.order.toString()),
                       AnimatedContainer(
                         width: 50,
                         height: 50,
@@ -138,6 +133,10 @@ class ExamTile extends StatelessWidget {
                       if (settings.get(Setting.showDebugInfo))
                         Column(
                           children: [
+                            Text(
+                              exam.id,
+                              style: TextStyle(fontSize: 8),
+                            ),
                             Text(
                                 'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
                           ],

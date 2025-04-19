@@ -21,10 +21,10 @@ import 'package:school_manager/utils/extensions/datetime_extension.dart';
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
-    this.showTommorrow = false,
+    this.showtomorrow = false,
   });
 
-  final bool showTommorrow;
+  final bool showtomorrow;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -36,11 +36,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
-  late final showTommorrow =
-      settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow;
+  late final showtomorrow =
+      settings.get(Setting.calendarInitialIstomorrow) || widget.showtomorrow;
   late final PageController _pageController = PageController(
     viewportFraction: 0.90,
-    initialPage: negativePageCount + (showTommorrow ? 1 : 0),
+    initialPage: negativePageCount + (showtomorrow ? 1 : 0),
   );
 
   late bool showMissed = settings.get(Setting.calendarShowMissed);
@@ -52,7 +52,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   void initState() {
     super.initState();
 
-    if (showTommorrow) {
+    if (showtomorrow) {
       _focusedDay =
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
@@ -191,7 +191,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       builder: (context, isWide, child) {
         return Scaffold(
           appBar: isWide ? null : buildAppBar(isWide),
-          floatingActionButtonLocation: isWide ? FloatingActionButtonLocation.endDocked : null,
+          floatingActionButtonLocation:
+              isWide ? FloatingActionButtonLocation.endDocked : null,
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,

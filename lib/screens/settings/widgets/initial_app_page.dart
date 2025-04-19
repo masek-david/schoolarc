@@ -19,8 +19,8 @@ class _InitialAppPageState extends State<InitialAppPage> {
     return Column(
       children: [
         SettingTile(
-          label: 'Initial page',
-          text: 'The page that will be displayed when opening the app',
+          title: 'Initial page',
+          subtitle: 'The page that will be displayed when opening the app',
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),

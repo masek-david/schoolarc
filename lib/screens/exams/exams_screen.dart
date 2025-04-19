@@ -40,7 +40,7 @@ class _AnimatedReorderableListItem {
     }
 
     if (exam != null && other.exam != null) {
-      return exam!.dbIndex == other.exam!.dbIndex;
+      return exam!.id == other.exam!.id;
     }
 
     return false;
@@ -147,7 +147,7 @@ class ExamsScreen extends ConsumerWidget {
                             // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
                             // Multiple widgets use the same globalkey error
                             key: ValueKey(
-                                'exam: ${exam.dbIndex} ${exam.stateReaddingVersion}'),
+                                'exam: ${exam.id} ${exam.stateReaddingVersion}'),
                             padding: EdgeInsets.symmetric(vertical: 4),
                             child: ExamTile(
                               exam: exam,

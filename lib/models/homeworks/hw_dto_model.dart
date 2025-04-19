@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_dto_model.dart';
@@ -11,9 +10,8 @@ class HomeworkDTO extends Task {
     required super.deadline,
     required super.isCompleted,
     required super.priority,
-    required super.dbIndex,
+    required super.id,
     required super.description,
-    required super.fireId,
     required super.timestamp,
     required super.isDeleted,
     required super.order,
@@ -25,49 +23,60 @@ class HomeworkDTO extends Task {
 
   Homework convert() {
     return Homework(
-      fireId: fireId,
       isDeleted: isDeleted,
-      subjectDbIndex: subject?.dbIndex,
+      subjectId: subject?.id,
       text: text,
       deadline: deadline,
       isCompleted: isCompleted,
       priority: priority.index,
       description: description,
-      timestamp: timestamp.toDate(),
+      timestamp: timestamp,
       order: order,
     );
   }
 
   @override
   String toString() {
-    return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $dbIndex, completed: $isCompleted, deleted: $isDeleted';
+    return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
+  }
+
+  Map<String, dynamic> toFireJson() {
+    return {
+      'n': text,
+      't': description,
+      's': subject?.id,
+      'd': deadline.toIso8601String(),
+      'p': priority.index,
+      'o': order,
+      'c': isCompleted,
+      'del': isDeleted,
+      'tm': timestamp.toIso8601String(),
+    };
   }
 
   @override
-  HomeworkDTO copyWith({
-    SubjectDTO? subject,
-    String? text,
-    DateTime? deadline,
-    bool? isCompleted,
-    TaskPriority? priority,
-    int? dbIndex,
-    String? description,
-    String? fireId,
-    Timestamp? timestamp,
-    bool? isDeleted,
-    int? order,
-    bool? isBeingAnimated,
-    int? stateReaddingVersion
-  }) {
+  HomeworkDTO copyWith(
+      {SubjectDTO? subject,
+      String? text,
+      DateTime? deadline,
+      bool? isCompleted,
+      TaskPriority? priority,
+      String? id,
+      String? description,
+      String? fireId,
+      DateTime? timestamp,
+      bool? isDeleted,
+      int? order,
+      bool? isBeingAnimated,
+      int? stateReaddingVersion}) {
     return HomeworkDTO(
       subject: subject ?? this.subject,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
-      dbIndex: dbIndex ?? this.dbIndex,
+      id: id ?? this.id,
       description: description ?? this.description,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,

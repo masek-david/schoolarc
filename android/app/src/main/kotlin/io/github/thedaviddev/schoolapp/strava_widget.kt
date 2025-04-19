@@ -1,4 +1,4 @@
-package com.example.myapp
+package cz.masci.schoolarc
 
 import HomeWidgetGlanceState
 import HomeWidgetGlanceStateDefinition

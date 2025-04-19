@@ -1,5 +1,5 @@
 
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_dto_model.dart';
@@ -21,7 +21,7 @@ class TimeTableDatabase {
       _table = tempTable as TimeTable;
     }
 
-    var subjects = subjectsDb.getDatabase().map((key, value) => MapEntry(key, value.convertToDTO(key)),);
+    var subjects = subjectsDb.getDatabase();
 
     return _table.convertToDTO(subjects);
   }
@@ -87,9 +87,9 @@ class TimeTableDatabase {
     _tableBox.put(tableKey, _table);
   }
 
-  void newLessonAt(int weekday, int lessonIndex, int subjectIndex) {
+  void newLessonAt(int weekday, int lessonIndex, String subjectId) {
     _table = _tableBox.get(tableKey);
-    _table.table[weekday][lessonIndex] = subjectIndex;
+    _table.table[weekday][lessonIndex] = subjectId;
 
     _tableBox.put(tableKey, _table);
   }

@@ -3,22 +3,19 @@ import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
-import 'package:school_manager/screens/settings/widgets/time_picker_action.dart';
 
-class TommorrowNotificationsPage extends StatefulWidget {
-  const TommorrowNotificationsPage({
-    super.key,
-  });
+class TomorrowNotificationsPage extends StatefulWidget {
+  const TomorrowNotificationsPage({super.key});
 
   @override
-  State<TommorrowNotificationsPage> createState() =>
-      _TommorrowNotificationsPageState();
+  State<TomorrowNotificationsPage> createState() =>
+      _TomorrowNotificationsPageState();
 }
 
-class _TommorrowNotificationsPageState
-    extends State<TommorrowNotificationsPage> {
+class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   bool? areNotificationsAllowed;
+  bool enabled = settings.get(Setting.tomorrowNotificationEnabled);
+  TimeOfDay time = settings.getTimeOfDay(Setting.tomorrowNotificationTime);
 
   @override
   void initState() {
@@ -29,12 +26,34 @@ class _TommorrowNotificationsPageState
 
   void getNotificationAllowed() async {
     bool value =
-        await NotificationSender.areNotificationsAllowed('tommorrow_channel');
+        await NotificationSender.areNotificationsAllowed('tomorrow_channel');
 
     if (mounted) {
       setState(() {
         areNotificationsAllowed = value;
       });
+    }
+  }
+
+  void setEnabled(bool value) async {
+    setState(() {
+      enabled = value;
+    });
+    settings.save(Setting.tomorrowNotificationEnabled, value);
+    if (value) {
+      bool nowHasPermission = await NotificationSender.getPermission(
+        context,
+        'tomorrow_channel',
+      );
+      if (nowHasPermission == false) {
+        setState(() {
+          enabled = false;
+        });
+      } else {
+        setState(() {
+          areNotificationsAllowed = true;
+        });
+      }
     }
   }
 
@@ -52,7 +71,7 @@ class _TommorrowNotificationsPageState
                 child: InkWell(
                   onTap: () {
                     NotificationSender.getPermission(
-                            context, 'tommorrow_channel')
+                            context, 'tomorrow_channel')
                         .then(
                       (value) async {
                         setState(() {
@@ -74,42 +93,35 @@ class _TommorrowNotificationsPageState
                 ),
               ),
             ),
-          SettingTile(
-            label: 'Upcoming day notifications',
+          SettingTile.withSwitch(
+            title: 'Upcoming day notifications',
             highlighted: true,
-            trailing: SwitchAction(
-              initialValue: settings.get(Setting.tommorowNotificationEnabled),
-              onChanged: (value) {
-                settings.save(Setting.tommorowNotificationEnabled, value);
-                if (value) {
-                  NotificationSender.getPermission(
-                    context,
-                    'tommorrow_channel',
-                  );
-                }
-              },
-            ),
+            onChanged: setEnabled,
+            value: enabled,
           ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Notification with homeworks and exams for next day',
+              'Receive notifications with homeworks and exams for the next day',
             ),
           ),
-          SettingTile(
-            label: 'Arrival time',
-            text: 'Time around which notification will arrive',
-            trailing: TimePickerAction(
-              initialTime:
-                  settings.getTimeOfDay(Setting.tommorowNotificationTime),
-              onChanged: (value) => settings.saveTimeOfDay(
-                  Setting.tommorowNotificationTime, value),
-            ),
+          SettingTile.withTimePicker(
+            title: 'Arrival time',
+            subtitle: 'Time when the notification will arrive',
+            time: time,
+            onChanged: (value) {
+              settings.saveTimeOfDay(Setting.tomorrowNotificationTime, value);
+              setState(() {
+                time = value;
+              });
+            },
           ),
           SettingTile(
-            label: 'Send upcoming day notification now',
-            onTap: () => NotificationSender.scheduleTommorrowNotification(
-                scheduled: false),
+            title: 'Send upcoming day notification now',
+            enabled: areNotificationsAllowed == true,
+            onTap: (context) => NotificationSender.scheduletomorrowNotification(
+              scheduled: false,
+            ),
           ),
         ],
       ),

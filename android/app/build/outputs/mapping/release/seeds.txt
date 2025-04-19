@@ -151,7 +151,7 @@ androidx.appcompat.widget.ViewStubCompat
 me.carda.awesome_notifications.DartScheduledNotificationReceiver
 com.google.android.material.datepicker.MaterialCalendar
 io.flutter.plugin.editing.ImeSyncDeferringInsetsCallback$AnimationCallback
-com.example.myapp.MainActivity
+cz.masci.schoolarc.MainActivity
 androidx.fragment.app.DialogFragment
 kotlinx.coroutines.internal.StackTraceRecoveryKt
 io.flutter.view.TextureRegistry$ImageTextureEntry
@@ -2963,7 +2963,7 @@ io.flutter.embedding.engine.FlutterJNI: void requestDartDeferredLibrary(int)
 androidx.core.view.ViewConfigurationCompat$Api28Impl: int getScaledHoverSlop(android.view.ViewConfiguration)
 androidx.appcompat.widget.AppCompatCheckedTextView: void setSupportBackgroundTintList(android.content.res.ColorStateList)
 androidx.appcompat.widget.AppCompatCheckedTextView: void setSupportCheckMarkTintList(android.content.res.ColorStateList)
-com.example.myapp.MainActivity: MainActivity()
+cz.masci.schoolarc.MainActivity: MainActivity()
 androidx.fragment.app.Fragment: Fragment()
 com.google.android.material.snackbar.BaseTransientBottomBar$SnackbarBaseLayout: void setBackgroundDrawable(android.graphics.drawable.Drawable)
 com.google.android.material.chip.Chip: void setCheckableResource(int)

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.myapp-mergeReleaseResources-44:/values/values.xml",
+            "outputFile": "cz.masci.schoolarc-mergeReleaseResources-44:/values/values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\molda\\.gradle\\caches\\transforms-3\\31e2f28d8f3f25ed0e0475bc6e307aa5\\transformed\\jetified-startup-runtime-1.1.1\\res\\values\\values.xml",

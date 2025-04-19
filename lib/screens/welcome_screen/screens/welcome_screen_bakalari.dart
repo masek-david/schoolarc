@@ -31,8 +31,8 @@ class _WelcomeScreenBakalariState extends State<WelcomeScreenBakalari> {
             ),
             SizedBox(height: 28),
             SettingTile(
-              label: 'Bakaláři',
-              text: 'Import subjects and view timetable',
+              title: 'Bakaláři',
+              subtitle: 'Import subjects and view timetable',
               trailing: Switch(
                 value: useBaka,
                 onChanged: (value) {
@@ -56,8 +56,8 @@ class _WelcomeScreenBakalariState extends State<WelcomeScreenBakalari> {
                   : null,
             ),
             SettingTile(
-              label: 'Strava CZ',
-              text: 'View meals in your canteen',
+              title: 'Strava CZ',
+              subtitle: 'View meals in your canteen',
               trailing: Switch(
                 value: useStrava,
                 onChanged: (value) {

@@ -124,7 +124,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
                 _db.newLessonAt(
                   weekday,
                   lessonIndex,
-                  value.dbIndex,
+                  value.id,
                 );
                 updateView();
               }

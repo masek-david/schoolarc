@@ -1,6 +1,6 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-3    package="com.example.myapp"
+3    package="cz.masci.schoolarc"
 4    android:versionCode="4001"
 5    android:versionName="1.0.0" >
 6
@@ -58,12 +58,12 @@
 37
 38    <permission
 38-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
-39        android:name="com.example.myapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+39        android:name="cz.masci.schoolarc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
 39-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
 40        android:protectionLevel="signature" />
 40-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
 41
-42    <uses-permission android:name="com.example.myapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- for android -->
+42    <uses-permission android:name="cz.masci.schoolarc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- for android -->
 42-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
 42-->[androidx.core:core:1.13.1] C:\Users\molda\.gradle\caches\transforms-3\79d8209f42e0633f3352b0b15788eaf0\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
 43    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
@@ -131,7 +131,7 @@
 69-->C:\Users\molda\Coding\flutter-projects\school_manager\android\app\src\main\AndroidManifest.xml:4:9-35
 70        <activity
 70-->C:\Users\molda\Coding\flutter-projects\school_manager\android\app\src\main\AndroidManifest.xml:7:9-28:20
-71            android:name="com.example.myapp.MainActivity"
+71            android:name="cz.masci.schoolarc.MainActivity"
 71-->C:\Users\molda\Coding\flutter-projects\school_manager\android\app\src\main\AndroidManifest.xml:8:13-41
 72            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
 72-->C:\Users\molda\Coding\flutter-projects\school_manager\android\app\src\main\AndroidManifest.xml:13:13-163
@@ -297,7 +297,7 @@
 159-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
 160            android:name="androidx.startup.InitializationProvider"
 160-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
-161            android:authorities="com.example.myapp.androidx-startup"
+161            android:authorities="cz.masci.schoolarc.androidx-startup"
 161-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
 162            android:exported="false" >
 162-->[androidx.emoji2:emoji2:1.2.0] C:\Users\molda\.gradle\caches\transforms-3\7937ae09fce4142bfc6f5190eff53904\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37

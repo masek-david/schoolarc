@@ -52,10 +52,11 @@ class PagesWidget extends StatelessWidget {
       controller: pageController,
       onPageChanged: onPageChanged,
       itemBuilder: (context, pageIndex) {
-        DateTime now = DateTime.now().toUtc();
-        DateTime nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
-        int daysToAdd = pageIndex - negativePageCount;
-        DateTime date = nowOnlyDate.add(Duration(days: daysToAdd));
+        final now = DateTime.now().toUtc();
+        final nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
+        final daysToAdd = pageIndex - negativePageCount;
+        final dateUtc = nowOnlyDate.add(Duration(days: daysToAdd));
+        final date = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
 
         List<HomeworkDTO> hwListForDay = hwByDate[date] ?? [];
         List<ExamDTO> examListForDay = examByDate[date] ?? [];

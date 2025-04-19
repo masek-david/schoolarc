@@ -43,7 +43,7 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login to Strava CZ'),
+        title: Text('Login to Strava.cz'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

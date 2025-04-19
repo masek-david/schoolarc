@@ -1,39 +1,30 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 
 class SubjectDatabase {
   final _subjectBox = Hive.box('subjectBox');
 
-  Map<int, Subject> getDatabase() {
-    return _subjectBox.toMap().cast<int, Subject>();
+  Map<String, SubjectDTO> getDatabase() {
+    return _subjectBox.toMap().cast<String, Subject>().map(
+          (key, value) => MapEntry(key, value.convertToDTO(key)),
+        );
   }
 
-  Subject getSubject(int dbIndex) {
-    return _subjectBox.get(dbIndex);
+  SubjectDTO getSubject(String id) {
+    return _subjectBox.get(id);
   }
 
-  Future<int> addSubject(Subject subject) {
-    return _subjectBox.add(subject);
+  Future<void> addSubject(String id, Subject subject) {
+    return _subjectBox.put(id, subject);
   }
 
-  Future<void> saveEditedSubject(int dbIndex, Subject newSubject) {
-    return _subjectBox.put(dbIndex, newSubject);
+  Future<void> saveEditedSubject(String id, Subject subject) {
+    return _subjectBox.put(id, subject);
   }
 
-  void addTimestamp(Timestamp timestamp, int dbIndex) {
-    final hw = getSubject(dbIndex);
-
-    _subjectBox.put(
-      dbIndex,
-      hw.copyWith(
-        timestamp: timestamp.toDate(),
-      ),
-    );
-  }
-
-  void delete(int dbKey){
-    _subjectBox.delete(dbKey);
+  void delete(String id) {
+    _subjectBox.delete(id);
   }
 
   void deleteAllFromDisk() {

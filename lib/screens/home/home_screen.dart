@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -135,8 +134,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     dateToShow = DateTime.now();
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
 
-    bool showTommorrow = isLessonsEmpty(upcomingLessons);
-    if (showTommorrow) {
+    bool showtomorrow = isLessonsEmpty(upcomingLessons);
+    if (showtomorrow) {
       dateToShow = DateTime.utc(dateToShow.toUtc().year,
               dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
           .add(const Duration(days: 1))
@@ -149,7 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
       examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
     }
-    String whenText = showTommorrow ? 'tommorrow' : 'today';
+    String whenText = showtomorrow ? 'tomorrow' : 'today';
     bool showMeals = settings.get(Setting.homeShowMeals);
     bool showBaka = settings.get(Setting.homeShowBaka);
 
@@ -165,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     HomeworksDatabase().deleteAllFromDisk();
                     SubjectDatabase().deleteAllFromDisk();
                     ExamDatabase().deleteAllFromDisk();
-                    firestoreService.logOut();
+                    firebaseService.logOut();
                     bakaService.logOut();
                   },
                   label: const Text('delete from disk'),

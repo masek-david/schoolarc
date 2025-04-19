@@ -20,6 +20,7 @@ class Activity {
   }
 }
 
+/// 0: subject, 1: homeworks, 2: exams
 final firebaseActivityProvider =
     NotifierProvider<FirebaseActivityNotifier, Map<int, Activity>>(FirebaseActivityNotifier.new);
 
