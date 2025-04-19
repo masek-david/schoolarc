@@ -129,16 +129,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          if (showDebug || kDebugMode)
-            SettingTile.withSwitch(
-                title: 'Developer mode',
-                value: showDebug,
-                onChanged: (value) {
-                  settings.save(Setting.showDebugInfo, value);
-                  setState(() {
-                    showDebug = value;
-                  });
-                }),
           if (showDebug)
             SettingTile(
               title: 'View app logs',
@@ -149,6 +139,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
+          Divider(),
+          if (showDebug || kDebugMode)
+            SettingTile.withSwitch(
+                title: 'Developer mode',
+                value: showDebug,
+                onChanged: (value) {
+                  settings.save(Setting.showDebugInfo, value);
+                  setState(() {
+                    showDebug = value;
+                  });
+                }),
           if (showDebug)
             SettingTile.withSwitch(
               title: 'Use firebase',

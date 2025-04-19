@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/widgets/progress_dialog.dart';
 
 class FirebaseLoginScreen extends ConsumerStatefulWidget {
   const FirebaseLoginScreen({
@@ -78,6 +79,19 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
             ),
             OutlinedButton(
               onPressed: () async {
+                final key = GlobalKey<ProgressDialogState>();
+
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => ProgressDialog(
+                    key: key,
+                    goal: 0,
+                    initialText: 'Logging in',
+                    showProgressNumber: false,
+                  ),
+                );
+
                 try {
                   await firebaseService.logIn(
                     email: emailController.text,
@@ -87,19 +101,25 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
                   }
+
+                  if (context.mounted) Navigator.pop(context);
                   return;
                 }
 
+                key.currentState?.changeText('Syncing');
                 try {
                   await syncAllTasks(ref);
                 } on Object catch (e) {
                   if (context.mounted) {
+                    Navigator.pop(context);
                     showMessage(context, e.toString(), isError: true);
+                    Navigator.pop(context);
                   }
                   return;
                 }
 
                 if (context.mounted) {
+                  Navigator.pop(context);
                   showMessage(context, 'Logged in, everything has been synced');
                 }
               },

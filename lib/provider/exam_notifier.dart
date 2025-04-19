@@ -280,9 +280,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
           // if the new one is newer, add it before old
         }
         reorder(
-          null,
           exam.order,
-          null,
           exam.priority,
           exam.convert(id, subjects[exam.subjectId]),
         );
@@ -291,8 +289,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
     state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
     if (addToFire) {
-      await firebaseService
-          .addExam(exam.convert(id, subjects[exam.subjectId]));
+      await firebaseService.addExam(exam.convert(id, subjects[exam.subjectId]));
     }
 
     return;
@@ -313,20 +310,16 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       if ((editedExam.isDeleted && !old.isDeleted) ||
           (editedExam.isCompleted && !old.isCompleted)) {
         reorder(
-          old.order,
-          null,
-          old.priority.index,
           null,
           null,
+          old,
         );
       }
       // if now isnt deleted or now isnt completed (should appear)
       if ((!editedExam.isDeleted && old.isDeleted) ||
           (!editedExam.isCompleted && old.isCompleted)) {
         reorder(
-          null,
           editedExam.order,
-          null,
           editedExam.priority.index,
           editedExam,
         );
@@ -336,11 +329,9 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       if (old.order != editedExam.order ||
           old.priority.index != editedExam.priority.index) {
         await reorder(
-          old.order,
           editedExam.order,
-          old.priority.index,
           editedExam.priority.index,
-          null,
+          old,
         );
       }
     }
@@ -354,26 +345,26 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     state = {...state, editedExam.id: editedExam};
   }
 
-  /// updates all with changed order, if [oldIndex] is null, it will only be added and [exam] cant be null, if [newIndex] is null, it will be only removed
+  /// updates all with changed order
+  ///
+  /// [originalExam] is old homework, [newIndex] and [newPriority] are where it will be placed
+  ///
+  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
-    int? oldIndex,
     int? newIndex,
-    int? oldPriority,
     int? newPriority,
-    Exam? exam, {
-    /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
+    final Exam originalExam, {
     bool addTimestamp = false,
   }) async {
-    if ((oldIndex == null || oldPriority == null) && exam == null) {
-      throw '[oldIndex], [oldPriority] and [subject] are all null';
-    }
+    // both must be null or both mustnt be null
+    assert((newIndex == null) == (newPriority == null));
 
     var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == oldPriority,
+              element.priority.index == originalExam.priority.index,
         )
         .toList();
     var newPriorityList = _dbState.values
@@ -388,30 +379,32 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
     newPriorityList.sort((a, b) => a.order.compareTo(b.order));
 
-    if (oldIndex != null && oldPriority != null) {
-      exam = oldPriorityList.removeAt(oldIndex >= oldPriorityList.length
-          ? oldPriorityList.length - 1
-          : oldIndex);
-      if (oldPriority == newPriority) {
-        newPriorityList.removeAt(oldIndex >= newPriorityList.length
-            ? newPriorityList.length - 1
-            : oldIndex);
-      }
-    }
+    // if you can remove it from somewhere
+    oldPriorityList.removeWhere((element) => element.id == originalExam.id);
+    // if you arent changing priority, you need to remove it from the [newPriorityList] too
+    newPriorityList.removeWhere((element) => element.id == originalExam.id);
+
+    Exam newExam = originalExam;
     if (addTimestamp) {
-      exam = exam!.copyWith(timestamp: DateTime.now().toUtc());
+      newExam = newExam.copyWith(timestamp: DateTime.now().toUtc());
     }
-    // now exam cant be null
+
+    // if you want to add it somewhere
     if (newIndex != null && newPriority != null) {
-      exam = exam!.copyWith(priority: TaskPriority(newPriority));
+      // change the task's priority
+      newExam = newExam.copyWith(priority: TaskPriority(newPriority));
+      // add it to list of [newPriority], at [newIndex]
       newPriorityList.insert(
           newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
-          exam);
+          newExam);
     }
+
+    // now the lists are final, its just about saving all exams with changed values
 
     final editedExams = <String, Exam>{};
 
-    if (oldPriority != newPriority) {
+    // if priority has changed, check old list too
+    if (originalExam.priority.index != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
         final oldExam = _dbState[edited.id];

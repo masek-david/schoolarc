@@ -16,11 +16,12 @@
 - ⬜ ? refactor timetable models
 - ✅ rework notifications - scheduling on app leave
     - ⬜ turn off notifications for weekend
+    - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 
 
 optional:
 - ✅ when should the widget be updated??
-- ⬜ rework reorder methods (dont include old priority, old index, instead the HomeworkDTO)
+- ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
 - ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 - ⬜ rework tutorial (is it necessary to teach every interaction??)

@@ -183,11 +183,9 @@ class HomeworksScreen extends ConsumerWidget {
 
                           if (item.hw != null) {
                             ref.read(hwProvider.notifier).reorder(
-                                  item.hw!.order,
                                   newOrder,
-                                  item.hw!.priority.index,
                                   newPriority,
-                                  null,
+                                  item.hw!,
                                   addTimestamp: true,
                                 );
                           }

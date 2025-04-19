@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -92,6 +91,10 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.hw.isBeingAnimated) {
+      playAnimation(true);
+    }
+
     return Padding(
       padding: widget.padding ?? EdgeInsets.all(0),
       child: AnimatedBuilder(

@@ -63,8 +63,7 @@ final hwDatesProvider = Provider<Map<DateTime, List<Homework>>>(
 );
 
 /// key for each day is the local date value, with time being 0:00:00
-Map<DateTime, List<Homework>> hwsSortByDate(
-    Map<String, Homework> original) {
+Map<DateTime, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
   Map<DateTime, List<Homework>> hwDateMap = {};
 
   original.forEach(
@@ -315,9 +314,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
           // if the new one is newer, add it before old
         }
         reorder(
-          null,
           hw.order,
-          null,
           hw.priority,
           hw.convert(id, subjects[hw.subjectId]),
         );
@@ -327,8 +324,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
 
     if (addToFire) {
-      await firebaseService
-          .addHomework(hw.convert(id, subjects[hw.subjectId]));
+      await firebaseService.addHomework(hw.convert(id, subjects[hw.subjectId]));
     }
 
     return;
@@ -352,20 +348,16 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         if ((editedHw.isDeleted && !old.isDeleted) ||
             (editedHw.isCompleted && !old.isCompleted)) {
           reorder(
-            old.order,
-            null,
-            old.priority.index,
             null,
             null,
+            old,
           );
         }
         // if now isnt deleted or now isnt completed (should appear)
         if ((!editedHw.isDeleted && old.isDeleted) ||
             (!editedHw.isCompleted && old.isCompleted)) {
           reorder(
-            null,
             editedHw.order,
-            null,
             editedHw.priority.index,
             editedHw,
           );
@@ -375,11 +367,9 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         if (old.order != editedHw.order ||
             old.priority.index != editedHw.priority.index) {
           await reorder(
-            old.order,
             editedHw.order,
-            old.priority.index,
             editedHw.priority.index,
-            null,
+            old,
           );
         }
       }
@@ -392,7 +382,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     }
 
     final isNew =
-        editedHw.timestamp.difference(DateTime.now()) < Duration(seconds: 1);
+        editedHw.timestamp.difference(DateTime.now()) < Duration(seconds: 5);
     final bool shouldPlayAnimation =
         old.isCompleted == false && editedHw.isCompleted == true && isNew;
 
@@ -416,26 +406,26 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     }
   }
 
-  /// updates all with changed order, if [oldIndex] is null, it will only be added and [homework] cant be null, if [newIndex] is null, it will be only removed
+  /// updates all with changed order
+  ///
+  /// [originalhw] is old homework, [newIndex] and [newPriority] are where it will be placed
+  /// 
+  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
-    int? oldIndex,
     int? newIndex,
-    int? oldPriority,
     int? newPriority,
-    Homework? homework, {
-    /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
+    final Homework originalHw, {
     bool addTimestamp = false,
   }) async {
-    if ((oldIndex == null || oldPriority == null) && homework == null) {
-      throw '[oldIndex], [oldPriority] and [subject] are all null';
-    }
+    // both must be null or both mustnt be null
+    assert((newIndex == null) == (newPriority == null));
 
     var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == oldPriority,
+              element.priority.index == originalHw.priority.index,
         )
         .toList();
     var newPriorityList = _dbState.values
@@ -450,30 +440,32 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
     newPriorityList.sort((a, b) => a.order.compareTo(b.order));
 
-    if (oldIndex != null && oldPriority != null) {
-      homework = oldPriorityList.removeAt(oldIndex >= oldPriorityList.length
-          ? oldPriorityList.length - 1
-          : oldIndex);
-      if (oldPriority == newPriority) {
-        newPriorityList.removeAt(oldIndex >= newPriorityList.length
-            ? newPriorityList.length - 1
-            : oldIndex);
-      }
-    }
+    // if you can remove it from somewhere
+    oldPriorityList.removeWhere((element) => element.id == originalHw.id);
+    // if you arent changing priority, you need to remove it from the [newPriorityList] too
+    newPriorityList.removeWhere((element) => element.id == originalHw.id);
+
+    Homework newHomework = originalHw;
     if (addTimestamp) {
-      homework = homework!.copyWith(timestamp: DateTime.now().toUtc());
+      newHomework = newHomework.copyWith(timestamp: DateTime.now().toUtc());
     }
-    // now homework cant be null
+
+    // if you want to add it somewhere
     if (newIndex != null && newPriority != null) {
-      homework = homework!.copyWith(priority: TaskPriority(newPriority));
+      // change the task's priority
+      newHomework = newHomework.copyWith(priority: TaskPriority(newPriority));
+      // add it to list of [newPriority], at [newIndex]
       newPriorityList.insert(
           newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
-          homework);
+          newHomework);
     }
+
+    // now the lists are final, its just about saving all homeworks with changed values
 
     final editedHomeworks = <String, Homework>{};
 
-    if (oldPriority != newPriority) {
+    // if priority has changed, check old list too
+    if (originalHw.priority.index != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
         final oldHw = _dbState[edited.id];

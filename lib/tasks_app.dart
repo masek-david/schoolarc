@@ -60,10 +60,12 @@ late PackageInfo packageInfo;
 
 Future<void> syncAllTasks(WidgetRef ref) async {
   await ref.read(subjectsProvider.notifier).syncAll();
-  Future.wait([
-    ref.read(hwProvider.notifier).syncAll(),
-    ref.read(examProvider.notifier).syncAll(),
-  ]);
+  if (ref.context.mounted) {
+    Future.wait([
+      ref.read(hwProvider.notifier).syncAll(),
+      ref.read(examProvider.notifier).syncAll(),
+    ]);
+  }
 }
 
 void showMessage(

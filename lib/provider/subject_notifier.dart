@@ -127,7 +127,6 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
           subjectsDb.saveEditedSubject(id, subject);
         }
         reorder(
-          null,
           subject.order,
           subject.convert(id),
         );
@@ -154,29 +153,26 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     final old = _dbState[editedSubject.id]!;
 
     if (checkOrder) {
-      // if now is deleted
+      // if now is deleted, remove it
       if (editedSubject.isDeleted && !old.isDeleted) {
         reorder(
-          old.order,
           null,
-          null,
+          old,
         );
       }
-      // if now isnt deleted
+      // if now isnt deleted, add it
       if (!editedSubject.isDeleted && old.isDeleted) {
         reorder(
-          null,
           editedSubject.order,
-          editedSubject,
+          old,
         );
       }
 
-      // if order has been changed
+      // if order has been changed, reorder
       if (old.order != editedSubject.order) {
         await reorder(
-          old.order,
           editedSubject.order,
-          null,
+          old,
         );
       }
     }
@@ -190,18 +186,16 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     }
   }
 
-  /// updates all with changed order, if [oldIndex] is null, it will only be added and [subject] cant be null, if [newIndex] is null, it will be only removed
+  /// updates all with changed order,
+  /// if [newIndex] is null, it will be only removed
+  ///
+  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
   Future<void> reorder(
-    int? oldIndex,
+    // int? oldIndex,
     int? newIndex,
-    Subject? subject, {
-    /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
+    final Subject originalSubject, {
     bool addTimestamp = false,
   }) async {
-    if (oldIndex == null && subject == null) {
-      throw '[oldIndex] and [subject] are both null';
-    }
-
     var list = _dbState.values
         .where(
           (element) => !element.isDeleted,
@@ -210,16 +204,17 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
     list.sort((a, b) => a.order.compareTo(b.order));
 
-    if (oldIndex != null) {
-      subject =
-          list.removeAt(oldIndex < list.length ? oldIndex : list.length - 1);
-    }
+    list.removeWhere((element) => element.id == originalSubject.id);
+
+    Subject newSubject = originalSubject;
     if (addTimestamp) {
-      subject = subject!.copyWith(timestamp: DateTime.now().toUtc());
+      newSubject = newSubject.copyWith(timestamp: DateTime.now().toUtc());
     }
     if (newIndex != null) {
-      list.insert(newIndex > list.length ? list.length : newIndex, subject!);
+      list.insert(newIndex > list.length ? list.length : newIndex, newSubject);
     }
+
+    // now the list is final, just save the changes
 
     final editedSubjects = <String, Subject>{};
 
@@ -232,20 +227,15 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       }
     }
 
-    state = {...state, ...editedSubjects};
-
-    firebaseService.editSubjects(editedSubjects.values.toList());
-
     editedSubjects.forEach(
-      (key, value) async {
-        edit(
-          value,
-          checkOrder: false,
-          syncWithFire: false,
-          reorderAddTimestamp: false,
-        );
+      (key, value) {
+        subjectsDb.saveEditedSubject(key, value.convert());
       },
     );
+
+    state = {...state, ...editedSubjects};
+
+    await firebaseService.editSubjects(editedSubjects.values.toList());
     return;
   }
 

@@ -23,7 +23,10 @@ class ImportExportRow extends ConsumerWidget {
       child: Row(
         spacing: 8,
         children: [
-          Text('App data', style: TextStyle(fontSize: 16),),
+          Text(
+            'App data',
+            style: TextStyle(fontSize: 16),
+          ),
           Spacer(),
           FilledButton.tonalIcon(
             label: Text('Export'),
@@ -35,8 +38,7 @@ class ImportExportRow extends ConsumerWidget {
                   dialogTitle: 'Choose location for save file:',
                   type: FileType.custom,
                   allowedExtensions: ['json'],
-                  fileName:
-                      'export_${DateTime.now().toIso8601String()}.json',
+                  fileName: 'export_${DateTime.now().toIso8601String()}.json',
                   bytes: utf8.encode(json));
             },
           ),
@@ -117,7 +119,9 @@ class ImportExportRow extends ConsumerWidget {
                                   );
                               dialogKey.currentState?.addProgress();
                             }
-                            dialogKey.currentState?.close();
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
                             if (context.mounted) {
                               Navigator.pop(context);
                             }

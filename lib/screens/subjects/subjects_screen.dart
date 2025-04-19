@@ -144,7 +144,6 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
             final subjects = ref.watch(subjectsSortedProvider);
 
             return subjects.isEmpty
-            
                 ? const Center(
                     child: Text(
                       'No subjects found. You can create new subjects by tapping the plus button.',
@@ -175,9 +174,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                       },
                       onReorder: (int oldIndex, int newIndex) {
                         ref.read(subjectsProvider.notifier).reorder(
-                              oldIndex,
                               newIndex,
-                              null,
+                              subjects[oldIndex],
                               addTimestamp: true,
                             );
                       },
