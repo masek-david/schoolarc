@@ -189,6 +189,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                       onPressed: () => Navigator.pop(context, true),
                                     ),
                                     adaptiveDialogButton(
+                                      isDestructiveAction: true,
                                       context: context,
                                       child: Text('Continue'),
                                       onPressed: () => Navigator.pop(context, false),
@@ -269,6 +270,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                             ),
                             adaptiveDialogButton(
                               context: context,
+                              isDestructiveAction: true,
                               onPressed: () async {
                                 Navigator.pop(context);
                                 setState(() {

@@ -82,6 +82,7 @@ class ImportExportRow extends ConsumerWidget {
                         ),
                         adaptiveDialogButton(
                           context: context,
+                          isDefaultAction: true,
                           child: Text('Import'),
                           onPressed: () async {
                             final GlobalKey<ProgressDialogState> dialogKey =

@@ -58,6 +58,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
           ),
           adaptiveDialogButton(
               context: context,
+              isDefaultAction: true,
               child: Text('Recover'),
               onPressed: () {
                 onRevert();

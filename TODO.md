@@ -41,7 +41,7 @@ settings:
 - ✅ when choosing app theme, show its type (vibrant,...)
 
 new features:
-- ⬜ ask for notification permission when launching app for first time, maybe periodicaly
+- ✅ ask for notification permission when launching app for first time, maybe periodicaly
 - ⬜ meals notifications
 - ⬜ add option to mark day in calendar as empty (weekends, holidays)
 

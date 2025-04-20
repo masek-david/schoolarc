@@ -44,6 +44,7 @@ class _LogsScreenState extends State<LogsScreen> {
                   ),
                   adaptiveDialogButton(
                     context: context,
+                    isDestructiveAction: true,
                     child: Text('Delete'),
                     onPressed: () {
                       Navigator.pop(context);

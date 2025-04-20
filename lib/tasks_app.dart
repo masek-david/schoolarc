@@ -248,7 +248,18 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
-    // NotificationSender.scheduletomorrowNotification();
+
+    if (settings.get(Setting.stopAskingForNotifications) != true) {
+      Future.delayed(
+        Duration.zero,
+        () {
+          if (navigatorKey.currentContext != null) {
+            NotificationSender.getPermission(
+                navigatorKey.currentContext!, tomorrowChannel);
+          }
+        },
+      );
+    }
 
     tryGettingNewHomeworks();
   }

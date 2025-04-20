@@ -40,6 +40,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
       enabled = value;
     });
     settings.save(Setting.tomorrowNotificationEnabled, value);
+    settings.save(Setting.stopAskingForNotifications, false);
     if (value) {
       bool nowHasPermission = await NotificationSender.getPermission(
         context,

@@ -224,7 +224,7 @@ class NotificationSender {
       ),
     );
 
-    log('\u001b[1;42m\u001b[1;30mtomorrow notification scheduled for: ${arriveDateTime.toString()}, in ${arriveDateTime.timeZoneName}');
+    log('\u001b[1;42m\u001b[1;30mtomorrow notification scheduled for: ${arriveDateTime.toLocal().toString()}');
 
     if (showSnackbar != null) {
       showSnackbar(
@@ -280,8 +280,17 @@ class NotificationSender {
               actions: [
                 adaptiveDialogButton(
                   context: context,
+                  isDestructiveAction: true,
+                  onPressed: () {
+                    settings.save(Setting.stopAskingForNotifications, true);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Stop asking'),
+                ),
+                adaptiveDialogButton(
+                  context: context,
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text('Later'),
                 ),
                 adaptiveDialogButton(
                   context: context,
@@ -295,7 +304,8 @@ class NotificationSender {
                       Navigator.pop(context, allowed);
                     }
                   },
-                  child: const Text('Grant permission'),
+                  isDefaultAction: true,
+                  child: const Text('Grant'),
                 ),
               ],
               content: const Column(

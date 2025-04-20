@@ -12,6 +12,7 @@ enum Setting {
   showAppOverlay,
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
+  stopAskingForNotifications,
   themeMode,
   timeTableShowWholeWeek,
   timeTableTileWidth,
@@ -77,8 +78,13 @@ class SettingsDatabase {
       key: 'tomorrowNotificationEnabled',
     ),
     Setting.tomorrowNotificationTime: SettingModel(
-        defaultValue: const TimeOfDay(hour: 18, minute: 00).toInt(),
-        key: 'tomorrowNotificationTime'),
+      defaultValue: const TimeOfDay(hour: 18, minute: 00).toInt(),
+      key: 'tomorrowNotificationTime',
+    ),
+    Setting.stopAskingForNotifications: SettingModel(
+      defaultValue: null,
+      key: 'stopAskingForNotifications',
+    ),
     Setting.themeMode: SettingModel(
       defaultValue: null,
       key: 'themeMode',

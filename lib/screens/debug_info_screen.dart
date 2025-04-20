@@ -70,7 +70,17 @@ class DbInfoScreen extends StatelessWidget {
                   showDialogAdaptive(
                       context: context,
                       content: SingleChildScrollView(
-                          child: Text(fireHws.toString())));
+                        child: Text(fireHws.toString()),
+                      ),
+                      actions: [
+                        adaptiveDialogButton(
+                          context: context,
+                          child: Text('Close'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ]);
                 }
               },
               child: Text('test firebase'),

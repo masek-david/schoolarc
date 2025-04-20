@@ -8,6 +8,7 @@
 - Changed package name
 - Improved settings
 - Improved firebase import interface
+- Improved dialogs
 
 ### Fixed
 - fix notification arriving at wrong time

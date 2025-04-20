@@ -49,11 +49,31 @@ bool showCupertino(BuildContext context) {
 Widget adaptiveDialogButton({
   required BuildContext context,
   required Widget child,
+  bool isDefaultAction = false,
+  bool isDestructiveAction = false,
   required void Function()? onPressed,
 }) {
   if (showCupertino(context)) {
-    return CupertinoButton(onPressed: onPressed, child: child);
+    return CupertinoDialogAction(
+      isDestructiveAction: isDestructiveAction,
+      isDefaultAction: isDefaultAction,
+      onPressed: onPressed,
+      child: child,
+    );
   } else {
-    return TextButton(onPressed: onPressed, child: child);
+    if (isDefaultAction) {
+      return FilledButton(onPressed: onPressed, child: child);
+    }
+    Color? textColor;
+    if (isDestructiveAction) {
+      textColor = Theme.of(context).colorScheme.error;
+    }
+    return TextButton(
+      onPressed: onPressed,
+      child: DefaultTextStyle(
+        style: TextStyle(color: textColor),
+        child: child,
+      ),
+    );
   }
 }
