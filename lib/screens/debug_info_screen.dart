@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class TestDatetime extends StatefulWidget {
   const TestDatetime({super.key});
@@ -54,6 +56,31 @@ class DbInfoScreen extends StatelessWidget {
         child: ListView(
           children: [
             TestDatetime(),
+            FilledButton(
+              onPressed: () async {
+                late List<HomeworkWithID>? fireHws;
+                try {
+                  fireHws = await firebaseService.getAllHomeworks();
+                } catch (e) {
+                  if (context.mounted) {
+                    showMessage(context, e.toString(), isError: true);
+                  }
+                }
+                if (context.mounted) {
+                  showDialogAdaptive(
+                      context: context,
+                      content: SingleChildScrollView(
+                          child: Text(fireHws.toString())));
+                }
+              },
+              child: Text('test firebase'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                firebaseService.logOut();
+              },
+              child: Text('logout'),
+            ),
             const Text('SUBJECTS'),
             const Divider(),
             Column(

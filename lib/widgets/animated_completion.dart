@@ -93,7 +93,6 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
   Widget build(BuildContext context) {
     if (widget.hw.isBeingAnimated && !_controller.isAnimating) {
       playAnimation(true);
-      print('now');
     }
 
     return Padding(

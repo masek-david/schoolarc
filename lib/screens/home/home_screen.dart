@@ -203,8 +203,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     hwNumberOfMissed: missedHw.length,
                   ),
                   SizedBox(height: 24),
-                  Row
-                  (
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isWide)

@@ -10,6 +10,7 @@ import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
+import 'package:school_manager/tasks_app.dart';
 
 class FirebaseService {
   FirebaseService({this.ref});
@@ -42,16 +43,23 @@ class FirebaseService {
     await auth.signInWithEmailAndPassword(email: email, password: password);
 
     exams =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/exams');
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
     homeworks = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/homeworks');
+        .ref('users/${auth.currentUser?.uid}/h');
     subjects = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/subjects');
+        .ref('users/${auth.currentUser?.uid}/s');
 
     return;
   }
 
   Future<void> logOut() async {
+    exams =
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
+    homeworks = FirebaseDatabase.instance
+        .ref('users/${auth.currentUser?.uid}/h');
+    subjects = FirebaseDatabase.instance
+        .ref('users/${auth.currentUser?.uid}/s');
+
     await auth.signOut();
   }
 
@@ -87,6 +95,7 @@ class FirebaseService {
     try {
       await exams.update(updates);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -103,6 +112,7 @@ class FirebaseService {
       await exams.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(2);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -113,8 +123,9 @@ class FirebaseService {
       await exams.child(exam.id).update(exam.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(2);
-    } on Object catch (error) {
-      log(error.toString());
+    } on Object catch (e) {
+      logsService.save(e.toString());
+      log(e.toString());
     }
     return;
   }
@@ -130,6 +141,7 @@ class FirebaseService {
         examsList.add(ExamWithID.fromFireJson(json));
       });
     } catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
 
@@ -162,6 +174,7 @@ class FirebaseService {
     try {
       await homeworks.update(updates);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -178,6 +191,7 @@ class FirebaseService {
       await homeworks.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(1);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -188,8 +202,9 @@ class FirebaseService {
       await homeworks.child(homework.id).update(homework.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(1);
-    } on Object catch (error) {
-      log(error.toString());
+    } on Object catch (e) {
+      logsService.save(e.toString());
+      log(e.toString());
     }
     return;
   }
@@ -205,6 +220,7 @@ class FirebaseService {
         homeworksList.add(HomeworkWithID.fromFireJson(json));
       });
     } catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
 
@@ -238,6 +254,7 @@ class FirebaseService {
     try {
       await subjects.update(updates);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -254,6 +271,7 @@ class FirebaseService {
       await subjects.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(0);
     } on Object catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
     return;
@@ -264,8 +282,9 @@ class FirebaseService {
       await subjects.child(subject.id).update(subject.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(0);
-    } on Object catch (error) {
-      log(error.toString());
+    } on Object catch (e) {
+      logsService.save(e.toString());
+      log(e.toString());
     }
     return;
   }
@@ -281,6 +300,7 @@ class FirebaseService {
         subjectsList.add(Subject.fromFireJson(json));
       });
     } catch (e) {
+      logsService.save(e.toString());
       log(e.toString());
     }
 
