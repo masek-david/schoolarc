@@ -49,7 +49,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   packageInfo = await PackageInfo.fromPlatform();
 
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+  if (!kIsWeb && Platform.isAndroid) {
     HomeWidget.registerInteractivityCallback(backgroundCallback);
 
     Workmanager().initialize(
