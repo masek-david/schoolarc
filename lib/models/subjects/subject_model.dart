@@ -74,10 +74,10 @@ class Subject {
     return {
       'n': name,
       's': shortcut,
-      'b': bakaId,
-      'o': order,
-      'd': isDeleted,
-      't': timestamp.toIso8601String(),
+      if(bakaId != null) 'b': bakaId,
+      if(order != 0) 'o': order,
+      if(isDeleted) 'del': isDeleted,
+      't': timestamp.millisecondsSinceEpoch,
     };
   }
 
@@ -86,9 +86,9 @@ class Subject {
         id = json['id'],
         shortcut = json['s'],
         bakaId = json['b'],
-        order = json['o'],
-        isDeleted = json['d'],
-        timestamp = DateTime.parse(json['t']);
+        order = json['o'] ?? 0,
+        isDeleted = json['d'] ?? false,
+        timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
 
   bool get isFromBakalari {
     return bakaId != null && bakaId != '';

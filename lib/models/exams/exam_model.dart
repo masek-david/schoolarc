@@ -39,13 +39,13 @@ class Exam extends Task {
   Map<String, dynamic> toFireJson() {
     return {
       'n': text,
-      't': description,
-      's': subject?.id,
-      'd': deadline.toIso8601String(),
-      'p': priority.index,
-      'o': order,
-      'del': isDeleted,
-      'tm': timestamp.toIso8601String(),
+      if (description != null && description != '') 'i': description,
+      if (subject != null) 's': subject?.id,
+      'd': deadline.millisecondsSinceEpoch,
+      if(priority.index != 0) 'p': priority.index,
+      if(order != 0) 'o': order,
+      if(isDeleted) 'del': isDeleted,
+      't': timestamp.millisecondsSinceEpoch,
     };
   }
 

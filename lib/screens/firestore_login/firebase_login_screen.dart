@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
@@ -109,13 +106,9 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                   return;
                 }
 
+                key.currentState?.changeText('Syncing');
                 try {
-                  key.currentState?.changeText('Syncing subjects');
-                  await ref.read(subjectsProvider.notifier).syncAll();
-                  key.currentState?.changeText('Syncing homeworks');
-                  await ref.read(hwProvider.notifier).syncAll();
-                  key.currentState?.changeText('Syncing exams');
-                  await ref.read(examProvider.notifier).syncAll();
+                  await syncAllTasks(ref);
                 } on Object catch (e) {
                   if (context.mounted) {
                     Navigator.pop(context);

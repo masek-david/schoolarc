@@ -18,11 +18,11 @@ class FirebaseService {
   WidgetRef? ref;
 
   late var exams =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/exams');
+      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
   late var homeworks =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/homeworks');
+      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
   late var subjects =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/subjects');
+      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
 
   bool get isloggedIn {
     return auth.currentUser != null;

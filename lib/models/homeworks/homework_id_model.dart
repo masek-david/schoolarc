@@ -19,15 +19,15 @@ class HomeworkWithID extends HomeworkEntity {
   factory HomeworkWithID.fromFireJson(Map<String, dynamic> json) {
     return HomeworkWithID(
       id: json['id'],
-      subjectId: json['s'],
       text: json['n'],
-      deadline: DateTime.parse(json['d']),
-      priority: json['p'],
-      description: json['t'],
-      order: json['o'],
-      isDeleted: json['del'],
-      isCompleted: json['c'],
-      timestamp: DateTime.parse(json['tm']),
+      description: json['i'],
+      subjectId: json['s'],
+      deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
+      priority: json['p'] ?? 0,
+      order: json['o'] ?? 0,
+      isCompleted: json['c'] ?? true,
+      isDeleted: json['del'] ?? false,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
     );
   }
 

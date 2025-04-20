@@ -18,14 +18,14 @@ class ExamWithID extends ExamEntity {
   factory ExamWithID.fromFireJson(Map<String, dynamic> json) {
     return ExamWithID(
       id: json['id'],
-      subjectId: json['s'],
       text: json['n'],
-      date: DateTime.parse(json['d']),
-      priority: json['p'],
-      description: json['t'],
-      order: json['o'],
-      isDeleted: json['del'],
-      timestamp: DateTime.parse(json['tm']),
+      description: json['i'],
+      subjectId: json['s'],
+      date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+      priority: json['p'] ?? 0,
+      order: json['o'] ?? 0,
+      isDeleted: json['del'] ?? false,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
     );
   }
 
