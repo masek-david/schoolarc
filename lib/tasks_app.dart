@@ -238,6 +238,17 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       firstTimeOpeningApp();
     } else {
       showingTutorial = false;
+      if (settings.get(Setting.stopAskingForNotifications) != true) {
+        Future.delayed(
+          Duration.zero,
+          () {
+            if (navigatorKey.currentContext != null) {
+              NotificationSender.getPermission(
+                  navigatorKey.currentContext!, tomorrowChannel);
+            }
+          },
+        );
+      }
     }
 
     if (!firebaseService.isloggedIn && kIsWeb) {
@@ -255,18 +266,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
-
-    if (settings.get(Setting.stopAskingForNotifications) != true) {
-      Future.delayed(
-        Duration.zero,
-        () {
-          if (navigatorKey.currentContext != null) {
-            NotificationSender.getPermission(
-                navigatorKey.currentContext!, tomorrowChannel);
-          }
-        },
-      );
-    }
 
     tryGettingNewHomeworks();
   }

@@ -1,8 +1,9 @@
 import 'package:hive_ce/hive.dart';
+import 'package:school_manager/hive/hive_init.dart';
 
 class BakaHomeworksService {
-  final _addedBox = Hive.box('bakaAddedHw');
-  final _seenBox = Hive.box('bakaSeenHw');
+  final _addedBox = Hive.box(bakaAddedHw);
+  final _seenBox = Hive.box(bakaSeenHw);
 
   bool isAdded(String id) {
     return _addedBox.values.contains(id);

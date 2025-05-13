@@ -1,9 +1,10 @@
 import 'package:hive_ce/hive.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
 
 class SubjectDatabase {
-  final _subjectBox = Hive.box('subjectBox');
+  final _subjectBox = Hive.box(subjectBox);
 
   Map<String, Subject> getDatabase() {
     return _subjectBox.toMap().cast<String, SubjectEntity>().map(

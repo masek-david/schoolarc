@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/homeworks/hw_entity_model.dart';
@@ -212,11 +213,11 @@ class HwNotifier extends Notifier<Map<String, Homework>>
 
     if (state == AppLifecycleState.resumed && !kIsWeb && Platform.isAndroid) {
       try {
-        await Hive.box('hwBox').close();
+        await Hive.box(hwBox).close();
       } on Object {
         // it shouldnt matter
       }
-      await Hive.openBox('hwBox');
+      await Hive.openBox(hwBox);
 
       _loadState();
     }
@@ -228,8 +229,8 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     listenFirebase = firebaseService.listenHomeworks().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(1);
 
-      if (!Hive.box('hwBox').isOpen) {
-        await Hive.openBox('hwBox');
+      if (!Hive.box(hwBox).isOpen) {
+        await Hive.openBox(hwBox);
       }
 
       await checkFireHomework(event);

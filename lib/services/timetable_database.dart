@@ -1,6 +1,7 @@
 
 
 import 'package:hive_ce/hive.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
@@ -9,7 +10,7 @@ import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class TimeTableDatabase {
-  final _tableBox = Hive.box('tableBox');
+  final _tableBox = Hive.box(tableBox);
   late TimeTableEntity _table = _tableBox.get(tableKey);
   final String tableKey = 'table';
 

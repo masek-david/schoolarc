@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:school_manager/hive/hive_init.dart';
 import 'package:school_manager/hive/hive_registrar.g.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
@@ -78,9 +79,9 @@ Future<void> completeHwBackground(
       await Hive.initFlutter();
       Hive.registerAdapters();
       await Future.wait([
-        Hive.openBox('subjectBox'),
-        Hive.openBox('hwBox'),
-        Hive.openBox('examBox'),
+        Hive.openBox(subjectBox),
+        Hive.openBox(hwBox),
+        Hive.openBox(examBox),
       ]);
 
       // WidgetsFlutterBinding.ensureInitialized();
@@ -92,8 +93,8 @@ Future<void> completeHwBackground(
 
       updateHwWidget(container.read(hwWidgetProvider));
 
-      await Hive.box('hwBox').flush();
-      await Hive.box('hwBox').close();
+      await Hive.box(hwBox).flush();
+      await Hive.box(hwBox).close();
       return;
     }
   }

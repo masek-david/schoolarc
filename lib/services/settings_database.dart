@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:school_manager/hive/hive_init.dart';
 
 enum Setting {
   themeUseDeviceColor,
@@ -161,7 +162,7 @@ class SettingsDatabase {
       key: 'expHwOverlay',
     )
   };
-  final _settingsBox = Hive.box('settings');
+  final _settingsBox = Hive.box(settingsBox);
 
   dynamic get(Setting setting) {
     final SettingModel? settingModel = _settings[setting];
