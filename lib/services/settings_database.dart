@@ -1,6 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 enum Setting {
   themeUseDeviceColor,
@@ -20,6 +22,7 @@ enum Setting {
   calendarInitialIstomorrow,
   calendarShowMissed,
   calendarResizableContainerRatio,
+  calendarShowArrows,
   mealsShowTodayUntil,
   userName,
   homeShowUserName,
@@ -78,8 +81,8 @@ class SettingsDatabase {
       key: 'tomorrowNotificationEnabled',
     ),
     Setting.tomorrowNotificationTime: SettingModel(
-      defaultValue: const TimeOfDay(hour: 18, minute: 00).toInt(),
-      key: 'tomorrowNotificationTime',
+      defaultValue: const TimeOfDay(hour: 18, minute: 00),
+      key: 'tomorrowNotificationTimeOfDay',
     ),
     Setting.stopAskingForNotifications: SettingModel(
       defaultValue: null,
@@ -113,9 +116,13 @@ class SettingsDatabase {
       defaultValue: <double>[0.5, 0.5],
       key: 'calendarResizeRatio',
     ),
+    Setting.calendarShowArrows: SettingModel(
+      defaultValue: kIsWeb || (!Platform.isAndroid && !Platform.isIOS),
+      key: 'calendarShowArrows',
+    ),
     Setting.mealsShowTodayUntil: SettingModel(
-      defaultValue: const TimeOfDay(hour: 14, minute: 30).toInt(),
-      key: 'mealsShowTodayUntil',
+      defaultValue: const TimeOfDay(hour: 14, minute: 30),
+      key: 'mealsShowTodayUntilTimeOfDay',
     ),
     Setting.userName: SettingModel(
       defaultValue: null,
@@ -156,25 +163,6 @@ class SettingsDatabase {
   };
   final _settingsBox = Hive.box('settings');
 
-  TimeOfDay getTimeOfDay(Setting setting) {
-    final SettingModel? settingModel = _settings[setting];
-    if (settingModel == null) {
-      throw 'No setting found for enum $setting';
-    }
-    if (settingModel.defaultValue.runtimeType != int) {
-      throw 'The setting $setting isn\'t of type TimeOfDay';
-    }
-
-    int? timeInInt = _settingsBox.get(settingModel.key);
-
-    if (timeInInt == null) {
-      timeInInt = get(setting);
-      _settingsBox.put(settingModel.key, timeInInt);
-    }
-
-    return timeOfDayFromInt(timeInInt!);
-  }
-
   dynamic get(Setting setting) {
     final SettingModel? settingModel = _settings[setting];
     if (settingModel == null) {
@@ -198,15 +186,6 @@ class SettingsDatabase {
     }
 
     _settingsBox.put(settingModel.key, value);
-  }
-
-  void saveTimeOfDay(Setting setting, TimeOfDay value) {
-    final SettingModel? settingModel = _settings[setting];
-    if (settingModel == null) {
-      throw 'No setting found for enum $setting';
-    }
-
-    _settingsBox.put(settingModel.key, value.toInt());
   }
 
   bool get firstTimeOpeningApp {

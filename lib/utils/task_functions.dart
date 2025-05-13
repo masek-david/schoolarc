@@ -16,6 +16,7 @@ Future<void> addNewHw(
   final newHw = await showModalBottomSheet<Task?>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
       autoSetDate: initialDate == null,
@@ -32,6 +33,7 @@ void editHw(BuildContext context, WidgetRef ref, Homework hw) async {
   Homework? edited = await showModalBottomSheet<Homework>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: hw,
       autoSetDate: false,
@@ -73,6 +75,7 @@ Future<void> addNewExam(
   final newExam = await showModalBottomSheet<Task?>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
       autoSetDate: initialDate == null,
@@ -88,6 +91,7 @@ void editExam(BuildContext context, WidgetRef ref, Exam exam) async {
   Exam? edited = await showModalBottomSheet<Exam>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: exam,
       autoSetDate: false,

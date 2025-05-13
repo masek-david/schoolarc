@@ -46,7 +46,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   late bool showMissed = settings.get(Setting.calendarShowMissed);
   final _resizeController = ResizableController();
   final List<double> initialRatios =
-      settings.get(Setting.calendarResizableContainerRatio);
+      List<double>.from(settings.get(Setting.calendarResizableContainerRatio));
 
   @override
   void initState() {

@@ -181,18 +181,20 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                   context: context,
                                   title: Text('Remember me?'),
                                   content: Text(
-                                      'If you disable this setting, you will only be able to import your timetable'),
+                                      'If you disable this setting, you will only be able to import your timetable.'),
                                   actions: [
                                     adaptiveDialogButton(
                                       context: context,
                                       child: Text('Cancel'),
-                                      onPressed: () => Navigator.pop(context, true),
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
                                     ),
                                     adaptiveDialogButton(
                                       isDestructiveAction: true,
                                       context: context,
                                       child: Text('Continue'),
-                                      onPressed: () => Navigator.pop(context, false),
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
                                     ),
                                   ]);
                             }

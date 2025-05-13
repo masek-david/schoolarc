@@ -1,19 +1,6 @@
 import 'package:intl/intl.dart';
 
 extension BetterDateTime on DateTime {
-  /// can ONLY add one month
-  DateTime addMonth(int months) {
-    int finalYear = year;
-    int finalMonth = month + months;
-
-    if (finalMonth > 12) {
-      finalYear++;
-      finalMonth = finalMonth - 12;
-    }
-
-    return copyWith(year: finalYear, month: finalMonth);
-  }
-
   bool isSameDay(DateTime comparedDate) {
     comparedDate = comparedDate.toLocal();
 
@@ -46,6 +33,10 @@ extension BetterDateTime on DateTime {
 
   String minuteStartingWithZero() {
     return minute < 10 ? '0$minute' : minute.toString();
+  }
+
+  DateTime onlyDate() {
+    return DateTime(year, month, day);
   }
 
   DateTime toUtcOnlyDate() {
@@ -112,7 +103,8 @@ extension BetterDateTime on DateTime {
 
   String formattedDate() {
     final local = toLocal();
-    String year = local.year == DateTime.now().year ? '' : local.year.toString();
+    String year =
+        local.year == DateTime.now().year ? '' : local.year.toString();
     return '${local.day}.${local.month}.$year';
   }
 }

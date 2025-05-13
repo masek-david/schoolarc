@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
@@ -20,6 +21,16 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
   final emailController =
       TextEditingController(text: firebaseService.userEmail ?? '');
   final passwordController = TextEditingController();
+  final displayNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    displayNameController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +46,51 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
         child: Column(
           spacing: 8,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    firebaseService.auth.currentUser?.displayName ?? '',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  // TODO complete this screen
+                  LoadingIconButton(
+                    onTap: () async {
+                      final newName = await showDialog<String?>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Change name'),
+                            content: TextField(
+                              controller: displayNameController,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('Close'),
+                              ),
+                              FilledButton(
+                                onPressed: () async {
+                                  Navigator.pop(
+                                      context, displayNameController.text);
+                                },
+                                child: Text('Save'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (newName != null) {
+                        await firebaseService.updateDisplayName(name: newName);
+                      }
+                    },
+                    icon: Icons.edit,
+                  ),
+                ],
+              ),
+            ),
             TextField(
               controller: emailController,
               autofillHints: const [

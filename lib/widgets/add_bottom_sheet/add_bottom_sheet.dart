@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -92,23 +91,26 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   @override
   void dispose() {
     nameController.dispose();
+    descriptionController.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       child: Container(
-        margin: const EdgeInsets.all(12),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 12),
               CancelSaveButton(onSave: onSave),
               const SizedBox(height: 15),
               Row(
@@ -137,8 +139,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
                               key: keysList[index],
-                              selected: pickedSubject?.id ==
-                                  subjects[index].id,
+                              selected: pickedSubject?.id == subjects[index].id,
                               label: Text(subjects[index].name),
                               onSelected: (value) {
                                 if (!value) {
@@ -297,6 +298,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   hintText: 'Description',
                 ),
               ),
+              SizedBox(height: 12),
             ],
           ),
         ),

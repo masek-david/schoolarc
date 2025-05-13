@@ -18,6 +18,7 @@ class CalendarSettings extends StatefulWidget {
 
 class _CalendarSettingsState extends State<CalendarSettings> {
   bool showMissed = settings.get(Setting.calendarShowMissed);
+  bool showArrows = settings.get(Setting.calendarShowArrows);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,19 @@ class _CalendarSettingsState extends State<CalendarSettings> {
             });
             widget.changeShowMissed(value);
           },
-        )
+        ),
+        SettingTile.withSwitch(
+          title: 'Show arrows',
+          subtitle: 'Show arrows for switching between pages',
+          value: showArrows,
+          onChanged: (value) {
+            settings.save(Setting.calendarShowArrows, value);
+            setState(() {
+              showArrows = value;
+            });
+            widget.changeShowMissed(showMissed);
+          },
+        ),
       ],
     );
   }

@@ -42,23 +42,21 @@ class FirebaseService {
   Future<void> logIn({required String email, required String password}) async {
     await auth.signInWithEmailAndPassword(email: email, password: password);
 
-    exams =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
-    homeworks = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/h');
-    subjects = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/s');
+    exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
+    homeworks =
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
+    subjects =
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
 
     return;
   }
 
   Future<void> logOut() async {
-    exams =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
-    homeworks = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/h');
-    subjects = FirebaseDatabase.instance
-        .ref('users/${auth.currentUser?.uid}/s');
+    exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
+    homeworks =
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
+    subjects =
+        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
 
     await auth.signOut();
   }
@@ -69,8 +67,15 @@ class FirebaseService {
     return;
   }
 
+  Future<void> updateDisplayName({required String name}) async {
+    await auth.currentUser?.updateDisplayName(name);
+    return;
+  }
+
   // EXAMS
   Stream<ExamWithID> listenExams() {
+    if (auth.currentUser == null) return Stream.empty();
+
     final added = exams.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
@@ -87,6 +92,7 @@ class FirebaseService {
 
   Future<void> deleteExams(List<Exam> examsToDelete) async {
     if (examsToDelete.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final Map<String, dynamic> updates = {
       for (final element in examsToDelete) element.id: null,
@@ -103,6 +109,7 @@ class FirebaseService {
 
   Future<void> editExams(List<Exam> examsToUpdate) async {
     if (examsToUpdate.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final updates = {
       for (final element in examsToUpdate) element.id: element.toFireJson()
@@ -119,6 +126,7 @@ class FirebaseService {
   }
 
   Future<void> addExam(Exam exam) async {
+    if (auth.currentUser == null) return;
     try {
       await exams.child(exam.id).update(exam.toFireJson());
 
@@ -131,6 +139,7 @@ class FirebaseService {
   }
 
   Future<List<ExamWithID>?> getAllExams() async {
+    if (auth.currentUser == null) return null;
     List<ExamWithID> examsList = [];
     try {
       final snapshot = await exams.get();
@@ -150,6 +159,8 @@ class FirebaseService {
 
   // HOMEWORKS
   Stream<HomeworkWithID> listenHomeworks() {
+    if (auth.currentUser == null) return Stream.empty();
+
     final added = homeworks.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
@@ -166,6 +177,7 @@ class FirebaseService {
 
   Future<void> deleteHomeworks(List<Homework> hwsToDelete) async {
     if (hwsToDelete.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final Map<String, dynamic> updates = {
       for (final element in hwsToDelete) element.id: null,
@@ -182,6 +194,7 @@ class FirebaseService {
 
   Future<void> editHomeworks(List<Homework> hwsToUpdate) async {
     if (hwsToUpdate.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final updates = {
       for (final element in hwsToUpdate) element.id: element.toFireJson()
@@ -198,6 +211,7 @@ class FirebaseService {
   }
 
   Future<void> addHomework(Homework homework) async {
+    if (auth.currentUser == null) return;
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
 
@@ -210,6 +224,7 @@ class FirebaseService {
   }
 
   Future<List<HomeworkWithID>?> getAllHomeworks() async {
+    if (auth.currentUser == null) return null;
     List<HomeworkWithID> homeworksList = [];
     try {
       final snapshot = await homeworks.get();
@@ -229,7 +244,8 @@ class FirebaseService {
 
   // SUBJECTS
 
-  Stream<Subject> listenSubjectsR() {
+  Stream<Subject> listenSubjects() {
+    if (auth.currentUser == null) return Stream.empty();
     final added = subjects.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
@@ -246,6 +262,7 @@ class FirebaseService {
 
   Future<void> deleteSubjects(List<Subject> subjectsToDelete) async {
     if (subjectsToDelete.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final Map<String, dynamic> updates = {
       for (final element in subjectsToDelete) element.id: null,
@@ -262,6 +279,7 @@ class FirebaseService {
 
   Future<void> editSubjects(List<Subject> subjectsToUpdate) async {
     if (subjectsToUpdate.isEmpty) return;
+    if (auth.currentUser == null) return;
 
     final updates = {
       for (final element in subjectsToUpdate) element.id: element.toFireJson()
@@ -278,6 +296,7 @@ class FirebaseService {
   }
 
   Future<void> addSubject(Subject subject) async {
+    if (auth.currentUser == null) return;
     try {
       await subjects.child(subject.id).update(subject.toFireJson());
 
@@ -289,7 +308,8 @@ class FirebaseService {
     return;
   }
 
-  Future<List<Subject>> getSubjects() async {
+  Future<List<Subject>?> getSubjects() async {
+    if (auth.currentUser == null) return null;
     List<Subject> subjectsList = [];
     try {
       final snapshot = await subjects.get();

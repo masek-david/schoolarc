@@ -30,7 +30,7 @@ class _MealsScreenState extends State<MealsScreen> {
     var now = DateTime.now();
 
     if (settings
-        .getTimeOfDay(Setting.mealsShowTodayUntil)
+        .get(Setting.mealsShowTodayUntil)
         .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }

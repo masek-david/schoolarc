@@ -40,7 +40,7 @@ void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
       // if it is after meal time, dont include meal for today
       if (!key.isSameDay(now) ||
           TimeOfDay.fromDateTime(now)
-              .isBefore(settings.getTimeOfDay(Setting.mealsShowTodayUntil))) {
+              .isBefore(settings.get(Setting.mealsShowTodayUntil))) {
         json[key.dayText()] = value
             .map(
               (e) => e.toJson(),

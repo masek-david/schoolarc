@@ -15,7 +15,7 @@ class TomorrowNotificationsPage extends StatefulWidget {
 class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   bool? areNotificationsAllowed;
   bool enabled = settings.get(Setting.tomorrowNotificationEnabled);
-  TimeOfDay time = settings.getTimeOfDay(Setting.tomorrowNotificationTime);
+  TimeOfDay time = settings.get(Setting.tomorrowNotificationTime);
 
   @override
   void initState() {
@@ -111,7 +111,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             subtitle: 'Time when the notification will arrive',
             time: time,
             onChanged: (value) {
-              settings.saveTimeOfDay(Setting.tomorrowNotificationTime, value);
+              settings.save(Setting.tomorrowNotificationTime, value);
               setState(() {
                 time = value;
               });

@@ -74,7 +74,7 @@ class NotificationSender {
     // sets correct schedule time and date
     if (scheduled) {
       TimeOfDay notificationTimeOfDay =
-          settings.getTimeOfDay(Setting.tomorrowNotificationTime);
+          settings.get(Setting.tomorrowNotificationTime);
 
       DateTime now = DateTime.now();
       DateTime notificationTime = DateTime(now.year, now.month, now.day,
@@ -255,6 +255,10 @@ class NotificationSender {
 
   /// returns true for android or ios
   static bool _isCompatiblePlatform() {
+    // platform cannot be checked on web
+    if(kIsWeb){
+      return false;
+    }
     if (Platform.isAndroid || Platform.isIOS) {
       return true;
     }
@@ -266,6 +270,9 @@ class NotificationSender {
     BuildContext context,
     String? channel,
   ) async {
+    if(!_isCompatiblePlatform()){
+      return false;
+    }
     if (await areNotificationsAllowed(channel)) {
       return true;
     }

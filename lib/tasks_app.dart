@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:async';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -178,6 +176,14 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   late bool showingTutorial;
   bool showingFirebaseLoginScreen = false;
 
+  // @override
+  // String? get restorationId => 'mainApp';
+
+  // @override
+  // void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+  //   registerForRestoration(currentPageIndex, 'currentPageIndex');
+  // }
+
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
       case null:
@@ -209,6 +215,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
   }
 
+  // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn() {
     updateHwWidget(ref.read(hwWidgetProvider));
     NotificationSender.scheduletomorrowNotification();
@@ -400,22 +407,26 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
-              colorScheme: light,
-              sliderTheme: SliderThemeData(year2023: false),
-              progressIndicatorTheme:
-                  ProgressIndicatorThemeData(year2023: false)),
+            colorScheme: light,
+            sliderTheme: SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+          ),
           darkTheme: ThemeData(
-              colorScheme: dark,
-              sliderTheme: SliderThemeData(year2023: false),
-              // pageTransitionsTheme: const PageTransitionsTheme(
-              //   builders: <TargetPlatform, PageTransitionsBuilder>{
-              //     // Set the predictive back transitions for Android.
-              //     TargetPlatform.android:
-              //         PredictiveBackPageTransitionsBuilder(),
-              //   },
-              // ),
-              progressIndicatorTheme:
-                  ProgressIndicatorThemeData(year2023: false)),
+            colorScheme: dark,
+            sliderTheme: SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            // pageTransitionsTheme: const PageTransitionsTheme(
+            //   builders: <TargetPlatform, PageTransitionsBuilder>{
+            //     // Set the predictive back transitions for Android.
+            //     TargetPlatform.android:
+            //         PredictiveBackPageTransitionsBuilder(),
+            //   },
+            // ),
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+          ),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {

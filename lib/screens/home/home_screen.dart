@@ -141,12 +141,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           .add(const Duration(days: 1))
           .toLocal();
 
+      final dateToShowOnlyDate = dateToShow.onlyDate();
+
       upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
-      examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
+      hwToShow = hws[dateToShowOnlyDate] ?? [];
+      examToShow = exams[dateToShowOnlyDate] ?? [];
     } else {
-      hwToShow = hws[dateToShow.toUtcOnlyDate()] ?? [];
-      examToShow = exams[dateToShow.toUtcOnlyDate()] ?? [];
+      final dateToShowOnlyDate = dateToShow.onlyDate();
+      hwToShow = hws[dateToShowOnlyDate] ?? [];
+      examToShow = exams[dateToShowOnlyDate] ?? [];
     }
     String whenText = showtomorrow ? 'tomorrow' : 'today';
     bool showMeals = settings.get(Setting.homeShowMeals);

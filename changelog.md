@@ -11,7 +11,8 @@
 - Improved dialogs
 
 ### Fixed
-- fix notification arriving at wrong time
+- Fix notification arriving at wrong time
+- Fix padding for exam tiles
 
 ---
 

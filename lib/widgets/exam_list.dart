@@ -33,7 +33,7 @@ class ExamList extends ConsumerWidget {
     return ClipRect(
       child: ExamTile(
         exam: exam,
-        showDeadline: false,
+        showDeadline: showDates,
         onDelete: () => onDelete(exam),
         onEdit: () => onEdit(exam),
         onConvert: () => onConvert(exam),
@@ -54,7 +54,7 @@ class ExamList extends ConsumerWidget {
       ...List.generate(examList.length, (index) {
         Exam exam = examList[index];
         return Padding(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: draggable
               ? LayoutBuilder(
                   builder: (context, constraints) {

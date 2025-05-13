@@ -19,7 +19,7 @@ class _HomeSettingsState extends State<HomeSettings> {
   bool showMyName = settings.get(Setting.homeShowUserName);
   bool showMeals = settings.get(Setting.homeShowMeals);
   bool showBaka = settings.get(Setting.homeShowBaka);
-  TimeOfDay lunchTime = settings.getTimeOfDay(Setting.mealsShowTodayUntil);
+  TimeOfDay lunchTime = settings.get(Setting.mealsShowTodayUntil);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           subtitle: 'When meals for next day appear',
           time: lunchTime,
           onChanged: (value) {
-            settings.saveTimeOfDay(Setting.mealsShowTodayUntil, value);
+            settings.save(Setting.mealsShowTodayUntil, value);
             setState(() {
               lunchTime = value;
             });

@@ -7,11 +7,11 @@ import 'package:school_manager/hive/hive_adapters.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
-    if (!Hive.isAdapterRegistered(ExamAdapter().typeId)) {
-      Hive.registerAdapter(ExamAdapter());
+    if (!Hive.isAdapterRegistered(ExamEntityAdapter().typeId)) {
+      Hive.registerAdapter(ExamEntityAdapter());
     }
-    if (!Hive.isAdapterRegistered(HomeworkAdapter().typeId)) {
-      Hive.registerAdapter(HomeworkAdapter());
+    if (!Hive.isAdapterRegistered(HomeworkEntityAdapter().typeId)) {
+      Hive.registerAdapter(HomeworkEntityAdapter());
     }
     if (!Hive.isAdapterRegistered(LessonTimesAdapter().typeId)) {
       Hive.registerAdapter(LessonTimesAdapter());
@@ -19,11 +19,22 @@ extension HiveRegistrar on HiveInterface {
     if (!Hive.isAdapterRegistered(LogAdapter().typeId)) {
       Hive.registerAdapter(LogAdapter());
     }
-    if (!Hive.isAdapterRegistered(SubjectAdapter().typeId)) {
-      Hive.registerAdapter(SubjectAdapter());
+    if (!Hive.isAdapterRegistered(SubjectEntityAdapter().typeId)) {
+      Hive.registerAdapter(SubjectEntityAdapter());
     }
-    if (!Hive.isAdapterRegistered(TimeTableAdapter().typeId)) {
-      Hive.registerAdapter(TimeTableAdapter());
+    if (!Hive.isAdapterRegistered(TimeTableEntityAdapter().typeId)) {
+      Hive.registerAdapter(TimeTableEntityAdapter());
     }
+  }
+}
+
+extension IsolatedHiveRegistrar on IsolatedHiveInterface {
+  void registerAdapters() {
+    registerAdapter(ExamEntityAdapter());
+    registerAdapter(HomeworkEntityAdapter());
+    registerAdapter(LessonTimesAdapter());
+    registerAdapter(LogAdapter());
+    registerAdapter(SubjectEntityAdapter());
+    registerAdapter(TimeTableEntityAdapter());
   }
 }

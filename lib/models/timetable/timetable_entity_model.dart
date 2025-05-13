@@ -19,7 +19,7 @@ class TimeTableEntity extends HiveObject {
     lessonTimes = [];
     table = List.generate(
       7,
-      (_) => List.filled(lessonTimes.length, null, growable: true),
+      (_) => List.filled(lessonTimes.length, null, growable: true), 
     );
   }
 

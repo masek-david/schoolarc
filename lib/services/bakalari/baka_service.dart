@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -64,8 +63,16 @@ class BakaService {
 
   /// tries to log in from memory using saved refresh token
   Future<void> refreshLogin() async {
-    String schoolName = await this.schoolName;
-    _refreshToken = await _getRefreshToken;
+    String schoolName = '';
+    try {
+      schoolName = await this.schoolName;
+      _refreshToken = await _getRefreshToken;
+    } on Exception {
+      throw ServiceException(
+        'Please log in',
+        action: ExceptionActions.bakaLogin,
+      );
+    }
 
     if (schoolName == '' || _refreshToken == '') {
       throw ServiceException('Please log in first',
@@ -451,8 +458,7 @@ class BakaService {
                 bakaId: bakaId,
                 isDeleted: false,
                 order: 0,
-                timestamp: DateTime.now().toUtc()
-                ,
+                timestamp: DateTime.now().toUtc(),
               ),
             );
         bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.id});

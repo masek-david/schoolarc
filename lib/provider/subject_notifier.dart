@@ -57,7 +57,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = firebaseService.listenSubjectsR().listen((event) async {
+    listenFirebase = firebaseService.listenSubjects().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(0);
 
       await checkFireSubject(event);
@@ -70,13 +70,15 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     await listenToFirebase();
     final fireSubjects = await firebaseService.getSubjects();
 
-    for (final element in fireSubjects) {
-      await checkFireSubject(element);
-    }
+    fireSubjects?.forEach(
+      (element) async {
+        await checkFireSubject(element);
+      },
+    );
 
     for (final subject in _dbState.values) {
       bool isSynced = fireSubjects
-              .where(
+              ?.where(
                 (element) => element.id == subject.id,
               )
               .firstOrNull !=
