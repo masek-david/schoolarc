@@ -158,88 +158,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
-        return Scaffold(
-          floatingActionButtonLocation:
-              isWide ? FloatingActionButtonLocation.endDocked : null,
-          floatingActionButton: kDebugMode
-              ? FloatingActionButton.extended(
-                  onPressed: () {
-                    HomeworksDatabase().deleteAllFromDisk();
-                    SubjectDatabase().deleteAllFromDisk();
-                    ExamDatabase().deleteAllFromDisk();
-                    firebaseService.logOut();
-                    bakaService.logOut();
-                  },
-                  label: const Text('delete from disk'),
-                  icon: const Icon(Icons.bug_report),
-                )
-              : null,
-          appBar: WideScreenAppBar(
-            isWideScreen: isWide,
-            leading:
-                isWide ? null : const DrawerButton(onPressed: switchDrawer),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return HomeSettings(
-                        onChanged: () => setState(() {}),
-                      );
+        return MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: Scaffold(
+            floatingActionButton: kDebugMode
+                ? FloatingActionButton.extended(
+                    onPressed: () {
+                      HomeworksDatabase().deleteAllFromDisk();
+                      SubjectDatabase().deleteAllFromDisk();
+                      ExamDatabase().deleteAllFromDisk();
+                      firebaseService.logOut();
+                      bakaService.logOut();
                     },
-                  );
-                },
-                icon: const Icon(Icons.settings),
-              ),
-            ],
-          ),
-          body: RefreshIndicator(
-            onRefresh: refresh,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ListView(
-                children: [
-                  Overview(
-                    hwNumberOfIncomplete: uncompletedHw,
-                    examNumberOfIncomplete: upcomingExams,
-                    hwNumberOfMissed: missedHw.length,
-                  ),
-                  SizedBox(height: 24),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isWide)
-                        Flexible(
-                            child: Column(
-                          children: [
-                            MealsCard(
-                              isVisible: showMeals,
-                              meals: mealsFuture,
-                              refresh: refreshMeals,
-                            ),
-                            TimetableCard(
-                              refresh: refreshTimetable,
-                              defaultTimeTable: defaultTimeTable,
-                              bakaTimetable: bakaTimetable,
-                              dateToShow: dateToShow,
-                              whenText: whenText,
-                              showOnline: showBaka,
-                            ),
-                          ],
-                        )),
-                      Flexible(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (!isWide)
+                    label: const Text('delete from disk'),
+                    icon: const Icon(Icons.bug_report),
+                  )
+                : null,
+            appBar: WideScreenAppBar(
+              isWideScreen: isWide,
+              leading:
+                  isWide ? null : const DrawerButton(onPressed: switchDrawer),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return HomeSettings(
+                          onChanged: () => setState(() {}),
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.settings),
+                ),
+              ],
+            ),
+            body: RefreshIndicator(
+              onRefresh: refresh,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: ListView(
+                  children: [
+                    Overview(
+                      hwNumberOfIncomplete: uncompletedHw,
+                      examNumberOfIncomplete: upcomingExams,
+                      hwNumberOfMissed: missedHw.length,
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isWide)
+                          Flexible(
+                              child: Column(
+                            children: [
                               MealsCard(
                                 isVisible: showMeals,
                                 meals: mealsFuture,
                                 refresh: refreshMeals,
                               ),
-                            if (!isWide)
                               TimetableCard(
                                 refresh: refreshTimetable,
                                 defaultTimeTable: defaultTimeTable,
@@ -248,7 +227,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 whenText: whenText,
                                 showOnline: showBaka,
                               ),
-                            if (missedHw.isNotEmpty)
+                            ],
+                          )),
+                        Flexible(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (!isWide)
+                                MealsCard(
+                                  isVisible: showMeals,
+                                  meals: mealsFuture,
+                                  refresh: refreshMeals,
+                                ),
+                              if (!isWide)
+                                TimetableCard(
+                                  refresh: refreshTimetable,
+                                  defaultTimeTable: defaultTimeTable,
+                                  bakaTimetable: bakaTimetable,
+                                  dateToShow: dateToShow,
+                                  whenText: whenText,
+                                  showOnline: showBaka,
+                                ),
+                              if (missedHw.isNotEmpty)
+                                Card(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerLowest,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: HomeworkList(
+                                      onChangedCompletion: (hw, value) =>
+                                          completeHw(context, ref, hw, value),
+                                      onDelete: (hw) =>
+                                          deleteHw(context, ref, hw),
+                                      onConvert: (hw) =>
+                                          convertHw(context, ref, hw),
+                                      onEdit: (hw) => editHw(context, ref, hw),
+                                      textFull: 'Missed homeworks',
+                                      showText: true,
+                                      showDates: true,
+                                      hwList: missedHw,
+                                    ),
+                                  ),
+                                ),
+                              Card(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLowest,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: ExamList(
+                                    onDelete: (exam) =>
+                                        deleteExam(context, ref, exam),
+                                    onEdit: (exam) =>
+                                        editExam(context, ref, exam),
+                                    onConvert: (exam) =>
+                                        convertExam(context, ref, exam),
+                                    textFull: 'Exams $whenText',
+                                    showText: true,
+                                    showDates: false,
+                                    examList: examToShow,
+                                  ),
+                                ),
+                              ),
                               Card(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -260,63 +302,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         completeHw(context, ref, hw, value),
                                     onDelete: (hw) =>
                                         deleteHw(context, ref, hw),
+                                    onEdit: (hw) => editHw(context, ref, hw),
                                     onConvert: (hw) =>
                                         convertHw(context, ref, hw),
-                                    onEdit: (hw) => editHw(context, ref, hw),
-                                    textFull: 'Missed homeworks',
+                                    textFull: 'Homeworks $whenText',
                                     showText: true,
-                                    showDates: true,
-                                    hwList: missedHw,
+                                    showDates: false,
+                                    hwList: hwToShow,
                                   ),
                                 ),
                               ),
-                            Card(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLowest,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: ExamList(
-                                  onDelete: (exam) =>
-                                      deleteExam(context, ref, exam),
-                                  onEdit: (exam) =>
-                                      editExam(context, ref, exam),
-                                  onConvert: (exam) =>
-                                      convertExam(context, ref, exam),
-                                  textFull: 'Exams $whenText',
-                                  showText: true,
-                                  showDates: false,
-                                  examList: examToShow,
-                                ),
-                              ),
-                            ),
-                            Card(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLowest,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: HomeworkList(
-                                  onChangedCompletion: (hw, value) =>
-                                      completeHw(context, ref, hw, value),
-                                  onDelete: (hw) => deleteHw(context, ref, hw),
-                                  onEdit: (hw) => editHw(context, ref, hw),
-                                  onConvert: (hw) =>
-                                      convertHw(context, ref, hw),
-                                  textFull: 'Homeworks $whenText',
-                                  showText: true,
-                                  showDates: false,
-                                  hwList: hwToShow,
-                                ),
-                              ),
-                            ),
-                            const ListBottomSpacer()
-                          ],
+                              const ListBottomSpacer()
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

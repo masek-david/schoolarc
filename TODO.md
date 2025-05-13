@@ -26,6 +26,7 @@ optional:
 - ✅ proper firebase error handling, if no user dont even try it,...
 - ✅ fix arrows in calendar (not centered on web)
 - ⬜ unite the ui/ux for extensions (in settings and in welcome page)
+- ⬜ create providers for logins
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task 

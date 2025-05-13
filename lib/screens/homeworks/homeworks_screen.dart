@@ -69,128 +69,133 @@ class HomeworksScreen extends ConsumerWidget {
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
-        return Scaffold(
-          appBar: WideScreenAppBar(
-            isWideScreen: isWide,
-            title: const Text('Homeworks'),
-          ),
-          floatingActionButtonLocation:
-              isWide ? FloatingActionButtonLocation.endDocked : null,
-          floatingActionButton: FloatingActionButton(
-            tooltip: 'Add new homework',
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              addNewHw(context, ref);
-            },
-            enableFeedback: true,
-            child: const Icon(Icons.add),
-          ),
-          body: Theme(
-            data: Theme.of(context).copyWith(
-              listTileTheme: ListTileTheme.of(context).copyWith(
-                dense: true,
-                visualDensity: VisualDensity.compact,
-              ),
+        return MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: Scaffold(
+            appBar: WideScreenAppBar(
+              isWideScreen: isWide,
+              title: const Text('Homeworks'),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: RefreshIndicator(
-                notificationPredicate: settings.get(Setting.useFirebase)
-                    ? (_) => true
-                    : (_) => false,
-                onRefresh: () async {
-                  try {
-                    await ref.read(hwProvider.notifier).syncAll();
-                  } on Object catch (e) {
-                    if (context.mounted) {
-                      showMessage(context, e.toString(), isError: true);
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add new homework',
+              onPressed: () async {
+                HapticFeedback.mediumImpact();
+                addNewHw(context, ref);
+              },
+              enableFeedback: true,
+              child: const Icon(Icons.add),
+            ),
+            body: Theme(
+              data: Theme.of(context).copyWith(
+                listTileTheme: ListTileTheme.of(context).copyWith(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: RefreshIndicator(
+                  notificationPredicate: settings.get(Setting.useFirebase)
+                      ? (_) => true
+                      : (_) => false,
+                  onRefresh: () async {
+                    try {
+                      await ref.read(hwProvider.notifier).syncAll();
+                    } on Object catch (e) {
+                      if (context.mounted) {
+                        showMessage(context, e.toString(), isError: true);
+                      }
+                      return;
                     }
-                    return;
-                  }
-                },
-                child: itemList.length == 5
-                    ? ListView(children: [
-                        AnimatedStar(),
-                        _buildCompletedList(context, ref, completedHws),
-                      ])
-                    : AnimatedReorderableListView(
-                        items: itemList,
-                        buildDefaultDragHandles: false,
-                        lockedItems: [
-                          _AnimatedReorderableListItem(priority: 3),
-                          _AnimatedReorderableListItem(priority: -1),
-                        ],
-                        nonDraggableItems: nonDraggableItems,
-                        onReorderStart: (p0) => HapticFeedback.mediumImpact(),
-                        itemBuilder: (context, index) {
-                          final item = itemList[index];
+                  },
+                  child: itemList.length == 5
+                      ? ListView(children: [
+                          AnimatedStar(),
+                          _buildCompletedList(context, ref, completedHws),
+                        ])
+                      : AnimatedReorderableListView(
+                          items: itemList,
+                          buildDefaultDragHandles: false,
+                          lockedItems: [
+                            _AnimatedReorderableListItem(priority: 3),
+                            _AnimatedReorderableListItem(priority: -1),
+                          ],
+                          nonDraggableItems: nonDraggableItems,
+                          onReorderStart: (p0) => HapticFeedback.mediumImpact(),
+                          itemBuilder: (context, index) {
+                            final item = itemList[index];
 
-                          if (item.priority != null) {
-                            if (item.priority! == -1) {
-                              return _buildCompletedList(
-                                  context, ref, completedHws);
+                            if (item.priority != null) {
+                              if (item.priority! == -1) {
+                                return _buildCompletedList(
+                                    context, ref, completedHws);
+                              }
+
+                              final priority = TaskPriority(item.priority!);
+                              return Padding(
+                                key: ValueKey('hw title: ${item.priority!}'),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                child: ExpansionTitle(
+                                  titleText: priority.name,
+                                  titleTextColor: priority.getColor(context),
+                                ),
+                              );
                             }
 
-                            final priority = TaskPriority(item.priority!);
-                            return Padding(
-                              key: ValueKey('hw title: ${item.priority!}'),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: ExpansionTitle(
-                                titleText: priority.name,
-                                titleTextColor: priority.getColor(context),
-                              ),
+                            final hw = item.hw!;
+                            return AnimatedCompletionTile(
+                              // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                              // Multiple widgets use the same globalkey error
+                              key: ValueKey(
+                                  'hw: ${hw.id} ${hw.stateReaddingVersion}'),
+                              hw: hw,
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              onChangedCompletion: (value) {
+                                ref
+                                    .read(hwProvider.notifier)
+                                    .complete(hw, value);
+                              },
+                              onDelete: () => deleteHw(context, ref, hw),
+                              onEdit: () => editHw(context, ref, hw),
+                              onConvert: () => convertHw(context, ref, hw),
                             );
-                          }
+                          },
+                          removeItemBuilder: (child, animation) {
+                            // we need custom remove item painter, to absorb pointer, the user mustnt
+                            // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
 
-                          final hw = item.hw!;
-                          return AnimatedCompletionTile(
-                            // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
-                            // Multiple widgets use the same globalkey error
-                            key: ValueKey(
-                                'hw: ${hw.id} ${hw.stateReaddingVersion}'),
-                            hw: hw,
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            onChangedCompletion: (value) {
-                              ref.read(hwProvider.notifier).complete(hw, value);
-                            },
-                            onDelete: () => deleteHw(context, ref, hw),
-                            onEdit: () => editHw(context, ref, hw),
-                            onConvert: () => convertHw(context, ref, hw),
-                          );
-                        },
-                        removeItemBuilder: (child, animation) {
-                          // we need custom remove item painter, to absorb pointer, the user mustnt
-                          // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
+                            return FadeTransition(
+                              opacity: animation,
+                              child: AbsorbPointer(child: child),
+                            );
+                          },
+                          isSameItem: (a, b) => a.isSameAs(b),
+                          onReorder: (oldIndex, newIndex) {
+                            final item = itemList.removeAt(oldIndex);
 
-                          return FadeTransition(
-                            opacity: animation,
-                            child: AbsorbPointer(child: child),
-                          );
-                        },
-                        isSameItem: (a, b) => a.isSameAs(b),
-                        onReorder: (oldIndex, newIndex) {
-                          final item = itemList.removeAt(oldIndex);
-
-                          final newPriority =
-                              itemList[newIndex - 1].getPriority;
-                          int newOrder = 0;
-                          for (int i = 0; i < newIndex; i++) {
-                            if (itemList[i].hw?.priority.index == newPriority) {
-                              newOrder++;
+                            final newPriority =
+                                itemList[newIndex - 1].getPriority;
+                            int newOrder = 0;
+                            for (int i = 0; i < newIndex; i++) {
+                              if (itemList[i].hw?.priority.index ==
+                                  newPriority) {
+                                newOrder++;
+                              }
                             }
-                          }
 
-                          if (item.hw != null) {
-                            ref.read(hwProvider.notifier).reorder(
-                                  newOrder,
-                                  newPriority,
-                                  item.hw!,
-                                  addTimestamp: true,
-                                );
-                          }
-                        },
-                      ),
+                            if (item.hw != null) {
+                              ref.read(hwProvider.notifier).reorder(
+                                    newOrder,
+                                    newPriority,
+                                    item.hw!,
+                                    addTimestamp: true,
+                                  );
+                            }
+                          },
+                        ),
+                ),
               ),
             ),
           ),
