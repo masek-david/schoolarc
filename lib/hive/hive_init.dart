@@ -4,7 +4,7 @@ import 'package:school_manager/hive/hive_registrar.g.dart';
 const String subjectBox = 'subjectBox';
 const String hwBox = 'hwBox';
 const String examBox = 'examBox';
-const String tableBox = 'tableBox';
+const String tableBox = 'timeTableBox';
 const String bakaAddedHw = 'bakaAddedHw';
 const String bakaSeenHw = 'bakaSeenHw';
 const String settingsBox = 'settings';
