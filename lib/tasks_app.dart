@@ -47,7 +47,7 @@ final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
-final timetableDatabase = TimeTableDatabase();
+final timetableDb = TimeTableDatabase();
 final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
@@ -251,7 +251,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       }
     }
 
-    if (!firebaseService.isloggedIn && kIsWeb) {
+    if (!firebaseService.isloggedIn && kIsWeb && !kDebugMode) {
       showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }

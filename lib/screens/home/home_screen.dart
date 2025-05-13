@@ -37,7 +37,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var dateToShow = DateTime.now();
 
-  late TimeTable defaultTimeTable = timetableDatabase.timeTable;
+  late TimeTable defaultTimeTable = timetableDb.timeTable;
   Future<TimeTable?>? bakaTimetable;
   late Future<Map<DateTime, List<Meal>>>? mealsFuture;
 
@@ -152,8 +152,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       examToShow = exams[dateToShowOnlyDate] ?? [];
     }
     String whenText = showtomorrow ? 'tomorrow' : 'today';
-    bool showMeals = settings.get(Setting.homeShowMeals);
-    bool showBaka = settings.get(Setting.homeShowBaka);
+    bool showMeals = settings.get(Setting.useMeals);
+    bool showBaka = settings.get(Setting.useBakalari);
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,

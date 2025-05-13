@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
@@ -37,7 +37,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   late int pickedPriority = widget.initialTask.priority.index;
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
-  final _timetable = TimeTableDatabase().timeTable;
+  final _timetable = timetableDb.timeTable;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(
     subjects.length,

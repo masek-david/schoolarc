@@ -66,24 +66,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          SettingTile(
-            title: 'Upcoming day notifications',
-            subtitle: 'Notification with homeworks and exams for next day',
-            icon: Icons.notifications_outlined,
-            trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => navigatorKey.currentState
-                ?.push(
-              MaterialPageRoute(
-                builder: (context) => const TomorrowNotificationsPage(),
+          if (NotificationSender.isCompatiblePlatform())
+            SettingTile(
+              title: 'Upcoming day notifications',
+              subtitle: 'Notification with homeworks and exams for next day',
+              icon: Icons.notifications_outlined,
+              trailing: Icon(Icons.keyboard_arrow_right),
+              onTap: (context) => navigatorKey.currentState
+                  ?.push(
+                MaterialPageRoute(
+                  builder: (context) => const TomorrowNotificationsPage(),
+                ),
+              )
+                  .then(
+                (value) {
+                  NotificationSender.scheduletomorrowNotification(
+                      showSnackbar: (text) => showMessage(context, text));
+                },
               ),
-            )
-                .then(
-              (value) {
-                NotificationSender.scheduletomorrowNotification(
-                    showSnackbar: (text) => showMessage(context, text));
-              },
             ),
-          ),
           Divider(),
           SettingTile(
             title: 'Bakaláři login',
@@ -139,8 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-          if (showDebug)
-          Divider(),
+          if (showDebug) Divider(),
           if (showDebug || kDebugMode)
             SettingTile.withSwitch(
                 title: 'Developer mode',

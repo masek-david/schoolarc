@@ -17,8 +17,8 @@ class HomeSettings extends StatefulWidget {
 
 class _HomeSettingsState extends State<HomeSettings> {
   bool showMyName = settings.get(Setting.homeShowUserName);
-  bool showMeals = settings.get(Setting.homeShowMeals);
-  bool showBaka = settings.get(Setting.homeShowBaka);
+  bool showMeals = settings.get(Setting.useMeals);
+  bool showBaka = settings.get(Setting.useBakalari);
   TimeOfDay lunchTime = settings.get(Setting.mealsShowTodayUntil);
 
   @override
@@ -55,7 +55,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           title: 'Show meals',
           value: showMeals,
           onChanged: (value) {
-            settings.save(Setting.homeShowMeals, value);
+            settings.save(Setting.useMeals, value);
             setState(() {
               showMeals = value;
             });
@@ -66,7 +66,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           title: 'Show Bakaláři timetable',
           value: showBaka,
           onChanged: (value) {
-            settings.save(Setting.homeShowBaka, value);
+            settings.save(Setting.useBakalari, value);
             setState(() {
               showBaka = value;
             });

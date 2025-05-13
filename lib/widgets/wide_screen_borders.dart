@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// TODO remake as stateful and save the values ??
 class WideScreenBorders extends StatelessWidget {
   const WideScreenBorders({
     super.key,
@@ -15,13 +16,13 @@ class WideScreenBorders extends StatelessWidget {
     double top = MediaQuery.paddingOf(context).top;
     double bottom = MediaQuery.paddingOf(context).bottom;
 
-    if(top == 0){
+    if (top == 0) {
       top = 16;
     }
-    if(bottom == 0){
+    if (bottom == 0) {
       bottom = 16;
     }
-    
+
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.surfaceContainer,
@@ -37,5 +38,5 @@ class WideScreenBorders extends StatelessWidget {
         ),
       ),
     );
-}
+  }
 }

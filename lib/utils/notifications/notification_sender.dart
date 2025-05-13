@@ -237,7 +237,7 @@ class NotificationSender {
     if (!await AwesomeNotifications().isNotificationAllowed()) {
       return false;
     }
-    if (!_isCompatiblePlatform()) {
+    if (!isCompatiblePlatform()) {
       return false;
     }
     List<NotificationPermission> permission = [];
@@ -254,7 +254,7 @@ class NotificationSender {
   }
 
   /// returns true for android or ios
-  static bool _isCompatiblePlatform() {
+  static bool isCompatiblePlatform() {
     // platform cannot be checked on web
     if(kIsWeb){
       return false;
@@ -270,7 +270,7 @@ class NotificationSender {
     BuildContext context,
     String? channel,
   ) async {
-    if(!_isCompatiblePlatform()){
+    if(!isCompatiblePlatform()){
       return false;
     }
     if (await areNotificationsAllowed(channel)) {

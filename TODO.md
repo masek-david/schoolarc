@@ -12,7 +12,6 @@
 - ✅ fix dates (save them just as utc)
     - ⬜ test timezones
 - ✅ move to realtime database
-- ⬜ ? refactor timetable models
 - ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ✅ rework notifications - scheduling on app leave
     - ⬜ turn off notifications for weekend
@@ -25,8 +24,10 @@ optional:
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
 - ✅ add errors message for baka/strava
 - ✅ proper firebase error handling, if no user dont even try it,...
-- ⬜ fix the frequency when is app searching for baka homeworks
+- ✅ fix arrows in calendar (not centered on web)
+- ⬜ unite the ui/ux for extensions (in settings and in welcome page)
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
+- ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task 
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ prevent from accidental scroll closing 
@@ -34,6 +35,7 @@ optional:
     - ⬜ is everything needed to be shown ??
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
+
 - ⬜ ? add google sign in 
 - ⬜ ? create baka provider
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be   triggered on build)
@@ -51,7 +53,8 @@ new features:
 
 web features
 - ✅ web - spatne se horizontalne scrolluje, pridat tlacitka
-- ⬜ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
+- ✅ web appbary jsou divne dole, asi protoze na webu neni safearea
+- ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
 - ⬜ onHover
 - ⬜ keyboard shortcuts
 

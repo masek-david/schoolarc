@@ -6,16 +6,17 @@ import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
-class WelcomeScreenBakalari extends StatefulWidget {
-  const WelcomeScreenBakalari({super.key});
+class WelcomeScreenExtensions extends StatefulWidget {
+  const WelcomeScreenExtensions({super.key});
 
   @override
-  State<WelcomeScreenBakalari> createState() => _WelcomeScreenBakalariState();
+  State<WelcomeScreenExtensions> createState() => _WelcomeScreenExtensionsState();
 }
 
-class _WelcomeScreenBakalariState extends State<WelcomeScreenBakalari> {
+class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
   bool useBaka = true;
   bool useStrava = false;
+  bool useFirebase = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _WelcomeScreenBakalariState extends State<WelcomeScreenBakalari> {
                 onChanged: (value) {
                   setState(() {
                     useBaka = value;
-                    settings.save(Setting.homeShowBaka, value);
+                    settings.save(Setting.useBakalari, value);
                   });
                 },
               ),
@@ -63,7 +64,7 @@ class _WelcomeScreenBakalariState extends State<WelcomeScreenBakalari> {
                 onChanged: (value) {
                   setState(() {
                     useStrava = value;
-                    settings.save(Setting.homeShowMeals, value);
+                    settings.save(Setting.useMeals, value);
                   });
                 },
               ),

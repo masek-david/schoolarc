@@ -1,8 +1,5 @@
-
-
 import 'package:hive_ce/hive.dart';
 import 'package:school_manager/hive/hive_init.dart';
-import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/models/timetable/timetable_entity_model.dart';
@@ -11,31 +8,29 @@ import 'package:school_manager/tasks_app.dart';
 
 class TimeTableDatabase {
   final _tableBox = Hive.box(tableBox);
-  late TimeTableEntity _table = _tableBox.get(tableKey);
-  final String tableKey = 'table';
+  static const String tableKey = 'table';
+  late TimeTableEntity _table;
+
+  TimeTableDatabase() {
+    final TimeTableEntity? tempTable = _tableBox.get(tableKey);
+    if (tempTable == null) {
+      final emptyTimeTable = TimeTableEntity(null, null);
+      _tableBox.put(tableKey, emptyTimeTable);
+      _table = emptyTimeTable;
+    } else {
+      _table = tempTable;
+    }
+  }
 
   TimeTable get timeTable {
-    final tempTable = _tableBox.get(tableKey);
-    if (tempTable == null) {
-      _tableBox.put(tableKey, TimeTableEntity.empty());
-      _table = TimeTableEntity.empty();
-    } else {
-      _table = tempTable as TimeTableEntity;
-    }
-
     var subjects = subjectsDb.getDatabase();
 
     return _table.convert(subjects);
   }
 
-  @Deprecated('use  getUpcomingLessons method of timetableDTO')
-  Map<LessonTimes, TimeTableLesson> get upcomingLessons {
-    return timeTable.getUpcomingLessons(DateTime.now());
-  }
-
   /// overwrites old table
   void createTable(List<LessonTimes> lessonTimes) {
-    _table = TimeTableEntity(lessonTimes);
+    _table = TimeTableEntity(lessonTimes, null);
     _tableBox.put(tableKey, _table);
   }
 

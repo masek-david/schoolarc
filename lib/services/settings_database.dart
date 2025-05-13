@@ -27,8 +27,8 @@ enum Setting {
   mealsShowTodayUntil,
   userName,
   homeShowUserName,
-  homeShowMeals,
-  homeShowBaka,
+  useMeals,
+  useBakalari,
   useFirebase,
   showDebugInfo,
   debugShowPerformanceOverlay,
@@ -133,11 +133,11 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'homeShowUserName',
     ),
-    Setting.homeShowMeals: SettingModel(
+    Setting.useMeals: SettingModel(
       defaultValue: true,
       key: 'homeShowMeals',
     ),
-    Setting.homeShowBaka: SettingModel(
+    Setting.useBakalari: SettingModel(
       defaultValue: true,
       key: 'homeShowBaka',
     ),

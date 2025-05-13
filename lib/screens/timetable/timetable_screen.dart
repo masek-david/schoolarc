@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/screens/timetable/new_lesson_times.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/screens/timetable/timetable_settings.dart';
@@ -18,16 +17,14 @@ class TimetableScreen extends ConsumerStatefulWidget {
 }
 
 class _TimetableScreenState extends ConsumerState<TimetableScreen> {
-  late final _db = TimeTableDatabase();
-
-  late var timeTable = _db.timeTable;
+  late var timeTable = timetableDb.timeTable;
 
   late double columnWidth = settings.get(Setting.timeTableTileWidth);
   late bool showWholeWeek = settings.get(Setting.timeTableShowWholeWeek);
 
   void updateView() {
     setState(() {
-      timeTable = _db.timeTable;
+      timeTable = timetableDb.timeTable;
     });
   }
 
@@ -76,7 +73,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
           ).then(
             (lessonTimes) {
               if (lessonTimes != null) {
-                _db.newLessonTime(lessonTimes);
+                timetableDb.newLessonTime(lessonTimes);
                 updateView();
               }
             },
@@ -97,7 +94,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
                 initialEndTime: lessonTimes.endTime,
                 initialName: lessonTimes.name,
                 delete: () {
-                  _db.deleteLessonTime(lessonIndex);
+                  timetableDb.deleteLessonTime(lessonIndex);
                   updateView();
                 },
               );
@@ -105,7 +102,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
           ).then(
             (value) {
               if (lessonTimes != value && value != null) {
-                _db.editLessonTime(lessonIndex, value);
+                timetableDb.editLessonTime(lessonIndex, value);
                 updateView();
               }
             },
@@ -116,12 +113,12 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
               context: context,
               subjects: ref.read(subjectsSortedProvider),
               delete: () {
-                _db.deleteLessonAt(weekday, lessonIndex);
+                timetableDb.deleteLessonAt(weekday, lessonIndex);
                 updateView();
               }).then(
             (value) {
               if (value != null) {
-                _db.newLessonAt(
+                timetableDb.newLessonAt(
                   weekday,
                   lessonIndex,
                   value.id,

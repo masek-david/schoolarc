@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_bakalari.dart';
+import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_extensions.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_priorities.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_subjects.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_welcome.dart';
@@ -21,7 +21,7 @@ class WelcomeScreen extends StatelessWidget {
     const WelcomeScreenExams(),
     const WelcomeScreenSubjects(),
     const WelcomeScreenPriorities(),
-    const WelcomeScreenBakalari(),
+    const WelcomeScreenExtensions(),
     WelcomeScreenEnd(onEnd: onEnd),
   ];
 

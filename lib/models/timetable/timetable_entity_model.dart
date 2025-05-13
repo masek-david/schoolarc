@@ -10,16 +10,13 @@ class TimeTableEntity extends HiveObject {
   // list of 7 days, for each day there are as many hours as specified in lessontimes, they are null if empty, and store index of the subject
   late List<List<String?>> table;
 
-  TimeTableEntity(this.lessonTimes) {
-    table = List.generate(
-        7, (_) => List.filled(lessonTimes.length, null, growable: true));
-  }
+  /// creates [TimeTableEntity], if lessonTimes is null, it will be [], and if table is null, it will fill it with empty lessons
+  TimeTableEntity(List<LessonTimes>? lessonTimes, List<List<String?>>? table) {
+    this.lessonTimes = lessonTimes ?? [];
 
-  TimeTableEntity.empty() {
-    lessonTimes = [];
-    table = List.generate(
+    this.table = table ?? List.generate(
       7,
-      (_) => List.filled(lessonTimes.length, null, growable: true), 
+      (_) => List.filled(this.lessonTimes.length, null, growable: true),
     );
   }
 

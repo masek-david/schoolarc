@@ -85,7 +85,7 @@ class LessonTimesAdapter extends TypeAdapter<LessonTimes> {
 
 class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
   @override
-  final typeId = 4;
+  final typeId = 9;
 
   @override
   HomeworkEntity read(BinaryReader reader) {
@@ -143,7 +143,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
 
 class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
   @override
-  final typeId = 5;
+  final typeId = 10;
 
   @override
   ExamEntity read(BinaryReader reader) {
@@ -198,7 +198,7 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
 
 class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
   @override
-  final typeId = 7;
+  final typeId = 11;
 
   @override
   SubjectEntity read(BinaryReader reader) {
@@ -247,7 +247,7 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
 
 class TimeTableEntityAdapter extends TypeAdapter<TimeTableEntity> {
   @override
-  final typeId = 3;
+  final typeId = 12;
 
   @override
   TimeTableEntity read(BinaryReader reader) {
@@ -257,6 +257,7 @@ class TimeTableEntityAdapter extends TypeAdapter<TimeTableEntity> {
     };
     return TimeTableEntity(
       (fields[0] as List).cast<LessonTimes>(),
+      (fields[1] as List).map((e) => (e as List).cast<String?>()).toList(),
     );
   }
 

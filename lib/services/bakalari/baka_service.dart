@@ -20,7 +20,6 @@ import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/services/timetable_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -32,7 +31,6 @@ class BakaService {
 
   DateTime? _tokenExpiration;
 
-  final _timetableDb = TimeTableDatabase();
   final _secureStorage = SecureStorage();
 
   bool get isLoggedIn {
@@ -268,7 +266,7 @@ class BakaService {
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
-    _timetableDb.createTable(lessons.map(
+    timetableDb.createTable(lessons.map(
       (lessonTimes) {
         return lessonTimes.toLessonTimes();
       },
@@ -289,7 +287,7 @@ class BakaService {
         String subjectId = bakaIdToSubjectIndex[subjectIdBaka]!;
         int hourId = subjectJson['HourId'];
 
-        _timetableDb.newLessonAt(
+        timetableDb.newLessonAt(
           weekday,
           lessons.indexWhere(
             (lesson) => lesson.id == hourId,
@@ -357,7 +355,7 @@ class BakaService {
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
-    TimeTable timeTable = TimeTable(
+    TimeTable timeTable = TimeTable.withoutTable(
         lessonTimes: lessons.map(
       (lessonTime) {
         return lessonTime.toLessonTimes();
