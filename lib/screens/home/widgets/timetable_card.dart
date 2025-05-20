@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';

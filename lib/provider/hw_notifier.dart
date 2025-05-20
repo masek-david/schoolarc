@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/hive/hive_init.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/homeworks/hw_entity_model.dart';

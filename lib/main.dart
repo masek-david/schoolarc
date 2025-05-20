@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:school_manager/hive/hive_init.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/tasks_app.dart';

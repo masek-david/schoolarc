@@ -4,7 +4,9 @@ import 'dart:developer';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
+import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
+import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
 final subjectsProvider =
@@ -17,6 +19,33 @@ final subjectsSortedProvider = Provider<List<Subject>>((ref) {
   // Filter out deleted subjects and sort based on the `order` field.
   return subjects.values.where((subject) => !subject.isDeleted).toList()
     ..sort((a, b) => (a.order).compareTo(b.order));
+});
+
+final subjectsUsedTimesProvider = Provider<Map<String, int>>((ref) {
+  final Map<String, int> map = {};
+  final exams = ref.watch(examProvider);
+  final hws = ref.watch(hwProvider);
+
+  exams.forEach(
+    (key, value) {
+      final subjectId = value.subject?.id;
+
+      if (subjectId != null) {
+        map[subjectId] = (map[subjectId] ?? 0) + 1;
+      }
+    },
+  );
+  hws.forEach(
+    (key, value) {
+      final subjectId = value.subject?.id;
+
+      if (subjectId != null) {
+        map[subjectId] = (map[subjectId] ?? 0) + 1;
+      }
+    },
+  );
+
+  return map;
 });
 
 final subjectsDeletedProvider = Provider<List<Subject>>(
@@ -77,14 +106,13 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     );
 
     for (final subject in _dbState.values) {
-      bool isSynced = fireSubjects
-              ?.where(
-                (element) => element.id == subject.id,
-              )
-              .firstOrNull !=
-          null;
+      final fireSubject = fireSubjects
+          ?.where((element) => element.id == subject.id)
+          .firstOrNull;
+      bool needsSync = fireSubject == null ||
+          fireSubject.timestamp.isBefore(subject.timestamp);
 
-      if (!isSynced) {
+      if (needsSync) {
         await edit(subject);
       }
     }
@@ -285,7 +313,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     await _permanentDelete(hwsToDelete);
   }
 
-  /// checks and updates/adds subject from firestore
+  /// checks and updates/adds subject from firebase
   Future<void> checkFireSubject(Subject fireSubject) async {
     final localSubject = _dbState.values.where(
       (element) {
@@ -293,7 +321,9 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       },
     ).firstOrNull;
 
-    // if it doesnt exist in local, add it
+    // print('\u001b[1;92m checking from fire: ${fireSubject.toString()}');
+
+    // if it doesnt exist in local, add it5
     if (localSubject == null) {
       // print(
       //     '\u001b[1;92madding from fire: ${fireSubject.name}: ${fireSubject.order}');

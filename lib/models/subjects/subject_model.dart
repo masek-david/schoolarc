@@ -38,7 +38,7 @@ class Subject {
 
   @override
   String toString() {
-    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp';
+    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp, ${isDeleted ? '[delete]' : ''}';
   }
 
   bool containsText(String text) {
@@ -87,7 +87,7 @@ class Subject {
         shortcut = json['s'],
         bakaId = json['b'],
         order = json['o'] ?? 0,
-        isDeleted = json['d'] ?? false,
+        isDeleted = json['del'] ?? false,
         timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
 
   bool get isFromBakalari {

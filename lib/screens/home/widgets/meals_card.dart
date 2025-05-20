@@ -2,7 +2,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/screens/meals/meals_screen.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';

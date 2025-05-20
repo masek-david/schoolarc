@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
@@ -64,12 +64,16 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     nameController.text = subject.name;
     shortcutController.text = subject.shortcut;
 
+    final map = ref.read(subjectsUsedTimesProvider);
+    final usedTimes = map[subject.id];
+
     showDialog(
       context: context,
       builder: (context) => SubjectDialog(
         text: 'Edit subject',
         nameController: nameController,
         shortcutController: shortcutController,
+        usedTimes: usedTimes,
         onSave: () {
           Subject newSubject = Subject(
             name: nameController.text,
@@ -118,6 +122,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final map = ref.read(subjectsUsedTimesProvider);
+    final subjects = ref.watch(subjectsSortedProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subjects'),
@@ -140,48 +147,45 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
       body: SlidableAutoCloseBehavior(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Consumer(builder: (context, ref, child) {
-            final subjects = ref.watch(subjectsSortedProvider);
-
-            return subjects.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No subjects found. You can create new subjects by tapping the plus button.',
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : RefreshIndicator(
-                    notificationPredicate: settings.get(Setting.useFirebase)
-                        ? (_) => true
-                        : (_) => false,
-                    onRefresh: onRefresh,
-                    child: AnimatedReorderableListView(
-                      onReorderStart: (index) => HapticFeedback.mediumImpact(),
-                      items: subjects,
-                      isSameItem: (a, b) => a.id == b.id,
-                      padding: EdgeInsets.only(bottom: 100),
-                      itemBuilder: (context, index) {
-                        Subject subject = subjects[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          key: Key('Sub: ${subject.id}'),
-                          child: SubjectTile(
-                            subject: subject,
-                            onTap: () => editSubject(subject, ref),
-                            onDelete: () => deleteSubject(subject, ref),
-                          ),
-                        );
-                      },
-                      onReorder: (int oldIndex, int newIndex) {
-                        ref.read(subjectsProvider.notifier).reorder(
-                              newIndex,
-                              subjects[oldIndex],
-                              addTimestamp: true,
-                            );
-                      },
-                    ),
-                  );
-          }),
+          child: subjects.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No subjects found. You can create new subjects by tapping the plus button.',
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : RefreshIndicator(
+                  notificationPredicate: settings.get(Setting.useFirebase)
+                      ? (_) => true
+                      : (_) => false,
+                  onRefresh: onRefresh,
+                  child: AnimatedReorderableListView(
+                    onReorderStart: (index) => HapticFeedback.mediumImpact(),
+                    items: subjects,
+                    isSameItem: (a, b) => a.id == b.id,
+                    padding: EdgeInsets.only(bottom: 100),
+                    itemBuilder: (context, index) {
+                      Subject subject = subjects[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        key: Key('Sub: ${subject.id}'),
+                        child: SubjectTile(
+                          usedTimes: map[subject.id],
+                          subject: subject,
+                          onTap: () => editSubject(subject, ref),
+                          onDelete: () => deleteSubject(subject, ref),
+                        ),
+                      );
+                    },
+                    onReorder: (int oldIndex, int newIndex) {
+                      ref.read(subjectsProvider.notifier).reorder(
+                            newIndex,
+                            subjects[oldIndex],
+                            addTimestamp: true,
+                          );
+                    },
+                  ),
+                ),
         ),
       ),
     );

@@ -4,7 +4,7 @@ import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/recently_deleted_screen.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';

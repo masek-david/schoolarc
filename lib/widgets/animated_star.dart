@@ -1,7 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class AnimatedStar extends StatefulWidget {

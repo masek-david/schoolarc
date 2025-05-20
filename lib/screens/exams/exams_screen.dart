@@ -6,7 +6,7 @@ import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';

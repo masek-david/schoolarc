@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/tasks_app.dart';

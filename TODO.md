@@ -26,8 +26,9 @@ optional:
 - ✅ proper firebase error handling, if no user dont even try it,...
 - ✅ fix arrows in calendar (not centered on web)
 - ⬜ unite the ui/ux for extensions (in settings and in welcome page)
-- ⬜ create providers for logins
+    - ⬜ create providers for logins
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
+- ⬜ why are there two firebase_options files
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task 
 - ⬜ rethink addnewtask bottom sheet
@@ -41,6 +42,7 @@ optional:
 - ⬜ ? create baka provider
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be   triggered on build)
 - ⬜ ? add images to meals
+- ⬜ refactor baka_service - add separate file for http requests
     
 settings:
 - ✅ rework switch action and settings screen(state management)

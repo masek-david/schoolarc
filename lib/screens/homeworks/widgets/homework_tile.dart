@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/hw_overlay.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
@@ -226,17 +226,17 @@ class _HomeworkTileState extends State<HomeworkTile> {
                           const SizedBox(width: 8),
                         Expanded(child: Text(widget.hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
-                        if (settings.get(Setting.showDebugInfo))
-                          Column(
-                            children: [
-                              Text(
-                                widget.hw.id,
-                                style: TextStyle(fontSize: 8),
-                              ),
-                              Text(widget.hw.timestamp.millisecondsSinceEpoch
-                                  .toString()),
-                            ],
-                          ),
+                        // if (settings.get(Setting.showDebugInfo))
+                        //   Column(
+                        //     children: [
+                        //       Text(
+                        //         widget.hw.id,
+                        //         style: TextStyle(fontSize: 8),
+                        //       ),
+                        //       Text(widget.hw.timestamp.millisecondsSinceEpoch
+                        //           .toString()),
+                        //     ],
+                        //   ),
                         if (widget.showDeadline)
                           Text(
                             widget.hw.deadline.dateText(),

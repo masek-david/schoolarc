@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class StyleMotionPage extends StatefulWidget {

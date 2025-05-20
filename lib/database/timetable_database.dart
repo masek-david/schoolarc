@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/hive/hive_init.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/models/timetable/timetable_entity_model.dart';

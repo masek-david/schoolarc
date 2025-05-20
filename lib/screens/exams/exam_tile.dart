@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -130,17 +130,17 @@ class ExamTile extends StatelessWidget {
                         ),
                       const SizedBox(width: 8),
                       Expanded(child: Text(exam.text, maxLines: 2)),
-                      if (settings.get(Setting.showDebugInfo))
-                        Column(
-                          children: [
-                            Text(
-                              exam.id,
-                              style: TextStyle(fontSize: 8),
-                            ),
-                            Text(
-                                'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
-                          ],
-                        ),
+                      // if (settings.get(Setting.showDebugInfo))
+                      //   Column(
+                      //     children: [
+                      //       Text(
+                      //         exam.id,
+                      //         style: TextStyle(fontSize: 8),
+                      //       ),
+                      //       Text(
+                      //           'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
+                      //     ],
+                      //   ),
                       const SizedBox(width: 8),
                       if (showDeadline)
                         Text(

@@ -14,3 +14,14 @@ class ServiceException implements Exception {
     return message ?? '';
   }
 }
+
+class BakaLoginException implements Exception {
+  BakaLoginException({this.message = 'Please log in'});
+
+  String? message;
+
+  @override
+  String toString() {
+    return message ?? '';
+  }
+}

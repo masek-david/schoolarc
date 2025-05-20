@@ -13,10 +13,10 @@ import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
-import 'package:school_manager/services/exams/exam_database.dart';
-import 'package:school_manager/services/homeworks/hw_database.dart';
-import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/services/subjects/subject_database.dart';
+import 'package:school_manager/database/exam_database.dart';
+import 'package:school_manager/database/hw_database.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/database/subject_database.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -162,6 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           context: context,
           removeBottom: true,
           child: Scaffold(
+            // only for debugging
             floatingActionButton: kDebugMode
                 ? FloatingActionButton.extended(
                     onPressed: () {

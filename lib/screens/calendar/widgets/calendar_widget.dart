@@ -4,7 +4,7 @@ import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:table_calendar/table_calendar.dart';

@@ -21,19 +21,23 @@ class BottomNavBar extends StatelessWidget {
       selectedIndex: pageIndex,
       destinations: const <Widget>[
         NavigationDestination(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
           label: 'Home',
         ),
         NavigationDestination(
-          icon: Icon(Icons.calendar_month),
+          icon: Icon(Icons.calendar_month_outlined),
+          selectedIcon: Icon(Icons.calendar_month),
           label: 'Calendar',
         ),
         NavigationDestination(
-          icon: Icon(Icons.home_work),
+          icon: Icon(Icons.home_work_outlined),
+          selectedIcon: Icon(Icons.home_work),
           label: 'Homeworks',
         ),
         NavigationDestination(
-          icon: Icon(Icons.description),
+          icon: Icon(Icons.description_outlined),
+          selectedIcon: Icon(Icons.description),
           label: 'Exams',
         ),
       ],

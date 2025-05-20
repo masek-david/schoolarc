@@ -26,19 +26,23 @@ class SideNavBar extends StatelessWidget {
       trailing: Icon(Icons.abc, color: Colors.transparent),
       destinations: [
         NavigationRailDestination(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
           label: Text('Home'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.calendar_month),
+          icon: Icon(Icons.calendar_month_outlined),
+          selectedIcon: Icon(Icons.calendar_month),
           label: Text('Calendar'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.home_work),
+          icon: Icon(Icons.home_work_outlined),
+          selectedIcon: Icon(Icons.home_work),
           label: Text('Homeworks'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.description),
+          icon: Icon(Icons.description_outlined),
+          selectedIcon: Icon(Icons.description),
           label: Text('Exams'),
         ),
       ],

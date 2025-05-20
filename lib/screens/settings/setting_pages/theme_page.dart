@@ -1,10 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/color_picker_action.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/scheme_variant_picker_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/theme_colors_showcase.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class ThemePage extends StatefulWidget {

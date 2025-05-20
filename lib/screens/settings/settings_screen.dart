@@ -9,7 +9,7 @@ import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
 import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
 import 'package:school_manager/screens/settings/widgets/package_info.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tomorrow_notifications_page.dart';

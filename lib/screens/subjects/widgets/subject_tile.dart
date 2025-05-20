@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -11,15 +11,18 @@ class SubjectTile extends StatelessWidget {
     required this.subject,
     required this.onTap,
     required this.onDelete,
+    this.usedTimes,
   });
 
   final Subject subject;
+  final int? usedTimes;
   final void Function() onTap;
   final void Function()? onDelete;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
+      final debug = settings.get(Setting.showDebugInfo);
       double extentRatio = 120 / constraints.maxWidth;
 
       if (extentRatio > 1) {
@@ -60,10 +63,7 @@ class SubjectTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if (settings.get(Setting.showDebugInfo) && subject.isDeleted)
-                    Icon(Icons.delete),
-                  if (settings.get(Setting.showDebugInfo))
-                    Text('order: ${subject.order.toString()}'),
+                  if (debug) Text(subject.order.toString()),
                   SizedBox(
                     width: 50,
                     child: SubjectShortcut(subject: subject),
@@ -72,8 +72,7 @@ class SubjectTile extends StatelessWidget {
                   Expanded(
                     child: Text(subject.name),
                   ),
-                  if (settings.get(Setting.showDebugInfo))
-                    Text(subject.id.toString(), style: TextStyle(fontSize: 10),),
+                  if (debug && usedTimes != null) Text(usedTimes.toString()),
                   if (subject.isFromBakalari)
                     Stack(
                       alignment: Alignment.center,
@@ -82,10 +81,10 @@ class SubjectTile extends StatelessWidget {
                           Icons.hexagon,
                           color: Theme.of(context).colorScheme.surfaceBright,
                         ),
-                        if (settings.get(Setting.showDebugInfo))
-                          Text(subject.bakaId ?? ''),
+                        if (debug) Text(subject.bakaId ?? ''),
                       ],
                     ),
+                  if (debug && subject.isDeleted) Icon(Icons.delete),
                 ],
               ),
             ),

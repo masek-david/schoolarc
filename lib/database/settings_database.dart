@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/hive/hive_init.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
 
 enum Setting {
   themeUseDeviceColor,

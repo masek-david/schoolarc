@@ -8,11 +8,13 @@ class SubjectDialog extends StatelessWidget {
     required this.shortcutController,
     required this.onSave,
     required this.text,
+    this.usedTimes,
   });
 
   final String text;
   final TextEditingController nameController;
   final TextEditingController shortcutController;
+  final int? usedTimes;
   final void Function() onSave;
 
   @override
@@ -56,6 +58,7 @@ class SubjectDialog extends StatelessWidget {
                 labelText: 'Shortcut (max 5 characters)',
               ),
             ),
+            if (usedTimes != null) Text('Used $usedTimes times'),
             CancelSaveButton(onSave: onSave)
           ],
         ),

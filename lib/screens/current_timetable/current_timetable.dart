@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';

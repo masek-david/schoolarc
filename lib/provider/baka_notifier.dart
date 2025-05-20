@@ -4,32 +4,42 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/models/bakalari/lesson_time_baka.dart';
 import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
+import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/secure_storage.dart';
-import 'package:school_manager/models/exception_model.dart';
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
-import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
-class BakaService {
+enum BakaLoginState {
+  loggedIn,
+  loggedOut,
+}
+
+class BakaNotifier extends AsyncNotifier<BakaLoginState> {
+  final _secureStorage = SecureStorage();
   String? _accessToken;
   String? _refreshToken;
 
   DateTime? _tokenExpiration;
+  Timer? _tokenExpirationTimer;
 
-  final _secureStorage = SecureStorage();
+  @override
+  Future<BakaLoginState> build() async {
+    return refreshLogin();
+  }
 
   bool get isLoggedIn {
     if (_tokenExpiration == null) {
@@ -41,6 +51,16 @@ class BakaService {
     return DateTime.now().isBefore(_tokenExpiration!);
   }
 
+  void _tokenExpirationTime(int seconds) {
+    _tokenExpirationTimer?.cancel();
+    _tokenExpirationTimer = Timer(
+      Duration(seconds: seconds),
+      () {
+        state = AsyncData(BakaLoginState.loggedOut);
+      },
+    );
+  }
+
   Future<String> get username async {
     return _secureStorage.read(SecureStorage.bakaUsernameKey);
   }
@@ -49,7 +69,7 @@ class BakaService {
     return _secureStorage.read(SecureStorage.bakaSchoolNameKey);
   }
 
-  Future<String> get _getRefreshToken async {
+  Future<String> get _storageRefreshToken async {
     return _secureStorage.read(SecureStorage.bakaRefreshTokenKey);
   }
 
@@ -58,43 +78,40 @@ class BakaService {
   }
 
   /// tries to log in from memory using saved refresh token
-  Future<void> refreshLogin() async {
-    String schoolName = '';
+  Future<BakaLoginState> refreshLogin() async {
+    state = const AsyncLoading();
     try {
-      schoolName = await this.schoolName;
-      _refreshToken = await _getRefreshToken;
-    } on Exception {
-      throw ServiceException(
-        'Please log in',
-        action: ExceptionActions.bakaLogin,
+      String schoolName = '';
+      try {
+        schoolName = await this.schoolName;
+        _refreshToken = await _storageRefreshToken;
+      } on Exception {
+        throw BakaLoginException();
+      }
+
+      if (schoolName == '' || _refreshToken == '') {
+        throw BakaLoginException();
+      }
+
+      final url = Uri(
+        scheme: 'https',
+        host: "$schoolName.bakalari.cz",
+        path: "/api/login",
       );
-    }
+      const head = {
+        "Content-Type": "application/x-www-form-urlencoded",
+      };
+      final body =
+          'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
-    if (schoolName == '' || _refreshToken == '') {
-      throw ServiceException('Please log in first',
-          action: ExceptionActions.bakaLogin);
-    }
-
-    final url = Uri(
-      scheme: 'https',
-      host: "$schoolName.bakalari.cz",
-      path: "/api/login",
-    );
-    const head = {
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
-    final body =
-        'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
-
-    try {
       await _callLogin(url, head, body);
-    } on Object {
-      rethrow;
+
+      loadName();
+      return BakaLoginState.loggedIn;
+    } catch (e, s) {
+      state = AsyncError(e, s);
+      return BakaLoginState.loggedOut;
     }
-
-    saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-
-    loadName();
   }
 
   Future<void> firstLogin({
@@ -103,36 +120,38 @@ class BakaService {
     required String password,
     required bool keepLoggedIn,
   }) async {
-    if (school == '' || username == '' || password == '') {
-      throw ServiceException('Please fill out all information');
-    }
-
-    final url = Uri(
-      scheme: 'https',
-      host: "$school.bakalari.cz",
-      path: "/api/login",
-    );
-    const head = {"Content-Type": "application/x-www-form-urlencoded"};
-    final body =
-        'client_id=ANDR&grant_type=password&username=$username&password=$password';
-
+    state = const AsyncLoading();
     try {
-      await _callLogin(url, head, body);
-    } on Object {
-      rethrow;
-    }
+      if (school == '' || username == '' || password == '') {
+        throw ServiceException('Please fill out all information');
+      }
 
-    if (keepLoggedIn) {
-      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-      saveToSecureStorage(SecureStorage.bakaSchoolNameKey, school);
-      saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
-    } else {
-      // it has to be overwriten if the user chooses
-      logOut();
+      final url = Uri(
+        scheme: 'https',
+        host: "$school.bakalari.cz",
+        path: "/api/login",
+      );
+      const head = {"Content-Type": "application/x-www-form-urlencoded"};
+      final body =
+          'client_id=ANDR&grant_type=password&username=$username&password=$password';
+
+      await _callLogin(url, head, body);
+
+      if (keepLoggedIn) {
+        saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+        saveToSecureStorage(SecureStorage.bakaSchoolNameKey, school);
+        saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
+      } else {
+        // it has to be overwriten if the user chooses
+        logOut();
+      }
+    } catch (e, s) {
+      state = AsyncError(e, s);
     }
   }
 
   Future<void> logOut() async {
+    state = AsyncData(BakaLoginState.loggedOut);
     _accessToken = null;
     _refreshToken = null;
     _tokenExpiration = null;
@@ -144,7 +163,8 @@ class BakaService {
     ]);
   }
 
-  /// logs in, returns errors and sets this._refreshToken and this._accessToken
+  /// logs in, returns errors and sets this._refreshToken, this._accessToken
+  /// and the state if it logs in succesfuly
   Future<void> _callLogin(Uri url, var head, var body) async {
     Response response;
     try {
@@ -181,13 +201,15 @@ class BakaService {
 
     _accessToken = accessToken;
     _refreshToken = refreshToken;
-    saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, refreshToken);
+    await saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, refreshToken);
+    _tokenExpirationTime(expiresInSeconds);
     _tokenExpiration =
         DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
+    state = AsyncData(BakaLoginState.loggedIn);
   }
 
   Future<void> loadName() async {
-    if (settings.get(Setting.userName) != null) {
+    if (settings.get(Setting.userName) != null || !isLoggedIn) {
       return;
     }
 
@@ -219,7 +241,7 @@ class BakaService {
   }
 
   /// imports permanent timetable and saves it
-  Future<void> importTimeTable(WidgetRef ref) async {
+  Future<void> importTimeTable() async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -271,7 +293,7 @@ class BakaService {
     ).toList());
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson, ref);
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -297,7 +319,7 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTable> getCurrentTimetable(DateTime date, WidgetRef ref) async {
+  Future<TimeTable> getCurrentTimetable(DateTime date) async {
     if (!isLoggedIn) {
       try {
         await refreshLogin();
@@ -362,7 +384,7 @@ class BakaService {
     timeTable.dates = mondayDate.allDaysInThisWeek();
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson, ref);
+    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
     final subjects = subjectsDb.getDatabase();
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
@@ -428,7 +450,7 @@ class BakaService {
 
   /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
   Future<Map<String, String>> _getSubjectsIdToIndex(
-      List<dynamic> subjectsJson, WidgetRef ref) async {
+      List<dynamic> subjectsJson) async {
     final subjects = subjectsDb.getDatabase().values.toList();
     Map<String, String> bakalariSubjectIdToSubjectIndex = {};
 

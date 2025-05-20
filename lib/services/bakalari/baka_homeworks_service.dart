@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/hive/hive_init.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
 
 class BakaHomeworksService {
   final _addedBox = Hive.box(bakaAddedHw);
