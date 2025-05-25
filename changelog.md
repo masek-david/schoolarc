@@ -2,6 +2,7 @@
 ### Added
 - Added option for importing app data, including subjects, homework and exams
 - Added info about how many times a subject is used
+- Added new priority picker
 
 ### Changed
 - Improved the order of tasks in calendar

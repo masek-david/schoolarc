@@ -203,16 +203,27 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   );
                 },
               ),
-              const Divider(),
+              SizedBox(height: 8),
               SizedBox(
-                  // listview musi mit vysku, kterou urci sizedbox
-                  height: 40,
-                  child: PriorityPicker(
-                    pickedPriority: pickedPriority,
-                    onSelected: (value) => setState(() {
-                      pickedPriority = value;
-                    }),
-                  )),
+                // listview musi mit vysku, kterou urci sizedbox
+                height: 40,
+                child: PriorityPickerNew(
+                  selectedPriority: pickedPriority,
+                  onSelected: (value) => setState(() {
+                    pickedPriority = value;
+                  }),
+                ),
+              ),
+              // SizedBox(
+              //   // listview musi mit vysku, kterou urci sizedbox
+              //   height: 40,
+              //   child: PriorityPicker(
+              //     pickedPriority: pickedPriority,
+              //     onSelected: (value) => setState(() {
+              //       pickedPriority = value;
+              //     }),
+              //   ),
+              // ),
               const Divider(),
               InkWell(
                 onTap: () async {

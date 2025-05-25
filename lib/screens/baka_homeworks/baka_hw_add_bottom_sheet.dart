@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/widgets/priority_picker.dart';
+import 'package:school_manager/widgets/priority_picker_new.dart';
 
 class BakaHwAddBottomSheet extends StatefulWidget {
   const BakaHwAddBottomSheet({
@@ -37,8 +37,8 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
           Divider(),
           SizedBox(
             height: 40,
-            child: PriorityPicker(
-              pickedPriority: pickedPriority,
+            child: PriorityPickerNew(
+              selectedPriority: pickedPriority,
               onSelected: (value) => setState(() {
                 pickedPriority = value;
               }),

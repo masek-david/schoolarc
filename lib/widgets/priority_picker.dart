@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/priority_model.dart';
 
+@Deprecated('use new instead')
 class PriorityPicker extends StatelessWidget {
   const PriorityPicker({
     super.key,

@@ -42,7 +42,8 @@ android.applicationVariants.all { variant ->
 android {
     namespace = "cz.masci.schoolarc"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -54,7 +55,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "cz.masci.schoolarc"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
@@ -77,7 +77,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.8"
+        // Compose Compiler [version]
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 }
 
