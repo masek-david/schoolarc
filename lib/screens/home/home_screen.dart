@@ -7,6 +7,7 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
@@ -35,7 +36,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late var dateToShow = DateTime.now();
+  var dateToShow = DateTime.now();
 
   late TimeTable defaultTimeTable = timetableDb.timeTable;
   Future<TimeTable?>? bakaTimetable;
@@ -45,17 +46,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
 
-    bakaTimetable = bakaService.getCurrentTimetable(DateTime.now(), ref);
     mealsFuture = stravaService.getMeals().then(
       (value) {
         updateStravaWidget(value);
         return value;
       },
     );
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        setState(() {
+          bakaTimetable =
+              ref.read(bakaProvider.notifier).getCurrentTimetable(dateToShow);
+        });
+      },
+    );
   }
 
   Future<void> refresh() async {
-    tryGettingNewHomeworks();
+    tryGettingNewHomeworks(ref);
 
     try {
       Future.wait([
@@ -88,7 +97,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> refreshTimetable() async {
     setState(() {
-      bakaTimetable = bakaService.getCurrentTimetable(dateToShow, ref);
+      bakaTimetable =
+          ref.read(bakaProvider.notifier).getCurrentTimetable(dateToShow);
     });
 
     try {
@@ -170,7 +180,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       SubjectDatabase().deleteAllFromDisk();
                       ExamDatabase().deleteAllFromDisk();
                       firebaseService.logOut();
-                      bakaService.logOut();
+                      ref.read(bakaProvider.notifier).logOut();
                     },
                     label: const Text('delete from disk'),
                     icon: const Icon(Icons.bug_report),

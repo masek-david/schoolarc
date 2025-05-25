@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
@@ -17,13 +17,21 @@ class BakaHomeworksScreen extends ConsumerStatefulWidget {
 }
 
 class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
-  late var homeworksFuture = bakaService.getHomeworks();
+  late Future<List<BakaHomework>> homeworksFuture;
   var homeworks = <BakaHomework>[];
+
+  @override
+  void initState() {
+    homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
+    super.initState();
+  }
 
   void add(BuildContext context, BakaHomework hw, bool isHomework) {
     if (isHomework) {
       ref.read(hwProvider.notifier).saveNew(
-            hw.copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false).toHw(),
+            hw
+                .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false)
+                .toHw(),
           );
     } else {
       ref.read(examProvider.notifier).saveNew(
@@ -64,7 +72,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      homeworksFuture = bakaService.getHomeworks();
+                      homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
                     });
                   },
                   icon: Icon(Icons.refresh),

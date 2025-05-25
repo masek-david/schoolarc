@@ -23,12 +23,10 @@ import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
-enum BakaLoginState {
-  loggedIn,
-  loggedOut,
-}
+final bakaProvider =
+    AsyncNotifierProvider<BakaNotifier, bool>(BakaNotifier.new);
 
-class BakaNotifier extends AsyncNotifier<BakaLoginState> {
+class BakaNotifier extends AsyncNotifier<bool> {
   final _secureStorage = SecureStorage();
   String? _accessToken;
   String? _refreshToken;
@@ -37,7 +35,7 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
   Timer? _tokenExpirationTimer;
 
   @override
-  Future<BakaLoginState> build() async {
+  Future<bool> build() async {
     return refreshLogin();
   }
 
@@ -56,7 +54,7 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
     _tokenExpirationTimer = Timer(
       Duration(seconds: seconds),
       () {
-        state = AsyncData(BakaLoginState.loggedOut);
+        state = AsyncData(false);
       },
     );
   }
@@ -78,7 +76,7 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
   }
 
   /// tries to log in from memory using saved refresh token
-  Future<BakaLoginState> refreshLogin() async {
+  Future<bool> refreshLogin() async {
     state = const AsyncLoading();
     try {
       String schoolName = '';
@@ -107,10 +105,10 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
       await _callLogin(url, head, body);
 
       loadName();
-      return BakaLoginState.loggedIn;
+      return true;
     } catch (e, s) {
       state = AsyncError(e, s);
-      return BakaLoginState.loggedOut;
+      return false;
     }
   }
 
@@ -151,7 +149,7 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
   }
 
   Future<void> logOut() async {
-    state = AsyncData(BakaLoginState.loggedOut);
+    state = AsyncData(false);
     _accessToken = null;
     _refreshToken = null;
     _tokenExpiration = null;
@@ -205,7 +203,7 @@ class BakaNotifier extends AsyncNotifier<BakaLoginState> {
     _tokenExpirationTime(expiresInSeconds);
     _tokenExpiration =
         DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
-    state = AsyncData(BakaLoginState.loggedIn);
+    state = AsyncData(true);
   }
 
   Future<void> loadName() async {

@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -48,6 +49,7 @@ final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
 final timetableDb = TimeTableDatabase();
+@Deprecated('use notifier')
 final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
@@ -121,9 +123,9 @@ void switchDrawer({bool? onlyClose}) {
   }
 }
 
-void tryGettingNewHomeworks() async {
+void tryGettingNewHomeworks(WidgetRef ref) async {
   try {
-    await bakaService.getHomeworks(
+    await ref.read(bakaProvider.notifier).getHomeworks(
       onNewFound: (numberOfNew) {
         if (navigatorKey.currentContext != null) {
           final context = navigatorKey.currentContext!;
@@ -175,14 +177,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   late Color userColor = Color(settings.get(Setting.themeColorValue));
   late bool showingTutorial;
   bool showingFirebaseLoginScreen = false;
-
-  // @override
-  // String? get restorationId => 'mainApp';
-
-  // @override
-  // void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-  //   registerForRestoration(currentPageIndex, 'currentPageIndex');
-  // }
 
   ThemeMode _getThemeMode(bool? value) {
     switch (value) {
@@ -267,7 +261,11 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           NotificationController.onDismissActionReceivedMethod,
     );
 
-    tryGettingNewHomeworks();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        tryGettingNewHomeworks(ref);
+      },
+    );
   }
 
   @override

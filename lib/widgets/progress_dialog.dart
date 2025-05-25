@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ProgressDialog extends StatefulWidget {
   const ProgressDialog({
     super.key,
-    required this.goal,
+    this.goal = 0,
     this.showProgressNumber = true,
     this.initialText = 'Importing',
   });
