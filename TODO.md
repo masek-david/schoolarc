@@ -1,5 +1,4 @@
 # FIX
-- kouknout znova na kod pro urcovani vysky radek v kalendari
 
 # version 2.0.0
 - ✅ change package name (cz.masci.schoolarc)
@@ -36,8 +35,8 @@ optional:
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 
-- ⬜ ? add google sign in 
-- ⬜ ? create baka provider
+- ⬜ ? add google sign in
+- ✅ ? create baka provider
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be   triggered on build)
 - ⬜ ? add images to meals
 - ⬜ refactor baka_service - add separate file for http requests
@@ -60,8 +59,6 @@ web features
 - ⬜ keyboard shortcuts
 
 # maybe
-- create baka provider
 - ? remake app isWide as riverpod provider
  
 - remove slide to delete?
-- pass datetime better to widget (pass it as datetime, not a string) why though???

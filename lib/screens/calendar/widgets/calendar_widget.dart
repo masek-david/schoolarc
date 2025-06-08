@@ -64,7 +64,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     List<DateTime> days = [];
 
     if (widget.calendarFormat.name == 'month') {
-      days = widget.focusedDay.toUtc().allDaysInThisMonth();
+      days = widget.focusedDay.toUtc().allDaysInMonthCalendarView();
     } else {
       days = widget.focusedDay.toUtc().allDaysInThisWeek();
     }
@@ -124,7 +124,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 calendarBuilders: myCalendarBuilder(
                   onEdit: (exam) => widget.onEdit(exam),
                   currentDate: widget.focusedDay,
-                  showOutside: widget.calendarFormat.name == 'week',
+                  showOutside: true,
                 ),
                 headerStyle: HeaderStyle(
                     formatButtonVisible: false,
@@ -150,10 +150,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   return isSameDay(widget.selectedDay, day);
                 },
                 onDaySelected: (selectedDayNew, focusedDayNew) {
-                  if (!selectedDayNew.isSameMonth(widget.focusedDay) &&
-                      widget.calendarFormat.name == 'month') {
-                    return;
-                  }
+                  // if (!selectedDayNew.isSameMonth(widget.focusedDay) &&
+                  //     widget.calendarFormat.name == 'month') {
+                  //   return;
+                  // }
 
                   if (!isSameDay(selectedDayNew, widget.selectedDay)) {
                     // Call `setState()` when updating the selected day

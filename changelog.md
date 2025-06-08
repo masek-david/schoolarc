@@ -11,6 +11,7 @@
 - Improved settings
 - Improved firebase import interface
 - Improved dialogs
+- Improved calendar view for bigger screens
 
 ### Fixed
 - Fix notification arriving at wrong time
