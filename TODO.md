@@ -1,7 +1,5 @@
 # FIX
-
 - kouknout znova na kod pro urcovani vysky radek v kalendari
-- na ipadu jsou tasky v kalendari moc dlouhy
 
 # version 2.0.0
 - ✅ change package name (cz.masci.schoolarc)

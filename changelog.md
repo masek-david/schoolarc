@@ -15,6 +15,7 @@
 ### Fixed
 - Fix notification arriving at wrong time
 - Fix padding for exam tiles
+- Fixed how dates are shown
 
 ---
 

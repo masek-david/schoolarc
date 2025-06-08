@@ -64,7 +64,7 @@ Widget adaptiveDialogButton({
     if (isDefaultAction) {
       return FilledButton(onPressed: onPressed, child: child);
     }
-    Color? textColor;
+    Color textColor = Theme.of(context).colorScheme.onSurface;
     if (isDestructiveAction) {
       textColor = Theme.of(context).colorScheme.error;
     }

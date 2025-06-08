@@ -76,13 +76,25 @@ class _PriorityPickerNewState extends State<PriorityPickerNew>
                 selectedColor: scheme.primaryContainer,
                 backgroundColor: scheme.surfaceContainerHigh,
                 selected: isSelected,
+                animationDuration: Duration(milliseconds: 300),
                 onTapDown: () {
                   setState(() {
                     priorityForAnimation = index;
                   });
+
+                  // _controller.animateTo(
+                  //   1,
+                  //   curve: Curves.elasticOut,
+                  //   duration: Duration(milliseconds: 1000),
+                  // );
                   _controller.animateTo(1);
                 },
                 onTapCancel: () {
+                  // _controller.animateBack(
+                  //   0,
+                  //   curve: Curves.elasticOut,
+                  //   duration: Duration(milliseconds: 1000),
+                  // );
                   _controller.animateBack(0);
                 },
                 onSelected: () {
@@ -91,6 +103,9 @@ class _PriorityPickerNewState extends State<PriorityPickerNew>
                     priorityForAnimation = index;
                   });
                   if (index != widget.selectedPriority) {
+                    // _controller.fling().then(
+                    //       (value) => _controller.fling(velocity: -1),
+                    //     );
                     _controller.forward().then(
                           (value) => _controller.reverse(),
                         );

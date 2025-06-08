@@ -76,6 +76,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
   }
 
   /// tries to log in from memory using saved refresh token
+  /// returns if the login was sucessful
   Future<bool> refreshLogin() async {
     state = const AsyncLoading();
     try {
@@ -242,7 +243,13 @@ class BakaNotifier extends AsyncNotifier<bool> {
   Future<void> importTimeTable() async {
     if (!isLoggedIn) {
       try {
-        await refreshLogin();
+        await refreshLogin().then(
+          (value) {
+            if (!value) {
+              throw BakaLoginException();
+            }
+          },
+        );
       } on Object {
         rethrow;
       }
@@ -320,7 +327,13 @@ class BakaNotifier extends AsyncNotifier<bool> {
   Future<TimeTable> getCurrentTimetable(DateTime date) async {
     if (!isLoggedIn) {
       try {
-        await refreshLogin();
+        await refreshLogin().then(
+          (value) {
+            if (!value) {
+              throw BakaLoginException();
+            }
+          },
+        );
       } on Object {
         rethrow;
       }
@@ -520,7 +533,13 @@ class BakaNotifier extends AsyncNotifier<bool> {
       {void Function(int count)? onNewFound}) async {
     if (!isLoggedIn) {
       try {
-        await refreshLogin();
+        await refreshLogin().then(
+          (value) {
+            if (!value) {
+              throw BakaLoginException();
+            }
+          },
+        );
       } on Object {
         rethrow;
       }

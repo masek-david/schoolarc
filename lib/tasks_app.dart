@@ -16,7 +16,6 @@ import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart
 import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/database/exam_database.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/home_widget_service.dart';
@@ -49,8 +48,6 @@ final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
 final timetableDb = TimeTableDatabase();
-@Deprecated('use notifier')
-final bakaService = BakaService();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
@@ -388,7 +385,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
         return MaterialApp(
           navigatorKey: navigatorKey,
-          title: 'SchoolArc',
+          title: 'Schoolarc',
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

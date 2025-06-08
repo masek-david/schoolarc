@@ -15,6 +15,7 @@ class GroupButton extends StatefulWidget {
     required this.flex,
     required this.onTapDown,
     required this.onTapCancel,
+    required this.animationDuration,
   });
 
   final bool roundedLeft;
@@ -26,6 +27,7 @@ class GroupButton extends StatefulWidget {
   final Color? selectedColor;
   final Color? backgroundColor;
   final double flex;
+  final Duration animationDuration;
   final Widget child;
 
   @override
@@ -41,7 +43,10 @@ class _GroupButtonState extends State<GroupButton>
   void initState() {
     super.initState();
 
-    _controller = AnimationController(vsync: this, duration: Durations.medium2);
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.animationDuration,
+    );
     _radiusAnimation = Tween<double>(begin: 8, end: 20).animate(
       CurvedAnimation(
         parent: _controller,

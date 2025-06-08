@@ -17,12 +17,16 @@ class BakaHomeworksScreen extends ConsumerStatefulWidget {
 }
 
 class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
-  late Future<List<BakaHomework>> homeworksFuture;
+  Future<List<BakaHomework>>? homeworksFuture;
   var homeworks = <BakaHomework>[];
 
   @override
   void initState() {
-    homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        refresh();
+      },
+    );
     super.initState();
   }
 
@@ -52,6 +56,18 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
     showMessage(context, '${isHomework ? 'Homework' : 'Exam'} added');
   }
 
+  Future<void> refresh() async {
+    setState(() {
+      homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
+    });
+
+    try {
+      await homeworksFuture;
+    } catch (_) {}
+
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,11 +86,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
               error: snapshot.error,
               actions: [
                 IconButton(
-                  onPressed: () {
-                    setState(() {
-                      homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
-                    });
-                  },
+                  onPressed: refresh,
                   icon: Icon(Icons.refresh),
                 ),
               ],

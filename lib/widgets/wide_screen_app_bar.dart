@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -23,10 +24,8 @@ class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   PreferredSizeWidget build(BuildContext context) {
     bool overrideSize = isWideScreen;
 
-    final myPreferredSize = Size.fromHeight(overrideSize ? 56 : kToolbarHeight);
-
     return PreferredSize(
-      preferredSize: myPreferredSize,
+      preferredSize: preferredSize,
       child: MediaQuery.removePadding(
         context: context,
         removeTop: overrideSize ? true : false,
@@ -42,5 +41,5 @@ class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(isWideScreen ? 56 : kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(isWideScreen && !kIsWeb ? 32 : kToolbarHeight);
 }

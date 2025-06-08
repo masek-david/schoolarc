@@ -41,7 +41,7 @@ class MyDrawer extends StatelessWidget {
           children: [
             const Padding(
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
-              child: Text('SchoolArc', style: TextStyle(fontSize: 20)),
+              child: Text('Schoolarc', style: TextStyle(fontSize: 20)),
             ),
             Padding(
                 padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),

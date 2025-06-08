@@ -57,7 +57,27 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// returns all days in this week
+  ///includes whole weeks
+  List<DateTime> allDaysInMonthCalendarView() {
+    List<DateTime> list = [];
+
+    final firstDayOfMonth = DateTime(year, month, 1);
+    final firstDayWeekday = firstDayOfMonth.weekday;
+    final firstDayIndex = - firstDayWeekday + 2;
+
+    final lastDayOfMonth = DateTime(year, month + 1, 0);
+    final daysInMonth = lastDayOfMonth.day;
+    final lastDayWeekday = lastDayOfMonth.weekday;
+    final lastDayIndex = daysInMonth + (7 - lastDayWeekday);
+
+    for (int i = firstDayIndex; i <= lastDayIndex; i++) {
+      list.add(DateTime(year, month, i));
+    }
+
+    return list;
+  }
+
+  /// returns all days in this month
   List<DateTime> allDaysInThisMonth() {
     List<DateTime> list = [];
 
@@ -76,15 +96,15 @@ extension BetterDateTime on DateTime {
     final now = DateTime.now();
 
     String text;
-    text = DateFormat('d. MM.').format(localDate);
+    text = DateFormat('d. M.').format(localDate);
     if (localDate.year != now.year) {
-      text = DateFormat('d. MM. y').format(localDate);
+      text = DateFormat('d. M. y').format(localDate);
     } else if (localDate.isSameDay(now)) {
       text = 'Today';
     } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
       text = 'Tomorrow';
     } else if (localDate
-        .isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
+        .isSameDay(now.toUtc().subtract(const Duration(days: 1)))) {
       text = 'Yesterday';
     }
     return text;

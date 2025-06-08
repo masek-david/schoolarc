@@ -200,7 +200,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 FloatingActionButton.extended(
-                  tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
+                  tooltip: 'Add new exam for ${_selectedDay.dateText().toLowerCase()}',
                   heroTag: 'exam_btn',
                   onPressed: () {
                     HapticFeedback.mediumImpact();
@@ -211,7 +211,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ),
                 const SizedBox(height: 10),
                 FloatingActionButton.extended(
-                  tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
+                  tooltip: 'Add new homework for ${_selectedDay.dateText().toLowerCase()}',
                   heroTag: 'homework_btn',
                   onPressed: () {
                     HapticFeedback.mediumImpact();

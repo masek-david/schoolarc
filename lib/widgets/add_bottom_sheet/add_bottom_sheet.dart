@@ -9,7 +9,6 @@ import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/widgets/priority_picker.dart';
 import 'package:school_manager/widgets/priority_picker_new.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {

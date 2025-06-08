@@ -55,10 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        setState(() {
-          bakaTimetable =
-              ref.read(bakaProvider.notifier).getCurrentTimetable(dateToShow);
-        });
+        refreshTimetable();
       },
     );
   }
