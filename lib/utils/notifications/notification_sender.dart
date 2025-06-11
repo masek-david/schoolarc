@@ -21,7 +21,7 @@ const String mainChannel = 'main_channel';
 Future<void> initNotifications() async {
   await AwesomeNotifications().initialize(
     // set the icon to null if you want to use the default app icon
-    'resource://drawable/res_app_icon',
+    'resource://drawable/notification_icon',
     [
       NotificationChannel(
         onlyAlertOnce: true,

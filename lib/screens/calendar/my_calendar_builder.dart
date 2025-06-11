@@ -3,13 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
   required void Function(Exam exam) onEdit,
-  required bool showOutside,
   required DateTime currentDate,
 }) {
   final padding = const EdgeInsets.all(10);
@@ -18,8 +16,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
   return CalendarBuilders(
     outsideBuilder: (context, day, focusedDay) {
-      return showOutside
-          ? RescheduleDragTarget(
+      return RescheduleDragTarget(
               currentDate: day,
               builder: (context, candidateData, rejectedData) {
                 if (candidateData.isNotEmpty) {
@@ -55,14 +52,9 @@ CalendarBuilders<Object?> myCalendarBuilder({
                   ),
                 );
               },
-            )
-          : AbsorbPointer(child: SizedBox());
+            );
     },
     selectedBuilder: (context, day, focusedDay) {
-      if (!showOutside && !day.isSameMonth(currentDate)) {
-        return SizedBox();
-      }
-
       return RescheduleDragTarget(
         currentDate: day,
         builder: (context, candidateData, rejectedData) {
@@ -125,10 +117,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
       );
     },
     todayBuilder: (context, day, focusedDay) {
-      if (!showOutside && !day.isSameMonth(currentDate)) {
-        return SizedBox();
-      }
-
       Color color = Theme.of(context).colorScheme.secondaryContainer;
       return RescheduleDragTarget(
         currentDate: day,
@@ -163,10 +151,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
       );
     },
     markerBuilder: (context, day, events) {
-      if (!showOutside && !day.isSameMonth(currentDate)) {
-        return SizedBox();
-      }
-
       List<Homework> homeworks = [];
       List<Exam> exams = [];
       for (var event in events) {
