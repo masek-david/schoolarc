@@ -1,0 +1,4 @@
+<resources>
+    <color name="icon_circle">@color/material_dynamic_primary60</color>
+    <color name="icon_pen">@color/material_dynamic_primary90</color>
+</resources>
