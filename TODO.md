@@ -7,13 +7,11 @@
 - ✅ remove old migration stuff
 - ✅ importing
 - ✅ fix dates (save them just as utc)
-    - ⬜ test timezones
 - ✅ move to realtime database
-- ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ✅ rework notifications - scheduling on app leave
     - ⬜ turn off notifications for weekend
     - ⬜ edge case - when the app is opened at 18:00 the notification could be old
-
+- ✅ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 
 optional:
 - ✅ when should the widget be updated??
@@ -25,18 +23,18 @@ optional:
 - ⬜ unite the ui/ux for extensions (in settings and in welcome page)
     - ⬜ create providers for logins
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
-- ⬜ why are there two firebase_options files
+- ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task 
+- ⬜ why are there two firebase_options files
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
     - ⬜ is everything needed to be shown ??
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
-- ⬜ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 
-- ⬜ ? add google sign in
 - ✅ ? create baka provider
+- ⬜ ? add google sign in
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be   triggered on build)
 - ⬜ ? add images to meals
 - ⬜ refactor baka_service - add separate file for http requests
