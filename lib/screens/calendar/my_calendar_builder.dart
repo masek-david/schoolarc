@@ -17,42 +17,39 @@ CalendarBuilders<Object?> myCalendarBuilder({
   return CalendarBuilders(
     outsideBuilder: (context, day, focusedDay) {
       return RescheduleDragTarget(
-              currentDate: day,
-              builder: (context, candidateData, rejectedData) {
-                if (candidateData.isNotEmpty) {
-                  HapticFeedback.selectionClick();
-                }
+        currentDate: day,
+        builder: (context, candidateData, rejectedData) {
+          if (candidateData.isNotEmpty) {
+            HapticFeedback.selectionClick();
+          }
 
-                return AnimatedContainer(
-                  padding: padding,
-                  margin: margin,
-                  duration: animationDuration,
-                  decoration: BoxDecoration(
-                    color: candidateData.isNotEmpty
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.circle,
-                  ),
-                  child: SizedBox(
-                    width: 40,
-                    child: Text(
-                      day.day.toString(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .dynamicLighten(
-                              makeItLighter: Theme.of(context).brightness !=
-                                  Brightness.dark,
-                              amount: 0.4,
-                            ),
+          return AnimatedContainer(
+            padding: padding,
+            margin: margin,
+            duration: animationDuration,
+            decoration: BoxDecoration(
+              color: candidateData.isNotEmpty
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surface,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              width: 40,
+              child: Text(
+                day.day.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.dynamicLighten(
+                        makeItLighter:
+                            Theme.of(context).brightness != Brightness.dark,
+                        amount: 0.4,
                       ),
-                    ),
-                  ),
-                );
-              },
-            );
+                ),
+              ),
+            ),
+          );
+        },
+      );
     },
     selectedBuilder: (context, day, focusedDay) {
       return RescheduleDragTarget(
@@ -151,6 +148,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
       );
     },
     markerBuilder: (context, day, events) {
+      final theme = Theme.of(context);
       List<Homework> homeworks = [];
       List<Exam> exams = [];
       for (var event in events) {
@@ -210,13 +208,13 @@ CalendarBuilders<Object?> myCalendarBuilder({
                       },
                       childWhenDragging: Opacity(
                         opacity: 0.3,
-                        child: _buildExamTile(exam, context),
+                        child: _buildExamTile(exam, context, theme),
                       ),
                       feedback: SizedBox(
                         width: 100,
-                        child: _buildExamTile(exam, context),
+                        child: _buildExamTile(exam, context, theme),
                       ),
-                      child: _buildExamTile(exam, context),
+                      child: _buildExamTile(exam, context, theme),
                     ),
                   );
                 },
@@ -229,19 +227,26 @@ CalendarBuilders<Object?> myCalendarBuilder({
   );
 }
 
-Widget _buildExamTile(Exam exam, BuildContext context) {
-  Color color = exam.priority.getContainerColor(context);
-  String shortcut = exam.subject?.trimmedShortcut ?? '';
+Widget _buildExamTile(Exam exam, BuildContext context, ThemeData theme) {
+  final isLight = theme.brightness == Brightness.light;
+  final color = exam.priority.getContainerColor(context, subtle: exam.isCompleted);
+  final shortcut = exam.subject?.trimmedShortcut ?? '';
+  Color textColor = theme.colorScheme.onSurface;
+  if (exam.isCompleted) {
+    textColor = textColor.dynamicLighten(makeItLighter: isLight, amount: 0.2);
+  }
 
   return Container(
     width: double.maxFinite,
     margin: const EdgeInsets.all(2),
     padding: const EdgeInsets.all(2),
-    decoration:
-        BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(6),
+    ),
     child: Text(
       '$shortcut ${exam.text}',
-      style: Theme.of(context).textTheme.bodySmall,
+      style: theme.textTheme.bodySmall!.copyWith(color: textColor),
       maxLines: 1,
       softWrap: false,
     ),

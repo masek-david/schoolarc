@@ -207,9 +207,17 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   }
 
   // called when user closes the app and when user opens the app
-  void _onAppLeaveOrReturn() {
+  void _onAppLeaveOrReturn(bool nowActive) {
     updateHwWidget(ref.read(hwWidgetProvider));
     NotificationSender.scheduletomorrowNotification();
+
+    if (nowActive) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          ref.read(examProvider.notifier).checkAllIfCompleted();
+        },
+      );
+    }
   }
 
   @override
@@ -217,10 +225,10 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     super.initState();
 
     appStateListener = AppLifecycleListener(
-      onResume: () => _onAppLeaveOrReturn(),
-      onInactive: () => _onAppLeaveOrReturn(),
+      onResume: () => _onAppLeaveOrReturn(true),
+      onInactive: () => _onAppLeaveOrReturn(false),
     );
-    _onAppLeaveOrReturn();
+    _onAppLeaveOrReturn(true);
 
     // add riverpod reference to firestore service, need to update firebaseOverlay
     firebaseService = FirebaseService(ref: ref);

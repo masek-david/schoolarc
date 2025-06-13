@@ -26,10 +26,9 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMissed = exam.deadline.isBeforeToday();
-
-    Color missedColor =
-        Colors.red.harmonizeWith(Theme.of(context).primaryColor);
+    final Color? missedColor = exam.deadline.isBeforeToday()
+        ? Colors.red.harmonizeWith(Theme.of(context).primaryColor)
+        : null;
 
     double opacity = 1;
     if (exam.isCompleted == true) {
@@ -146,9 +145,7 @@ class ExamTile extends StatelessWidget {
                         Text(
                           exam.deadline.dateText(),
                           maxLines: 2,
-                          style: TextStyle(
-                              color: isMissed ? missedColor : null,
-                              fontSize: 12),
+                          style: TextStyle(color: missedColor, fontSize: 12),
                         ),
                       const SizedBox(width: 8),
                     ],

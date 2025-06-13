@@ -75,11 +75,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
     return LayoutBuilder(
       builder: (context, constraints) {
         double extentRatio = 135 / constraints.maxWidth;
-    
+
         if (extentRatio > 1) {
           extentRatio = 1;
         }
-    
+
         return Slidable(
           groupTag: '0',
           enabled: !expUseHwOverlay,
@@ -142,44 +142,44 @@ class _HomeworkTileState extends State<HomeworkTile> {
                   ? Theme.of(context).colorScheme.surfaceContainerLowest
                   : Theme.of(context).colorScheme.surfaceContainerLow,
             ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: expUseHwOverlay
-                  ? () {
-                      final RenderBox renderBox = widgetKey.currentContext!
-                          .findRenderObject() as RenderBox;
-                      final Offset position = renderBox
-                          .localToGlobal(Offset.zero); // Get global position
-                      final Size size = renderBox.size; // Get widget size
-    
-                      late final OverlayEntry overlay;
-                      overlay = OverlayEntry(
-                        builder: (context) {
-                          return HwOverlay(
-                            hw: widget.hw,
-                            position: position,
-                            size: size,
-                            onEdit: widget.onEdit,
-                            onDelete: widget.onDelete,
-                            onConvert: widget.onConvert,
-                            onHide: () {
-                              overlay.remove();
-                              setState(() {
-                                isShown = true;
-                              });
-                            },
-                          );
-                        },
-                      );
-    
-                      Overlay.of(context).insert(overlay);
-                      setState(() {
-                        isShown = false;
-                      });
-                    }
-                  : widget.onEdit,
-              child: Material(
-                color: Colors.transparent,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(borderRadius),
+                onTap: expUseHwOverlay
+                    ? () {
+                        final RenderBox renderBox = widgetKey.currentContext!
+                            .findRenderObject() as RenderBox;
+                        final Offset position = renderBox
+                            .localToGlobal(Offset.zero); // Get global position
+                        final Size size = renderBox.size; // Get widget size
+
+                        late final OverlayEntry overlay;
+                        overlay = OverlayEntry(
+                          builder: (context) {
+                            return HwOverlay(
+                              hw: widget.hw,
+                              position: position,
+                              size: size,
+                              onEdit: widget.onEdit,
+                              onDelete: widget.onDelete,
+                              onConvert: widget.onConvert,
+                              onHide: () {
+                                overlay.remove();
+                                setState(() {
+                                  isShown = true;
+                                });
+                              },
+                            );
+                          },
+                        );
+
+                        Overlay.of(context).insert(overlay);
+                        setState(() {
+                          isShown = false;
+                        });
+                      }
+                    : widget.onEdit,
                 child: Opacity(
                   opacity: opacity,
                   child: Padding(
@@ -217,9 +217,8 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             widget.hw.description != '')
                           Icon(
                             Icons.notes,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         if (widget.hw.description != null &&
                             widget.hw.description != '')

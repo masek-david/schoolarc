@@ -26,18 +26,6 @@ class _HomeSettingsState extends State<HomeSettings> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SettingTile.withTimePicker(
-          title: 'Lunch time',
-          subtitle: 'When meals for next day appear',
-          time: lunchTime,
-          onChanged: (value) {
-            settings.save(Setting.mealsShowTodayUntil, value);
-            setState(() {
-              lunchTime = value;
-            });
-            widget.onChanged();
-          },
-        ),
         SettingTile.withSwitch(
           title: 'Show my name',
           subtitle:
@@ -47,6 +35,17 @@ class _HomeSettingsState extends State<HomeSettings> {
             settings.save(Setting.homeShowUserName, value);
             setState(() {
               showMyName = value;
+            });
+            widget.onChanged();
+          },
+        ),
+        SettingTile.withSwitch(
+          title: 'Show Bakaláři timetable',
+          value: showBaka,
+          onChanged: (value) {
+            settings.save(Setting.useBakalari, value);
+            setState(() {
+              showBaka = value;
             });
             widget.onChanged();
           },
@@ -62,13 +61,14 @@ class _HomeSettingsState extends State<HomeSettings> {
             widget.onChanged();
           },
         ),
-        SettingTile.withSwitch(
-          title: 'Show Bakaláři timetable',
-          value: showBaka,
+        SettingTile.withTimePicker(
+          title: 'Lunch time',
+          subtitle: 'When meals for next day appear',
+          time: lunchTime,
           onChanged: (value) {
-            settings.save(Setting.useBakalari, value);
+            settings.save(Setting.mealsShowTodayUntil, value);
             setState(() {
-              showBaka = value;
+              lunchTime = value;
             });
             widget.onChanged();
           },

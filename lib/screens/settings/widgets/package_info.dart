@@ -21,10 +21,10 @@ class PackageInfoWidget extends StatelessWidget {
           showMessage(context, 'You are already the developer');
           return;
         }
-        if (tapped == 5) {
-          showMessage(context, 'Press 5 more times to become developer');
+        if (tapped == 3) {
+          showMessage(context, 'Press 2 more times to become developer');
         }
-        if (tapped == 10) {
+        if (tapped == 5) {
           showMessage(context, 'You\'ve become the developer');
           tapped = 0;
           onBecameDev();

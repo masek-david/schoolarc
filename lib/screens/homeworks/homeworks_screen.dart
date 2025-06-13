@@ -222,13 +222,14 @@ class HomeworksScreen extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: HomeworkTile(
-                  hw: hw,
-                  onChangedCompletion: (value) {
-                    ref.read(hwProvider.notifier).complete(hw, value);
-                  },
-                  onDelete: () => deleteHw(context, ref, hw),
-                  onEdit: () => editHw(context, ref, hw),
-                  onConvert: () => convertHw(context, ref, hw)),
+                hw: hw,
+                onChangedCompletion: (value) {
+                  ref.read(hwProvider.notifier).complete(hw, value);
+                },
+                onDelete: () => deleteHw(context, ref, hw),
+                onEdit: () => editHw(context, ref, hw),
+                onConvert: () => convertHw(context, ref, hw),
+              ),
             );
           },
         ),

@@ -1,4 +1,5 @@
 # FIX
+baka notifier still throws wrong errors
 
 # version 2.0.0
 - ✅ change package name (cz.masci.schoolarc)
