@@ -34,14 +34,11 @@ class WelcomeScreen extends StatelessWidget {
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            leading: const SizedBox.shrink(),
+            leading: TextButton(
+              onPressed: onEnd,
+              child: const Text('Skip'),
+            ),
             backgroundColor: Colors.transparent,
-            actions: [
-              TextButton(
-                onPressed: onEnd,
-                child: const Text('Skip'),
-              ),
-            ],
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
@@ -80,10 +77,10 @@ class WelcomeScreen extends StatelessWidget {
                   controller: _controller,
                   itemCount: pages.length,
                   itemBuilder: (context, index) {
-                    if(index == pages.length - 1){
+                    if (index == pages.length - 1) {
                       return pages.last;
                     }
-                    
+
                     return Scaffold(
                       body: pages[index],
                     );

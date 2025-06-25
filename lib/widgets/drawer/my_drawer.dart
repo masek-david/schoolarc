@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/recap/recap_button.dart';
+import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/screens/recently_deleted_screen.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
@@ -177,6 +179,26 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
+            if (isRecapDate())
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RecapButton(
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'View stats about your year 🎉',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             MyDrawerButton(
               text: 'View tutorial',
               icon: const Icon(Icons.school),

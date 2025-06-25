@@ -18,6 +18,8 @@ import 'package:school_manager/database/exam_database.dart';
 import 'package:school_manager/database/hw_database.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/database/subject_database.dart';
+import 'package:school_manager/screens/recap/recap_button.dart';
+import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -214,6 +216,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       examNumberOfIncomplete: upcomingExams,
                       hwNumberOfMissed: missedHw.length,
                     ),
+                    if (isRecapDate() && !hasSeenRecap())
+                      RecapButton(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Another year behind 🎉',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              Text('View stats about your year'),
+                            ],
+                          ),
+                        ),
+                      ),
                     SizedBox(height: 24),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

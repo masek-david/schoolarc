@@ -34,6 +34,7 @@ enum Setting {
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
   expUseHwOverlay,
+  recapShownForYear,
 }
 
 class SettingModel {
@@ -160,7 +161,11 @@ class SettingsDatabase {
     Setting.expUseHwOverlay: SettingModel(
       defaultValue: false,
       key: 'expHwOverlay',
-    )
+    ),
+    Setting.recapShownForYear: SettingModel(
+      defaultValue: 0,
+      key: 'recapShownForYear',
+    ),
   };
   final _settingsBox = Hive.box(settingsBox);
 

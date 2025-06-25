@@ -251,7 +251,8 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     }
 
     if (!firebaseService.isloggedIn && kIsWeb && !kDebugMode) {
-      showingFirebaseLoginScreen = true;
+      // TODO should we hide this or not?
+      // showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }
 

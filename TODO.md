@@ -1,20 +1,7 @@
 # FIX
-baka notifier still throws wrong errors
+baka current timetable maybe shouldnt save the subjects ???
 
-# version 2.0.0
-- ✅ change package name (cz.masci.schoolarc)
-- ✅ check widget
-- ✅ move to hivece
-- ✅ remove old migration stuff
-- ✅ importing
-- ✅ fix dates (save them just as utc)
-- ✅ move to realtime database
-- ✅ rework notifications - scheduling on app leave
-    - ⬜ turn off notifications for weekend
-    - ⬜ edge case - when the app is opened at 18:00 the notification could be old
-- ✅ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
-
-optional:
+# NEW:
 - ✅ when should the widget be updated??
 - ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
@@ -27,7 +14,6 @@ optional:
 - ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task 
-- ⬜ why are there two firebase_options files
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
@@ -40,24 +26,46 @@ optional:
 - ⬜ ? add images to meals
 - ⬜ refactor baka_service - add separate file for http requests
     
-settings:
-- ✅ rework switch action and settings screen(state management)
-- ✅ tapping on any setting tile should trigger its switch
-- ✅ when choosing app theme, show its type (vibrant,...)
+## notifications:
+- ⬜ turn off notifications for weekend
+- ⬜ edge case - when the app is opened at 18:00 the notification could be old
 
-new features:
+## new features:
 - ✅ ask for notification permission when launching app for first time, maybe periodicaly
 - ⬜ meals notifications
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 
-web features
+## web features
 - ✅ web - spatne se horizontalne scrolluje, pridat tlacitka
 - ✅ web appbary jsou divne dole, asi protoze na webu neni safearea
 - ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
 - ⬜ onHover
 - ⬜ keyboard shortcuts
 
-# maybe
+# MAYBE
 - ? remake app isWide as riverpod provider
- 
 - remove slide to delete?
+
+## year recap
+- ⬜ in background move this years hws and exams tiles
+- ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
+
+
+
+
+
+# VERSION 2.0.0
+- ✅ change package name (cz.masci.schoolarc)
+- ✅ check widget
+- ✅ move to hivece
+- ✅ remove old migration stuff
+- ✅ importing
+- ✅ fix dates (save them just as utc)
+- ✅ move to realtime database
+- ✅ rework notifications - scheduling on app leave
+- ✅ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
+
+## settings:
+- ✅ rework switch action and settings screen(state management)
+- ✅ tapping on any setting tile should trigger its switch
+- ✅ when choosing app theme, show its type (vibrant,...)

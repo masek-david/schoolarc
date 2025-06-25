@@ -177,10 +177,10 @@ class StravaService {
     }
 
     if (canteenCode == '') {
-      throw ServiceException('No canteen, please login',
+      throw ServiceException('No canteen, please log in',
           action: ExceptionActions.stravaLogin);
     }
-
+    
     final uri = Uri.parse(
         'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=$canteenCode&jazyk=CZ&httphlavicka=A%C2%A0');
 

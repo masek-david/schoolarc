@@ -75,6 +75,9 @@ class ErrorTile extends StatelessWidget {
             },
             child: Text(
               'Login',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
         if (action == ExceptionActions.bakaLogin)

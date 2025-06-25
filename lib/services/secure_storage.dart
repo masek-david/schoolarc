@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
@@ -10,19 +7,10 @@ class SecureStorage {
   static const String bakaSchoolNameKey = 'bakaSchoolUrlKey';
 
   Future<String> read(String key) async {
-    if (!kIsWeb) {
-      if (Platform.isAndroid || Platform.isIOS) {
-        return await _storage.read(key: key) ?? '';
-      }
-    }
-    return '';
+    return await _storage.read(key: key) ?? '';
   }
 
-  Future<void> write(String key, String value) async{
-    if (!kIsWeb) {
-      if (Platform.isAndroid || Platform.isIOS) {
-        await _storage.write(key: key, value: value);
-      }
-    }
+  Future<void> write(String key, String value) async {
+    await _storage.write(key: key, value: value);
   }
 }

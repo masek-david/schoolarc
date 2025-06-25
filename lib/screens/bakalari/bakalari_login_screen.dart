@@ -52,6 +52,23 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   void loadLoginInfo() async {
     _schoolController.text = await ref.read(bakaProvider.notifier).schoolName;
     _usernameController.text = await ref.read(bakaProvider.notifier).username;
+
+    if (_schoolController.text == '' && mounted) {
+      showDialogAdaptive(
+        context: context,
+        title: Text('Logging in will import new subjects'),
+        content: Text(
+          'If you already have imported the subjects before, make sure they exist in the app.',
+        ),
+        actions: [
+          adaptiveDialogButton(
+            context: context,
+            child: Text('Okay'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      );
+    }
   }
 
   @override

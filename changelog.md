@@ -1,6 +1,8 @@
-## [2.0.0]() - 2025-
+## [2.0.0]() - 2025-06-25
 ### Added
 - Added option for importing app data, including subjects, homework and exams
+- Added full Bakalari support for web
+- Added year recap
 - Added info about how many times a subject is used
 - Added new priority picker
 

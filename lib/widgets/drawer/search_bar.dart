@@ -72,7 +72,9 @@ class MySearchBar extends ConsumerWidget {
               item = ExamTile(
                 exam: task as Exam,
                 onDelete: null,
-                onEdit: () {},
+                onEdit: () {
+                  editExam(context, ref, task);
+                },
                 onConvert: null,
               );
             }
