@@ -8,8 +8,10 @@ baka current timetable maybe shouldnt save the subjects ???
 - ✅ add errors message for baka/strava
 - ✅ proper firebase error handling, if no user dont even try it,...
 - ✅ fix arrows in calendar (not centered on web)
+- ✅ create baka provider
 - ⬜ unite the ui/ux for extensions (in settings and in welcome page)
     - ⬜ create providers for logins
+- ⬜ add google sign in
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
 - ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ fix the frequency when is app searching for baka homeworks
@@ -20,19 +22,13 @@ baka current timetable maybe shouldnt save the subjects ???
     - ⬜ is everything needed to be shown ??
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 
-- ✅ ? create baka provider
-- ⬜ ? add google sign in
-- ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be   triggered on build)
-- ⬜ ? add images to meals
-- ⬜ refactor baka_service - add separate file for http requests
-    
 ## notifications:
 - ⬜ turn off notifications for weekend
 - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 
 ## new features:
 - ✅ ask for notification permission when launching app for first time, maybe periodicaly
-- ⬜ meals notifications
+- ⬜ meals notifications (before meal?, remind to pick a week before?)
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 
 ## web features
@@ -42,14 +38,17 @@ baka current timetable maybe shouldnt save the subjects ???
 - ⬜ onHover
 - ⬜ keyboard shortcuts
 
-# MAYBE
-- ? remake app isWide as riverpod provider
-- remove slide to delete?
-
 ## year recap
 - ⬜ in background move this years hws and exams tiles
 - ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
 
+# MAYBE
+- ⬜ refactor baka_service - add separate file for http requests
+- ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
+- ⬜ ? add images to meals
+- ⬜ ? remake app isWide as riverpod provider
+- ⬜ ? remove slide to delete
+    
 
 
 
