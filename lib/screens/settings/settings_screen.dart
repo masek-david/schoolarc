@@ -1,21 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
-import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
+import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/settings/setting_pages/style_motion_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
 import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
-import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
-import 'package:school_manager/screens/settings/widgets/slider_action.dart';
+import 'package:school_manager/screens/settings/widgets/package_info.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
-import 'package:school_manager/screens/settings/setting_pages/tommorrow_notifications_page.dart';
+import 'package:school_manager/screens/settings/setting_pages/tomorrow_notifications_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
     required this.refreshTheme,
@@ -23,17 +23,17 @@ class SettingsScreen extends StatelessWidget {
 
   final void Function() refreshTheme;
 
-  void showSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)),
-    );
-  }
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool showDebug = settings.get(Setting.showDebugInfo);
+  bool showFirebase = settings.get(Setting.useFirebase);
+  bool useExperimentalHwOverlay = settings.get(Setting.expUseHwOverlay);
 
   @override
   Widget build(BuildContext context) {
-    bool showDebug = settings.get(Setting.showDebugInfo);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -41,150 +41,155 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           SettingTile(
-            label: 'App theme',
-            text: 'Customize the look and feel of the app',
+            title: 'Color theme',
+            subtitle: 'Customize the colors of the app',
             icon: Icons.palette_outlined,
-            onTap: () => navigatorKey.currentState?.push(
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => ThemePage(
-                  refreshTheme: refreshTheme,
+                  refreshTheme: widget.refreshTheme,
                 ),
               ),
             ),
           ),
           SettingTile(
-            label: 'Upcoming day notifications',
-            text: 'Notification with homeworks and exams for next day',
-            icon: Icons.circle_notifications_outlined,
-            onTap: () => navigatorKey.currentState
-                ?.push(
+            title: 'Style & Motion',
+            subtitle: 'Customize animations and more',
+            icon: Icons.animation,
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (context) => const TommorrowNotificationsPage(),
+                builder: (context) => StyleMotionPage(
+                  refreshTheme: widget.refreshTheme,
+                ),
               ),
-            )
-                .then(
-              (value) {
-                NotificationSender.scheduleTommorrowNotification(
-                    showSnackbar: (text) => showSnackBar(context, text));
-              },
             ),
           ),
+          if (NotificationSender.isCompatiblePlatform())
+            SettingTile(
+              title: 'Upcoming day notifications',
+              subtitle: 'Notification with homeworks and exams for next day',
+              icon: Icons.notifications_outlined,
+              trailing: Icon(Icons.keyboard_arrow_right),
+              onTap: (context) => navigatorKey.currentState
+                  ?.push(
+                MaterialPageRoute(
+                  builder: (context) => const TomorrowNotificationsPage(),
+                ),
+              )
+                  .then(
+                (value) {
+                  NotificationSender.scheduletomorrowNotification(
+                      showSnackbar: (text) => showMessage(context, text));
+                },
+              ),
+            ),
           Divider(),
           SettingTile(
-            label: 'Bakaláři login',
+            title: 'Bakaláři login',
             icon: Icons.hexagon_outlined,
-            onTap: () => navigatorKey.currentState?.push(
+            onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const BakaLoginScreen(),
               ),
             ),
           ),
           SettingTile(
-            label: 'Strava cz login',
+            title: 'Strava.cz login',
             icon: Icons.food_bank_outlined,
-            onTap: () => navigatorKey.currentState?.push(
+            onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const StravaLoginScreen(),
               ),
             ),
           ),
-          if (settings.get(Setting.useFirebase))
-            SettingTile(
-              label: 'Firebase login',
-              icon: Icons.fireplace,
-              onTap: () => navigatorKey.currentState?.push(
-                MaterialPageRoute(
-                  builder: (context) => const FirestoreLoginScreen(),
+          AnimatedSize(
+            duration: Durations.medium1,
+            child: SizedBox(
+              height: showFirebase ? null : 0,
+              child: SettingTile(
+                title: 'Firebase login',
+                icon: Icons.fireplace,
+                onTap: (context) => navigatorKey.currentState?.push(
+                  MaterialPageRoute(
+                    builder: (context) => const FirebaseLoginScreen(),
+                  ),
                 ),
               ),
             ),
-          Divider(),
-          InitialAppPage(),
-          SettingTile(
-            label: 'Screen switching animation duration',
-            text: 'In miliseconds (0 disables animation)',
-            icon: Icons.timelapse,
-            newLineAction: SliderAction(
-              inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
-              divisions: 10,
-              min: 0,
-              max: 500,
-              onChanged: (value) {
-                settings.save(Setting.pageSwitchAnimationDuration, value);
-              },
-            ),
-          ),
-          SettingTile(
-            label: 'Show app border',
-            text: 'On big screen or in landscape, show borders in the app',
-            trailing: SwitchAction(
-              initialValue: settings.get(Setting.showAppOverlay),
-              onChanged: (value) {
-                settings.save(Setting.showAppOverlay, value);
-                refreshTheme();
-              },
-            ),
           ),
           Divider(),
+          ImportExportRow(),
           SettingTile(
-            label: 'View app changelog',
+            title: 'View app changelog',
             icon: Icons.data_object,
-            onTap: () => navigatorKey.currentState?.push(
+            onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const ChangelogScreen(),
               ),
             ),
           ),
-          SettingTile(
-            label: 'Show debug info',
-            trailing: SwitchAction(
-              initialValue: settings.get(Setting.showDebugInfo),
-              onChanged: (value) {
-                settings.save(Setting.showDebugInfo, value);
-                refreshTheme();
-              },
-            ),
-          ),
-          if (showDebug) ImportExportRow(),
           if (showDebug)
             SettingTile(
-              label: 'View app logs',
+              title: 'View app logs',
               icon: Icons.data_array,
-              onTap: () => navigatorKey.currentState?.push(
+              onTap: (context) => navigatorKey.currentState?.push(
                 MaterialPageRoute(
                   builder: (context) => const LogsScreen(),
                 ),
               ),
             ),
-          if (showDebug)
-            SettingTile(
-              label: 'Use firebase',
-              trailing: SwitchAction(
-                initialValue: settings.get(Setting.useFirebase),
+          if (showDebug) Divider(),
+          if (showDebug || kDebugMode)
+            SettingTile.withSwitch(
+                title: 'Developer mode',
+                value: showDebug,
                 onChanged: (value) {
-                  settings.save(Setting.useFirebase, value);
-                  refreshTheme();
-                },
-              ),
+                  settings.save(Setting.showDebugInfo, value);
+                  setState(() {
+                    showDebug = value;
+                  });
+                }),
+          if (showDebug)
+            SettingTile.withSwitch(
+              title: 'Use firebase',
+              value: showFirebase,
+              onChanged: (value) {
+                settings.save(Setting.useFirebase, value);
+                setState(() {
+                  showFirebase = value;
+                });
+              },
             ),
           if (showDebug)
-            SettingTile(
-              label: 'Use experimental homework tile overlay',
-              trailing: SwitchAction(
-                initialValue: settings.get(Setting.expUseHwOverlay),
-                onChanged: (value) {
-                  settings.save(Setting.expUseHwOverlay, value);
-                  refreshTheme();
-                },
+            SettingTile.withSwitch(
+              title: 'Use experimental homework tile overlay',
+              value: useExperimentalHwOverlay,
+              onChanged: (value) {
+                settings.save(Setting.expUseHwOverlay, value);
+                setState(() {
+                  useExperimentalHwOverlay = value;
+                });
+                widget.refreshTheme();
+              },
+            ),
+          if (showDebug)
+            Center(
+              child: Text(
+                packageInfo.packageName,
+                style: TextStyle(
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest),
               ),
             ),
           Center(
-            child: Text(
-              '${packageInfo.version} build ${packageInfo.buildNumber}',
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest),
-            ),
-          )
+              child: PackageInfoWidget(
+            onBecameDev: () => setState(() {
+              showDebug = true;
+              settings.save(Setting.showDebugInfo, true);
+            }),
+          ))
         ],
       ),
     );

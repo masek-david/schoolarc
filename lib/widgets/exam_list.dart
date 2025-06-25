@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
 
 class ExamList extends ConsumerWidget {
@@ -19,21 +19,21 @@ class ExamList extends ConsumerWidget {
     this.textEmpty,
   });
 
-  final List<ExamDTO> examList;
-  final void Function(ExamDTO exam) onDelete;
-  final void Function(ExamDTO exam) onEdit;
-  final void Function(ExamDTO exam) onConvert;
+  final List<Exam> examList;
+  final void Function(Exam exam) onDelete;
+  final void Function(Exam exam) onEdit;
+  final void Function(Exam exam) onConvert;
   final bool draggable;
   final bool showText;
   final bool showDates;
   final String textFull;
   final String? textEmpty;
 
-  Widget buildTile(BuildContext context, WidgetRef ref, ExamDTO exam) {
+  Widget buildTile(BuildContext context, WidgetRef ref, Exam exam) {
     return ClipRect(
       child: ExamTile(
         exam: exam,
-        showDeadline: false,
+        showDeadline: showDates,
         onDelete: () => onDelete(exam),
         onEdit: () => onEdit(exam),
         onConvert: () => onConvert(exam),
@@ -52,9 +52,9 @@ class ExamList extends ConsumerWidget {
       else if (showText)
         TextSeparator(text: textFull),
       ...List.generate(examList.length, (index) {
-        ExamDTO exam = examList[index];
+        Exam exam = examList[index];
         return Padding(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: draggable
               ? LayoutBuilder(
                   builder: (context, constraints) {

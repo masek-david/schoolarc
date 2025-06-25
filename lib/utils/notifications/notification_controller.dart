@@ -16,8 +16,8 @@ class NotificationController {
       ReceivedNotification receivedNotification) async {
     // Your code goes here
 
-    if (receivedNotification.channelKey == 'tommorrow_channel') {
-      NotificationSender.scheduleTommorrowNotification();
+    if (receivedNotification.channelKey == 'tomorrow_channel') {
+      NotificationSender.scheduletomorrowNotification();
     }
   }
 
@@ -36,7 +36,7 @@ class NotificationController {
 
 
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
-    if (receivedAction.channelKey == 'tommorrow_channel') {
+    if (receivedAction.channelKey == 'tomorrow_channel') {
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
         '/calendar',
         (route) => (route.settings.name != '/calendar') || route.isFirst,

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/calendar/widgets/calendar_widget.dart';
 import 'package:school_manager/screens/calendar/widgets/pages_widget.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -21,10 +21,10 @@ import 'package:school_manager/utils/extensions/datetime_extension.dart';
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
-    this.showTommorrow = false,
+    this.showtomorrow = false,
   });
 
-  final bool showTommorrow;
+  final bool showtomorrow;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -36,23 +36,23 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
-  late final showTommorrow =
-      settings.get(Setting.calendarInitialIsTommorrow) || widget.showTommorrow;
+  late final showtomorrow =
+      settings.get(Setting.calendarInitialIstomorrow) || widget.showtomorrow;
   late final PageController _pageController = PageController(
     viewportFraction: 0.90,
-    initialPage: negativePageCount + (showTommorrow ? 1 : 0),
+    initialPage: negativePageCount + (showtomorrow ? 1 : 0),
   );
 
   late bool showMissed = settings.get(Setting.calendarShowMissed);
   final _resizeController = ResizableController();
   final List<double> initialRatios =
-      settings.get(Setting.calendarResizableContainerRatio);
+      List<double>.from(settings.get(Setting.calendarResizableContainerRatio));
 
   @override
   void initState() {
     super.initState();
 
-    if (showTommorrow) {
+    if (showtomorrow) {
       _focusedDay =
           DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
       _selectedDay = _focusedDay;
@@ -77,8 +77,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Widget buildCalendar(
     bool isWide,
-    Map<DateTime, List<HomeworkDTO>> hws,
-    Map<DateTime, List<ExamDTO>> exams,
+    Map<DateTime, List<Homework>> hws,
+    Map<DateTime, List<Exam>> exams,
   ) {
     return CalendarWidget(
       onEdit: (exam) => editExam(context, ref, exam),
@@ -114,9 +114,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Widget buildPages(
-    Map<DateTime, List<HomeworkDTO>> hws,
-    Map<DateTime, List<ExamDTO>> exams,
-    List<HomeworkDTO> missedHw,
+    Map<DateTime, List<Homework>> hws,
+    Map<DateTime, List<Exam>> exams,
+    List<Homework> missedHw,
   ) {
     return PagesWidget(
       examOnDelete: (exam) => deleteExam(context, ref, exam),
@@ -189,79 +189,83 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
       builder: (context, isWide, child) {
-        return Scaffold(
-          appBar: isWide ? null : buildAppBar(isWide),
-          floatingActionButtonLocation: isWide ? FloatingActionButtonLocation.endDocked : null,
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              FloatingActionButton.extended(
-                tooltip: 'Add new exam for ${_selectedDay.formattedDate()}',
-                heroTag: 'exam_btn',
-                onPressed: () {
-                  HapticFeedback.mediumImpact();
-                  addNewExam(context, ref, initialDate: _selectedDay);
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Exam'),
-              ),
-              const SizedBox(height: 10),
-              FloatingActionButton.extended(
-                tooltip: 'Add new homework for ${_selectedDay.formattedDate()}',
-                heroTag: 'homework_btn',
-                onPressed: () {
-                  HapticFeedback.mediumImpact();
-                  addNewHw(context, ref, initialDate: _selectedDay);
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Homework'),
-              ),
-            ],
-          ),
-          body: isWide
-              ? Container(
-                  // this is what is shown behind the resizable container
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  child: ResizableContainer(
-                    controller: _resizeController,
-                    direction: Axis.horizontal,
-                    children: [
-                      ResizableChild(
-                        size: ResizableSize.ratio(initialRatios[0], min: 300),
-                        divider: ResizableDivider(
-                          thickness: 4,
-                          length: ResizableSize.pixels(60),
-                          padding: 12,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Scaffold(
-                            appBar: buildAppBar(isWide),
-                            body: buildCalendar(isWide, hws, exams),
+        return MediaQuery.removePadding(
+        // the padding doesnt need to exist anymore, the fabs would be too high
+          context: context,
+          removeBottom: true,
+          child: Scaffold(
+            appBar: isWide ? null : buildAppBar(isWide),
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FloatingActionButton.extended(
+                  tooltip: 'Add new exam for ${_selectedDay.dateText().toLowerCase()}',
+                  heroTag: 'exam_btn',
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    addNewExam(context, ref, initialDate: _selectedDay);
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Exam'),
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton.extended(
+                  tooltip: 'Add new homework for ${_selectedDay.dateText().toLowerCase()}',
+                  heroTag: 'homework_btn',
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    addNewHw(context, ref, initialDate: _selectedDay);
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Homework'),
+                ),
+              ],
+            ),
+            body: isWide
+                ? Container(
+                    // this is what is shown behind the resizable container
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: ResizableContainer(
+                      controller: _resizeController,
+                      direction: Axis.horizontal,
+                      children: [
+                        ResizableChild(
+                          size: ResizableSize.ratio(initialRatios[0], min: 300),
+                          divider: ResizableDivider(
+                            thickness: 4,
+                            length: ResizableSize.pixels(60),
+                            padding: 12,
                           ),
-                        ),
-                      ),
-                      ResizableChild(
-                        size: ResizableSize.ratio(initialRatios[1], min: 300),
-                        child: Container(
-                          decoration: BoxDecoration(
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            color: Theme.of(context).colorScheme.surface,
+                            child: Scaffold(
+                              appBar: buildAppBar(isWide),
+                              body: buildCalendar(isWide, hws, exams),
+                            ),
                           ),
-                          child: buildPages(hws, exams, missedHws),
                         ),
-                      ),
+                        ResizableChild(
+                          size: ResizableSize.ratio(initialRatios[1], min: 300),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                            child: buildPages(hws, exams, missedHws),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: [
+                      buildCalendar(isWide, hws, exams),
+                      const SizedBox(height: 4),
+                      Expanded(child: buildPages(hws, exams, missedHws)),
                     ],
                   ),
-                )
-              : Column(
-                  children: [
-                    buildCalendar(isWide, hws, exams),
-                    const SizedBox(height: 4),
-                    Expanded(child: buildPages(hws, exams, missedHws)),
-                  ],
-                ),
+          ),
         );
       },
     );

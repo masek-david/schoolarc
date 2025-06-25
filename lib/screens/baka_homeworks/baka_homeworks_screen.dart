@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
@@ -17,17 +17,29 @@ class BakaHomeworksScreen extends ConsumerStatefulWidget {
 }
 
 class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
-  late var homeworksFuture = bakaService.getHomeworks();
+  Future<List<BakaHomework>>? homeworksFuture;
   var homeworks = <BakaHomework>[];
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        refresh();
+      },
+    );
+    super.initState();
+  }
 
   void add(BuildContext context, BakaHomework hw, bool isHomework) {
     if (isHomework) {
       ref.read(hwProvider.notifier).saveNew(
-            hw.copyWith(timestamp: Timestamp.now(), isCompleted: false).toHw(),
+            hw
+                .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false)
+                .toHw(),
           );
     } else {
       ref.read(examProvider.notifier).saveNew(
-            hw.copyWith(timestamp: Timestamp.now()).toExam(),
+            hw.copyWith(timestamp: DateTime.now().toUtc()).toExam(),
           );
     }
 
@@ -42,6 +54,18 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
     });
 
     showMessage(context, '${isHomework ? 'Homework' : 'Exam'} added');
+  }
+
+  Future<void> refresh() async {
+    setState(() {
+      homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
+    });
+
+    try {
+      await homeworksFuture;
+    } catch (_) {}
+
+    return;
   }
 
   @override
@@ -62,11 +86,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
               error: snapshot.error,
               actions: [
                 IconButton(
-                  onPressed: () {
-                    setState(() {
-                      homeworksFuture = bakaService.getHomeworks();
-                    });
-                  },
+                  onPressed: refresh,
                   icon: Icon(Icons.refresh),
                 ),
               ],

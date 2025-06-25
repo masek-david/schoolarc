@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class CalendarSettings extends StatefulWidget {
@@ -18,13 +17,16 @@ class CalendarSettings extends StatefulWidget {
 }
 
 class _CalendarSettingsState extends State<CalendarSettings> {
+  bool showMissed = settings.get(Setting.calendarShowMissed);
+  bool showArrows = settings.get(Setting.calendarShowArrows);
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SettingTile(
-          label: 'Initial date',
+          title: 'Initial date',
           trailing: DropDownAction(
             items: const [
               DropdownMenuItem(
@@ -33,32 +35,41 @@ class _CalendarSettingsState extends State<CalendarSettings> {
               ),
               DropdownMenuItem(
                 value: true,
-                child: Text('Tommorrow'),
+                child: Text('Tomorrow'),
               ),
             ],
-            initialValue: settings.get(Setting.calendarInitialIsTommorrow),
+            initialValue: settings.get(Setting.calendarInitialIstomorrow),
             onChanged: (value) {
               settings.save(
-                Setting.calendarInitialIsTommorrow,
+                Setting.calendarInitialIstomorrow,
                 value,
               );
             },
           ),
         ),
-        SettingTile(
-          label: 'Show missed homeworks',
-          trailing: SwitchAction(
-            initialValue: settings.get(
-              Setting.calendarShowMissed,
-            ),
-            onChanged: (value) {
-              settings.save(
-              Setting.calendarShowMissed, value
-            );
+        SettingTile.withSwitch(
+          title: 'Show missed homeworks',
+          value: showMissed,
+          onChanged: (value) {
+            settings.save(Setting.calendarShowMissed, value);
+            setState(() {
+              showMissed = value;
+            });
             widget.changeShowMissed(value);
-            },
-          ),
-        )
+          },
+        ),
+        SettingTile.withSwitch(
+          title: 'Show arrows',
+          subtitle: 'Show arrows for switching between pages',
+          value: showArrows,
+          onChanged: (value) {
+            settings.save(Setting.calendarShowArrows, value);
+            setState(() {
+              showArrows = value;
+            });
+            widget.changeShowMissed(showMissed);
+          },
+        ),
       ],
     );
   }

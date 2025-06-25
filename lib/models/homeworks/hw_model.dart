@@ -1,136 +1,87 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/models/task_model.dart';
 
-part 'hw_model.g.dart';
-
-@HiveType(typeId: 0)
-class Homework extends HiveObject {
+class Homework extends Task {
   Homework({
-    required this.fireId,
-    required this.isDeleted,
-    required this.subjectDbIndex,
-    required this.text,
-    required this.deadline,
-    required this.isCompleted,
-    required this.priority,
-    required this.description,
-    required DateTime? timestamp,
-    required this.order,
-  }) : timestamp = timestamp ?? DateTime.now() {
-    if (timestamp == null) {
-      saveSafe();
-    }
-  }
+    required super.subject,
+    required super.text,
+    required super.deadline,
+    required super.isCompleted,
+    required super.priority,
+    required super.id,
+    required super.description,
+    required super.timestamp,
+    required super.isDeleted,
+    required super.order,
+    super.stateReaddingVersion = 0,
+    this.isBeingAnimated = false,
+  });
 
-  @HiveField(0)
-  final int? subjectDbIndex;
-  @HiveField(1)
-  final String text;
-  @HiveField(2)
-  final DateTime deadline;
-  @HiveField(3)
-  final bool isCompleted;
-  @HiveField(4)
-  final int priority;
-  @HiveField(5)
-  final String? description;
-  @HiveField(6)
-  final String? fireId;
-  @HiveField(7)
-  final DateTime timestamp;
-  @HiveField(8, defaultValue: false)
-  final bool isDeleted;
-  @HiveField(9, defaultValue: 0)
-  final int order;
+  bool isBeingAnimated;
 
-  /// saves this as it is now to hive
-  void saveSafe() async {
-    // i dont know why it works, this box doesnt need to exist, maybe its just the delay?
-    await Hive.openBox('subjects');
-
-    if (isInBox) {
-      save();
-    }
+  HomeworkEntity convert() {
+    return HomeworkEntity(
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      deadline: deadline,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
+      order: order,
+    );
   }
 
   @override
   String toString() {
-    return 'homework: $text, order: $order, completed: $isCompleted, deleted: $isDeleted';
+    return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
   }
 
-  // TODO remove parameter
-  Map<String, dynamic> toJson(Map<int, Subject> subjects) {
+  Map<String, dynamic> toFireJson() {
     return {
-      'text': text,
-      'subjectId': subjects[subjectDbIndex]?.fireId,
-      'date': deadline.toUtc().toIso8601String(),
-      'priority': priority,
-      'description': description,
-      'id': fireId,
-      'order': order,
-      'isDeleted': isDeleted,
-      'isCompleted': isCompleted,
+      'n': text,
+      if (description != null && description != '') 'i': description,
+      if (subject != null) 's': subject?.id,
+      'd': deadline.millisecondsSinceEpoch,
+      if(priority.index != 0) 'p': priority.index,
+      if(order != 0) 'o': order,
+      if(!isCompleted) 'c': isCompleted,
+      if(isDeleted) 'del': isDeleted,
+      't': timestamp.millisecondsSinceEpoch,
     };
   }
 
-  Homework.fromJson(Map<String, dynamic> json)
-      : subjectDbIndex = null,
-        // TODO just uncomment in 2.0.0
-        // : subjectDbIndex = json['subjectId'],
-        text = json['text'],
-        deadline = DateTime.parse(json['date']),
-        priority = json['priority'],
-        description = json['description'],
-        fireId = json['id'],
-        order = json['order'],
-        isDeleted = json['isDeleted'],
-        isCompleted = json['isCompleted'],
-        timestamp = DateTime.now();
-
-  Homework copyWith({
-    int? subjectDbIndex,
-    String? text,
-    DateTime? deadline,
-    bool? isCompleted,
-    int? priority,
-    int? dbIndex,
-    String? description,
-    String? fireId,
-    DateTime? timestamp,
-    bool? isDeleted,
-    int? order,
-  }) {
+  @override
+  Homework copyWith(
+      {Subject? subject,
+      String? text,
+      DateTime? deadline,
+      bool? isCompleted,
+      TaskPriority? priority,
+      String? id,
+      String? description,
+      String? fireId,
+      DateTime? timestamp,
+      bool? isDeleted,
+      int? order,
+      bool? isBeingAnimated,
+      int? stateReaddingVersion}) {
     return Homework(
-      subjectDbIndex: subjectDbIndex ?? this.subjectDbIndex,
+      subject: subject ?? this.subject,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
+      id: id ?? this.id,
       description: description ?? this.description,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-    );
-  }
-
-  HomeworkDTO convertToDTO(int dbIndex, SubjectDTO? subject) {
-    return HomeworkDTO(
-      subject: subject,
-      text: text,
-      description: description,
-      deadline: deadline,
-      isCompleted: isCompleted,
-      priority: TaskPriority(priority),
-      dbIndex: dbIndex,
-      fireId: fireId,
-      timestamp: Timestamp.fromDate(timestamp),
-      isDeleted: isDeleted,
-      order: order,
+      isBeingAnimated: isBeingAnimated ?? this.isBeingAnimated,
+      stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }
 }

@@ -1,9 +1,18 @@
 import 'dart:convert';
 
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/exams/exam_id_model.dart';
+import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/tasks_app.dart';
+
+class ImportExport {
+  ImportExport(
+      {required this.exams, required this.hws, required this.subjects});
+
+  final List<Subject> subjects;
+  final List<ExamWithID> exams;
+  final List<HomeworkWithID> hws;
+}
 
 String export() {
   String json = '';
@@ -19,37 +28,45 @@ String export() {
             (value) => value.toJson(),
           )
           .toList(),
-      'exams': exams.values
+      'exams': exams
           .map(
-            (value) => value.toJson(subjects),
+            (key, value) => MapEntry(key, value.toJson(key)),
           )
+          .values
           .toList(),
-      'homework': hws.values
+      'homework': hws
           .map(
-            (value) => value.toJson(subjects),
+            (key, value) => MapEntry(key, value.toJson(key)),
           )
-          .toList(),
+          .values
+          .toList()
     },
   );
 
   return json;
 }
 
-Map<String, dynamic> import({required String jsonString}) {
+ImportExport import({required String jsonString}) {
   final json = jsonDecode(jsonString);
-  final List<Exam> exams = [];
-  final List<Homework> hws = [];
+  final List<ExamWithID> exams = [];
+  final List<HomeworkWithID> hws = [];
   final List<Subject> subjects = [];
 
   for (var element in (json['subjects'] as List)) {
     subjects.add(Subject.fromJson(element));
   }
-  for (var element in (json['exams'] as List)) {
-    exams.add(Exam.fromJson(element));
-  }
-  for (var element in (json['homework'] as List)) {
-    hws.add(Homework.fromJson(element));
-  }
+  subjects.sort((a, b) => a.order.compareTo(b.order));
 
-  return {'exams': exams, 'homework': hws, 'subjects': subjects};
+  for (var element in (json['exams'] as List)) {
+    exams.add(ExamWithID
+    .fromJson(element));
+  }
+  exams.sort((a, b) => a.order.compareTo(b.order));
+
+  for (var element in (json['homework'] as List)) {
+    hws.add(HomeworkWithID.fromJson(element));
+  }
+  hws.sort((a, b) => a.order.compareTo(b.order));
+
+  return ImportExport(subjects: subjects, hws: hws, exams: exams);
 }

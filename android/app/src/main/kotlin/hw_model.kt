@@ -3,7 +3,7 @@ import com.google.gson.annotations.SerializedName
 
 @Keep
 data class Homework(
-    @SerializedName("dbIndex") val dbIndex:Int,
+    @SerializedName("id") val id:String,
     @SerializedName("text") val text : String,
     @SerializedName("subject") val subject : String,
     @SerializedName("deadline") val deadline : String,

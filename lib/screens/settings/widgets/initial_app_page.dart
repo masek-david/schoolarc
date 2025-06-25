@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
 
@@ -19,8 +19,8 @@ class _InitialAppPageState extends State<InitialAppPage> {
     return Column(
       children: [
         SettingTile(
-          label: 'Initial page',
-          text: 'The page that will be displayed when opening the app',
+          title: 'Initial page',
+          subtitle: 'The page that will be displayed when opening the app',
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_bakalari.dart';
+import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_extensions.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_priorities.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_subjects.dart';
 import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_welcome.dart';
@@ -21,7 +21,7 @@ class WelcomeScreen extends StatelessWidget {
     const WelcomeScreenExams(),
     const WelcomeScreenSubjects(),
     const WelcomeScreenPriorities(),
-    const WelcomeScreenBakalari(),
+    const WelcomeScreenExtensions(),
     WelcomeScreenEnd(onEnd: onEnd),
   ];
 
@@ -34,14 +34,11 @@ class WelcomeScreen extends StatelessWidget {
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            leading: const SizedBox.shrink(),
+            leading: TextButton(
+              onPressed: onEnd,
+              child: const Text('Skip'),
+            ),
             backgroundColor: Colors.transparent,
-            actions: [
-              TextButton(
-                onPressed: onEnd,
-                child: const Text('Skip'),
-              ),
-            ],
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
@@ -80,10 +77,10 @@ class WelcomeScreen extends StatelessWidget {
                   controller: _controller,
                   itemCount: pages.length,
                   itemBuilder: (context, index) {
-                    if(index == pages.length - 1){
+                    if (index == pages.length - 1) {
                       return pages.last;
                     }
-                    
+
                     return Scaffold(
                       body: pages[index],
                     );

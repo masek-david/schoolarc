@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/timetable_dto_model.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
@@ -35,8 +35,8 @@ class TimetableCard extends StatelessWidget {
   });
 
   final void Function()? refresh;
-  final TimeTableDTO defaultTimeTable;
-  final Future<TimeTableDTO?>? bakaTimetable;
+  final TimeTable defaultTimeTable;
+  final Future<TimeTable?>? bakaTimetable;
   final DateTime dateToShow;
   final String whenText;
   final bool showOnline;
@@ -54,7 +54,7 @@ class TimetableCard extends StatelessWidget {
           error = snapshot.error;
         }
 
-        TimeTableDTO timetable = defaultTimeTable;
+        TimeTable timetable = defaultTimeTable;
         if (snapshot.data != null && refresh != null && showOnline) {
           timetable = snapshot.data!;
         }

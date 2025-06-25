@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 class SettingTile extends StatelessWidget {
   const SettingTile({
     super.key,
-    required this.label,
-    this.text,
+    required this.title,
+    this.subtitle,
     this.icon,
     this.trailing,
     this.newLineAction,
@@ -13,14 +14,63 @@ class SettingTile extends StatelessWidget {
     this.enabled = true,
   });
 
-  final String label;
-  final String? text;
+  final String title;
+  final String? subtitle;
   final IconData? icon;
   final Widget? trailing;
   final Widget? newLineAction;
-  final Function()? onTap;
+  final Function(BuildContext context)? onTap;
   final bool highlighted;
   final bool enabled;
+
+  static SettingTile withSwitch({
+    required String title,
+    required bool value,
+    required void Function(bool value) onChanged,
+    String? subtitle,
+    bool? enabled,
+    bool? highlighted,
+    IconData? icon,
+  }) {
+    return SettingTile(
+      title: title,
+      subtitle: subtitle,
+      enabled: enabled ?? true,
+      highlighted: highlighted ?? false,
+      icon: icon,
+      onTap: (context) => onChanged(!value),
+      trailing: Switch(value: value, onChanged: onChanged),
+    );
+  }
+
+  static SettingTile withTimePicker({
+    required String title,
+    required TimeOfDay time,
+    required void Function(TimeOfDay value) onChanged,
+    String? subtitle,
+    bool? enabled,
+    bool? highlighted,
+    IconData? icon,
+  }) {
+    return SettingTile(
+      title: title,
+      subtitle: subtitle,
+      enabled: enabled ?? true,
+      highlighted: highlighted ?? false,
+      icon: icon,
+      onTap: (context) async {
+        final value = await showTimePicker(context: context, initialTime: time);
+
+        if (value != null) {
+          onChanged(value);
+        }
+      },
+      trailing: Text(
+        '${time.hour}:${time.minuteStartingWithZero()}',
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +83,7 @@ class SettingTile extends StatelessWidget {
             padding: highlighted ? const EdgeInsets.all(16) : EdgeInsets.all(0),
             child: ListTile(
               enabled: enabled,
-              onTap: onTap,
+              onTap: onTap == null ? null : () => onTap!(context),
               tileColor: highlighted
                   ? Theme.of(context).colorScheme.primaryContainer
                   : null,
@@ -44,12 +94,12 @@ class SettingTile extends StatelessWidget {
               contentPadding: highlighted ? EdgeInsets.all(12) : null,
               leading: icon != null ? Icon(icon) : null,
               title: Text(
-                label,
+                title,
                 style: TextStyle(
                   fontSize: highlighted ? 19 : null,
                 ),
               ),
-              subtitle: text == null ? null : Text(text!),
+              subtitle: subtitle == null ? null : Text(subtitle!),
               trailing: trailing,
             ),
           ),

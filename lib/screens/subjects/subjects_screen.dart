@@ -1,14 +1,15 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
-import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 
@@ -40,12 +41,11 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         shortcutController: shortcutController,
         onSave: () async {
           ref.read(subjectsProvider.notifier).saveNew(
-                Subject(
+                SubjectEntity(
                   name: nameController.text,
                   shortcut: shortcutController.text,
-                  fireId: null,
                   isDeleted: false,
-                  timestamp: Timestamp.now().toDate(),
+                  timestamp: DateTime.now().toUtc(),
                   bakaId: null,
                   order: 0,
                 ),
@@ -60,9 +60,12 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  void editSubject(SubjectDTO subject, WidgetRef ref) {
+  void editSubject(Subject subject, WidgetRef ref) {
     nameController.text = subject.name;
     shortcutController.text = subject.shortcut;
+
+    final map = ref.read(subjectsUsedTimesProvider);
+    final usedTimes = map[subject.id];
 
     showDialog(
       context: context,
@@ -70,15 +73,15 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         text: 'Edit subject',
         nameController: nameController,
         shortcutController: shortcutController,
+        usedTimes: usedTimes,
         onSave: () {
-          SubjectDTO newSubject = SubjectDTO(
+          Subject newSubject = Subject(
             name: nameController.text,
             shortcut: shortcutController.text,
-            dbIndex: subject.dbIndex,
+            id: subject.id,
             bakaId: subject.bakaId,
             isDeleted: subject.isDeleted,
-            fireId: subject.fireId,
-            timestamp: Timestamp.now(),
+            timestamp: DateTime.now().toUtc(),
             order: subject.order,
           );
 
@@ -93,7 +96,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  void deleteSubject(SubjectDTO subject, WidgetRef ref) {
+  void deleteSubject(Subject subject, WidgetRef ref) {
     ref.read(subjectsProvider.notifier).deleteSubject(subject);
 
     showMessage(context, 'Deleted subject ${subject.name}', actions: [
@@ -106,10 +109,33 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     ]);
   }
 
+  Future<void> onRefresh() async {
+    try {
+      return await ref.read(subjectsProvider.notifier).syncAll();
+    } on Object catch (e) {
+      if (context.mounted) {
+        showMessage(context, e.toString(), isError: true);
+      }
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final map = ref.read(subjectsUsedTimesProvider);
+    final subjects = ref.watch(subjectsSortedProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Subjects')),
+      appBar: AppBar(
+        title: const Text('Subjects'),
+        actions: [
+          if (kIsWeb && settings.get(Setting.useFirebase))
+            IconButton(
+              onPressed: onRefresh,
+              icon: Icon(Icons.refresh_outlined),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new subject',
         onPressed: () {
@@ -121,60 +147,45 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
       body: SlidableAutoCloseBehavior(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Consumer(builder: (context, ref, child) {
-            final subjects = ref.watch(subjectsSortedProvider);
-
-            return subjects.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No subjects found. You can create new subjects by tapping the plus button.',
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : RefreshIndicator(
-                    notificationPredicate: settings.get(Setting.useFirebase)
-                        ? (_) => true
-                        : (_) => false,
-                    onRefresh: () async {
-                      try {
-                        return await ref
-                            .read(subjectsProvider.notifier)
-                            .syncAll();
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          showMessage(context, e.toString(), isError: true);
-                        }
-                        return;
-                      }
+          child: subjects.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No subjects found. You can create new subjects by tapping the plus button.',
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : RefreshIndicator(
+                  notificationPredicate: settings.get(Setting.useFirebase)
+                      ? (_) => true
+                      : (_) => false,
+                  onRefresh: onRefresh,
+                  child: AnimatedReorderableListView(
+                    onReorderStart: (index) => HapticFeedback.mediumImpact(),
+                    items: subjects,
+                    isSameItem: (a, b) => a.id == b.id,
+                    padding: EdgeInsets.only(bottom: 100),
+                    itemBuilder: (context, index) {
+                      Subject subject = subjects[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        key: Key('Sub: ${subject.id}'),
+                        child: SubjectTile(
+                          usedTimes: map[subject.id],
+                          subject: subject,
+                          onTap: () => editSubject(subject, ref),
+                          onDelete: () => deleteSubject(subject, ref),
+                        ),
+                      );
                     },
-                    child: AnimatedReorderableListView(
-                      onReorderStart: (index) => HapticFeedback.mediumImpact(),
-                      items: subjects,
-                      isSameItem: (a, b) => a.dbIndex == b.dbIndex,
-                      padding: EdgeInsets.only(bottom: 100),
-                      itemBuilder: (context, index) {
-                        SubjectDTO subject = subjects[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          key: Key('Sub: ${subject.dbIndex}'),
-                          child: SubjectTile(
-                            subject: subject,
-                            onTap: () => editSubject(subject, ref),
-                            onDelete: () => deleteSubject(subject, ref),
-                          ),
-                        );
-                      },
-                      onReorder: (int oldIndex, int newIndex) {
-                        ref.read(subjectsProvider.notifier).reorder(
-                              oldIndex,
-                              newIndex,
-                              null,
-                              addTimestamp: true,
-                            );
-                      },
-                    ),
-                  );
-          }),
+                    onReorder: (int oldIndex, int newIndex) {
+                      ref.read(subjectsProvider.notifier).reorder(
+                            newIndex,
+                            subjects[oldIndex],
+                            addTimestamp: true,
+                          );
+                    },
+                  ),
+                ),
         ),
       ),
     );

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 
-Future<SubjectDTO?> showSelectSubject({
+Future<Subject?> showSelectSubject({
   required BuildContext context,
-  required List<SubjectDTO> subjects,
+  required List<Subject> subjects,
   required Function delete,
 }) {
-  return showDialog<SubjectDTO?>(
+  return showDialog<Subject?>(
     context: context,
     builder: (context) {
       return SelectSubjectDialog(
@@ -26,7 +26,7 @@ class SelectSubjectDialog extends StatelessWidget {
     this.showAllSubjects = true,
   });
 
-  final List<SubjectDTO> subjects;
+  final List<Subject> subjects;
   final Function? delete;
   final bool showAllSubjects;
 
@@ -76,7 +76,7 @@ class SelectSubjectDialog extends StatelessWidget {
             },
             optionsBuilder: (textEditingValue) {
               if (textEditingValue.text == '') {
-                return const Iterable<SubjectDTO>.empty();
+                return const Iterable<Subject>.empty();
               }
               return subjects.where(
                 (subject) {

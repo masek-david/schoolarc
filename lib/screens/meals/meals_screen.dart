@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -30,7 +30,7 @@ class _MealsScreenState extends State<MealsScreen> {
     var now = DateTime.now();
 
     if (settings
-        .getTimeOfDay(Setting.mealsShowTodayUntil)
+        .get(Setting.mealsShowTodayUntil)
         .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }

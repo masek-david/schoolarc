@@ -2,9 +2,9 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/hw_overlay.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
@@ -25,7 +25,7 @@ class HomeworkTile extends StatefulWidget {
     required this.onConvert,
   });
 
-  final HomeworkDTO hw;
+  final Homework hw;
   final bool showDeadline;
   final SlidableController? slidableController;
   final bool showCompletion;
@@ -75,11 +75,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
     return LayoutBuilder(
       builder: (context, constraints) {
         double extentRatio = 135 / constraints.maxWidth;
-    
+
         if (extentRatio > 1) {
           extentRatio = 1;
         }
-    
+
         return Slidable(
           groupTag: '0',
           enabled: !expUseHwOverlay,
@@ -142,44 +142,44 @@ class _HomeworkTileState extends State<HomeworkTile> {
                   ? Theme.of(context).colorScheme.surfaceContainerLowest
                   : Theme.of(context).colorScheme.surfaceContainerLow,
             ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: expUseHwOverlay
-                  ? () {
-                      final RenderBox renderBox = widgetKey.currentContext!
-                          .findRenderObject() as RenderBox;
-                      final Offset position = renderBox
-                          .localToGlobal(Offset.zero); // Get global position
-                      final Size size = renderBox.size; // Get widget size
-    
-                      late final OverlayEntry overlay;
-                      overlay = OverlayEntry(
-                        builder: (context) {
-                          return HwOverlay(
-                            hw: widget.hw,
-                            position: position,
-                            size: size,
-                            onEdit: widget.onEdit,
-                            onDelete: widget.onDelete,
-                            onConvert: widget.onConvert,
-                            onHide: () {
-                              overlay.remove();
-                              setState(() {
-                                isShown = true;
-                              });
-                            },
-                          );
-                        },
-                      );
-    
-                      Overlay.of(context).insert(overlay);
-                      setState(() {
-                        isShown = false;
-                      });
-                    }
-                  : widget.onEdit,
-              child: Material(
-                color: Colors.transparent,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(borderRadius),
+                onTap: expUseHwOverlay
+                    ? () {
+                        final RenderBox renderBox = widgetKey.currentContext!
+                            .findRenderObject() as RenderBox;
+                        final Offset position = renderBox
+                            .localToGlobal(Offset.zero); // Get global position
+                        final Size size = renderBox.size; // Get widget size
+
+                        late final OverlayEntry overlay;
+                        overlay = OverlayEntry(
+                          builder: (context) {
+                            return HwOverlay(
+                              hw: widget.hw,
+                              position: position,
+                              size: size,
+                              onEdit: widget.onEdit,
+                              onDelete: widget.onDelete,
+                              onConvert: widget.onConvert,
+                              onHide: () {
+                                overlay.remove();
+                                setState(() {
+                                  isShown = true;
+                                });
+                              },
+                            );
+                          },
+                        );
+
+                        Overlay.of(context).insert(overlay);
+                        setState(() {
+                          isShown = false;
+                        });
+                      }
+                    : widget.onEdit,
                 child: Opacity(
                   opacity: opacity,
                   child: Padding(
@@ -192,12 +192,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         if (settings.get(Setting.showDebugInfo))
                           Column(
                             children: [
-                              Text('id: ${widget.hw.dbIndex.toString()}'),
                               Text(widget.hw.order.toString()),
                               if (widget.hw.isBeingAnimated)
                                 Icon(
                                   Icons.animation,
-                                  size: 10,
+                                  size: 15,
                                 )
                             ],
                           ),
@@ -218,26 +217,25 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             widget.hw.description != '')
                           Icon(
                             Icons.notes,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         if (widget.hw.description != null &&
                             widget.hw.description != '')
                           const SizedBox(width: 8),
                         Expanded(child: Text(widget.hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
-                        if (settings.get(Setting.showDebugInfo))
-                          Column(
-                            children: [
-                              Text(
-                                widget.hw.fireId ?? 'no fireId',
-                                style: TextStyle(fontSize: 8),
-                              ),
-                              Text(widget.hw.timestamp.millisecondsSinceEpoch
-                                  .toString()),
-                            ],
-                          ),
+                        // if (settings.get(Setting.showDebugInfo))
+                        //   Column(
+                        //     children: [
+                        //       Text(
+                        //         widget.hw.id,
+                        //         style: TextStyle(fontSize: 8),
+                        //       ),
+                        //       Text(widget.hw.timestamp.millisecondsSinceEpoch
+                        //           .toString()),
+                        //     ],
+                        //   ),
                         if (widget.showDeadline)
                           Text(
                             widget.hw.deadline.dateText(),
@@ -254,7 +252,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             priority: widget.hw.priority,
                             onChanged: widget.onChangedCompletion,
                             // must be here
-                            key: ValueKey('checkbox ${widget.hw.dbIndex}'),
+                            key: ValueKey('checkbox ${widget.hw.id}'),
                           ),
                       ],
                     ),

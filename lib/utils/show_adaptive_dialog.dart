@@ -6,10 +6,12 @@ Future<T> showDialogAdaptive<T>({
   Widget? title,
   Widget? content,
   List<Widget>? actions,
+  bool? dismissible,
 }) async {
   if (showCupertino(context)) {
     return await showCupertinoDialog(
       context: context,
+      barrierDismissible: dismissible ?? false,
       builder: (context) {
         return _builder(context, title, content, actions);
       },
@@ -17,6 +19,7 @@ Future<T> showDialogAdaptive<T>({
   } else {
     return await showDialog(
       context: context,
+      barrierDismissible: dismissible ?? true,
       builder: (context) {
         return _builder(context, title, content, actions);
       },
@@ -46,11 +49,31 @@ bool showCupertino(BuildContext context) {
 Widget adaptiveDialogButton({
   required BuildContext context,
   required Widget child,
+  bool isDefaultAction = false,
+  bool isDestructiveAction = false,
   required void Function()? onPressed,
 }) {
   if (showCupertino(context)) {
-    return CupertinoButton(onPressed: onPressed, child: child);
+    return CupertinoDialogAction(
+      isDestructiveAction: isDestructiveAction,
+      isDefaultAction: isDefaultAction,
+      onPressed: onPressed,
+      child: child,
+    );
   } else {
-    return TextButton(onPressed: onPressed, child: child);
+    if (isDefaultAction) {
+      return FilledButton(onPressed: onPressed, child: child);
+    }
+    Color textColor = Theme.of(context).colorScheme.onSurface;
+    if (isDestructiveAction) {
+      textColor = Theme.of(context).colorScheme.error;
+    }
+    return TextButton(
+      onPressed: onPressed,
+      child: DefaultTextStyle(
+        style: TextStyle(color: textColor),
+        child: child,
+      ),
+    );
   }
 }

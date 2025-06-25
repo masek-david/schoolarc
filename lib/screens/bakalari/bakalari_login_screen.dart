@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/animated_star.dart';
+import 'package:school_manager/widgets/progress_dialog.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
   const BakaLoginScreen({
@@ -23,10 +25,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   final _passwordController = TextEditingController();
   final refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  bool isLoggedIn = false;
-  bool isLoading = false;
   late bool keepLoggedIn = settings.get(Setting.bakaKeepLoggedIn);
   bool obscureText = true;
+  Object? lastError;
 
   @override
   void dispose() {
@@ -42,69 +43,55 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     super.initState();
 
     loadLoginInfo();
-    tryLogin();
-  }
-
-  Future<void> tryLogin() async {
-    if (await bakaService.schoolName != '') {
-      setState(() {
-        isLoading = true;
-      });
-      bakaService.refreshLogin().then((value) {
-        onLoginSuccess();
-      }, onError: onError);
-    }
-  }
-
-  void loadLoginInfo() async {
-    _schoolController.text = await bakaService.schoolName;
-    _usernameController.text = await bakaService.username;
-  }
-
-  void onLoginSuccess() {
-    setState(() {
-      isLoggedIn = true;
-      isLoading = false;
-    });
   }
 
   void onError(dynamic error) {
-    setState(() {
-      isLoading = false;
-    });
-    showMessage(error.toString(), isError: true);
+    showMessage(context, error.toString(), isError: true);
   }
 
-  void showMessage(String message, {bool isError = false}) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor:
-              isError ? Theme.of(context).colorScheme.errorContainer : null,
-          content: Text(
-            message,
-            style: TextStyle(
-              color: isError
-                  ? Theme.of(context).colorScheme.onErrorContainer
-                  : null,
-            ),
-          ),
+  void loadLoginInfo() async {
+    _schoolController.text = await ref.read(bakaProvider.notifier).schoolName;
+    _usernameController.text = await ref.read(bakaProvider.notifier).username;
+
+    if (_schoolController.text == '' && mounted) {
+      showDialogAdaptive(
+        context: context,
+        title: Text('Logging in will import new subjects'),
+        content: Text(
+          'If you already have imported the subjects before, make sure they exist in the app.',
         ),
+        actions: [
+          adaptiveDialogButton(
+            context: context,
+            child: Text('Okay'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       );
     }
-  }
-
-  bool canLogin() {
-    return _schoolController.text != '' &&
-        _passwordController.text != '' &&
-        _usernameController.text != '';
   }
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    final baka = ref.watch(bakaProvider);
+    final isLoggedIn = baka.value == true;
+    baka.when(
+      data: (data) {},
+      error: (error, stackTrace) {
+        if (lastError != error) {
+          lastError = error;
+          WidgetsBinding.instance.addPostFrameCallback(
+            (timeStamp) {
+              onError(error);
+            },
+          );
+        }
+      },
+      loading: () {},
+    );
 
     return Scaffold(
       appBar: widget.showAppbar
@@ -116,19 +103,12 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: RefreshIndicator(
           onRefresh: () async {
-            setState(() {
-              isLoggedIn = false;
-            });
-            bakaService.refreshLogin().then(
-              (value) {
-                onLoginSuccess();
-              },
-              onError: onError,
-            );
+            ref.read(bakaProvider.notifier).refreshLogin();
           },
           child: ListView(
             children: [
-              if (isLoggedIn)
+              SizedBox(height: 8),
+              if (isLoggedIn && !baka.isLoading)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AnimatedStar.success(
@@ -138,10 +118,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                     isDark: isDark,
                   ),
                 ),
-              if (isLoading) const Center(child: CircularProgressIndicator()),
-              if (isLoading) const SizedBox(height: 20),
+              if (baka.isLoading)
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               TextField(
-                enabled: !isLoading,
+                enabled: !baka.isLoading,
                 controller: _schoolController,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(15),
@@ -152,7 +135,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               const SizedBox(height: 12),
               TextField(
                 autofillHints: const [AutofillHints.username],
-                enabled: !isLoading,
+                enabled: !baka.isLoading,
                 controller: _usernameController,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(15),
@@ -166,7 +149,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                   Expanded(
                     child: TextField(
                       autofillHints: const [AutofillHints.password],
-                      enabled: !isLoading,
+                      enabled: !baka.isLoading,
                       controller: _passwordController,
                       obscureText: obscureText,
                       decoration: const InputDecoration(
@@ -194,66 +177,73 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                   const Text('Remember me'),
                   Checkbox(
                     value: keepLoggedIn,
-                    onChanged: !isLoading
-                        ? (value) {
+                    onChanged: !baka.isLoading
+                        ? (value) async {
+                            if (!value!) {
+                              value = await showDialogAdaptive(
+                                context: context,
+                                title: Text('Remember me?'),
+                                content: Text(
+                                    'If you continue, you won\'t be able to view your current timetable and current homeworks.'),
+                                actions: [
+                                  adaptiveDialogButton(
+                                    context: context,
+                                    child: Text('Cancel'),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                  ),
+                                  adaptiveDialogButton(
+                                    isDestructiveAction: true,
+                                    context: context,
+                                    child: Text('Continue'),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                  ),
+                                ],
+                              );
+                            }
+
                             setState(() {
                               keepLoggedIn = value!;
                             });
-                            settings.save(Setting.bakaKeepLoggedIn, value!);
+                            settings.save(Setting.bakaKeepLoggedIn, value);
                           }
                         : null,
                   )
                 ],
               ),
-              FilledButton(
-                onPressed: isLoading && !canLogin()
-                    ? null
-                    : () async {
-                        refreshIndicatorKey.currentState?.show();
-                        setState(() {
-                          isLoading = true;
-                          isLoggedIn = false;
-                        });
-
-                        try {
-                          await bakaService.firstLogin(
-                            school: _schoolController.text,
-                            username: _usernameController.text,
-                            password: _passwordController.text,
-                            keepLoggedIn: keepLoggedIn,
-                          );
-                          onLoginSuccess();
-                        } catch (e) {
-                          onError(e);
-                        }
-                      },
-                child: const Text("Log in"),
+              Row(
+                spacing: 16,
+                children: [
+                  FilledButton(
+                    onPressed: baka.isLoading
+                        ? null
+                        : () async {
+                            refreshIndicatorKey.currentState?.show();
+                            ref.read(bakaProvider.notifier).firstLogin(
+                                  school: _schoolController.text,
+                                  username: _usernameController.text,
+                                  password: _passwordController.text,
+                                  keepLoggedIn: keepLoggedIn,
+                                );
+                          },
+                    child: const Text("Log in"),
+                  ),
+                  if (isLoggedIn)
+                    OutlinedButton(
+                      onPressed: baka.isLoading
+                          ? null
+                          : () async {
+                              refreshIndicatorKey.currentState?.show();
+                              ref.read(bakaProvider.notifier).logOut();
+                            },
+                      child: const Text("Log out"),
+                    ),
+                ],
               ),
-              if (isLoggedIn)
-                OutlinedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          refreshIndicatorKey.currentState?.show();
-                          setState(() {
-                            isLoading = true;
-                            isLoggedIn = false;
-                          });
-
-                          try {
-                            await bakaService.logOut();
-                            setState(() {
-                              isLoading = false;
-                            });
-                          } catch (e) {
-                            onError(e);
-                          }
-                        },
-                  child: const Text("Log out"),
-                ),
               const Divider(),
               OutlinedButton(
-                onPressed: isLoggedIn && !isLoading
+                onPressed: isLoggedIn && !baka.isLoading
                     ? () {
                         showDialogAdaptive(
                           context: context,
@@ -269,17 +259,28 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                             ),
                             adaptiveDialogButton(
                               context: context,
+                              isDestructiveAction: true,
                               onPressed: () async {
                                 Navigator.pop(context);
-                                setState(() {
-                                  isLoading = true;
-                                });
 
-                                bakaService.importTimeTable(ref).then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }, onError: onError);
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      ProgressDialog(showProgressNumber: false),
+                                );
+
+                                ref
+                                    .read(bakaProvider.notifier)
+                                    .importTimeTable()
+                                    .then(
+                                  (value) {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  onError: onError,
+                                );
                               },
                               child: const Text('Import'),
                             ),

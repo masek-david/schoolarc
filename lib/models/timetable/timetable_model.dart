@@ -1,51 +1,76 @@
-import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/timetable_dto_model.dart';
 
-part 'timetable_model.g.dart';
-
-@HiveType(typeId: 3)
 class TimeTable {
-  // index and times for lessons times
-  @HiveField(0)
-  List<LessonTimes> lessonTimes = [];
-  // list of 7 days, for each day there are as many hours as specified in lessontimes, they are null if empty, and store index of the subject
-  @HiveField(1)
-  late List<List<int?>> table;
+  List<LessonTimes> lessonTimes;
+  List<DateTime>? dates;
+  late List<List<TimeTableLesson>> table;
 
-  TimeTable(this.lessonTimes) {
-    table = List.generate(
-        7, (_) => List.filled(lessonTimes.length, null, growable: true));
-  }
+  TimeTable({
+    required this.lessonTimes,
+    required this.table,
+    this.dates,
+  });
 
-  TimeTable.empty() {
-    lessonTimes = [];
+  /// creates [TimeTable] with lessonTimes, but empty table, so it can be added later 
+  TimeTable.withoutTable({
+    required this.lessonTimes,
+  }) {
     table = List.generate(
       7,
-      (_) => List.filled(lessonTimes.length, null, growable: true),
+      (_) => List.generate(lessonTimes.length, (_) => TimeTableLesson.empty()),
     );
   }
 
-  TimeTableDTO convertToDTO(Map<int, SubjectDTO> subjects) {
-    var convertedTable = table.map(
-      (day) {
-        return day.map(
-          (subjectIndex) {
-            final subject = subjects[subjectIndex];
-            return TimeTableLesson(
-              subject: subject,
-              change: null,
-            );
-          },
-        ).toList();
-      },
-    ).toList();
+  Map<LessonTimes, TimeTableLesson> getUpcomingLessons(DateTime? date) {
+    Map<LessonTimes, TimeTableLesson> upcomingLessons = {};
 
-    return TimeTableDTO(
-      lessonTimes: lessonTimes,
-      table: convertedTable,
-    );
+    date ??= DateTime.now();
+    date = date.toLocal();
+
+    Map<int, LessonTimes> upcomingLessonTimes = {};
+
+    for (int i = 0; i < lessonTimes.length; i++) {
+      final lesson = lessonTimes[i];
+
+      if (TimeOfDay(hour: date.hour, minute: date.minute)
+          .isBefore(lesson.endTime)) {
+        upcomingLessonTimes.addAll({i: lesson});
+      }
+    }
+
+    for (var lessonIndex in upcomingLessonTimes.keys) {
+      final lesson = table[date.weekday - 1][lessonIndex];
+
+      upcomingLessons.addAll({upcomingLessonTimes[lessonIndex]!: lesson});
+    }
+
+    return upcomingLessons;
+  }
+
+  DateTime? nextDateForSubject(Subject subject) {
+    if (lessonTimes.isEmpty) {
+      return null;
+    }
+
+    var now = DateTime.now();
+    // int weekday = now.weekday - 1;
+
+    var date = DateTime.utc(now.year, now.month, now.day);
+
+    for (int i = date.weekday - 1; i < 100; i++) {
+      date = date.add(const Duration(days: 1));
+      var listOfSubjects = table[date.weekday - 1].where((element) {
+        bool contains = element.subject?.id == subject.id;
+        return contains;
+      });
+      if (listOfSubjects.isNotEmpty) {
+        return date.toLocal();
+      }
+    }
+
+    return null;
   }
 }

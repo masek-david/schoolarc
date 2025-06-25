@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/int_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 
 class SubjectDialog extends StatelessWidget {
@@ -8,11 +9,13 @@ class SubjectDialog extends StatelessWidget {
     required this.shortcutController,
     required this.onSave,
     required this.text,
+    this.usedTimes,
   });
 
   final String text;
   final TextEditingController nameController;
   final TextEditingController shortcutController;
+  final int? usedTimes;
   final void Function() onSave;
 
   @override
@@ -56,6 +59,9 @@ class SubjectDialog extends StatelessWidget {
                 labelText: 'Shortcut (max 5 characters)',
               ),
             ),
+            if (usedTimes != null)
+              Text(
+                  'This subject is used $usedTimes time${usedTimes!.pluralS()}'),
             CancelSaveButton(onSave: onSave)
           ],
         ),

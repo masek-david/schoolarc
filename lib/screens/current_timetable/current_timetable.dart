@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -12,17 +14,31 @@ class CurrentTimetableScreen extends ConsumerStatefulWidget {
   const CurrentTimetableScreen({super.key});
 
   @override
-  ConsumerState<CurrentTimetableScreen> createState() => _CurrentTimetableScreenState();
+  ConsumerState<CurrentTimetableScreen> createState() =>
+      _CurrentTimetableScreenState();
 }
 
-class _CurrentTimetableScreenState extends ConsumerState<CurrentTimetableScreen> {
-  late var timetable = bakaService.getCurrentTimetable(date, ref);
+class _CurrentTimetableScreenState
+    extends ConsumerState<CurrentTimetableScreen> {
+  Future<TimeTable>? timetable;
   DateTime date = DateTime.now();
   bool isLoading = true;
-  
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        setState(() {
+          timetable = ref.read(bakaProvider.notifier).getCurrentTimetable(date);
+        });
+      },
+    );
+  }
+
   Future<void> refresh() async {
     setState(() {
-      timetable = bakaService.getCurrentTimetable(date, ref);
+      timetable = ref.read(bakaProvider.notifier).getCurrentTimetable(date);
     });
 
     try {

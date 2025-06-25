@@ -1,8 +1,5 @@
 {
   "projects": {
-    "staging": "school-903c8",
     "default": "school-903c8"
-  },
-  "targets": {},
-  "etags": {}
+  }
 }

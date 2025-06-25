@@ -25,7 +25,7 @@ class StravaService {
     required String password,
   }) {
     if (int.tryParse(canteenCode) == null) {
-      throw ServiceException('Invalid canteen number:');
+      throw ServiceException('Invalid canteen number');
     }
     if (canteenCode.length != 4) {
       throw ServiceException(
@@ -47,34 +47,45 @@ class StravaService {
   }
 
   Future<void> login() async {
-    canteenCode = await getCanteenCode;
-    String username = await getUsername;
-    String password = await storage.read(passwordKey);
+    String username = '';
+    String password = '';
+    try {
+      canteenCode = await getCanteenCode;
+      username = await getUsername;
+      password = await storage.read(passwordKey);
+    } on Exception {
+      throw ServiceException(
+        'Please log in',
+        action: ExceptionActions.stravaLogin,
+      );
+    }
 
     if (canteenCode == '') {
-      throw ServiceException('Canteen number is missing');
+      throw ServiceException('Canteen number is missing',
+          action: ExceptionActions.stravaLogin);
     }
     if (username == '') {
-      throw ServiceException('Username is missing');
+      throw ServiceException('Username is missing',
+          action: ExceptionActions.stravaLogin);
     }
     if (password == '') {
-      throw ServiceException('Password is missing');
+      throw ServiceException('Password is missing',
+          action: ExceptionActions.stravaLogin);
     }
 
     Response response;
     try {
-      response = await http
-          .post(
-            Uri.https('app.strava.cz', '/api/login'),
-            body: jsonEncode({
-              'cislo': canteenCode,
-              'enviroment': 'W',
-              'heslo': password,
-              'jmeno': username,
-              'lang': 'CZ',
-              'zustatPrihlasen': false,
-            }),
-          );
+      response = await http.post(
+        Uri.https('app.strava.cz', '/api/login'),
+        body: jsonEncode({
+          'cislo': canteenCode,
+          'enviroment': 'W',
+          'heslo': password,
+          'jmeno': username,
+          'lang': 'CZ',
+          'zustatPrihlasen': false,
+        }),
+      );
     } on Exception {
       rethrow;
     }
@@ -103,19 +114,18 @@ class StravaService {
 
     Response response;
     try {
-      response = await http
-          .post(
-            Uri.https('app.strava.cz', '/api/objednavky'),
-            body: jsonEncode({
-              'cislo': canteenCode,
-              'sid': sid,
-              's5url': s5url,
-              'lang': 'CZ',
-              'konto': 0,
-              'podminka': '',
-              'ignoreCert': ignoreCert,
-            }),
-          );
+      response = await http.post(
+        Uri.https('app.strava.cz', '/api/objednavky'),
+        body: jsonEncode({
+          'cislo': canteenCode,
+          'sid': sid,
+          's5url': s5url,
+          'lang': 'CZ',
+          'konto': 0,
+          'podminka': '',
+          'ignoreCert': ignoreCert,
+        }),
+      );
     } on SocketException {
       throw ServiceException('Check your internet connection');
     } on Object {
@@ -159,13 +169,18 @@ class StravaService {
   Future<Map<DateTime, List<Meal>>> getMealsNoLogin() async {
     Map<DateTime, List<Meal>> meals = {};
 
-    canteenCode = await storage.read(canteenCodeKey);
-
-    if (canteenCode == '') {
-      throw ServiceException('No canteen, please login',
+    try {
+      canteenCode = await storage.read(canteenCodeKey);
+    } on Exception {
+      throw ServiceException('Please log in',
           action: ExceptionActions.stravaLogin);
     }
 
+    if (canteenCode == '') {
+      throw ServiceException('No canteen, please log in',
+          action: ExceptionActions.stravaLogin);
+    }
+    
     final uri = Uri.parse(
         'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=$canteenCode&jazyk=CZ&httphlavicka=A%C2%A0');
 

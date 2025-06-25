@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:async';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +8,23 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
-import 'package:school_manager/screens/firestore_login/firestore_login_screen.dart';
+import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
-import 'package:school_manager/services/baka_homeworks_service.dart';
-import 'package:school_manager/services/bakalari/baka_service.dart';
-import 'package:school_manager/services/exams/exam_database.dart';
-import 'package:school_manager/services/firestore/firestore_service.dart';
-import 'package:school_manager/services/homeworks/hw_database.dart';
-import 'package:school_manager/services/logs_service.dart';
-import 'package:school_manager/services/settings_database.dart';
-import 'package:school_manager/services/strava_service.dart';
-import 'package:school_manager/services/subjects/subject_database.dart';
-import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
+import 'package:school_manager/database/exam_database.dart';
+import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/home_widget_service.dart';
+import 'package:school_manager/database/hw_database.dart';
+import 'package:school_manager/services/logs_service.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/services/strava_service.dart';
+import 'package:school_manager/database/subject_database.dart';
+import 'package:school_manager/database/timetable_database.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
 import 'package:school_manager/screens/calendar/calendar_screen.dart';
@@ -50,21 +47,23 @@ final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
-final timetableDatabase = TimeTableDatabase();
-final bakaService = BakaService();
+final timetableDb = TimeTableDatabase();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
-FirestoreService firestoreService = FirestoreService();
+FirebaseService firebaseService = FirebaseService();
 final uuid = Uuid();
 late PackageInfo packageInfo;
 
 Future<void> syncAllTasks(WidgetRef ref) async {
   await ref.read(subjectsProvider.notifier).syncAll();
-  Future.wait([
-    ref.read(hwProvider.notifier).syncAll(),
-    ref.read(examProvider.notifier).syncAll(),
-  ]);
+  if (ref.context.mounted) {
+    await Future.wait([
+      ref.read(hwProvider.notifier).syncAll(),
+      ref.read(examProvider.notifier).syncAll(),
+    ]);
+  }
+  return;
 }
 
 void showMessage(
@@ -121,9 +120,9 @@ void switchDrawer({bool? onlyClose}) {
   }
 }
 
-void tryGettingNewHomeworks() async {
+void tryGettingNewHomeworks(WidgetRef ref) async {
   try {
-    await bakaService.getHomeworks(
+    await ref.read(bakaProvider.notifier).getHomeworks(
       onNewFound: (numberOfNew) {
         if (navigatorKey.currentContext != null) {
           final context = navigatorKey.currentContext!;
@@ -165,10 +164,11 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   late final _pageController = PageController(
     initialPage: settings.get(Setting.initialAppPage),
   );
+  late final AppLifecycleListener appStateListener;
   final Key _pageViewKey = GlobalKey();
 
   late int currentPageIndex = settings.get(Setting.initialAppPage);
-  bool calendarShowTommorrow = false;
+  bool calendarShowtomorrow = false;
 
   late ThemeMode themeMode = _getThemeMode(settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
@@ -206,21 +206,53 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
   }
 
+  // called when user closes the app and when user opens the app
+  void _onAppLeaveOrReturn(bool nowActive) {
+    updateHwWidget(ref.read(hwWidgetProvider));
+    NotificationSender.scheduletomorrowNotification();
+
+    if (nowActive) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          ref.read(examProvider.notifier).checkAllIfCompleted();
+        },
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
+    appStateListener = AppLifecycleListener(
+      onResume: () => _onAppLeaveOrReturn(true),
+      onInactive: () => _onAppLeaveOrReturn(false),
+    );
+    _onAppLeaveOrReturn(true);
+
     // add riverpod reference to firestore service, need to update firebaseOverlay
-    firestoreService = FirestoreService(ref: ref);
+    firebaseService = FirebaseService(ref: ref);
 
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
       showingTutorial = false;
+      if (settings.get(Setting.stopAskingForNotifications) != true) {
+        Future.delayed(
+          Duration.zero,
+          () {
+            if (navigatorKey.currentContext != null) {
+              NotificationSender.getPermission(
+                  navigatorKey.currentContext!, tomorrowChannel);
+            }
+          },
+        );
+      }
     }
 
-    if (!firestoreService.isloggedIn && kIsWeb) {
-      showingFirebaseLoginScreen = true;
+    if (!firebaseService.isloggedIn && kIsWeb && !kDebugMode) {
+      // TODO should we hide this or not?
+      // showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }
 
@@ -234,9 +266,18 @@ class _TasksAppState extends ConsumerState<TasksApp> {
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
     );
-    NotificationSender.scheduleTommorrowNotification();
 
-    tryGettingNewHomeworks();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        tryGettingNewHomeworks(ref);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    appStateListener.dispose();
+    super.dispose();
   }
 
   void firstTimeOpeningApp() {
@@ -275,7 +316,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // This code will run after the first frame is rendered.
-      calendarShowTommorrow = false;
+      calendarShowtomorrow = false;
     });
   }
 
@@ -283,7 +324,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     navigatorKey.currentState?.popUntil((route) => route.isFirst);
     switchDrawer(onlyClose: true);
 
-    calendarShowTommorrow = true;
+    calendarShowtomorrow = true;
     _pageController.jumpToPage(0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // This code will run after the first frame is rendered.
@@ -296,17 +337,13 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // This code will run after the first frame is rendered.
-      calendarShowTommorrow = false;
+      calendarShowtomorrow = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenSize.init(context);
-
-    ref.listen<List<HomeworkDTO>>(hwWidgetProvider, (previous, next) {
-      updateHwWidget(next);
-    });
 
     final isWide = ScreenSize.isWideScreen.value;
 
@@ -357,7 +394,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
         return MaterialApp(
           navigatorKey: navigatorKey,
-          title: 'School app',
+          title: 'Schoolarc',
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -373,23 +410,26 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
-              colorScheme: light,
-              sliderTheme: SliderThemeData(year2023: false),
-              progressIndicatorTheme:
-                  ProgressIndicatorThemeData(year2023: false)),
+            colorScheme: light,
+            sliderTheme: SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+          ),
           darkTheme: ThemeData(
-              colorScheme: dark,
-              sliderTheme: SliderThemeData(year2023: false),
-              // TODO add ?
-              // pageTransitionsTheme: const PageTransitionsTheme(
-              //   builders: <TargetPlatform, PageTransitionsBuilder>{
-              //     // Set the predictive back transitions for Android.
-              //     TargetPlatform.android:
-              //         PredictiveBackPageTransitionsBuilder(),
-              //   },
-              // ),
-              progressIndicatorTheme:
-                  ProgressIndicatorThemeData(year2023: false)),
+            colorScheme: dark,
+            sliderTheme: SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            // pageTransitionsTheme: const PageTransitionsTheme(
+            //   builders: <TargetPlatform, PageTransitionsBuilder>{
+            //     // Set the predictive back transitions for Android.
+            //     TargetPlatform.android:
+            //         PredictiveBackPageTransitionsBuilder(),
+            //   },
+            // ),
+            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+          ),
           themeMode: themeMode,
           initialRoute: '/',
           onGenerateRoute: (settings) {
@@ -445,7 +485,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                           children: [
                             const HomeScreen(),
                             CalendarScreen(
-                              showTommorrow: calendarShowTommorrow,
+                              showtomorrow: calendarShowtomorrow,
                             ),
                             const HomeworksScreen(),
                             const ExamsScreen(),
@@ -468,7 +508,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
               ),
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
               if (showingFirebaseLoginScreen)
-                FirestoreLoginScreen(onHide: hideFirebase),
+                FirebaseLoginScreen(onHide: hideFirebase),
             ],
           ),
         );

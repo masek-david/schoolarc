@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 
 class TimetableSettings extends StatefulWidget {
   const TimetableSettings({
@@ -32,20 +31,18 @@ class _TimetableSettingsState extends State<TimetableSettings> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SettingTile(
-            label: 'Show 7 day week',
-            trailing: SwitchAction(
-              initialValue: showWholeWeek,
-              onChanged: (value) {
-                setState(() {
-                  widget.changeShowWholeWeek(value);
-                  showWholeWeek = value;
-                });
-              },
-            ),
+          SettingTile.withSwitch(
+            title: 'Show 7 day week',
+            value: showWholeWeek,
+            onChanged: (value) {
+              setState(() {
+                widget.changeShowWholeWeek(value);
+                showWholeWeek = value;
+              });
+            },
           ),
           SettingTile(
-            label: 'Tile width',
+            title: 'Tile width',
             newLineAction: SliderAction(
               inititalValue: tileWidth.toDouble(),
               min: 60,

@@ -49,7 +49,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
                 ? () {
                     Navigator.pop(
                       context,
-                      LessonTimes.fromTimeOfDay(
+                      LessonTimes(
                         startTime: startTime!,
                         endTime: endTime!,
                         name: nameController.text

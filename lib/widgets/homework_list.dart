@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
 class HomeworkList extends StatelessWidget {
@@ -17,11 +17,11 @@ class HomeworkList extends StatelessWidget {
     required this.onChangedCompletion, required this.onConvert,
   });
 
-  final List<HomeworkDTO> hwList;
-  final void Function(HomeworkDTO hw) onDelete;
-  final void Function(HomeworkDTO hw) onConvert;
-  final void Function(HomeworkDTO hw) onEdit;
-  final void Function(HomeworkDTO hw, bool value) onChangedCompletion;
+  final List<Homework> hwList;
+  final void Function(Homework hw) onDelete;
+  final void Function(Homework hw) onConvert;
+  final void Function(Homework hw) onEdit;
+  final void Function(Homework hw, bool value) onChangedCompletion;
   final bool draggable;
   final bool showText;
   final bool showDates;
@@ -41,7 +41,7 @@ class HomeworkList extends StatelessWidget {
         else if (showText)
           TextSeparator(text: textFull),
         ...List.generate(hwList.length, (index) {
-          HomeworkDTO hw = hwList[index];
+          Homework hw = hwList[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: AnimatedCompletionTile(

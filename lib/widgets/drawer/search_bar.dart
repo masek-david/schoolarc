@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -57,9 +57,9 @@ class MySearchBar extends ConsumerWidget {
             .forEach(
           (task) {
             late Widget item;
-            if (task.runtimeType == HomeworkDTO) {
+            if (task.runtimeType == Homework) {
               item = HomeworkTile(
-                hw: task as HomeworkDTO,
+                hw: task as Homework,
                 onChangedCompletion: (p0) {},
                 onDelete: null,
                 onEdit: () {
@@ -70,9 +70,11 @@ class MySearchBar extends ConsumerWidget {
               );
             } else {
               item = ExamTile(
-                exam: task as ExamDTO,
+                exam: task as Exam,
                 onDelete: null,
-                onEdit: () {},
+                onEdit: () {
+                  editExam(context, ref, task);
+                },
                 onConvert: null,
               );
             }

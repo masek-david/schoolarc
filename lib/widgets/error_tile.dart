@@ -26,6 +26,10 @@ class ErrorTile extends StatelessWidget {
       action = exception.action;
     }
 
+    if (error.runtimeType == BakaLoginException) {
+      action = ExceptionActions.bakaLogin;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +75,9 @@ class ErrorTile extends StatelessWidget {
             },
             child: Text(
               'Login',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
         if (action == ExceptionActions.bakaLogin)

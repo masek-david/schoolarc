@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/recap/recap_button.dart';
+import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/screens/recently_deleted_screen.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/switch_action.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -42,7 +43,7 @@ class MyDrawer extends StatelessWidget {
           children: [
             const Padding(
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
-              child: Text('School app', style: TextStyle(fontSize: 20)),
+              child: Text('Schoolarc', style: TextStyle(fontSize: 20)),
             ),
             Padding(
                 padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
@@ -123,40 +124,33 @@ class MyDrawer extends StatelessWidget {
                     if (kDebugMode || showDebug)
                       const Divider(indent: 28, endIndent: 28),
                     if (kDebugMode || showDebug)
-                      SettingTile(
-                        label: 'Show debug info',
-                        trailing: SwitchAction(
-                          initialValue: settings.get(Setting.showDebugInfo),
-                          onChanged: (value) {
-                            settings.save(Setting.showDebugInfo, value);
-                            refreshTheme();
-                          },
-                        ),
+                      SettingTile.withSwitch(
+                        title: 'Developer mode',
+                        value: settings.get(Setting.showDebugInfo),
+                        onChanged: (value) {
+                          settings.save(Setting.showDebugInfo, value);
+                          refreshTheme();
+                        },
                       ),
                     if (showDebug)
-                      SettingTile(
-                        label: 'Show performance overlay',
-                        trailing: SwitchAction(
-                          initialValue:
-                              settings.get(Setting.debugShowPerformanceOverlay),
-                          onChanged: (value) {
-                            settings.save(
-                                Setting.debugShowPerformanceOverlay, value);
-                            refreshTheme();
-                          },
-                        ),
+                      SettingTile.withSwitch(
+                        title: 'Show performance overlay',
+                        value:
+                            settings.get(Setting.debugShowPerformanceOverlay),
+                        onChanged: (value) {
+                          settings.save(
+                              Setting.debugShowPerformanceOverlay, value);
+                          refreshTheme();
+                        },
                       ),
                     if (showDebug)
-                      SettingTile(
-                        label: 'Show firebase overlay',
-                        trailing: SwitchAction(
-                          initialValue:
-                              settings.get(Setting.debugShowFireOverlay),
-                          onChanged: (value) {
-                            settings.save(Setting.debugShowFireOverlay, value);
-                            refreshTheme();
-                          },
-                        ),
+                      SettingTile.withSwitch(
+                        title: 'Show firebase overlay',
+                        value: settings.get(Setting.debugShowFireOverlay),
+                        onChanged: (value) {
+                          settings.save(Setting.debugShowFireOverlay, value);
+                          refreshTheme();
+                        },
                       ),
                     if (showDebug)
                       MyDrawerButton(
@@ -185,6 +179,26 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
+            if (isRecapDate())
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RecapButton(
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'View stats about your year 🎉',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             MyDrawerButton(
               text: 'View tutorial',
               icon: const Icon(Icons.school),
@@ -203,7 +217,7 @@ class MyDrawer extends StatelessWidget {
                 );
               },
             ),
-            if (showDebug)
+            if (showDebug || kDebugMode)
               GestureDetector(
                 onTap: () => navigatorKey.currentState?.push(MaterialPageRoute(
                   builder: (context) => ChangelogScreen(),

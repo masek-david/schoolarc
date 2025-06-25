@@ -1,32 +1,31 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
+import 'package:school_manager/models/exams/exam_id_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/notifications/notification_sender.dart';
 
 final examProvider =
-    NotifierProvider<ExamNotifier, Map<int, ExamDTO>>(ExamNotifier.new);
+    NotifierProvider<ExamNotifier, Map<String, Exam>>(ExamNotifier.new);
 
 // sorts by priorities (0-3), orders them
-final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
+final examSortedProvider = Provider<Map<int, List<Exam>>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
-    Map<int, List<ExamDTO>> examPriorityMap = {
-      0: <ExamDTO>[],
-      1: <ExamDTO>[],
-      2: <ExamDTO>[],
-      3: <ExamDTO>[],
+    Map<int, List<Exam>> examPriorityMap = {
+      0: <Exam>[],
+      1: <Exam>[],
+      2: <Exam>[],
+      3: <Exam>[],
     };
 
     exams.forEach(
@@ -50,7 +49,7 @@ final examSortedProvider = Provider<Map<int, List<ExamDTO>>>(
 );
 
 // key for each day is the utc value, with time being 0:00:00
-final examsDatesProvider = Provider<Map<DateTime, List<ExamDTO>>>(
+final examsDatesProvider = Provider<Map<DateTime, List<Exam>>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
@@ -58,16 +57,16 @@ final examsDatesProvider = Provider<Map<DateTime, List<ExamDTO>>>(
   },
 );
 
-// key for each day is the utc value, with time being 0:00:00
-Map<DateTime, List<ExamDTO>> examsSortByDate(Map<int, ExamDTO> original) {
-  Map<DateTime, List<ExamDTO>> examsDateMap = {};
+// key for each day is the local date value, with time being 0:00:00
+Map<DateTime, List<Exam>> examsSortByDate(Map<String, Exam> original) {
+  Map<DateTime, List<Exam>> examsDateMap = {};
 
   original.forEach(
     (dbIndex, exam) {
-      final examDeadlineUtc = exam.deadline;
+      final examDeadlineLocal = exam.deadline.toLocal();
 
-      DateTime dateNoTime = DateTime.utc(
-          examDeadlineUtc.year, examDeadlineUtc.month, examDeadlineUtc.day);
+      DateTime dateNoTime = DateTime(examDeadlineLocal.year,
+          examDeadlineLocal.month, examDeadlineLocal.day);
 
       if (!exam.isDeleted) {
         if (examsDateMap.containsKey(dateNoTime)) {
@@ -82,17 +81,18 @@ Map<DateTime, List<ExamDTO>> examsSortByDate(Map<int, ExamDTO> original) {
   );
 
   examsDateMap.forEach((key, value) {
+    value.sort((a, b) => a.order.compareTo(b.order));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
 
   return examsDateMap;
 }
 
-final examCompletedProvider = Provider<List<ExamDTO>>(
+final examCompletedProvider = Provider<List<Exam>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
-    final list = <ExamDTO>[];
+    final list = <Exam>[];
 
     exams.forEach(
       (key, exam) {
@@ -108,7 +108,7 @@ final examCompletedProvider = Provider<List<ExamDTO>>(
   },
 );
 
-final examDeletedProvider = Provider<List<ExamDTO>>(
+final examDeletedProvider = Provider<List<Exam>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
@@ -125,18 +125,12 @@ final examDeletedProvider = Provider<List<ExamDTO>>(
   },
 );
 
-class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
-  Map<int, SubjectDTO> subjects = {};
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
+class ExamNotifier extends Notifier<Map<String, Exam>> {
+  Map<String, Subject> subjects = {};
+  StreamSubscription<ExamWithID>? listenFirebase;
 
   @override
-  set state(Map<int, ExamDTO> newState) {
-    super.state = newState;
-    NotificationSender.scheduleTommorrowNotification();
-  }
-
-  @override
-  Map<int, ExamDTO> build() {
+  Map<String, Exam> build() {
     // listen to subjectsProvider changes
     ref.listen(subjectsProvider, (_, next) {
       subjects = next;
@@ -157,12 +151,12 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   }
 
   // returns state saved in database
-  Map<int, ExamDTO> get _dbState {
+  Map<String, Exam> get _dbState {
     return examsDb.getDatabase().map(
       (key, value) {
         return MapEntry(
           key,
-          value.convertToDTO(key, subjects[value.subjectDbIndex]),
+          value.convert(key, subjects[value.subjectId]),
         );
       },
     );
@@ -171,39 +165,10 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase =
-        firestoreService.examsListenToChanges().listen((event) async {
+    listenFirebase = firebaseService.listenExams().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(2);
 
-      Map<String, Exam> updatedExams = {};
-
-      for (var change in event.docChanges) {
-        final doc = change.doc;
-        final fireExam = Exam(
-          isDeleted: doc['isDeleted'],
-          timestamp: (doc['timestamp'] as Timestamp).toDate(),
-          fireId: doc.id,
-          subjectDbIndex: subjects.values
-              .where(
-                (exam) => exam.fireId == doc['subjectId'],
-              )
-              .firstOrNull
-              ?.dbIndex,
-          text: doc['text'],
-          date: (doc['deadline'] as Timestamp).toDate(),
-          priority: doc['priority'],
-          description: doc['description'],
-          order: doc['order'],
-        );
-
-        updatedExams[doc.id] = fireExam;
-      }
-
-      updatedExams.forEach(
-        (key, value) async {
-          await checkFireExam(value);
-        },
-      );
+      await checkFireExam(event);
     }, onError: (error) {
       log('error listening to firebase exams: ${error.toString()}');
     });
@@ -225,7 +190,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   }
 
   void checkAllIfCompleted() {
-    Map<int, ExamDTO> updated = {};
+    Map<String, Exam> updated = {};
 
     state.forEach(
       (key, value) {
@@ -244,7 +209,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   Future<void> syncAll() async {
     _loadState();
     await listenToFirebase();
-    final fireExams = await firestoreService.getAllExams();
+    final fireExams = await firebaseService.getAllExams();
 
     fireExams?.forEach(
       (element) {
@@ -257,19 +222,15 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
 
     state.forEach(
       (key, value) {
-        if (value.fireId == null) {
-          edit(value);
-        } else {
-          bool isSynced = fireExams
-                  ?.where(
-                    (element) => element.fireId == value.fireId,
-                  )
-                  .firstOrNull !=
-              null;
+        bool isSynced = fireExams
+                ?.where(
+                  (element) => element.id == value.id,
+                )
+                .firstOrNull !=
+            null;
 
-          if (!isSynced) {
-            edit(value);
-          }
+        if (!isSynced) {
+          edit(value);
         }
       },
     );
@@ -278,29 +239,31 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   }
 
   Future<void> saveNew(
-    Exam exam, {
+    ExamEntity exam, {
+    // if null, new id is generated
+    String? overrideId,
     bool addToFire = true,
+    // sets the order to put the task to the end
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      exam = exam.copyWith(order: _dbState.values
-          .where(
-            (element) =>
-                !element.isDeleted &&
-                !element.isCompleted &&
-                element.priority.index == exam.priority,
-          )
-          .length);
+      exam = exam.copyWith(
+          order: _dbState.values
+              .where(
+                (element) =>
+                    !element.isDeleted &&
+                    !element.isCompleted &&
+                    element.priority.index == exam.priority,
+              )
+              .length);
     }
 
-    if (addToFire) {
-      exam = exam.copyWith(fireId: uuid.v4());
-    }
+    final id = overrideId ?? uuid.v4();
 
     final originalState = _dbState;
-    int dbIndex = await examsDb.addExam(exam);
+    await examsDb.addExam(id, exam);
 
-    final ExamDTO? examWithSameOrder = originalState.values
+    final Exam? examWithSameOrder = originalState.values
         .where((element) =>
             element.order == exam.order &&
             !element.isDeleted &&
@@ -313,34 +276,28 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
             examWithSameOrder.timestamp.millisecondsSinceEpoch) {
           // if the new one is older, add it after the old one
           exam = exam.copyWith(order: exam.order + 1);
-          examsDb.editExam(dbIndex, exam);
+          examsDb.editExam(id, exam);
           // if the new one is newer, add it before old
         }
         reorder(
-          null,
           exam.order,
-          null,
           exam.priority,
-          exam.convertToDTO(dbIndex, subjects[exam.subjectDbIndex]),
+          exam.convert(id, subjects[exam.subjectId]),
         );
       }
     }
 
-    state = {
-      ...state,
-      dbIndex: exam.convertToDTO(dbIndex, subjects[exam.subjectDbIndex])
-    };
+    state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
     if (addToFire) {
-      await firestoreService
-          .addExam(exam.convertToDTO(0, subjects[exam.subjectDbIndex]));
+      await firebaseService.addExam(exam.convert(id, subjects[exam.subjectId]));
     }
 
     return;
   }
 
-  /// assign timestamp manually, if no fireId, it will add it as now
-  void edit(ExamDTO editedExam, {bool syncWithFire = true}) async {
-    final old = _dbState[editedExam.dbIndex]!;
+  /// assign timestamp manually, if no id, it will add it as now
+  void edit(Exam editedExam, {bool syncWithFire = true}) async {
+    final old = _dbState[editedExam.id]!;
 
     editedExam = editedExam.copyWith(
       isCompleted: editedExam.deadline.isBeforeToday(),
@@ -353,20 +310,16 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       if ((editedExam.isDeleted && !old.isDeleted) ||
           (editedExam.isCompleted && !old.isCompleted)) {
         reorder(
-          old.order,
-          null,
-          old.priority.index,
           null,
           null,
+          old,
         );
       }
       // if now isnt deleted or now isnt completed (should appear)
       if ((!editedExam.isDeleted && old.isDeleted) ||
           (!editedExam.isCompleted && old.isCompleted)) {
         reorder(
-          null,
           editedExam.order,
-          null,
           editedExam.priority.index,
           editedExam,
         );
@@ -376,49 +329,42 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       if (old.order != editedExam.order ||
           old.priority.index != editedExam.priority.index) {
         await reorder(
-          old.order,
           editedExam.order,
-          old.priority.index,
           editedExam.priority.index,
-          null,
+          old,
         );
       }
     }
 
-    examsDb.editExam(editedExam.dbIndex, editedExam.convert());
+    examsDb.editExam(editedExam.id, editedExam.convert());
 
     if (syncWithFire) {
-      if (editedExam.fireId == null) {
-        editedExam = editedExam.copyWith(fireId: uuid.v4());
-
-        examsDb.editExam(editedExam.dbIndex, editedExam.convert());
-      }
-      firestoreService.editExams([editedExam]);
+      firebaseService.editExams([editedExam]);
     }
 
-    state = {...state, editedExam.dbIndex: editedExam};
+    state = {...state, editedExam.id: editedExam};
   }
 
-  /// updates all with changed order, if [oldIndex] is null, it will only be added and [exam] cant be null, if [newIndex] is null, it will be only removed
+  /// updates all with changed order
+  ///
+  /// [originalExam] is old homework, [newIndex] and [newPriority] are where it will be placed
+  ///
+  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
-    int? oldIndex,
     int? newIndex,
-    int? oldPriority,
     int? newPriority,
-    ExamDTO? exam, {
-    /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
+    final Exam originalExam, {
     bool addTimestamp = false,
   }) async {
-    if ((oldIndex == null || oldPriority == null) && exam == null) {
-      throw '[oldIndex], [oldPriority] and [subject] are all null';
-    }
+    // both must be null or both mustnt be null
+    assert((newIndex == null) == (newPriority == null));
 
     var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == oldPriority,
+              element.priority.index == originalExam.priority.index,
         )
         .toList();
     var newPriorityList = _dbState.values
@@ -433,100 +379,98 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
     oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
     newPriorityList.sort((a, b) => a.order.compareTo(b.order));
 
-    if (oldIndex != null && oldPriority != null) {
-      exam = oldPriorityList.removeAt(oldIndex >= oldPriorityList.length
-          ? oldPriorityList.length - 1
-          : oldIndex);
-      if (oldPriority == newPriority) {
-        newPriorityList.removeAt(oldIndex >= newPriorityList.length
-            ? newPriorityList.length - 1
-            : oldIndex);
-      }
-    }
+    // if you can remove it from somewhere
+    oldPriorityList.removeWhere((element) => element.id == originalExam.id);
+    // if you arent changing priority, you need to remove it from the [newPriorityList] too
+    newPriorityList.removeWhere((element) => element.id == originalExam.id);
+
+    Exam newExam = originalExam;
     if (addTimestamp) {
-      exam = exam!.copyWith(timestamp: Timestamp.now());
+      newExam = newExam.copyWith(timestamp: DateTime.now().toUtc());
     }
-    // now exam cant be null
+
+    // if you want to add it somewhere
     if (newIndex != null && newPriority != null) {
-      exam = exam!.copyWith(priority: TaskPriority(newPriority));
+      // change the task's priority
+      newExam = newExam.copyWith(priority: TaskPriority(newPriority));
+      // add it to list of [newPriority], at [newIndex]
       newPriorityList.insert(
           newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
-          exam);
+          newExam);
     }
 
-    final editedExams = <int, ExamDTO>{};
+    // now the lists are final, its just about saving all exams with changed values
 
-    if (oldPriority != newPriority) {
+    final editedExams = <String, Exam>{};
+
+    // if priority has changed, check old list too
+    if (originalExam.priority.index != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
-        final oldExam = _dbState[edited.dbIndex];
+        final oldExam = _dbState[edited.id];
 
         if (edited.order != oldExam?.order) {
-          editedExams[edited.dbIndex] = edited;
+          editedExams[edited.id] = edited;
         }
       }
     }
     for (int i = 0; i < newPriorityList.length; i++) {
       final edited = newPriorityList[i].copyWith(order: i);
-      final oldExam = _dbState[edited.dbIndex];
+      final oldExam = _dbState[edited.id];
 
       if (edited.order != oldExam?.order ||
           edited.priority.index != oldExam?.priority.index) {
-        editedExams[edited.dbIndex] = edited;
+        editedExams[edited.id] = edited;
       }
     }
 
     editedExams.forEach(
       (key, value) async {
-        examsDb.editExam(value.dbIndex, value.convert());
+        examsDb.editExam(key, value.convert());
       },
     );
 
-    firestoreService.editExams(editedExams.values
-        .where(
-          (element) => element.fireId != null,
-        )
-        .toList());
+    firebaseService.editExams(editedExams.values.toList());
 
     state = {...state, ...editedExams};
     return;
   }
 
-  void convert(ExamDTO exam) {
+  void convert(Exam exam) {
     delete(exam);
     ref.read(hwProvider.notifier).saveNew(exam.toHw());
   }
 
-  void delete(ExamDTO exam) {
-    edit(exam.copyWith(timestamp: Timestamp.now(), isDeleted: true));
+  void delete(Exam exam) {
+    edit(exam.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(ExamDTO exam) {
+  void revertDelete(Exam exam) {
     edit(
       exam.copyWith(
-          timestamp: Timestamp.now(),
+          timestamp: DateTime.now().toUtc(),
           isDeleted: false,
           stateReaddingVersion: exam.stateReaddingVersion + 1),
     );
   }
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  Future<void> _permanentDelete(List<ExamDTO> exams) async {
+  Future<void> _permanentDelete(List<Exam> exams) async {
     if (exams.isEmpty) return;
     for (var element in exams) {
-      examsDb.delete(element.dbIndex);
+      examsDb.delete(element.id);
     }
-    await firestoreService.deleteExams(exams);
+    await firebaseService.deleteExams(exams);
   }
 
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<ExamDTO> examsToDelete = [];
+    List<Exam> examsToDelete = [];
 
     for (var exam in _dbState.values) {
       if (exam.isDeleted &&
-          now.difference(exam.timestamp.toDate()) > Duration(days: 7)) {
+          now.difference(exam.timestamp) > Duration(days: 7)) {
         examsToDelete.add(exam);
       }
     }
@@ -534,12 +478,12 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
   }
 
   /// checks and updates/adds exam from firestore, overwrites the newest version
-  Future<void> checkFireExam(Exam fireExam) async {
+  Future<void> checkFireExam(ExamWithID fireExam) async {
     // print('checking exam from fire: ${fireExam.toString()}');
 
     final localExam = _dbState.values.where(
       (element) {
-        return element.fireId == fireExam.fireId;
+        return element.id == fireExam.id;
       },
     ).firstOrNull;
 
@@ -550,13 +494,14 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
 
       await saveNew(
         fireExam,
+        overrideId: fireExam.id,
         addToFire: false,
         addToEnd: false,
       );
       return;
     }
 
-    final localTime = localExam.timestamp.toDate();
+    final localTime = localExam.timestamp;
     final fireTime = fireExam.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
@@ -564,8 +509,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       //     '\u001b[1;93mediting exam from fire: ${fireExam.toString()}');
 
       edit(
-        fireExam.convertToDTO(
-            localExam.dbIndex, subjects[fireExam.subjectDbIndex]),
+        fireExam.convert(fireExam.id, subjects[fireExam.subjectId]),
         syncWithFire: false,
       );
     } else if (fireTime.millisecondsSinceEpoch <
@@ -573,7 +517,7 @@ class ExamNotifier extends Notifier<Map<int, ExamDTO>> {
       // print(
       //     '\u001b[1;93mediting exam from hive: ${fireExam.toString()}');
 
-      firestoreService.editExams([localExam.copyWith(fireId: fireExam.fireId)]);
+      firebaseService.editExams([localExam.copyWith(id: fireExam.id)]);
     }
     return;
   }

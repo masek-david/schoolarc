@@ -1,19 +1,6 @@
 import 'package:intl/intl.dart';
 
 extension BetterDateTime on DateTime {
-  /// can ONLY add one month
-  DateTime addMonth(int months) {
-    int finalYear = year;
-    int finalMonth = month + months;
-
-    if (finalMonth > 12) {
-      finalYear++;
-      finalMonth = finalMonth - 12;
-    }
-
-    return copyWith(year: finalYear, month: finalMonth);
-  }
-
   bool isSameDay(DateTime comparedDate) {
     comparedDate = comparedDate.toLocal();
 
@@ -35,8 +22,9 @@ extension BetterDateTime on DateTime {
 
   /// vrati true pokud je date vcera a drive, false pokud dnes
   bool isBeforeToday() {
+    final local = toLocal();
     DateTime now = DateTime.now();
-    DateTime dateOnlyDate = DateTime(year, month, day);
+    DateTime dateOnlyDate = DateTime(local.year, local.month, local.day);
     DateTime nowOnlyDate = DateTime(now.year, now.month, now.day);
 
     return dateOnlyDate.isBefore(nowOnlyDate) &&
@@ -45,6 +33,10 @@ extension BetterDateTime on DateTime {
 
   String minuteStartingWithZero() {
     return minute < 10 ? '0$minute' : minute.toString();
+  }
+
+  DateTime onlyDate() {
+    return DateTime(year, month, day);
   }
 
   DateTime toUtcOnlyDate() {
@@ -65,7 +57,27 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// returns all days in this week
+  ///includes whole weeks
+  List<DateTime> allDaysInMonthCalendarView() {
+    List<DateTime> list = [];
+
+    final firstDayOfMonth = DateTime(year, month, 1);
+    final firstDayWeekday = firstDayOfMonth.weekday;
+    final firstDayIndex = - firstDayWeekday + 2;
+
+    final lastDayOfMonth = DateTime(year, month + 1, 0);
+    final daysInMonth = lastDayOfMonth.day;
+    final lastDayWeekday = lastDayOfMonth.weekday;
+    final lastDayIndex = daysInMonth + (7 - lastDayWeekday);
+
+    for (int i = firstDayIndex; i <= lastDayIndex; i++) {
+      list.add(DateTime(year, month, i));
+    }
+
+    return list;
+  }
+
+  /// returns all days in this month
   List<DateTime> allDaysInThisMonth() {
     List<DateTime> list = [];
 
@@ -78,21 +90,21 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tommorow
+  /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tomorrow
   String dateText() {
     final localDate = toLocal();
     final now = DateTime.now();
 
     String text;
-    text = DateFormat('d. MM.').format(localDate);
+    text = DateFormat('d. M.').format(localDate);
     if (localDate.year != now.year) {
-      text = DateFormat('d. MM. y').format(localDate);
+      text = DateFormat('d. M. y').format(localDate);
     } else if (localDate.isSameDay(now)) {
       text = 'Today';
     } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
-      text = 'Tommorow';
+      text = 'Tomorrow';
     } else if (localDate
-        .isSameDay(now.toUtc().subtract(const Duration(days: -1)))) {
+        .isSameDay(now.toUtc().subtract(const Duration(days: 1)))) {
       text = 'Yesterday';
     }
     return text;
@@ -103,14 +115,16 @@ extension BetterDateTime on DateTime {
     final localDate = toLocal();
     final now = DateTime.now();
 
-    if(localDate.difference(now) < Duration(days: 6)){
+    if (localDate.difference(now) < Duration(days: 6)) {
       return DateFormat.EEEE().format(localDate);
     }
     return dateText();
   }
 
   String formattedDate() {
-    String year = this.year == DateTime.now().year ? '' : this.year.toString();
-    return '$day.$month.$year';
+    final local = toLocal();
+    String year =
+        local.year == DateTime.now().year ? '' : local.year.toString();
+    return '${local.day}.${local.month}.$year';
   }
 }

@@ -1,23 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/exams/exam_entity_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 
 class Task {
-  SubjectDTO? subject;
-  String text;
-  DateTime deadline;
-  bool isCompleted;
-  TaskPriority priority;
-  int dbIndex;
-  String? description;
-  final String? fireId;
-  final Timestamp timestamp;
+  final String id;
+  final String text;
+  final String? description;
+  final Subject? subject;
+  final DateTime deadline;
+  final TaskPriority priority;
+  final int order;
+  final bool isCompleted;
   final bool isDeleted;
-  int order;
+  final DateTime timestamp;
 
   /// stateReaddingVersion changes when the task is re-added, so it doesnt trigger
   /// Multiple widgets use the same globalkey error in AnimatedReorderableListView
@@ -25,7 +23,7 @@ class Task {
   final int stateReaddingVersion;
 
   Task({
-    required this.fireId,
+    required this.id,
     required this.timestamp,
     required this.isDeleted,
     required this.subject,
@@ -33,7 +31,6 @@ class Task {
     required this.deadline,
     required this.isCompleted,
     required this.priority,
-    required this.dbIndex,
     required this.description,
     required this.order,
     this.stateReaddingVersion = 0,
@@ -42,47 +39,47 @@ class Task {
   Task.empty({DateTime? deadline})
       : deadline = deadline ?? DateTime.now(),
         text = '',
-        fireId = null,
         isCompleted = false,
         priority = TaskPriority(0),
-        dbIndex = 0,
+        id = '',
         isDeleted = false,
         order = 0,
-        timestamp = Timestamp.now(),
+        description = null,
+        subject = null,
+        timestamp = DateTime.now().toUtc(),
         stateReaddingVersion = 0;
 
-  Homework toHw() {
-    return Homework(
-      fireId: fireId,
+  HomeworkEntity toHw() {
+    return HomeworkEntity(
+      // id: id,
       isDeleted: isDeleted,
-      subjectDbIndex: subject?.dbIndex,
+      subjectId: subject?.id,
       text: text,
       deadline: deadline,
       isCompleted: isCompleted,
       priority: priority.index,
       description: description,
-      timestamp: timestamp.toDate(),
+      timestamp: timestamp,
       order: order,
     );
   }
 
-  Exam toExam() {
-    return Exam(
-      fireId: fireId,
+  ExamEntity toExam() {
+    return ExamEntity(
       isDeleted: isDeleted,
-      subjectDbIndex: subject?.dbIndex,
+      subjectId: subject?.id,
       text: text,
       date: deadline,
       priority: priority.index,
       description: description,
-      timestamp: timestamp.toDate(),
+      timestamp: timestamp,
       order: order,
     );
   }
 
   Map<String, dynamic> toWidgetJson() {
     return {
-      'dbIndex': dbIndex,
+      'id': id,
       'text': text,
       'subject': subject?.shortcut ?? '',
       'deadline': deadline.dateText(),
@@ -108,15 +105,14 @@ class Task {
   }
 
   Task copyWith({
-    SubjectDTO? subject,
+    Subject? subject,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
     TaskPriority? priority,
-    int? dbIndex,
+    String? id,
     String? description,
-    String? fireId,
-    Timestamp? timestamp,
+    DateTime? timestamp,
     bool? isDeleted,
     int? order,
     int? stateReaddingVersion,
@@ -127,9 +123,8 @@ class Task {
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
-      dbIndex: dbIndex ?? this.dbIndex,
+      id: id ?? this.id,
       description: description ?? this.description,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,

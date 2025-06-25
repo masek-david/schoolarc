@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
@@ -16,6 +16,7 @@ Future<void> addNewHw(
   final newHw = await showModalBottomSheet<Task?>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
       autoSetDate: initialDate == null,
@@ -28,10 +29,11 @@ Future<void> addNewHw(
   return;
 }
 
-void editHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) async {
-  HomeworkDTO? edited = await showModalBottomSheet<HomeworkDTO>(
+void editHw(BuildContext context, WidgetRef ref, Homework hw) async {
+  Homework? edited = await showModalBottomSheet<Homework>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: hw,
       autoSetDate: false,
@@ -43,16 +45,16 @@ void editHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) async {
   }
 }
 
-void convertHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) {
+void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
   ref.read(hwProvider.notifier).convert(hw);
 }
 
 void completeHw(
-    BuildContext context, WidgetRef ref, HomeworkDTO hw, bool value) {
+    BuildContext context, WidgetRef ref, Homework hw, bool value) {
   ref.read(hwProvider.notifier).complete(hw, value);
 }
 
-void deleteHw(BuildContext context, WidgetRef ref, HomeworkDTO hw) {
+void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   ref.read(hwProvider.notifier).delete(hw);
 
   showMessage(context, 'Deleted homework ${hw.text}', actions: [
@@ -73,6 +75,7 @@ Future<void> addNewExam(
   final newExam = await showModalBottomSheet<Task?>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: Task.empty().copyWith(deadline: initialDate),
       autoSetDate: initialDate == null,
@@ -84,10 +87,11 @@ Future<void> addNewExam(
   }
 }
 
-void editExam(BuildContext context, WidgetRef ref, ExamDTO exam) async {
-  ExamDTO? edited = await showModalBottomSheet<ExamDTO>(
+void editExam(BuildContext context, WidgetRef ref, Exam exam) async {
+  Exam? edited = await showModalBottomSheet<Exam>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => AddTaskBottomSheet(
       initialTask: exam,
       autoSetDate: false,
@@ -99,11 +103,11 @@ void editExam(BuildContext context, WidgetRef ref, ExamDTO exam) async {
   }
 }
 
-void convertExam(BuildContext context, WidgetRef ref, ExamDTO exam) {
+void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
   ref.read(examProvider.notifier).convert(exam);
 }
 
-void deleteExam(BuildContext context, WidgetRef ref, ExamDTO exam) {
+void deleteExam(BuildContext context, WidgetRef ref, Exam exam) {
   ref.read(examProvider.notifier).delete(exam);
 
   showMessage(context, 'Deleted exan ${exam.text}', actions: [

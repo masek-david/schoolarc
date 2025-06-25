@@ -52,7 +52,7 @@ class WelcomeScreenWelcome extends StatelessWidget {
           left: 40,
           right: 20,
           child: Text(
-            'Thanks for downloading this app. This is a tutorial for using the app. It will always be avaible to view later.',
+            'Thanks for downloading Schoolarc. This is a tutorial for using the app. It will always be avaible to view later.',
             style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.left,
           ),

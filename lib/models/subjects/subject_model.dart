@@ -1,48 +1,53 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
 
-part 'subject_model.g.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 
-@HiveType(typeId: 2)
-class Subject extends HiveObject {
+class Subject {
   Subject({
-    required this.fireId,
-    required DateTime? timestamp,
-    required this.isDeleted,
     required this.name,
     required this.shortcut,
+    required this.id,
     required this.bakaId,
+    required this.timestamp,
+    required this.isDeleted,
     required this.order,
-  }) : timestamp = timestamp ?? DateTime.now() {
-    if (timestamp == null) {
-      saveSafe();
-    }
+  });
+
+  String name;
+  String shortcut;
+  String id;
+  String? bakaId;
+  DateTime timestamp;
+  bool isDeleted;
+  int order;
+
+  SubjectEntity convert() {
+    return SubjectEntity(
+      name: name,
+      shortcut: shortcut,
+      bakaId: bakaId,
+      isDeleted: isDeleted,
+      timestamp: timestamp,
+      order: order,
+    );
   }
 
-  @HiveField(0)
-  final String name;
-  @HiveField(1)
-  final String shortcut;
-  @HiveField(2)
-  final String? bakaId;
-  @HiveField(3)
-  final String? fireId;
-  @HiveField(4)
-  final DateTime timestamp;
-  @HiveField(5, defaultValue: false)
-  final bool isDeleted;
-  @HiveField(6, defaultValue: 0)
-  final int order;
+  String get trimmedShortcut {
+    return shortcut.trim();
+  }
 
-  /// saves this as it is now to hive
-  void saveSafe() async {
-    // i dont know why it works, this box doesnt need to exist, maybe its just the delay?
-    await Hive.openBox('subjects');
+  @override
+  String toString() {
+    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp, ${isDeleted ? '[delete]' : ''}';
+  }
 
-    if (isInBox) {
-      save();
-    }
+  bool containsText(String text) {
+    return name.withoutDiacriticalMarks.toLowerCase().contains(
+              text.withoutDiacriticalMarks.toLowerCase(),
+            ) ||
+        shortcut.withoutDiacriticalMarks.toLowerCase().contains(
+              text.withoutDiacriticalMarks.toLowerCase(),
+            );
   }
 
   Map<String, dynamic> toJson() {
@@ -50,7 +55,7 @@ class Subject extends HiveObject {
       'name': name,
       'shortcut': shortcut,
       'bakaId': bakaId,
-      'id': fireId,
+      'id': id,
       'order': order,
       'isDeleted': isDeleted,
     };
@@ -58,42 +63,52 @@ class Subject extends HiveObject {
 
   Subject.fromJson(Map<String, dynamic> json)
       : name = json['name'],
+        id = json['id'],
         shortcut = json['shortcut'],
         bakaId = json['bakaId'],
-        fireId = json['id'],
         order = json['order'],
         isDeleted = json['isDeleted'],
-        timestamp = DateTime.now();
+        timestamp = DateTime.now().toUtc();
 
-  SubjectDTO convertToDTO(int dbIndex) {
-    return SubjectDTO(
-      name: name,
-      shortcut: shortcut,
-      dbIndex: dbIndex,
-      bakaId: bakaId,
-      isDeleted: isDeleted == true,
-      fireId: fireId,
-      timestamp: Timestamp.fromDate(timestamp),
-      order: order,
-    );
+  Map<String, dynamic> toFireJson() {
+    return {
+      'n': name,
+      's': shortcut,
+      if(bakaId != null) 'b': bakaId,
+      if(order != 0) 'o': order,
+      if(isDeleted) 'del': isDeleted,
+      't': timestamp.millisecondsSinceEpoch,
+    };
+  }
+
+  Subject.fromFireJson(Map<String, dynamic>  json)
+      : name = json['n'],
+        id = json['id'],
+        shortcut = json['s'],
+        bakaId = json['b'],
+        order = json['o'] ?? 0,
+        isDeleted = json['del'] ?? false,
+        timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
+
+  bool get isFromBakalari {
+    return bakaId != null && bakaId != '';
   }
 
   Subject copyWith({
     String? name,
     String? shortcut,
-    int? dbIndex,
+    String? id,
     bool? isDeleted,
     String? bakaId,
-    String? fireId,
     DateTime? timestamp,
     int? order,
   }) {
     return Subject(
       name: name ?? this.name,
       shortcut: shortcut ?? this.shortcut,
+      id: id ?? this.id,
       isDeleted: isDeleted ?? this.isDeleted,
       bakaId: bakaId ?? this.bakaId,
-      fireId: fireId ?? this.fireId,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
     );

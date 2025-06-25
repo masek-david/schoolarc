@@ -2,8 +2,8 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/exams/exam_dto_model.dart';
-import 'package:school_manager/services/settings_database.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -18,7 +18,7 @@ class ExamTile extends StatelessWidget {
     required this.onConvert,
   });
 
-  final ExamDTO exam;
+  final Exam exam;
   final bool showDeadline;
   final void Function()? onDelete;
   final void Function() onEdit;
@@ -26,10 +26,9 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMissed = exam.deadline.isBeforeToday();
-
-    Color missedColor =
-        Colors.red.harmonizeWith(Theme.of(context).primaryColor);
+    final Color? missedColor = exam.deadline.isBeforeToday()
+        ? Colors.red.harmonizeWith(Theme.of(context).primaryColor)
+        : null;
 
     double opacity = 1;
     if (exam.isCompleted == true) {
@@ -109,12 +108,7 @@ class ExamTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       if (settings.get(Setting.showDebugInfo))
-                        Column(
-                          children: [
-                            Text('id: ${exam.dbIndex.toString()}'),
-                            Text(exam.order.toString()),
-                          ],
-                        ),
+                        Text(exam.order.toString()),
                       AnimatedContainer(
                         width: 50,
                         height: 50,
@@ -135,21 +129,23 @@ class ExamTile extends StatelessWidget {
                         ),
                       const SizedBox(width: 8),
                       Expanded(child: Text(exam.text, maxLines: 2)),
-                      if (settings.get(Setting.showDebugInfo))
-                        Column(
-                          children: [
-                            Text(
-                                'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
-                          ],
-                        ),
+                      // if (settings.get(Setting.showDebugInfo))
+                      //   Column(
+                      //     children: [
+                      //       Text(
+                      //         exam.id,
+                      //         style: TextStyle(fontSize: 8),
+                      //       ),
+                      //       Text(
+                      //           'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
+                      //     ],
+                      //   ),
                       const SizedBox(width: 8),
                       if (showDeadline)
                         Text(
                           exam.deadline.dateText(),
                           maxLines: 2,
-                          style: TextStyle(
-                              color: isMissed ? missedColor : null,
-                              fontSize: 12),
+                          style: TextStyle(color: missedColor, fontSize: 12),
                         ),
                       const SizedBox(width: 8),
                     ],

@@ -1,16 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/timetable_database.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/widgets/priority_picker.dart';
+import 'package:school_manager/widgets/priority_picker_new.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -33,12 +32,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       TextEditingValue(text: widget.initialTask.text));
   late final descriptionController = TextEditingController.fromValue(
       TextEditingValue(text: widget.initialTask.description ?? ''));
-  late SubjectDTO? pickedSubject = widget.initialTask.subject;
+  late Subject? pickedSubject = widget.initialTask.subject;
   late DateTime pickedDate = widget.initialTask.deadline;
   late int pickedPriority = widget.initialTask.priority.index;
 
-  late List<SubjectDTO> subjects = ref.read(subjectsSortedProvider);
-  final _timetable = TimeTableDatabase().timeTable;
+  late List<Subject> subjects = ref.read(subjectsSortedProvider);
+  final _timetable = timetableDb.timeTable;
 
   late List<GlobalKey> keysList = List<GlobalKey>.generate(
     subjects.length,
@@ -54,12 +53,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
         description: descriptionController.text,
         deadline: pickedDate,
         priority: TaskPriority(pickedPriority),
-        timestamp: Timestamp.now(),
+        timestamp: DateTime.now().toUtc(),
       ),
     );
   }
 
-  void setSubject(SubjectDTO? subject) {
+  void setSubject(Subject? subject) {
     setState(() {
       pickedSubject = subject;
       if (widget.autoSetDate && subject != null) {
@@ -80,7 +79,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       if (pickedSubject != null) {
         Scrollable.ensureVisible(
           keysList[subjects.indexWhere(
-            (element) => pickedSubject!.dbIndex == element.dbIndex,
+            (element) => pickedSubject!.id == element.id,
           )]
               .currentContext!,
           duration: const Duration(milliseconds: 500),
@@ -92,23 +91,26 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   @override
   void dispose() {
     nameController.dispose();
+    descriptionController.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       child: Container(
-        margin: const EdgeInsets.all(12),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 12),
               CancelSaveButton(onSave: onSave),
               const SizedBox(height: 15),
               Row(
@@ -137,8 +139,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
                               key: keysList[index],
-                              selected: pickedSubject?.dbIndex ==
-                                  subjects[index].dbIndex,
+                              selected: pickedSubject?.id == subjects[index].id,
                               label: Text(subjects[index].name),
                               onSelected: (value) {
                                 if (!value) {
@@ -156,7 +157,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                 ],
               ),
               const SizedBox(height: 10),
-              Autocomplete<SubjectDTO>(
+              Autocomplete<Subject>(
                 fieldViewBuilder: (context, textEditingController, focusNode,
                     onFieldSubmitted) {
                   return TextField(
@@ -201,16 +202,27 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   );
                 },
               ),
-              const Divider(),
+              SizedBox(height: 8),
               SizedBox(
-                  // listview musi mit vysku, kterou urci sizedbox
-                  height: 40,
-                  child: PriorityPicker(
-                    pickedPriority: pickedPriority,
-                    onSelected: (value) => setState(() {
-                      pickedPriority = value;
-                    }),
-                  )),
+                // listview musi mit vysku, kterou urci sizedbox
+                height: 40,
+                child: PriorityPickerNew(
+                  selectedPriority: pickedPriority,
+                  onSelected: (value) => setState(() {
+                    pickedPriority = value;
+                  }),
+                ),
+              ),
+              // SizedBox(
+              //   // listview musi mit vysku, kterou urci sizedbox
+              //   height: 40,
+              //   child: PriorityPicker(
+              //     pickedPriority: pickedPriority,
+              //     onSelected: (value) => setState(() {
+              //       pickedPriority = value;
+              //     }),
+              //   ),
+              // ),
               const Divider(),
               InkWell(
                 onTap: () async {
@@ -239,7 +251,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                         style: TextStyle(fontSize: 16),
                       ),
                       Text(
-                        '${pickedDate.day}.${pickedDate.month}.${pickedDate.year}',
+                        pickedDate.formattedDate(),
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -297,6 +309,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   hintText: 'Description',
                 ),
               ),
+              SizedBox(height: 12),
             ],
           ),
         ),

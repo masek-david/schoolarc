@@ -2,36 +2,36 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/homeworks/hw_dto_model.dart';
+import 'package:school_manager/database/hive/hive_init.dart';
+import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/homeworks/hw_entity_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_dto_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/notifications/notification_sender.dart';
 
 final hwProvider =
-    NotifierProvider<HwNotifier, Map<int, HomeworkDTO>>(HwNotifier.new);
+    NotifierProvider<HwNotifier, Map<String, Homework>>(HwNotifier.new);
 
 // sorts by priorities (0-3), orders them
-final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
+final hwSortedProvider = Provider<Map<int, List<Homework>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    Map<int, List<HomeworkDTO>> hwPriorityMap = {
-      0: <HomeworkDTO>[],
-      1: <HomeworkDTO>[],
-      2: <HomeworkDTO>[],
-      3: <HomeworkDTO>[],
+    Map<int, List<Homework>> hwPriorityMap = {
+      0: <Homework>[],
+      1: <Homework>[],
+      2: <Homework>[],
+      3: <Homework>[],
     };
 
     hws.forEach(
@@ -55,7 +55,7 @@ final hwSortedProvider = Provider<Map<int, List<HomeworkDTO>>>(
 );
 
 // key for each day is the utc value, with time being 0:00:00
-final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
+final hwDatesProvider = Provider<Map<DateTime, List<Homework>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -63,16 +63,16 @@ final hwDatesProvider = Provider<Map<DateTime, List<HomeworkDTO>>>(
   },
 );
 
-/// key for each day is the utc value, with time being 0:00:00
-Map<DateTime, List<HomeworkDTO>> hwsSortByDate(Map<int, HomeworkDTO> original) {
-  Map<DateTime, List<HomeworkDTO>> hwDateMap = {};
+/// key for each day is the local date value, with time being 0:00:00
+Map<DateTime, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
+  Map<DateTime, List<Homework>> hwDateMap = {};
 
   original.forEach(
     (dbIndex, homework) {
-      final hwDeadlineUtc = homework.deadline;
+      final hwDeadlineLocal = homework.deadline.toLocal();
 
-      DateTime dateNoTime = DateTime.utc(
-          hwDeadlineUtc.year, hwDeadlineUtc.month, hwDeadlineUtc.day);
+      DateTime dateNoTime = DateTime(
+          hwDeadlineLocal.year, hwDeadlineLocal.month, hwDeadlineLocal.day);
 
       if (!homework.isDeleted) {
         if (hwDateMap.containsKey(dateNoTime)) {
@@ -87,17 +87,18 @@ Map<DateTime, List<HomeworkDTO>> hwsSortByDate(Map<int, HomeworkDTO> original) {
   );
 
   hwDateMap.forEach((key, value) {
+    value.sort((a, b) => a.order.compareTo(b.order));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
 
   return hwDateMap;
 }
 
-final hwCompletedProvider = Provider<List<HomeworkDTO>>(
+final hwCompletedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
-    final list = <HomeworkDTO>[];
+    final list = <Homework>[];
 
     hws.forEach(
       (key, hw) {
@@ -113,10 +114,10 @@ final hwCompletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwWidgetProvider = Provider<List<HomeworkDTO>>(
+final hwWidgetProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwSortedProvider);
-    final list = <HomeworkDTO>[];
+    final list = <Homework>[];
 
     for (int i = 3; i >= 0; i--) {
       list.addAll([...hws[i]!]);
@@ -126,7 +127,7 @@ final hwWidgetProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwMissedProvider = Provider<List<HomeworkDTO>>(
+final hwMissedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -134,7 +135,7 @@ final hwMissedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-final hwDeletedProvider = Provider<List<HomeworkDTO>>(
+final hwDeletedProvider = Provider<List<Homework>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -151,8 +152,8 @@ final hwDeletedProvider = Provider<List<HomeworkDTO>>(
   },
 );
 
-List<HomeworkDTO> hwsGetMissed(Map<int, HomeworkDTO> original) {
-  List<HomeworkDTO> missedHw = [];
+List<Homework> hwsGetMissed(Map<String, Homework> original) {
+  List<Homework> missedHw = [];
 
   original.forEach(
     (dbIndex, hw) {
@@ -168,19 +169,13 @@ List<HomeworkDTO> hwsGetMissed(Map<int, HomeworkDTO> original) {
   return missedHw;
 }
 
-class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
+class HwNotifier extends Notifier<Map<String, Homework>>
     with WidgetsBindingObserver {
-  Map<int, SubjectDTO> subjects = {};
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listenFirebase;
+  Map<String, Subject> subjects = {};
+  StreamSubscription<HomeworkWithID>? listenFirebase;
 
   @override
-  set state(Map<int, HomeworkDTO> newState) {
-    super.state = newState;
-    NotificationSender.scheduleTommorrowNotification();
-  }
-
-  @override
-  Map<int, HomeworkDTO> build() {
+  Map<String, Homework> build() {
     // listen to subjectsProvider changes
     ref.listen(subjectsProvider, (_, next) {
       subjects = next;
@@ -200,12 +195,12 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
   }
 
   /// returns state saved in database
-  Map<int, HomeworkDTO> get _dbState {
+  Map<String, Homework> get _dbState {
     return homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(
           key,
-          value.convertToDTO(key, subjects[value.subjectDbIndex]),
+          value.convert(key, subjects[value.subjectId]),
         );
       },
     );
@@ -218,11 +213,11 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
 
     if (state == AppLifecycleState.resumed && !kIsWeb && Platform.isAndroid) {
       try {
-        await Hive.box('hwBox').close();
+        await Hive.box(hwBox).close();
       } on Object {
         // it shouldnt matter
       }
-      await Hive.openBox('hwBox');
+      await Hive.openBox(hwBox);
 
       _loadState();
     }
@@ -231,44 +226,14 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase =
-        firestoreService.homeworksListenToChanges().listen((event) async {
+    listenFirebase = firebaseService.listenHomeworks().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(1);
 
-      Map<String, Homework> updatedHws = {};
-
-      for (var change in event.docChanges) {
-        final doc = change.doc;
-        final fireHw = Homework(
-          isDeleted: doc['isDeleted'],
-          timestamp: (doc['timestamp'] as Timestamp).toDate(),
-          fireId: doc.id,
-          subjectDbIndex: subjects.values
-              .where(
-                (homework) => homework.fireId == doc['subjectId'],
-              )
-              .firstOrNull
-              ?.dbIndex,
-          text: doc['text'],
-          deadline: (doc['deadline'] as Timestamp).toDate(),
-          isCompleted: doc['isCompleted'],
-          priority: doc['priority'],
-          description: doc['description'],
-          order: doc['order'],
-        );
-
-        updatedHws[doc.id] = fireHw;
+      if (!Hive.box(hwBox).isOpen) {
+        await Hive.openBox(hwBox);
       }
 
-      if (!Hive.box('hwBox').isOpen) {
-        await Hive.openBox('hwBox');
-      }
-
-      updatedHws.forEach(
-        (key, value) async {
-          await checkFireHomework(value);
-        },
-      );
+      await checkFireHomework(event);
     }, onError: (error) {
       log('error listening to firebase hws: ${error.toString()}');
     });
@@ -276,9 +241,10 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
 
   /// checks all online and offline
   Future<void> syncAll() async {
+    // TODO make it sync everything at once, make it check every for newer version
     _loadState();
     await listenToFirebase();
-    final fireHws = await firestoreService.getAllHomeworks(subjects);
+    final fireHws = await firebaseService.getAllHomeworks();
 
     fireHws?.forEach(
       (element) async {
@@ -291,19 +257,15 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
 
     state.forEach(
       (key, value) {
-        if (value.fireId == null) {
-          edit(value);
-        } else {
-          bool isSynced = fireHws
-                  ?.where(
-                    (element) => element.fireId == value.fireId,
-                  )
-                  .firstOrNull !=
-              null;
+        bool isSynced = fireHws
+                ?.where(
+                  (element) => element.id == value.id,
+                )
+                .firstOrNull !=
+            null;
 
-          if (!isSynced) {
-            edit(value);
-          }
+        if (!isSynced) {
+          edit(value);
         }
       },
     );
@@ -312,8 +274,11 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
   }
 
   Future<void> saveNew(
-    Homework hw, {
+    HomeworkEntity hw, {
+    // if null, new id is generated
+    String? overrideId,
     bool addToFire = true,
+    // sets the order to put the task to the end
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
@@ -328,14 +293,12 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
               .length);
     }
 
-    if (addToFire) {
-      hw = hw.copyWith(fireId: uuid.v4());
-    }
+    final id = overrideId ?? uuid.v4();
 
     final originalState = _dbState;
-    int dbIndex = await homeworksDb.addHw(hw);
+    await homeworksDb.addHw(id, hw);
 
-    final HomeworkDTO? hwWithSameOrder = originalState.values
+    final Homework? hwWithSameOrder = originalState.values
         .where((element) =>
             element.order == hw.order &&
             !element.isDeleted &&
@@ -348,41 +311,35 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
             hwWithSameOrder.timestamp.millisecondsSinceEpoch) {
           // if the new one is older, add it after the old one
           hw = hw.copyWith(order: hw.order + 1);
-          homeworksDb.editHw(dbIndex, hw);
+          homeworksDb.editHw(id, hw);
           // if the new one is newer, add it before old
         }
         reorder(
-          null,
           hw.order,
-          null,
           hw.priority,
-          hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex]),
+          hw.convert(id, subjects[hw.subjectId]),
         );
       }
     }
 
-    state = {
-      ...state,
-      dbIndex: hw.convertToDTO(dbIndex, subjects[hw.subjectDbIndex])
-    };
+    state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
 
     if (addToFire) {
-      await firestoreService
-          .addHomework(hw.convertToDTO(0, subjects[hw.subjectDbIndex]));
+      await firebaseService.addHomework(hw.convert(id, subjects[hw.subjectId]));
     }
 
     return;
   }
 
-  /// assign timestamp manually, if no fireId, it will add it as now
+  /// assign timestamp manually, if no id, it will add it as now
   Future<void> edit(
-    HomeworkDTO editedHw, {
+    Homework editedHw, {
     bool syncWithFire = true,
 
     /// this is true when completing a task, it wont reorder others
     bool disableReorder = false,
   }) async {
-    final old = _dbState[editedHw.dbIndex]!;
+    final old = _dbState[editedHw.id]!;
 
     if (!disableReorder) {
       // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
@@ -392,20 +349,16 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
         if ((editedHw.isDeleted && !old.isDeleted) ||
             (editedHw.isCompleted && !old.isCompleted)) {
           reorder(
-            old.order,
-            null,
-            old.priority.index,
             null,
             null,
+            old,
           );
         }
         // if now isnt deleted or now isnt completed (should appear)
         if ((!editedHw.isDeleted && old.isDeleted) ||
             (!editedHw.isCompleted && old.isCompleted)) {
           reorder(
-            null,
             editedHw.order,
-            null,
             editedHw.priority.index,
             editedHw,
           );
@@ -415,73 +368,65 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
         if (old.order != editedHw.order ||
             old.priority.index != editedHw.priority.index) {
           await reorder(
-            old.order,
             editedHw.order,
-            old.priority.index,
             editedHw.priority.index,
-            null,
+            old,
           );
         }
       }
     }
 
-    await homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
+    await homeworksDb.editHw(editedHw.id, editedHw.convert());
 
     if (syncWithFire) {
-      if (editedHw.fireId == null) {
-        editedHw = editedHw.copyWith(fireId: uuid.v4());
-
-        homeworksDb.editHw(editedHw.dbIndex, editedHw.convert());
-      }
-      firestoreService.editHomeworks([editedHw]);
+      firebaseService.editHomeworks([editedHw]);
     }
 
-    final isNew = editedHw.timestamp.toDate().difference(DateTime.now()) <
-        Duration(seconds: 1);
+    final isNew =
+        editedHw.timestamp.difference(DateTime.now()) < Duration(seconds: 5);
     final bool shouldPlayAnimation =
         old.isCompleted == false && editedHw.isCompleted == true && isNew;
 
     if (shouldPlayAnimation) {
       state = {
         ...state,
-        editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: true),
+        editedHw.id: editedHw.copyWith(isBeingAnimated: true),
       };
 
       await Future.delayed(Duration(seconds: 1));
       state = {
         ...state,
-        editedHw.dbIndex:
-            state[editedHw.dbIndex]!.copyWith(isBeingAnimated: false),
+        editedHw.id: state[editedHw.id]!.copyWith(isBeingAnimated: false),
       };
     } else {
       state = {
         ...state,
-        editedHw.dbIndex: editedHw.copyWith(isBeingAnimated: false)
+        editedHw.id: editedHw.copyWith(isBeingAnimated: false)
       };
       state = Map.from(state);
     }
   }
 
-  /// updates all with changed order, if [oldIndex] is null, it will only be added and [homework] cant be null, if [newIndex] is null, it will be only removed
+  /// updates all with changed order
+  ///
+  /// [originalhw] is old homework, [newIndex] and [newPriority] are where it will be placed
+  /// 
+  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
-    int? oldIndex,
     int? newIndex,
-    int? oldPriority,
     int? newPriority,
-    HomeworkDTO? homework, {
-    /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
+    final Homework originalHw, {
     bool addTimestamp = false,
   }) async {
-    if ((oldIndex == null || oldPriority == null) && homework == null) {
-      throw '[oldIndex], [oldPriority] and [subject] are all null';
-    }
+    // both must be null or both mustnt be null
+    assert((newIndex == null) == (newPriority == null));
 
     var oldPriorityList = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == oldPriority,
+              element.priority.index == originalHw.priority.index,
         )
         .toList();
     var newPriorityList = _dbState.values
@@ -496,115 +441,113 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
     oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
     newPriorityList.sort((a, b) => a.order.compareTo(b.order));
 
-    if (oldIndex != null && oldPriority != null) {
-      homework = oldPriorityList.removeAt(oldIndex >= oldPriorityList.length
-          ? oldPriorityList.length - 1
-          : oldIndex);
-      if (oldPriority == newPriority) {
-        newPriorityList.removeAt(oldIndex >= newPriorityList.length
-            ? newPriorityList.length - 1
-            : oldIndex);
-      }
-    }
+    // if you can remove it from somewhere
+    oldPriorityList.removeWhere((element) => element.id == originalHw.id);
+    // if you arent changing priority, you need to remove it from the [newPriorityList] too
+    newPriorityList.removeWhere((element) => element.id == originalHw.id);
+
+    Homework newHomework = originalHw;
     if (addTimestamp) {
-      homework = homework!.copyWith(timestamp: Timestamp.now());
+      newHomework = newHomework.copyWith(timestamp: DateTime.now().toUtc());
     }
-    // now homework cant be null
+
+    // if you want to add it somewhere
     if (newIndex != null && newPriority != null) {
-      homework = homework!.copyWith(priority: TaskPriority(newPriority));
+      // change the task's priority
+      newHomework = newHomework.copyWith(priority: TaskPriority(newPriority));
+      // add it to list of [newPriority], at [newIndex]
       newPriorityList.insert(
           newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
-          homework);
+          newHomework);
     }
 
-    final editedHomeworks = <int, HomeworkDTO>{};
+    // now the lists are final, its just about saving all homeworks with changed values
 
-    if (oldPriority != newPriority) {
+    final editedHomeworks = <String, Homework>{};
+
+    // if priority has changed, check old list too
+    if (originalHw.priority.index != newPriority) {
       for (int i = 0; i < oldPriorityList.length; i++) {
         final edited = oldPriorityList[i].copyWith(order: i);
-        final oldHw = _dbState[edited.dbIndex];
+        final oldHw = _dbState[edited.id];
 
         if (edited.order != oldHw?.order) {
-          editedHomeworks[edited.dbIndex] = edited;
+          editedHomeworks[edited.id] = edited;
         }
       }
     }
     for (int i = 0; i < newPriorityList.length; i++) {
       final edited = newPriorityList[i].copyWith(order: i);
-      final oldHw = _dbState[edited.dbIndex];
+      final oldHw = _dbState[edited.id];
 
       if (edited.order != oldHw?.order ||
           edited.priority.index != oldHw?.priority.index) {
-        editedHomeworks[edited.dbIndex] = edited;
+        editedHomeworks[edited.id] = edited;
       }
     }
 
     editedHomeworks.forEach(
       (key, value) async {
-        homeworksDb.editHw(value.dbIndex, value.convert());
+        homeworksDb.editHw(value.id, value.convert());
       },
     );
 
-    firestoreService.editHomeworks(editedHomeworks.values
-        .where(
-          (element) => element.fireId != null,
-        )
-        .toList());
+    firebaseService.editHomeworks(editedHomeworks.values.toList());
 
     state = {...state, ...editedHomeworks};
     return;
   }
 
-  void convert(HomeworkDTO hw) {
+  void convert(Homework hw) {
     delete(hw);
     ref.read(examProvider.notifier).saveNew(hw.toExam());
   }
 
-  Future<void> completeIndex(int dbIndex, bool nowIsCompleted) async {
-    final hw = _dbState[dbIndex];
+  Future<void> completeById(String id, bool nowIsCompleted) async {
+    final hw = _dbState[id];
 
     if (hw != null) {
       await complete(hw, nowIsCompleted);
     }
   }
 
-  Future<void> complete(HomeworkDTO hw, bool nowIsCompleted) async {
+  Future<void> complete(Homework hw, bool nowIsCompleted) async {
     await edit(
-      hw.copyWith(timestamp: Timestamp.now(), isCompleted: nowIsCompleted),
+      hw.copyWith(
+          timestamp: DateTime.now().toUtc(), isCompleted: nowIsCompleted),
       disableReorder: nowIsCompleted,
     );
   }
 
-  void delete(HomeworkDTO hw) {
-    edit(hw.copyWith(timestamp: Timestamp.now(), isDeleted: true));
+  void delete(Homework hw) {
+    edit(hw.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(HomeworkDTO hw) {
+  void revertDelete(Homework hw) {
     edit(
       hw.copyWith(
-          timestamp: Timestamp.now(),
+          timestamp: DateTime.now().toUtc(),
           isDeleted: false,
           stateReaddingVersion: hw.stateReaddingVersion + 1),
     );
   }
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  Future<void> _permanentDelete(List<HomeworkDTO> hws) async {
+  Future<void> _permanentDelete(List<Homework> hws) async {
     if (hws.isEmpty) return;
     for (var element in hws) {
-      homeworksDb.deleteHw(element.dbIndex);
+      homeworksDb.deleteHw(element.id);
     }
-    await firestoreService.deleteHomeworks(hws);
+    await firebaseService.deleteHomeworks(hws);
   }
 
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<HomeworkDTO> hwsToDelete = [];
+    List<Homework> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
-      if (hw.isDeleted &&
-          now.difference(hw.timestamp.toDate()) > Duration(days: 7)) {
+      if (hw.isDeleted && now.difference(hw.timestamp) > Duration(days: 7)) {
         hwsToDelete.add(hw);
       }
     }
@@ -612,12 +555,12 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
   }
 
   /// checks and updates/adds hw from firestore, overwrites the newest version
-  Future<void> checkFireHomework(Homework fireHw) async {
+  Future<void> checkFireHomework(HomeworkWithID fireHw) async {
     // print('checking hw from fire: ${fireHw.toString()}');
 
     final localHw = _dbState.values.where(
       (element) {
-        return element.fireId == fireHw.fireId;
+        return element.id == fireHw.id;
       },
     ).firstOrNull;
 
@@ -627,27 +570,28 @@ class HwNotifier extends Notifier<Map<int, HomeworkDTO>>
 
       await saveNew(
         fireHw,
+        overrideId: fireHw.id,
         addToFire: false,
         addToEnd: false,
       );
       return;
     }
 
-    final localTime = localHw.timestamp.toDate();
+    final localTime = localHw.timestamp;
     final fireTime = fireHw.timestamp;
 
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
 
       edit(
-        fireHw.convertToDTO(localHw.dbIndex, subjects[fireHw.subjectDbIndex]),
+        fireHw.convert(fireHw.id, subjects[fireHw.subjectId]),
         syncWithFire: false,
       );
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
-      firestoreService.editHomeworks([localHw.copyWith(fireId: fireHw.fireId)]);
+      firebaseService.editHomeworks([localHw.copyWith(id: fireHw.id)]);
     }
     return;
   }
