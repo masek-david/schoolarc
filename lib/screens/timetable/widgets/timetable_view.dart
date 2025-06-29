@@ -21,8 +21,10 @@ class TimetableView extends StatelessWidget {
   final bool showWholeWeek;
   final double columnWidth;
   final String? textWhenEmpty;
-  final void Function(LessonTimes lessonTimes, int lessonIndex)? onLessonTimesTapped;
-  final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)? onSubjectTapped;
+  final void Function(LessonTimes lessonTimes, int lessonIndex)?
+      onLessonTimesTapped;
+  final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)?
+      onSubjectTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class TimetableView extends StatelessWidget {
             ),
           )
         : SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding: const EdgeInsets.only(
@@ -57,7 +59,6 @@ class TimetableView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(
                   showWholeWeek ? table.length + 1 : table.length - 2 + 1,
-                  
                   (rowIndex) {
                     if (rowIndex == 0) {
                       return Row(
@@ -69,11 +70,11 @@ class TimetableView extends StatelessWidget {
                               return SizedBox(
                                   width: timeTable?.dates != null ? 60 : 0);
                             }
-        
+
                             int lessonIndex = columnIndex - 1;
                             final lessonTimes =
                                 timeTable!.lessonTimes[lessonIndex];
-        
+
                             return Padding(
                               padding: const EdgeInsets.all(4),
                               child: AnimatedContainer(
@@ -117,13 +118,12 @@ class TimetableView extends StatelessWidget {
                         children: List.generate(
                           table[weekday].length + 1,
                           (columnIndex) {
+                            final date = timeTable?.dates?[weekday];
                             if (columnIndex == 0) {
-                              final date = timeTable?.dates?[weekday];
-        
                               if (date == null) {
                                 return const SizedBox();
                               }
-        
+
                               return SizedBox(
                                 width: 60,
                                 child: Column(
@@ -135,22 +135,28 @@ class TimetableView extends StatelessWidget {
                                 ),
                               );
                             }
-        
+
                             int lessonIndex = columnIndex - 1;
                             final lesson = table[weekday][lessonIndex];
-        
+
                             bool isHighlighted =
                                 timeTable!.lessonTimes[lessonIndex].isActive &&
                                     DateTime.now().weekday - 1 == weekday;
-        
+
+                            if (isHighlighted &&
+                                date != null &&
+                                !date.isSameDay(DateTime.now())) {
+                              isHighlighted = false;
+                            }
+
                             return TimetableTile(
                               isHighlighted: isHighlighted,
                               lesson: lesson,
                               columnWidth: columnWidth,
                               onTap: onSubjectTapped == null
                                   ? null
-                                  : (_) =>
-                                      onSubjectTapped!(weekday, lessonIndex, lesson),
+                                  : (_) => onSubjectTapped!(
+                                      weekday, lessonIndex, lesson),
                             );
                           },
                         ),

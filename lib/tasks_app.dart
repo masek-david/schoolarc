@@ -33,6 +33,7 @@ import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/theme_generate.dart';
 import 'package:school_manager/widgets/firebase_overlay.dart';
+import 'package:school_manager/widgets/my_shortcuts.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/exams/exams_screen.dart';
@@ -467,51 +468,54 @@ class _TasksAppState extends ConsumerState<TasksApp> {
               : null,
           home: Stack(
             children: [
-              Scaffold(
-                appBar: AppBar(
-                  toolbarHeight: 0,
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                    systemNavigationBarColor: Colors.transparent,
+              MyShortcuts(
+                ref: ref,
+                child: Scaffold(
+                  appBar: AppBar(
+                    toolbarHeight: 0,
+                    systemOverlayStyle: SystemUiOverlayStyle(
+                      systemNavigationBarColor: Colors.transparent,
+                    ),
                   ),
-                ),
-                key: scaffoldKey,
-                body: SlidableAutoCloseBehavior(
-                  child: Row(
-                    children: [
-                      if (isWide)
-                        SideNavBar(
+                  key: scaffoldKey,
+                  body: SlidableAutoCloseBehavior(
+                    child: Row(
+                      children: [
+                        if (isWide)
+                          SideNavBar(
+                            onTap: switchPage,
+                            pageIndex: currentPageIndex,
+                          ),
+                        WideScreenBorders(
+                          show: isWide && settings.get(Setting.showAppOverlay),
+                          child: PageView(
+                            key: _pageViewKey,
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _pageController,
+                            children: [
+                              const HomeScreen(),
+                              CalendarScreen(
+                                showtomorrow: calendarShowtomorrow,
+                              ),
+                              const HomeworksScreen(),
+                              const ExamsScreen(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  drawer: MyDrawer(
+                    refreshTheme: refreshTheme,
+                    startTutorial: startTutorial,
+                  ),
+                  bottomNavigationBar: isWide
+                      ? null
+                      : BottomNavBar(
                           onTap: switchPage,
                           pageIndex: currentPageIndex,
                         ),
-                      WideScreenBorders(
-                        show: isWide && settings.get(Setting.showAppOverlay),
-                        child: PageView(
-                          key: _pageViewKey,
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: _pageController,
-                          children: [
-                            const HomeScreen(),
-                            CalendarScreen(
-                              showtomorrow: calendarShowtomorrow,
-                            ),
-                            const HomeworksScreen(),
-                            const ExamsScreen(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-                drawer: MyDrawer(
-                  refreshTheme: refreshTheme,
-                  startTutorial: startTutorial,
-                ),
-                bottomNavigationBar: isWide
-                    ? null
-                    : BottomNavBar(
-                        onTap: switchPage,
-                        pageIndex: currentPageIndex,
-                      ),
               ),
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
               if (showingFirebaseLoginScreen)

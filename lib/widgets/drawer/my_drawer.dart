@@ -65,7 +65,7 @@ class MyDrawer extends StatelessWidget {
                     ),
                     MyDrawerButton(
                       text: 'Permanent timetable',
-                      icon: const Icon(Icons.calendar_month),
+                      icon: const Icon(Icons.calendar_month_outlined),
                       onTap: () {
                         navigatorKey.currentState?.push(
                           MaterialPageRoute(
@@ -99,17 +99,6 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
-                    // MyDrawerButton(
-                    //   text: 'Meals',
-                    //   icon: const Icon(Icons.food_bank_outlined),
-                    //   onTap: () {
-                    //     navigatorKey.currentState?.push(
-                    //       MaterialPageRoute(
-                    //         builder: (context) => MealsScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                     MyDrawerButton(
                       text: 'Recently deleted',
                       icon: const Icon(Icons.delete_forever),

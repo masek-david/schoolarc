@@ -1,0 +1,5 @@
+run
+resize the window with powertoys zones to fill most of the screen
+close
+
+run

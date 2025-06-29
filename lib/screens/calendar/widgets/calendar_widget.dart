@@ -124,6 +124,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 calendarBuilders: myCalendarBuilder(
                   onEdit: (exam) => widget.onEdit(exam),
                   currentDate: widget.focusedDay,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                 ),
                 headerStyle: HeaderStyle(
                     formatButtonVisible: false,

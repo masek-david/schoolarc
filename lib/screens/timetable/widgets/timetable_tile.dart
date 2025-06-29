@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
@@ -61,6 +62,20 @@ class TimetableTile extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    if (lesson?.subject?.id == '')
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            height: 5,
+                            width: 5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.blue.harmonizeWith(tileColor),
+                            ),
+                          ),
+                        ],
+                      ),
                     if (lesson?.subject?.isFromBakalari == true &&
                         settings.get(Setting.showDebugInfo))
                       Text('baka: ${lesson?.subject?.bakaId}'),
@@ -70,7 +85,9 @@ class TimetableTile extends StatelessWidget {
                     if (lesson?.subject != null)
                       SubjectShortcut(
                         subject: lesson?.subject,
-                        color: change != null ? Theme.of(context).colorScheme.onErrorContainer : null,
+                        color: change != null
+                            ? Theme.of(context).colorScheme.onErrorContainer
+                            : null,
                       ),
                     const Spacer(),
                     if (lesson?.teacher != null)

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/screens/firestore_login/firebase_login_page.dart';
+import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
@@ -17,19 +20,7 @@ class FirebaseLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
-  final emailController =
-      TextEditingController(text: firebaseService.userEmail ?? '');
-  final passwordController = TextEditingController();
-  final displayNameController = TextEditingController();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    displayNameController.dispose();
-
-    super.dispose();
-  }
+  bool useFirebase = settings.get(Setting.useFirebase);
 
   @override
   Widget build(BuildContext context) {
@@ -38,146 +29,131 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
         leading: BackButton(
           onPressed: widget.onHide != null ? () => widget.onHide!() : null,
         ),
-        title: Text('Firebase'),
+        title: Text('Cloud sync'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           spacing: 8,
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Text(
-            //         firebaseService.auth.currentUser?.displayName ?? '',
-            //         style: Theme.of(context).textTheme.headlineSmall,
-            //       ),
-            //       // TODO complete this screen
-            //       LoadingIconButton(
-            //         onTap: () async {
-            //           final newName = await showDialog<String?>(
-            //             context: context,
-            //             builder: (context) {
-            //               return AlertDialog(
-            //                 title: Text('Change name'),
-            //                 content: TextField(
-            //                   controller: displayNameController,
-            //                 ),
-            //                 actions: [
-            //                   TextButton(
-            //                     onPressed: () => Navigator.pop(context),
-            //                     child: Text('Close'),
-            //                   ),
-            //                   FilledButton(
-            //                     onPressed: () async {
-            //                       Navigator.pop(
-            //                           context, displayNameController.text);
-            //                     },
-            //                     child: Text('Save'),
-            //                   ),
-            //                 ],
-            //               );
-            //             },
-            //           );
-            //           if (newName != null) {
-            //             await firebaseService.updateDisplayName(name: newName);
-            //           }
-            //         },
-            //         icon: Icons.edit,
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            TextField(
-              controller: emailController,
-              autofillHints: const [
-                AutofillHints.email,
-                AutofillHints.username
-              ],
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'E-mail',
-              ),
-            ),
-            TextField(
-              controller: passwordController,
-              autofillHints: const [AutofillHints.password],
-              obscureText: true,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
+            SettingTile.withSwitch(
+              title: 'Use cloud sync',
+              icon: Icons.cloud_outlined,
+              value: useFirebase,
+              onChanged: (value) {
+                settings.save(Setting.useFirebase, value);
+                setState(() {
+                  useFirebase = value;
+                });
+              },
             ),
             OutlinedButton(
               onPressed: () async {
-                try {
-                  await firebaseService.createUser(
-                    email: emailController.text,
-                    password: passwordController.text,
-                  );
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
-                  }
-                  return;
-                }
+                navigatorKey.currentState?.push(MaterialPageRoute(
+                  builder: (context) => FirebaseLoginPage(
+                    actionName: 'Register',
+                    onSubmit: (email, password) async {
+                      try {
+                        await firebaseService.createUser(
+                          email: email,
+                          password: password,
+                        );
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
+                      }
 
-                if (context.mounted) {
-                  showMessage(context, 'Registered successfuly');
-                }
+                      if (context.mounted) {
+                        showMessage(context, 'Registered successfuly');
+                      }
+                    },
+                  ),
+                ));
               },
               child: Text('Register'),
             ),
             OutlinedButton(
               onPressed: () async {
-                final key = GlobalKey<ProgressDialogState>();
+                navigatorKey.currentState?.push(MaterialPageRoute(
+                  builder: (context) => FirebaseLoginPage(
+                    actionName: 'Log in',
+                    initialEmail: firebaseService.userEmail,
+                    onSubmit: (email, password) async {
+                      final key = GlobalKey<ProgressDialogState>();
 
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => ProgressDialog(
-                    key: key,
-                    goal: 0,
-                    initialText: 'Logging in',
-                    showProgressNumber: false,
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => ProgressDialog(
+                          key: key,
+                          goal: 0,
+                          initialText: 'Logging in',
+                          showProgressNumber: false,
+                        ),
+                      );
+
+                      try {
+                        await firebaseService.logIn(
+                          email: email,
+                          password: password,
+                        );
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+
+                        if (context.mounted) Navigator.pop(context);
+                        return;
+                      }
+
+                      key.currentState?.changeText('Syncing');
+                      try {
+                        await syncAllTasks(ref);
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
+                      }
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        showMessage(
+                            context, 'Logged in, everything has been synced');
+                      }
+                    },
                   ),
-                );
-
-                try {
-                  await firebaseService.logIn(
-                    email: emailController.text,
-                    password: passwordController.text,
-                  );
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
-                  }
-
-                  if (context.mounted) Navigator.pop(context);
-                  return;
-                }
-
-                key.currentState?.changeText('Syncing');
-                try {
-                  await syncAllTasks(ref);
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    showMessage(context, e.toString(), isError: true);
-                  }
-                  return;
-                }
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  showMessage(context, 'Logged in, everything has been synced');
-                }
+                ));
               },
               child: Text('Log in'),
+            ),
+            OutlinedButton(
+              onPressed: () async {
+                navigatorKey.currentState?.push(MaterialPageRoute(
+                  builder: (context) => FirebaseLoginPage(
+                    actionName: 'Change password',
+                    askForEmail: false,
+                    onSubmit: (email, password) async {
+                      try {
+                        await firebaseService.changePassword(password);
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
+                      }
+
+                      if (context.mounted) {
+                        showMessage(context, 'Password changed successfuly');
+                      }
+                    },
+                  ),
+                ));
+              },
+              child: Text('Change password'),
             ),
             OutlinedButton(
               onPressed: () async {

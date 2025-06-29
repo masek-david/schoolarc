@@ -9,6 +9,7 @@ import 'package:table_calendar/table_calendar.dart';
 CalendarBuilders<Object?> myCalendarBuilder({
   required void Function(Exam exam) onEdit,
   required DateTime currentDate,
+  required Color backgroundColor,
 }) {
   final padding = const EdgeInsets.all(10);
   final margin = const EdgeInsets.only(top: 6);
@@ -30,7 +31,8 @@ CalendarBuilders<Object?> myCalendarBuilder({
             decoration: BoxDecoration(
               color: candidateData.isNotEmpty
                   ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surface,
+                  : backgroundColor,
+                  // : Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -99,7 +101,8 @@ CalendarBuilders<Object?> myCalendarBuilder({
             decoration: BoxDecoration(
               color: candidateData.isNotEmpty
                   ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surface,
+                  : backgroundColor,
+                  // : Theme.of(context).colorScheme.surfaceContainerHigh,
               shape: BoxShape.circle,
             ),
             child: SizedBox(

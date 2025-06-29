@@ -15,7 +15,6 @@ import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -298,7 +297,8 @@ class BakaNotifier extends AsyncNotifier<bool> {
     ).toList());
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
+    final bakaIdToSubjectIndex =
+        await _bakaSubjectIdToSubject(subjectsJson, createIfMissing: true);
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -309,7 +309,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
         String subjectIdBaka = subjectJson['SubjectId'];
-        String subjectId = bakaIdToSubjectIndex[subjectIdBaka]!;
+        String subjectId = bakaIdToSubjectIndex[subjectIdBaka]!.id;
         int hourId = subjectJson['HourId'];
 
         timetableDb.newLessonAt(
@@ -395,8 +395,10 @@ class BakaNotifier extends AsyncNotifier<bool> {
     timeTable.dates = mondayDate.allDaysInThisWeek();
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _getSubjectsIdToIndex(subjectsJson);
-    final subjects = subjectsDb.getDatabase();
+    final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
+      subjectsJson,
+      createIfMissing: false,
+    );
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
@@ -426,7 +428,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
         String? subjectIdBaka = subjectJson['SubjectId'];
         String? teacherId = subjectJson['TeacherId'];
         String? roomId = subjectJson['RoomId'];
-        String? subjectId = bakaIdToSubjectIndex[subjectIdBaka];
+        final subject = bakaIdToSubjectIndex[subjectIdBaka];
         int hourId = subjectJson['HourId'];
         final changeJson = subjectJson['Change'];
 
@@ -439,8 +441,6 @@ class BakaNotifier extends AsyncNotifier<bool> {
             shortcut: changeJson['TypeAbbrev'],
           );
         }
-
-        final subject = subjects[subjectId];
 
         final teacher = teachersMap[teacherId];
         final room = roomsMap[roomId];
@@ -459,42 +459,53 @@ class BakaNotifier extends AsyncNotifier<bool> {
     return timeTable;
   }
 
-  /// for each id from baka, you have index of app's subjects, if the subject doesnt exist, it is created
-  Future<Map<String, String>> _getSubjectsIdToIndex(
-      List<dynamic> subjectsJson) async {
-    final subjects = subjectsDb.getDatabase().values.toList();
-    Map<String, String> bakalariSubjectIdToSubjectIndex = {};
+  /// to each bakalari subjects ID maps a local subject, based on saved bakaId
+  ///
+  /// if such subject doesnt exist yet, it is created
+  /// and if [createIfMissing] is true, it is also permanently saved
+  Future<Map<String, Subject>> _bakaSubjectIdToSubject(
+    List<dynamic> subjectsJson, {
+    required bool createIfMissing,
+  }) async {
+    // bakaId to subject
+    final db = subjectsDb.getDatabase();
+    db.removeWhere((key, value) => value.isDeleted);
+
+    final subjects = db.map(
+      (key, value) => MapEntry(value.bakaId, value),
+    );
+    Map<String, Subject> bakaSubjectIdToSubject = {};
 
     for (var subjectJson in subjectsJson) {
       String bakaId = subjectJson['Id'];
       String shortcut = subjectJson['Abbrev'];
       String name = subjectJson['Name'];
-      bool subjectExisted = false;
 
-      for (var subject in subjects) {
-        if (subject.bakaId == bakaId) {
-          bakalariSubjectIdToSubjectIndex.addAll({bakaId: subject.id});
-          subjectExisted = true;
-          break;
-        }
+      if (subjects.containsKey(bakaId)) {
+        // the subject exists locally
+        bakaSubjectIdToSubject.addAll({bakaId: subjects[bakaId]!});
+        continue;
       }
 
-      if (!subjectExisted) {
-        var newSubject = await ref.read(subjectsProvider.notifier).saveNew(
-              SubjectEntity(
-                name: name,
-                shortcut: shortcut,
-                bakaId: bakaId,
-                isDeleted: false,
-                order: 0,
-                timestamp: DateTime.now().toUtc(),
-              ),
-            );
-        bakalariSubjectIdToSubjectIndex.addAll({bakaId: newSubject.id});
+      // the subject doesnt exist, create with empty id
+      var newSubject = Subject(
+        id: '',
+        name: name,
+        shortcut: shortcut,
+        bakaId: bakaId,
+        isDeleted: false,
+        order: 0,
+        timestamp: DateTime.now().toUtc(),
+      );
+      if (createIfMissing) {
+        newSubject = await ref
+            .read(subjectsProvider.notifier)
+            .saveNew(newSubject.convert());
       }
+      bakaSubjectIdToSubject.addAll({bakaId: newSubject});
     }
 
-    return bakalariSubjectIdToSubjectIndex;
+    return bakaSubjectIdToSubject;
   }
 
   List<LessonTimesBaka> _getLessons(List<dynamic> lessonsJson) {
@@ -577,14 +588,14 @@ class BakaNotifier extends AsyncNotifier<bool> {
     int newHomeworks = 0;
 
     for (var homework in homeworksJson) {
-      Subject subject = subjects.entries
+      Subject? subject = subjects.entries
           .where(
             (entry) {
               return entry.value.bakaId == homework['Subject']['Id'];
             },
           )
-          .first
-          .value;
+          .firstOrNull
+          ?.value;
 
       final String id = homework['ID'];
       final String text = homework['Content'];

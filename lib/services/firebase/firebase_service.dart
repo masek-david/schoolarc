@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:async/async.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_id_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
@@ -13,17 +15,16 @@ import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
 class FirebaseService {
-  FirebaseService({this.ref});
+  FirebaseService({this.ref}) {
+    refLocation();
+  }
 
   FirebaseAuth auth = FirebaseAuth.instance;
   WidgetRef? ref;
 
-  late var exams =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
-  late var homeworks =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
-  late var subjects =
-      FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
+  late DatabaseReference exams;
+  late DatabaseReference homeworks;
+  late DatabaseReference subjects;
 
   bool get isloggedIn {
     return auth.currentUser != null;
@@ -33,32 +34,36 @@ class FirebaseService {
     return auth.currentUser?.email;
   }
 
-  Future<void> testRealtime(Subject subject) async {
-    subjects.child(subject.id).update(subject.toFireJson());
-
-    return;
-  }
-
-  Future<void> logIn({required String email, required String password}) async {
-    await auth.signInWithEmailAndPassword(email: email, password: password);
+  void refLocation() {
+    if (Platform.isWindows) return;
 
     exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
     homeworks =
         FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
     subjects =
         FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
+  }
+
+  Future<void> logIn({required String email, required String password}) async {
+    try {
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+
+      refLocation();
+    } on FirebaseAuthException catch (e) {
+      if ((e).message == 'An internal error has occurred.') {
+        throw ServiceException('Try again.');
+      }
+      throw ServiceException(e.message);
+    }
 
     return;
   }
 
   Future<void> logOut() async {
-    exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
-    homeworks =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
-    subjects =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
-
     await auth.signOut();
+
+    refLocation();
+    return;
   }
 
   Future<void> createUser(
@@ -67,9 +72,19 @@ class FirebaseService {
     return;
   }
 
-  Future<void> updateDisplayName({required String name}) async {
-    await auth.currentUser?.updateDisplayName(name);
-    return;
+  Future<bool> changePassword(String password) async {
+    if(auth.currentUser == null){
+      throw ServiceException('No user logged in');
+    }
+    
+    //Pass in the password to updatePassword.
+    auth.currentUser!.updatePassword(password).then((_) {
+      return true;
+    }).catchError((error) {
+      throw ServiceException("Password can't be changed$error");
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
+    return false;
   }
 
   // EXAMS

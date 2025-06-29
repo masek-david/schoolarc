@@ -59,6 +59,9 @@ class NotificationSender {
     bool scheduled = true,
     Function(String text)? showSnackbar,
   }) async {
+    if(kIsWeb || !Platform.isAndroid || !Platform.isIOS){
+      return;
+    }
     await initHive();
 
     if (!await areNotificationsAllowed(tomorrowChannel)) {

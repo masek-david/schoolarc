@@ -1,5 +1,4 @@
 # FIX
-baka current timetable maybe shouldnt save the subjects ???
 
 # NEW:
 - ✅ when should the widget be updated??
@@ -15,27 +14,33 @@ baka current timetable maybe shouldnt save the subjects ???
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
 - ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ fix the frequency when is app searching for baka homeworks
-- ⬜ create settings for initial task 
+- ⬜ create settings for initial task
+    - ⬜ priority
+    - ⬜ subject
+    - ⬜ date
+    - ⬜ auto set date to next appearance
 - ⬜ rethink addnewtask bottom sheet
+    - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
     - ⬜ is everything needed to be shown ??
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ icons - hws, exams, subjects
+- ⬜ meals notifications (before meal?, remind to pick a week before?)
+- ⬜ localizations
+    - ⬜ date format 
+    - ⬜ language
+    - ⬜ start week with monday
 
 ## notifications:
 - ⬜ turn off notifications for weekend
 - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 
-## new features:
-- ✅ ask for notification permission when launching app for first time, maybe periodicaly
-- ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
-
 ## web features
 - ✅ web - spatne se horizontalne scrolluje, pridat tlacitka
 - ✅ web appbary jsou divne dole, asi protoze na webu neni safearea
 - ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
-- ⬜ onHover
+- ✅ onHover
 - ⬜ keyboard shortcuts
 
 ## year recap
@@ -44,6 +49,7 @@ baka current timetable maybe shouldnt save the subjects ???
 
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
+- ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remake app isWide as riverpod provider
@@ -62,6 +68,7 @@ baka current timetable maybe shouldnt save the subjects ???
 - ✅ fix dates (save them just as utc)
 - ✅ move to realtime database
 - ✅ rework notifications - scheduling on app leave
+- ✅ ask for notification permission when launching app for first time, maybe periodicaly
 - ✅ check app icon (consistency - dynamic icon, main icon, web, ios, splash screen (animated, normal), notification)
 
 ## settings:

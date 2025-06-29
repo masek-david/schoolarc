@@ -116,7 +116,7 @@ class _CurrentTimetableScreenState
                     columnWidth: settings.get(Setting.timeTableTileWidth),
                     onLessonTimesTapped: null,
                     onSubjectTapped: (weekday, lessonIndex, lesson) {
-                      lesson.showLessonDialog(context);
+                      lesson.showLessonDialog(context, ref);
                     },
                   ),
                 ),

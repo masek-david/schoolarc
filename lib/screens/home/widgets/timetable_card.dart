@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
@@ -32,6 +33,7 @@ class TimetableCard extends StatelessWidget {
     required this.dateToShow,
     required this.whenText,
     required this.showOnline,
+    required this.ref,
   });
 
   final void Function()? refresh;
@@ -40,6 +42,7 @@ class TimetableCard extends StatelessWidget {
   final DateTime dateToShow;
   final String whenText;
   final bool showOnline;
+  final WidgetRef ref;
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +148,7 @@ class TimetableCard extends StatelessWidget {
                                         lesson: entry.value,
                                         columnWidth: 80,
                                         onTap: (lesson) =>
-                                            lesson?.showLessonDialog(context),
+                                            lesson?.showLessonDialog(context, ref),
                                       ),
                                     ),
                                   ],

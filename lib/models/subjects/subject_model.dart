@@ -38,7 +38,7 @@ class Subject {
 
   @override
   String toString() {
-    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp, ${isDeleted ? '[delete]' : ''}';
+    return '$name, $shortcut, bakaId: $bakaId, order: $order, timestamp: $timestamp, ${isDeleted ? '[deleted]' : ''}';
   }
 
   bool containsText(String text) {

@@ -1,3 +1,17 @@
+## [2.0.1]() - 2025-06-29
+### Added
+- Added keyboard shortcut support
+- Added option to change password for Cloud sync
+
+### Changed
+- Improved importing subjects from Bakaláři
+- Improved logging in to Cloud sync
+
+### Fixed
+- Timetable no longer shows lesson active if it isn't today
+
+---
+
 ## [2.0.0]() - 2025-06-25
 ### Added
 - Added option for importing app data, including subjects, homework and exams

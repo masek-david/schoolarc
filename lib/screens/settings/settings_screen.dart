@@ -4,6 +4,7 @@ import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/settings/setting_pages/shortcuts_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/style_motion_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
 import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
@@ -29,7 +30,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool showDebug = settings.get(Setting.showDebugInfo);
-  bool showFirebase = settings.get(Setting.useFirebase);
   bool useExperimentalHwOverlay = settings.get(Setting.expUseHwOverlay);
 
   @override
@@ -85,9 +85,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ),
+          SettingTile(
+            title: 'Shortcuts',
+            subtitle: 'View keyboard shortcuts',
+            icon: Icons.keyboard_alt_outlined,
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: (context) => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const ShortcutsPage(),
+              ),
+            ),
+          ),
           Divider(),
           SettingTile(
-            title: 'Bakaláři login',
+            title: 'Bakaláři',
             icon: Icons.hexagon_outlined,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -96,26 +107,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SettingTile(
-            title: 'Strava.cz login',
-            icon: Icons.food_bank_outlined,
+            title: 'Strava.cz',
+            icon: Icons.restaurant_outlined,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const StravaLoginScreen(),
               ),
             ),
           ),
-          AnimatedSize(
-            duration: Durations.medium1,
-            child: SizedBox(
-              height: showFirebase ? null : 0,
-              child: SettingTile(
-                title: 'Firebase login',
-                icon: Icons.fireplace,
-                onTap: (context) => navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => const FirebaseLoginScreen(),
-                  ),
-                ),
+          SettingTile(
+            title: 'Cloud sync',
+            icon: Icons.cloud_outlined,
+            onTap: (context) => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => const FirebaseLoginScreen(),
               ),
             ),
           ),
@@ -151,17 +156,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     showDebug = value;
                   });
                 }),
-          if (showDebug)
-            SettingTile.withSwitch(
-              title: 'Use firebase',
-              value: showFirebase,
-              onChanged: (value) {
-                settings.save(Setting.useFirebase, value);
-                setState(() {
-                  showFirebase = value;
-                });
-              },
-            ),
           if (showDebug)
             SettingTile.withSwitch(
               title: 'Use experimental homework tile overlay',

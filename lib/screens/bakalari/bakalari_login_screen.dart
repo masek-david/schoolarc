@@ -38,37 +38,8 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadLoginInfo();
-  }
-
   void onError(dynamic error) {
     showMessage(context, error.toString(), isError: true);
-  }
-
-  void loadLoginInfo() async {
-    _schoolController.text = await ref.read(bakaProvider.notifier).schoolName;
-    _usernameController.text = await ref.read(bakaProvider.notifier).username;
-
-    if (_schoolController.text == '' && mounted) {
-      showDialogAdaptive(
-        context: context,
-        title: Text('Logging in will import new subjects'),
-        content: Text(
-          'If you already have imported the subjects before, make sure they exist in the app.',
-        ),
-        actions: [
-          adaptiveDialogButton(
-            context: context,
-            child: Text('Okay'),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      );
-    }
   }
 
   @override
@@ -247,7 +218,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                     ? () {
                         showDialogAdaptive(
                           context: context,
-                          title: const Text('Import timetable?'),
+                          title: const Text('Import timetable and subjects?'),
                           content: const Text(
                             'Importing the timetable will replace your existing timetable. Are you sure?',
                           ),
@@ -288,7 +259,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                         );
                       }
                     : null,
-                child: const Text('Import timetable'),
+                child: const Text('Import timetable and subjects'),
               ),
             ],
           ),

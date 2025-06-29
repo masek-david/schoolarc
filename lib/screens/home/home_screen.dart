@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
@@ -14,10 +13,7 @@ import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
-import 'package:school_manager/database/exam_database.dart';
-import 'package:school_manager/database/hw_database.dart';
 import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/database/subject_database.dart';
 import 'package:school_manager/screens/recap/recap_button.dart';
 import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/services/home_widget_service.dart';
@@ -171,20 +167,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           context: context,
           removeBottom: true,
           child: Scaffold(
-            // only for debugging
-            floatingActionButton: kDebugMode
-                ? FloatingActionButton.extended(
-                    onPressed: () {
-                      HomeworksDatabase().deleteAllFromDisk();
-                      SubjectDatabase().deleteAllFromDisk();
-                      ExamDatabase().deleteAllFromDisk();
-                      firebaseService.logOut();
-                      ref.read(bakaProvider.notifier).logOut();
-                    },
-                    label: const Text('delete from disk'),
-                    icon: const Icon(Icons.bug_report),
-                  )
-                : null,
             appBar: WideScreenAppBar(
               isWideScreen: isWide,
               leading:
@@ -216,6 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       examNumberOfIncomplete: upcomingExams,
                       hwNumberOfMissed: missedHw.length,
                     ),
+
                     if (isRecapDate() && !hasSeenRecap())
                       RecapButton(
                         child: Padding(
@@ -253,6 +236,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 dateToShow: dateToShow,
                                 whenText: whenText,
                                 showOnline: showBaka,
+                                ref: ref,
                               ),
                             ],
                           )),
@@ -275,6 +259,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   dateToShow: dateToShow,
                                   whenText: whenText,
                                   showOnline: showBaka,
+                                  ref: ref,
                                 ),
                               if (missedHw.isNotEmpty)
                                 Card(

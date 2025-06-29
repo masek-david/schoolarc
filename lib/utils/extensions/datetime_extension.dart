@@ -63,7 +63,7 @@ extension BetterDateTime on DateTime {
 
     final firstDayOfMonth = DateTime(year, month, 1);
     final firstDayWeekday = firstDayOfMonth.weekday;
-    final firstDayIndex = - firstDayWeekday + 2;
+    final firstDayIndex = -firstDayWeekday + 2;
 
     final lastDayOfMonth = DateTime(year, month + 1, 0);
     final daysInMonth = lastDayOfMonth.day;
