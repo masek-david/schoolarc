@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
@@ -16,7 +18,7 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
   final _canteenController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool canLogIn = settings.get(Setting.showDebugInfo);
+  bool canLogIn = settings.get(Setting.allowStravaLogin);
 
   @override
   void dispose() {
@@ -83,22 +85,17 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
                 ),
               ],
             ),
-            if (settings.get(Setting.showDebugInfo))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Allow logging in (experimental)'),
-                  Switch(
-                    value: canLogIn,
-                    onChanged: (value) {
-                      setState(() {
-                        canLogIn = value;
-                      });
-                    },
-                  ),
-                ],
+            if (settings.get(Setting.showDebugInfo) || kDebugMode)
+              SettingTile.withSwitch(
+                title: 'Allow logging in (experimental)',
+                onChanged: (value) {
+                  setState(() {
+                    settings.save(Setting.allowStravaLogin, value);
+                    canLogIn = value;
+                  });
+                },
+                value: canLogIn,
               ),
-            if (canLogIn) const SizedBox(height: 12),
             if (canLogIn)
               TextField(
                 controller: _usernameController,
@@ -124,7 +121,7 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
             FilledButton(
               onPressed: () async {
                 try {
-                  stravaService.registerUser(
+                  await stravaService.registerUser(
                     canteenCode: _canteenController.text,
                     username: _usernameController.text,
                     password: _passwordController.text,

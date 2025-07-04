@@ -1,4 +1,4 @@
-## [2.0.1]() - 2025-06-29
+## [2.0.1]() - 2025-07-04
 ### Added
 - Added keyboard shortcut support
 - Added option to change password for Cloud sync
@@ -6,9 +6,13 @@
 ### Changed
 - Improved importing subjects from Bakaláři
 - Improved logging in to Cloud sync
+- Improved logging in to Strava.cz
+- The color of the top bar on web is now the same as the app's
 
 ### Fixed
 - Timetable no longer shows lesson active if it isn't today
+- Strava.cz now works on web
+- Fixed keyboard shorcuts on web
 
 ---
 

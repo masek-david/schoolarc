@@ -28,6 +28,7 @@ enum Setting {
   userName,
   homeShowUserName,
   useMeals,
+  allowStravaLogin,
   useBakalari,
   useFirebase,
   showDebugInfo,
@@ -137,6 +138,10 @@ class SettingsDatabase {
     Setting.useMeals: SettingModel(
       defaultValue: true,
       key: 'homeShowMeals',
+    ),
+    Setting.allowStravaLogin: SettingModel(
+      defaultValue: false,
+      key: 'allowStravaLogin',
     ),
     Setting.useBakalari: SettingModel(
       defaultValue: true,

@@ -10,27 +10,30 @@
 - ✅ create baka provider
 - ⬜ unite the ui/ux for extensions (in settings and in welcome page)
     - ⬜ create providers for logins
-- ⬜ add google sign in
 - ⬜ rework tutorial (is it necessary to teach every interaction??)
-- ⬜ persistance (tasks_app.dart refactor probably needed, maybe use go_router ??)
+- ⬜ restore state (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ fix the frequency when is app searching for baka homeworks
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
+- ⬜ localizations
+    - ⬜ date format 
+    - ⬜ language
+    - ⬜ start week with monday
+- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ icons - hws, exams, subjects
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
     - ⬜ is everything needed to be shown ??
-- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
-- ⬜ icons - hws, exams, subjects
+- ⬜ add google sign in
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ localizations
-    - ⬜ date format 
-    - ⬜ language
-    - ⬜ start week with monday
+- ⬜ strava service
+    - ⬜ check it works 
+    - ⬜ stop saving the password 
 
 ## notifications:
 - ⬜ turn off notifications for weekend

@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
+import 'package:school_manager/utils/web/bar_color.dart';
 
 // TODO remake as stateful and save the values ??
 class WideScreenBorders extends StatelessWidget {
@@ -15,6 +18,10 @@ class WideScreenBorders extends StatelessWidget {
   Widget build(BuildContext context) {
     double top = MediaQuery.paddingOf(context).top;
     double bottom = MediaQuery.paddingOf(context).bottom;
+
+    if (kIsWeb) {
+      setBarColor(Theme.of(context).colorScheme.surfaceContainer.toHexString());
+    }
 
     if (top == 0) {
       top = 16;

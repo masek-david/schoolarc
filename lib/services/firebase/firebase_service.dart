@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:async/async.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_id_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
@@ -35,7 +36,7 @@ class FirebaseService {
   }
 
   void refLocation() {
-    if (Platform.isWindows) return;
+    if (!kIsWeb && Platform.isWindows) return;
 
     exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
     homeworks =

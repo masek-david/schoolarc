@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/utils/windows1250.dart';
 import 'package:xml/xml.dart';
 
 class StravaService {
@@ -19,11 +21,11 @@ class StravaService {
   final usernameKey = 'stravaUsername';
   final passwordKey = 'stravaPassword';
 
-  void registerUser({
+  Future<void> registerUser({
     required String canteenCode,
     required String username,
     required String password,
-  }) {
+  }) async{
     if (int.tryParse(canteenCode) == null) {
       throw ServiceException('Invalid canteen number');
     }
@@ -32,9 +34,9 @@ class StravaService {
           'Invalid canteen number length, only allowed is 4');
     }
 
-    storage.write(canteenCodeKey, canteenCode);
-    storage.write(usernameKey, username);
-    storage.write(passwordKey, password);
+    await storage.write(canteenCodeKey, canteenCode);
+    await storage.write(usernameKey, username);
+    await storage.write(passwordKey, password);
     return;
   }
 
@@ -86,8 +88,12 @@ class StravaService {
           'zustatPrihlasen': false,
         }),
       );
-    } on Exception {
+    } on Object {
       rethrow;
+    }
+
+    if(response.statusCode != 200){
+      throw ServiceException(response.reasonPhrase);
     }
 
     final parsedJson = json.decode(response.body);
@@ -180,24 +186,31 @@ class StravaService {
       throw ServiceException('No canteen, please log in',
           action: ExceptionActions.stravaLogin);
     }
-    
-    final uri = Uri.parse(
-        'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=$canteenCode&jazyk=CZ&httphlavicka=A%C2%A0');
+
+    final uri =
+        'https://www.strava.cz/foxisapi/foxisapi.dll/istravne.istravne.process?xmljidelnickyA&zarizeni=$canteenCode&jazyk=CZ&httphlavicka=A%C2%A0';
 
     Response response;
     try {
-      response = await http.get(uri);
+      if (kIsWeb) {
+        final encodedUri = Uri.encodeComponent(uri);
+        response = await http.get(Uri.parse(
+            'https://cors-proxy-one-olive.vercel.app/api/proxy?url=$encodedUri'));
+      } else {
+        response = await http.get(Uri.parse(uri));
+      }
     } on SocketException {
       throw ServiceException('Check your internet connection');
     } on Object {
       rethrow;
     }
 
-    if (response.reasonPhrase != "OK") {
+    if (response.statusCode != 200) {
       throw ServiceException(response.reasonPhrase);
     }
 
-    final document = XmlDocument.parse(response.body);
+    final decoded = decodeWindows1250(response.bodyBytes);
+    final document = XmlDocument.parse(decoded);
     final mealsXml = document.findAllElements('pomjidelnic_xmljidelnic');
 
     // Iterate over each meal and extract the required details
@@ -212,10 +225,7 @@ class StravaService {
 
       final date = DateTime.parse(dateXml);
 
-      final meal = Meal(
-        type: fixEncode(type),
-        name: fixEncode(name),
-      );
+      final meal = Meal(type: type, name: name);
 
       if (meals.containsKey(date)) {
         meals[date]!.add(meal);
@@ -227,19 +237,5 @@ class StravaService {
     }
 
     return meals;
-  }
-
-  String fixEncode(String string) {
-    return string
-        .replaceAll('è', 'č')
-        .replaceAll('È', 'Č')
-        .replaceAll('', 'š')
-        .replaceAll('', 'Š')
-        .replaceAll('ø', 'ř')
-        .replaceAll('ì', 'ě')
-        .replaceAll('', 'ž')
-        .replaceAll('ù', 'ů')
-        // .replaceAll('í', 'á')
-        .replaceAll('ò', 'ň');
   }
 }

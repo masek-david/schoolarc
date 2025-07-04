@@ -198,7 +198,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       examNumberOfIncomplete: upcomingExams,
                       hwNumberOfMissed: missedHw.length,
                     ),
-
                     if (isRecapDate() && !hasSeenRecap())
                       RecapButton(
                         child: Padding(

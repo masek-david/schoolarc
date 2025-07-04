@@ -32,7 +32,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
               color: candidateData.isNotEmpty
                   ? Theme.of(context).colorScheme.primary
                   : backgroundColor,
-                  // : Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -102,7 +101,6 @@ CalendarBuilders<Object?> myCalendarBuilder({
               color: candidateData.isNotEmpty
                   ? Theme.of(context).colorScheme.primary
                   : backgroundColor,
-                  // : Theme.of(context).colorScheme.surfaceContainerHigh,
               shape: BoxShape.circle,
             ),
             child: SizedBox(

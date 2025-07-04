@@ -42,12 +42,36 @@
 </head>
 
 <body>
-  <script src="flutter_bootstrap.js" async>
+  <script>
+    window.addEventListener('keydown', function (event) {
+      if (event.metaKey || event.ctrlKey) {
+        switch (event.key.toLowerCase()) {
+          case 'h':
+          case 'e':
+          case 'f':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case 'd':
+            event.preventDefault();
+            break;
+        }
+      }
+    });
+
+    window.setBarColor = function (color) {
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", color);
+    };
+
     document.addEventListener('touchstart', (startEvent) => {
       if (startEvent.touches.length > 1) return;
       startEvent.preventDefault();
     }, { passive: false });
   </script>
+
+  <!-- Flutter app -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 
 </html>
