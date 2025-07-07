@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
@@ -100,7 +101,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     final maxNumberOfExamsPerDay = getMaxNumberOfExamsPerDay();
-    final bool showArrows = settings.get(Setting.calendarShowArrows) && widget.calendarFormat.name == 'month';
+    final bool showArrows = settings.get(Setting.calendarShowArrows) &&
+        widget.calendarFormat.name == 'month';
 
     return Stack(
       children: [
@@ -110,11 +112,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             children: [
               TableCalendar(
                 // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
+                locale: getLocale().languageCode,
+                daysOfWeekHeight: 20,
                 firstDay: DateTime(0),
                 lastDay: DateTime(5000),
                 focusedDay: widget.focusedDay,
                 availableGestures: AvailableGestures.horizontalSwipe,
-                startingDayOfWeek: StartingDayOfWeek.monday,
+                startingDayOfWeek: settings.get(Setting.weekStartsOnMonday)
+                    ? StartingDayOfWeek.monday
+                    : StartingDayOfWeek.sunday,
                 calendarFormat: widget.calendarFormat,
                 availableCalendarFormats: const {
                   CalendarFormat.week: 'Week',
@@ -133,7 +139,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                         : const EdgeInsets.symmetric(vertical: 8.0),
                     leftChevronVisible: !showArrows,
                     rightChevronVisible: !showArrows),
-                calendarStyle: CalendarStyle(
+                calendarStyle: const CalendarStyle(
                   cellAlignment: Alignment.topCenter,
                   markersAlignment: Alignment.topCenter,
                   tablePadding: EdgeInsets.symmetric(horizontal: 8),
@@ -191,7 +197,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 56),
+              padding: const EdgeInsets.only(bottom: 56),
               child: ArrowButtonsRow(
                 onPressedLeft: previousPage,
                 onPressedRight: nextPage,
@@ -215,7 +221,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         }
 
         while (isLeft ? isHoveringLeft : isHoveringRight) {
-          await Future.delayed(Duration(milliseconds: 1000));
+          await Future.delayed(const Duration(milliseconds: 1000));
           if (isLeft ? isHoveringLeft : isHoveringRight) {
             HapticFeedback.lightImpact();
             if (isLeft) {

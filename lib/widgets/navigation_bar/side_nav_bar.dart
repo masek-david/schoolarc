@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class SideNavBar extends StatelessWidget {
   const SideNavBar({
@@ -22,28 +23,28 @@ class SideNavBar extends StatelessWidget {
       groupAlignment: 0.0,
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      leading: DrawerButton(onPressed: switchDrawer),
-      trailing: Icon(Icons.abc, color: Colors.transparent),
+      leading: const DrawerButton(onPressed: switchDrawer),
+      trailing: const Icon(Icons.abc, color: Colors.transparent),
       destinations: [
         NavigationRailDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: Text('Home'),
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: Text(context.loc.home),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.calendar_month_outlined),
-          selectedIcon: Icon(Icons.calendar_month),
-          label: Text('Calendar'),
+          icon: const Icon(Icons.calendar_month_outlined),
+          selectedIcon: const Icon(Icons.calendar_month),
+          label: Text(context.loc.calendar),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.home_work_outlined),
-          selectedIcon: Icon(Icons.home_work),
-          label: Text('Homeworks'),
+          icon: const Icon(Icons.home_work_outlined),
+          selectedIcon: const Icon(Icons.home_work),
+          label: Text(context.loc.homeworks(2)),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.description_outlined),
-          selectedIcon: Icon(Icons.description),
-          label: Text('Exams'),
+          icon: const Icon(Icons.description_outlined),
+          selectedIcon: const Icon(Icons.description),
+          label: Text(context.loc.exams(2)),
         ),
       ],
     );

@@ -4,6 +4,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class StyleMotionPage extends StatefulWidget {
   const StyleMotionPage({super.key, required this.refreshTheme});
@@ -20,13 +21,15 @@ class _StyleMotionPageState extends State<StyleMotionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(context.loc.styleMotion),
+      ),
       body: ListView(
         children: [
-          InitialAppPage(),
+          const InitialAppPage(),
           SettingTile(
-            title: 'Screen switching animation duration',
-            subtitle: 'In miliseconds (0 disables animation)',
+            title: context.loc.styleMotionScreenSwitchAnimationTitle,
+            subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
             icon: Icons.timelapse,
             newLineAction: SliderAction(
               inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
@@ -39,8 +42,8 @@ class _StyleMotionPageState extends State<StyleMotionPage> {
             ),
           ),
           SettingTile.withSwitch(
-            title: 'Show app border',
-            subtitle: 'On big screen or in landscape, show borders in the app',
+            title: context.loc.styleMotionShowBorderTitle,
+            subtitle: context.loc.styleMotionShowBorderSubtitle,
             value: showBorder,
             onChanged: (value) {
               settings.save(Setting.showAppOverlay, value);

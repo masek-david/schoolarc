@@ -27,7 +27,7 @@ class _PriorityPickerState extends State<PriorityPicker>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 150),
     );
   }
 
@@ -76,7 +76,7 @@ class _PriorityPickerState extends State<PriorityPicker>
                 selectedColor: scheme.primaryContainer,
                 backgroundColor: scheme.surfaceContainerHigh,
                 selected: isSelected,
-                animationDuration: Duration(milliseconds: 300),
+                animationDuration: const Duration(milliseconds: 300),
                 onTapDown: () {
                   setState(() {
                     priorityForAnimation = index;

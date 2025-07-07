@@ -27,7 +27,7 @@ class FirebaseOverlay extends ConsumerWidget {
       children: [
         IgnorePointer(
           child: DefaultTextStyle(
-            style: TextStyle(),
+            style: const TextStyle(),
             child: AnimatedOpacity(
               duration: Durations.long2,
               opacity: ref.watch(_opacityProvider) == true ? 1 : 0,
@@ -41,7 +41,7 @@ class FirebaseOverlay extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 16,
                     children: [
-                      Column(
+                      const Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -54,7 +54,7 @@ class FirebaseOverlay extends ConsumerWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('Subjects'),
+                          const Text('Subjects'),
                           Text(activity[0]!.adds.toString()),
                           Text(activity[0]!.modifies.toString()),
                           Text(activity[0]!.listenReads.toString()),
@@ -63,7 +63,7 @@ class FirebaseOverlay extends ConsumerWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('Homeworks'),
+                          const Text('Homeworks'),
                           Text(activity[1]!.adds.toString()),
                           Text(activity[1]!.modifies.toString()),
                           Text(activity[1]!.listenReads.toString()),
@@ -72,7 +72,7 @@ class FirebaseOverlay extends ConsumerWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('Exams'),
+                          const Text('Exams'),
                           Text(activity[2]!.adds.toString()),
                           Text(activity[2]!.modifies.toString()),
                           Text(activity[2]!.listenReads.toString()),
@@ -89,7 +89,7 @@ class FirebaseOverlay extends ConsumerWidget {
           onPressed: () {
             ref.read(_opacityProvider.notifier).state = !ref.read(_opacityProvider.notifier).state;
           },
-          icon: Icon(Icons.hide_source),
+          icon: const Icon(Icons.hide_source),
         ),
       ],
     );

@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
-import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
+import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/settings/setting_pages/localization_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/shortcuts_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/style_motion_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
@@ -12,6 +13,7 @@ import 'package:school_manager/screens/settings/widgets/package_info.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/setting_pages/tomorrow_notifications_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
@@ -34,17 +36,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(loc.settings),
       ),
       body: ListView(
         children: [
           SettingTile(
-            title: 'Color theme',
-            subtitle: 'Customize the colors of the app',
+            title: loc.colorTheme,
+            subtitle: loc.colorThemeDescription,
             icon: Icons.palette_outlined,
-            trailing: Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => ThemePage(
@@ -54,10 +58,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SettingTile(
-            title: 'Style & Motion',
-            subtitle: 'Customize animations and more',
+            title: loc.styleMotion,
+            subtitle: loc.styleMotionDescription,
             icon: Icons.animation,
-            trailing: Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => StyleMotionPage(
@@ -66,12 +70,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          if (NotificationSender.isCompatiblePlatform())
+          if (NotificationSender.isCompatiblePlatform() || kDebugMode)
             SettingTile(
-              title: 'Upcoming day notifications',
-              subtitle: 'Notification with homeworks and exams for next day',
+              title: loc.upcomingDayNotifications,
+              subtitle: loc.upcomingDayNotificationsDescription,
               icon: Icons.notifications_outlined,
-              trailing: Icon(Icons.keyboard_arrow_right),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: (context) => navigatorKey.currentState
                   ?.push(
                 MaterialPageRoute(
@@ -86,19 +90,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           SettingTile(
-            title: 'Shortcuts',
-            subtitle: 'View keyboard shortcuts',
+            title: loc.localization,
+            subtitle: loc.localizationSubtitle,
+            icon: Icons.language_outlined,
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: (context) => navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => LocalizationPage(
+                  refreshTheme: widget.refreshTheme,
+                ),
+              ),
+            ),
+          ),
+          SettingTile(
+            title: loc.shortcuts,
+            subtitle: loc.shortcutsDescription,
             icon: Icons.keyboard_alt_outlined,
-            trailing: Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const ShortcutsPage(),
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           SettingTile(
-            title: 'Bakaláři',
+            title: loc.bakalari,
             icon: Icons.hexagon_outlined,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -107,7 +124,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SettingTile(
-            title: 'Strava.cz',
+            title: loc.stravaCz,
             icon: Icons.restaurant_outlined,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -116,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SettingTile(
-            title: 'Cloud sync',
+            title: loc.cloudSync,
             icon: Icons.cloud_outlined,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -124,10 +141,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          Divider(),
-          ImportExportRow(),
+          const Divider(),
+          const ImportExportRow(),
           SettingTile(
-            title: 'View app changelog',
+            title: loc.viewAppChangelog,
             icon: Icons.data_object,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -137,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           if (showDebug)
             SettingTile(
-              title: 'View app logs',
+              title: loc.viewLogs,
               icon: Icons.data_array,
               onTap: (context) => navigatorKey.currentState?.push(
                 MaterialPageRoute(
@@ -145,10 +162,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-          if (showDebug) Divider(),
+          if (showDebug) const Divider(),
           if (showDebug || kDebugMode)
             SettingTile.withSwitch(
-                title: 'Developer mode',
+                title: loc.developerMode,
                 value: showDebug,
                 onChanged: (value) {
                   settings.save(Setting.showDebugInfo, value);
@@ -158,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }),
           if (showDebug)
             SettingTile.withSwitch(
-              title: 'Use experimental homework tile overlay',
+              title: loc.useExperimentalHomeworkTileOverlay,
               value: useExperimentalHwOverlay,
               onChanged: (value) {
                 settings.save(Setting.expUseHwOverlay, value);

@@ -42,7 +42,7 @@ void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
       if (!key.isSameDay(now) ||
           TimeOfDay.fromDateTime(now)
               .isBefore(settings.get(Setting.mealsShowTodayUntil))) {
-        json[key.dayText()] = value
+        json[key.dayOfWeekText()] = value
             .map(
               (e) => e.toJson(),
             )

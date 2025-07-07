@@ -12,6 +12,7 @@ import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart'
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});
@@ -36,7 +37,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     showDialog(
       context: context,
       builder: (context) => SubjectDialog(
-        text: 'Add new subject',
+        text: context.loc.addNewSubject,
         nameController: nameController,
         shortcutController: shortcutController,
         onSave: () async {
@@ -70,7 +71,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     showDialog(
       context: context,
       builder: (context) => SubjectDialog(
-        text: 'Edit subject',
+        text: context.loc.editSubject,
         nameController: nameController,
         shortcutController: shortcutController,
         usedTimes: usedTimes,
@@ -99,14 +100,15 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   void deleteSubject(Subject subject, WidgetRef ref) {
     ref.read(subjectsProvider.notifier).deleteSubject(subject);
 
-    showMessage(context, 'Deleted subject ${subject.name}', actions: [
-      SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          ref.read(subjectsProvider.notifier).revertDelete(subject);
-        },
-      ),
-    ]);
+    showMessage(context, context.loc.deletedSubjectMessage(subject.name),
+        actions: [
+          SnackBarAction(
+            label: context.loc.undo,
+            onPressed: () {
+              ref.read(subjectsProvider.notifier).revertDelete(subject);
+            },
+          ),
+        ]);
   }
 
   Future<void> onRefresh() async {
@@ -127,17 +129,17 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subjects'),
+        title: Text(context.loc.subjects),
         actions: [
           if (kIsWeb && settings.get(Setting.useFirebase))
             IconButton(
               onPressed: onRefresh,
-              icon: Icon(Icons.refresh_outlined),
+              icon: const Icon(Icons.refresh_outlined),
             ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Add new subject',
+        tooltip: context.loc.addNewSubject,
         onPressed: () {
           HapticFeedback.mediumImpact();
           createNewSubject(ref);
@@ -148,9 +150,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: subjects.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'No subjects found. You can create new subjects by tapping the plus button.',
+                    context.loc.noSubjectsFoundMessage,
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -163,7 +165,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                     onReorderStart: (index) => HapticFeedback.mediumImpact(),
                     items: subjects,
                     isSameItem: (a, b) => a.id == b.id,
-                    padding: EdgeInsets.only(bottom: 100),
+                    padding: const EdgeInsets.only(bottom: 100),
                     itemBuilder: (context, index) {
                       Subject subject = subjects[index];
                       return Padding(

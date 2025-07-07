@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class StravaLoginScreen extends StatefulWidget {
@@ -25,7 +26,6 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
     _canteenController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
@@ -37,15 +37,16 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
   @override
   void initState() {
     super.initState();
-
     getInfoFromStorage();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login to Strava.cz'),
+        title: Text(loc.loginToStrava),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -58,10 +59,10 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
                   child: TextField(
                     keyboardType: TextInputType.number,
                     controller: _canteenController,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(15),
-                      border: OutlineInputBorder(),
-                      labelText: 'School canteen id',
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(15),
+                      border: const OutlineInputBorder(),
+                      labelText: loc.schoolCanteenId,
                     ),
                   ),
                 ),
@@ -69,25 +70,24 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
                   onPressed: () {
                     showDialogAdaptive(
                       context: context,
-                      title: Text('School canteen id'),
-                      content: Text(
-                          'School canteen id is 4 digit number you use to login to your strava app.'),
+                      title: Text(loc.schoolCanteenId),
+                      content: Text(loc.schoolCanteenIdDescription),
                       actions: [
                         adaptiveDialogButton(
                           context: context,
-                          child: Text('Close'),
+                          child: Text(loc.close),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],
                     );
                   },
-                  icon: Icon(Icons.info_outline),
+                  icon: const Icon(Icons.info_outline),
                 ),
               ],
             ),
             if (settings.get(Setting.showDebugInfo) || kDebugMode)
               SettingTile.withSwitch(
-                title: 'Allow logging in (experimental)',
+                title: loc.allowStravaLogin,
                 onChanged: (value) {
                   setState(() {
                     settings.save(Setting.allowStravaLogin, value);
@@ -100,10 +100,10 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
               TextField(
                 controller: _usernameController,
                 autofillHints: const [AutofillHints.username],
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'Username',
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: loc.username,
                 ),
               ),
             if (canLogIn) const SizedBox(height: 12),
@@ -111,10 +111,10 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
               TextField(
                 controller: _passwordController,
                 autofillHints: const [AutofillHints.password],
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'Password',
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: loc.password,
                 ),
               ),
             const SizedBox(height: 12),
@@ -142,9 +142,9 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
                   return;
                 }
 
-                showMessage(context, 'Logged in');
+                showMessage(context, loc.loggedIn);
               },
-              child: const Text('Log in'),
+              child: Text(loc.logIn),
             ),
           ],
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/timeofday_extension.dart';
 
 class SettingTile extends StatelessWidget {
   const SettingTile({
@@ -59,15 +58,22 @@ class SettingTile extends StatelessWidget {
       highlighted: highlighted ?? false,
       icon: icon,
       onTap: (context) async {
-        final value = await showTimePicker(context: context, initialTime: time);
+        final value = await showTimePicker(
+          context: context,
+          initialTime: time,
+        );
 
         if (value != null) {
           onChanged(value);
         }
       },
-      trailing: Text(
-        '${time.hour}:${time.minuteStartingWithZero()}',
-        style: const TextStyle(fontSize: 16),
+      trailing: Builder(
+        builder: (context) {
+          return Text(
+            time.format(context),
+            style: const TextStyle(fontSize: 16),
+          );
+        }
       ),
     );
   }
@@ -80,7 +86,9 @@ class SettingTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: highlighted ? const EdgeInsets.all(16) : EdgeInsets.all(0),
+            padding: highlighted
+                ? const EdgeInsets.all(16)
+                : const EdgeInsets.all(0),
             child: ListTile(
               enabled: enabled,
               onTap: onTap == null ? null : () => onTap!(context),
@@ -91,7 +99,7 @@ class SettingTile extends StatelessWidget {
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32))
                   : null,
-              contentPadding: highlighted ? EdgeInsets.all(12) : null,
+              contentPadding: highlighted ? const EdgeInsets.all(12) : null,
               leading: icon != null ? Icon(icon) : null,
               title: Text(
                 title,

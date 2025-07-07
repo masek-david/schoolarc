@@ -3,6 +3,7 @@ import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class ErrorTile extends StatelessWidget {
   const ErrorTile({
@@ -74,7 +75,7 @@ class ErrorTile extends StatelessWidget {
               ));
             },
             child: Text(
-              'Login',
+              context.loc.login,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -94,7 +95,7 @@ class ErrorTile extends StatelessWidget {
               ));
             },
             child: Text(
-              'Login',
+              context.loc.login,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.error,
               ),

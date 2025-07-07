@@ -7,14 +7,13 @@ class HomeworkList extends StatelessWidget {
   const HomeworkList({
     super.key,
     required this.hwList,
-    this.draggable = false,
-    this.showText = false,
-    this.showDates = true,
-    this.textFull = 'Homeworks',
-    this.textEmpty,
     required this.onDelete,
     required this.onEdit,
-    required this.onChangedCompletion, required this.onConvert,
+    required this.onChangedCompletion,
+    required this.onConvert,
+    required this.text,
+    this.draggable = false,
+    this.showDates = true,
   });
 
   final List<Homework> hwList;
@@ -23,38 +22,33 @@ class HomeworkList extends StatelessWidget {
   final void Function(Homework hw) onEdit;
   final void Function(Homework hw, bool value) onChangedCompletion;
   final bool draggable;
-  final bool showText;
   final bool showDates;
-  final String textFull;
-  final String? textEmpty;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (hwList.isEmpty && showText)
-          TextSeparator(
-            text: textEmpty ?? 'No $textFull',
-            greydOut: true,
-          )
-        else if (showText)
-          TextSeparator(text: textFull),
-        ...List.generate(hwList.length, (index) {
-          Homework hw = hwList[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: AnimatedCompletionTile(
-              hw: hw,
-              draggable: draggable,
-              showDate: showDates,
-              onChangedCompletion: (value) => onChangedCompletion(hw, value),
-              onDelete: () => onDelete(hw),
-              onEdit: () => onEdit(hw),
-              onConvert: () => onConvert(hw),
-            ),
-          );
-        }),
+        if (text != null) TextSeparator(text: text!, greydOut: hwList.isEmpty),
+        ...List.generate(
+          hwList.length,
+          (index) {
+            Homework hw = hwList[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: AnimatedCompletionTile(
+                hw: hw,
+                draggable: draggable,
+                showDate: showDates,
+                onChangedCompletion: (value) => onChangedCompletion(hw, value),
+                onDelete: () => onDelete(hw),
+                onEdit: () => onEdit(hw),
+                onConvert: () => onConvert(hw),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

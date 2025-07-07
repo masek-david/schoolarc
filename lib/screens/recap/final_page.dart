@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -72,7 +73,7 @@ class _FinalPageState extends State<FinalPage> {
                 'Enjoy the summer break!',
                 style: text.headlineMedium,
               ),
-              margin: EdgeInsets.only(top: 16)),
+              margin: const EdgeInsets.only(top: 16)),
           _animatedText(
               3,
               Row(
@@ -84,12 +85,12 @@ class _FinalPageState extends State<FinalPage> {
                           Setting.recapShownForYear, DateTime.now().year);
                       Navigator.pop(context);
                     },
-                    child: Text('Exit'),
+                    child: const Text('Exit'),
                   ),
                 ],
               ),
-              margin: EdgeInsets.only(top: 64)),
-          SizedBox(height: 80),
+              margin: const EdgeInsets.only(top: 64)),
+          const SizedBox(height: 80),
         ],
       ),
     );

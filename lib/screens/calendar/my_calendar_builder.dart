@@ -203,9 +203,9 @@ CalendarBuilders<Object?> myCalendarBuilder({
                     child: LongPressDraggable(
                       data: exam,
                       onDragStarted: () => HapticFeedback.mediumImpact(),
-                      feedbackOffset: Offset(0, -80),
+                      feedbackOffset: const Offset(0, -80),
                       dragAnchorStrategy: (draggable, context, position) {
-                        return Offset(50, 60);
+                        return const Offset(50, 60);
                       },
                       childWhenDragging: Opacity(
                         opacity: 0.3,

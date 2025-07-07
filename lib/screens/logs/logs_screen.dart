@@ -3,6 +3,7 @@ import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/logs/log.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -27,17 +28,17 @@ class _LogsScreenState extends State<LogsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Logs'),
+        title: Text(context.loc.logs),
         actions: [
           IconButton(
             onPressed: () {
               showDialogAdaptive(
                 context: context,
-                title: Text('Delete all logs?'),
+                title: Text(context.loc.deleteAllLogs),
                 actions: [
                   adaptiveDialogButton(
                     context: context,
-                    child: Text('Cancel'),
+                    child: Text(context.loc.cancel),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -45,7 +46,7 @@ class _LogsScreenState extends State<LogsScreen> {
                   adaptiveDialogButton(
                     context: context,
                     isDestructiveAction: true,
-                    child: Text('Delete'),
+                    child: Text(context.loc.delete),
                     onPressed: () {
                       Navigator.pop(context);
                       logsService.deleteAll();
@@ -57,12 +58,12 @@ class _LogsScreenState extends State<LogsScreen> {
                 ],
               );
             },
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
           ),
         ],
       ),
       body: logsMap.isEmpty
-          ? Center(child: Text('No logs found'))
+          ? Center(child: Text(context.loc.noLogsFound))
           : ListView.builder(
               itemCount: logs.length,
               itemBuilder: (context, index) {
@@ -82,7 +83,7 @@ class _LogsScreenState extends State<LogsScreen> {
                                   logsMap.remove(logs[index].$1);
                                 });
                               },
-                              icon: Icon(Icons.delete),
+                              icon: const Icon(Icons.delete),
                             ),
                             IconButton(
                               onPressed: () {
@@ -94,7 +95,7 @@ class _LogsScreenState extends State<LogsScreen> {
                                   ),
                                 );
                               },
-                              icon: Icon(Icons.keyboard_arrow_right),
+                              icon: const Icon(Icons.keyboard_arrow_right),
                             ),
                           ],
                         ),

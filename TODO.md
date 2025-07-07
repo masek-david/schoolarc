@@ -1,6 +1,13 @@
 # FIX
 
 # NEW:
+
+## RELEASE
+- ⬜ privacy policy info for cloud sync
+- ⬜ info about bakalari login
+- ⬜ info about strava.cz login
+- ⬜ plus plan - one time/yearly ???
+
 - ✅ when should the widget be updated??
 - ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
@@ -8,45 +15,50 @@
 - ✅ proper firebase error handling, if no user dont even try it,...
 - ✅ fix arrows in calendar (not centered on web)
 - ✅ create baka provider
-- ⬜ unite the ui/ux for extensions (in settings and in welcome page)
+- ✅ localizations
+    - ✅ date format 
+    - ✅ translation
+    - ✅ start week with monday
+- ⬜ tutorial
+    - ⬜ need to teach:
+        - ⬜ difference between hw and exam
+        - ⬜ complete hw
+        - ⬜ slide to delete
+        - ⬜ priorities
+        - ⬜ subjects
+    - ⬜ translation
+    - ⬜ import data ???
+    - ⬜ plus plan
+- ⬜ unite the ui/ux for extensions (in settings and in tutorial)
     - ⬜ create providers for logins
-- ⬜ rework tutorial (is it necessary to teach every interaction??)
-- ⬜ restore state (tasks_app.dart refactor probably needed, maybe use go_router ??)
+- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ fix the frequency when is app searching for baka homeworks
+- ⬜ restore state (tasks_app.dart refactor probably needed, maybe use go_router ??)
+- ⬜ strava service
+    - ⬜ check it works 
+    - ⬜ stop saving the password 
+- ⬜ on weekend, show info about upcoming week
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
-- ⬜ localizations
-    - ⬜ date format 
-    - ⬜ language
-    - ⬜ start week with monday
-- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ icons - hws, exams, subjects
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
     - ⬜ is everything needed to be shown ??
-- ⬜ add google sign in
+- ⬜ add google sign in + sign in with apple
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ strava service
-    - ⬜ check it works 
-    - ⬜ stop saving the password 
 
 ## notifications:
 - ⬜ turn off notifications for weekend
 - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 
-## web features
-- ✅ web - spatne se horizontalne scrolluje, pridat tlacitka
-- ✅ web appbary jsou divne dole, asi protoze na webu neni safearea
-- ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
-- ✅ onHover
-- ⬜ keyboard shortcuts
-
 ## year recap
+- ⬜ translate
 - ⬜ in background move this years hws and exams tiles
 - ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
 
@@ -78,3 +90,10 @@
 - ✅ rework switch action and settings screen(state management)
 - ✅ tapping on any setting tile should trigger its switch
 - ✅ when choosing app theme, show its type (vibrant,...)
+
+## web features
+- ✅ web - spatne se horizontalne scrolluje, pridat tlacitka
+- ✅ web appbary jsou divne dole, asi protoze na webu neni safearea
+- ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
+- ✅ onHover
+- ✅ keyboard shortcuts

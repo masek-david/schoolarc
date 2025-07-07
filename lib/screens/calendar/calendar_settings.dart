@@ -3,6 +3,7 @@ import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class CalendarSettings extends StatefulWidget {
   const CalendarSettings({
@@ -19,36 +20,39 @@ class CalendarSettings extends StatefulWidget {
 class _CalendarSettingsState extends State<CalendarSettings> {
   bool showMissed = settings.get(Setting.calendarShowMissed);
   bool showArrows = settings.get(Setting.calendarShowArrows);
+  bool initialIsTomorrow = settings.get(Setting.calendarInitialIsTomorrow);
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SettingTile(
-          title: 'Initial date',
+          title: loc.initialDate,
           trailing: DropDownAction(
-            items: const [
+            value: initialIsTomorrow,
+            items: [
               DropdownMenuItem(
                 value: false,
-                child: Text('Today'),
+                child: Text(loc.today),
               ),
               DropdownMenuItem(
                 value: true,
-                child: Text('Tomorrow'),
+                child: Text(loc.tomorrow),
               ),
             ],
-            initialValue: settings.get(Setting.calendarInitialIstomorrow),
             onChanged: (value) {
-              settings.save(
-                Setting.calendarInitialIstomorrow,
-                value,
-              );
+              settings.save(Setting.calendarInitialIsTomorrow, value);
+              setState(() {
+                initialIsTomorrow = value as bool;
+              });
             },
           ),
         ),
         SettingTile.withSwitch(
-          title: 'Show missed homeworks',
+          title: loc.showMissedHomeworks,
           value: showMissed,
           onChanged: (value) {
             settings.save(Setting.calendarShowMissed, value);
@@ -59,8 +63,8 @@ class _CalendarSettingsState extends State<CalendarSettings> {
           },
         ),
         SettingTile.withSwitch(
-          title: 'Show arrows',
-          subtitle: 'Show arrows for switching between pages',
+          title: loc.showArrows,
+          subtitle: loc.showArrowsSubtitle,
           value: showArrows,
           onChanged: (value) {
             settings.save(Setting.calendarShowArrows, value);

@@ -13,6 +13,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 import 'package:school_manager/widgets/drawer/search_bar.dart';
 
@@ -36,6 +37,8 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final bool showDebug = settings.get(Setting.showDebugInfo);
+    final loc = context.loc;
+    
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -45,15 +48,15 @@ class MyDrawer extends StatelessWidget {
               padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
               child: Text('Schoolarc', style: TextStyle(fontSize: 20)),
             ),
-            Padding(
-                padding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
+            const Padding(
+                padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
                 child: MySearchBar()),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     MyDrawerButton(
-                      text: 'Subjects',
+                      text: loc.subjects,
                       icon: const Icon(Icons.school_outlined),
                       onTap: () {
                         navigatorKey.currentState?.push(
@@ -64,7 +67,7 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     MyDrawerButton(
-                      text: 'Permanent timetable',
+                      text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_outlined),
                       onTap: () {
                         navigatorKey.currentState?.push(
@@ -88,24 +91,24 @@ class MyDrawer extends StatelessWidget {
                     //   },
                     // ),
                     MyDrawerButton(
-                      text: 'Homeworks from Bakaláři',
+                      text: loc.hwFromBaka,
                       icon: const Icon(Icons.home_work_outlined),
                       onTap: () {
                         navigatorKey.currentState?.push(
                           MaterialPageRoute(
-                            builder: (context) => BakaHomeworksScreen(),
+                            builder: (context) => const BakaHomeworksScreen(),
                           ),
                         );
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
                     MyDrawerButton(
-                      text: 'Recently deleted',
+                      text: loc.recentlyDeleted,
                       icon: const Icon(Icons.delete_forever),
                       onTap: () {
                         navigatorKey.currentState?.push(
                           MaterialPageRoute(
-                            builder: (context) => RecentlyDeletedScreen(),
+                            builder: (context) => const RecentlyDeletedScreen(),
                           ),
                         );
                       },
@@ -114,7 +117,7 @@ class MyDrawer extends StatelessWidget {
                       const Divider(indent: 28, endIndent: 28),
                     if (kDebugMode || showDebug)
                       SettingTile.withSwitch(
-                        title: 'Developer mode',
+                        title: loc.developerMode,
                         value: settings.get(Setting.showDebugInfo),
                         onChanged: (value) {
                           settings.save(Setting.showDebugInfo, value);
@@ -123,7 +126,7 @@ class MyDrawer extends StatelessWidget {
                       ),
                     if (showDebug)
                       SettingTile.withSwitch(
-                        title: 'Show performance overlay',
+                        title: loc.showPerformanceOverlay,
                         value:
                             settings.get(Setting.debugShowPerformanceOverlay),
                         onChanged: (value) {
@@ -134,7 +137,7 @@ class MyDrawer extends StatelessWidget {
                       ),
                     if (showDebug)
                       SettingTile.withSwitch(
-                        title: 'Show firebase overlay',
+                        title: loc.showFirebaseOverlay,
                         value: settings.get(Setting.debugShowFireOverlay),
                         onChanged: (value) {
                           settings.save(Setting.debugShowFireOverlay, value);
@@ -143,7 +146,7 @@ class MyDrawer extends StatelessWidget {
                       ),
                     if (showDebug)
                       MyDrawerButton(
-                          text: 'View database',
+                          text: loc.viewDatabase,
                           icon: const Icon(Icons.data_array),
                           onTap: () {
                             navigatorKey.currentState?.push(
@@ -154,12 +157,12 @@ class MyDrawer extends StatelessWidget {
                           }),
                     if (showDebug)
                       MyDrawerButton(
-                        text: 'View logs',
+                        text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
                         onTap: () {
                           navigatorKey.currentState?.push(
                             MaterialPageRoute(
-                              builder: (context) => LogsScreen(),
+                              builder: (context) => const LogsScreen(),
                             ),
                           );
                         },
@@ -180,7 +183,7 @@ class MyDrawer extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'View stats about your year 🎉',
+                          '${loc.viewYearStats} 🎉',
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ),
@@ -189,12 +192,12 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             MyDrawerButton(
-              text: 'View tutorial',
+              text: loc.viewTutorial,
               icon: const Icon(Icons.school),
               onTap: startTutorial,
             ),
             MyDrawerButton(
-              text: 'Settings',
+              text: loc.settings,
               icon: const Icon(Icons.settings),
               onTap: () {
                 navigatorKey.currentState?.push(
@@ -209,7 +212,7 @@ class MyDrawer extends StatelessWidget {
             if (showDebug || kDebugMode)
               GestureDetector(
                 onTap: () => navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => ChangelogScreen(),
+                  builder: (context) => const ChangelogScreen(),
                 )),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),

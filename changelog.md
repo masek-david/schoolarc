@@ -1,3 +1,15 @@
+## [2.0.2]() - 2025-07-07
+### Added
+- Added czech translation
+- Added options for date and time formats
+
+### Changed
+
+### Fixed
+
+
+---
+
 ## [2.0.1]() - 2025-07-04
 ### Added
 - Added keyboard shortcut support

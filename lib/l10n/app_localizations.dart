@@ -1,0 +1,1569 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_cs.dart';
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('cs'),
+    Locale('en')
+  ];
+
+  /// Greeting based on time of day: morning, afternoon, evening, night
+  ///
+  /// In en, this message translates to:
+  /// **'{hour, select, morning{Good morning} afternoon{Good afternoon} evening{Good evening} night{Good night} other{Hello}}'**
+  String greetingByHour(String hour);
+
+  /// No description provided for @youHave.
+  ///
+  /// In en, this message translates to:
+  /// **'You have'**
+  String get youHave;
+
+  /// Label for missed homework count
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Missed homework} other{Missed homeworks}}'**
+  String missedHomework(int count);
+
+  /// Label for upcoming homework count
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Upcoming homework} other{Upcoming homeworks}}'**
+  String upcomingHomework(int count);
+
+  /// Label for upcoming exams count
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Upcoming exam} other{Upcoming exams}}'**
+  String upcomingExams(int count);
+
+  /// No description provided for @and.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get and;
+
+  /// Represents the absence of number, or something like: 'No errors found', but in other languages can be '0 errors found'
+  ///
+  /// In en, this message translates to:
+  /// **'no'**
+  String get zero;
+
+  /// Represents the absence of number, or something like: 'No errors found'
+  ///
+  /// In en, this message translates to:
+  /// **'no'**
+  String get no;
+
+  /// No description provided for @high.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get high;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get low;
+
+  /// No description provided for @noPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'No priority'**
+  String get noPriority;
+
+  /// No description provided for @anotherYearBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'Another year behind'**
+  String get anotherYearBehind;
+
+  /// No description provided for @viewYearStats.
+  ///
+  /// In en, this message translates to:
+  /// **'View stats about your year'**
+  String get viewYearStats;
+
+  /// No description provided for @importing.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing'**
+  String get importing;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @deadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline'**
+  String get deadline;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get now;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @added.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get added;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Ok'**
+  String get ok;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @logIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in'**
+  String get logIn;
+
+  /// No description provided for @pleaseLogIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in'**
+  String get pleaseLogIn;
+
+  /// No description provided for @everythingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything done'**
+  String get everythingDone;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @success.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get success;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @exams.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Exam} other{Exams}}'**
+  String exams(num count);
+
+  /// No description provided for @addNewExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new exam'**
+  String get addNewExam;
+
+  /// No description provided for @addNewExamFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new exam for'**
+  String get addNewExamFor;
+
+  /// No description provided for @deletedExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted exam'**
+  String get deletedExam;
+
+  /// No description provided for @toExam.
+  ///
+  /// In en, this message translates to:
+  /// **'To exam'**
+  String get toExam;
+
+  /// No description provided for @examsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'{isEmpty, select, true{No exams} other{Exams}} {whenText}'**
+  String examsFor(String isEmpty, Object whenText);
+
+  /// No description provided for @examAbsence.
+  ///
+  /// In en, this message translates to:
+  /// **'{isAbsent, select, true{No exams} other{Exams}}'**
+  String examAbsence(String isAbsent);
+
+  /// No description provided for @homeworks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Homework} other{Homeworks}}'**
+  String homeworks(num count);
+
+  /// No description provided for @addNewHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new homework'**
+  String get addNewHomework;
+
+  /// No description provided for @addNewHomeworkFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new homework for'**
+  String get addNewHomeworkFor;
+
+  /// No description provided for @deletedHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted homework'**
+  String get deletedHomework;
+
+  /// No description provided for @toHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'To homework'**
+  String get toHomework;
+
+  /// No description provided for @homeworksFor.
+  ///
+  /// In en, this message translates to:
+  /// **'{isEmpty, select, true{No homeworks} other{Homeworks}} {whenText}'**
+  String homeworksFor(String isEmpty, Object whenText);
+
+  /// No description provided for @homeworkAbsence.
+  ///
+  /// In en, this message translates to:
+  /// **'{isAbsent, select, true{No homework} other{Homework}}'**
+  String homeworkAbsence(String isAbsent);
+
+  /// No description provided for @showMyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Show my name'**
+  String get showMyName;
+
+  /// No description provided for @showMyNameSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled and logged in to Bakaláři, you will be greeted with your name'**
+  String get showMyNameSubtitle;
+
+  /// No description provided for @showBakalariTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Bakaláři timetable'**
+  String get showBakalariTimetable;
+
+  /// No description provided for @showMeals.
+  ///
+  /// In en, this message translates to:
+  /// **'Show meals'**
+  String get showMeals;
+
+  /// No description provided for @lunchTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch time'**
+  String get lunchTime;
+
+  /// No description provided for @lunchTimeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When meals for next day appear'**
+  String get lunchTimeSubtitle;
+
+  /// No description provided for @initialDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial date'**
+  String get initialDate;
+
+  /// No description provided for @showMissedHomeworks.
+  ///
+  /// In en, this message translates to:
+  /// **'Show missed homeworks'**
+  String get showMissedHomeworks;
+
+  /// No description provided for @showArrows.
+  ///
+  /// In en, this message translates to:
+  /// **'Show arrows'**
+  String get showArrows;
+
+  /// No description provided for @showArrowsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show arrows for switching between pages'**
+  String get showArrowsSubtitle;
+
+  /// No description provided for @upcomingDayChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Here you will find upcoming exams and homeworks'**
+  String get upcomingDayChannelDescription;
+
+  /// No description provided for @mainChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Main channel'**
+  String get mainChannel;
+
+  /// No description provided for @mainChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Main channel for notifications'**
+  String get mainChannelDescription;
+
+  /// No description provided for @internalError.
+  ///
+  /// In en, this message translates to:
+  /// **'An internal error has occurred.'**
+  String get internalError;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @noUserLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'No user logged in'**
+  String get noUserLoggedIn;
+
+  /// No description provided for @usernameMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is missing'**
+  String get usernameMissing;
+
+  /// No description provided for @passwordMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is missing'**
+  String get passwordMissing;
+
+  /// No description provided for @passwordCantBeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password can\'t be changed'**
+  String get passwordCantBeChanged;
+
+  /// No description provided for @invalidCanteenNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid canteen number'**
+  String get invalidCanteenNumber;
+
+  /// No description provided for @invalidCanteenNumberLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid canteen number length, only allowed is 4'**
+  String get invalidCanteenNumberLength;
+
+  /// No description provided for @canteenNumberMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Canteen number is missing'**
+  String get canteenNumberMissing;
+
+  /// No description provided for @checkConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection'**
+  String get checkConnection;
+
+  /// No description provided for @unexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get unexpectedError;
+
+  /// No description provided for @fillOutAllInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill out all information'**
+  String get fillOutAllInfo;
+
+  /// No description provided for @noCanteen.
+  ///
+  /// In en, this message translates to:
+  /// **'No canteen, please log in'**
+  String get noCanteen;
+
+  /// No description provided for @emptyLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty lesson'**
+  String get emptyLesson;
+
+  /// No description provided for @subjectHasntBeenAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'This subject hasn\\\'t been added.'**
+  String get subjectHasntBeenAdded;
+
+  /// No description provided for @importedSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported subject'**
+  String get importedSubject;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @teacher.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher'**
+  String get teacher;
+
+  /// No description provided for @room.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get room;
+
+  /// No description provided for @hwFromBaka.
+  ///
+  /// In en, this message translates to:
+  /// **'Homeworks from Bakaláři'**
+  String get hwFromBaka;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data'**
+  String get noData;
+
+  /// No description provided for @newHomeworks.
+  ///
+  /// In en, this message translates to:
+  /// **'New homeworks'**
+  String get newHomeworks;
+
+  /// No description provided for @homeworkAlreadyAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'This homework has been already added'**
+  String get homeworkAlreadyAdded;
+
+  /// No description provided for @addAsHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Add as homework'**
+  String get addAsHomework;
+
+  /// No description provided for @addAsExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Add as an exam'**
+  String get addAsExam;
+
+  /// No description provided for @bakalari.
+  ///
+  /// In en, this message translates to:
+  /// **'Bakaláři'**
+  String get bakalari;
+
+  /// No description provided for @loggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in'**
+  String get loggedIn;
+
+  /// No description provided for @schoolWebId.
+  ///
+  /// In en, this message translates to:
+  /// **'School web'**
+  String get schoolWebId;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @oldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Old password'**
+  String get oldPassword;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @rememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get rememberMe;
+
+  /// No description provided for @rememberMeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me?'**
+  String get rememberMeTitle;
+
+  /// No description provided for @rememberMeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you continue, you won\'t be able to view your current timetable and current homeworks.'**
+  String get rememberMeWarning;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logOut;
+
+  /// No description provided for @importTimetableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import timetable and subjects?'**
+  String get importTimetableTitle;
+
+  /// No description provided for @importTimetableWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing the timetable will replace your existing timetable. Are you sure?'**
+  String get importTimetableWarning;
+
+  /// No description provided for @import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import;
+
+  /// No description provided for @importTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Import timetable and subjects'**
+  String get importTimetable;
+
+  /// No description provided for @changeDateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Change date to'**
+  String get changeDateTo;
+
+  /// No description provided for @currentTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Current timetable'**
+  String get currentTimetable;
+
+  /// No description provided for @noTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'No timetable found'**
+  String get noTimetable;
+
+  /// No description provided for @timetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Timetable'**
+  String get timetable;
+
+  /// No description provided for @convertToHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to homework'**
+  String get convertToHomework;
+
+  /// No description provided for @convertToExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to exam'**
+  String get convertToExam;
+
+  /// No description provided for @cloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync'**
+  String get cloudSync;
+
+  /// No description provided for @useCloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Use cloud sync'**
+  String get useCloudSync;
+
+  /// No description provided for @register.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get register;
+
+  /// No description provided for @loggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in'**
+  String get loggingIn;
+
+  /// No description provided for @loggedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged out'**
+  String get loggedOut;
+
+  /// No description provided for @loggedInSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in, everything has been synced'**
+  String get loggedInSynced;
+
+  /// No description provided for @registeredSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered successfully'**
+  String get registeredSuccessfully;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @passwordChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully'**
+  String get passwordChangedSuccessfully;
+
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get syncing;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loading;
+
+  /// No description provided for @meals.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals'**
+  String get meals;
+
+  /// No description provided for @mealsNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals couldn\'t be loaded'**
+  String get mealsNotLoaded;
+
+  /// No description provided for @noMealsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No meals found'**
+  String get noMealsFound;
+
+  /// No description provided for @noMealsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'No meals for'**
+  String get noMealsFor;
+
+  /// No description provided for @mealsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals for'**
+  String get mealsFor;
+
+  /// No description provided for @lessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons'**
+  String get lessons;
+
+  /// No description provided for @noLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'No lesson {whenText}'**
+  String noLesson(Object whenText);
+
+  /// No description provided for @addNewLessonTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new lesson time'**
+  String get addNewLessonTime;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @logs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get logs;
+
+  /// No description provided for @deleteAllLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all logs?'**
+  String get deleteAllLogs;
+
+  /// No description provided for @noLogsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No logs found. Everything runs well!'**
+  String get noLogsFound;
+
+  /// No description provided for @shortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcuts'**
+  String get shortcuts;
+
+  /// No description provided for @createHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Create homework'**
+  String get createHomework;
+
+  /// No description provided for @createExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an exam'**
+  String get createExam;
+
+  /// No description provided for @shortcutWhenCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'When creating:'**
+  String get shortcutWhenCreating;
+
+  /// No description provided for @searchForSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a subject'**
+  String get searchForSubject;
+
+  /// No description provided for @choosePriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a priority'**
+  String get choosePriority;
+
+  /// No description provided for @pickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get pickDate;
+
+  /// No description provided for @styleMotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Style & Motion'**
+  String get styleMotion;
+
+  /// No description provided for @styleMotionScreenSwitchAnimationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen switching animation duration'**
+  String get styleMotionScreenSwitchAnimationTitle;
+
+  /// No description provided for @styleMotionScreenSwitchAnimationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In milliseconds (0 disables animation)'**
+  String get styleMotionScreenSwitchAnimationSubtitle;
+
+  /// No description provided for @styleMotionShowBorderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show app border'**
+  String get styleMotionShowBorderTitle;
+
+  /// No description provided for @styleMotionShowBorderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On big screen or in landscape, show borders in the app'**
+  String get styleMotionShowBorderSubtitle;
+
+  /// No description provided for @themePageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themePageTitle;
+
+  /// No description provided for @themeBrightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get themeBrightness;
+
+  /// No description provided for @themeFollowSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeFollowSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeOLEDTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OLED black'**
+  String get themeOLEDTitle;
+
+  /// No description provided for @themeOLEDSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Works only in dark mode'**
+  String get themeOLEDSubtitle;
+
+  /// No description provided for @themeUseDeviceColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Use device colors'**
+  String get themeUseDeviceColors;
+
+  /// No description provided for @themeSystemColorWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently using system color. If you want to use custom color, turn off Use device colors.'**
+  String get themeSystemColorWarning;
+
+  /// No description provided for @themeAppColor.
+  ///
+  /// In en, this message translates to:
+  /// **'App color'**
+  String get themeAppColor;
+
+  /// No description provided for @themeSchemeVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheme variant'**
+  String get themeSchemeVariant;
+
+  /// No description provided for @upcomingDayNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming day notifications'**
+  String get upcomingDayNotifications;
+
+  /// No description provided for @notificationsNotAllowedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications not allowed, click here to grant permission'**
+  String get notificationsNotAllowedMessage;
+
+  /// No description provided for @upcomingDayNotificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications with homeworks and exams for the next day'**
+  String get upcomingDayNotificationsDescription;
+
+  /// No description provided for @arrivalTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival time'**
+  String get arrivalTimeTitle;
+
+  /// No description provided for @arrivalTimeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time when the notification will arrive'**
+  String get arrivalTimeSubtitle;
+
+  /// No description provided for @sendNotificationNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Send upcoming day notification now'**
+  String get sendNotificationNow;
+
+  /// No description provided for @appDataLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'App data'**
+  String get appDataLabel;
+
+  /// No description provided for @export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// No description provided for @chooseSaveLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a location for save file:'**
+  String get chooseSaveLocation;
+
+  /// No description provided for @pickSaveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a save file:'**
+  String get pickSaveFile;
+
+  /// Confirmation message asking to import subjects, homework, and exams with correct plurals
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to import {subjectsCount} subject{subjectsCount, plural, =1{} other{s}}, {hwsCount} piece{hwsCount, plural, =1{} other{s}} of homework and {examsCount} exam{examsCount, plural, =1{} other{s}}?'**
+  String importConfirmationText(num subjectsCount, num hwsCount, num examsCount);
+
+  /// No description provided for @importErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during import.'**
+  String get importErrorMessage;
+
+  /// No description provided for @initialPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial page'**
+  String get initialPageTitle;
+
+  /// No description provided for @initialPageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The page that will be displayed when opening the app'**
+  String get initialPageSubtitle;
+
+  /// No description provided for @alreadyDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already the developer'**
+  String get alreadyDeveloper;
+
+  /// No description provided for @pressMoreTimesToBecomeDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Press 2 more times to become the developer'**
+  String get pressMoreTimesToBecomeDeveloper;
+
+  /// No description provided for @becameDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve become the developer'**
+  String get becameDeveloper;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @colorTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Color theme'**
+  String get colorTheme;
+
+  /// No description provided for @colorThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the colors of the app'**
+  String get colorThemeDescription;
+
+  /// No description provided for @styleMotionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize animations and more'**
+  String get styleMotionDescription;
+
+  /// No description provided for @shortcutsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View keyboard shortcuts'**
+  String get shortcutsDescription;
+
+  /// No description provided for @stravaCz.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava.cz'**
+  String get stravaCz;
+
+  /// No description provided for @viewAppChangelog.
+  ///
+  /// In en, this message translates to:
+  /// **'View app changelog'**
+  String get viewAppChangelog;
+
+  /// No description provided for @developerMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer mode'**
+  String get developerMode;
+
+  /// No description provided for @useExperimentalHomeworkTileOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Use experimental homework tile overlay'**
+  String get useExperimentalHomeworkTileOverlay;
+
+  /// No description provided for @colorShowcaseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how the app will look with these colors:'**
+  String get colorShowcaseTitle;
+
+  /// No description provided for @filledButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled button'**
+  String get filledButton;
+
+  /// No description provided for @choiceChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Choice chip'**
+  String get choiceChip;
+
+  /// No description provided for @loginToStrava.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to Strava.cz'**
+  String get loginToStrava;
+
+  /// No description provided for @schoolCanteenId.
+  ///
+  /// In en, this message translates to:
+  /// **'School canteen ID'**
+  String get schoolCanteenId;
+
+  /// No description provided for @schoolCanteenIdDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'School canteen id is a 4-digit number you use to login to your Strava app.'**
+  String get schoolCanteenIdDescription;
+
+  /// No description provided for @allowStravaLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow logging in (experimental)'**
+  String get allowStravaLogin;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @shortcutMax5Chars.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcut (max 5 characters)'**
+  String get shortcutMax5Chars;
+
+  /// No description provided for @subjectUsedTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {This subject is used 1 time} other {This subject is used {count} times}}'**
+  String subjectUsedTimes(num count);
+
+  /// No description provided for @addNewSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new subject'**
+  String get addNewSubject;
+
+  /// No description provided for @editSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit subject'**
+  String get editSubject;
+
+  /// No description provided for @subjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Subjects'**
+  String get subjects;
+
+  /// No description provided for @noSubjectsFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No subjects found. You can create new subjects by tapping the plus button.'**
+  String get noSubjectsFoundMessage;
+
+  /// No description provided for @deletedSubjectMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted subject {name}'**
+  String deletedSubjectMessage(Object name);
+
+  /// No description provided for @createNewTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new times:'**
+  String get createNewTimes;
+
+  /// No description provided for @deleteThisLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this lesson'**
+  String get deleteThisLesson;
+
+  /// No description provided for @beginningTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginning time:'**
+  String get beginningTime;
+
+  /// No description provided for @endingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Ending time:'**
+  String get endingTime;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @selectSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a subject:'**
+  String get selectSubject;
+
+  /// No description provided for @setToEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Set to empty'**
+  String get setToEmpty;
+
+  /// No description provided for @show7DayWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Show 7 day week'**
+  String get show7DayWeek;
+
+  /// No description provided for @timetableTileWidth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tile width'**
+  String get timetableTileWidth;
+
+  /// No description provided for @permanentTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent timetable'**
+  String get permanentTimetable;
+
+  /// No description provided for @recentlyDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently deleted'**
+  String get recentlyDeleted;
+
+  /// No description provided for @showPerformanceOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show performance overlay'**
+  String get showPerformanceOverlay;
+
+  /// No description provided for @showFirebaseOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show firebase overlay'**
+  String get showFirebaseOverlay;
+
+  /// No description provided for @viewDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'View database'**
+  String get viewDatabase;
+
+  /// No description provided for @viewLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View logs'**
+  String get viewLogs;
+
+  /// No description provided for @viewTutorial.
+  ///
+  /// In en, this message translates to:
+  /// **'View tutorial'**
+  String get viewTutorial;
+
+  /// No description provided for @localization.
+  ///
+  /// In en, this message translates to:
+  /// **'Localization'**
+  String get localization;
+
+  /// No description provided for @localizationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize language and date format'**
+  String get localizationSubtitle;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @timeFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Time format'**
+  String get timeFormat;
+
+  /// No description provided for @timeFormat12.
+  ///
+  /// In en, this message translates to:
+  /// **'12-hour'**
+  String get timeFormat12;
+
+  /// No description provided for @timeFormat24.
+  ///
+  /// In en, this message translates to:
+  /// **'24-hour'**
+  String get timeFormat24;
+
+  /// No description provided for @dateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Date format'**
+  String get dateFormat;
+
+  /// No description provided for @weekStartsOnMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Week starts on monday'**
+  String get weekStartsOnMonday;
+
+  /// No description provided for @weekStartsOnMondaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, first day of the week will be monday. Else, it will be Sunday.'**
+  String get weekStartsOnMondaySubtitle;
+
+  /// No description provided for @viewingOfflineTimetable.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing offline timetable'**
+  String get viewingOfflineTimetable;
+
+  /// No description provided for @recover.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover'**
+  String get recover;
+
+  /// No description provided for @recoverInfoContent.
+  ///
+  /// In en, this message translates to:
+  /// **'To recover something, tap on it and press recover. After 7 days, it will be deleted forever.'**
+  String get recoverInfoContent;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String daysLeft(num count);
+
+  /// No description provided for @defaultWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultWord;
+
+  /// No description provided for @useDateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format: day month year'**
+  String get useDateFormat;
+
+  /// No description provided for @asDividerUse.
+  ///
+  /// In en, this message translates to:
+  /// **'(as a divider use \"space\" / , . -)'**
+  String get asDividerUse;
+
+  /// No description provided for @missed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{Missed}}'**
+  String missed(num count);
+
+  /// No description provided for @nextNotificationInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Next notification will arrive {dateWhen} at around {timeWhen}'**
+  String nextNotificationInfo(Object dateWhen, Object timeWhen);
+
+  /// No description provided for @notificationPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission'**
+  String get notificationPermission;
+
+  /// No description provided for @stopAsking.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop asking'**
+  String get stopAsking;
+
+  /// No description provided for @later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get later;
+
+  /// No description provided for @grant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get grant;
+
+  /// No description provided for @notificationPermissionBody1.
+  ///
+  /// In en, this message translates to:
+  /// **'If you want this app to send you notifications, you need to grant it permission.'**
+  String get notificationPermissionBody1;
+
+  /// No description provided for @notificationPermissionBody2.
+  ///
+  /// In en, this message translates to:
+  /// **'The Grant permission button will take you to app settings from where you can enable all notifications.'**
+  String get notificationPermissionBody2;
+}
+
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'cs': return AppLocalizationsCs();
+    case 'en': return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
+}

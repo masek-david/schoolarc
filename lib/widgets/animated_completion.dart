@@ -96,7 +96,7 @@ class AnimatedCompletionTileState extends State<AnimatedCompletionTile>
     }
 
     return Padding(
-      padding: widget.padding ?? EdgeInsets.all(0),
+      padding: widget.padding ?? const EdgeInsets.all(0),
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

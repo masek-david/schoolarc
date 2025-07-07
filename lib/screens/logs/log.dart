@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -19,7 +20,7 @@ class _LogScreenState extends State<LogScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.log.date.formattedDate(),
+          widget.log.date.format(),
         ),
         actions: [
           IconButton(
@@ -30,7 +31,7 @@ class _LogScreenState extends State<LogScreen> {
                 }
               });
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.remove,
             ),
           ),
@@ -40,14 +41,14 @@ class _LogScreenState extends State<LogScreen> {
                 fontSize++;
               });
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.add,
             ),
           ),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 20),
         child: SingleChildScrollView(
           child: Text(
             widget.log.log,

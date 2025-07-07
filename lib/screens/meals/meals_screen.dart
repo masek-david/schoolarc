@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -39,7 +40,7 @@ class _MealsScreenState extends State<MealsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meals'),
+        title: Text(context.loc.meals),
       ),
       body: FutureBuilder(
         future: meals,
@@ -51,10 +52,10 @@ class _MealsScreenState extends State<MealsScreen> {
           } else if (snapshot.hasError) {
             return ErrorTile(
               error: snapshot.error,
-              text: 'Meals couldn\'t be loaded',
+              text: context.loc.mealsNotLoaded,
             );
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('No meals found'));
+            return Center(child: Text(context.loc.noMealsFound));
           }
 
           int itemCount = snapshot.data?.keys.length ?? 1;
@@ -77,23 +78,25 @@ class _MealsScreenState extends State<MealsScreen> {
 
                 return Card(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextSeparator(
                           text: isLoading
-                              ? 'Loading'
+                              ? context.loc.loading
                               : empty
-                                  ? 'No meals for ${date.dateText().toLowerCase()}'
-                                  : 'Meals for ${date.dateText().toLowerCase()}',
+                                  ? '${context.loc.noMealsFor} ${date.dateText().toLowerCase()}'
+                                  : '${context.loc.mealsFor} ${date.dateText().toLowerCase()}',
                           actions: [
-                            if(isLoading) LoadingIconButton(
-                              icon: Icons.refresh,
-                              onTap: () async {},
-                              isLoading: true,
-                            ),
+                            if (isLoading)
+                              LoadingIconButton(
+                                icon: Icons.refresh,
+                                onTap: () async {},
+                                isLoading: true,
+                              ),
                           ],
                         ),
                         if (!empty)

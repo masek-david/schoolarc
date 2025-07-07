@@ -8,6 +8,7 @@ import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
@@ -75,10 +76,10 @@ class HomeworksScreen extends ConsumerWidget {
           child: Scaffold(
             appBar: WideScreenAppBar(
               isWideScreen: isWide,
-              title: const Text('Homeworks'),
+              title: Text(context.loc.homeworks(2)),
             ),
             floatingActionButton: FloatingActionButton(
-              tooltip: 'Add new homework',
+              tooltip: context.loc.addNewHomework,
               onPressed: () async {
                 HapticFeedback.mediumImpact();
                 addNewHw(context, ref);
@@ -111,7 +112,7 @@ class HomeworksScreen extends ConsumerWidget {
                   },
                   child: itemList.length == 5
                       ? ListView(children: [
-                          AnimatedStar(),
+                          const AnimatedStar(),
                           _buildCompletedList(context, ref, completedHws),
                         ])
                       : AnimatedReorderableListView(
@@ -122,31 +123,28 @@ class HomeworksScreen extends ConsumerWidget {
                             _AnimatedReorderableListItem(priority: -1),
                           ],
                           nonDraggableItems: nonDraggableItems,
-                          onReorderStart: (p0) =>
-                              HapticFeedback.mediumImpact(),
+                          onReorderStart: (p0) => HapticFeedback.mediumImpact(),
                           itemBuilder: (context, index) {
                             final item = itemList[index];
-    
+
                             if (item.priority != null) {
                               if (item.priority! == -1) {
                                 return _buildCompletedList(
                                     context, ref, completedHws);
                               }
-    
+
                               final priority = TaskPriority(item.priority!);
                               return Padding(
-                                key:
-                                    ValueKey('hw title: ${item.priority!}'),
+                                key: ValueKey('hw title: ${item.priority!}'),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 8),
                                 child: ExpansionTitle(
                                   titleText: priority.name,
-                                  titleTextColor:
-                                      priority.getColor(context),
+                                  titleTextColor: priority.getColor(context),
                                 ),
                               );
                             }
-    
+
                             final hw = item.hw!;
                             return AnimatedCompletionTile(
                               // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
@@ -154,7 +152,7 @@ class HomeworksScreen extends ConsumerWidget {
                               key: ValueKey(
                                   'hw: ${hw.id} ${hw.stateReaddingVersion}'),
                               hw: hw,
-                              padding: EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               onChangedCompletion: (value) {
                                 ref
                                     .read(hwProvider.notifier)
@@ -168,7 +166,7 @@ class HomeworksScreen extends ConsumerWidget {
                           removeItemBuilder: (child, animation) {
                             // we need custom remove item painter, to absorb pointer, the user mustnt
                             // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
-    
+
                             return FadeTransition(
                               opacity: animation,
                               child: AbsorbPointer(child: child),
@@ -177,7 +175,7 @@ class HomeworksScreen extends ConsumerWidget {
                           isSameItem: (a, b) => a.isSameAs(b),
                           onReorder: (oldIndex, newIndex) {
                             final item = itemList.removeAt(oldIndex);
-    
+
                             final newPriority =
                                 itemList[newIndex - 1].getPriority;
                             int newOrder = 0;
@@ -187,7 +185,7 @@ class HomeworksScreen extends ConsumerWidget {
                                 newOrder++;
                               }
                             }
-    
+
                             if (item.hw != null) {
                               ref.read(hwProvider.notifier).reorder(
                                     newOrder,
@@ -210,12 +208,12 @@ class HomeworksScreen extends ConsumerWidget {
   Widget _buildCompletedList(
       BuildContext context, WidgetRef ref, List<Homework> completedHws) {
     return Padding(
-      key: ValueKey('hw completed title'),
+      key: const ValueKey('hw completed title'),
       padding: const EdgeInsets.only(bottom: 70),
       child: ExpansionTile(
         title: ExpansionTitle(
           numberOfItems: completedHws.length,
-          titleText: 'Completed',
+          titleText: context.loc.completed,
         ),
         shape: const Border(),
         children: List.generate(

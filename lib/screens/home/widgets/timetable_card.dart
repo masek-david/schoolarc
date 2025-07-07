@@ -4,12 +4,14 @@ import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
 bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
@@ -73,7 +75,7 @@ class TimetableCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextSeparator(
-                  text: 'Lessons $whenText',
+                  text: '${context.loc.lessons} $whenText',
                   actions: [
                     if (refresh != null && showOnline)
                       AnimatedOpacity(
@@ -106,7 +108,7 @@ class TimetableCard extends StatelessWidget {
                     height: error != null && showOnline ? null : 0,
                     child: ErrorTile(
                       error: error,
-                      text: 'Viewing offline timetable',
+                      text: context.loc.viewingOfflineTimetable,
                     ),
                   ),
                 ),
@@ -147,8 +149,8 @@ class TimetableCard extends StatelessWidget {
                                                 .isSameDay(DateTime.now()),
                                         lesson: entry.value,
                                         columnWidth: 80,
-                                        onTap: (lesson) =>
-                                            lesson?.showLessonDialog(context, ref),
+                                        onTap: (lesson) => lesson
+                                            ?.showLessonDialog(context, ref),
                                       ),
                                     ),
                                   ],
@@ -156,7 +158,7 @@ class TimetableCard extends StatelessWidget {
                               },
                             ).toList()),
                       )
-                    : Text('No lessons $whenText'),
+                    : Text(context.loc.noLesson(whenText).capitalize()),
               ],
             ),
           ),

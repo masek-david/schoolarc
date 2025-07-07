@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class FirebaseLoginPage extends StatefulWidget {
   const FirebaseLoginPage({
@@ -7,10 +8,12 @@ class FirebaseLoginPage extends StatefulWidget {
     this.initialEmail,
     this.askForEmail = true,
     required this.onSubmit,
+    this.emailHint,
   });
 
   final String actionName;
   final String? initialEmail;
+  final String? emailHint;
   final bool askForEmail;
   final void Function(String email, String password) onSubmit;
 
@@ -49,25 +52,25 @@ class _FirebaseLoginPageState extends State<FirebaseLoginPage> {
                   AutofillHints.email,
                   AutofillHints.username
                 ],
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'Email',
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: widget.emailHint ?? context.loc.email,
                 ),
               ),
             TextField(
               controller: passwordController,
               autofillHints: const [AutofillHints.password],
               obscureText: true,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Password',
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                border: const OutlineInputBorder(),
+                labelText: context.loc.password,
               ),
             ),
             FilledButton(
-              onPressed: () =>
-                  widget.onSubmit(emailController.text, passwordController.text),
+              onPressed: () => widget.onSubmit(
+                  emailController.text, passwordController.text),
               child: Text(widget.actionName),
             ),
           ],

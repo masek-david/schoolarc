@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -19,34 +21,34 @@ const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
 
 Future<void> initNotifications() async {
+  final loc = getLocalization();
+
   await AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
     'resource://drawable/notification_icon',
     [
       NotificationChannel(
         onlyAlertOnce: true,
         channelGroupKey: tomorrowChannel,
         channelKey: tomorrowChannel,
-        channelName: 'Upcoming day notifications',
-        channelDescription: 'Here you will find upcoming exams and homeworks',
-        defaultColor: Colors.transparent,
+        channelName: loc.upcomingDayNotifications, // localized string
+        channelDescription: loc.upcomingDayChannelDescription,
+        defaultColor: Colors.blue,
         ledColor: Colors.blue,
       ),
       NotificationChannel(
         onlyAlertOnce: true,
         channelGroupKey: mainChannel,
         channelKey: mainChannel,
-        channelName: 'Main channel',
-        channelDescription: 'Main channel for notifications',
-        defaultColor: Colors.transparent,
+        channelName: loc.mainChannel,
+        channelDescription: loc.mainChannelDescription,
+        defaultColor: Colors.blue,
         ledColor: Colors.blue,
       ),
     ],
-    // Channel groups are only visual and are not required
     channelGroups: [
       NotificationChannelGroup(
         channelGroupKey: tomorrowChannel,
-        channelGroupName: 'Upcoming day',
+        channelGroupName: loc.upcomingDayNotifications,
       ),
     ],
     debug: kDebugMode,
@@ -59,7 +61,7 @@ class NotificationSender {
     bool scheduled = true,
     Function(String text)? showSnackbar,
   }) async {
-    if(kIsWeb || !Platform.isAndroid || !Platform.isIOS){
+    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       return;
     }
     await initHive();
@@ -124,36 +126,34 @@ class NotificationSender {
     String examsTextList = '';
     String homeworksTextList = '';
     String? missedHwTextList;
+    final loc = getLocalization();
 
-    final dateUtc = arriveDateTime.add(Duration(days: 1));
+    final dateUtc = arriveDateTime.add(const Duration(days: 1));
     final tomorrowDate = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
 
     await initHive();
     final subjects = subjectsDb.getDatabase();
     final hwsInDb = homeworksDb.getDatabase().map(
       (key, value) {
-        return MapEntry(
-            key, value.convert(key, subjects[value.subjectId]));
+        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
       },
     );
     final examsInDb = examsDb.getDatabase().map(
       (key, value) {
-        return MapEntry(
-            key, value.convert(key, subjects[value.subjectId]));
+        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
       },
     );
-    List<Exam> examsFortomorrow =
+    List<Exam> examsForTomorrow =
         examsSortByDate(examsInDb)[tomorrowDate] ?? [];
-    List<Homework> hwsFortomorrow =
-        hwsSortByDate(hwsInDb)[tomorrowDate] ?? [];
+    List<Homework> hwsFortomorrow = hwsSortByDate(hwsInDb)[tomorrowDate] ?? [];
     List<Homework> missedHws = hwsGetMissed(hwsInDb);
 
     final isIOS = Platform.isIOS;
     final lineBreak = isIOS ? '\n' : '<br>';
 
     // creates text for notification for exam
-    for (int i = 0; i < examsFortomorrow.length; i++) {
-      Exam exam = examsFortomorrow[i];
+    for (int i = 0; i < examsForTomorrow.length; i++) {
+      Exam exam = examsForTomorrow[i];
       String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
 
       String examText =
@@ -188,26 +188,27 @@ class NotificationSender {
     }
 
     notificationText =
-        '${missedHwTextList != null ? '<b>Missed homeworks:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsFortomorrow.isEmpty ? 'No exams tomorrow' : '<b>Exams:</b>'}$lineBreak$examsTextList $lineBreak${hwsFortomorrow.isEmpty ? 'No homeworks for tomorrow' : '<b>Homeworks:</b>'}$lineBreak$homeworksTextList';
+        '${missedHwTextList != null ? '<b>${loc.missedHomework(2)}:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTomorrow.isEmpty ? loc.examsFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.exams(2)}:</b>'}$lineBreak$examsTextList$lineBreak${hwsFortomorrow.isEmpty ? loc.homeworksFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.homeworks(2)}:</b>'}$lineBreak$homeworksTextList';
 
     String summary = '';
 
     if (missedHws.isNotEmpty) {
-      summary += '${missedHws.length} missed';
+      summary +=
+          '${missedHws.length} ${loc.missed(missedHws.length).toLowerCase()}';
     }
     if (hwsFortomorrow.isNotEmpty) {
       if (summary != '') {
         summary += ', ';
       }
       summary +=
-          '${hwsFortomorrow.length} homework${hwsFortomorrow.length == 1 ? '' : 's'}';
+          '${hwsFortomorrow.length} ${loc.homeworks(hwsFortomorrow.length).toLowerCase()}';
     }
-    if (examsFortomorrow.isNotEmpty) {
+    if (examsForTomorrow.isNotEmpty) {
       if (!summary.endsWith(', ')) {
         summary += ', ';
       }
       summary +=
-          '${examsFortomorrow.length} exam${examsFortomorrow.length == 1 ? '' : 's'}';
+          '${examsForTomorrow.length} ${loc.exams(examsForTomorrow.length).toLowerCase()}';
     }
 
     AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
@@ -219,7 +220,7 @@ class NotificationSender {
         badge: 0,
         channelKey: tomorrowChannel,
         summary: summary,
-        title: 'Tomorrow:',
+        title: loc.tomorrow,
         body: notificationText,
         autoDismissible: false,
         category: NotificationCategory.Reminder,
@@ -227,11 +228,17 @@ class NotificationSender {
       ),
     );
 
-    log('\u001b[1;42m\u001b[1;30mtomorrow notification scheduled for: ${arriveDateTime.toLocal().toString()}');
+    log('\u001b[1;42m\u001b[1;30mTomorrow notification scheduled for: ${arriveDateTime.toLocal().toString()}');
 
     if (showSnackbar != null) {
       showSnackbar(
-          'Next notification will arrive ${arriveDateTime.isSameDay(DateTime.now().toUtc()) ? 'today' : 'tomorrow'} at around ${arriveDateTime.toLocal().hour}:${arriveDateTime.toLocal().minuteStartingWithZero()}');
+        loc.nextNotificationInfo(
+          arriveDateTime.isSameDay(DateTime.now().toUtc())
+              ? loc.today.toLowerCase()
+              : loc.tomorrow.toLowerCase(),
+          arriveDateTime.formatTime(),
+        ),
+      );
     }
   }
 
@@ -259,7 +266,7 @@ class NotificationSender {
   /// returns true for android or ios
   static bool isCompatiblePlatform() {
     // platform cannot be checked on web
-    if(kIsWeb){
+    if (kIsWeb) {
       return false;
     }
     if (Platform.isAndroid || Platform.isIOS) {
@@ -268,12 +275,14 @@ class NotificationSender {
     return false;
   }
 
-  /// returns true if notifications are enabled, if they arent the user is taken to setting/shown request to allow them
+  /// if notifications arent enabled the user is taken to settings/shown request to allow them
+  /// then returns true if the user enabled them
+  /// on incompatible platforms returns false
   static Future<bool> getPermission(
     BuildContext context,
     String? channel,
   ) async {
-    if(!isCompatiblePlatform()){
+    if (!isCompatiblePlatform()) {
       return false;
     }
     if (await areNotificationsAllowed(channel)) {
@@ -282,57 +291,50 @@ class NotificationSender {
     if (!context.mounted) {
       return false;
     }
+    final loc = context.loc;
     return await showDialogAdaptive<bool?>(
+          context: context,
+          title: Text(loc.notificationPermission),
+          actions: [
+            adaptiveDialogButton(
               context: context,
-              title: const Text(
-                'Notification Permission',
-              ),
-              actions: [
-                adaptiveDialogButton(
-                  context: context,
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    settings.save(Setting.stopAskingForNotifications, true);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Stop asking'),
-                ),
-                adaptiveDialogButton(
-                  context: context,
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Later'),
-                ),
-                adaptiveDialogButton(
-                  context: context,
-                  onPressed: () async {
-                    await AwesomeNotifications()
-                        .requestPermissionToSendNotifications(
-                      channelKey: channel,
-                    );
-                    bool allowed = await areNotificationsAllowed(channel);
-                    if (context.mounted) {
-                      Navigator.pop(context, allowed);
-                    }
-                  },
-                  isDefaultAction: true,
-                  child: const Text('Grant'),
-                ),
-              ],
-              content: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'If you want this app to send you notifications, you need to grant it permission.',
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'The Grant permission button will take you to app settings from where you can enable all notifications.',
-                  ),
-                ],
-              ),
-            ) ==
-            true
-        ? true
-        : false;
+              isDestructiveAction: true,
+              onPressed: () {
+                settings.save(Setting.stopAskingForNotifications, true);
+                Navigator.pop(context);
+              },
+              child: Text(loc.stopAsking),
+            ),
+            adaptiveDialogButton(
+              context: context,
+              onPressed: () => Navigator.pop(context),
+              child: Text(loc.later),
+            ),
+            adaptiveDialogButton(
+              context: context,
+              onPressed: () async {
+                await AwesomeNotifications()
+                    .requestPermissionToSendNotifications(
+                  channelKey: channel,
+                );
+                bool allowed = await areNotificationsAllowed(channel);
+                if (context.mounted) {
+                  Navigator.pop(context, allowed);
+                }
+              },
+              isDefaultAction: true,
+              child: Text(loc.grant),
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(loc.notificationPermissionBody1),
+              const SizedBox(height: 12),
+              Text(loc.notificationPermissionBody2),
+            ],
+          ),
+        ) ==
+        true;
   }
 }

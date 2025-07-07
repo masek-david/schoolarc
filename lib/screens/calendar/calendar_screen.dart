@@ -12,6 +12,7 @@ import 'package:school_manager/screens/current_timetable/loading_icon_button.dar
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
@@ -37,7 +38,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
   late final showtomorrow =
-      settings.get(Setting.calendarInitialIstomorrow) || widget.showtomorrow;
+      settings.get(Setting.calendarInitialIsTomorrow) || widget.showtomorrow;
   late final PageController _pageController = PageController(
     viewportFraction: 0.90,
     initialPage: negativePageCount + (showtomorrow ? 1 : 0),
@@ -147,7 +148,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   PreferredSizeWidget buildAppBar(bool isWide) {
     return WideScreenAppBar(
       isWideScreen: isWide,
-      title: const Text('Calendar'),
+      title: Text(context.loc.calendar),
       actions: [
         if (settings.get(Setting.useFirebase))
           LoadingIconButton(
@@ -200,25 +201,25 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 FloatingActionButton.extended(
-                  tooltip: 'Add new exam for ${_selectedDay.dateText().toLowerCase()}',
+                  tooltip: '${context.loc.addNewExamFor} ${_selectedDay.dateText().toLowerCase()}',
                   heroTag: 'exam_btn',
                   onPressed: () {
                     HapticFeedback.mediumImpact();
                     addNewExam(context, ref, initialDate: _selectedDay);
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Exam'),
+                  label: Text(context.loc.exams(1)),
                 ),
                 const SizedBox(height: 10),
                 FloatingActionButton.extended(
-                  tooltip: 'Add new homework for ${_selectedDay.dateText().toLowerCase()}',
+                  tooltip: '${context.loc.addNewHomeworkFor} ${_selectedDay.dateText().toLowerCase()}',
                   heroTag: 'homework_btn',
                   onPressed: () {
                     HapticFeedback.mediumImpact();
                     addNewHw(context, ref, initialDate: _selectedDay);
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Homework'),
+                  label: Text(context.loc.homeworks(1)),
                 ),
               ],
             ),
@@ -232,7 +233,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       children: [
                         ResizableChild(
                           size: ResizableSize.ratio(initialRatios[0], min: 300),
-                          divider: ResizableDivider(
+                          divider: const ResizableDivider(
                             thickness: 4,
                             length: ResizableSize.pixels(60),
                             padding: 12,

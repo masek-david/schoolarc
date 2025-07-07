@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/color_picker_action.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
@@ -7,6 +6,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/theme_colors_showcase.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class ThemePage extends StatefulWidget {
   const ThemePage({
@@ -23,34 +23,41 @@ class ThemePage extends StatefulWidget {
 class _ThemePageState extends State<ThemePage> {
   bool themeUseOled = settings.get(Setting.themeUseOled);
   bool useDeviceColor = settings.get(Setting.themeUseDeviceColor);
+  bool? themeMode = settings.get(Setting.themeMode);
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(loc.themePageTitle),
+      ),
       body: ListView(
         children: [
           const ThemeColorsShowcase(),
           SettingTile(
-            title: 'Brightness',
+            title: loc.themeBrightness,
             trailing: DropDownAction(
-              initialValue: settings.get(Setting.themeMode),
+              value: themeMode,
               onChanged: (value) {
-                bool? valueToBool = (value is bool) ? value : null;
-
-                settings.save(Setting.themeMode, valueToBool);
+                settings.save(Setting.themeMode, value as bool?);
+                setState(() {
+                  themeMode = value;
+                });
                 widget.refreshTheme();
               },
-              items: const [
-                DropdownMenuItem(value: null, child: Text('Follow system')),
-                DropdownMenuItem(value: false, child: Text('Light')),
-                DropdownMenuItem(value: true, child: Text('Dark')),
+              items: [
+                DropdownMenuItem(
+                    value: null, child: Text(loc.themeFollowSystem)),
+                DropdownMenuItem(value: false, child: Text(loc.themeLight)),
+                DropdownMenuItem(value: true, child: Text(loc.themeDark)),
               ],
             ),
           ),
           SettingTile.withSwitch(
-            title: 'OLED black',
-            subtitle: 'Works only in dark mode',
+            title: loc.themeOLEDTitle,
+            subtitle: loc.themeOLEDSubtitle,
             value: themeUseOled,
             onChanged: (value) {
               settings.save(Setting.themeUseOled, !themeUseOled);
@@ -61,7 +68,7 @@ class _ThemePageState extends State<ThemePage> {
             },
           ),
           SettingTile.withSwitch(
-            title: 'Use device colors',
+            title: loc.themeUseDeviceColors,
             value: useDeviceColor,
             onChanged: (value) {
               settings.save(Setting.themeUseDeviceColor, value);
@@ -75,24 +82,23 @@ class _ThemePageState extends State<ThemePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                'Currently using system color. If you want to use custom color, turn off Use device colors.',
+                loc.themeSystemColorWarning,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
           SettingTile(
-            title: 'App color',
+            title: loc.themeAppColor,
             enabled: !useDeviceColor,
             newLineAction: ColorPickerAction(
               initialColor: Color(settings.get(Setting.themeColorValue)),
               onChanged: (color) {
-                // ignore: deprecated_member_use
-                settings.save(Setting.themeColorValue, color.value);
+                settings.save(Setting.themeColorValue, color.toARGB32());
                 widget.refreshTheme();
               },
             ),
           ),
           SettingTile(
-            title: '',
+            title: loc.themeSchemeVariant,
             enabled: !useDeviceColor,
             newLineAction: SchemeVariantPickerAction(
               initialScheme: settings.get(Setting.themeDynamicSchemeVariantInt),

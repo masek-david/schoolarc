@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class NewLessonTimes extends StatefulWidget {
   const NewLessonTimes({
@@ -27,14 +28,15 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
   @override
   void dispose() {
     nameController.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return AlertDialog(
-      title: const Text('Create new times:'),
+      title: Text(loc.createNewTimes),
       actions: [
         if (widget.delete != null)
           OutlinedButton(
@@ -42,47 +44,43 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
               widget.delete!();
               Navigator.pop(context);
             },
-            child: const Text('Delete this lesson'),
+            child: Text(loc.deleteThisLesson),
           ),
         FilledButton(
-            onPressed: startTime != null && endTime != null
-                ? () {
-                    Navigator.pop(
-                      context,
-                      LessonTimes(
-                        startTime: startTime!,
-                        endTime: endTime!,
-                        name: nameController.text
-                      ),
-                    );
-                  }
-                : null,
-            child: const Text('Save')),
+          onPressed: startTime != null && endTime != null
+              ? () {
+                  Navigator.pop(
+                    context,
+                    LessonTimes(
+                      startTime: startTime!,
+                      endTime: endTime!,
+                      name: nameController.text,
+                    ),
+                  );
+                }
+              : null,
+          child: Text(loc.save),
+        ),
       ],
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
-
-            controller: nameController,
-          ),
+          TextField(controller: nameController),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Begining time:'),
+              Text(loc.beginningTime),
               TextButton(
-                child: Text(startTime?.format(context) ?? 'Select'),
+                child: Text(startTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(
-                          context: context,
-                          initialTime: startTime ?? TimeOfDay.now())
-                      .then(
-                    (value) {
-                      setState(() {
-                        startTime = value;
-                      });
-                    },
-                  );
+                    context: context,
+                    initialTime: startTime ?? TimeOfDay.now(),
+                  ).then((value) {
+                    setState(() {
+                      startTime = value;
+                    });
+                  });
                 },
               ),
             ],
@@ -90,20 +88,18 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Ending time:'),
+              Text(loc.endingTime),
               TextButton(
-                child: Text(endTime?.format(context) ?? 'Select'),
+                child: Text(endTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(
-                          context: context,
-                          initialTime: endTime ?? TimeOfDay.now())
-                      .then(
-                    (value) {
-                      setState(() {
-                        endTime = value;
-                      });
-                    },
-                  );
+                    context: context,
+                    initialTime: endTime ?? TimeOfDay.now(),
+                  ).then((value) {
+                    setState(() {
+                      endTime = value;
+                    });
+                  });
                 },
               ),
             ],

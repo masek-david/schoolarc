@@ -4,6 +4,7 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
@@ -103,43 +104,44 @@ class PagesWidget extends StatelessWidget {
                                   shape: const Border(),
                                   dense: true,
                                   title: ExpansionTitle(
-                                    titleText: 'Missed Homeworks',
+                                    titleText: context.loc.missedHomework(2),
                                     boldText: false,
                                     titleTextColor: scheme.error,
                                     numberOfItems: missedHwList.length,
                                   ),
                                   children: [
                                     HomeworkList(
+                                      hwList: missedHwList,
                                       onChangedCompletion:
                                           hwOnChangedCompletion,
                                       onDelete: hwOnDelete,
                                       onConvert: hwOnConvert,
                                       onEdit: hwOnEdit,
                                       draggable: true,
-                                      hwList: missedHwList,
+                                      text: null,
                                     )
                                   ],
                                 ),
                               ),
                             ),
                           ExamList(
+                            examList: examListForDay,
                             onEdit: examOnEdit,
                             onDelete: examOnDelete,
                             onConvert: examOnConvert,
                             showDates: false,
-                            showText: true,
                             draggable: true,
-                            examList: examListForDay,
+                            text: context.loc.examAbsence(examListForDay.isEmpty.toString()),
                           ),
                           HomeworkList(
+                            hwList: hwListForDay,
                             onChangedCompletion: hwOnChangedCompletion,
                             onDelete: hwOnDelete,
                             onEdit: hwOnEdit,
                             onConvert: hwOnConvert,
                             showDates: false,
-                            showText: true,
                             draggable: true,
-                            hwList: hwListForDay,
+                            text: context.loc.homeworkAbsence(hwListForDay.isEmpty.toString()),
                           ),
                           const ListBottomSpacer(),
                           const ListBottomSpacer(),
@@ -165,7 +167,7 @@ class PagesWidget extends StatelessWidget {
                           child: showOverlay
                               ? Center(
                                   child: Text(
-                                    'Change date to ${date.formattedDate()}',
+                                    '${context.loc.changeDateTo} ${date.formatWithoutYear()}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge

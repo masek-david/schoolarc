@@ -17,7 +17,9 @@ import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/recap/recap_button.dart';
 import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/services/home_widget_service.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/exam_list.dart';
@@ -156,7 +158,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       hwToShow = hws[dateToShowOnlyDate] ?? [];
       examToShow = exams[dateToShowOnlyDate] ?? [];
     }
-    String whenText = showtomorrow ? 'tomorrow' : 'today';
+    String whenText = showtomorrow
+        ? context.loc.tomorrow.toLowerCase()
+        : context.loc.today.toLowerCase();
     bool showMeals = settings.get(Setting.useMeals);
     bool showBaka = settings.get(Setting.useBakalari);
 
@@ -206,16 +210,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Another year behind 🎉',
+                                '${context.loc.anotherYearBehind} 🎉',
                                 style:
                                     Theme.of(context).textTheme.headlineSmall,
                               ),
-                              Text('View stats about your year'),
+                              Text(context.loc.viewYearStats),
                             ],
                           ),
                         ),
                       ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -268,18 +272,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(12),
                                     child: HomeworkList(
-                                      onChangedCompletion: (hw, value) =>
-                                          completeHw(context, ref, hw, value),
-                                      onDelete: (hw) =>
-                                          deleteHw(context, ref, hw),
-                                      onConvert: (hw) =>
-                                          convertHw(context, ref, hw),
-                                      onEdit: (hw) => editHw(context, ref, hw),
-                                      textFull: 'Missed homeworks',
-                                      showText: true,
-                                      showDates: true,
-                                      hwList: missedHw,
-                                    ),
+                                        hwList: missedHw,
+                                        onChangedCompletion: (hw, value) =>
+                                            completeHw(context, ref, hw, value),
+                                        onDelete: (hw) =>
+                                            deleteHw(context, ref, hw),
+                                        onConvert: (hw) =>
+                                            convertHw(context, ref, hw),
+                                        onEdit: (hw) =>
+                                            editHw(context, ref, hw),
+                                        showDates: true,
+                                        text: context.loc.missedHomework(2)),
                                   ),
                                 ),
                               Card(
@@ -295,8 +298,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         editExam(context, ref, exam),
                                     onConvert: (exam) =>
                                         convertExam(context, ref, exam),
-                                    textFull: 'Exams $whenText',
-                                    showText: true,
+                                    text: context.loc
+                                        .examsFor(
+                                          examToShow.isEmpty.toString(),
+                                          whenText,
+                                        )
+                                        .capitalize(),
                                     showDates: false,
                                     examList: examToShow,
                                   ),
@@ -309,6 +316,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(12),
                                   child: HomeworkList(
+                                    hwList: hwToShow,
                                     onChangedCompletion: (hw, value) =>
                                         completeHw(context, ref, hw, value),
                                     onDelete: (hw) =>
@@ -316,10 +324,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     onEdit: (hw) => editHw(context, ref, hw),
                                     onConvert: (hw) =>
                                         convertHw(context, ref, hw),
-                                    textFull: 'Homeworks $whenText',
-                                    showText: true,
                                     showDates: false,
-                                    hwList: hwToShow,
+                                    text: context.loc
+                                        .homeworksFor(
+                                          hwToShow.isEmpty.toString(),
+                                          whenText,
+                                        )
+                                        .capitalize(),
                                   ),
                                 ),
                               ),

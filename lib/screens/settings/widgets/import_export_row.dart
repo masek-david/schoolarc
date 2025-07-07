@@ -9,6 +9,7 @@ import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/import_export.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
@@ -24,31 +25,32 @@ class ImportExportRow extends ConsumerWidget {
         spacing: 8,
         children: [
           Text(
-            'App data',
-            style: TextStyle(fontSize: 16),
+            context.loc.appDataLabel,
+            style: const TextStyle(fontSize: 16),
           ),
-          Spacer(),
+          const Spacer(),
           FilledButton.tonalIcon(
-            label: Text('Export'),
-            icon: Icon(Icons.file_upload_outlined),
+            label: Text(context.loc.export),
+            icon: const Icon(Icons.file_upload_outlined),
             onPressed: () async {
               final json = export();
 
               await FilePicker.platform.saveFile(
-                  dialogTitle: 'Choose location for save file:',
-                  type: FileType.custom,
-                  allowedExtensions: ['json'],
-                  fileName: 'export_${DateTime.now().toIso8601String()}.json',
-                  bytes: utf8.encode(json));
+                dialogTitle: context.loc.chooseSaveLocation,
+                type: FileType.custom,
+                allowedExtensions: ['json'],
+                fileName: 'export_${DateTime.now().toIso8601String().replaceAll(RegExp(r':'), '-')}.json',
+                bytes: utf8.encode(json),
+              );
             },
           ),
           FilledButton.tonalIcon(
-            label: Text('Import'),
-            icon: Icon(Icons.file_download_outlined),
+            label: Text(context.loc.import),
+            icon: const Icon(Icons.file_download_outlined),
             onPressed: () async {
               try {
                 final pickedFile = await FilePicker.platform.pickFiles(
-                  dialogTitle: 'Pick a save file:',
+                  dialogTitle: context.loc.pickSaveFile,
                   type: FileType.custom,
                   allowedExtensions: ['json'],
                 );
@@ -69,21 +71,21 @@ class ImportExportRow extends ConsumerWidget {
                 if (context.mounted) {
                   showDialogAdaptive(
                       context: context,
-                      title: Text('Import'),
+                      title: Text(context.loc.import),
                       dismissible: false,
                       content: Text(
-                        'Do you want to import $subjectsCount subject${subjectsCount == 1 ? '' : 's'}, $hwsCount piece${hwsCount == 1 ? '' : 's'} of homework and $examsCount exam${examsCount == 1 ? '' : 's'}?',
+                        context.loc.importConfirmationText(subjectsCount, hwsCount, examsCount),
                       ),
                       actions: [
                         adaptiveDialogButton(
                           context: context,
-                          child: Text('Cancel'),
+                          child: Text(context.loc.cancel),
                           onPressed: () => Navigator.pop(context),
                         ),
                         adaptiveDialogButton(
                           context: context,
                           isDefaultAction: true,
-                          child: Text('Import'),
+                          child: Text(context.loc.import),
                           onPressed: () async {
                             final GlobalKey<ProgressDialogState> dialogKey =
                                 GlobalKey();

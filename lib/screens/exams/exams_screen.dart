@@ -8,6 +8,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/animated_star.dart';
@@ -74,10 +75,10 @@ class ExamsScreen extends ConsumerWidget {
           child: Scaffold(
             appBar: WideScreenAppBar(
               isWideScreen: isWide,
-              title: const Text('Exams'),
+              title: Text(context.loc.exams(2)),
             ),
             floatingActionButton: FloatingActionButton(
-              tooltip: 'Add new exam',
+              tooltip: context.loc.addNewExam,
               onPressed: () async {
                 HapticFeedback.mediumImpact();
                 addNewExam(context, ref);
@@ -110,7 +111,7 @@ class ExamsScreen extends ConsumerWidget {
                   },
                   child: itemList.length == 5
                       ? ListView(children: [
-                          AnimatedStar(),
+                          const AnimatedStar(),
                           _buildCompletedList(context, ref, completedExams)
                         ])
                       : AnimatedReorderableListView(
@@ -149,7 +150,7 @@ class ExamsScreen extends ConsumerWidget {
                               // Multiple widgets use the same globalkey error
                               key: ValueKey(
                                   'exam: ${exam.id} ${exam.stateReaddingVersion}'),
-                              padding: EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               child: ExamTile(
                                 exam: exam,
                                 onDelete: () => deleteExam(context, ref, exam),
@@ -196,12 +197,12 @@ class ExamsScreen extends ConsumerWidget {
   Widget _buildCompletedList(
       BuildContext context, WidgetRef ref, List<Exam> completedExams) {
     return Padding(
-      key: ValueKey('exam completed title'),
+      key: const ValueKey('exam completed title'),
       padding: const EdgeInsets.only(bottom: 70),
       child: ExpansionTile(
         title: ExpansionTitle(
           numberOfItems: completedExams.length,
-          titleText: 'Completed',
+          titleText: context.loc.completed,
         ),
         shape: const Border(),
         children: List.generate(

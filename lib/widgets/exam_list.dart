@@ -8,15 +8,13 @@ import 'package:school_manager/screens/exams/exam_tile.dart';
 class ExamList extends ConsumerWidget {
   const ExamList({
     super.key,
+    required this.examList,
     required this.onDelete,
     required this.onEdit,
-    required this.examList,
     required this.onConvert,
+    required this.text,
     this.draggable = false,
-    this.showText = false,
     this.showDates = true,
-    this.textFull = 'Exams',
-    this.textEmpty,
   });
 
   final List<Exam> examList;
@@ -24,10 +22,8 @@ class ExamList extends ConsumerWidget {
   final void Function(Exam exam) onEdit;
   final void Function(Exam exam) onConvert;
   final bool draggable;
-  final bool showText;
+  final String text;
   final bool showDates;
-  final String textFull;
-  final String? textEmpty;
 
   Widget buildTile(BuildContext context, WidgetRef ref, Exam exam) {
     return ClipRect(
@@ -43,38 +39,38 @@ class ExamList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (examList.isEmpty && showText)
-        TextSeparator(
-          text: textEmpty ?? 'No $textFull',
-          greydOut: true,
-        )
-      else if (showText)
-        TextSeparator(text: textFull),
-      ...List.generate(examList.length, (index) {
-        Exam exam = examList[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: draggable
-              ? LayoutBuilder(
-                  builder: (context, constraints) {
-                    return LongPressDraggable(
-                      data: exam,
-                      onDragStarted: () => HapticFeedback.mediumImpact(),
-                      feedback: SizedBox(
-                        width: constraints.maxWidth,
-                        child: Opacity(
-                          opacity: 0.6,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextSeparator(text: text, greydOut: examList.isEmpty),
+        ...List.generate(
+          examList.length,
+          (index) {
+            Exam exam = examList[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: draggable
+                  ? LayoutBuilder(
+                      builder: (context, constraints) {
+                        return LongPressDraggable(
+                          data: exam,
+                          onDragStarted: () => HapticFeedback.mediumImpact(),
+                          feedback: SizedBox(
+                            width: constraints.maxWidth,
+                            child: Opacity(
+                              opacity: 0.6,
+                              child: buildTile(context, ref, exam),
+                            ),
+                          ),
                           child: buildTile(context, ref, exam),
-                        ),
-                      ),
-                      child: buildTile(context, ref, exam),
-                    );
-                  },
-                )
-              : buildTile(context, ref, exam),
-        );
-      }),
-    ]);
+                        );
+                      },
+                    )
+                  : buildTile(context, ref, exam),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

@@ -241,7 +241,6 @@ class HwNotifier extends Notifier<Map<String, Homework>>
 
   /// checks all online and offline
   Future<void> syncAll() async {
-    // TODO make it sync everything at once, make it check every for newer version
     _loadState();
     await listenToFirebase();
     final fireHws = await firebaseService.getAllHomeworks();
@@ -383,7 +382,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     }
 
     final isNew =
-        editedHw.timestamp.difference(DateTime.now()) < Duration(seconds: 5);
+        editedHw.timestamp.difference(DateTime.now()) < const Duration(seconds: 5);
     final bool shouldPlayAnimation =
         old.isCompleted == false && editedHw.isCompleted == true && isNew;
 
@@ -393,7 +392,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         editedHw.id: editedHw.copyWith(isBeingAnimated: true),
       };
 
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       state = {
         ...state,
         editedHw.id: state[editedHw.id]!.copyWith(isBeingAnimated: false),
@@ -547,7 +546,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     List<Homework> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
-      if (hw.isDeleted && now.difference(hw.timestamp) > Duration(days: 7)) {
+      if (hw.isDeleted && now.difference(hw.timestamp) > const Duration(days: 7)) {
         hwsToDelete.add(hw);
       }
     }

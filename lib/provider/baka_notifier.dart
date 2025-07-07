@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/models/bakalari/lesson_time_baka.dart';
 import 'package:school_manager/models/bakalari/teacher_model.dart';
@@ -53,7 +54,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
     _tokenExpirationTimer = Timer(
       Duration(seconds: seconds),
       () {
-        state = AsyncData(false);
+        state = const AsyncData(false);
       },
     );
   }
@@ -121,7 +122,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
     state = const AsyncLoading();
     try {
       if (school == '' || username == '' || password == '') {
-        throw ServiceException('Please fill out all information');
+        throw ServiceException(getLocalization().fillOutAllInfo);
       }
 
       final url = Uri(
@@ -149,7 +150,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
   }
 
   Future<void> logOut() async {
-    state = AsyncData(false);
+    state = const AsyncData(false);
     _accessToken = null;
     _refreshToken = null;
     _tokenExpiration = null;
@@ -165,6 +166,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
   /// and the state if it logs in succesfuly
   Future<void> _callLogin(Uri url, var head, var body) async {
     Response response;
+    final loc = getLocalization();
     try {
       response = await http.post(
         url,
@@ -172,9 +174,9 @@ class BakaNotifier extends AsyncNotifier<bool> {
         body: body,
       );
     } on SocketException catch (_) {
-      throw ServiceException('Check your internet connection');
+      throw ServiceException(loc.checkConnection);
     } catch (e) {
-      throw ServiceException('An unexpected error occurred: $e');
+      throw ServiceException('${loc.unexpectedError}: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -203,7 +205,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
     _tokenExpirationTime(expiresInSeconds);
     _tokenExpiration =
         DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
-    state = AsyncData(true);
+    state = const AsyncData(true);
   }
 
   Future<void> loadName() async {
@@ -262,6 +264,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
     );
 
     Response response;
+    final loc = getLocalization();
     try {
       response = await http.get(
         url,
@@ -271,9 +274,9 @@ class BakaNotifier extends AsyncNotifier<bool> {
         },
       );
     } on SocketException {
-      throw ServiceException('Check your internet connection');
+      throw ServiceException(loc.checkConnection);
     } catch (e) {
-      throw ServiceException('An unexpected error occurred: $e');
+      throw ServiceException('${loc.unexpectedError}: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -361,15 +364,16 @@ class BakaNotifier extends AsyncNotifier<bool> {
     );
 
     Response response;
+    final loc = getLocalization();
     try {
       response = await http.get(url, headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException('Check your internet connection');
+      throw ServiceException(loc.checkConnection);
     } catch (e) {
-      throw ServiceException('An unexpected error occurred: $e');
+      throw ServiceException('${loc.unexpectedError}: $e');
     }
 
     // when the url or school is incorrect, it needs to be decoded
@@ -567,15 +571,16 @@ class BakaNotifier extends AsyncNotifier<bool> {
     );
 
     Response response;
+    final loc = getLocalization();
     try {
       response = await http.get(url, headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": "Bearer $_accessToken",
       });
     } on SocketException {
-      throw ServiceException('Check your internet connection');
+      throw ServiceException(loc.checkConnection);
     } catch (e) {
-      throw ServiceException('An unexpected error occurred: $e');
+      throw ServiceException('${loc.unexpectedError}: $e');
     }
 
     final parsedJson = jsonDecode(response.body);

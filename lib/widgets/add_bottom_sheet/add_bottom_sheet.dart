@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/utils/intent/intents.dart';
@@ -87,7 +90,10 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     } else {
       newDate = await showDatePicker(
         context: context,
-        locale: const Locale('en', 'GB'),
+        locale: Locale(
+          Localizations.localeOf(context).languageCode,
+          settings.get(Setting.weekStartsOnMonday) ? 'GB' : 'US',
+        ),
         initialDate: pickedDate,
         firstDate: DateTime.utc(0),
         lastDate: DateTime.utc(3000),
@@ -143,25 +149,25 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     return Shortcuts(
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit1):
-            PickPriorityIntent(0),
+            const PickPriorityIntent(0),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit2):
-            PickPriorityIntent(1),
+            const PickPriorityIntent(1),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit3):
-            PickPriorityIntent(2),
+            const PickPriorityIntent(2),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit4):
-            PickPriorityIntent(3),
+            const PickPriorityIntent(3),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpad1):
-            PickPriorityIntent(0),
+            const PickPriorityIntent(0),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpad2):
-            PickPriorityIntent(1),
+            const PickPriorityIntent(1),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpad3):
-            PickPriorityIntent(2),
+            const PickPriorityIntent(2),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpad4):
-            PickPriorityIntent(3),
+            const PickPriorityIntent(3),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyD):
-            PickDateIntent(),
+            const PickDateIntent(),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-            PickSubjectIntent(),
+            const PickSubjectIntent(),
       },
       child: Actions(
         actions: {
@@ -178,7 +184,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
           ),
         },
         child: ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           child: Container(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -189,7 +195,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   CancelSaveButton(onSave: onSave),
                   const SizedBox(height: 15),
                   Row(
@@ -273,7 +279,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       );
                     },
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   SizedBox(
                     // listview musi mit vysku, kterou urci sizedbox
                     height: 40,
@@ -293,12 +299,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Deadline:',
-                            style: TextStyle(fontSize: 16),
+                          Text(
+                            context.loc.deadline,
+                            style: const TextStyle(fontSize: 16),
                           ),
                           Text(
-                            pickedDate.formattedDate(),
+                            pickedDate.formatWithoutYear(),
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -308,7 +314,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   Row(
                     children: [
                       ChoiceChip(
-                        label: const Text('Today'),
+                        label: Text(context.loc.today),
                         selected: pickedDate.isSameDay(DateTime.now()),
                         onSelected: (value) {
                           DateTime now = DateTime.now();
@@ -319,7 +325,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
-                        label: const Text('Tomorrow'),
+                        label: Text(context.loc.tomorrow),
                         selected: pickedDate.isSameDay(
                             DateTime.now().add(const Duration(days: 1))),
                         onSelected: (value) {
@@ -333,7 +339,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       const SizedBox(width: 8),
                       ChoiceChip(
                         label: Text(
-                            'Next ${DateFormat('EEEE').format(DateTime.now()).toLowerCase()}'),
+                            '${context.loc.next} ${DateFormat.EEEE(getLocale().languageCode).format(DateTime.now()).toLowerCase()}'),
                         selected: pickedDate.isSameDay(
                             DateTime.now().add(const Duration(days: 7))),
                         onSelected: (value) {
@@ -350,13 +356,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   TextField(
                     controller: descriptionController,
                     maxLines: null,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(15),
-                      border: OutlineInputBorder(),
-                      hintText: 'Description',
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(15),
+                      border: const OutlineInputBorder(),
+                      hintText: context.loc.description,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),

@@ -88,7 +88,7 @@ class _SubjectsPageState extends State<PriorityPage> {
               style: text.headlineMedium,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             2,
             Container(
@@ -98,7 +98,7 @@ class _SubjectsPageState extends State<PriorityPage> {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: BarChart(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 BarChartData(
                   maxY: maxY.toDouble(),
                   barGroups: List.generate(
@@ -133,16 +133,16 @@ class _SubjectsPageState extends State<PriorityPage> {
                   ),
                   // axis text - names of subjects
                   titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
+                    leftTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
-                    rightTitles: AxisTitles(
+                    rightTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
                         reservedSize: 48,
                       ),
                     ),
@@ -164,13 +164,13 @@ class _SubjectsPageState extends State<PriorityPage> {
                       ),
                     ),
                   ),
-                  gridData: FlGridData(show: false),
+                  gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             3,
             RichText(

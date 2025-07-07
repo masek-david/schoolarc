@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
 
-class DropDownAction extends StatefulWidget {
+class DropDownAction extends StatelessWidget {
   const DropDownAction({
     super.key,
     required this.items,
-    required this.initialValue,
+    required this.value,
     required this.onChanged,
   });
 
   final List<DropdownMenuItem<Object>> items;
-  final Object? initialValue;
+  final Object? value;
   final void Function(Object? value) onChanged;
 
   @override
-  State<DropDownAction> createState() => _DropDownActionState();
-}
-
-class _DropDownActionState extends State<DropDownAction> {
-  late Object? _value = widget.initialValue;
-
-  @override
   Widget build(BuildContext context) {
+    assert(items.map((e) => e.value).contains(value), 'items doesn\'t include this value');
+
     return DropdownButton(
-      value: _value,
-      items: widget.items,
-      onChanged: (value) {
-        widget.onChanged(value);
-        setState(() {
-          _value = value;
-        });
-      },
+      value: value,
+      items: items,
+      onChanged: onChanged,
     );
   }
 }

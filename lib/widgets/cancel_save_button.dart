@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class CancelSaveButton extends StatelessWidget {
   const CancelSaveButton({
@@ -25,16 +26,16 @@ class CancelSaveButton extends StatelessWidget {
             }
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: Text(context.loc.cancel),
         ),
-        if(middle != null) middle!,
+        if (middle != null) middle!,
         FilledButton(
           onPressed: () {
             HapticFeedback.lightImpact();
             onSave();
             Navigator.maybePop(context);
           },
-          child: const Text('Save'),
+          child: Text(context.loc.save),
         )
       ],
     );

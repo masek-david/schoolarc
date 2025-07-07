@@ -23,21 +23,6 @@ ChangeType getChangeType(String changeType) {
   throw 'Not a valid changetype: $changeType';
 }
 
-String getString(ChangeType change) {
-  switch (change) {
-    case ChangeType.canceled:
-      return 'Canceled';
-    case ChangeType.added:
-      return 'Added';
-    case ChangeType.removed:
-      return 'Removed';
-    case ChangeType.roomChanged:
-      return 'Room changed';
-    case ChangeType.substitution:
-      return 'Substitution';
-  }
-}
-
 class BakaChange {
   BakaChange({
     required this.type,

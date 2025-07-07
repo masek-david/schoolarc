@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -16,7 +17,7 @@ class RecapButton extends StatelessWidget {
         onTap: () {
           navigatorKey.currentState?.push(
             MaterialPageRoute(
-              builder: (context) => RecapScreen(),
+              builder: (context) => const RecapScreen(),
             ),
           );
         },

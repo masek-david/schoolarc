@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
@@ -102,7 +103,7 @@ class _CountPageState extends State<CountPage> {
                   ],
                 ),
               ),
-              margin: EdgeInsets.only(top: 48)),
+              margin: const EdgeInsets.only(top: 48)),
           _animatedText(
               4,
               RichText(
@@ -126,8 +127,8 @@ class _CountPageState extends State<CountPage> {
                   ],
                 ),
               ),
-              margin: EdgeInsets.only(top: 16)),
-          SizedBox(height: 80),
+              margin: const EdgeInsets.only(top: 16)),
+          const SizedBox(height: 80),
         ],
       ),
     );

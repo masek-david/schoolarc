@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
@@ -56,7 +57,7 @@ class ExamTile extends StatelessWidget {
                       onConvert!();
                     },
                     icon: Icons.swap_vertical_circle_outlined,
-                    label: 'To homework',
+                    label: context.loc.toHomework,
                     foregroundColor:
                         Theme.of(context).colorScheme.onTertiaryContainer,
                     backgroundColor:
@@ -112,7 +113,7 @@ class ExamTile extends StatelessWidget {
                       AnimatedContainer(
                         width: 50,
                         height: 50,
-                        duration: Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 300),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
                             color: exam.priority.getContainerColor(context)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
+import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/database/settings_database.dart';
@@ -28,10 +29,10 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
           child: Column(
             children: [
               Text(
-                'You can login to these extensions:',
+                'You can log in to these extensions:',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              SizedBox(height: 28),
+              const SizedBox(height: 28),
               _ExtensionButton(
                 value: useBaka,
                 title: 'Bakaláři',
@@ -46,11 +47,11 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
                   onPressed: () {
                     navigatorKey.currentState?.push(
                       MaterialPageRoute(
-                        builder: (context) => BakaLoginScreen(),
+                        builder: (context) => const BakaLoginScreen(),
                       ),
                     );
                   },
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
               ),
               _ExtensionButton(
@@ -67,35 +68,34 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
                   onPressed: () {
                     navigatorKey.currentState?.push(
                       MaterialPageRoute(
-                        builder: (context) => StravaLoginScreen(),
+                        builder: (context) => const StravaLoginScreen(),
                       ),
                     );
                   },
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
               ),
-              if (settings.get(Setting.showDebugInfo))
-                _ExtensionButton(
-                  title: 'Firebase',
-                  subtitle: 'Backup and sync your data between devices',
-                  value: useFirebase,
-                  onChanged: (value) {
-                    setState(() {
-                      useFirebase = value;
-                      settings.save(Setting.useFirebase, value);
-                    });
+              _ExtensionButton(
+                title: 'Cloud sync',
+                subtitle: 'Backup and sync your data between devices',
+                value: useFirebase,
+                onChanged: (value) {
+                  setState(() {
+                    useFirebase = value;
+                    settings.save(Setting.useFirebase, value);
+                  });
+                },
+                button: FilledButton(
+                  onPressed: () {
+                    navigatorKey.currentState?.push(
+                      MaterialPageRoute(
+                        builder: (context) => const FirebaseLoginScreen(),
+                      ),
+                    );
                   },
-                  button: FilledButton(
-                    onPressed: () {
-                      navigatorKey.currentState?.push(
-                        MaterialPageRoute(
-                          builder: (context) => StravaLoginScreen(),
-                        ),
-                      );
-                    },
-                    child: Text('Login'),
-                  ),
+                  child: const Text('Login'),
                 ),
+              ),
             ],
           ),
         ),

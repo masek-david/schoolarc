@@ -306,7 +306,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     List<Subject> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
-      if (hw.isDeleted && now.difference(hw.timestamp) > Duration(days: 7)) {
+      if (hw.isDeleted && now.difference(hw.timestamp) > const Duration(days: 7)) {
         hwsToDelete.add(hw);
       }
     }

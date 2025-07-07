@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
@@ -127,9 +128,9 @@ class _RecapScreenState extends ConsumerState<RecapScreen> {
                         hws: hws,
                       );
                     case 4:
-                      return FinalPage();
+                      return const FinalPage();
                   }
-                  return Placeholder();
+                  return const Placeholder();
                 },
               ),
             ),

@@ -1,7 +1,9 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/animated_completion.dart';
 
 class HwOverlay extends StatefulWidget {
@@ -120,7 +122,7 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   AnimatedOpacity(
                     opacity: fullSize ? 1 : 0,
                     duration: duration,
@@ -134,8 +136,8 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                             close();
                             widget.onEdit();
                           },
-                          label: Text('Edit'),
-                          icon: Icon(Icons.edit),
+                          label: Text(context.loc.edit),
+                          icon: const Icon(Icons.edit),
                         ),
                         if (widget.onConvert != null)
                         FilledButton.tonalIcon(
@@ -143,8 +145,8 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                             close();
                             widget.onConvert!();
                           },
-                          label: Text('Convert to exam'),
-                          icon: Icon(Icons.swap_vert_circle_outlined),
+                          label: Text(context.loc.convertToExam),
+                          icon: const Icon(Icons.swap_vert_circle_outlined),
                         ),
                         if (widget.onDelete != null)
                         FilledButton.tonalIcon(
@@ -152,8 +154,8 @@ class _HwOverlayState extends State<HwOverlay> with TickerProviderStateMixin {
                             close();
                             widget.onDelete!();
                           },
-                          label: Text('Delete'),
-                          icon: Icon(Icons.delete),
+                          label: Text(context.loc.delete),
+                          icon: const Icon(Icons.delete),
                         ),
                       ],
                     ),

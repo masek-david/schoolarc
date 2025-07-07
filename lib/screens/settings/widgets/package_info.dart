@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class PackageInfoWidget extends StatelessWidget {
   const PackageInfoWidget({
@@ -18,14 +18,14 @@ class PackageInfoWidget extends StatelessWidget {
       onTap: () {
         tapped++;
         if (settings.get(Setting.showDebugInfo)) {
-          showMessage(context, 'You are already the developer');
+          showMessage(context, context.loc.alreadyDeveloper);
           return;
         }
         if (tapped == 3) {
-          showMessage(context, 'Press 2 more times to become developer');
+          showMessage(context, context.loc.pressMoreTimesToBecomeDeveloper);
         }
         if (tapped == 5) {
-          showMessage(context, 'You\'ve become the developer');
+          showMessage(context, context.loc.becameDeveloper);
           tapped = 0;
           onBecameDev();
         }

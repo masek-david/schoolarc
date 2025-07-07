@@ -49,8 +49,8 @@ class WelcomeScreenSubjects extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'You can create subjects in Subjects page in the drawer',
               textAlign: TextAlign.center,
             ),
@@ -69,8 +69,8 @@ class WelcomeScreenSubjects extends StatelessWidget {
                 },
               ).toList(),
             ),
-            SizedBox(height: 50),
-            Text(
+            const SizedBox(height: 50),
+            const Text(
               'You can assign the subject when adding new task or editing old',
               textAlign: TextAlign.center,
             ),

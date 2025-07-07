@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/int_extension.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/cancel_save_button.dart';
 
 class SubjectDialog extends StatelessWidget {
@@ -20,6 +20,8 @@ class SubjectDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Dialog(
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -38,10 +40,10 @@ class SubjectDialog extends StatelessWidget {
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Name',
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                border: const OutlineInputBorder(),
+                labelText: loc.name,
               ),
             ),
             const SizedBox(height: 16),
@@ -53,15 +55,16 @@ class SubjectDialog extends StatelessWidget {
                 onSave();
                 Navigator.pop(context);
               },
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
-                labelText: 'Shortcut (max 5 characters)',
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                border: const OutlineInputBorder(),
+                labelText: loc.shortcutMax5Chars,
               ),
             ),
             if (usedTimes != null)
               Text(
-                  'This subject is used $usedTimes time${usedTimes!.pluralS()}'),
+                loc.subjectUsedTimes(usedTimes!),
+              ),
             CancelSaveButton(onSave: onSave)
           ],
         ),

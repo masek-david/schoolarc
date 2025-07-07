@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/web/bar_color.dart';
 
-// TODO remake as stateful and save the values ??
 class WideScreenBorders extends StatelessWidget {
   const WideScreenBorders({
     super.key,

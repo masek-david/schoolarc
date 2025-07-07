@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class ThemeColorsShowcase extends StatelessWidget {
   const ThemeColorsShowcase({super.key});
@@ -17,20 +18,20 @@ class ThemeColorsShowcase extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          const Text('This is how the app will look with these colors:'),
+          Text(context.loc.colorShowcaseTitle),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FilledButton(
-                  onPressed: () {}, child: const Text('Filled Button')),
+                  onPressed: () {}, child: Text(context.loc.filledButton)),
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {},
                 style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.tertiary,
                 ),
-                child: const Text('Filled Button'),
+                child: Text(context.loc.filledButton),
               ),
             ],
           ),
@@ -38,13 +39,13 @@ class ThemeColorsShowcase extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ChoiceChip(
-                label: const Text('Choice chip'),
+                label: Text(context.loc.choiceChip),
                 selected: true,
                 onSelected: (value) {},
               ),
               const SizedBox(width: 8),
               ChoiceChip(
-                label: const Text('Choice chip'),
+                label: Text(context.loc.choiceChip),
                 selected: false,
                 onSelected: (value) {},
               ),

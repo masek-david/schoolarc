@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/database/settings_database.dart';
@@ -84,7 +85,7 @@ class SubjectTile extends StatelessWidget {
                         if (debug) Text(subject.bakaId ?? ''),
                       ],
                     ),
-                  if (debug && subject.isDeleted) Icon(Icons.delete),
+                  if (debug && subject.isDeleted) const Icon(Icons.delete),
                 ],
               ),
             ),

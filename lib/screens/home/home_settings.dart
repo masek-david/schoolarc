@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class HomeSettings extends StatefulWidget {
   const HomeSettings({
@@ -27,9 +28,8 @@ class _HomeSettingsState extends State<HomeSettings> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SettingTile.withSwitch(
-          title: 'Show my name',
-          subtitle:
-              'If enabled and logged in to Bakaláři, you will be greeted with your name',
+          title: context.loc.showMyName,
+          subtitle: context.loc.showMyNameSubtitle,
           value: showMyName,
           onChanged: (value) {
             settings.save(Setting.homeShowUserName, value);
@@ -40,7 +40,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           },
         ),
         SettingTile.withSwitch(
-          title: 'Show Bakaláři timetable',
+          title: context.loc.showBakalariTimetable,
           value: showBaka,
           onChanged: (value) {
             settings.save(Setting.useBakalari, value);
@@ -51,7 +51,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           },
         ),
         SettingTile.withSwitch(
-          title: 'Show meals',
+          title: context.loc.showMeals,
           value: showMeals,
           onChanged: (value) {
             settings.save(Setting.useMeals, value);
@@ -62,8 +62,8 @@ class _HomeSettingsState extends State<HomeSettings> {
           },
         ),
         SettingTile.withTimePicker(
-          title: 'Lunch time',
-          subtitle: 'When meals for next day appear',
+          title: context.loc.lunchTime,
+          subtitle: context.loc.lunchTimeSubtitle,
           time: lunchTime,
           onChanged: (value) {
             settings.save(Setting.mealsShowTodayUntil, value);

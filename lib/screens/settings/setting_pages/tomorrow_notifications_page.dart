@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 
@@ -20,7 +21,6 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   @override
   void initState() {
     super.initState();
-
     getNotificationAllowed();
   }
 
@@ -60,8 +60,12 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(loc.upcomingDayNotifications),
+      ),
       body: ListView(
         children: [
           if (areNotificationsAllowed == false)
@@ -84,7 +88,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      'Notifications not allowed, click here to grant permission',
+                      loc.notificationsNotAllowedMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onErrorContainer,
@@ -95,20 +99,18 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
               ),
             ),
           SettingTile.withSwitch(
-            title: 'Upcoming day notifications',
+            title: loc.upcomingDayNotifications,
             highlighted: true,
             onChanged: setEnabled,
             value: enabled,
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text(
-              'Receive notifications with homeworks and exams for the next day',
-            ),
+            child: Text(loc.upcomingDayNotificationsDescription),
           ),
           SettingTile.withTimePicker(
-            title: 'Arrival time',
-            subtitle: 'Time when the notification will arrive',
+            title: loc.arrivalTimeTitle,
+            subtitle: loc.arrivalTimeSubtitle,
             time: time,
             onChanged: (value) {
               settings.save(Setting.tomorrowNotificationTime, value);
@@ -118,7 +120,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             },
           ),
           SettingTile(
-            title: 'Send upcoming day notification now',
+            title: loc.sendNotificationNow,
             enabled: areNotificationsAllowed == true,
             onTap: (context) => NotificationSender.scheduletomorrowNotification(
               scheduled: false,

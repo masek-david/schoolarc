@@ -6,6 +6,7 @@ import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class TimeTableLesson {
   TimeTableLesson({
@@ -40,7 +41,7 @@ class TimeTableLesson {
       }
     }
 
-    title ??= 'Empty lesson';
+    title ??= context.loc.emptyLesson;
 
     showDialog(
       context: context,
@@ -67,9 +68,7 @@ class TimeTableLesson {
                       ),
                     ),
                     Flexible(
-                      child: Text(
-                        'This subject hasn\'t been added.',
-                      ),
+                      child: Text(context.loc.subjectHasntBeenAdded),
                     ),
                     FilledButton(
                       onPressed: () async {
@@ -77,17 +76,19 @@ class TimeTableLesson {
                               subject!.convert(),
                             );
                         if (context.mounted) {
-                          showMessage(context, 'Imported subject');
+                          showMessage(context, context.loc.importedSubject);
                         }
                       },
-                      child: Text('Add'),
+                      child: Text(context.loc.add),
                     ),
                   ],
                 ),
               ),
-            if (change != null) Text('Change: ${change?.description}'),
-            if (teacher != null) Text('Teacher: ${teacher?.name}'),
-            if (room != null) Text('Room: $room'),
+            if (change != null)
+              Text('${context.loc.change}: ${change?.description}'),
+            if (teacher != null)
+              Text('${context.loc.teacher}: ${teacher?.name}'),
+            if (room != null) Text('${context.loc.room}: $room'),
           ],
         ),
       ),

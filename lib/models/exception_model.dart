@@ -1,3 +1,5 @@
+import 'package:school_manager/l10n/my_localization.dart';
+
 enum ExceptionActions {
   bakaLogin,
   stravaLogin,
@@ -16,12 +18,12 @@ class ServiceException implements Exception {
 }
 
 class BakaLoginException implements Exception {
-  BakaLoginException({this.message = 'Please log in'});
+  BakaLoginException({this.message});
 
   String? message;
 
   @override
   String toString() {
-    return message ?? '';
+    return message ?? getLocalization().pleaseLogIn;
   }
 }

@@ -8,6 +8,7 @@ import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/screens/timetable/timetable_settings.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class TimetableScreen extends ConsumerStatefulWidget {
   const TimetableScreen({super.key});
@@ -32,7 +33,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timetable'),
+        title: Text(context.loc.timetable),
         actions: [
           IconButton(
             onPressed: () {
@@ -63,7 +64,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Add new lesson time',
+        tooltip: context.loc.addNewLessonTime,
         onPressed: () {
           showDialog<LessonTimes>(
             context: context,

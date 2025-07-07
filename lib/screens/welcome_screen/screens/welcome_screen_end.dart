@@ -19,7 +19,7 @@ class _WelcomeScreenEndState extends State<WelcomeScreenEnd>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       value: 0,
     );
   }
@@ -55,11 +55,11 @@ class _WelcomeScreenEndState extends State<WelcomeScreenEnd>
             ),
           ),
           child: AnimatedScale(
-            duration: Duration(milliseconds: 1500),
+            duration: const Duration(milliseconds: 1500),
             curve: Curves.easeIn,
             scale: controller.isAnimating ? 8 : 1,
             child: AnimatedOpacity(
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
               opacity: controller.isAnimating ? 0 : 1,
               child: Center(
@@ -68,7 +68,7 @@ class _WelcomeScreenEndState extends State<WelcomeScreenEnd>
                   children: [
                     FilledButton(
                       onPressed: animate,
-                      child: Text('Go to app'),
+                      child: const Text('Go to app'),
                     ),
                     // FilledButton(
                     //   onPressed: () {

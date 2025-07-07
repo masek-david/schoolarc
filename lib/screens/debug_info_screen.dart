@@ -34,8 +34,8 @@ class DbInfoScreen extends StatelessWidget {
               label: const Text('delete from disk'),
               icon: const Icon(Icons.bug_report),
             ),
-            Divider(),
-            Text('SECURE STORAGE'),
+            const Divider(),
+            const Text('SECURE STORAGE'),
             FilledButton(
               onPressed: () async {
                 await SecureStorage().write(SecureStorage.bakaRefreshTokenKey,
@@ -45,7 +45,7 @@ class DbInfoScreen extends StatelessWidget {
                     .read(SecureStorage.bakaRefreshTokenKey);
                 print(text);
               },
-              child: Text('write and read'),
+              child: const Text('write and read'),
             ),
             FilledButton(
               onPressed: () async {
@@ -53,10 +53,10 @@ class DbInfoScreen extends StatelessWidget {
                     .read(SecureStorage.bakaRefreshTokenKey);
                 print(text);
               },
-              child: Text('only read'),
+              child: const Text('only read'),
             ),
-            Divider(),
-            Text('FIREBASE'),
+            const Divider(),
+            const Text('FIREBASE'),
             FilledButton(
               onPressed: () async {
                 late List<HomeworkWithID>? fireHws;
@@ -76,7 +76,7 @@ class DbInfoScreen extends StatelessWidget {
                       actions: [
                         adaptiveDialogButton(
                           context: context,
-                          child: Text('Close'),
+                          child: const Text('Close'),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -84,13 +84,13 @@ class DbInfoScreen extends StatelessWidget {
                       ]);
                 }
               },
-              child: Text('test firebase'),
+              child: const Text('test firebase'),
             ),
             FilledButton(
               onPressed: () async {
                 firebaseService.logOut();
               },
-              child: Text('logout from firebase'),
+              child: const Text('logout from firebase'),
             ),
             const Text('SUBJECTS'),
             const Divider(),
@@ -112,7 +112,7 @@ class DbInfoScreen extends StatelessWidget {
                         child: Text(item.shortcut),
                       ),
                       Expanded(child: Text(item.name)),
-                      if (item.isDeleted) Icon(Icons.delete)
+                      if (item.isDeleted) const Icon(Icons.delete)
                     ],
                   ),
                 );
@@ -145,8 +145,8 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (item.isCompleted) Icon(Icons.check),
-                      if (entry.value.isDeleted) Icon(Icons.delete),
+                      if (item.isCompleted) const Icon(Icons.check),
+                      if (entry.value.isDeleted) const Icon(Icons.delete),
                     ],
                   ),
                 );
@@ -178,7 +178,7 @@ class DbInfoScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(item.text)),
-                      if (entry.value.isDeleted) Icon(Icons.delete),
+                      if (entry.value.isDeleted) const Icon(Icons.delete),
                     ],
                   ),
                 );

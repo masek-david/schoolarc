@@ -1,3 +1,4 @@
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -90,18 +91,18 @@ class _DaysPageState extends State<DaysPage> {
               style: text.headlineMedium,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             2,
             Container(
               height: 300,
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: LineChart(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 LineChartData(
                   maxY: maxY.toDouble(),
                   minY: 0,
@@ -116,7 +117,7 @@ class _DaysPageState extends State<DaysPage> {
                         color:
                             Theme.of(context).colorScheme.primary.withAlpha(60),
                       ),
-                      dotData: FlDotData(show: false),
+                      dotData: const FlDotData(show: false),
                       spots: List.generate(
                         days.length,
                         (index) => FlSpot(
@@ -128,16 +129,16 @@ class _DaysPageState extends State<DaysPage> {
                   ],
                   // axis text - names of days
                   titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
+                    leftTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
-                    rightTitles: AxisTitles(
+                    rightTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
                         reservedSize: 36,
                       ),
                     ),
@@ -148,7 +149,7 @@ class _DaysPageState extends State<DaysPage> {
                         getTitlesWidget: (value, meta) {
                           // it should show only for whole numbers
                           if ((value.round() - value).abs() > 0.00000000000001) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           }
 
                           return SideTitleWidget(
@@ -167,13 +168,13 @@ class _DaysPageState extends State<DaysPage> {
                       ),
                     ),
                   ),
-                  gridData: FlGridData(show: false),
+                  gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             3,
             RichText(

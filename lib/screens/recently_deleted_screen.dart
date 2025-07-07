@@ -11,6 +11,7 @@ import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class RecentlyDeletedScreen extends ConsumerWidget {
@@ -48,18 +49,18 @@ class RecentlyDeletedScreen extends ConsumerWidget {
 
     showDialogAdaptive(
         context: context,
-        title: Text('Recover?'),
-        content: Text('Recover \'$itemName\'?'),
+        title: Text('${context.loc.recover}?'),
+        content: Text('${context.loc.recover} \'$itemName\'?'),
         actions: [
           adaptiveDialogButton(
             context: context,
-            child: Text('Cancel'),
+            child: Text(context.loc.cancel),
             onPressed: () => Navigator.pop(context),
           ),
           adaptiveDialogButton(
               context: context,
               isDefaultAction: true,
-              child: Text('Recover'),
+              child: Text(context.loc.recover),
               onPressed: () {
                 onRevert();
                 Navigator.pop(context);
@@ -78,23 +79,22 @@ class RecentlyDeletedScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recently deleted'),
+        title: Text(context.loc.recentlyDeleted),
         actions: [
           IconButton(
             onPressed: () => showDialogAdaptive(
               context: context,
-              title: Text('Recover'),
-              content: Text(
-                  'To recover something, tap on it and recover. After 7 days, it will be deleted forever. '),
+              title: Text(context.loc.recover),
+              content: Text(context.loc.recoverInfoContent),
               actions: [
                 adaptiveDialogButton(
                   context: context,
-                  child: Text('Close'),
+                  child: Text(context.loc.close),
                   onPressed: () => Navigator.pop(context),
                 )
               ],
             ),
-            icon: Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline),
           ),
         ],
       ),
@@ -122,8 +122,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
               }
             case const (Exam):
               {
-                daysLeft =
-                    7 + (item as Exam).timestamp.difference(now).inDays;
+                daysLeft = 7 + (item as Exam).timestamp.difference(now).inDays;
                 tile = ExamTile(
                   exam: item,
                   onDelete: null,
@@ -157,7 +156,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
               children: [
                 tile!,
                 Text(
-                  '${daysLeft.toString()} day${daysLeft > 1 ? 's' : ''} left',
+                  context.loc.daysLeft(daysLeft),
                   style: TextStyle(color: textColor),
                 ),
               ],

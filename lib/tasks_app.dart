@@ -5,16 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:school_manager/l10n/app_localizations.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
-import 'package:school_manager/screens/firestore_login/firebase_login_screen.dart';
+import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
 import 'package:school_manager/database/exam_database.dart';
@@ -40,6 +41,7 @@ import 'package:school_manager/screens/exams/exams_screen.dart';
 import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
+import 'package:school_manager/widgets/time_format.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
 import 'package:uuid/uuid.dart';
 
@@ -54,7 +56,7 @@ final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
 FirebaseService firebaseService = FirebaseService();
-final uuid = Uuid();
+final uuid = const Uuid();
 late PackageInfo packageInfo;
 
 Future<void> syncAllTasks(WidgetRef ref) async {
@@ -132,16 +134,16 @@ void tryGettingNewHomeworks(WidgetRef ref) async {
           showMessage(
             context,
             '$numberOfNew new homework${numberOfNew == 1 ? '' : 's'} found',
-            duration: Duration(days: 100),
+            duration: const Duration(days: 100),
             actions: [
               FilledButton(
                 onPressed: () {
                   navigatorKey.currentState?.push(MaterialPageRoute(
-                    builder: (context) => BakaHomeworksScreen(),
+                    builder: (context) => const BakaHomeworksScreen(),
                   ));
                   ScaffoldMessenger.of(context).clearSnackBars();
                 },
-                child: Text(
+                child: const Text(
                   'View',
                 ),
               ),
@@ -174,6 +176,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
   late ThemeMode themeMode = _getThemeMode(settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
+  late Locale locale = getLocale();
   late bool showingTutorial;
   bool showingFirebaseLoginScreen = false;
 
@@ -253,8 +256,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     }
 
     if (!firebaseService.isloggedIn && kIsWeb && !kDebugMode) {
-      // TODO should we hide this or not?
-      // showingFirebaseLoginScreen = true;
       settings.save(Setting.useFirebase, true);
     }
 
@@ -291,6 +292,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     setState(() {
       userColor = Color(settings.get(Setting.themeColorValue));
       themeMode = _getThemeMode(settings.get(Setting.themeMode));
+      locale = getLocale();
     });
   }
 
@@ -397,30 +399,23 @@ class _TasksAppState extends ConsumerState<TasksApp> {
         return MaterialApp(
           navigatorKey: navigatorKey,
           title: 'Schoolarc',
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en'), // English
-            // Locale('cs'),
-          ],
-          locale: const Locale('en', 'GB'),
-          // locale: const Locale('cs', 'CZ'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: supportedLocales.keys,
+          locale: locale,
           debugShowCheckedModeBanner: false,
           showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
             colorScheme: light,
-            sliderTheme: SliderThemeData(year2023: false),
+            sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(year2023: false),
           ),
           darkTheme: ThemeData(
             colorScheme: dark,
-            sliderTheme: SliderThemeData(year2023: false),
+            sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
             // pageTransitionsTheme: const PageTransitionsTheme(
@@ -430,7 +425,8 @@ class _TasksAppState extends ConsumerState<TasksApp> {
             //         PredictiveBackPageTransitionsBuilder(),
             //   },
             // ),
-            progressIndicatorTheme: ProgressIndicatorThemeData(year2023: false),
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(year2023: false),
           ),
           themeMode: themeMode,
           initialRoute: '/',
@@ -451,21 +447,9 @@ class _TasksAppState extends ConsumerState<TasksApp> {
             }
             return null;
           },
-          builder: (settings.get(Setting.debugShowFireOverlay))
-              ? (context, child) {
-                  return Stack(
-                    children: [
-                      child ?? SizedBox.shrink(),
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: FirebaseOverlay(),
-                      ),
-                    ],
-                  );
-                }
-              : null,
+          builder: (context, child) {
+            return TimeFormat(child: child!);
+          },
           home: Stack(
             children: [
               MyShortcuts(
@@ -473,7 +457,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                 child: Scaffold(
                   appBar: AppBar(
                     toolbarHeight: 0,
-                    systemOverlayStyle: SystemUiOverlayStyle(
+                    systemOverlayStyle: const SystemUiOverlayStyle(
                       systemNavigationBarColor: Colors.transparent,
                     ),
                   ),
@@ -520,6 +504,13 @@ class _TasksAppState extends ConsumerState<TasksApp> {
               if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
               if (showingFirebaseLoginScreen)
                 FirebaseLoginScreen(onHide: hideFirebase),
+              if (settings.get(Setting.debugShowFireOverlay))
+                const Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: FirebaseOverlay(),
+                ),
             ],
           ),
         );

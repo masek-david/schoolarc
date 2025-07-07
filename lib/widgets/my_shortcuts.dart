@@ -15,9 +15,9 @@ class MyShortcuts extends StatelessWidget {
     return Shortcuts(
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyH):
-            NewHomeworkIntent(),
+            const NewHomeworkIntent(),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyE):
-            NewExamIntent(),
+            const NewExamIntent(),
       },
       child: Actions(
         actions: {

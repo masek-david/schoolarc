@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class AnimatedStar extends StatefulWidget {
   const AnimatedStar({
@@ -63,7 +64,7 @@ class _AnimatedStarState extends State<AnimatedStar>
   double scale = 1;
 
   late final int size = widget.size;
-  late final String text = widget.text;
+  late String text = widget.text;
   late Color firstColor =
       widget.firstColor ?? Theme.of(context).colorScheme.primaryContainer;
   late Color secondColor =
@@ -122,6 +123,14 @@ class _AnimatedStarState extends State<AnimatedStar>
 
   @override
   Widget build(BuildContext context) {
+    if (text == 'Everything done') {
+      text = context.loc.everythingDone;
+    } else if (text == 'Success') {
+      text = context.loc.success;
+    } else if (text == 'Error') {
+      text = context.loc.error;
+    }
+
     return Padding(
       padding: EdgeInsets.all(size * 0.3),
       child: AbsorbPointer(
@@ -188,27 +197,28 @@ class _AnimatedStarState extends State<AnimatedStar>
                               ),
                             ),
                           ),
-                          if(settings.get(Setting.themeUseOled)) Container(
-                            height: size.toDouble() - 8,
-                            width: size.toDouble() - 8,
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  blurRadius: 30,
-                                  spreadRadius: -1,
-                                  color: secondColor,
+                          if (settings.get(Setting.themeUseOled))
+                            Container(
+                              height: size.toDouble() - 8,
+                              width: size.toDouble() - 8,
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    blurRadius: 30,
+                                    spreadRadius: -1,
+                                    color: secondColor,
+                                  ),
+                                ],
+                                color: Colors.black,
+                                shape: const StarBorder(
+                                  points: 12.00,
+                                  rotation: 0.00,
+                                  innerRadiusRatio: 0.85,
+                                  pointRounding: 0.50,
+                                  valleyRounding: 0.50,
                                 ),
-                              ],
-                              color: Colors.black,
-                              shape: const StarBorder(
-                                points: 12.00,
-                                rotation: 0.00,
-                                innerRadiusRatio: 0.85,
-                                pointRounding: 0.50,
-                                valleyRounding: 0.50,
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),

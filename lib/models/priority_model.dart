@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 
 class TaskPriority {
   late final int index;
@@ -8,26 +9,28 @@ class TaskPriority {
   late String htmlIcon;
 
   TaskPriority(int index) {
+    final loc = getLocalization();
+    
     switch (index) {
       case 3:
         color = Colors.red;
         htmlIcon = '\uD83D\uDD34';
-        name = 'High';
+        name = loc.high;
         this.index = 3;
       case 2:
         color = Colors.orange;
         htmlIcon = '\uD83D\uDFE0';
-        name = 'Medium';
+        name = loc.medium;
         this.index = 2;
       case 1:
         color = Colors.green;
         htmlIcon = '\uD83D\uDFE2';
-        name = 'Low';
+        name = loc.low; 
         this.index = 1;
       default:
         color = Colors.blue;
         htmlIcon = '\uD83D\uDD35';
-        name = 'No priority';
+        name = loc.noPriority;
         this.index = 0;
     }
   }

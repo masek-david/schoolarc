@@ -1,3 +1,4 @@
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
@@ -98,7 +99,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
               style: text.headlineMedium,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             2,
             Container(
@@ -108,7 +109,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: BarChart(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 BarChartData(
                   maxY: subjects.isNotEmpty
                       ? subjects[0].usedTimes.toDouble()
@@ -149,16 +150,16 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   ),
                   // axis text - names of subjects
                   titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
+                    leftTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
-                    rightTitles: AxisTitles(
+                    rightTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
                         reservedSize: 48,
                       ),
                     ),
@@ -180,17 +181,17 @@ class _SubjectsPageState extends State<SubjectsPage> {
                       ),
                     ),
                   ),
-                  gridData: FlGridData(show: false),
+                  gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           _animatedText(
             3,
             subjects.isEmpty
-                ? Text(
+                ? const Text(
                     'There aren\'t enough data to show :( . Keep using the app!')
                 : RichText(
                     text: TextSpan(

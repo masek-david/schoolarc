@@ -6,6 +6,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerStatefulWidget {
@@ -52,8 +53,9 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
           )
           .alreadyAdded = true;
     });
-
-    showMessage(context, '${isHomework ? 'Homework' : 'Exam'} added');
+    final loc = context.loc;
+    showMessage(context,
+        '${isHomework ? loc.homeworks(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
   }
 
   Future<void> refresh() async {
@@ -72,7 +74,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Homeworks from Bakaláři'),
+        title: Text(context.loc.hwFromBaka),
       ),
       body: FutureBuilder(
         future: homeworksFuture,
@@ -87,12 +89,12 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
               actions: [
                 IconButton(
                   onPressed: refresh,
-                  icon: Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh),
                 ),
               ],
             );
           } else if (!snapshot.hasData) {
-            return const Text('No data');
+            return Text(context.loc.noData);
           }
 
           homeworks = snapshot.data!;
@@ -118,7 +120,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 16, top: 16),
                         child: Text(
-                          'New homeworks',
+                          context.loc.newHomeworks,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),

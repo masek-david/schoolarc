@@ -6,6 +6,7 @@ import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 
 Future<void> addNewHw(
@@ -57,9 +58,9 @@ void completeHw(
 void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   ref.read(hwProvider.notifier).delete(hw);
 
-  showMessage(context, 'Deleted homework ${hw.text}', actions: [
+  showMessage(context, '${context.loc.deletedHomework} \'${hw.text}\'', actions: [
     SnackBarAction(
-      label: 'Undo',
+      label: context.loc.undo,
       onPressed: () {
         ref.read(hwProvider.notifier).revertDelete(hw);
       },
@@ -110,9 +111,9 @@ void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
 void deleteExam(BuildContext context, WidgetRef ref, Exam exam) {
   ref.read(examProvider.notifier).delete(exam);
 
-  showMessage(context, 'Deleted exan ${exam.text}', actions: [
+  showMessage(context, '${context.loc.deletedExam} \'${exam.text}\'', actions: [
     SnackBarAction(
-      label: 'Undo',
+      label: context.loc.undo,
       onPressed: () {
         ref.read(examProvider.notifier).revertDelete(exam);
       },

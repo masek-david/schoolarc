@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class ProgressDialog extends StatefulWidget {
   const ProgressDialog({
     super.key,
     this.goal = 0,
     this.showProgressNumber = true,
-    this.initialText = 'Importing',
+    this.initialText,
   });
 
   final int goal;
   final bool showProgressNumber;
-  final String initialText;
+  final String? initialText;
 
   @override
   State<ProgressDialog> createState() => ProgressDialogState();
@@ -19,7 +20,7 @@ class ProgressDialog extends StatefulWidget {
 
 class ProgressDialogState extends State<ProgressDialog> {
   int _progress = 0;
-  late String _text = widget.initialText;
+  late String _text = widget.initialText ?? context.loc.importing;
 
   void addProgress({int progressToAdd = 1}) {
     setState(() {
@@ -44,7 +45,7 @@ class ProgressDialogState extends State<ProgressDialog> {
           children: [
             CircularProgressIndicator(
               value: widget.goal != 0 ? _progress / widget.goal : null,
-              constraints: BoxConstraints(minWidth: 140, minHeight: 140),
+              constraints: const BoxConstraints(minWidth: 140, minHeight: 140),
               strokeWidth: 14,
             ),
             if (widget.showProgressNumber) Text('$_progress / ${widget.goal}')

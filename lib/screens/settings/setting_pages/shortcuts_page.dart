@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class ShortcutsPage extends StatelessWidget {
   const ShortcutsPage({super.key});
@@ -8,13 +9,13 @@ class ShortcutsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shortcuts'),
+        title: Text(context.loc.shortcuts),
       ),
       body: ListView(
         children: [
           SettingTile(
-            title: 'Create homework',
-            trailing: Row(
+            title: context.loc.createHomework,
+            trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.keyboard_control_key),
@@ -23,8 +24,8 @@ class ShortcutsPage extends StatelessWidget {
             ),
           ),
           SettingTile(
-            title: 'Create an exam',
-            trailing: Row(
+            title: context.loc.createExam,
+            trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.keyboard_control_key),
@@ -32,17 +33,17 @@ class ShortcutsPage extends StatelessWidget {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
-              'When creating: ',
+              context.loc.shortcutWhenCreating,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
           SettingTile(
-            title: 'Search for a subject',
-            trailing: Row(
+            title: context.loc.searchForSubject,
+            trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.keyboard_control_key),
@@ -51,8 +52,8 @@ class ShortcutsPage extends StatelessWidget {
             ),
           ),
           SettingTile(
-            title: 'Choose a priority',
-            trailing: Row(
+            title: context.loc.choosePriority,
+            trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.keyboard_control_key),
@@ -63,8 +64,8 @@ class ShortcutsPage extends StatelessWidget {
             ),
           ),
           SettingTile(
-            title: 'Pick a date',
-            trailing: Row(
+            title: context.loc.pickDate,
+            trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.keyboard_control_key),
@@ -102,7 +103,7 @@ class _KeyboardIcon extends StatelessWidget {
       ),
       child: Text(
         keyboardKey!,
-        style: TextStyle(
+        style: const TextStyle(
           height: 1,
           fontSize: 12,
         ),

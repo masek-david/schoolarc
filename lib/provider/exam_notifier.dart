@@ -470,7 +470,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
     for (var exam in _dbState.values) {
       if (exam.isDeleted &&
-          now.difference(exam.timestamp) > Duration(days: 7)) {
+          now.difference(exam.timestamp) > const Duration(days: 7)) {
         examsToDelete.add(exam);
       }
     }

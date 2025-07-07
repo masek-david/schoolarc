@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/animated_star.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
@@ -34,7 +35,6 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     _schoolController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
@@ -54,11 +54,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
       error: (error, stackTrace) {
         if (lastError != error) {
           lastError = error;
-          WidgetsBinding.instance.addPostFrameCallback(
-            (timeStamp) {
-              onError(error);
-            },
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            onError(error);
+          });
         }
       },
       loading: () {},
@@ -66,41 +64,40 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
 
     return Scaffold(
       appBar: widget.showAppbar
-          ? AppBar(
-              title: const Text('Bakaláři'),
-            )
+          ? AppBar(title: Text(context.loc.bakalari))
           : null,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: RefreshIndicator(
+          key: refreshIndicatorKey,
           onRefresh: () async {
             ref.read(bakaProvider.notifier).refreshLogin();
           },
           child: ListView(
             children: [
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               if (isLoggedIn && !baka.isLoading)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AnimatedStar.success(
-                    text: 'Logged in',
+                    text: context.loc.loggedIn,
                     size: 100,
                     primary: colorScheme.primary,
                     isDark: isDark,
                   ),
                 ),
               if (baka.isLoading)
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: const Center(child: CircularProgressIndicator()),
+                const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
               TextField(
                 enabled: !baka.isLoading,
                 controller: _schoolController,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'School web id',
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: context.loc.schoolWebId,
                 ),
               ),
               const SizedBox(height: 12),
@@ -108,10 +105,10 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                 autofillHints: const [AutofillHints.username],
                 enabled: !baka.isLoading,
                 controller: _usernameController,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
-                  labelText: 'Username',
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: context.loc.username,
                 ),
               ),
               const SizedBox(height: 12),
@@ -123,10 +120,10 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       enabled: !baka.isLoading,
                       controller: _passwordController,
                       obscureText: obscureText,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(15),
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(15),
+                        border: const OutlineInputBorder(),
+                        labelText: context.loc.password,
                       ),
                     ),
                   ),
@@ -145,7 +142,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Remember me'),
+                  Text(context.loc.rememberMe),
                   Checkbox(
                     value: keepLoggedIn,
                     onChanged: !baka.isLoading
@@ -153,20 +150,19 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                             if (!value!) {
                               value = await showDialogAdaptive(
                                 context: context,
-                                title: Text('Remember me?'),
-                                content: Text(
-                                    'If you continue, you won\'t be able to view your current timetable and current homeworks.'),
+                                title: Text(context.loc.rememberMeTitle),
+                                content: Text(context.loc.rememberMeWarning),
                                 actions: [
                                   adaptiveDialogButton(
                                     context: context,
-                                    child: Text('Cancel'),
+                                    child: Text(context.loc.cancel),
                                     onPressed: () =>
                                         Navigator.pop(context, true),
                                   ),
                                   adaptiveDialogButton(
                                     isDestructiveAction: true,
                                     context: context,
-                                    child: Text('Continue'),
+                                    child: Text(context.loc.continueAction),
                                     onPressed: () =>
                                         Navigator.pop(context, false),
                                   ),
@@ -180,7 +176,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                             settings.save(Setting.bakaKeepLoggedIn, value);
                           }
                         : null,
-                  )
+                  ),
                 ],
               ),
               Row(
@@ -198,7 +194,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                   keepLoggedIn: keepLoggedIn,
                                 );
                           },
-                    child: const Text("Log in"),
+                    child: Text(context.loc.logIn),
                   ),
                   if (isLoggedIn)
                     OutlinedButton(
@@ -208,7 +204,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                               refreshIndicatorKey.currentState?.show();
                               ref.read(bakaProvider.notifier).logOut();
                             },
-                      child: const Text("Log out"),
+                      child: Text(context.loc.logOut),
                     ),
                 ],
               ),
@@ -218,15 +214,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                     ? () {
                         showDialogAdaptive(
                           context: context,
-                          title: const Text('Import timetable and subjects?'),
-                          content: const Text(
-                            'Importing the timetable will replace your existing timetable. Are you sure?',
-                          ),
+                          title: Text(context.loc.importTimetableTitle),
+                          content: Text(context.loc.importTimetableWarning),
                           actions: [
                             adaptiveDialogButton(
                               context: context,
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
+                              child: Text(context.loc.cancel),
                             ),
                             adaptiveDialogButton(
                               context: context,
@@ -238,7 +232,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) =>
-                                      ProgressDialog(showProgressNumber: false),
+                                      const ProgressDialog(showProgressNumber: false),
                                 );
 
                                 ref
@@ -253,13 +247,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                   onError: onError,
                                 );
                               },
-                              child: const Text('Import'),
+                              child: Text(context.loc.import),
                             ),
                           ],
                         );
                       }
                     : null,
-                child: const Text('Import timetable and subjects'),
+                child: Text(context.loc.importTimetable),
               ),
             ],
           ),

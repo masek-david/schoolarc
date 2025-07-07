@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
@@ -19,26 +20,26 @@ class BottomNavBar extends StatelessWidget {
         onTap(newScreenIndex: index);
       },
       selectedIndex: pageIndex,
-      destinations: const <Widget>[
+      destinations: <Widget>[
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: context.loc.home,
         ),
         NavigationDestination(
-          icon: Icon(Icons.calendar_month_outlined),
-          selectedIcon: Icon(Icons.calendar_month),
-          label: 'Calendar',
+          icon: const Icon(Icons.calendar_month_outlined),
+          selectedIcon: const Icon(Icons.calendar_month),
+          label: context.loc.calendar,
         ),
         NavigationDestination(
-          icon: Icon(Icons.home_work_outlined),
-          selectedIcon: Icon(Icons.home_work),
-          label: 'Homeworks',
+          icon: const Icon(Icons.home_work_outlined),
+          selectedIcon: const Icon(Icons.home_work),
+          label: context.loc.homeworks(2),
         ),
         NavigationDestination(
-          icon: Icon(Icons.description_outlined),
-          selectedIcon: Icon(Icons.description),
-          label: 'Exams',
+          icon: const Icon(Icons.description_outlined),
+          selectedIcon: const Icon(Icons.description),
+          label: context.loc.exams(2),
         ),
       ],
     );

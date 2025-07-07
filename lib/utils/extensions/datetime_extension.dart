@@ -1,4 +1,7 @@
 import 'package:intl/intl.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/l10n/my_localization.dart';
+import 'package:school_manager/tasks_app.dart';
 
 extension BetterDateTime on DateTime {
   bool isSameDay(DateTime comparedDate) {
@@ -29,10 +32,6 @@ extension BetterDateTime on DateTime {
 
     return dateOnlyDate.isBefore(nowOnlyDate) &&
         !dateOnlyDate.isAtSameMomentAs(nowOnlyDate);
-  }
-
-  String minuteStartingWithZero() {
-    return minute < 10 ? '0$minute' : minute.toString();
   }
 
   DateTime onlyDate() {
@@ -90,41 +89,57 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// formats the date, d. MM. defaultly, if isnt the current year, adds the year, also replaces yesterday, today and tomorrow
+  /// formats using saved dateformat and using apps language
+  String format() {
+    return DateFormat(
+            settings.get(Setting.dateFormat), getLocale().languageCode)
+        .format(this);
+  }
+
+  /// formats using saved dateformat and using apps language
+  String formatTime() {
+    return DateFormat(settings.get(Setting.use24HourFormat) == true ? 'Hm' : 'jm',
+            getLocale().languageCode)
+        .format(this);
+  }
+
+  /// formats using saved dateformat and using apps language, but if the year is the
+  /// same as the current, leave it
+  String formatWithoutYear() {
+    String format = settings.get(Setting.dateFormat);
+
+    final noYear =
+        supportedDateFormatsNoYear[supportedDateFormats.indexOf(format)];
+
+    return DateFormat(noYear, getLocale().languageCode).format(this);
+  }
+
+  /// formats the date, replaces yesterday, today and tomorrow, or calls [formatWithoutYear]
   String dateText() {
     final localDate = toLocal();
     final now = DateTime.now();
+    final loc = getLocalization();
 
-    String text;
-    text = DateFormat('d. M.').format(localDate);
-    if (localDate.year != now.year) {
-      text = DateFormat('d. M. y').format(localDate);
-    } else if (localDate.isSameDay(now)) {
-      text = 'Today';
-    } else if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
-      text = 'Tomorrow';
-    } else if (localDate
-        .isSameDay(now.toUtc().subtract(const Duration(days: 1)))) {
-      text = 'Yesterday';
+    if (localDate.isSameDay(now)) {
+      return loc.today;
     }
-    return text;
+    if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
+      return loc.tomorrow;
+    }
+    if (localDate.isSameDay(now.toUtc().subtract(const Duration(days: 1)))) {
+      return loc.yesterday;
+    }
+    return formatWithoutYear();
   }
 
-  /// returns day of week if it is in less than 7 days, else date
-  String dayText() {
+  /// returns day of week if it is in less than 7 days, else [formatWithoutYear]
+  String dayOfWeekText() {
     final localDate = toLocal();
     final now = DateTime.now();
 
-    if (localDate.difference(now) < Duration(days: 6)) {
-      return DateFormat.EEEE().format(localDate);
+    if (localDate.difference(now) < const Duration(days: 6)) {
+      return DateFormat.EEEE(getLocale().languageCode).format(localDate);
     }
-    return dateText();
-  }
-
-  String formattedDate() {
-    final local = toLocal();
-    String year =
-        local.year == DateTime.now().year ? '' : local.year.toString();
-    return '${local.day}.${local.month}.$year';
+    return formatWithoutYear();
   }
 }

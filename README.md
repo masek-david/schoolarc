@@ -16,14 +16,14 @@ App to help students manage their homeworks and exams, simply in one app.
 ## Platforms
 Schoolarc can run on most platforms, however, some functions don't work on some operating systems.
 
-|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications| Widget  |
-|---------|:---------------------:|:--------:|:---------:|:------------:|:-------:|
-| Android |           ✅         |    ✅    |    ✅    |      ✅      |   ✅   | 
-| iOS     |           ✅         |    ✅    |    ✅    |      ✅      |   ❌   | 
-| Web     |           ✅         |    ✅    |    ❌    |      ❌      |   ❌   | 
-| Windows |           ❌         |    ✅    |    ✅    |      ❌      |   ❌   | 
-| macOS   |           ❔         |    ❔    |    ❔    |      ❔      |   ❔   | 
-| Linux   |           ❔         |    ❔    |    ❔    |      ❔      |   ❔   | 
+|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications| Homescreen Widget |
+|---------|:---------------------:|:--------:|:---------:|:------------:|:-----------------:|
+| Android |           ✅         |    ✅    |    ✅    |      ✅      |         ✅       | 
+| iOS     |           ✅         |    ✅    |    ✅    |      ✅      |         ❌       | 
+| Web     |           ✅         |    ✅    |    ✅    |      ❌      |         ❌       | 
+| Windows |           ❌         |    ✅    |    ✅    |      ❌      |         ❌       | 
+| macOS   |           ❔         |    ❔    |    ❔    |      ❔      |         ❔       | 
+| Linux   |           ❔         |    ❔    |    ❔    |      ❔      |         ❔       | 
 
  ✅ working       ❌ not working     ❔not tested
 

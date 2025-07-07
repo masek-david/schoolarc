@@ -4,12 +4,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 
 enum Setting {
   themeUseDeviceColor,
   themeColorValue,
   themeDynamicSchemeVariantInt,
   themeUseOled,
+  localeLanguage,
+  use24HourFormat,
+  dateFormat,
+  weekStartsOnMonday,
   initialAppPage,
   pageSwitchAnimationDuration,
   showAppOverlay,
@@ -20,7 +25,7 @@ enum Setting {
   timeTableShowWholeWeek,
   timeTableTileWidth,
   bakaKeepLoggedIn,
-  calendarInitialIstomorrow,
+  calendarInitialIsTomorrow,
   calendarShowMissed,
   calendarResizableContainerRatio,
   calendarShowArrows,
@@ -56,8 +61,7 @@ class SettingsDatabase {
     ),
     Setting.themeColorValue: SettingModel(
       key: 'themeColor',
-      // ignore: deprecated_member_use
-      defaultValue: const Color.fromARGB(255, 104, 58, 183).value,
+      defaultValue: const Color.fromARGB(255, 104, 58, 183).toARGB32(),
     ),
     Setting.themeDynamicSchemeVariantInt: SettingModel(
       key: 'themeColorMode',
@@ -66,6 +70,23 @@ class SettingsDatabase {
     Setting.themeUseOled: SettingModel(
       key: 'themeUseOled',
       defaultValue: false,
+    ),
+    Setting.localeLanguage: SettingModel(
+      key: 'localeLanguage',
+      // format: 'cs' or 'en'
+      defaultValue: null,
+    ),
+    Setting.use24HourFormat: SettingModel(
+      key: '24HourFormat',
+      defaultValue: null,
+    ),
+    Setting.dateFormat: SettingModel(
+      key: 'dateFormat',
+      defaultValue: supportedDateFormats[0],
+    ),
+    Setting.weekStartsOnMonday: SettingModel(
+      key: 'startOnMonday',
+      defaultValue: true,
     ),
     Setting.initialAppPage: SettingModel(
       key: 'initialAppPage',
@@ -107,7 +128,7 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'bakaKeepLoggedIn',
     ),
-    Setting.calendarInitialIstomorrow: SettingModel(
+    Setting.calendarInitialIsTomorrow: SettingModel(
       defaultValue: true,
       key: 'calendarInitialIstomorrow',
     ),

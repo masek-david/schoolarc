@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
@@ -34,6 +35,7 @@ void main() async {
 
   await initHive();
   await initNotifications();
+  await initializeDateFormatting();
 
   // gets rid of android bottom colored bar
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -59,6 +61,6 @@ void main() async {
   }
 
   runApp(
-    ProviderScope(child: const TasksApp()),
+    const ProviderScope(child: TasksApp()),
   );
 }

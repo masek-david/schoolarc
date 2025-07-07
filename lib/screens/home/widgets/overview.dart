@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 
 class Overview extends StatelessWidget {
   const Overview({
@@ -14,24 +16,24 @@ class Overview extends StatelessWidget {
   final int hwNumberOfMissed;
   final int examNumberOfIncomplete;
 
-  String get welcomeText {
+  String get greetingTime {
     final hour = TimeOfDay.now().hour;
 
     if (hour >= 5 && hour < 12) {
-      return 'Good morning';
+      return 'morning';
     } else if (hour < 17) {
-      return 'Good afternoon';
+      return 'afternoon';
     } else if (hour < 21) {
-      return 'Good evening';
+      return 'evening';
     } else {
-      return 'Good night';
+      return 'night';
     }
   }
 
   /// return 'no' if the int == 0
-  String numberWithNo(int number) {
+  String numberOrNo(int number, BuildContext context) {
     if (number == 0) {
-      return 'no';
+      return context.loc.zero;
     }
     return number.toString();
   }
@@ -48,31 +50,31 @@ class Overview extends StatelessWidget {
         settings.get(Setting.homeShowUserName) && userName != null;
 
     return Padding(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$welcomeText${showUserName ? ', $userName' : ''}',
+            '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative()}' : ''}',
             style: textTheme.headlineLarge,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           RichText(
             text: TextSpan(
-              text: 'You have ',
+              text: '${context.loc.youHave} ',
               style: textTheme.bodyLarge,
               children: [
                 if (showMissed)
                   TextSpan(
                     text:
-                        '${numberWithNo(hwNumberOfMissed)}\u{00A0}missed homework${hwNumberOfMissed != 1 ? 's' : ''}, ',
+                    '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed)}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 TextSpan(
-                  text: numberWithNo(hwNumberOfIncomplete),
+                  text: numberOrNo(hwNumberOfIncomplete, context),
                   style: TextStyle(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
@@ -80,10 +82,10 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      '\u{00A0}upcoming homework${hwNumberOfIncomplete != 1 ? 's' : ''} and ',
+                  ' ${context.loc.upcomingHomework(hwNumberOfIncomplete)} ${context.loc.and} ',
                 ),
                 TextSpan(
-                  text: numberWithNo(examNumberOfIncomplete),
+                  text: numberOrNo(examNumberOfIncomplete, context),
                   style: TextStyle(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
@@ -91,7 +93,7 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      '\u{00A0}upcoming exam${examNumberOfIncomplete != 1 ? 's' : ''}',
+                  ' ${context.loc.upcomingExams(examNumberOfIncomplete)}',
                 ),
               ],
             ),

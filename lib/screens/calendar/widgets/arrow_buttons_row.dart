@@ -13,7 +13,7 @@ class ArrowButtonsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(120);
-    final padding = EdgeInsets.all(6);
+    final padding = const EdgeInsets.all(6);
     
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,7 +26,7 @@ class ArrowButtonsRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
               color: color,
             ),
-            child: Icon(Icons.keyboard_arrow_left),
+            child: const Icon(Icons.keyboard_arrow_left),
           ),
         ),
         IconButton(
@@ -37,7 +37,7 @@ class ArrowButtonsRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
               color: color,
             ),
-            child: Icon(Icons.keyboard_arrow_right),
+            child: const Icon(Icons.keyboard_arrow_right),
           ),
         ),
       ],

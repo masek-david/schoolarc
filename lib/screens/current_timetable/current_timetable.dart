@@ -6,6 +6,7 @@ import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/non_scrollable_refresh_indicator.dart';
@@ -52,7 +53,7 @@ class _CurrentTimetableScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Current timetable'),
+        title: Text(context.loc.currentTimetable),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
@@ -95,14 +96,14 @@ class _CurrentTimetableScreenState
           future: timetable,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
               return Center(child: ErrorTile(error: snapshot.error));
             } else if (!snapshot.hasData) {
               return Center(
-                child: Text('No timetable'),
+                child: Text(context.loc.noTimetable),
               );
             }
 
@@ -110,7 +111,7 @@ class _CurrentTimetableScreenState
               children: [
                 Expanded(
                   child: TimetableView(
-                    textWhenEmpty: 'No timetable found',
+                    textWhenEmpty: context.loc.noTimetable,
                     timeTable: snapshot.data,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
                     columnWidth: settings.get(Setting.timeTableTileWidth),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 
@@ -31,7 +34,7 @@ class TimetableView extends StatelessWidget {
     if (timeTable == null) {
       return Center(
         child: Text(
-          textWhenEmpty ?? 'No timetable found',
+          textWhenEmpty ?? context.loc.noTimetable,
           textAlign: TextAlign.center,
         ),
       );
@@ -40,9 +43,9 @@ class TimetableView extends StatelessWidget {
     final table = timeTable!.table;
 
     return timeTable!.lessonTimes.isEmpty
-        ? const Center(
+        ? Center(
             child: Text(
-              'No timetable found.',
+              context.loc.noTimetable,
               textAlign: TextAlign.center,
             ),
           )
@@ -112,6 +115,14 @@ class TimetableView extends StatelessWidget {
                       );
                     }
                     int weekday = rowIndex - 1;
+
+                    if (!settings.get(Setting.weekStartsOnMonday)) {
+                      weekday--;
+                      if (weekday == -1) {
+                        weekday = 6;
+                      }
+                    }
+
                     return Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -130,7 +141,7 @@ class TimetableView extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(DateFormat('EEE').format(date)),
-                                    Text(date.toLocal().formattedDate()),
+                                    Text(date.toLocal().formatWithoutYear()),
                                   ],
                                 ),
                               );

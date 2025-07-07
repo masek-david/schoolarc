@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class KeyboardDatePicker extends StatefulWidget {
@@ -23,7 +25,6 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
     final month = int.tryParse(split.elementAtOrNull(1) ?? '');
     final year = int.tryParse(split.elementAtOrNull(2) ?? '');
 
-    // if (day == null && month == null && year == null) return null;
     return date.copyWith(day: day, month: month, year: year);
   }
 
@@ -44,8 +45,8 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
             TextField(
               autofocus: true,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(15),
-                border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.all(15),
+                border: const OutlineInputBorder(),
                 hintText: DateFormat('d M y').format(date),
               ),
               onChanged: (value) {
@@ -57,8 +58,12 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
                 Navigator.pop(context, date);
               },
             ),
+            Text(context.loc.useDateFormat),
+            Text(context.loc.asDividerUse),
             TableCalendar(
-              availableCalendarFormats: {CalendarFormat.month: 'Month'},
+              locale: getLocale().languageCode,
+              daysOfWeekHeight: 20,
+              availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarBuilders: myCalendarBuilder(
                 onEdit: (exam) {},
@@ -80,18 +85,19 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 8,
               children: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Close'),
+                  child: Text(context.loc.close),
                 ),
                 FilledButton(
                   onPressed: () {
                     Navigator.pop(context, date);
                   },
-                  child: Text('Ok'),
+                  child: Text(context.loc.ok),
                 ),
               ],
             ),

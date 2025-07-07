@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/meal_model.dart';
@@ -25,13 +26,13 @@ class StravaService {
     required String canteenCode,
     required String username,
     required String password,
-  }) async{
+  }) async {
+    final loc = getLocalization();
     if (int.tryParse(canteenCode) == null) {
-      throw ServiceException('Invalid canteen number');
+      throw ServiceException(loc.invalidCanteenNumber);
     }
     if (canteenCode.length != 4) {
-      throw ServiceException(
-          'Invalid canteen number length, only allowed is 4');
+      throw ServiceException(loc.invalidCanteenNumberLength);
     }
 
     await storage.write(canteenCodeKey, canteenCode);
@@ -62,16 +63,17 @@ class StravaService {
       );
     }
 
+    final loc = getLocalization();
     if (canteenCode == '') {
-      throw ServiceException('Canteen number is missing',
+      throw ServiceException(loc.canteenNumberMissing,
           action: ExceptionActions.stravaLogin);
     }
     if (username == '') {
-      throw ServiceException('Username is missing',
+      throw ServiceException(loc.usernameMissing,
           action: ExceptionActions.stravaLogin);
     }
     if (password == '') {
-      throw ServiceException('Password is missing',
+      throw ServiceException(loc.passwordMissing,
           action: ExceptionActions.stravaLogin);
     }
 
@@ -92,7 +94,7 @@ class StravaService {
       rethrow;
     }
 
-    if(response.statusCode != 200){
+    if (response.statusCode != 200) {
       throw ServiceException(response.reasonPhrase);
     }
 
@@ -133,7 +135,8 @@ class StravaService {
         }),
       );
     } on SocketException {
-      throw ServiceException('Check your internet connection');
+      final loc = getLocalization();
+      throw ServiceException(loc.checkConnection);
     } on Object {
       rethrow;
     }
@@ -174,16 +177,16 @@ class StravaService {
   /// datetime in local at 0:00
   Future<Map<DateTime, List<Meal>>> getMealsNoLogin() async {
     Map<DateTime, List<Meal>> meals = {};
+    final loc = getLocalization();
 
     try {
       canteenCode = await storage.read(canteenCodeKey);
     } on Exception {
-      throw ServiceException('Please log in',
-          action: ExceptionActions.stravaLogin);
+      throw ServiceException(loc.logIn, action: ExceptionActions.stravaLogin);
     }
 
     if (canteenCode == '') {
-      throw ServiceException('No canteen, please log in',
+      throw ServiceException(loc.noCanteen,
           action: ExceptionActions.stravaLogin);
     }
 
@@ -200,7 +203,7 @@ class StravaService {
         response = await http.get(Uri.parse(uri));
       }
     } on SocketException {
-      throw ServiceException('Check your internet connection');
+      throw ServiceException(loc.checkConnection);
     } on Object {
       rethrow;
     }

@@ -6,6 +6,7 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/screens/homeworks/widgets/hw_overlay.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/homeworks/widgets/my_checkbox.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
@@ -59,7 +60,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
   @override
   Widget build(BuildContext context) {
     if (!isShown) {
-      return SizedBox(height: 60);
+      return const SizedBox(height: 60);
     }
 
     final bool isMissed =
@@ -96,7 +97,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         widget.onConvert!();
                       },
                       icon: Icons.swap_vertical_circle_outlined,
-                      label: 'To exam',
+                      label: context.loc.toExam,
                       foregroundColor:
                           Theme.of(context).colorScheme.onTertiaryContainer,
                       backgroundColor:
@@ -129,7 +130,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                 ),
           child: AnimatedContainer(
             key: widgetKey,
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               border: isMissed && widget.borderIfMissed
                   ? Border.all(
@@ -183,7 +184,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                 child: Opacity(
                   opacity: opacity,
                   child: Padding(
-                    padding: EdgeInsets.all(padding),
+                    padding: const EdgeInsets.all(padding),
                     // main row
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,7 +195,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                             children: [
                               Text(widget.hw.order.toString()),
                               if (widget.hw.isBeingAnimated)
-                                Icon(
+                                const Icon(
                                   Icons.animation,
                                   size: 15,
                                 )

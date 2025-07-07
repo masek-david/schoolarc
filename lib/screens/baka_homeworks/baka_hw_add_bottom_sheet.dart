@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/priority_picker.dart';
 
 class BakaHwAddBottomSheet extends StatefulWidget {
@@ -34,7 +35,7 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           Text(widget.hw.text),
-          Divider(),
+          const Divider(),
           SizedBox(
             height: 40,
             child: PriorityPicker(
@@ -50,7 +51,7 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
               children: [
                 Icon(Icons.info, color: errorColor),
                 Text(
-                  'This homework has been already added',
+                  context.loc.homeworkAlreadyAdded,
                   style: TextStyle(color: errorColor),
                 ),
               ],
@@ -68,7 +69,7 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
                     ),
                   );
                 },
-                child: Text('Add as homework'),
+                child: Text(context.loc.addAsHomework),
               ),
               FilledButton(
                 onPressed: () {
@@ -80,7 +81,7 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
                     ),
                   );
                 },
-                child: Text('Add as a exam'),
+                child: Text(context.loc.addAsExam),
               ),
             ],
           ),

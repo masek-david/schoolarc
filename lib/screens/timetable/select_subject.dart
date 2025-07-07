@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 Future<Subject?> showSelectSubject({
   required BuildContext context,
@@ -32,13 +33,15 @@ class SelectSubjectDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
+
     return AlertDialog(
       contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
-      title: const Text('Select a subject:'),
+      title: Text(loc.selectSubject),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(loc.cancel),
         ),
         if (delete != null)
           TextButton(
@@ -46,14 +49,14 @@ class SelectSubjectDialog extends StatelessWidget {
               delete!();
               Navigator.pop(context);
             },
-            child: const Text('Set to empty'),
+            child: Text(loc.setToEmpty),
           ),
       ],
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Autocomplete(
+          Autocomplete<Subject>(
             onSelected: (option) {
               Navigator.pop(context, option);
             },
@@ -71,17 +74,13 @@ class SelectSubjectDialog extends StatelessWidget {
                 ),
               );
             },
-            displayStringForOption: (option) {
-              return option.name;
-            },
+            displayStringForOption: (option) => option.name,
             optionsBuilder: (textEditingValue) {
-              if (textEditingValue.text == '') {
+              if (textEditingValue.text.isEmpty) {
                 return const Iterable<Subject>.empty();
               }
               return subjects.where(
-                (subject) {
-                  return subject.containsText(textEditingValue.text);
-                },
+                (subject) => subject.containsText(textEditingValue.text),
               );
             },
           ),
@@ -94,14 +93,11 @@ class SelectSubjectDialog extends StatelessWidget {
                   itemCount: subjects.length,
                   itemBuilder: (context, index) {
                     final subject = subjects[index];
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: SubjectTile(
                         subject: subject,
-                        onTap: () {
-                          Navigator.pop(context, subject);
-                        },
+                        onTap: () => Navigator.pop(context, subject),
                         onDelete: null,
                       ),
                     );

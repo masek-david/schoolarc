@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exams/exam_id_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/exception_model.dart';
@@ -51,8 +52,10 @@ class FirebaseService {
 
       refLocation();
     } on FirebaseAuthException catch (e) {
-      if ((e).message == 'An internal error has occurred.') {
-        throw ServiceException('Try again.');
+      final loc = getLocalization();
+
+      if ((e).message == loc.internalError) {
+        throw ServiceException(loc.tryAgain);
       }
       throw ServiceException(e.message);
     }
@@ -73,24 +76,34 @@ class FirebaseService {
     return;
   }
 
-  Future<bool> changePassword(String password) async {
-    if(auth.currentUser == null){
-      throw ServiceException('No user logged in');
+  Future<bool> changePassword(String oldPassword, String password) async {
+    final loc = getLocalization();
+    if (auth.currentUser == null) {
+      throw ServiceException(loc.noUserLoggedIn);
     }
-    
+
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: auth.currentUser!.email ?? '',
+        password: oldPassword,
+      );
+    } on Object catch (error) {
+      throw ServiceException("${loc.passwordCantBeChanged} $error");
+    }
+
     //Pass in the password to updatePassword.
     auth.currentUser!.updatePassword(password).then((_) {
       return true;
     }).catchError((error) {
-      throw ServiceException("Password can't be changed$error");
-      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+      throw ServiceException("${loc.passwordCantBeChanged} $error");
+      // This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
     });
     return false;
   }
 
   // EXAMS
   Stream<ExamWithID> listenExams() {
-    if (auth.currentUser == null) return Stream.empty();
+    if (auth.currentUser == null) return const Stream.empty();
 
     final added = exams.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
@@ -175,7 +188,7 @@ class FirebaseService {
 
   // HOMEWORKS
   Stream<HomeworkWithID> listenHomeworks() {
-    if (auth.currentUser == null) return Stream.empty();
+    if (auth.currentUser == null) return const Stream.empty();
 
     final added = homeworks.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
@@ -261,7 +274,7 @@ class FirebaseService {
   // SUBJECTS
 
   Stream<Subject> listenSubjects() {
-    if (auth.currentUser == null) return Stream.empty();
+    if (auth.currentUser == null) return const Stream.empty();
     final added = subjects.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);

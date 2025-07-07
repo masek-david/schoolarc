@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/screens/meals/meals_screen.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
@@ -11,8 +12,8 @@ import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class MealsCard extends StatelessWidget {
-  MealsCard({
+class MealsCard extends StatefulWidget {
+  const MealsCard({
     super.key,
     required this.meals,
     required this.refresh,
@@ -23,7 +24,18 @@ class MealsCard extends StatelessWidget {
   final bool isVisible;
   final Future<void> Function() refresh;
 
+  @override
+  State<MealsCard> createState() => _MealsCardState();
+}
+
+class _MealsCardState extends State<MealsCard> {
   final PageController _pageController = PageController();
+
+  @override
+  void dispose(){
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,45 +52,43 @@ class MealsCard extends StatelessWidget {
     return AnimatedSize(
       duration: Durations.medium1,
       child: SizedBox(
-        height: isVisible ? null : 0,
+        height: widget.isVisible ? null : 0,
         child: FutureBuilder(
-          future: meals,
+          future: widget.meals,
           builder: (context, snapshot) {
             bool isLoading = false;
-        
+
             if (snapshot.connectionState == ConnectionState.waiting) {
               isLoading = true;
             } else if (snapshot.hasError) {
               return ErrorTile(
                 error: snapshot.error,
-                text: 'Meals couldn\'t be loaded',
+                text: context.loc.mealsNotLoaded,
                 actions: [
                   LoadingIconButton(
                     icon: Icons.refresh,
-                    onTap: () => refresh(),
+                    onTap: () => widget.refresh(),
                     isLoading: isLoading,
                   ),
                   IconButton(
                     onPressed: () {
                       navigatorKey.currentState?.push(MaterialPageRoute(
-                        builder: (context) => MealsScreen(),
+                        builder: (context) => const MealsScreen(),
                       ));
                     },
-                    icon: const Icon(
-                      Icons.keyboard_arrow_right_rounded,
-                    ),
+                    icon: const Icon(Icons.keyboard_arrow_right_rounded),
                   ),
                 ],
               );
             } else if (!snapshot.hasData) {
-              return const Center(child: Text('No meals found'));
+              return Center(child: Text(context.loc.noMealsFound));
             }
-        
+
             int pagesCount = snapshot.data?.keys.length ?? 1;
             if (pagesCount == 0) {
               pagesCount = 1;
             }
-        
+
             return Card(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -93,42 +103,41 @@ class MealsCard extends StatelessWidget {
                           .toUtc()
                           .add(Duration(days: index))
                           .toLocal();
-        
+
                       final mealsForToday = snapshot.data?[date];
                       final bool empty = mealsForToday == null;
-        
+
                       return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextSeparator(
                               text: isLoading
-                                  ? 'Loading'
+                                  ? context.loc.loading
                                   : empty
-                                      ? 'No meals for ${date.dayText().toLowerCase()}'
-                                      : 'Meals for ${date.dayText().toLowerCase()}',
+                                      ? '${context.loc.noMealsFor} ${date.dayOfWeekText().toLowerCase()}'
+                                      : '${context.loc.mealsFor} ${date.dayOfWeekText().toLowerCase()}',
                               actions: [
                                 LoadingIconButton(
                                   icon: Icons.refresh,
-                                  onTap: () => refresh(),
+                                  onTap: () => widget.refresh(),
                                   isLoading: isLoading,
                                 ),
                                 IconButton(
                                   onPressed: () {
                                     navigatorKey.currentState
                                         ?.push(MaterialPageRoute(
-                                      builder: (context) => MealsScreen(),
+                                      builder: (context) => const MealsScreen(),
                                     ));
                                   },
                                   icon: const Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                  ),
+                                      Icons.keyboard_arrow_right_rounded),
                                 ),
                               ],
                             ),
-                            // if (empty) SizedBox(height: 8),
                             if (!empty)
                               ...mealsForToday.map((meal) {
                                 return MealTile(meal: meal);
@@ -144,9 +153,11 @@ class MealsCard extends StatelessWidget {
                         controller: _pageController,
                         count: snapshot.data?.keys.length ?? 0,
                         effect: ScrollingDotsEffect(
-                          activeDotColor: Theme.of(context).colorScheme.tertiary,
-                          dotColor:
-                              Theme.of(context).colorScheme.surfaceContainerHighest,
+                          activeDotColor:
+                              Theme.of(context).colorScheme.tertiary,
+                          dotColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           maxVisibleDots: 7,
                           dotHeight: 4,
                           dotWidth: 16,
