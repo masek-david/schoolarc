@@ -1,4 +1,4 @@
-## [2.0.2]() - 2025-07-07
+## [2.0.2]() - 2025-07-08
 ### Added
 - Added czech translation
 - Added options for date and time formats

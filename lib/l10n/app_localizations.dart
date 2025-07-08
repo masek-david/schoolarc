@@ -1412,8 +1412,14 @@ abstract class AppLocalizations {
   /// No description provided for @timeFormat.
   ///
   /// In en, this message translates to:
-  /// **'Time format'**
+  /// **'Use 24-hour time format'**
   String get timeFormat;
+
+  /// No description provided for @timeFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Some languages support only 24-hour format'**
+  String get timeFormatSubtitle;
 
   /// No description provided for @timeFormat12.
   ///

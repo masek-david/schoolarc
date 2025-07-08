@@ -10,7 +10,7 @@ class TimeFormat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final localUse24 = ref.watch(timeFormatProvider);
+    final localUse24 = ref.watch(use24HourFormatProvider);
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(

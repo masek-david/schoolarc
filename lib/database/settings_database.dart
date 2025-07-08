@@ -78,7 +78,7 @@ class SettingsDatabase {
     ),
     Setting.use24HourFormat: SettingModel(
       key: '24HourFormat',
-      defaultValue: null,
+      defaultValue: false,
     ),
     Setting.dateFormat: SettingModel(
       key: 'dateFormat',

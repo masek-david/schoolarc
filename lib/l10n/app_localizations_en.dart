@@ -786,7 +786,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get timeFormat => 'Time format';
+  String get timeFormat => 'Use 24-hour time format';
+
+  @override
+  String get timeFormatSubtitle => 'Some languages support only 24-hour format';
 
   @override
   String get timeFormat12 => '12-hour';

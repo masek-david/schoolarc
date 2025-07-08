@@ -800,7 +800,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get language => 'Jazyk';
 
   @override
-  String get timeFormat => 'Formát času';
+  String get timeFormat => 'Používat 24 hodinový formát času';
+
+  @override
+  String get timeFormatSubtitle => 'Některé jazyky podporují pouze 24 hodinový formát';
 
   @override
   String get timeFormat12 => '12 hodinový';

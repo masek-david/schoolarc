@@ -28,7 +28,7 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
   @override
   Widget build(BuildContext context) {
     final loc = context.loc;
-    bool? use24HourFormat = ref.watch(timeFormatProvider);
+    bool use24HourFormat = ref.watch(use24HourFormatProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +61,7 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
           ),
           SettingTile(
             title: loc.dateFormat,
-            subtitle:
-                '${loc.today}: ${DateTime.now().format()}',
+            subtitle: '${loc.today}: ${DateTime.now().format()}',
             trailing: DropDownAction(
               value: dateFormat,
               onChanged: (value) {
@@ -84,29 +83,17 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
                   .toList(),
             ),
           ),
-          SettingTile(
-            title: loc.timeFormat,
-            subtitle: '${loc.now}: ${TimeOfDay.now().format(context)}',
-            trailing: DropDownAction(
+          // show setting for 24 hour format only if it is supported
+          if (DateFormat.jm(language).format(date).contains('PM'))
+            SettingTile.withSwitch(
+              title: loc.timeFormat,
               value: use24HourFormat,
+              subtitle: '''
+${loc.timeFormatSubtitle}
+${loc.now}: ${TimeOfDay.now().format(context)}''',
               onChanged: (value) =>
-                  ref.read(timeFormatProvider.notifier).set(value as bool?),
-              items: [
-                DropdownMenuItem(
-                  value: null,
-                  child: Text(loc.defaultWord),
-                ),
-                DropdownMenuItem(
-                  value: false,
-                  child: Text(loc.timeFormat12),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Text(loc.timeFormat24),
-                ),
-              ],
+                  ref.read(use24HourFormatProvider.notifier).set(value),
             ),
-          ),
           SettingTile.withSwitch(
             title: loc.weekStartsOnMonday,
             subtitle: loc.weekStartsOnMondaySubtitle,
