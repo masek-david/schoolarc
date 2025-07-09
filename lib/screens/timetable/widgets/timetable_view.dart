@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
@@ -8,6 +9,7 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
+import 'package:school_manager/utils/extensions/string_extension.dart';
 
 class TimetableView extends StatelessWidget {
   const TimetableView({
@@ -140,7 +142,7 @@ class TimetableView extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(DateFormat('EEE').format(date)),
+                                    Text(DateFormat('EEE', getLocale().languageCode).format(date).capitalize()),
                                     Text(date.toLocal().formatWithoutYear()),
                                   ],
                                 ),

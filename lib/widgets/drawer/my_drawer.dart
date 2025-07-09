@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
@@ -13,6 +14,7 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/color_mapper.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 import 'package:school_manager/widgets/drawer/search_bar.dart';
@@ -38,19 +40,27 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     late final bool showDebug = settings.get(Setting.showDebugInfo);
     final loc = context.loc;
-    
+
     return Drawer(
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 28, bottom: 20, top: 20),
-              child: Text('Schoolarc', style: TextStyle(fontSize: 20)),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                height: 100,
+                child: SvgPicture.asset(
+                  alignment: Alignment.centerLeft,
+                  'assets/schoolarc_logo.svg',
+                  colorMapper: LogoColorMapper(Theme.of(context)),
+                ),
+              ),
             ),
             const Padding(
-                padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
-                child: MySearchBar()),
+              padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
+              child: MySearchBar(),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(

@@ -67,7 +67,7 @@ class Overview extends StatelessWidget {
                 if (showMissed)
                   TextSpan(
                     text:
-                    '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed)}, ',
+                    '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed).toLowerCase()}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,
@@ -82,7 +82,7 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                  ' ${context.loc.upcomingHomework(hwNumberOfIncomplete)} ${context.loc.and} ',
+                  ' ${context.loc.upcomingHomework(hwNumberOfIncomplete).toLowerCase()} ${context.loc.and} ',
                 ),
                 TextSpan(
                   text: numberOrNo(examNumberOfIncomplete, context),
@@ -93,7 +93,7 @@ class Overview extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                  ' ${context.loc.upcomingExams(examNumberOfIncomplete)}',
+                  ' ${context.loc.upcomingExams(examNumberOfIncomplete).toLowerCase()}',
                 ),
               ],
             ),

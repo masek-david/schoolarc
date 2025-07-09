@@ -98,10 +98,11 @@ extension BetterDateTime on DateTime {
 
   /// formats using saved dateformat and using apps language
   String formatTime() {
+    final date = toLocal();
     if(settings.get(Setting.use24HourFormat)){
-      return DateFormat.Hm().format(this);
+      return DateFormat.Hm().format(date);
     }
-    return DateFormat.jm(settings.get(Setting.localeLanguage)).format(this);
+    return DateFormat.jm(settings.get(Setting.localeLanguage)).format(date);
   }
 
   /// formats using saved dateformat and using apps language, but if the year is the

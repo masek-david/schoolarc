@@ -1,3 +1,16 @@
+## [2.0.3]() - 2025-
+### Added
+- Added app logo to drawer
+- Added image showing app colors in theme settings
+
+### Changed
+
+### Fixed
+- Fixed home screen overview capitalization
+- Fixed time formatting
+
+---
+
 ## [2.0.2]() - 2025-07-08
 ### Added
 - Added czech translation
@@ -6,7 +19,6 @@
 ### Changed
 
 ### Fixed
-
 
 ---
 

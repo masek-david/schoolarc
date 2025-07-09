@@ -560,10 +560,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get themeFollowSystem => 'Podle systému';
 
   @override
-  String get themeLight => 'Světlé';
+  String get themeLight => 'Světlý';
 
   @override
-  String get themeDark => 'Tmavé';
+  String get themeDark => 'Tmavý';
 
   @override
   String get themeOLEDTitle => 'OLED černá';

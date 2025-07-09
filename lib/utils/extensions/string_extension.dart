@@ -51,7 +51,7 @@ extension DiacriticsAwareString on String {
       // Např. Michal -> Michale
     } else if (lowerName.endsWith('ch') || lowerName.endsWith('k')) {
       return '${name}u';
-      // Např. vojtect -> vojtechu
+      // Např. vojtech -> vojtechu
     } else if (lowerName.endsWith('r')) {
       return '${name.substring(0, name.length - 1)}ře';
       // Např. Petr -> Petře
