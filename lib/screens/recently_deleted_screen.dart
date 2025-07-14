@@ -8,7 +8,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
@@ -111,9 +111,9 @@ class RecentlyDeletedScreen extends ConsumerWidget {
               {
                 daysLeft =
                     7 + (item as Homework).timestamp.difference(now).inDays;
-                tile = HomeworkTile(
+                tile = HwTile(
                   hw: item,
-                  borderIfMissed: false,
+                  showBorderIfMissed: false,
                   onChangedCompletion: null,
                   onDelete: null,
                   onEdit: () => recover(context: context, ref: ref, item: item),

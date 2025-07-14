@@ -11,7 +11,7 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
-import 'package:school_manager/widgets/animated_star.dart';
+import 'package:school_manager/widgets/animated_shape.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
@@ -111,7 +111,7 @@ class ExamsScreen extends ConsumerWidget {
                   },
                   child: itemList.length == 5
                       ? ListView(children: [
-                          const AnimatedStar(),
+                          const AnimatedShape(),
                           _buildCompletedList(context, ref, completedExams)
                         ])
                       : AnimatedReorderableListView(

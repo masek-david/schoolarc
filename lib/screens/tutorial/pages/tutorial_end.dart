@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
-class WelcomeScreenEnd extends StatefulWidget {
-  const WelcomeScreenEnd({super.key, required this.onEnd});
+class TutorialEnd extends StatefulWidget {
+  const TutorialEnd({super.key, required this.onEnd});
 
   final void Function() onEnd;
 
   @override
-  State<WelcomeScreenEnd> createState() => _WelcomeScreenEndState();
+  State<TutorialEnd> createState() => _TutorialEndState();
 }
 
-class _WelcomeScreenEndState extends State<WelcomeScreenEnd>
+class _TutorialEndState extends State<TutorialEnd>
     with TickerProviderStateMixin {
   late final AnimationController controller;
 
@@ -68,18 +69,8 @@ class _WelcomeScreenEndState extends State<WelcomeScreenEnd>
                   children: [
                     FilledButton(
                       onPressed: animate,
-                      child: const Text('Go to app'),
+                      child: Text(context.loc.goToApp),
                     ),
-                    // FilledButton(
-                    //   onPressed: () {
-                    //     navigatorKey.currentState?.push(
-                    //       MaterialPageRoute(
-                    //         builder: (context) => WelcomeScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    //   child: Text('show tutorial'),
-                    // ),
                   ],
                 ),
               ),

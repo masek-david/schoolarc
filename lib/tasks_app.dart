@@ -16,7 +16,7 @@ import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
-import 'package:school_manager/screens/welcome_screen/welcome_screen.dart';
+import 'package:school_manager/screens/tutorial/tutorial.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
 import 'package:school_manager/database/exam_database.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
@@ -284,8 +284,9 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   }
 
   void firstTimeOpeningApp() {
-    // TODO - when done simply change the key of the value in db
-    showingTutorial = false;
+    if (!kIsWeb) {
+      showingTutorial = true;
+    }
   }
 
   void refreshTheme() {
@@ -501,7 +502,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
                         ),
                 ),
               ),
-              if (showingTutorial) WelcomeScreen(onEnd: endTutorial),
+              if (showingTutorial) Tutorial(onEnd: endTutorial),
               if (showingFirebaseLoginScreen)
                 FirebaseLoginScreen(onHide: hideFirebase),
               if (settings.get(Setting.debugShowFireOverlay))

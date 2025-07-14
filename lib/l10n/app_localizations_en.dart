@@ -867,4 +867,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationPermissionBody2 => 'The Grant permission button will take you to app settings from where you can enable all notifications.';
+
+  @override
+  String get useExtensions => 'You can use these extensions:';
+
+  @override
+  String get bakalariSubtitle => 'Import subjects and view current timetable';
+
+  @override
+  String get stravaCzSubtitle => 'View meals in your canteen';
+
+  @override
+  String get cloudSyncSubtitle => 'Backup and sync your data between devices';
+
+  @override
+  String get goToApp => 'Go to app';
+
+  @override
+  String get tutorialIntro => 'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.';
+
+  @override
+  String get welcome => 'Welcome';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get tutorialHomeworkTitle => 'This is homework:';
+
+  @override
+  String get tutorialExamTitle => 'And this is an exam:';
+
+  @override
+  String get tutorialHomeworkDelete => 'This deletes the homework';
+
+  @override
+  String get tutorialExamDelete => 'This deletes the exam';
+
+  @override
+  String get tutorialPriorities => 'Every homework and exam also have their priority. That priority is displayed by its color. Try changing it:';
+
+  @override
+  String get tutorialTryAssigningSubject => 'You can assign each homework or exam to one subject. Try changing it:';
+
+  @override
+  String get tutorialCreateSubjectsLater => 'Create your subjects later in subjects screen inside the drawer.';
+
+  @override
+  String get tutorialCompleteHomework => 'Great job! This completes the homework';
+
+  @override
+  String get tutorialSlideToDelete => 'You can also delete anything by sliding it to left and tapping delete.';
+
+  @override
+  String get tutorialTapCheckbox => 'And by tapping the checkbox on the right, you complete the homework.';
+
+  @override
+  String get exampleSubjectName1 => 'Mathematics';
+
+  @override
+  String get exampleSubjectShort1 => 'Math';
+
+  @override
+  String get exampleSubjectName2 => 'Biology';
+
+  @override
+  String get exampleSubjectShort2 => 'Bio';
+
+  @override
+  String get exampleSubjectName3 => 'English';
+
+  @override
+  String get exampleSubjectShort3 => 'Eng';
 }

@@ -5,14 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
-import 'package:school_manager/widgets/animated_completion.dart';
-import 'package:school_manager/widgets/animated_star.dart';
+import 'package:school_manager/widgets/animated_shape.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
@@ -112,7 +111,7 @@ class HomeworksScreen extends ConsumerWidget {
                   },
                   child: itemList.length == 5
                       ? ListView(children: [
-                          const AnimatedStar(),
+                          const AnimatedShape(),
                           _buildCompletedList(context, ref, completedHws),
                         ])
                       : AnimatedReorderableListView(
@@ -146,21 +145,23 @@ class HomeworksScreen extends ConsumerWidget {
                             }
 
                             final hw = item.hw!;
-                            return AnimatedCompletionTile(
-                              // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
-                              // Multiple widgets use the same globalkey error
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               key: ValueKey(
                                   'hw: ${hw.id} ${hw.stateReaddingVersion}'),
-                              hw: hw,
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              onChangedCompletion: (value) {
-                                ref
-                                    .read(hwProvider.notifier)
-                                    .complete(hw, value);
-                              },
-                              onDelete: () => deleteHw(context, ref, hw),
-                              onEdit: () => editHw(context, ref, hw),
-                              onConvert: () => convertHw(context, ref, hw),
+                              child: HwTile(
+                                // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                                // Multiple widgets use the same globalkey error
+                                hw: hw,
+                                onChangedCompletion: (value) {
+                                  ref
+                                      .read(hwProvider.notifier)
+                                      .complete(hw, value);
+                                },
+                                onDelete: () => deleteHw(context, ref, hw),
+                                onEdit: () => editHw(context, ref, hw),
+                                onConvert: () => convertHw(context, ref, hw),
+                              ),
                             );
                           },
                           removeItemBuilder: (child, animation) {
@@ -222,7 +223,7 @@ class HomeworksScreen extends ConsumerWidget {
             final hw = completedHws[index];
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: HomeworkTile(
+              child: HwTile(
                 hw: hw,
                 onChangedCompletion: (value) {
                   ref.read(hwProvider.notifier).complete(hw, value);

@@ -1,28 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_extensions.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_priorities.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_subjects.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_welcome.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_homeworks.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_exams.dart';
-import 'package:school_manager/screens/welcome_screen/screens/welcome_screen_end.dart';
+import 'package:school_manager/l10n/app_localizations.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_extensions.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_interactions.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_priorities.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_subjects.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_welcome.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_basics.dart';
+import 'package:school_manager/screens/tutorial/pages/tutorial_end.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  WelcomeScreen({super.key, required this.onEnd});
+Subject exampleSubject(AppLocalizations loc) => Subject(
+  name: loc.exampleSubjectName1,
+  shortcut: loc.exampleSubjectShort1,
+  id: '',
+  bakaId: '',
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
+Homework exampleHw(AppLocalizations loc) => Homework(
+  subject: exampleSubject(loc),
+  text: loc.homeworks(1),
+  deadline: DateTime.now().add(const Duration(days: 1)),
+  isCompleted: false,
+  priority: TaskPriority(0),
+  id: '',
+  description: null,
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
+Exam exampleExam(AppLocalizations loc) => Exam(
+  subject: exampleSubject(loc),
+  text: loc.exams(1),
+  deadline: DateTime.now().add(const Duration(days: 1)),
+  isCompleted: false,
+  priority: TaskPriority(0),
+  id: '',
+  description: null,
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
+
+class Tutorial extends StatelessWidget {
+  Tutorial({super.key, required this.onEnd});
 
   final void Function() onEnd;
   final _controller = PageController();
 
   late final pages = [
-    const WelcomeScreenWelcome(),
-    const WelcomeScreenHomeworks(),
-    const WelcomeScreenExams(),
-    const WelcomeScreenSubjects(),
-    const WelcomeScreenPriorities(),
-    const WelcomeScreenExtensions(),
-    WelcomeScreenEnd(onEnd: onEnd),
+    const TutorialWelcome(),
+    const TutorialBasics(),
+    const TutorialPriorities(),
+    const TutorialSubjects(),
+    const TutorialInteractions(),
+    const TutorialExtensions(),
+    TutorialEnd(onEnd: onEnd),
   ];
 
   @override
@@ -34,9 +74,9 @@ class WelcomeScreen extends StatelessWidget {
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            leading: TextButton(
+            title: TextButton(
               onPressed: onEnd,
-              child: const Text('Skip'),
+              child: Text(context.loc.skip),
             ),
             backgroundColor: Colors.transparent,
           ),

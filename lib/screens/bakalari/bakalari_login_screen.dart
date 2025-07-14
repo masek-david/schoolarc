@@ -5,7 +5,7 @@ import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
-import 'package:school_manager/widgets/animated_star.dart';
+import 'package:school_manager/widgets/animated_shape.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
@@ -79,7 +79,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               if (isLoggedIn && !baka.isLoading)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: AnimatedStar.success(
+                  child: AnimatedShape.success(
                     text: context.loc.loggedIn,
                     size: 100,
                     primary: colorScheme.primary,

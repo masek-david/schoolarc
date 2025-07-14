@@ -605,7 +605,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get appDataLabel => 'Data aplikace';
 
   @override
-  String get export => 'Export';
+  String get export => 'Exportovat';
 
   @override
   String get chooseSaveLocation => 'Vybertre umístění pro uložení souboru:';
@@ -884,4 +884,76 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get notificationPermissionBody2 => 'Tlačítko Povolit vás přesměruje do nastavení aplikace, kde můžete oznámení povolit.';
+
+  @override
+  String get useExtensions => 'Můžete využít tato rozšíření:';
+
+  @override
+  String get bakalariSubtitle => 'Umožní importovat předměty a zobrazit aktuální rozvrh';
+
+  @override
+  String get stravaCzSubtitle => 'Dokáže zobrazit jídla ve vaší jídelně';
+
+  @override
+  String get cloudSyncSubtitle => 'Zálohuje a synchronizuje data mezi zařízeními';
+
+  @override
+  String get goToApp => 'Přejít do aplikace';
+
+  @override
+  String get tutorialIntro => 'Děkuji za stažení aplikace Schoolarc. Toto je tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
+
+  @override
+  String get welcome => 'Vítejte';
+
+  @override
+  String get skip => 'Přeskočit';
+
+  @override
+  String get tutorialHomeworkTitle => 'Toto je úkol:';
+
+  @override
+  String get tutorialExamTitle => 'A toto je test:';
+
+  @override
+  String get tutorialHomeworkDelete => 'Tímto smažete úkol';
+
+  @override
+  String get tutorialExamDelete => 'Tímto smažete test';
+
+  @override
+  String get tutorialPriorities => 'Každý úkol a test má svou prioritu. Ta je vyjádřena barvou. Zkuste prioritu změnit:';
+
+  @override
+  String get tutorialTryAssigningSubject => 'Každý úkol nebo test můžete přiřadit k jednomu předmětu. Zkuste předmět změnit:';
+
+  @override
+  String get tutorialCreateSubjectsLater => 'Své předměty si později vytvoříte v obrazovce předmětů v navigační nabídce.';
+
+  @override
+  String get tutorialCompleteHomework => 'Skvělá práce! Tímto dokončíte úkol';
+
+  @override
+  String get tutorialSlideToDelete => 'Přejetím doleva a klepnutím na smazat můžete cokoliv smazat.';
+
+  @override
+  String get tutorialTapCheckbox => 'A klepnutím na zaškrtávací políčko vpravo dokončíte úkol.';
+
+  @override
+  String get exampleSubjectName1 => 'Matematika';
+
+  @override
+  String get exampleSubjectShort1 => 'Ma';
+
+  @override
+  String get exampleSubjectName2 => 'Biologie';
+
+  @override
+  String get exampleSubjectShort2 => 'Bi';
+
+  @override
+  String get exampleSubjectName3 => 'Český jazyk';
+
+  @override
+  String get exampleSubjectShort3 => 'Čj';
 }

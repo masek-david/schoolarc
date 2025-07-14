@@ -1,13 +1,17 @@
-## [2.0.3]() - 2025-
+## [2.1.0]() - 2025-
 ### Added
 - Added app logo to drawer
 - Added image showing app colors in theme settings
+- Added new animated component - shape shifting star
+- Added new animation for completing homework
 
 ### Changed
+- Improved tutorial and welcome page
 
 ### Fixed
 - Fixed home screen overview capitalization
 - Fixed time formatting
+- Fixed sorting in calendar
 
 ---
 

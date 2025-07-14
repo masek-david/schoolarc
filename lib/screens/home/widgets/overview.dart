@@ -3,6 +3,7 @@ import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:school_manager/utils/roboto_serif.dart';
 
 class Overview extends StatelessWidget {
   const Overview({
@@ -21,9 +22,9 @@ class Overview extends StatelessWidget {
 
     if (hour >= 5 && hour < 12) {
       return 'morning';
-    } else if (hour < 17) {
+    } else if (hour >= 12 && hour < 19) {
       return 'afternoon';
-    } else if (hour < 21) {
+    } else if (hour >= 19 && hour < 22) {
       return 'evening';
     } else {
       return 'night';
@@ -56,7 +57,13 @@ class Overview extends StatelessWidget {
         children: [
           Text(
             '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative()}' : ''}',
-            style: textTheme.headlineLarge,
+            style: robotoSerif(
+              size: 36,
+              color: colorScheme.onPrimaryContainer,
+              width: 50,
+              weight: 700,
+              grade: -50,
+            ),
           ),
           const SizedBox(height: 12),
           RichText(
@@ -67,7 +74,7 @@ class Overview extends StatelessWidget {
                 if (showMissed)
                   TextSpan(
                     text:
-                    '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed).toLowerCase()}, ',
+                        '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed).toLowerCase()}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,
@@ -76,24 +83,24 @@ class Overview extends StatelessWidget {
                 TextSpan(
                   text: numberOrNo(hwNumberOfIncomplete, context),
                   style: TextStyle(
-                    color: colorScheme.primary,
+                    color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
                   text:
-                  ' ${context.loc.upcomingHomework(hwNumberOfIncomplete).toLowerCase()} ${context.loc.and} ',
+                      ' ${context.loc.upcomingHomework(hwNumberOfIncomplete).toLowerCase()} ${context.loc.and} ',
                 ),
                 TextSpan(
                   text: numberOrNo(examNumberOfIncomplete, context),
                   style: TextStyle(
-                    color: colorScheme.primary,
+                    color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
                   text:
-                  ' ${context.loc.upcomingExams(examNumberOfIncomplete).toLowerCase()}',
+                      ' ${context.loc.upcomingExams(examNumberOfIncomplete).toLowerCase()}',
                 ),
               ],
             ),

@@ -221,9 +221,7 @@ class SettingsDatabase {
   }
 
   bool get firstTimeOpeningApp {
-    const dbKey = 'firstTimeOpeningApp';
-
-    // return true;
+    const dbKey = 'firstTimeOpeningApp1';
 
     if (_settingsBox.get(dbKey) != true) {
       _settingsBox.put(dbKey, true);

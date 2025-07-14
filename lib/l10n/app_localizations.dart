@@ -1540,6 +1540,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The Grant permission button will take you to app settings from where you can enable all notifications.'**
   String get notificationPermissionBody2;
+
+  /// No description provided for @useExtensions.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use these extensions:'**
+  String get useExtensions;
+
+  /// No description provided for @bakalariSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import subjects and view current timetable'**
+  String get bakalariSubtitle;
+
+  /// No description provided for @stravaCzSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View meals in your canteen'**
+  String get stravaCzSubtitle;
+
+  /// No description provided for @cloudSyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup and sync your data between devices'**
+  String get cloudSyncSubtitle;
+
+  /// No description provided for @goToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to app'**
+  String get goToApp;
+
+  /// No description provided for @tutorialIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.'**
+  String get tutorialIntro;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @tutorialHomeworkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is homework:'**
+  String get tutorialHomeworkTitle;
+
+  /// No description provided for @tutorialExamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'And this is an exam:'**
+  String get tutorialExamTitle;
+
+  /// No description provided for @tutorialHomeworkDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes the homework'**
+  String get tutorialHomeworkDelete;
+
+  /// No description provided for @tutorialExamDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes the exam'**
+  String get tutorialExamDelete;
+
+  /// No description provided for @tutorialPriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Every homework and exam also have their priority. That priority is displayed by its color. Try changing it:'**
+  String get tutorialPriorities;
+
+  /// No description provided for @tutorialTryAssigningSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'You can assign each homework or exam to one subject. Try changing it:'**
+  String get tutorialTryAssigningSubject;
+
+  /// No description provided for @tutorialCreateSubjectsLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your subjects later in subjects screen inside the drawer.'**
+  String get tutorialCreateSubjectsLater;
+
+  /// No description provided for @tutorialCompleteHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! This completes the homework'**
+  String get tutorialCompleteHomework;
+
+  /// No description provided for @tutorialSlideToDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'You can also delete anything by sliding it to left and tapping delete.'**
+  String get tutorialSlideToDelete;
+
+  /// No description provided for @tutorialTapCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'And by tapping the checkbox on the right, you complete the homework.'**
+  String get tutorialTapCheckbox;
+
+  /// No description provided for @exampleSubjectName1.
+  ///
+  /// In en, this message translates to:
+  /// **'Mathematics'**
+  String get exampleSubjectName1;
+
+  /// No description provided for @exampleSubjectShort1.
+  ///
+  /// In en, this message translates to:
+  /// **'Math'**
+  String get exampleSubjectShort1;
+
+  /// No description provided for @exampleSubjectName2.
+  ///
+  /// In en, this message translates to:
+  /// **'Biology'**
+  String get exampleSubjectName2;
+
+  /// No description provided for @exampleSubjectShort2.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get exampleSubjectShort2;
+
+  /// No description provided for @exampleSubjectName3.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get exampleSubjectName3;
+
+  /// No description provided for @exampleSubjectShort3.
+  ///
+  /// In en, this message translates to:
+  /// **'Eng'**
+  String get exampleSubjectShort3;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

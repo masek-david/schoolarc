@@ -1,4 +1,6 @@
 # FIX
+shortcut for creating should include the date in calendar
+performance of expanded title in hw and exams screen
 
 # NEW:
 
@@ -7,6 +9,8 @@
 - ⬜ info about bakalari login
 - ⬜ info about strava.cz login
 - ⬜ plus plan - one time/yearly ???
+
+
 
 - ✅ when should the widget be updated??
 - ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
@@ -19,15 +23,14 @@
     - ✅ date format 
     - ✅ translation
     - ✅ start week with monday
-- ⬜ tutorial
-    - ⬜ need to teach:
-        - ⬜ difference between hw and exam
-        - ⬜ complete hw
-        - ⬜ slide to delete
-        - ⬜ priorities
-        - ⬜ subjects
-    - ⬜ translation
-    - ⬜ import data ???
+- ✅ tutorial
+    - ✅ need to teach:
+        - ✅ difference between hw and exam
+        - ✅ complete hw
+        - ✅ slide to delete
+        - ✅ priorities
+        - ✅ subjects
+    - ✅ translation
     - ⬜ plus plan
 - ⬜ unite the ui/ux for extensions (in settings and in tutorial)
     - ⬜ create providers for logins
@@ -69,6 +72,7 @@
 - ⬜ ? add images to meals
 - ⬜ ? remake app isWide as riverpod provider
 - ⬜ ? remove slide to delete
+- ⬜ make everything react to touch (shrink)
     
 
 

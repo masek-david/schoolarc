@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/widgets/animated_completion.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 
 class HomeworkList extends StatelessWidget {
   const HomeworkList({
@@ -37,7 +37,9 @@ class HomeworkList extends StatelessWidget {
             Homework hw = hwList[index];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
-              child: AnimatedCompletionTile(
+              child: HwTile(
+                // must be here
+                key: ValueKey('hwTile ${hw.id}'),
                 hw: hw,
                 draggable: draggable,
                 showDate: showDates,

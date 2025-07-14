@@ -4,9 +4,9 @@ import 'package:school_manager/l10n/my_localization.dart';
 
 class TaskPriority {
   late final int index;
-  late String name;
-  late Color color;
-  late String htmlIcon;
+  late final String name;
+  late final Color color;
+  late final String htmlIcon;
 
   TaskPriority(int index) {
     final loc = getLocalization();

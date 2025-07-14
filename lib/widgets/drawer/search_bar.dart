@@ -6,7 +6,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/screens/homeworks/widgets/homework_tile.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/utils/task_functions.dart';
 
@@ -58,7 +58,7 @@ class MySearchBar extends ConsumerWidget {
           (task) {
             late Widget item;
             if (task.runtimeType == Homework) {
-              item = HomeworkTile(
+              item = HwTile(
                 hw: task as Homework,
                 onChangedCompletion: (p0) {},
                 onDelete: null,
@@ -66,7 +66,6 @@ class MySearchBar extends ConsumerWidget {
                   editHw(context, ref, task);
                 },
                 onConvert: null,
-                expUseHwOverlay: true,
               );
             } else {
               item = ExamTile(

@@ -6,16 +6,17 @@ import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
-class WelcomeScreenExtensions extends StatefulWidget {
-  const WelcomeScreenExtensions({super.key});
+class TutorialExtensions extends StatefulWidget {
+  const TutorialExtensions({super.key});
 
   @override
-  State<WelcomeScreenExtensions> createState() =>
-      _WelcomeScreenExtensionsState();
+  State<TutorialExtensions> createState() =>
+      _TutorialExtensionsState();
 }
 
-class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
+class _TutorialExtensionsState extends State<TutorialExtensions> {
   bool useBaka = settings.get(Setting.useBakalari);
   bool useStrava = settings.get(Setting.useMeals);
   bool useFirebase = settings.get(Setting.useFirebase);
@@ -29,14 +30,14 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
           child: Column(
             children: [
               Text(
-                'You can log in to these extensions:',
+                context.loc.useExtensions,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 28),
               _ExtensionButton(
                 value: useBaka,
-                title: 'Bakaláři',
-                subtitle: 'Import subjects and view current timetable',
+                title: context.loc.bakalari,
+                subtitle: context.loc.bakalariSubtitle,
                 onChanged: (value) {
                   setState(() {
                     useBaka = value;
@@ -51,12 +52,12 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
                       ),
                     );
                   },
-                  child: const Text('Login'),
+                  child: Text(context.loc.login),
                 ),
               ),
               _ExtensionButton(
-                title: 'Strava CZ',
-                subtitle: 'View meals in your canteen',
+                title: context.loc.stravaCz,
+                subtitle: context.loc.stravaCzSubtitle,
                 value: useStrava,
                 onChanged: (value) {
                   setState(() {
@@ -72,12 +73,12 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
                       ),
                     );
                   },
-                  child: const Text('Login'),
+                  child: Text(context.loc.login),
                 ),
               ),
               _ExtensionButton(
-                title: 'Cloud sync',
-                subtitle: 'Backup and sync your data between devices',
+                title: context.loc.cloudSync,
+                subtitle: context.loc.cloudSyncSubtitle,
                 value: useFirebase,
                 onChanged: (value) {
                   setState(() {
@@ -93,7 +94,7 @@ class _WelcomeScreenExtensionsState extends State<WelcomeScreenExtensions> {
                       ),
                     );
                   },
-                  child: const Text('Login'),
+                  child: Text(context.loc.login),
                 ),
               ),
             ],

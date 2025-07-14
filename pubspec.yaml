@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.0.2+16
+version: 2.0.2+17
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -72,6 +72,9 @@ dependencies:
   flutter_markdown_plus: ^1.0.3
   fl_chart: ^1.0.0
   flutter_svg: ^2.2.0
+  m3_expressive_shapes:
+    git:
+      url: https://github.com/kekland/m3_expressive_shapes
 
 dev_dependencies:
   flutter_test:
@@ -117,17 +120,9 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Roboto Serif
+      fonts:
+        - asset: assets/fonts/RobotoSerif-VariableFont_GRAD,opsz,wdth,wght.ttf
+        - asset: assets/fonts/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf
+          style: italic

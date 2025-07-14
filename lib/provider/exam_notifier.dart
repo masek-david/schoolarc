@@ -81,7 +81,7 @@ Map<DateTime, List<Exam>> examsSortByDate(Map<String, Exam> original) {
   );
 
   examsDateMap.forEach((key, value) {
-    value.sort((a, b) => a.order.compareTo(b.order));
+    value.sort((a, b) => a.id.compareTo(b.id));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
 

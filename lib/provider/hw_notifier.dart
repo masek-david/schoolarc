@@ -87,7 +87,7 @@ Map<DateTime, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
   );
 
   hwDateMap.forEach((key, value) {
-    value.sort((a, b) => a.order.compareTo(b.order));
+    value.sort((a, b) => a.id.compareTo(b.id));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
 
@@ -381,8 +381,8 @@ class HwNotifier extends Notifier<Map<String, Homework>>
       firebaseService.editHomeworks([editedHw]);
     }
 
-    final isNew =
-        editedHw.timestamp.difference(DateTime.now()) < const Duration(seconds: 5);
+    final isNew = editedHw.timestamp.difference(DateTime.now()) <
+        const Duration(seconds: 5);
     final bool shouldPlayAnimation =
         old.isCompleted == false && editedHw.isCompleted == true && isNew;
 
@@ -393,10 +393,13 @@ class HwNotifier extends Notifier<Map<String, Homework>>
       };
 
       await Future.delayed(const Duration(seconds: 1));
-      state = {
-        ...state,
-        editedHw.id: state[editedHw.id]!.copyWith(isBeingAnimated: false),
-      };
+      // remove the animation only if it was this call of this method that set the animation to true the first 
+      if (state[editedHw.id]!.timestamp == editedHw.timestamp) {
+        state = {
+          ...state,
+          editedHw.id: state[editedHw.id]!.copyWith(isBeingAnimated: false),
+        };
+      }
     } else {
       state = {
         ...state,
@@ -408,8 +411,8 @@ class HwNotifier extends Notifier<Map<String, Homework>>
 
   /// updates all with changed order
   ///
-  /// [originalhw] is old homework, [newIndex] and [newPriority] are where it will be placed
-  /// 
+  /// [originalHw] is old homework, [newIndex] and [newPriority] are where it will be placed
+  ///
   /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
     int? newIndex,
@@ -546,7 +549,8 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     List<Homework> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
-      if (hw.isDeleted && now.difference(hw.timestamp) > const Duration(days: 7)) {
+      if (hw.isDeleted &&
+          now.difference(hw.timestamp) > const Duration(days: 7)) {
         hwsToDelete.add(hw);
       }
     }
