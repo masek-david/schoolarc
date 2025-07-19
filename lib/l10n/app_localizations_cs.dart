@@ -432,6 +432,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noTimetable => 'Nebyl nalezen žádný rozvrh';
 
   @override
+  String get noHomeworks => 'Nebyly nalezeny žádné úkoly';
+
+  @override
+  String get noRecentlyDeleted => 'Nebyly nalezeny žádné nedávno smazané položky';
+
+  @override
   String get timetable => 'Rozvrh';
 
   @override

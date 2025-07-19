@@ -30,6 +30,7 @@ class SettingTile extends StatelessWidget {
     bool? enabled,
     bool? highlighted,
     IconData? icon,
+    Key? key,
   }) {
     return SettingTile(
       title: title,
@@ -39,6 +40,7 @@ class SettingTile extends StatelessWidget {
       icon: icon,
       onTap: (context) => onChanged(!value),
       trailing: Switch(value: value, onChanged: onChanged),
+      key: key,
     );
   }
 

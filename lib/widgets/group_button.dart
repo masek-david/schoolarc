@@ -51,7 +51,6 @@ class _GroupButtonState extends State<GroupButton>
       CurvedAnimation(
         parent: _controller,
         curve: myCurve,
-        reverseCurve: Curves.decelerate,
       ),
     );
   }

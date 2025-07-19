@@ -5,6 +5,7 @@ import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -34,22 +35,18 @@ class TimetableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (timeTable == null) {
-      return Center(
-        child: Text(
-          textWhenEmpty ?? context.loc.noTimetable,
-          textAlign: TextAlign.center,
-        ),
+      return EmptyMessage(
+        emoji: '🍃',
+        message: textWhenEmpty ?? context.loc.noTimetable,
       );
     }
 
     final table = timeTable!.table;
 
     return timeTable!.lessonTimes.isEmpty
-        ? Center(
-            child: Text(
-              context.loc.noTimetable,
-              textAlign: TextAlign.center,
-            ),
+        ? EmptyMessage(
+            emoji: '🍃',
+            message: textWhenEmpty ?? context.loc.noTimetable,
           )
         : SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -142,7 +139,10 @@ class TimetableView extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(DateFormat('EEE', getLocale().languageCode).format(date).capitalize()),
+                                    Text(DateFormat(
+                                            'EEE', getLocale().languageCode)
+                                        .format(date)
+                                        .capitalize()),
                                     Text(date.toLocal().formatWithoutYear()),
                                   ],
                                 ),

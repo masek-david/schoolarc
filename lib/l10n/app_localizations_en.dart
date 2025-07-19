@@ -424,6 +424,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTimetable => 'No timetable found';
 
   @override
+  String get noHomeworks => 'No homeworks found';
+
+  @override
+  String get noRecentlyDeleted => 'No recently deleted items found';
+
+  @override
   String get timetable => 'Timetable';
 
   @override

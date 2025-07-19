@@ -148,6 +148,8 @@
   "changeDateTo": "Změnit datum na",
   "currentTimetable": "Aktuální rozvrh",
   "noTimetable": "Nebyl nalezen žádný rozvrh",
+  "noHomeworks": "Nebyly nalezeny žádné úkoly",
+  "noRecentlyDeleted": "Nebyly nalezeny žádné nedávno smazané položky",
   "timetable": "Rozvrh",
   "convertToHomework": "Převést na úkol",
   "convertToExam": "Převést na test",

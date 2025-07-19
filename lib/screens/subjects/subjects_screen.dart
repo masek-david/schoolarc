@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
@@ -150,11 +151,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: subjects.isEmpty
-              ? Center(
-                  child: Text(
-                    context.loc.noSubjectsFoundMessage,
-                    textAlign: TextAlign.center,
-                  ),
+              ? EmptyMessage(
+                  emoji: '🍃',
+                  message: context.loc.noSubjectsFoundMessage,
                 )
               : RefreshIndicator(
                   notificationPredicate: settings.get(Setting.useFirebase)

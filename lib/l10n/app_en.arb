@@ -148,6 +148,8 @@
   "changeDateTo": "Change date to",
   "currentTimetable": "Current timetable",
   "noTimetable": "No timetable found",
+  "noHomeworks": "No homeworks found",
+  "noRecentlyDeleted": "No recently deleted items found",
   "timetable": "Timetable",
   "convertToHomework": "Convert to homework",
   "convertToExam": "Convert to exam",

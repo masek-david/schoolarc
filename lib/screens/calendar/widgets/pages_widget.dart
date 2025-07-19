@@ -103,11 +103,12 @@ class PagesWidget extends StatelessWidget {
                                   collapsedShape: const Border(),
                                   shape: const Border(),
                                   dense: true,
-                                  title: ExpansionTitle(
-                                    titleText: context.loc.missedHomework(2),
-                                    boldText: false,
-                                    titleTextColor: scheme.error,
-                                    numberOfItems: missedHwList.length,
+                                  title: TitleWithCount(
+                                    text: context.loc.missedHomework(2),
+                                    bold: false,
+                                    textColor: scheme.error,
+                                    countContainerColor: context.col.errorContainer,
+                                    count: missedHwList.length,
                                   ),
                                   children: [
                                     HomeworkList(

@@ -39,7 +39,6 @@ enum Setting {
   showDebugInfo,
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
-  expUseHwOverlay,
   recapShownForYear,
 }
 
@@ -183,10 +182,6 @@ class SettingsDatabase {
     Setting.debugShowFireOverlay: SettingModel(
       defaultValue: false,
       key: 'showDebugFire',
-    ),
-    Setting.expUseHwOverlay: SettingModel(
-      defaultValue: false,
-      key: 'expHwOverlay',
     ),
     Setting.recapShownForYear: SettingModel(
       defaultValue: 0,

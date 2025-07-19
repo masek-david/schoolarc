@@ -137,9 +137,9 @@ class ExamsScreen extends ConsumerWidget {
                                 key: ValueKey('exam title: ${item.priority!}'),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 8),
-                                child: ExpansionTitle(
-                                  titleText: priority.name,
-                                  titleTextColor: priority.getColor(context),
+                                child: TitleWithCount(
+                                  text: priority.name,
+                                  textColor: priority.getColor(context),
                                 ),
                               );
                             }
@@ -200,9 +200,9 @@ class ExamsScreen extends ConsumerWidget {
       key: const ValueKey('exam completed title'),
       padding: const EdgeInsets.only(bottom: 70),
       child: ExpansionTile(
-        title: ExpansionTitle(
-          numberOfItems: completedExams.length,
-          titleText: context.loc.completed,
+        title: TitleWithCount(
+          count: completedExams.length,
+          text: context.loc.completed,
         ),
         shape: const Border(),
         children: List.generate(

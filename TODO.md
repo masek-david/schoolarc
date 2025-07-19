@@ -23,6 +23,7 @@ performance of expanded title in hw and exams screen
     - ✅ date format 
     - ✅ translation
     - ✅ start week with monday
+- ✅ add emojis for empty screens, add no baka homeworks screen
 - ✅ tutorial
     - ✅ need to teach:
         - ✅ difference between hw and exam
@@ -55,6 +56,7 @@ performance of expanded title in hw and exams screen
     - ⬜ is everything needed to be shown ??
 - ⬜ add google sign in + sign in with apple
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
+- ⬜ better calendar screen scroll - shrink calendar, make better missed
 
 ## notifications:
 - ⬜ turn off notifications for weekend

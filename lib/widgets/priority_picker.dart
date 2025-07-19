@@ -49,11 +49,6 @@ class _PriorityPickerState extends State<PriorityPicker>
         (index) {
           bool isSelected = index == widget.selectedPriority;
           TaskPriority priority = TaskPriority(index);
-          final scheme = ColorScheme.fromSeed(
-            seedColor: priority.getColor(context),
-            brightness: Theme.of(context).brightness,
-            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-          );
 
           return AnimatedBuilder(
             animation: _controller,
@@ -73,28 +68,17 @@ class _PriorityPickerState extends State<PriorityPicker>
               return GroupButton(
                 roundedLeft: index == 0,
                 roundedRight: index == 3,
-                selectedColor: scheme.primaryContainer,
-                backgroundColor: scheme.surfaceContainerHigh,
+                selectedColor: priority.getColor(context),
+                backgroundColor: priority.getSurfaceColor(context),
                 selected: isSelected,
                 animationDuration: const Duration(milliseconds: 300),
                 onTapDown: () {
                   setState(() {
                     priorityForAnimation = index;
                   });
-
-                  // _controller.animateTo(
-                  //   1,
-                  //   curve: Curves.elasticOut,
-                  //   duration: Duration(milliseconds: 1000),
-                  // );
                   _controller.animateTo(1);
                 },
                 onTapCancel: () {
-                  // _controller.animateBack(
-                  //   0,
-                  //   curve: Curves.elasticOut,
-                  //   duration: Duration(milliseconds: 1000),
-                  // );
                   _controller.animateBack(0);
                 },
                 onSelected: () {
@@ -103,9 +87,6 @@ class _PriorityPickerState extends State<PriorityPicker>
                     priorityForAnimation = index;
                   });
                   if (index != widget.selectedPriority) {
-                    // _controller.fling().then(
-                    //       (value) => _controller.fling(velocity: -1),
-                    //     );
                     _controller.forward().then(
                           (value) => _controller.reverse(),
                         );
@@ -116,8 +97,9 @@ class _PriorityPickerState extends State<PriorityPicker>
                   priority.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color:
-                        isSelected ? scheme.onPrimaryContainer : scheme.primary,
+                    color: isSelected
+                        ? priority.getOnColor(context)
+                        : priority.getOnSurfaceColor(context),
                   ),
                 ),
               );

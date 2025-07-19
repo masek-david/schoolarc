@@ -48,11 +48,18 @@ class _AnimatedReorderableListItem {
   }
 }
 
-class HomeworksScreen extends ConsumerWidget {
+class HomeworksScreen extends ConsumerStatefulWidget {
   const HomeworksScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeworksScreen> createState() => _HomeworksScreenState();
+}
+
+class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
+  bool showingCompleted = false;
+
+  @override
+  Widget build(BuildContext context) {
     final hwByPriority = ref.watch(hwSortedProvider);
     final completedHws = ref.watch(hwCompletedProvider);
 
@@ -65,6 +72,10 @@ class HomeworksScreen extends ConsumerWidget {
     itemList.add(_AnimatedReorderableListItem(priority: -1));
     final nonDraggableItems =
         itemList.where((element) => element.hw == null).toList();
+
+    if (showingCompleted) {
+      itemList.add(_AnimatedReorderableListItem(priority: 10));
+    }
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -133,13 +144,14 @@ class HomeworksScreen extends ConsumerWidget {
                               }
 
                               final priority = TaskPriority(item.priority!);
+
                               return Padding(
                                 key: ValueKey('hw title: ${item.priority!}'),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 8),
-                                child: ExpansionTitle(
-                                  titleText: priority.name,
-                                  titleTextColor: priority.getColor(context),
+                                child: TitleWithCount(
+                                  text: priority.name,
+                                  textColor: priority.getColor(context),
                                 ),
                               );
                             }
@@ -208,13 +220,22 @@ class HomeworksScreen extends ConsumerWidget {
 
   Widget _buildCompletedList(
       BuildContext context, WidgetRef ref, List<Homework> completedHws) {
+    // return SettingTile.withSwitch(
+    //   key: const ValueKey('some key'),
+    //   title: 'show',
+    //   value: showingCompleted,
+    //   onChanged: (value) => setState(() {
+    //     showingCompleted = value;
+    //   }),
+    // );
+
     return Padding(
       key: const ValueKey('hw completed title'),
       padding: const EdgeInsets.only(bottom: 70),
       child: ExpansionTile(
-        title: ExpansionTitle(
-          numberOfItems: completedHws.length,
-          titleText: context.loc.completed,
+        title: TitleWithCount(
+          count: completedHws.length,
+          text: context.loc.completed,
         ),
         shape: const Border(),
         children: List.generate(

@@ -749,6 +749,18 @@ abstract class AppLocalizations {
   /// **'No timetable found'**
   String get noTimetable;
 
+  /// No description provided for @noHomeworks.
+  ///
+  /// In en, this message translates to:
+  /// **'No homeworks found'**
+  String get noHomeworks;
+
+  /// No description provided for @noRecentlyDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'No recently deleted items found'**
+  String get noRecentlyDeleted;
+
   /// No description provided for @timetable.
   ///
   /// In en, this message translates to:

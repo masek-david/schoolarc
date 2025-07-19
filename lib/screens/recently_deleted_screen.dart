@@ -7,6 +7,7 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
+import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
 import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
@@ -98,72 +99,81 @@ class RecentlyDeletedScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-          final now = DateTime.now();
-          int daysLeft = 7;
+      body: items.isEmpty
+          ? EmptyMessage(
+              message: context.loc.noRecentlyDeleted,
+              emoji: '🍃',
+            )
+          : ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                final now = DateTime.now();
+                int daysLeft = 7;
 
-          Widget? tile;
-          switch (item.runtimeType) {
-            case const (Homework):
-              {
-                daysLeft =
-                    7 + (item as Homework).timestamp.difference(now).inDays;
-                tile = HwTile(
-                  hw: item,
-                  showBorderIfMissed: false,
-                  onChangedCompletion: null,
-                  onDelete: null,
-                  onEdit: () => recover(context: context, ref: ref, item: item),
-                  onConvert: null,
-                );
-              }
-            case const (Exam):
-              {
-                daysLeft = 7 + (item as Exam).timestamp.difference(now).inDays;
-                tile = ExamTile(
-                  exam: item,
-                  onDelete: null,
-                  onEdit: () => recover(context: context, ref: ref, item: item),
-                  onConvert: null,
-                );
-              }
-            case const (Subject):
-              {
-                daysLeft =
-                    7 + (item as Subject).timestamp.difference(now).inDays;
-                tile = SubjectTile(
-                  subject: item,
-                  onDelete: kDebugMode
-                      ? () {
-                          subjectsDb.delete(item.id);
-                          firebaseService.deleteSubjects([item]);
-                        }
-                      : null,
-                  onTap: () => recover(context: context, ref: ref, item: item),
-                );
-              }
-          }
+                Widget? tile;
+                switch (item.runtimeType) {
+                  case const (Homework):
+                    {
+                      daysLeft = 7 +
+                          (item as Homework).timestamp.difference(now).inDays;
+                      tile = HwTile(
+                        hw: item,
+                        showBorderIfMissed: false,
+                        onChangedCompletion: null,
+                        onDelete: null,
+                        onEdit: () =>
+                            recover(context: context, ref: ref, item: item),
+                        onConvert: null,
+                      );
+                    }
+                  case const (Exam):
+                    {
+                      daysLeft =
+                          7 + (item as Exam).timestamp.difference(now).inDays;
+                      tile = ExamTile(
+                        exam: item,
+                        onDelete: null,
+                        onEdit: () =>
+                            recover(context: context, ref: ref, item: item),
+                        onConvert: null,
+                      );
+                    }
+                  case const (Subject):
+                    {
+                      daysLeft = 7 +
+                          (item as Subject).timestamp.difference(now).inDays;
+                      tile = SubjectTile(
+                        subject: item,
+                        onDelete: kDebugMode
+                            ? () {
+                                subjectsDb.delete(item.id);
+                                firebaseService.deleteSubjects([item]);
+                              }
+                            : null,
+                        onTap: () =>
+                            recover(context: context, ref: ref, item: item),
+                      );
+                    }
+                }
 
-          assert(tile != null);
+                assert(tile != null);
 
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                tile!,
-                Text(
-                  context.loc.daysLeft(daysLeft),
-                  style: TextStyle(color: textColor),
-                ),
-              ],
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      tile!,
+                      Text(
+                        context.loc.daysLeft(daysLeft),
+                        style: TextStyle(color: textColor),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

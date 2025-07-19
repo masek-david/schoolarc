@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
+import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/logs/log.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
@@ -63,7 +64,10 @@ class _LogsScreenState extends State<LogsScreen> {
         ],
       ),
       body: logsMap.isEmpty
-          ? Center(child: Text(context.loc.noLogsFound))
+          ? EmptyMessage(
+              emoji: '🎉',
+              message: context.loc.noLogsFound,
+            )
           : ListView.builder(
               itemCount: logs.length,
               itemBuilder: (context, index) {

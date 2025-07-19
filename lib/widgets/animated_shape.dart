@@ -9,6 +9,7 @@ import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/roboto_serif.dart';
 import 'package:school_manager/widgets/shapes_list.dart';
 
 class AnimatedShape extends StatefulWidget {
@@ -234,14 +235,25 @@ class _AnimatedShapeState extends State<AnimatedShape>
                       ),
                     ),
                     Center(
-                      child: Text(
-                        text,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          shadows: [Shadow(color: firstColor, blurRadius: 10)],
+                      child: SizedBox(
+                        width: size - 16,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            text,
+                            maxLines: 2,
+                            style: robotoSerif(
+                                    size: 22,
+                                    width: 50,
+                                    grade: -50,
+                                    weight: 500,
+                                    color: textColor)
+                                .copyWith(
+                              shadows: [
+                                Shadow(color: firstColor, blurRadius: 10)
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),

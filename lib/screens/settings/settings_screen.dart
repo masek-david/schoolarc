@@ -32,7 +32,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool showDebug = settings.get(Setting.showDebugInfo);
-  bool useExperimentalHwOverlay = settings.get(Setting.expUseHwOverlay);
 
   @override
   Widget build(BuildContext context) {
@@ -173,18 +172,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     showDebug = value;
                   });
                 }),
-          if (showDebug)
-            SettingTile.withSwitch(
-              title: loc.useExperimentalHomeworkTileOverlay,
-              value: useExperimentalHwOverlay,
-              onChanged: (value) {
-                settings.save(Setting.expUseHwOverlay, value);
-                setState(() {
-                  useExperimentalHwOverlay = value;
-                });
-                widget.refreshTheme();
-              },
-            ),
           if (showDebug)
             Center(
               child: Text(

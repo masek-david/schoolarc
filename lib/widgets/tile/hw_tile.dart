@@ -129,15 +129,16 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
 
   Widget buildTile() {
     final bool isMissed =
-        widget.hw.deadline.isBeforeToday() && widget.hw.isCompleted == false;
-    final missedColor =
-        Colors.red.harmonizeWith(Theme.of(context).primaryColor);
-    final backgroundColor = widget.hw.isCompleted && !widget.hw.isBeingAnimated
-        ? Theme.of(context).colorScheme.surfaceContainerLowest
-        : Theme.of(context).colorScheme.surfaceContainerLow;
+        widget.hw.isCompleted == false && widget.hw.deadline.isBeforeToday();
+    final missedColor = isMissed
+        ? Colors.red.harmonizeWith(Theme.of(context).primaryColor)
+        : null;
 
     final opacity =
         widget.hw.isCompleted && !widget.hw.isBeingAnimated ? 0.5 : 1.0;
+    final backgroundColor = widget.hw.isCompleted && !widget.hw.isBeingAnimated
+        ? Theme.of(context).colorScheme.surfaceContainerLowest
+        : Theme.of(context).colorScheme.surfaceContainerLow;
 
     return ClipRRect(
       child: TileSlidable(
@@ -150,7 +151,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
           decoration: BoxDecoration(
             border: isMissed && widget.showBorderIfMissed
                 ? Border.all(
-                    color: missedColor,
+                    color: missedColor!,
                     width: 2,
                   )
                 : null,
@@ -226,7 +227,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                               onChanged: widget.onChangedCompletion == null
                                   ? (value) {}
                                   : (value) {
-                                      HapticFeedback.mediumImpact();
+                                      HapticFeedback.vibrate();
                                       if (widget.onChangedCompletion != null) {
                                         widget.onChangedCompletion!(value);
                                       }
