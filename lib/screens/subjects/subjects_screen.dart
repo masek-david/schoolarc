@@ -1,16 +1,15 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
@@ -152,7 +151,6 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: subjects.isEmpty
               ? EmptyMessage(
-                  emoji: '🍃',
                   message: context.loc.noSubjectsFoundMessage,
                 )
               : RefreshIndicator(

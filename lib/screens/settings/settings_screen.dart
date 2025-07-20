@@ -1,22 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
-import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
-import 'package:school_manager/screens/logs/logs_screen.dart';
+import 'package:school_manager/screens/settings/about_app.dart';
 import 'package:school_manager/screens/settings/setting_pages/localization_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/shortcuts_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/style_motion_page.dart';
 import 'package:school_manager/screens/settings/setting_pages/theme_page.dart';
+import 'package:school_manager/screens/settings/setting_pages/tomorrow_notifications_page.dart';
 import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
 import 'package:school_manager/screens/settings/widgets/package_info.dart';
+import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
-import 'package:school_manager/screens/settings/setting_pages/tomorrow_notifications_page.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -143,25 +142,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
           const ImportExportRow(),
           SettingTile(
-            title: loc.viewAppChangelog,
-            icon: Icons.data_object,
+            title: context.loc.aboutApp,
+            icon: Icons.info_outline_rounded,
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (context) => const ChangelogScreen(),
+                builder: (context) => const AboutApp(),
               ),
             ),
           ),
-          if (showDebug)
-            SettingTile(
-              title: loc.viewLogs,
-              icon: Icons.data_array,
-              onTap: (context) => navigatorKey.currentState?.push(
-                MaterialPageRoute(
-                  builder: (context) => const LogsScreen(),
-                ),
-              ),
-            ),
-          if (showDebug) const Divider(),
           if (showDebug || kDebugMode)
             SettingTile.withSwitch(
                 title: loc.developerMode,

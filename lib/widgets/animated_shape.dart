@@ -91,7 +91,7 @@ class _AnimatedShapeState extends State<AnimatedShape>
 
   late final duration =
       widget.shapeChangeDuration ?? const Duration(milliseconds: 500);
-  final curve = Curves.easeOutCirc;
+  final curve = Curves.decelerate;
   late final _rotationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: widget.secondsForOneRotation.abs()));
@@ -99,7 +99,7 @@ class _AnimatedShapeState extends State<AnimatedShape>
       AnimationController(vsync: this, duration: duration * 0.5);
 
   late final shapes = widget.excludeShapes ? textShapes : MaterialShapes.values;
-  var shape = MaterialShapes.cookie12;
+  int shapeIndex = 14;
   var turns = 0.0;
 
   @override
@@ -143,8 +143,13 @@ class _AnimatedShapeState extends State<AnimatedShape>
     _scaleController.animateTo(1, duration: duration * 0.5).then(
         (_) => _scaleController.animateTo(0.95, duration: duration * 0.5));
 
+    int random = Random().nextInt(shapes.length);
+    while (random == shapeIndex) {
+      random = Random().nextInt(shapes.length);
+    }
+
     setState(() {
-      shape = shapes[Random().nextInt(shapes.length)];
+      shapeIndex = random;
       turns += 0.1 * (widget.secondsForOneRotation.isNegative ? -1 : 1);
     });
   }
@@ -208,7 +213,8 @@ class _AnimatedShapeState extends State<AnimatedShape>
                                   stops: const [0.1, 0.9],
                                   colors: [secondColor, firstColor],
                                 ),
-                                shape: RoundedPolygonBorder(polygon: shape),
+                                shape: RoundedPolygonBorder(
+                                    polygon: shapes[shapeIndex]),
                               ),
                             ),
                             if (settings.get(Setting.themeUseOled))
@@ -226,7 +232,8 @@ class _AnimatedShapeState extends State<AnimatedShape>
                                       ),
                                     ],
                                     color: Colors.black,
-                                    shape: RoundedPolygonBorder(polygon: shape),
+                                    shape: RoundedPolygonBorder(
+                                        polygon: shapes[shapeIndex]),
                                   ),
                                 ),
                               ),

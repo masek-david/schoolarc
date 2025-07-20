@@ -457,7 +457,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loggedInSynced => 'Logged in, everything has been synced';
 
   @override
-  String get registeredSuccessfully => 'Registered successfully';
+  String get registeredSuccessfully => 'Registered successfully, everything has been synced';
 
   @override
   String get changePassword => 'Change password';
@@ -945,4 +945,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exampleSubjectShort3 => 'Eng';
+
+  @override
+  String get aboutApp => 'About app';
+
+  @override
+  String get reportBug => 'Report bug';
+
+  @override
+  String get viewLicenses => 'View licenses';
+
+  @override
+  String get sendReport => 'Send bug report?';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get deleteLog => 'Delete log?';
+
+  @override
+  String get bugReportHint => 'Describe the bug: You can also attach a screenshot.';
+
+  @override
+  String get cantOpenMail => 'Couldn\'t open email app';
+
+  @override
+  String get secureLogin => 'Login security';
+
+  @override
+  String get secureLoginInfo => 'Your login is stored securely on this device. It\'s never shared, sent anywhere, or accessible by other apps.';
+
+  @override
+  String get cantDeleteData => 'Data wasn\'t deleted successfully. Try again.';
+
+  @override
+  String get cantLogin => 'Can\'t log in. Try again.';
+
+  @override
+  String get deleteAllData => 'Delete all data';
+
+  @override
+  String get deletedAllData => 'All data was deleted.';
+
+  @override
+  String get deleteAllDataTitle => 'Delete all data?';
+
+  @override
+  String get deleteAllDataText => 'Deleting all data will clear your cloud backup. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?';
+
+  @override
+  String get getAllData => 'Download all data';
 }

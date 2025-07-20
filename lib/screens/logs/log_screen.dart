@@ -50,7 +50,7 @@ class _LogScreenState extends State<LogScreen> {
       body: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: SingleChildScrollView(
-          child: Text(
+          child: SelectableText(
             widget.log.log,
             style: TextStyle(
               fontSize: fontSize,

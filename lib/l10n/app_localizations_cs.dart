@@ -465,7 +465,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loggedInSynced => 'Byli jste přihlášeni, vše je synchronizováno';
 
   @override
-  String get registeredSuccessfully => 'Byli jste úspěšně registrováni';
+  String get registeredSuccessfully => 'Byli jste úspěšně registrováni, vše je synchronizováno';
 
   @override
   String get changePassword => 'Změnit heslo';
@@ -962,4 +962,55 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get exampleSubjectShort3 => 'Čj';
+
+  @override
+  String get aboutApp => 'O aplikaci';
+
+  @override
+  String get reportBug => 'Nahlásit chybu';
+
+  @override
+  String get viewLicenses => 'Zobrazit licence';
+
+  @override
+  String get sendReport => 'Odeslat zprávu o chybě?';
+
+  @override
+  String get send => 'Odeslat';
+
+  @override
+  String get deleteLog => 'Smazat záznam?';
+
+  @override
+  String get bugReportHint => 'Popište chybu: Také můžete přiložit snímek obrazovky.';
+
+  @override
+  String get cantOpenMail => 'Nepodařilo se otevřít email aplikaci';
+
+  @override
+  String get secureLogin => 'Bezpečnost přihlášení';
+
+  @override
+  String get secureLoginInfo => 'Údaje o přihlášení jsou bezpečně uschovány v tomto zařízení. Nikdy nejsou sdíleny, kamkoliv odeslány nebo dostupné jiným aplikacím.';
+
+  @override
+  String get cantDeleteData => 'Data nebyla úspěšně smazána. Zkuste to znovu.';
+
+  @override
+  String get cantLogin => 'Přihlášení se nepodařilo. Zkuste to znovu.';
+
+  @override
+  String get deleteAllData => 'Smazat všechna data';
+
+  @override
+  String get deletedAllData => 'Všechna data byla smazána.';
+
+  @override
+  String get deleteAllDataTitle => 'Smazat všechna data?';
+
+  @override
+  String get deleteAllDataText => 'Smazání všech dat smaže vaší synchronizovanou zálohu. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
+
+  @override
+  String get getAllData => 'Stáhnout všechna data';
 }

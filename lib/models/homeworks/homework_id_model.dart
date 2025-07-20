@@ -16,6 +16,33 @@ class HomeworkWithID extends HomeworkEntity {
 
   String id;
 
+  @override
+  HomeworkWithID copyWith({
+    String? id,
+    DateTime? deadline,
+    String? text,
+    String? description,
+    String? subjectId,
+    int? priority,
+    int? order,
+    bool? isCompleted,
+    bool? isDeleted,
+    DateTime? timestamp,
+  }) {
+    return HomeworkWithID(
+      id: id ?? this.id,
+      deadline: deadline ?? this.deadline,
+      text: text ?? this.text,
+      description: description ?? this.description,
+      subjectId: subjectId ?? this.subjectId,
+      priority: priority ?? this.priority,
+      order: order ?? this.order,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isDeleted: isDeleted ?? this.isDeleted,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
   factory HomeworkWithID.fromFireJson(Map<String, dynamic> json) {
     return HomeworkWithID(
       id: json['id'],

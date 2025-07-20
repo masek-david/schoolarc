@@ -9,12 +9,7 @@ import 'package:school_manager/widgets/animated_shape.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
-  const BakaLoginScreen({
-    super.key,
-    this.showAppbar = true,
-  });
-
-  final bool showAppbar;
+  const BakaLoginScreen({super.key});
 
   @override
   ConsumerState<BakaLoginScreen> createState() => _BakalariScreenState();
@@ -63,9 +58,26 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     );
 
     return Scaffold(
-      appBar: widget.showAppbar
-          ? AppBar(title: Text(context.loc.bakalari))
-          : null,
+      appBar: AppBar(
+        title: Text(context.loc.bakalari),
+        actions: [
+          IconButton(
+            onPressed: () => showDialogAdaptive(
+              context: context,
+              title: Text(context.loc.secureLogin),
+              content: Text(context.loc.secureLoginInfo),
+              actions: [
+                adaptiveDialogButton(
+                  context: context,
+                  child: Text(context.loc.close),
+                  onPressed: () => Navigator.pop(context),
+                )
+              ],
+            ),
+            icon: const Icon(Icons.info_outline),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: RefreshIndicator(
@@ -231,8 +243,8 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
-                                  builder: (context) =>
-                                      const ProgressDialog(showProgressNumber: false),
+                                  builder: (context) => const ProgressDialog(
+                                      showProgressNumber: false),
                                 );
 
                                 ref

@@ -47,6 +47,23 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.loginToStrava),
+        actions: [
+          IconButton(
+            onPressed: () => showDialogAdaptive(
+              context: context,
+              title: Text(context.loc.secureLogin),
+              content: Text(context.loc.secureLoginInfo),
+              actions: [
+                adaptiveDialogButton(
+                  context: context,
+                  child: Text(context.loc.close),
+                  onPressed: () => Navigator.pop(context),
+                )
+              ],
+            ),
+            icon: const Icon(Icons.info_outline),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

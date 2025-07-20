@@ -6,16 +6,16 @@ import 'package:school_manager/utils/extensions/context_extension.dart';
 class PackageInfoWidget extends StatelessWidget {
   const PackageInfoWidget({
     super.key,
-    required this.onBecameDev,
+    this.onBecameDev,
   });
 
-  final void Function() onBecameDev;
+  final void Function()? onBecameDev;
 
   @override
   Widget build(BuildContext context) {
     int tapped = 0;
     return InkWell(
-      onTap: () {
+      onTap: onBecameDev == null ? null : () {
         tapped++;
         if (settings.get(Setting.showDebugInfo)) {
           showMessage(context, context.loc.alreadyDeveloper);
@@ -27,7 +27,7 @@ class PackageInfoWidget extends StatelessWidget {
         if (tapped == 5) {
           showMessage(context, context.loc.becameDeveloper);
           tapped = 0;
-          onBecameDev();
+          onBecameDev!();
         }
       },
       child: Text(

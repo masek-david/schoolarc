@@ -818,7 +818,7 @@ abstract class AppLocalizations {
   /// No description provided for @registeredSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'Registered successfully'**
+  /// **'Registered successfully, everything has been synced'**
   String get registeredSuccessfully;
 
   /// No description provided for @changePassword.
@@ -1696,6 +1696,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Eng'**
   String get exampleSubjectShort3;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In en, this message translates to:
+  /// **'About app'**
+  String get aboutApp;
+
+  /// No description provided for @reportBug.
+  ///
+  /// In en, this message translates to:
+  /// **'Report bug'**
+  String get reportBug;
+
+  /// No description provided for @viewLicenses.
+  ///
+  /// In en, this message translates to:
+  /// **'View licenses'**
+  String get viewLicenses;
+
+  /// No description provided for @sendReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Send bug report?'**
+  String get sendReport;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @deleteLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete log?'**
+  String get deleteLog;
+
+  /// No description provided for @bugReportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the bug: You can also attach a screenshot.'**
+  String get bugReportHint;
+
+  /// No description provided for @cantOpenMail.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open email app'**
+  String get cantOpenMail;
+
+  /// No description provided for @secureLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login security'**
+  String get secureLogin;
+
+  /// No description provided for @secureLoginInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Your login is stored securely on this device. It\'s never shared, sent anywhere, or accessible by other apps.'**
+  String get secureLoginInfo;
+
+  /// No description provided for @cantDeleteData.
+  ///
+  /// In en, this message translates to:
+  /// **'Data wasn\'t deleted successfully. Try again.'**
+  String get cantDeleteData;
+
+  /// No description provided for @cantLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t log in. Try again.'**
+  String get cantLogin;
+
+  /// No description provided for @deleteAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data'**
+  String get deleteAllData;
+
+  /// No description provided for @deletedAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'All data was deleted.'**
+  String get deletedAllData;
+
+  /// No description provided for @deleteAllDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data?'**
+  String get deleteAllDataTitle;
+
+  /// No description provided for @deleteAllDataText.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting all data will clear your cloud backup. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?'**
+  String get deleteAllDataText;
+
+  /// No description provided for @getAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all data'**
+  String get getAllData;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

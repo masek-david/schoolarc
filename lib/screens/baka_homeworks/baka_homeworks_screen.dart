@@ -96,7 +96,6 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
             );
           } else if (snapshot.data?.isEmpty ?? true) {
             return EmptyMessage(
-              emoji: '🍃',
               message: context.loc.noHomeworks,
             );
           }

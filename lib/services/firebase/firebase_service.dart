@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -73,6 +75,7 @@ class FirebaseService {
   Future<void> createUser(
       {required String email, required String password}) async {
     await auth.createUserWithEmailAndPassword(email: email, password: password);
+    refLocation();
     return;
   }
 
@@ -88,7 +91,7 @@ class FirebaseService {
         password: oldPassword,
       );
     } on Object catch (error) {
-      throw ServiceException("${loc.passwordCantBeChanged} $error");
+      throw ServiceException("${loc.cantLogin} $error");
     }
 
     //Pass in the password to updatePassword.
@@ -99,6 +102,54 @@ class FirebaseService {
       // This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
     });
     return false;
+  }
+
+  Future<void> deleteAllData(String password) async {
+    final loc = getLocalization();
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: auth.currentUser!.email ?? '',
+        password: password,
+      );
+    } on Object catch (error) {
+      throw ServiceException("${loc.cantLogin} $error");
+    }
+    try {
+      await exams.remove();
+      await homeworks.remove();
+      await subjects.remove();
+      await FirebaseAuth.instance.currentUser?.delete();
+    } on Object catch (error) {
+      throw ServiceException("${loc.cantDeleteData} $error");
+    }
+    return;
+  }
+
+  Future<void> getAllData() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final ref = FirebaseDatabase.instance.ref('users/$uid');
+
+    final snapshot = await ref.get();
+    if (snapshot.exists) {
+      final userData = snapshot.value;
+
+      final exportData = {
+        "profile": {
+          "uid": auth.currentUser!.uid,
+          "email": auth.currentUser!.email,
+        },
+        "data": userData
+      };
+      final exportJson = jsonEncode(exportData);
+
+      await FilePicker.platform.saveFile(
+        dialogTitle: getLocalization().chooseSaveLocation,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        fileName: 'schoolarc_cloud_data_export.json',
+        bytes: utf8.encode(exportJson),
+      );
+    }
   }
 
   // EXAMS

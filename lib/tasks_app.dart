@@ -1,13 +1,18 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:school_manager/database/exam_database.dart';
+import 'package:school_manager/database/hw_database.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/database/subject_database.dart';
+import 'package:school_manager/database/timetable_database.dart';
 import 'package:school_manager/l10n/app_localizations.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/provider/baka_notifier.dart';
@@ -15,31 +20,26 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
+import 'package:school_manager/screens/calendar/calendar_screen.dart';
+import 'package:school_manager/screens/exams/exams_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
+import 'package:school_manager/screens/home/home_screen.dart';
+import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/tutorial/tutorial.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
-import 'package:school_manager/database/exam_database.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/home_widget_service.dart';
-import 'package:school_manager/database/hw_database.dart';
 import 'package:school_manager/services/logs_service.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/services/strava_service.dart';
-import 'package:school_manager/database/subject_database.dart';
-import 'package:school_manager/database/timetable_database.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
-import 'package:school_manager/screens/calendar/calendar_screen.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/theme_generate.dart';
+import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/firebase_overlay.dart';
 import 'package:school_manager/widgets/my_shortcuts.dart';
 import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
-import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
-import 'package:school_manager/screens/exams/exams_screen.dart';
-import 'package:school_manager/screens/home/home_screen.dart';
-import 'package:school_manager/widgets/drawer/my_drawer.dart';
 import 'package:school_manager/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:school_manager/widgets/time_format.dart';
 import 'package:school_manager/widgets/wide_screen_borders.dart';
@@ -177,7 +177,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
   late ThemeMode themeMode = _getThemeMode(settings.get(Setting.themeMode));
   late Color userColor = Color(settings.get(Setting.themeColorValue));
   late Locale locale = getLocale();
-  late bool showingTutorial;
+  bool showingTutorial = false;
   bool showingFirebaseLoginScreen = false;
 
   ThemeMode _getThemeMode(bool? value) {
@@ -241,7 +241,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
-      showingTutorial = false;
       if (settings.get(Setting.stopAskingForNotifications) != true) {
         Future.delayed(
           Duration.zero,

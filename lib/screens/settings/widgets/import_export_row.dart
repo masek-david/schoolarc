@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/import_export.dart';
@@ -66,7 +67,12 @@ class ImportExportRow extends ConsumerWidget {
                     }
 
                     File file = File(pickedFile.files.first.path!);
-                    final bytes = await file.readAsBytes();
+                    Uint8List bytes;
+                    if (kIsWeb) {
+                      bytes = pickedFile.files.first.bytes!;
+                    } else {
+                      bytes = await file.readAsBytes();
+                    }
                     final imported = import(jsonString: utf8.decode(bytes));
 
                     final subjectsCount = imported.subjects.length;

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
 
 Future<T> showDialogAdaptive<T>({
   required BuildContext context,
@@ -70,6 +71,9 @@ Widget adaptiveDialogButton({
     }
     return TextButton(
       onPressed: onPressed,
+      style: isDestructiveAction ? ButtonStyle(
+        overlayColor: WidgetStatePropertyAll(context.col.errorContainer),
+      ) : null,
       child: DefaultTextStyle(
         style: TextStyle(color: textColor),
         child: child,

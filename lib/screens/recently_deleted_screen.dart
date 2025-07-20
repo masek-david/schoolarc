@@ -9,11 +9,11 @@ import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 
 class RecentlyDeletedScreen extends ConsumerWidget {
   const RecentlyDeletedScreen({super.key});
@@ -102,7 +102,6 @@ class RecentlyDeletedScreen extends ConsumerWidget {
       body: items.isEmpty
           ? EmptyMessage(
               message: context.loc.noRecentlyDeleted,
-              emoji: '🍃',
             )
           : ListView.builder(
               itemCount: items.length,

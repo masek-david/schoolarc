@@ -99,7 +99,7 @@ extension BetterDateTime on DateTime {
   /// formats using saved dateformat and using apps language
   String formatTime() {
     final date = toLocal();
-    if(settings.get(Setting.use24HourFormat)){
+    if (settings.get(Setting.use24HourFormat)) {
       return DateFormat.Hm().format(date);
     }
     return DateFormat.jm(settings.get(Setting.localeLanguage)).format(date);
@@ -108,12 +108,13 @@ extension BetterDateTime on DateTime {
   /// formats using saved dateformat and using apps language, but if the year is the
   /// same as the current, leave it
   String formatWithoutYear() {
-    String format = settings.get(Setting.dateFormat);
+    String dateFormat = settings.get(Setting.dateFormat);
 
-    final noYear =
-        supportedDateFormatsNoYear[supportedDateFormats.indexOf(format)];
+    final format = year == DateTime.now().year
+        ? supportedDateFormatsNoYear[supportedDateFormats.indexOf(dateFormat)]
+        : dateFormat;
 
-    return DateFormat(noYear, getLocale().languageCode).format(this);
+    return DateFormat(format, getLocale().languageCode).format(this);
   }
 
   /// formats the date, replaces yesterday, today and tomorrow, or calls [formatWithoutYear]

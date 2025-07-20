@@ -1,14 +1,16 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:school_manager/utils/color_mapper.dart';
 
 class EmptyMessage extends StatelessWidget {
   const EmptyMessage({
     super.key,
     required this.message,
-    required this.emoji,
+    this.asset = 'assets/book.svg',
   });
 
   final String message;
-  final String emoji;
+  final String asset;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,10 @@ class EmptyMessage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 32),
-            child: Text(
-              emoji,
-              style: const TextStyle(fontSize: 160),
+            child: SvgPicture.asset(
+              asset,
+              colorMapper: PrimaryColorMapper(Theme.of(context)),
+              height: 200,
             ),
           ),
           Text(

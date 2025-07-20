@@ -5,6 +5,7 @@ import 'package:school_manager/screens/firebase_login/firebase_login_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
 class FirebaseLoginScreen extends ConsumerStatefulWidget {
@@ -54,6 +55,19 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                   builder: (context) => FirebaseLoginPage(
                     actionName: context.loc.register,
                     onSubmit: (email, password) async {
+                      final key = GlobalKey<ProgressDialogState>();
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => ProgressDialog(
+                          key: key,
+                          goal: 0,
+                          initialText: context.loc.loggingIn,
+                          showProgressNumber: false,
+                        ),
+                      );
+
                       try {
                         await firebaseService.createUser(
                           email: email,
@@ -63,12 +77,28 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                         if (context.mounted) {
                           showMessage(context, e.toString(), isError: true);
                         }
+
+                        if (context.mounted) Navigator.pop(context);
                         return;
                       }
 
                       if (context.mounted) {
-                        showMessage(
-                            context, context.loc.registeredSuccessfully);
+                        key.currentState?.changeText(context.loc.syncing);
+                      }
+                      try {
+                        await syncAllTasks(ref);
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
+                      }
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showMessage(context, context.loc.registeredSuccessfully);
                       }
                     },
                   ),
@@ -125,6 +155,7 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
 
                       if (context.mounted) {
                         Navigator.pop(context);
+                        Navigator.pop(context);
                         showMessage(context, context.loc.loggedInSynced);
                       }
                     },
@@ -175,6 +206,74 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                 }
               },
               child: Text(context.loc.logOut),
+            ),
+            OutlinedButton(
+              onPressed: () async {
+                try {
+                  await firebaseService.getAllData();
+                } on Object catch (e) {
+                  if (context.mounted) {
+                    showMessage(context, e.toString(), isError: true);
+                  }
+                  return;
+                }
+              },
+              child: Text(context.loc.getAllData),
+            ),
+            const Divider(),
+            FilledButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    WidgetStatePropertyAll(context.col.errorContainer),
+                foregroundColor:
+                    WidgetStatePropertyAll(context.col.onErrorContainer),
+              ),
+              onPressed: () async {
+                navigatorKey.currentState?.push(MaterialPageRoute(
+                  builder: (context) => FirebaseLoginPage(
+                    actionName: context.loc.deleteAllData,
+                    emailHint: context.loc.password,
+                    askForEmail: false,
+                    onSubmit: (email, password) async {
+                      showDialogAdaptive(
+                        context: context,
+                        title: Text(context.loc.deleteAllDataTitle),
+                        content: Text(context.loc.deleteAllDataText),
+                        actions: [
+                          adaptiveDialogButton(
+                            context: context,
+                            child: Text(context.loc.cancel),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          adaptiveDialogButton(
+                            context: context,
+                            isDestructiveAction: true,
+                            child: Text(context.loc.delete),
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              try {
+                                await firebaseService.deleteAllData(password);
+                              } on Object catch (e) {
+                                if (context.mounted) {
+                                  showMessage(context, e.toString(),
+                                      isError: true);
+                                }
+                                return;
+                              }
+
+                              if (context.mounted) {
+                                showMessage(
+                                    context, context.loc.deletedAllData);
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ));
+              },
+              child: Text(context.loc.deleteAllData),
             ),
           ],
         ),

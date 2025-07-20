@@ -2,17 +2,17 @@ import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/animated_shape.dart';
 import 'package:school_manager/widgets/expansion_title.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {
@@ -48,18 +48,11 @@ class _AnimatedReorderableListItem {
   }
 }
 
-class HomeworksScreen extends ConsumerStatefulWidget {
+class HomeworksScreen extends ConsumerWidget {
   const HomeworksScreen({super.key});
 
   @override
-  ConsumerState<HomeworksScreen> createState() => _HomeworksScreenState();
-}
-
-class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
-  bool showingCompleted = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hwByPriority = ref.watch(hwSortedProvider);
     final completedHws = ref.watch(hwCompletedProvider);
 
@@ -72,10 +65,6 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
     itemList.add(_AnimatedReorderableListItem(priority: -1));
     final nonDraggableItems =
         itemList.where((element) => element.hw == null).toList();
-
-    if (showingCompleted) {
-      itemList.add(_AnimatedReorderableListItem(priority: 10));
-    }
 
     return ValueListenableBuilder(
       valueListenable: ScreenSize.isWideScreen,
@@ -179,7 +168,6 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
                           removeItemBuilder: (child, animation) {
                             // we need custom remove item painter, to absorb pointer, the user mustnt
                             // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
-
                             return FadeTransition(
                               opacity: animation,
                               child: AbsorbPointer(child: child),
@@ -220,15 +208,6 @@ class _HomeworksScreenState extends ConsumerState<HomeworksScreen> {
 
   Widget _buildCompletedList(
       BuildContext context, WidgetRef ref, List<Homework> completedHws) {
-    // return SettingTile.withSwitch(
-    //   key: const ValueKey('some key'),
-    //   title: 'show',
-    //   value: showingCompleted,
-    //   onChanged: (value) => setState(() {
-    //     showingCompleted = value;
-    //   }),
-    // );
-
     return Padding(
       key: const ValueKey('hw completed title'),
       padding: const EdgeInsets.only(bottom: 70),

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
+import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/recap/recap_button.dart';
 import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/screens/recently_deleted_screen.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/screens/debug_info_screen.dart';
 import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
@@ -88,18 +88,6 @@ class MyDrawer extends StatelessWidget {
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
-                    // MyDrawerButton(
-                    //   text: 'Current Timetable',
-                    //   icon: const Icon(Icons.calendar_today_rounded),
-                    //   onTap: () {
-                    //     navigatorKey.currentState?.push(
-                    //       MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             const CurrentTimetableScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                     MyDrawerButton(
                       text: loc.hwFromBaka,
                       icon: const Icon(Icons.home_work_outlined),

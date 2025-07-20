@@ -1,9 +1,8 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
@@ -27,10 +26,6 @@ class ExamTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color? missedColor = exam.deadline.isBeforeToday()
-        ? Colors.red.harmonizeWith(Theme.of(context).primaryColor)
-        : null;
-
     double opacity = 1;
     if (exam.isCompleted == true) {
       opacity = 0.5;
@@ -146,7 +141,7 @@ class ExamTile extends StatelessWidget {
                         Text(
                           exam.deadline.dateText(),
                           maxLines: 2,
-                          style: TextStyle(color: missedColor, fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                         ),
                       const SizedBox(width: 8),
                     ],

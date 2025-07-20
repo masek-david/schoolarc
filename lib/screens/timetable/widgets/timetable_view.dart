@@ -6,10 +6,10 @@ import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/screens/empty_message.dart';
+import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 
 class TimetableView extends StatelessWidget {
@@ -36,7 +36,6 @@ class TimetableView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (timeTable == null) {
       return EmptyMessage(
-        emoji: '🍃',
         message: textWhenEmpty ?? context.loc.noTimetable,
       );
     }
@@ -45,7 +44,6 @@ class TimetableView extends StatelessWidget {
 
     return timeTable!.lessonTimes.isEmpty
         ? EmptyMessage(
-            emoji: '🍃',
             message: textWhenEmpty ?? context.loc.noTimetable,
           )
         : SingleChildScrollView(

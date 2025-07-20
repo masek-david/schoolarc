@@ -52,7 +52,6 @@ class HomeworkEntity extends HiveObject {
     DateTime? deadline,
     bool? isCompleted,
     int? priority,
-    int? dbIndex,
     String? description,
     DateTime? timestamp,
     bool? isDeleted,

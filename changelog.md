@@ -4,9 +4,15 @@
 - Added image showing app colors in theme settings
 - Added new animated component - shape shifting star
 - Added new animation for completing homework
+- Added option for reporting bugs
+- Added license page
+- Added option to delete all Cloud sync data
+- Added option to export all Cloud sync data
 
 ### Changed
 - Improved tutorial and welcome page
+- Improved screens with empty info
+- Improved shortcuts in calendar
 
 ### Fixed
 - Fixed home screen overview capitalization

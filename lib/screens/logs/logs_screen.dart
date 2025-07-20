@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/screens/logs/log.dart';
+import 'package:school_manager/screens/logs/log_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/send_bug_report.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -59,13 +60,13 @@ class _LogsScreenState extends State<LogsScreen> {
                 ],
               );
             },
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.delete_outline),
           ),
         ],
       ),
       body: logsMap.isEmpty
           ? EmptyMessage(
-              emoji: '🎉',
+              asset: 'assets/confetti.svg',
               message: context.loc.noLogsFound,
             )
           : ListView.builder(
@@ -82,12 +83,55 @@ class _LogsScreenState extends State<LogsScreen> {
                           actions: [
                             IconButton(
                               onPressed: () {
-                                logsService.delete(logs[index].$1);
-                                setState(() {
-                                  logsMap.remove(logs[index].$1);
-                                });
+                                showDialogAdaptive(
+                                    context: context,
+                                    title: Text(context.loc.sendReport),
+                                    actions: [
+                                      adaptiveDialogButton(
+                                        context: context,
+                                        child: Text(context.loc.cancel),
+                                        onPressed: () => Navigator.pop(context),
+                                      ),
+                                      adaptiveDialogButton(
+                                        context: context,
+                                        child: Text(context.loc.send),
+                                        isDefaultAction: true,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          sendBugReport(context,
+                                              bug: logs[index].$2.log);
+                                        },
+                                      ),
+                                    ]);
                               },
-                              icon: const Icon(Icons.delete),
+                              icon: const Icon(Icons.bug_report_outlined),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showDialogAdaptive(
+                                    context: context,
+                                    title: Text(context.loc.deleteLog),
+                                    actions: [
+                                      adaptiveDialogButton(
+                                        context: context,
+                                        child: Text(context.loc.cancel),
+                                        onPressed: () => Navigator.pop(context),
+                                      ),
+                                      adaptiveDialogButton(
+                                        context: context,
+                                        child: Text(context.loc.delete),
+                                        isDestructiveAction: true,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          logsService.delete(logs[index].$1);
+                                          setState(() {
+                                            logsMap.remove(logs[index].$1);
+                                          });
+                                        },
+                                      ),
+                                    ]);
+                              },
+                              icon: const Icon(Icons.delete_outline),
                             ),
                             IconButton(
                               onPressed: () {
@@ -105,7 +149,7 @@ class _LogsScreenState extends State<LogsScreen> {
                         ),
                         Text(
                           logs[index].$2.log,
-                          maxLines: 5,
+                          maxLines: 3,
                         ),
                       ],
                     ),

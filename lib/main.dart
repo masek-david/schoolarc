@@ -12,6 +12,7 @@ import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/licenses.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/workmanager.dart';
 import 'package:workmanager/workmanager.dart';
@@ -59,6 +60,8 @@ void main() async {
       isInDebugMode: kDebugMode,
     );
   }
+
+  addLicenses();
 
   runApp(
     const ProviderScope(child: TasksApp()),

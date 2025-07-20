@@ -1,13 +1,12 @@
 # FIX
-shortcut for creating should include the date in calendar
-performance of expanded title in hw and exams screen
 
 # NEW:
 
 ## RELEASE
+- ✅ info about app, credits (font, svgs)
+- ✅ info about bakalari login
+- ✅ info about strava.cz login
 - ⬜ privacy policy info for cloud sync
-- ⬜ info about bakalari login
-- ⬜ info about strava.cz login
 - ⬜ plus plan - one time/yearly ???
 
 
@@ -33,6 +32,8 @@ performance of expanded title in hw and exams screen
         - ✅ subjects
     - ✅ translation
     - ⬜ plus plan
+- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
+- ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
 - ⬜ unite the ui/ux for extensions (in settings and in tutorial)
     - ⬜ create providers for logins
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
@@ -56,7 +57,6 @@ performance of expanded title in hw and exams screen
     - ⬜ is everything needed to be shown ??
 - ⬜ add google sign in + sign in with apple
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ better calendar screen scroll - shrink calendar, make better missed
 
 ## notifications:
 - ⬜ turn off notifications for weekend
