@@ -382,6 +382,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password => 'Password';
 
   @override
+  String get repeatPassword => 'Repeat password';
+
+  @override
+  String get notSamePassword => 'The repeated password isn\'t the same.';
+
+  @override
   String get oldPassword => 'Old password';
 
   @override
@@ -457,10 +463,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loggedInSynced => 'Logged in, everything has been synced';
 
   @override
+  String get errorLoggingIn => 'There was an issue during the login.';
+
+  @override
+  String get errorRegistering => 'There was an issue registering you.';
+
+  @override
+  String get errorChangingPassword => 'There was an issue changing the password.';
+
+  @override
   String get registeredSuccessfully => 'Registered successfully, everything has been synced';
 
   @override
   String get changePassword => 'Change password';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get repeatNewPassword => 'Repeat new password';
+
+  @override
+  String get samePasswords => 'The new password can\'t be the same as the old password.';
 
   @override
   String get passwordChangedSuccessfully => 'Password changed successfully';
@@ -953,6 +977,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportBug => 'Report bug';
 
   @override
+  String get reportBugPolicy => 'By sending the report, you agree to share the included information for the purpose of fixing bugs.';
+
+  @override
   String get viewLicenses => 'View licenses';
 
   @override
@@ -992,8 +1019,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAllDataTitle => 'Delete all data?';
 
   @override
-  String get deleteAllDataText => 'Deleting all data will clear your cloud backup. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?';
+  String get deleteAllDataText => 'Deleting all data will clear your cloud backup and delete your account. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?';
 
   @override
   String get getAllData => 'Download all data';
+
+  @override
+  String get agree => 'Agree';
+
+  @override
+  String get disagree => 'Disagree';
+
+  @override
+  String get privacyPolicy => '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
 }

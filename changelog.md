@@ -8,6 +8,7 @@
 - Added license page
 - Added option to delete all Cloud sync data
 - Added option to export all Cloud sync data
+- Added privacy policy for Cloud sync
 
 ### Changed
 - Improved tutorial and welcome page

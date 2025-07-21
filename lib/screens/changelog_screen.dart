@@ -7,8 +7,6 @@ class ChangelogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    rootBundle.loadString('changelog.md');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Changelog'),

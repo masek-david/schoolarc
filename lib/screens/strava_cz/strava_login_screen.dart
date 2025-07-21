@@ -2,20 +2,22 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/debug_mode_notifier.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
-class StravaLoginScreen extends StatefulWidget {
+class StravaLoginScreen extends ConsumerStatefulWidget {
   const StravaLoginScreen({super.key});
 
   @override
-  State<StravaLoginScreen> createState() => _StravaLoginScreenState();
+  ConsumerState<StravaLoginScreen> createState() => _StravaLoginScreenState();
 }
 
-class _StravaLoginScreenState extends State<StravaLoginScreen> {
+class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
   final _canteenController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -102,7 +104,7 @@ class _StravaLoginScreenState extends State<StravaLoginScreen> {
                 ),
               ],
             ),
-            if (settings.get(Setting.showDebugInfo) || kDebugMode)
+            if (ref.watch(debugModeProvider) || kDebugMode)
               SettingTile.withSwitch(
                 title: loc.allowStravaLogin,
                 onChanged: (value) {

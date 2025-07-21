@@ -18,13 +18,17 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/tasks_app.dart';
 
+final firebaseServiceProvider = Provider<FirebaseService>((ref) {
+  return FirebaseService(ref: ref);
+});
+
 class FirebaseService {
-  FirebaseService({this.ref}) {
+  FirebaseService({required this.ref}) {
     refLocation();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  WidgetRef? ref;
+  Ref? ref;
 
   late DatabaseReference exams;
   late DatabaseReference homeworks;

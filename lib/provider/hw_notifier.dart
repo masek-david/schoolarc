@@ -9,13 +9,14 @@ import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/homeworks/hw_entity_model.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
+import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
@@ -226,7 +227,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = firebaseService.listenHomeworks().listen((event) async {
+    listenFirebase = ref.read(firebaseServiceProvider).listenHomeworks().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(1);
 
       if (!Hive.box(hwBox).isOpen) {
@@ -243,7 +244,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
   Future<void> syncAll() async {
     _loadState();
     await listenToFirebase();
-    final fireHws = await firebaseService.getAllHomeworks();
+    final fireHws = await ref.read(firebaseServiceProvider).getAllHomeworks();
 
     fireHws?.forEach(
       (element) async {
@@ -324,7 +325,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
 
     if (addToFire) {
-      await firebaseService.addHomework(hw.convert(id, subjects[hw.subjectId]));
+      await ref.read(firebaseServiceProvider).addHomework(hw.convert(id, subjects[hw.subjectId]));
     }
 
     return;
@@ -378,7 +379,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     await homeworksDb.editHw(editedHw.id, editedHw.convert());
 
     if (syncWithFire) {
-      firebaseService.editHomeworks([editedHw]);
+      ref.read(firebaseServiceProvider).editHomeworks([editedHw]);
     }
 
     final isNew = editedHw.timestamp.difference(DateTime.now()) <
@@ -494,7 +495,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
       },
     );
 
-    firebaseService.editHomeworks(editedHomeworks.values.toList());
+    ref.read(firebaseServiceProvider).editHomeworks(editedHomeworks.values.toList());
 
     state = {...state, ...editedHomeworks};
     return;
@@ -540,7 +541,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     for (var element in hws) {
       homeworksDb.deleteHw(element.id);
     }
-    await firebaseService.deleteHomeworks(hws);
+    await ref.read(firebaseServiceProvider).deleteHomeworks(hws);
   }
 
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
@@ -594,7 +595,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
-      firebaseService.editHomeworks([localHw.copyWith(id: fireHw.id)]);
+      ref.read(firebaseServiceProvider).editHomeworks([localHw.copyWith(id: fireHw.id)]);
     }
     return;
   }

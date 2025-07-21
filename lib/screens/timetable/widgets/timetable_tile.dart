@@ -1,8 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
@@ -77,7 +77,7 @@ class TimetableTile extends StatelessWidget {
                         ],
                       ),
                     if (lesson?.subject?.isFromBakalari == true &&
-                        settings.get(Setting.showDebugInfo))
+                        settings.get(Setting.debugMode))
                       Text('baka: ${lesson?.subject?.bakaId}'),
                     const Spacer(),
                     if (lesson?.change?.type == ChangeType.canceled)

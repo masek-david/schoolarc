@@ -6,7 +6,7 @@
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
-- ⬜ privacy policy info for cloud sync
+- ✅ privacy policy info for cloud sync
 - ⬜ plus plan - one time/yearly ???
 
 
@@ -57,6 +57,7 @@
     - ⬜ is everything needed to be shown ??
 - ⬜ add google sign in + sign in with apple
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
+- ⬜ translation - google sheets
 
 ## notifications:
 - ⬜ turn off notifications for weekend

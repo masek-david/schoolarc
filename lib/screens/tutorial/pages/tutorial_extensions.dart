@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 
-class TutorialExtensions extends StatefulWidget {
+class TutorialExtensions extends ConsumerStatefulWidget {
   const TutorialExtensions({super.key});
 
   @override
-  State<TutorialExtensions> createState() =>
+  ConsumerState<TutorialExtensions> createState() =>
       _TutorialExtensionsState();
 }
 
-class _TutorialExtensionsState extends State<TutorialExtensions> {
+class _TutorialExtensionsState extends ConsumerState<TutorialExtensions> {
   bool useBaka = settings.get(Setting.useBakalari);
   bool useStrava = settings.get(Setting.useMeals);
-  bool useFirebase = settings.get(Setting.useFirebase);
 
   @override
   Widget build(BuildContext context) {
+    bool useCloudSync = ref.watch(useCloudSyncProvider);
+    
     return SlidableAutoCloseBehavior(
       child: SafeArea(
         child: Padding(
@@ -79,11 +82,10 @@ class _TutorialExtensionsState extends State<TutorialExtensions> {
               _ExtensionButton(
                 title: context.loc.cloudSync,
                 subtitle: context.loc.cloudSyncSubtitle,
-                value: useFirebase,
+                value: useCloudSync,
                 onChanged: (value) {
                   setState(() {
-                    useFirebase = value;
-                    settings.save(Setting.useFirebase, value);
+                    ref.read(useCloudSyncProvider.notifier).set(value, context, ref);
                   });
                 },
                 button: FilledButton(

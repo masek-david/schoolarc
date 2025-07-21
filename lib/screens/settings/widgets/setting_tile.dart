@@ -11,11 +11,13 @@ class SettingTile extends StatelessWidget {
     this.onTap,
     this.highlighted = false,
     this.enabled = true,
+    this.iconColor,
   });
 
   final String title;
   final String? subtitle;
   final IconData? icon;
+  final Color? iconColor;
   final Widget? trailing;
   final Widget? newLineAction;
   final Function(BuildContext context)? onTap;
@@ -30,6 +32,7 @@ class SettingTile extends StatelessWidget {
     bool? enabled,
     bool? highlighted,
     IconData? icon,
+    Color? iconColor,
     Key? key,
   }) {
     return SettingTile(
@@ -40,6 +43,7 @@ class SettingTile extends StatelessWidget {
       icon: icon,
       onTap: (context) => onChanged(!value),
       trailing: Switch(value: value, onChanged: onChanged),
+      iconColor: iconColor,
       key: key,
     );
   }
@@ -52,6 +56,7 @@ class SettingTile extends StatelessWidget {
     bool? enabled,
     bool? highlighted,
     IconData? icon,
+    Color? iconColor,
   }) {
     return SettingTile(
       title: title,
@@ -59,6 +64,7 @@ class SettingTile extends StatelessWidget {
       enabled: enabled ?? true,
       highlighted: highlighted ?? false,
       icon: icon,
+      iconColor: iconColor,
       onTap: (context) async {
         final value = await showTimePicker(
           context: context,
@@ -69,14 +75,12 @@ class SettingTile extends StatelessWidget {
           onChanged(value);
         }
       },
-      trailing: Builder(
-        builder: (context) {
-          return Text(
-            time.format(context),
-            style: const TextStyle(fontSize: 16),
-          );
-        }
-      ),
+      trailing: Builder(builder: (context) {
+        return Text(
+          time.format(context),
+          style: const TextStyle(fontSize: 16),
+        );
+      }),
     );
   }
 
@@ -102,7 +106,7 @@ class SettingTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(32))
                   : null,
               contentPadding: highlighted ? const EdgeInsets.all(12) : null,
-              leading: icon != null ? Icon(icon) : null,
+              leading: icon != null ? Icon(icon, color: iconColor) : null,
               title: Text(
                 title,
                 style: TextStyle(

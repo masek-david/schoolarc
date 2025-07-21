@@ -27,7 +27,6 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/tutorial/tutorial.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
-import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/services/logs_service.dart';
 import 'package:school_manager/services/strava_service.dart';
@@ -55,7 +54,6 @@ final timetableDb = TimeTableDatabase();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
 final logsService = LogsService();
-FirebaseService firebaseService = FirebaseService();
 final uuid = const Uuid();
 late PackageInfo packageInfo;
 
@@ -73,13 +71,17 @@ Future<void> syncAllTasks(WidgetRef ref) async {
 void showMessage(
   BuildContext context,
   String message, {
-  Duration duration = const Duration(seconds: 3),
+  Duration? duration,
   bool isError = false,
   bool isContinuos = false,
   List<Widget>? actions,
 }) {
   if (context.mounted) {
-    if (isError) {}
+    if (isError) {
+      duration ??= const Duration(seconds: 10);
+    } else {
+      duration ??= const Duration(seconds: 3);
+    }
     if (isContinuos) {
       duration = const Duration(days: 100);
     }
@@ -235,9 +237,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
     );
     _onAppLeaveOrReturn(true);
 
-    // add riverpod reference to firestore service, need to update firebaseOverlay
-    firebaseService = FirebaseService(ref: ref);
-
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
@@ -252,10 +251,6 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           },
         );
       }
-    }
-
-    if (!firebaseService.isloggedIn && kIsWeb && !kDebugMode) {
-      settings.save(Setting.useFirebase, true);
     }
 
     // Only after at least the action method is set, the notification events are delivered
@@ -403,7 +398,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
           supportedLocales: supportedLocales.keys,
           locale: locale,
           debugShowCheckedModeBanner: false,
-          showPerformanceOverlay: settings.get(Setting.showDebugInfo) &&
+          showPerformanceOverlay: settings.get(Setting.debugMode) &&
               settings.get(Setting.debugShowPerformanceOverlay),
           theme: ThemeData(
             colorScheme: light,
@@ -412,6 +407,20 @@ class _TasksAppState extends ConsumerState<TasksApp> {
             visualDensity: VisualDensity.standard,
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(year2023: false),
+            filledButtonTheme: FilledButtonThemeData(
+              style: ButtonStyle(
+                side: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.focused)) {
+                    return BorderSide(
+                      color: light.primary,
+                      width: 3,
+                      strokeAlign: 3,
+                    );
+                  }
+                  return null;
+                }),
+              ),
+            ),
           ),
           darkTheme: ThemeData(
             colorScheme: dark,
@@ -425,6 +434,20 @@ class _TasksAppState extends ConsumerState<TasksApp> {
             //         PredictiveBackPageTransitionsBuilder(),
             //   },
             // ),
+            filledButtonTheme: FilledButtonThemeData(
+              style: ButtonStyle(
+                side: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.focused)) {
+                    return BorderSide(
+                      color: dark.primary,
+                      width: 3,
+                      strokeAlign: 3,
+                    );
+                  }
+                  return null;
+                }),
+              ),
+            ),
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(year2023: false),
           ),

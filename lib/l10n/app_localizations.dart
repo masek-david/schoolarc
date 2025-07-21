@@ -665,6 +665,18 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get password;
 
+  /// No description provided for @repeatPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat password'**
+  String get repeatPassword;
+
+  /// No description provided for @notSamePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The repeated password isn\'t the same.'**
+  String get notSamePassword;
+
   /// No description provided for @oldPassword.
   ///
   /// In en, this message translates to:
@@ -815,6 +827,24 @@ abstract class AppLocalizations {
   /// **'Logged in, everything has been synced'**
   String get loggedInSynced;
 
+  /// No description provided for @errorLoggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an issue during the login.'**
+  String get errorLoggingIn;
+
+  /// No description provided for @errorRegistering.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an issue registering you.'**
+  String get errorRegistering;
+
+  /// No description provided for @errorChangingPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an issue changing the password.'**
+  String get errorChangingPassword;
+
   /// No description provided for @registeredSuccessfully.
   ///
   /// In en, this message translates to:
@@ -826,6 +856,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change password'**
   String get changePassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @repeatNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get repeatNewPassword;
+
+  /// No description provided for @samePasswords.
+  ///
+  /// In en, this message translates to:
+  /// **'The new password can\'t be the same as the old password.'**
+  String get samePasswords;
 
   /// No description provided for @passwordChangedSuccessfully.
   ///
@@ -1709,6 +1757,12 @@ abstract class AppLocalizations {
   /// **'Report bug'**
   String get reportBug;
 
+  /// No description provided for @reportBugPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'By sending the report, you agree to share the included information for the purpose of fixing bugs.'**
+  String get reportBugPolicy;
+
   /// No description provided for @viewLicenses.
   ///
   /// In en, this message translates to:
@@ -1790,7 +1844,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAllDataText.
   ///
   /// In en, this message translates to:
-  /// **'Deleting all data will clear your cloud backup. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?'**
+  /// **'Deleting all data will clear your cloud backup and delete your account. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?'**
   String get deleteAllDataText;
 
   /// No description provided for @getAllData.
@@ -1798,6 +1852,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download all data'**
   String get getAllData;
+
+  /// No description provided for @agree.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree'**
+  String get agree;
+
+  /// No description provided for @disagree.
+  ///
+  /// In en, this message translates to:
+  /// **'Disagree'**
+  String get disagree;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase'**
+  String get privacyPolicy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

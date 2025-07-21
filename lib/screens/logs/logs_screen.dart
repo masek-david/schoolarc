@@ -36,6 +36,46 @@ class _LogsScreenState extends State<LogsScreen> {
             onPressed: () {
               showDialogAdaptive(
                 context: context,
+                title: Text(context.loc.sendReport),
+                content: Text(context.loc.reportBugPolicy),
+                actions: [
+                  adaptiveDialogButton(
+                    context: context,
+                    child: Text(context.loc.cancel),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  adaptiveDialogButton(
+                    context: context,
+                    child: Text(context.loc.send),
+                    isDefaultAction: true,
+                    onPressed: () {
+                      final message = logs
+                          .getRange(0, 118)
+                          .map((e) =>
+                              '=====   ${e.$2.date}   =====\n${e.$2.log}')
+                          .join('\n\n\n')
+                          .replaceAll(
+                            RegExp(r'^\s*#.*(?:\r?\n)?', multiLine: true),
+                            '',
+                          );
+
+                      final trimmed = message.length > 18000
+                          ? message.substring(0, 18000)
+                          : message;
+
+                      Navigator.pop(context);
+                      sendBugReport(context, bug: trimmed);
+                    },
+                  ),
+                ],
+              );
+            },
+            icon: const Icon(Icons.bug_report_outlined),
+          ),
+          IconButton(
+            onPressed: () {
+              showDialogAdaptive(
+                context: context,
                 title: Text(context.loc.deleteAllLogs),
                 actions: [
                   adaptiveDialogButton(
@@ -84,25 +124,27 @@ class _LogsScreenState extends State<LogsScreen> {
                             IconButton(
                               onPressed: () {
                                 showDialogAdaptive(
-                                    context: context,
-                                    title: Text(context.loc.sendReport),
-                                    actions: [
-                                      adaptiveDialogButton(
-                                        context: context,
-                                        child: Text(context.loc.cancel),
-                                        onPressed: () => Navigator.pop(context),
-                                      ),
-                                      adaptiveDialogButton(
-                                        context: context,
-                                        child: Text(context.loc.send),
-                                        isDefaultAction: true,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          sendBugReport(context,
-                                              bug: logs[index].$2.log);
-                                        },
-                                      ),
-                                    ]);
+                                  context: context,
+                                  title: Text(context.loc.sendReport),
+                                  content: Text(context.loc.reportBugPolicy),
+                                  actions: [
+                                    adaptiveDialogButton(
+                                      context: context,
+                                      child: Text(context.loc.cancel),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                    adaptiveDialogButton(
+                                      context: context,
+                                      child: Text(context.loc.send),
+                                      isDefaultAction: true,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        sendBugReport(context,
+                                            bug: logs[index].$2.log);
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
                               icon: const Icon(Icons.bug_report_outlined),
                             ),

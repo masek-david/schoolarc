@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/screen_size.dart';
@@ -96,7 +96,7 @@ class ExamsScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: RefreshIndicator(
-                  notificationPredicate: settings.get(Setting.useFirebase)
+                  notificationPredicate: ref.watch(useCloudSyncProvider)
                       ? (_) => true
                       : (_) => false,
                   onRefresh: () async {

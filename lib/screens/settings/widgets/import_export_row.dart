@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -143,7 +143,7 @@ class ImportExportRow extends ConsumerWidget {
                                 if (context.mounted) {
                                   Navigator.pop(context);
                                 }
-                                if (settings.get(Setting.useFirebase)) {
+                                if (ref.watch(useCloudSyncProvider)) {
                                   syncAllTasks(ref);
                                 }
                               },

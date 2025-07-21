@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/debug_mode_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';
@@ -19,7 +21,7 @@ import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 import 'package:school_manager/widgets/drawer/search_bar.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends ConsumerWidget {
   const MyDrawer({
     super.key,
     required this.refreshTheme,
@@ -37,8 +39,8 @@ class MyDrawer extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    late final bool showDebug = settings.get(Setting.showDebugInfo);
+  Widget build(BuildContext context, WidgetRef ref) {
+    late final bool debugMode = ref.watch(debugModeProvider);
     final loc = context.loc;
 
     return Drawer(
@@ -111,18 +113,17 @@ class MyDrawer extends StatelessWidget {
                         );
                       },
                     ),
-                    if (kDebugMode || showDebug)
+                    if (kDebugMode || debugMode)
                       const Divider(indent: 28, endIndent: 28),
-                    if (kDebugMode || showDebug)
+                    if (kDebugMode || debugMode)
                       SettingTile.withSwitch(
                         title: loc.developerMode,
-                        value: settings.get(Setting.showDebugInfo),
+                        value: debugMode,
                         onChanged: (value) {
-                          settings.save(Setting.showDebugInfo, value);
-                          refreshTheme();
+                          ref.read(debugModeProvider.notifier).set(value);
                         },
                       ),
-                    if (showDebug)
+                    if (debugMode)
                       SettingTile.withSwitch(
                         title: loc.showPerformanceOverlay,
                         value:
@@ -133,7 +134,7 @@ class MyDrawer extends StatelessWidget {
                           refreshTheme();
                         },
                       ),
-                    if (showDebug)
+                    if (debugMode)
                       SettingTile.withSwitch(
                         title: loc.showFirebaseOverlay,
                         value: settings.get(Setting.debugShowFireOverlay),
@@ -142,7 +143,7 @@ class MyDrawer extends StatelessWidget {
                           refreshTheme();
                         },
                       ),
-                    if (showDebug)
+                    if (debugMode)
                       MyDrawerButton(
                           text: loc.viewDatabase,
                           icon: const Icon(Icons.data_array),
@@ -153,7 +154,7 @@ class MyDrawer extends StatelessWidget {
                               ),
                             );
                           }),
-                    if (showDebug)
+                    if (debugMode)
                       MyDrawerButton(
                         text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
@@ -207,7 +208,7 @@ class MyDrawer extends StatelessWidget {
                 );
               },
             ),
-            if (showDebug || kDebugMode)
+            if (debugMode || kDebugMode)
               GestureDetector(
                 onTap: () => navigatorKey.currentState?.push(MaterialPageRoute(
                   builder: (context) => const ChangelogScreen(),

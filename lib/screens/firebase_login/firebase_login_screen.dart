@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/screens/firebase_login/firebase_login_page.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
+import 'package:school_manager/provider/firebase_login_notifier.dart';
+import 'package:school_manager/screens/login_input_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
+import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
-class FirebaseLoginScreen extends ConsumerStatefulWidget {
+class FirebaseLoginScreen extends ConsumerWidget {
   const FirebaseLoginScreen({
     super.key,
     this.onHide,
@@ -17,228 +19,287 @@ class FirebaseLoginScreen extends ConsumerStatefulWidget {
   final void Function()? onHide;
 
   @override
-  ConsumerState<FirebaseLoginScreen> createState() =>
-      _FirestoreLoginScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool useCloudSync = ref.watch(useCloudSyncProvider);
+    final loggedIn = ref.watch(firebaseLoginProvider).isLoggedIn;
 
-class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
-  bool useFirebase = settings.get(Setting.useFirebase);
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(
-          onPressed: widget.onHide != null ? () => widget.onHide!() : null,
+          onPressed: onHide != null ? () => onHide!() : null,
         ),
         title: Text(context.loc.cloudSync),
+        actions: [
+          IconButton(
+            onPressed: () => showConsentDialog(context, ref),
+            icon: const Icon(Icons.info_outline),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          spacing: 8,
-          children: [
-            SettingTile.withSwitch(
-              title: context.loc.useCloudSync,
-              icon: Icons.cloud_outlined,
-              value: useFirebase,
-              onChanged: (value) {
-                settings.save(Setting.useFirebase, value);
-                setState(() {
-                  useFirebase = value;
-                });
-              },
+      body: Column(
+        spacing: 8,
+        children: [
+          SettingTile.withSwitch(
+            title: context.loc.useCloudSync,
+            icon: Icons.cloud_outlined,
+            value: useCloudSync,
+            onChanged: (value) {
+              ref.read(useCloudSyncProvider.notifier).set(value, context, ref);
+            },
+          ),
+          if (loggedIn)
+            SettingTile(
+              title: context.loc.loggedIn,
+              iconColor: Colors.lightGreenAccent,
+              icon: Icons.check_circle,
             ),
+          if (!loggedIn)
             OutlinedButton(
-              onPressed: () async {
-                navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => FirebaseLoginPage(
-                    actionName: context.loc.register,
-                    onSubmit: (email, password) async {
-                      final key = GlobalKey<ProgressDialogState>();
+              onPressed: useCloudSync
+                  ? () async {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => LoginInputScreen(
+                          actionName: context.loc.logIn,
+                          fields: [
+                            LoginField(
+                              name: context.loc.email,
+                              initialValue:
+                                  ref.read(firebaseServiceProvider).userEmail,
+                              autofillHints: [
+                                AutofillHints.username,
+                                AutofillHints.email,
+                              ],
+                            ),
+                            LoginField(
+                              name: context.loc.password,
+                              obscure: true,
+                              autofillHints: [AutofillHints.password],
+                            ),
+                          ],
+                          onSubmit: (fields) async {
+                            final key = GlobalKey<ProgressDialogState>();
 
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => ProgressDialog(
-                          key: key,
-                          goal: 0,
-                          initialText: context.loc.loggingIn,
-                          showProgressNumber: false,
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => ProgressDialog(
+                                key: key,
+                                initialText: context.loc.loggingIn,
+                                showProgressNumber: false,
+                              ),
+                            );
+
+                            try {
+                              await ref
+                                  .read(firebaseLoginProvider.notifier)
+                                  .logIn(
+                                    email: fields[0],
+                                    password: fields[1],
+                                  );
+                            } on Object catch (e) {
+                              if (context.mounted) {
+                                showMessage(
+                                  context,
+                                  '${context.loc.errorLoggingIn}\n$e',
+                                  isError: true,
+                                );
+                              }
+
+                              if (context.mounted) Navigator.pop(context);
+                              return;
+                            }
+
+                            if (context.mounted) {
+                              key.currentState?.changeText(context.loc.syncing);
+                            }
+                            try {
+                              await syncAllTasks(ref);
+                            } on Object catch (e) {
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                showMessage(context, e.toString(),
+                                    isError: true);
+                              }
+                              return;
+                            }
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              showMessage(context, context.loc.loggedInSynced);
+                            }
+                          },
                         ),
-                      );
-
-                      try {
-                        await firebaseService.createUser(
-                          email: email,
-                          password: password,
-                        );
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          showMessage(context, e.toString(), isError: true);
-                        }
-
-                        if (context.mounted) Navigator.pop(context);
-                        return;
-                      }
-
-                      if (context.mounted) {
-                        key.currentState?.changeText(context.loc.syncing);
-                      }
-                      try {
-                        await syncAllTasks(ref);
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          showMessage(context, e.toString(), isError: true);
-                        }
-                        return;
-                      }
-
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        showMessage(context, context.loc.registeredSuccessfully);
-                      }
-                    },
-                  ),
-                ));
-              },
-              child: Text(context.loc.register),
-            ),
-            OutlinedButton(
-              onPressed: () async {
-                navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => FirebaseLoginPage(
-                    actionName: context.loc.logIn,
-                    initialEmail: firebaseService.userEmail,
-                    onSubmit: (email, password) async {
-                      final key = GlobalKey<ProgressDialogState>();
-
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => ProgressDialog(
-                          key: key,
-                          goal: 0,
-                          initialText: context.loc.loggingIn,
-                          showProgressNumber: false,
-                        ),
-                      );
-
-                      try {
-                        await firebaseService.logIn(
-                          email: email,
-                          password: password,
-                        );
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          showMessage(context, e.toString(), isError: true);
-                        }
-
-                        if (context.mounted) Navigator.pop(context);
-                        return;
-                      }
-
-                      if (context.mounted) {
-                        key.currentState?.changeText(context.loc.syncing);
-                      }
-                      try {
-                        await syncAllTasks(ref);
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          showMessage(context, e.toString(), isError: true);
-                        }
-                        return;
-                      }
-
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        showMessage(context, context.loc.loggedInSynced);
-                      }
-                    },
-                  ),
-                ));
-              },
+                      ));
+                    }
+                  : null,
               child: Text(context.loc.logIn),
             ),
+          if (!loggedIn)
             OutlinedButton(
-              onPressed: () async {
-                navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => FirebaseLoginPage(
-                    actionName: context.loc.changePassword,
-                    emailHint: context.loc.oldPassword,
-                    onSubmit: (email, password) async {
-                      try {
-                        await firebaseService.changePassword(email, password);
-                      } on Object catch (e) {
-                        if (context.mounted) {
-                          showMessage(context, e.toString(), isError: true);
-                        }
-                        return;
-                      }
+              onPressed: useCloudSync
+                  ? () async {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => LoginInputScreen(
+                          actionName: context.loc.register,
+                          fields: [
+                            LoginField(
+                              name: context.loc.email,
+                              autofillHints: [
+                                AutofillHints.newUsername,
+                                AutofillHints.email,
+                              ],
+                            ),
+                            LoginField(
+                              name: context.loc.password,
+                              obscure: true,
+                              autofillHints: [AutofillHints.newPassword],
+                            ),
+                            LoginField(
+                              name: context.loc.repeatPassword,
+                              obscure: true,
+                              autofillHints: [AutofillHints.newPassword],
+                            ),
+                          ],
+                          onSubmit: (fields) async {
+                            final key = GlobalKey<ProgressDialogState>();
 
-                      if (context.mounted) {
-                        showMessage(
-                            context, context.loc.passwordChangedSuccessfully);
-                      }
-                    },
-                  ),
-                ));
-              },
+                            if (fields[1] != fields[2]) {
+                              showMessage(context, context.loc.notSamePassword,
+                                  isError: true);
+                              return;
+                            }
+
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => ProgressDialog(
+                                key: key,
+                                initialText: context.loc.loggingIn,
+                                showProgressNumber: false,
+                              ),
+                            );
+
+                            try {
+                              await ref
+                                  .read(firebaseLoginProvider.notifier)
+                                  .register(
+                                    email: fields[0],
+                                    password: fields[1],
+                                  );
+                            } on Object catch (e) {
+                              if (context.mounted) {
+                                showMessage(
+                                  context,
+                                  '${context.loc.errorRegistering}\n$e',
+                                  isError: true,
+                                );
+                              }
+
+                              if (context.mounted) Navigator.pop(context);
+                              return;
+                            }
+
+                            if (context.mounted) {
+                              key.currentState?.changeText(context.loc.syncing);
+                            }
+                            try {
+                              await syncAllTasks(ref);
+                            } on Object catch (e) {
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                showMessage(context, e.toString(),
+                                    isError: true);
+                              }
+                              return;
+                            }
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              showMessage(
+                                  context, context.loc.registeredSuccessfully);
+                            }
+                          },
+                        ),
+                      ));
+                    }
+                  : null,
+              child: Text(context.loc.register),
+            ),
+          if (loggedIn)
+            OutlinedButton(
+              onPressed: useCloudSync
+                  ? () async {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => LoginInputScreen(
+                          actionName: context.loc.changePassword,
+                          fields: [
+                            LoginField(
+                              name: context.loc.oldPassword,
+                              obscure: true,
+                              autofillHints: [AutofillHints.password],
+                            ),
+                            LoginField(
+                              name: context.loc.newPassword,
+                              obscure: true,
+                              autofillHints: [AutofillHints.newPassword],
+                            ),
+                            LoginField(
+                              name: context.loc.repeatNewPassword,
+                              obscure: true,
+                              autofillHints: [AutofillHints.newPassword],
+                            ),
+                          ],
+                          onSubmit: (fields) async {
+                            if (fields[1] != fields[2]) {
+                              showMessage(context, context.loc.notSamePassword,
+                                  isError: true);
+                              return;
+                            }
+
+                            if (fields[0] == fields[1]) {
+                              showMessage(
+                                context,
+                                context.loc.samePasswords,
+                                isError: true,
+                              );
+                              return;
+                            }
+
+                            try {
+                              await ref
+                                  .read(firebaseServiceProvider)
+                                  .changePassword(fields[0], fields[1]);
+                            } on Object catch (e) {
+                              if (context.mounted) {
+                                showMessage(
+                                  context,
+                                  '${context.loc.errorChangingPassword}\n$e',
+                                  isError: true,
+                                );
+                              }
+                              return;
+                            }
+
+                            if (context.mounted) {
+                              showMessage(context,
+                                  context.loc.passwordChangedSuccessfully);
+                            }
+                          },
+                        ),
+                      ));
+                    }
+                  : null,
               child: Text(context.loc.changePassword),
             ),
+          if (loggedIn)
             OutlinedButton(
-              onPressed: () async {
-                try {
-                  await firebaseService.logOut();
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
-                  }
-                  return;
-                }
-
-                if (context.mounted) {
-                  showMessage(context, context.loc.loggedOut);
-                }
-              },
-              child: Text(context.loc.logOut),
-            ),
-            OutlinedButton(
-              onPressed: () async {
-                try {
-                  await firebaseService.getAllData();
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
-                  }
-                  return;
-                }
-              },
-              child: Text(context.loc.getAllData),
-            ),
-            const Divider(),
-            FilledButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(context.col.errorContainer),
-                foregroundColor:
-                    WidgetStatePropertyAll(context.col.onErrorContainer),
-              ),
-              onPressed: () async {
-                navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => FirebaseLoginPage(
-                    actionName: context.loc.deleteAllData,
-                    emailHint: context.loc.password,
-                    askForEmail: false,
-                    onSubmit: (email, password) async {
+              onPressed: useCloudSync
+                  ? () async {
                       showDialogAdaptive(
                         context: context,
-                        title: Text(context.loc.deleteAllDataTitle),
-                        content: Text(context.loc.deleteAllDataText),
+                        title: Text('${context.loc.logOut}?'),
                         actions: [
                           adaptiveDialogButton(
                             context: context,
@@ -248,11 +309,13 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                           adaptiveDialogButton(
                             context: context,
                             isDestructiveAction: true,
-                            child: Text(context.loc.delete),
+                            child: Text(context.loc.logOut),
                             onPressed: () async {
                               Navigator.pop(context);
                               try {
-                                await firebaseService.deleteAllData(password);
+                                await ref
+                                    .read(firebaseLoginProvider.notifier)
+                                    .logOut();
                               } on Object catch (e) {
                                 if (context.mounted) {
                                   showMessage(context, e.toString(),
@@ -262,21 +325,106 @@ class _FirestoreLoginScreenState extends ConsumerState<FirebaseLoginScreen> {
                               }
 
                               if (context.mounted) {
-                                showMessage(
-                                    context, context.loc.deletedAllData);
+                                showMessage(context, context.loc.loggedOut);
                               }
                             },
                           ),
                         ],
                       );
-                    },
-                  ),
-                ));
-              },
+                    }
+                  : null,
+              child: Text(context.loc.logOut),
+            ),
+          if (loggedIn)
+            OutlinedButton(
+              onPressed: useCloudSync
+                  ? () async {
+                      try {
+                        await ref.read(firebaseServiceProvider).getAllData();
+                      } on Object catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                        return;
+                      }
+                    }
+                  : null,
+              child: Text(context.loc.getAllData),
+            ),
+          if (loggedIn) const Divider(),
+          if (loggedIn)
+            FilledButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return context.col.errorContainer.withAlpha(14);
+                  }
+                  return context.col.errorContainer;
+                }),
+                foregroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return context.col.onErrorContainer.withAlpha(80);
+                  }
+                  return context.col.onErrorContainer;
+                }),
+              ),
+              onPressed: useCloudSync
+                  ? () async {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => LoginInputScreen(
+                          actionName: context.loc.deleteAllData,
+                          fields: [
+                            LoginField(
+                              name: context.loc.password,
+                              obscure: true,
+                              autofillHints: [AutofillHints.password],
+                            ),
+                          ],
+                          onSubmit: (fields) async {
+                            showDialogAdaptive(
+                              context: context,
+                              title: Text(context.loc.deleteAllDataTitle),
+                              content: Text(context.loc.deleteAllDataText),
+                              actions: [
+                                adaptiveDialogButton(
+                                  context: context,
+                                  child: Text(context.loc.cancel),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                adaptiveDialogButton(
+                                  context: context,
+                                  isDestructiveAction: true,
+                                  child: Text(context.loc.delete),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    try {
+                                      await ref
+                                          .read(firebaseServiceProvider)
+                                          .deleteAllData(fields[0]);
+                                    } on Object catch (e) {
+                                      if (context.mounted) {
+                                        showMessage(context, e.toString(),
+                                            isError: true);
+                                      }
+                                      return;
+                                    }
+
+                                    if (context.mounted) {
+                                      showMessage(
+                                          context, context.loc.deletedAllData);
+                                    }
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ));
+                    }
+                  : null,
               child: Text(context.loc.deleteAllData),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

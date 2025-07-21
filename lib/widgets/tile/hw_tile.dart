@@ -7,13 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/shapes_list.dart';
-import 'package:school_manager/widgets/tile/animated_checkbox.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
+import 'package:school_manager/widgets/tile/animated_checkbox.dart';
 import 'package:school_manager/widgets/tile/tile_slidable.dart';
 
 class HwTile extends StatefulWidget {
@@ -172,7 +172,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      if (settings.get(Setting.showDebugInfo))
+                      if (settings.get(Setting.debugMode))
                         Column(
                           children: [
                             Text(widget.hw.order.toString()),

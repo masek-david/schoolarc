@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
@@ -131,7 +131,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
       appBar: AppBar(
         title: Text(context.loc.subjects),
         actions: [
-          if (kIsWeb && settings.get(Setting.useFirebase))
+          if (kIsWeb && ref.watch(useCloudSyncProvider))
             IconButton(
               onPressed: onRefresh,
               icon: const Icon(Icons.refresh_outlined),
@@ -154,7 +154,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                   message: context.loc.noSubjectsFoundMessage,
                 )
               : RefreshIndicator(
-                  notificationPredicate: settings.get(Setting.useFirebase)
+                  notificationPredicate: ref.watch(useCloudSyncProvider)
                       ? (_) => true
                       : (_) => false,
                   onRefresh: onRefresh,

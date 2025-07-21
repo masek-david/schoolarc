@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/subjects/subject_entity_model.dart';
+import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
+import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/tasks_app.dart';
 
 final subjectsProvider =
@@ -86,7 +87,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = firebaseService.listenSubjects().listen((event) async {
+    listenFirebase = ref.read(firebaseServiceProvider).listenSubjects().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(0);
 
       await checkFireSubject(event);
@@ -97,7 +98,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
   Future<void> syncAll() async {
     await listenToFirebase();
-    final fireSubjects = await firebaseService.getSubjects();
+    final fireSubjects = await ref.read(firebaseServiceProvider).getSubjects();
 
     fireSubjects?.forEach(
       (element) async {
@@ -165,7 +166,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
     state = {...state, id: subject.convert(id)};
     if (addToFire) {
-      await firebaseService.addSubject(subject.convert(id));
+      await ref.read(firebaseServiceProvider).addSubject(subject.convert(id));
     }
 
     return subject.convert(id);
@@ -211,7 +212,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     subjectsDb.saveEditedSubject(editedSubject.id, editedSubject.convert());
 
     if (syncWithFire) {
-      await firebaseService
+      await ref.read(firebaseServiceProvider)
           .editSubjects([editedSubject.copyWith(id: editedSubject.id)]);
     }
   }
@@ -265,7 +266,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
     state = {...state, ...editedSubjects};
 
-    await firebaseService.editSubjects(editedSubjects.values.toList());
+    await ref.read(firebaseServiceProvider).editSubjects(editedSubjects.values.toList());
     return;
   }
 
@@ -297,7 +298,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     for (var element in subjects) {
       subjectsDb.delete(element.id);
     }
-    await firebaseService.deleteSubjects(subjects);
+    await ref.read(firebaseServiceProvider).deleteSubjects(subjects);
   }
 
   /// `_checkForDeleted` must be called from build(), because it doesnt update the state
@@ -354,7 +355,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
-      firebaseService.editSubjects([localSubject.copyWith(id: fireSubject.id)]);
+      ref.read(firebaseServiceProvider).editSubjects([localSubject.copyWith(id: fireSubject.id)]);
     } else {
       // print('same date');
     }

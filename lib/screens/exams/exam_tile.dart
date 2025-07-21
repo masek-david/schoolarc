@@ -103,7 +103,7 @@ class ExamTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      if (settings.get(Setting.showDebugInfo))
+                      if (settings.get(Setting.debugMode))
                         Text(exam.order.toString()),
                       AnimatedContainer(
                         width: 50,
@@ -125,17 +125,6 @@ class ExamTile extends StatelessWidget {
                         ),
                       const SizedBox(width: 8),
                       Expanded(child: Text(exam.text, maxLines: 2)),
-                      // if (settings.get(Setting.showDebugInfo))
-                      //   Column(
-                      //     children: [
-                      //       Text(
-                      //         exam.id,
-                      //         style: TextStyle(fontSize: 8),
-                      //       ),
-                      //       Text(
-                      //           'ts: ${exam.timestamp.millisecondsSinceEpoch}'),
-                      //     ],
-                      //   ),
                       const SizedBox(width: 8),
                       if (showDeadline)
                         Text(

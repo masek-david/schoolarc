@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
@@ -7,16 +8,17 @@ import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/provider/baka_notifier.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
 import 'package:school_manager/screens/home/widgets/timetable_card.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/recap/recap_button.dart';
 import 'package:school_manager/screens/recap/recap_screen.dart';
 import 'package:school_manager/services/home_widget_service.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
@@ -24,7 +26,6 @@ import 'package:school_manager/utils/screen_size.dart';
 import 'package:school_manager/utils/task_functions.dart';
 import 'package:school_manager/widgets/exam_list.dart';
 import 'package:school_manager/widgets/homework_list.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/wide_screen_app_bar.dart';
 
@@ -67,7 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       Future.wait([
         refreshMeals(),
         refreshTimetable(),
-        if (settings.get(Setting.useFirebase)) syncAllTasks(ref),
+        if (ref.watch(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
       showMessage(context, e.toString(), isError: true);

@@ -36,10 +36,11 @@ enum Setting {
   allowStravaLogin,
   useBakalari,
   useFirebase,
-  showDebugInfo,
+  debugMode,
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
   recapShownForYear,
+  cloudSyncConsent,
 }
 
 class SettingModel {
@@ -171,7 +172,7 @@ class SettingsDatabase {
       defaultValue: false,
       key: 'useFirebase',
     ),
-    Setting.showDebugInfo: SettingModel(
+    Setting.debugMode: SettingModel(
       defaultValue: false,
       key: 'showDebug',
     ),
@@ -186,6 +187,10 @@ class SettingsDatabase {
     Setting.recapShownForYear: SettingModel(
       defaultValue: 0,
       key: 'recapShownForYear',
+    ),
+    Setting.cloudSyncConsent: SettingModel(
+      defaultValue: null,
+      key: 'cloudSyncConsent',
     ),
   };
   final _settingsBox = Hive.box(settingsBox);

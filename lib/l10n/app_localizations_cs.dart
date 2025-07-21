@@ -390,6 +390,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get password => 'Heslo';
 
   @override
+  String get repeatPassword => 'Potvrďte heslo';
+
+  @override
+  String get notSamePassword => 'Potvrzované heslo není stejné.';
+
+  @override
   String get oldPassword => 'Staré heslo';
 
   @override
@@ -465,10 +471,28 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loggedInSynced => 'Byli jste přihlášeni, vše je synchronizováno';
 
   @override
+  String get errorLoggingIn => 'Při přihlašování došlo k chybě.';
+
+  @override
+  String get errorRegistering => 'Při registraci došlo k chybě.';
+
+  @override
+  String get errorChangingPassword => 'Při změně hesla došlo k chybě.';
+
+  @override
   String get registeredSuccessfully => 'Byli jste úspěšně registrováni, vše je synchronizováno';
 
   @override
   String get changePassword => 'Změnit heslo';
+
+  @override
+  String get newPassword => 'Nové heslo';
+
+  @override
+  String get repeatNewPassword => 'Potvrďte nové heslo';
+
+  @override
+  String get samePasswords => 'Nové heslo nemůže být stejné jako staré heslo.';
 
   @override
   String get passwordChangedSuccessfully => 'Heslo bylo úspěšně změněno';
@@ -970,6 +994,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get reportBug => 'Nahlásit chybu';
 
   @override
+  String get reportBugPolicy => 'Odesláním chyby souhlasíte se sdílením uvedených informací výhradně za účelem opravy chyb.';
+
+  @override
   String get viewLicenses => 'Zobrazit licence';
 
   @override
@@ -1009,8 +1036,17 @@ class AppLocalizationsCs extends AppLocalizations {
   String get deleteAllDataTitle => 'Smazat všechna data?';
 
   @override
-  String get deleteAllDataText => 'Smazání všech dat smaže vaší synchronizovanou zálohu. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
+  String get deleteAllDataText => 'Smazání všech dat smaže vaší synchronizovanou zálohu a váš účet. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
 
   @override
   String get getAllData => 'Stáhnout všechna data';
+
+  @override
+  String get agree => 'Souhlasím';
+
+  @override
+  String get disagree => 'Nesouhlasím';
+
+  @override
+  String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/calendar/calendar_settings.dart';
@@ -159,7 +160,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       isWideScreen: isWide,
       title: Text(context.loc.calendar),
       actions: [
-        if (settings.get(Setting.useFirebase))
+        if (ref.watch(useCloudSyncProvider))
           LoadingIconButton(
             icon: Icons.refresh,
             onTap: () async {

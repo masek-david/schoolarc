@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/debug_mode_notifier.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/settings/about_app.dart';
@@ -17,7 +18,7 @@ import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({
     super.key,
     required this.refreshTheme,
@@ -26,15 +27,9 @@ class SettingsScreen extends StatefulWidget {
   final void Function() refreshTheme;
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool showDebug = settings.get(Setting.showDebugInfo);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = context.loc;
+    final debugMode = ref.watch(debugModeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => ThemePage(
-                  refreshTheme: widget.refreshTheme,
+                  refreshTheme: refreshTheme,
                 ),
               ),
             ),
@@ -63,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => StyleMotionPage(
-                  refreshTheme: widget.refreshTheme,
+                  refreshTheme: refreshTheme,
                 ),
               ),
             ),
@@ -95,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => LocalizationPage(
-                  refreshTheme: widget.refreshTheme,
+                  refreshTheme: refreshTheme,
                 ),
               ),
             ),
@@ -150,17 +145,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          if (showDebug || kDebugMode)
+          if (debugMode || kDebugMode)
             SettingTile.withSwitch(
                 title: loc.developerMode,
-                value: showDebug,
+                value: debugMode,
                 onChanged: (value) {
-                  settings.save(Setting.showDebugInfo, value);
-                  setState(() {
-                    showDebug = value;
-                  });
+                  ref.read(debugModeProvider.notifier).set(value);
                 }),
-          if (showDebug)
+          if (debugMode)
             Center(
               child: Text(
                 packageInfo.packageName,
@@ -169,13 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Theme.of(context).colorScheme.surfaceContainerHighest),
               ),
             ),
-          Center(
-              child: PackageInfoWidget(
-            onBecameDev: () => setState(() {
-              showDebug = true;
-              settings.save(Setting.showDebugInfo, true);
-            }),
-          ))
+          const Center(child: PackageInfoWidget())
         ],
       ),
     );

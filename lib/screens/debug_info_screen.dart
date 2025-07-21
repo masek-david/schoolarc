@@ -1,16 +1,18 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/exam_database.dart';
 import 'package:school_manager/database/hw_database.dart';
 import 'package:school_manager/database/subject_database.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/priority_model.dart';
+import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
-class DbInfoScreen extends StatelessWidget {
+class DbInfoScreen extends ConsumerWidget {
   DbInfoScreen({super.key});
 
   late final exams = examsDb.getDatabase();
@@ -18,7 +20,7 @@ class DbInfoScreen extends StatelessWidget {
   late final subjects = subjectsDb.getDatabase();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -61,7 +63,7 @@ class DbInfoScreen extends StatelessWidget {
               onPressed: () async {
                 late List<HomeworkWithID>? fireHws;
                 try {
-                  fireHws = await firebaseService.getAllHomeworks();
+                  fireHws = await ref.read(firebaseServiceProvider).getAllHomeworks();
                 } catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
@@ -88,7 +90,7 @@ class DbInfoScreen extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () async {
-                firebaseService.logOut();
+                ref.read(firebaseServiceProvider).logOut();
               },
               child: const Text('logout from firebase'),
             ),

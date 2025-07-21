@@ -41,10 +41,11 @@ class AboutApp extends StatelessWidget {
             ),
           ),
           SettingTile(
-            title: context.loc.reportBug,
-            icon: Icons.bug_report_outlined,
-            onTap: sendBugReport
-          ),
+              title: context.loc.reportBug,
+              subtitle:
+              context.loc.reportBugPolicy,
+              icon: Icons.bug_report_outlined,
+              onTap: sendBugReport),
           SettingTile(
             title: context.loc.viewLogs,
             icon: Icons.data_array,
