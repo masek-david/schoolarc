@@ -28,7 +28,7 @@ class ProgressDialogState extends State<ProgressDialog> {
     });
   }
 
-  void changeText(String newText){
+  void changeText(String newText) {
     setState(() {
       _text = newText;
     });
@@ -40,6 +40,14 @@ class ProgressDialogState extends State<ProgressDialog> {
       canPop: kDebugMode,
       child: AlertDialog(
         title: Center(child: Text(_text)),
+        actions: kDebugMode
+            ? [
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('pop(debug)'),
+                )
+              ]
+            : null,
         content: Stack(
           alignment: Alignment.center,
           children: [

@@ -1,71 +1,48 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
 
-class LoginState {
-  final bool isLoading;
-  final bool isLoggedIn;
-
-  const LoginState({
-    this.isLoading = false,
-    this.isLoggedIn = false,
-  });
-
-  LoginState copyWith({
-    bool? isLoading,
-    bool? isLoggedIn,
-  }) {
-    return LoginState(
-      isLoading: isLoading ?? this.isLoading,
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-    );
-  }
-}
-
 final firebaseLoginProvider =
-    NotifierProvider<FirebaseLoginNotifier, LoginState>(
+    AsyncNotifierProvider<FirebaseLoginNotifier, bool>(
         FirebaseLoginNotifier.new);
 
-class FirebaseLoginNotifier extends Notifier<LoginState> {
+class FirebaseLoginNotifier extends AsyncNotifier<bool> {
   @override
-  LoginState build() {
-    final isLoggedIn = ref.read(firebaseServiceProvider).isloggedIn;
-    return LoginState(isLoggedIn: isLoggedIn);
+  Future<bool> build() async {
+    return ref.read(firebaseServiceProvider).isloggedIn;
   }
 
   Future<void> logIn({required String email, required String password}) async {
-    state = state.copyWith(isLoading: true);
+    state = const AsyncValue.loading();
     try {
       await ref
           .read(firebaseServiceProvider)
           .logIn(email: email, password: password);
-      state = state.copyWith(isLoading: false, isLoggedIn: true);
-    } catch (e) {
-      state = state.copyWith(isLoading: false);
-      rethrow;
+      state = const AsyncValue.data(true);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
   Future<void> logOut() async {
-    state = state.copyWith(isLoading: true);
+    state = const AsyncValue.loading();
     try {
       await ref.read(firebaseServiceProvider).logOut();
-      state = state.copyWith(isLoading: false, isLoggedIn: false);
-    } catch (e) {
-      state = state.copyWith(isLoading: false);
-      rethrow;
+      state = const AsyncValue.data(false);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> register({required String email, required String password}) async {
-    state = state.copyWith(isLoading: true);
+  Future<void> register(
+      {required String email, required String password}) async {
+    state = const AsyncValue.loading();
     try {
       await ref
           .read(firebaseServiceProvider)
           .createUser(email: email, password: password);
-      state = state.copyWith(isLoading: false, isLoggedIn: true);
-    } catch (e) {
-      state = state.copyWith(isLoading: false);
-      rethrow;
+      state = const AsyncValue.data(true);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
 import 'package:school_manager/tasks_app.dart';
@@ -28,10 +27,11 @@ class _CurrentTimetableScreenState
   @override
   void initState() {
     super.initState();
+    // TODO doesnt have to be in initstate right?
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         setState(() {
-          timetable = ref.read(bakaProvider.notifier).getCurrentTimetable(date);
+          timetable = bakaService.getCurrentTimetable(date, ref);
         });
       },
     );
@@ -39,7 +39,7 @@ class _CurrentTimetableScreenState
 
   Future<void> refresh() async {
     setState(() {
-      timetable = ref.read(bakaProvider.notifier).getCurrentTimetable(date);
+      timetable = bakaService.getCurrentTimetable(date, ref);
     });
 
     try {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 
@@ -30,7 +30,7 @@ class _StyleMotionPageState extends State<StyleMotionPage> {
           SettingTile(
             title: context.loc.styleMotionScreenSwitchAnimationTitle,
             subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
-            icon: Icons.timelapse,
+            leading: const Icon(Icons.timelapse),
             newLineAction: SliderAction(
               inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
               divisions: 10,

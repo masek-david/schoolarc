@@ -7,10 +7,10 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/provider/baka_notifier.dart';
-import 'package:school_manager/provider/cloudsync_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/provider/use_cloudsync_notifier.dart';
 import 'package:school_manager/screens/home/home_settings.dart';
 import 'package:school_manager/screens/home/widgets/meals_card.dart';
 import 'package:school_manager/screens/home/widgets/overview.dart';
@@ -56,18 +56,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        refreshTimetable();
+        refreshTimetable(ref);
       },
     );
   }
 
   Future<void> refresh() async {
-    tryGettingNewHomeworks(ref);
+    tryGettingNewHomeworks();
 
     try {
       Future.wait([
         refreshMeals(),
-        refreshTimetable(),
+        refreshTimetable(ref),
         if (ref.watch(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
@@ -93,10 +93,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return;
   }
 
-  Future<void> refreshTimetable() async {
+  Future<void> refreshTimetable(WidgetRef ref) async {
     setState(() {
-      bakaTimetable =
-          ref.read(bakaProvider.notifier).getCurrentTimetable(dateToShow);
+      bakaTimetable = bakaService.getCurrentTimetable(dateToShow, ref);
     });
 
     try {
@@ -162,7 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     String whenText = showtomorrow
         ? context.loc.tomorrow.toLowerCase()
         : context.loc.today.toLowerCase();
-    bool showMeals = settings.get(Setting.useMeals);
+    bool showMeals = ref.watch(useMealsProvider);
     bool showBaka = settings.get(Setting.useBakalari);
 
     return ValueListenableBuilder(
@@ -234,7 +233,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 refresh: refreshMeals,
                               ),
                               TimetableCard(
-                                refresh: refreshTimetable,
+                                refresh: () => refreshTimetable(ref),
                                 defaultTimeTable: defaultTimeTable,
                                 bakaTimetable: bakaTimetable,
                                 dateToShow: dateToShow,
@@ -257,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                               if (!isWide)
                                 TimetableCard(
-                                  refresh: refreshTimetable,
+                                  refresh: () => refreshTimetable(ref),
                                   defaultTimeTable: defaultTimeTable,
                                   bakaTimetable: bakaTimetable,
                                   dateToShow: dateToShow,

@@ -6,6 +6,11 @@ import 'package:hive_ce/hive.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 
+/// To define a new setting, create a field in [Setting] enum 
+/// and then create [SettingModel] in [SettingsDatabase] [_settings]
+/// 
+/// To create a provider for this setting, define it inside settings_notifiers.dart
+
 enum Setting {
   themeUseDeviceColor,
   themeColorValue,
@@ -47,7 +52,7 @@ class SettingModel {
   final String key;
   final dynamic defaultValue;
 
-  SettingModel({
+  const SettingModel({
     required this.key,
     required this.defaultValue,
   });
@@ -55,7 +60,7 @@ class SettingModel {
 
 class SettingsDatabase {
   static final Map<Setting, SettingModel> _settings = {
-    Setting.themeUseDeviceColor: SettingModel(
+    Setting.themeUseDeviceColor: const SettingModel(
       key: 'themeUseMaterial',
       defaultValue: true,
     ),
@@ -63,20 +68,20 @@ class SettingsDatabase {
       key: 'themeColor',
       defaultValue: const Color.fromARGB(255, 104, 58, 183).toARGB32(),
     ),
-    Setting.themeDynamicSchemeVariantInt: SettingModel(
+    Setting.themeDynamicSchemeVariantInt: const SettingModel(
       key: 'themeColorMode',
       defaultValue: 7,
     ),
-    Setting.themeUseOled: SettingModel(
+    Setting.themeUseOled: const SettingModel(
       key: 'themeUseOled',
       defaultValue: false,
     ),
-    Setting.localeLanguage: SettingModel(
+    Setting.localeLanguage: const SettingModel(
       key: 'localeLanguage',
       // format: 'cs' or 'en'
       defaultValue: null,
     ),
-    Setting.use24HourFormat: SettingModel(
+    Setting.use24HourFormat: const SettingModel(
       key: '24HourFormat',
       defaultValue: false,
     ),
@@ -84,59 +89,59 @@ class SettingsDatabase {
       key: 'dateFormat',
       defaultValue: supportedDateFormats[0],
     ),
-    Setting.weekStartsOnMonday: SettingModel(
+    Setting.weekStartsOnMonday: const SettingModel(
       key: 'startOnMonday',
       defaultValue: true,
     ),
-    Setting.initialAppPage: SettingModel(
+    Setting.initialAppPage: const SettingModel(
       key: 'initialAppPage',
       defaultValue: 0,
     ),
-    Setting.pageSwitchAnimationDuration: SettingModel(
+    Setting.pageSwitchAnimationDuration: const SettingModel(
       key: 'pageSwitchDuration',
       defaultValue: 0.0,
     ),
-    Setting.showAppOverlay: SettingModel(
+    Setting.showAppOverlay: const SettingModel(
       defaultValue: true,
       key: 'showOverlay',
     ),
-    Setting.tomorrowNotificationEnabled: SettingModel(
+    Setting.tomorrowNotificationEnabled: const SettingModel(
       defaultValue: true,
       key: 'tomorrowNotificationEnabled',
     ),
-    Setting.tomorrowNotificationTime: SettingModel(
-      defaultValue: const TimeOfDay(hour: 18, minute: 00),
+    Setting.tomorrowNotificationTime: const SettingModel(
+      defaultValue: TimeOfDay(hour: 18, minute: 00),
       key: 'tomorrowNotificationTimeOfDay',
     ),
-    Setting.stopAskingForNotifications: SettingModel(
+    Setting.stopAskingForNotifications: const SettingModel(
       defaultValue: null,
       key: 'stopAskingForNotifications',
     ),
-    Setting.themeMode: SettingModel(
+    Setting.themeMode: const SettingModel(
       defaultValue: null,
       key: 'themeMode',
     ),
-    Setting.timeTableShowWholeWeek: SettingModel(
+    Setting.timeTableShowWholeWeek: const SettingModel(
       defaultValue: false,
       key: 'ttWholeWeek',
     ),
-    Setting.timeTableTileWidth: SettingModel(
+    Setting.timeTableTileWidth: const SettingModel(
       defaultValue: 80.0,
       key: 'ttTileWidth',
     ),
-    Setting.bakaKeepLoggedIn: SettingModel(
+    Setting.bakaKeepLoggedIn: const SettingModel(
       defaultValue: true,
       key: 'bakaKeepLoggedIn',
     ),
-    Setting.calendarInitialIsTomorrow: SettingModel(
+    Setting.calendarInitialIsTomorrow: const SettingModel(
       defaultValue: true,
       key: 'calendarInitialIstomorrow',
     ),
-    Setting.calendarShowMissed: SettingModel(
+    Setting.calendarShowMissed: const SettingModel(
       defaultValue: true,
       key: 'calendarShowMissed',
     ),
-    Setting.calendarResizableContainerRatio: SettingModel(
+    Setting.calendarResizableContainerRatio: const SettingModel(
       defaultValue: <double>[0.5, 0.5],
       key: 'calendarResizeRatio',
     ),
@@ -144,52 +149,52 @@ class SettingsDatabase {
       defaultValue: kIsWeb || (!Platform.isAndroid && !Platform.isIOS),
       key: 'calendarShowArrows',
     ),
-    Setting.mealsShowTodayUntil: SettingModel(
-      defaultValue: const TimeOfDay(hour: 14, minute: 30),
+    Setting.mealsShowTodayUntil: const SettingModel(
+      defaultValue: TimeOfDay(hour: 14, minute: 30),
       key: 'mealsShowTodayUntilTimeOfDay',
     ),
-    Setting.userName: SettingModel(
+    Setting.userName: const SettingModel(
       defaultValue: null,
       key: 'userName',
     ),
-    Setting.homeShowUserName: SettingModel(
+    Setting.homeShowUserName: const SettingModel(
       defaultValue: true,
       key: 'homeShowUserName',
     ),
-    Setting.useMeals: SettingModel(
+    Setting.useMeals: const SettingModel(
       defaultValue: true,
       key: 'homeShowMeals',
     ),
-    Setting.allowStravaLogin: SettingModel(
+    Setting.allowStravaLogin: const SettingModel(
       defaultValue: false,
       key: 'allowStravaLogin',
     ),
-    Setting.useBakalari: SettingModel(
+    Setting.useBakalari: const SettingModel(
       defaultValue: true,
       key: 'homeShowBaka',
     ),
-    Setting.useFirebase: SettingModel(
+    Setting.useFirebase: const SettingModel(
       defaultValue: false,
       key: 'useFirebase',
     ),
-    Setting.debugMode: SettingModel(
+    Setting.debugMode: const SettingModel(
       defaultValue: false,
       key: 'showDebug',
     ),
-    Setting.debugShowPerformanceOverlay: SettingModel(
+    Setting.debugShowPerformanceOverlay: const SettingModel(
       defaultValue: false,
       key: 'showDebugPerformance',
     ),
-    Setting.debugShowFireOverlay: SettingModel(
+    Setting.debugShowFireOverlay: const SettingModel(
       defaultValue: false,
       key: 'showDebugFire',
     ),
-    Setting.recapShownForYear: SettingModel(
+    Setting.recapShownForYear: const SettingModel(
       defaultValue: 0,
       key: 'recapShownForYear',
     ),
-    Setting.cloudSyncConsent: SettingModel(
-      defaultValue: null,
+    Setting.cloudSyncConsent: const SettingModel(
+      defaultValue: false,
       key: 'cloudSyncConsent',
     ),
   };

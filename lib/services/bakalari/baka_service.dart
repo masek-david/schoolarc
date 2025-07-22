@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/l10n/my_localization.dart';
@@ -23,94 +22,59 @@ import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 
-final bakaProvider =
-    AsyncNotifierProvider<BakaNotifier, bool>(BakaNotifier.new);
-
-class BakaNotifier extends AsyncNotifier<bool> {
-  final _secureStorage = SecureStorage();
+class BakaService {
   String? _accessToken;
   String? _refreshToken;
 
-  DateTime? _tokenExpiration;
-  Timer? _tokenExpirationTimer;
-
-  @override
-  Future<bool> build() async {
-    return refreshLogin();
-  }
+  DateTime? tokenExpiration;
 
   bool get isLoggedIn {
-    if (_tokenExpiration == null) {
+    if (tokenExpiration == null) {
       return false;
     }
     if (_accessToken == null) {
       return false;
     }
-    return DateTime.now().isBefore(_tokenExpiration!);
-  }
-
-  void _tokenExpirationTime(int seconds) {
-    _tokenExpirationTimer?.cancel();
-    _tokenExpirationTimer = Timer(
-      Duration(seconds: seconds),
-      () {
-        state = const AsyncData(false);
-      },
-    );
+    return DateTime.now().isBefore(tokenExpiration!);
   }
 
   Future<String> get username async {
-    return _secureStorage.read(SecureStorage.bakaUsernameKey);
+    return secureStorage.read(SecureStorage.bakaUsernameKey);
   }
 
   Future<String> get schoolName async {
-    return _secureStorage.read(SecureStorage.bakaSchoolNameKey);
+    return secureStorage.read(SecureStorage.bakaSchoolNameKey);
   }
 
   Future<String> get _storageRefreshToken async {
-    return _secureStorage.read(SecureStorage.bakaRefreshTokenKey);
-  }
-
-  Future<void> saveToSecureStorage(String key, String value) async {
-    _secureStorage.write(key, value);
+    return secureStorage.read(SecureStorage.bakaRefreshTokenKey);
   }
 
   /// tries to log in from memory using saved refresh token
-  /// returns if the login was sucessful
-  Future<bool> refreshLogin() async {
-    state = const AsyncLoading();
-    try {
-      String schoolName = '';
-      try {
-        schoolName = await this.schoolName;
-        _refreshToken = await _storageRefreshToken;
-      } on Exception {
-        throw BakaLoginException();
-      }
+  Future<void> refreshLogin() async {
+    String schoolName = '';
+    schoolName = await this.schoolName;
+    _refreshToken = await _storageRefreshToken;
 
-      if (schoolName == '' || _refreshToken == '') {
-        throw BakaLoginException();
-      }
-
-      final url = Uri(
-        scheme: 'https',
-        host: "$schoolName.bakalari.cz",
-        path: "/api/login",
-      );
-      const head = {
-        "Content-Type": "application/x-www-form-urlencoded",
-      };
-      final body =
-          'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
-
-      await _callLogin(url, head, body);
-
-      loadName();
-      return true;
-    } catch (e, s) {
-      state = AsyncError(e, s);
-      return false;
+    if (schoolName == '' || _refreshToken == '') {
+      throw BakaLoginException();
     }
+
+    final url = Uri(
+      scheme: 'https',
+      host: "$schoolName.bakalari.cz",
+      path: "/api/login",
+    );
+    const head = {
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+    final body =
+        'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
+
+    await _callLogin(url, head, body);
+
+    loadName();
+    return;
   }
 
   Future<void> firstLogin({
@@ -119,46 +83,40 @@ class BakaNotifier extends AsyncNotifier<bool> {
     required String password,
     required bool keepLoggedIn,
   }) async {
-    state = const AsyncLoading();
-    try {
-      if (school == '' || username == '' || password == '') {
-        throw ServiceException(getLocalization().fillOutAllInfo);
-      }
+    if (school == '' || username == '' || password == '') {
+      throw ServiceException(getLocalization().fillOutAllInfo);
+    }
 
-      final url = Uri(
-        scheme: 'https',
-        host: "$school.bakalari.cz",
-        path: "/api/login",
-      );
-      const head = {"Content-Type": "application/x-www-form-urlencoded"};
-      final body =
-          'client_id=ANDR&grant_type=password&username=$username&password=$password';
+    final url = Uri(
+      scheme: 'https',
+      host: "$school.bakalari.cz",
+      path: "/api/login",
+    );
+    const head = {"Content-Type": "application/x-www-form-urlencoded"};
+    final body =
+        'client_id=ANDR&grant_type=password&username=$username&password=$password';
 
-      await _callLogin(url, head, body);
+    await _callLogin(url, head, body);
 
-      if (keepLoggedIn) {
-        saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-        saveToSecureStorage(SecureStorage.bakaSchoolNameKey, school);
-        saveToSecureStorage(SecureStorage.bakaUsernameKey, username);
-      } else {
-        // it has to be overwriten if the user chooses
-        logOut();
-      }
-    } catch (e, s) {
-      state = AsyncError(e, s);
+    if (keepLoggedIn) {
+      secureStorage.write(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+      secureStorage.write(SecureStorage.bakaSchoolNameKey, school);
+      secureStorage.write(SecureStorage.bakaUsernameKey, username);
+    } else {
+      // it has to be overwriten if the user chooses
+      logOut();
     }
   }
 
   Future<void> logOut() async {
-    state = const AsyncData(false);
     _accessToken = null;
     _refreshToken = null;
-    _tokenExpiration = null;
+    tokenExpiration = null;
 
     Future.wait([
-      saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, ''),
-      saveToSecureStorage(SecureStorage.bakaSchoolNameKey, ''),
-      saveToSecureStorage(SecureStorage.bakaUsernameKey, ''),
+      secureStorage.write(SecureStorage.bakaRefreshTokenKey, ''),
+      secureStorage.write(SecureStorage.bakaSchoolNameKey, ''),
+      secureStorage.write(SecureStorage.bakaUsernameKey, ''),
     ]);
   }
 
@@ -201,11 +159,10 @@ class BakaNotifier extends AsyncNotifier<bool> {
 
     _accessToken = accessToken;
     _refreshToken = refreshToken;
-    await saveToSecureStorage(SecureStorage.bakaRefreshTokenKey, refreshToken);
-    _tokenExpirationTime(expiresInSeconds);
-    _tokenExpiration =
-        DateTime.now().toUtc().add(Duration(seconds: expiresInSeconds));
-    state = const AsyncData(true);
+    await secureStorage.write(SecureStorage.bakaRefreshTokenKey, refreshToken);
+    tokenExpiration = DateTime.now().toUtc().add(
+          Duration(seconds: expiresInSeconds),
+        );
   }
 
   Future<void> loadName() async {
@@ -241,19 +198,9 @@ class BakaNotifier extends AsyncNotifier<bool> {
   }
 
   /// imports permanent timetable and saves it
-  Future<void> importTimeTable() async {
+  Future<void> importTimeTable(WidgetRef ref) async {
     if (!isLoggedIn) {
-      try {
-        await refreshLogin().then(
-          (value) {
-            if (!value) {
-              throw BakaLoginException();
-            }
-          },
-        );
-      } on Object {
-        rethrow;
-      }
+      await refreshLogin();
     }
 
     String schoolName = await this.schoolName;
@@ -300,8 +247,11 @@ class BakaNotifier extends AsyncNotifier<bool> {
     ).toList());
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex =
-        await _bakaSubjectIdToSubject(subjectsJson, createIfMissing: true);
+    final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
+      subjectsJson,
+      createIfMissing: true,
+      ref: ref,
+    );
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -327,19 +277,9 @@ class BakaNotifier extends AsyncNotifier<bool> {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTable> getCurrentTimetable(DateTime date) async {
+  Future<TimeTable> getCurrentTimetable(DateTime date, WidgetRef ref) async {
     if (!isLoggedIn) {
-      try {
-        await refreshLogin().then(
-          (value) {
-            if (!value) {
-              throw BakaLoginException();
-            }
-          },
-        );
-      } on Object {
-        rethrow;
-      }
+      await refreshLogin();
     }
 
     DateTime mondayDate = date.toUtc();
@@ -402,6 +342,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
     final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
       subjectsJson,
       createIfMissing: false,
+      ref: ref,
     );
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
@@ -470,6 +411,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
   Future<Map<String, Subject>> _bakaSubjectIdToSubject(
     List<dynamic> subjectsJson, {
     required bool createIfMissing,
+    required WidgetRef ref,
   }) async {
     // bakaId to subject
     final db = subjectsDb.getDatabase();
@@ -547,17 +489,7 @@ class BakaNotifier extends AsyncNotifier<bool> {
   Future<List<BakaHomework>> getHomeworks(
       {void Function(int count)? onNewFound}) async {
     if (!isLoggedIn) {
-      try {
-        await refreshLogin().then(
-          (value) {
-            if (!value) {
-              throw BakaLoginException();
-            }
-          },
-        );
-      } on Object {
-        rethrow;
-      }
+      await refreshLogin();
     }
 
     String schoolName = await this.schoolName;

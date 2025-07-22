@@ -23,6 +23,7 @@
     - ✅ translation
     - ✅ start week with monday
 - ✅ add emojis for empty screens, add no baka homeworks screen
+- ✅ unite the ui/ux for extensions (in settings and in tutorial)
 - ✅ tutorial
     - ✅ need to teach:
         - ✅ difference between hw and exam
@@ -32,10 +33,13 @@
         - ✅ subjects
     - ✅ translation
     - ⬜ plus plan
+- ⬜ riverpod
+    - ⬜ remake app isWide as riverpod provider
+    - ⬜ strava
+    - ⬜ bakalari
+- ⬜ reset password
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
-- ⬜ unite the ui/ux for extensions (in settings and in tutorial)
-    - ⬜ create providers for logins
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ fix the frequency when is app searching for baka homeworks
@@ -73,7 +77,6 @@
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
-- ⬜ ? remake app isWide as riverpod provider
 - ⬜ ? remove slide to delete
 - ⬜ make everything react to touch (shrink)
     

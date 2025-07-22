@@ -378,7 +378,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get bakalari => 'Bakaláři';
 
   @override
+  String get useBakalari => 'Používat Bakaláře';
+
+  @override
   String get loggedIn => 'Přihlášeni';
+
+  @override
+  String get loggedOut => 'Odhlášeni';
 
   @override
   String get schoolWebId => 'Školní web';
@@ -465,7 +471,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loggingIn => 'Přihlašování';
 
   @override
-  String get loggedOut => 'Byli jste odhlášeni';
+  String get youWereLoggedOut => 'Byli jste odhlášeni';
 
   @override
   String get loggedInSynced => 'Byli jste přihlášeni, vše je synchronizováno';
@@ -707,6 +713,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get stravaCz => 'Strava.cz';
+
+  @override
+  String get useStravaCz => 'Používat Strava.cz';
 
   @override
   String get viewAppChangelog => 'Zobrazit změny aplikace';

@@ -7,7 +7,8 @@ class SecureStorage {
   static const String bakaSchoolNameKey = 'bakaSchoolUrlKey';
 
   Future<String> read(String key) async {
-    return await _storage.read(key: key) ?? '';
+    final value = await _storage.read(key: key) ?? '';
+    return value;
   }
 
   Future<void> write(String key, String value) async {

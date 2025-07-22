@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 
-class HomeSettings extends StatefulWidget {
+class HomeSettings extends ConsumerStatefulWidget {
   const HomeSettings({
     super.key,
     required this.onChanged,
@@ -13,17 +15,18 @@ class HomeSettings extends StatefulWidget {
   final void Function() onChanged;
 
   @override
-  State<HomeSettings> createState() => _HomeSettingsState();
+  ConsumerState<HomeSettings> createState() => _HomeSettingsState();
 }
 
-class _HomeSettingsState extends State<HomeSettings> {
+class _HomeSettingsState extends ConsumerState<HomeSettings> {
   bool showMyName = settings.get(Setting.homeShowUserName);
-  bool showMeals = settings.get(Setting.useMeals);
   bool showBaka = settings.get(Setting.useBakalari);
   TimeOfDay lunchTime = settings.get(Setting.mealsShowTodayUntil);
 
   @override
   Widget build(BuildContext context) {
+    bool showMeals = ref.watch(useMealsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -54,11 +57,7 @@ class _HomeSettingsState extends State<HomeSettings> {
           title: context.loc.showMeals,
           value: showMeals,
           onChanged: (value) {
-            settings.save(Setting.useMeals, value);
-            setState(() {
-              showMeals = value;
-            });
-            widget.onChanged();
+            ref.read(useMealsProvider.notifier).set(value);
           },
         ),
         SettingTile.withTimePicker(

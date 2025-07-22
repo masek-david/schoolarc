@@ -641,11 +641,23 @@ abstract class AppLocalizations {
   /// **'Bakaláři'**
   String get bakalari;
 
+  /// No description provided for @useBakalari.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Bakaláři'**
+  String get useBakalari;
+
   /// No description provided for @loggedIn.
   ///
   /// In en, this message translates to:
   /// **'Logged in'**
   String get loggedIn;
+
+  /// No description provided for @loggedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged out'**
+  String get loggedOut;
 
   /// No description provided for @schoolWebId.
   ///
@@ -815,11 +827,11 @@ abstract class AppLocalizations {
   /// **'Logging in'**
   String get loggingIn;
 
-  /// No description provided for @loggedOut.
+  /// No description provided for @youWereLoggedOut.
   ///
   /// In en, this message translates to:
   /// **'Logged out'**
-  String get loggedOut;
+  String get youWereLoggedOut;
 
   /// No description provided for @loggedInSynced.
   ///
@@ -1246,6 +1258,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Strava.cz'**
   String get stravaCz;
+
+  /// No description provided for @useStravaCz.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Strava.cz'**
+  String get useStravaCz;
 
   /// No description provided for @viewAppChangelog.
   ///

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/current_timetable/current_timetable.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
 import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
@@ -104,14 +104,13 @@ class TimetableCard extends StatelessWidget {
                 ),
                 AnimatedSize(
                   duration: Durations.medium1,
-                  child: SizedBox(
-                    height: error != null && showOnline ? null : 0,
-                    child: ErrorTile(
+                  curve: Curves.decelerate,
+                  child: error != null && showOnline?
+                     ErrorTile(
                       error: error,
                       text: context.loc.viewingOfflineTimetable,
-                    ),
+                    ) : const SizedBox(height: 0, width: double.infinity,),
                   ),
-                ),
                 const SizedBox(height: 10),
                 areThereUpcomingLessons
                     ? SingleChildScrollView(

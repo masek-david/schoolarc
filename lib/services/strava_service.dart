@@ -1,27 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/windows1250.dart';
 import 'package:xml/xml.dart';
 
 class StravaService {
-  String? sid;
-  String? s5url;
-  bool? ignoreCert;
+  String? _sid;
+  String? _s5url;
+  bool? _ignoreCert;
   String? canteenCode;
-  final storage = SecureStorage();
 
   final canteenCodeKey = 'canteenCode';
   final usernameKey = 'stravaUsername';
   final passwordKey = 'stravaPassword';
 
+  /// saves the login info
   Future<void> registerUser({
     required String canteenCode,
     required String username,
@@ -35,30 +36,36 @@ class StravaService {
       throw ServiceException(loc.invalidCanteenNumberLength);
     }
 
-    await storage.write(canteenCodeKey, canteenCode);
-    await storage.write(usernameKey, username);
-    await storage.write(passwordKey, password);
+    await secureStorage.write(canteenCodeKey, canteenCode);
+    await secureStorage.write(usernameKey, username);
+    await secureStorage.write(passwordKey, password);
+
+    if (password != '' && username != '') {
+      await login();
+    }
+
     return;
   }
 
   Future<String> get getCanteenCode async {
-    return await storage.read(canteenCodeKey);
+    return await secureStorage.read(canteenCodeKey);
   }
 
   Future<String> get getUsername async {
-    return await storage.read(usernameKey);
+    return await secureStorage.read(usernameKey);
   }
 
-  Future<void> login() async {
+  /// returns false if the user cant be logged in, true if success
+  Future<bool> login() async {
     String username = '';
     String password = '';
     try {
       canteenCode = await getCanteenCode;
       username = await getUsername;
-      password = await storage.read(passwordKey);
+      password = await secureStorage.read(passwordKey);
     } on Exception {
       throw ServiceException(
-        'Please log in',
+        getLocalization().pleaseLogIn,
         action: ExceptionActions.stravaLogin,
       );
     }
@@ -68,13 +75,12 @@ class StravaService {
       throw ServiceException(loc.canteenNumberMissing,
           action: ExceptionActions.stravaLogin);
     }
+
     if (username == '') {
-      throw ServiceException(loc.usernameMissing,
-          action: ExceptionActions.stravaLogin);
+      return false;
     }
     if (password == '') {
-      throw ServiceException(loc.passwordMissing,
-          action: ExceptionActions.stravaLogin);
+      return false;
     }
 
     Response response;
@@ -100,17 +106,21 @@ class StravaService {
 
     final parsedJson = json.decode(response.body);
 
-    sid = parsedJson['sid'];
-    s5url = parsedJson['s5url'];
-    ignoreCert = parsedJson['ignoreCert'];
+    _sid = parsedJson['sid'];
+    _s5url = parsedJson['s5url'];
+    _ignoreCert = parsedJson['ignoreCert'];
 
-    return;
+    return true;
   }
 
   Future<Map<DateTime, List<Meal>>> getMeals() async {
     try {
       try {
-        await login();
+        final loggedIn = await login();
+        if (!loggedIn) {
+          // just to get to getMealsNoLogin
+          throw Exception();
+        }
       } on Object {
         return await getMealsNoLogin();
       }
@@ -126,12 +136,12 @@ class StravaService {
         Uri.https('app.strava.cz', '/api/objednavky'),
         body: jsonEncode({
           'cislo': canteenCode,
-          'sid': sid,
-          's5url': s5url,
+          'sid': _sid,
+          's5url': _s5url,
           'lang': 'CZ',
           'konto': 0,
           'podminka': '',
-          'ignoreCert': ignoreCert,
+          'ignoreCert': _ignoreCert,
         }),
       );
     } on SocketException {
@@ -180,7 +190,7 @@ class StravaService {
     final loc = getLocalization();
 
     try {
-      canteenCode = await storage.read(canteenCodeKey);
+      canteenCode = await secureStorage.read(canteenCodeKey);
     } on Exception {
       throw ServiceException(loc.logIn, action: ExceptionActions.stravaLogin);
     }

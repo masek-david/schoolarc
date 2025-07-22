@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/debug_mode_notifier.dart';
+import 'package:school_manager/provider/baka_login_notifier.dart';
+import 'package:school_manager/provider/firebase_login_notifier.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/provider/strava_login_notifier.dart';
+import 'package:school_manager/provider/use_cloudsync_notifier.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/settings/about_app.dart';
@@ -17,6 +21,7 @@ import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
 import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
+import 'package:school_manager/widgets/login_status_icon.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({
@@ -40,7 +45,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.colorTheme,
             subtitle: loc.colorThemeDescription,
-            icon: Icons.palette_outlined,
+            leading: const Icon(Icons.palette_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -53,7 +58,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.styleMotion,
             subtitle: loc.styleMotionDescription,
-            icon: Icons.animation,
+            leading: const Icon(Icons.animation),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -67,7 +72,7 @@ class SettingsScreen extends ConsumerWidget {
             SettingTile(
               title: loc.upcomingDayNotifications,
               subtitle: loc.upcomingDayNotificationsDescription,
-              icon: Icons.notifications_outlined,
+              leading: const Icon(Icons.notifications_outlined),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: (context) => navigatorKey.currentState
                   ?.push(
@@ -85,7 +90,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.localization,
             subtitle: loc.localizationSubtitle,
-            icon: Icons.language_outlined,
+            leading: const Icon(Icons.language_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -98,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.shortcuts,
             subtitle: loc.shortcutsDescription,
-            icon: Icons.keyboard_alt_outlined,
+            leading: const Icon(Icons.keyboard_alt_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
@@ -109,36 +114,48 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           SettingTile(
             title: loc.bakalari,
-            icon: Icons.hexagon_outlined,
+            leading: const Icon(Icons.hexagon_outlined),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const BakaLoginScreen(),
               ),
             ),
+            trailing: LoginStatusIcon(
+              provider: bakaLoginProvider,
+              showProvider: useBakaProvider,
+            ),
           ),
           SettingTile(
             title: loc.stravaCz,
-            icon: Icons.restaurant_outlined,
+            leading: const Icon(Icons.restaurant_outlined),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const StravaLoginScreen(),
               ),
             ),
+            trailing: LoginStatusIcon(
+              provider: stravaLoginProvider,
+              showProvider: useMealsProvider,
+            ),
           ),
           SettingTile(
             title: loc.cloudSync,
-            icon: Icons.cloud_outlined,
+            leading: const Icon(Icons.cloud_outlined),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const FirebaseLoginScreen(),
               ),
+            ),
+            trailing: LoginStatusIcon(
+              provider: firebaseLoginProvider,
+              showProvider: useCloudSyncProvider,
             ),
           ),
           const Divider(),
           const ImportExportRow(),
           SettingTile(
             title: context.loc.aboutApp,
-            icon: Icons.info_outline_rounded,
+            leading: const Icon(Icons.info_outline_rounded),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const AboutApp(),

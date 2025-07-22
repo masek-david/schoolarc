@@ -33,7 +33,7 @@ class AboutApp extends StatelessWidget {
           ),
           SettingTile(
             title: context.loc.viewAppChangelog,
-            icon: Icons.history_outlined,
+            leading: const Icon(Icons.history_outlined),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const ChangelogScreen(),
@@ -44,11 +44,11 @@ class AboutApp extends StatelessWidget {
               title: context.loc.reportBug,
               subtitle:
               context.loc.reportBugPolicy,
-              icon: Icons.bug_report_outlined,
+              leading: const Icon(Icons.bug_report_outlined),
               onTap: sendBugReport),
           SettingTile(
             title: context.loc.viewLogs,
-            icon: Icons.data_array,
+            leading: const Icon(Icons.data_array),
             onTap: (context) => navigatorKey.currentState?.push(
               MaterialPageRoute(
                 builder: (context) => const LogsScreen(),
@@ -57,7 +57,7 @@ class AboutApp extends StatelessWidget {
           ),
           SettingTile(
             title: context.loc.viewLicenses,
-            icon: Icons.attribution,
+            leading: const Icon(Icons.attribution),
             onTap: (context) => showLicensePage(
               context: context,
               applicationIcon: Padding(

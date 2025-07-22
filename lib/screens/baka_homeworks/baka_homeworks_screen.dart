@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/bakalari/baka_hw_model.dart';
-import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
@@ -61,7 +60,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
 
   Future<void> refresh() async {
     setState(() {
-      homeworksFuture = ref.read(bakaProvider.notifier).getHomeworks();
+      homeworksFuture = bakaService.getHomeworks();
     });
 
     try {

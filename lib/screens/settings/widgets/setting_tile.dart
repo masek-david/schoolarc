@@ -5,22 +5,22 @@ class SettingTile extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
-    this.icon,
+    this.leading,
     this.trailing,
     this.newLineAction,
     this.onTap,
     this.highlighted = false,
     this.enabled = true,
-    this.iconColor,
+    this.contentPadding,
   });
 
   final String title;
   final String? subtitle;
-  final IconData? icon;
-  final Color? iconColor;
+  final Widget? leading;
   final Widget? trailing;
   final Widget? newLineAction;
   final Function(BuildContext context)? onTap;
+  final EdgeInsetsGeometry? contentPadding;
   final bool highlighted;
   final bool enabled;
 
@@ -31,8 +31,9 @@ class SettingTile extends StatelessWidget {
     String? subtitle,
     bool? enabled,
     bool? highlighted,
-    IconData? icon,
+    Widget? leading,
     Color? iconColor,
+    EdgeInsetsGeometry? contentPadding,
     Key? key,
   }) {
     return SettingTile(
@@ -40,10 +41,11 @@ class SettingTile extends StatelessWidget {
       subtitle: subtitle,
       enabled: enabled ?? true,
       highlighted: highlighted ?? false,
-      icon: icon,
+      contentPadding: contentPadding,
+      leading: leading,
       onTap: (context) => onChanged(!value),
-      trailing: Switch(value: value, onChanged: onChanged),
-      iconColor: iconColor,
+      trailing:
+          Switch(value: value, onChanged: enabled == false ? null : onChanged),
       key: key,
     );
   }
@@ -55,7 +57,7 @@ class SettingTile extends StatelessWidget {
     String? subtitle,
     bool? enabled,
     bool? highlighted,
-    IconData? icon,
+    Widget? leading,
     Color? iconColor,
   }) {
     return SettingTile(
@@ -63,8 +65,7 @@ class SettingTile extends StatelessWidget {
       subtitle: subtitle,
       enabled: enabled ?? true,
       highlighted: highlighted ?? false,
-      icon: icon,
-      iconColor: iconColor,
+      leading: leading,
       onTap: (context) async {
         final value = await showTimePicker(
           context: context,
@@ -105,8 +106,9 @@ class SettingTile extends StatelessWidget {
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32))
                   : null,
-              contentPadding: highlighted ? const EdgeInsets.all(12) : null,
-              leading: icon != null ? Icon(icon, color: iconColor) : null,
+              contentPadding:
+                  highlighted ? const EdgeInsets.all(12) : contentPadding,
+              leading: leading,
               title: Text(
                 title,
                 style: TextStyle(

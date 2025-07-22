@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/provider/debug_mode_notifier.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/debug_info_screen.dart';

@@ -94,7 +94,7 @@ class FirebaseService {
         email: auth.currentUser!.email ?? '',
         password: oldPassword,
       );
-    } on Object catch (error) {
+    } catch (error) {
       throw ServiceException("${loc.cantLogin} $error");
     }
 
@@ -115,7 +115,7 @@ class FirebaseService {
         email: auth.currentUser!.email ?? '',
         password: password,
       );
-    } on Object catch (error) {
+    } catch (error) {
       throw ServiceException("${loc.cantLogin} $error");
     }
     try {
@@ -123,7 +123,7 @@ class FirebaseService {
       await homeworks.remove();
       await subjects.remove();
       await FirebaseAuth.instance.currentUser?.delete();
-    } on Object catch (error) {
+    } catch (error) {
       throw ServiceException("${loc.cantDeleteData} $error");
     }
     return;
@@ -184,9 +184,9 @@ class FirebaseService {
 
     try {
       await exams.update(updates);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -202,9 +202,9 @@ class FirebaseService {
     try {
       await exams.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(2);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -215,9 +215,9 @@ class FirebaseService {
       await exams.child(exam.id).update(exam.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(2);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -233,9 +233,9 @@ class FirebaseService {
         json.putIfAbsent('id', () => key);
         examsList.add(ExamWithID.fromFireJson(json));
       });
-    } catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
 
     return examsList;
@@ -269,9 +269,9 @@ class FirebaseService {
 
     try {
       await homeworks.update(updates);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -287,9 +287,9 @@ class FirebaseService {
     try {
       await homeworks.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(1);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -300,9 +300,9 @@ class FirebaseService {
       await homeworks.child(homework.id).update(homework.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(1);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -318,9 +318,9 @@ class FirebaseService {
         json.putIfAbsent('id', () => key);
         homeworksList.add(HomeworkWithID.fromFireJson(json));
       });
-    } catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
 
     return homeworksList;
@@ -354,9 +354,9 @@ class FirebaseService {
 
     try {
       await subjects.update(updates);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -372,9 +372,9 @@ class FirebaseService {
     try {
       await subjects.update(updates);
       ref?.read(firebaseActivityProvider.notifier).modify(0);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -385,9 +385,9 @@ class FirebaseService {
       await subjects.child(subject.id).update(subject.toFireJson());
 
       ref?.read(firebaseActivityProvider.notifier).add(0);
-    } on Object catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
     return;
   }
@@ -403,9 +403,9 @@ class FirebaseService {
         json.putIfAbsent('id', () => key);
         subjectsList.add(Subject.fromFireJson(json));
       });
-    } catch (e) {
-      logsService.save(e.toString());
-      log(e.toString());
+    } catch (e, st) {
+      logsService.save('$e\n$st');
+      log('$e\n$st');
     }
 
     return subjectsList;

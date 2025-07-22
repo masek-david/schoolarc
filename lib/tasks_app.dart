@@ -15,7 +15,6 @@ import 'package:school_manager/database/subject_database.dart';
 import 'package:school_manager/database/timetable_database.dart';
 import 'package:school_manager/l10n/app_localizations.dart';
 import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/provider/baka_notifier.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
@@ -27,8 +26,10 @@ import 'package:school_manager/screens/home/home_screen.dart';
 import 'package:school_manager/screens/homeworks/homeworks_screen.dart';
 import 'package:school_manager/screens/tutorial/tutorial.dart';
 import 'package:school_manager/services/bakalari/baka_homeworks_service.dart';
+import 'package:school_manager/services/bakalari/baka_service.dart';
 import 'package:school_manager/services/home_widget_service.dart';
 import 'package:school_manager/services/logs_service.dart';
+import 'package:school_manager/services/secure_storage.dart';
 import 'package:school_manager/services/strava_service.dart';
 import 'package:school_manager/utils/extensions/color_extension.dart';
 import 'package:school_manager/utils/notifications/notification_controller.dart';
@@ -50,9 +51,11 @@ final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
+final secureStorage = SecureStorage();
 final timetableDb = TimeTableDatabase();
 final bakaHomeworkService = BakaHomeworksService();
 final stravaService = StravaService();
+final bakaService = BakaService();
 final logsService = LogsService();
 final uuid = const Uuid();
 late PackageInfo packageInfo;
@@ -126,9 +129,9 @@ void switchDrawer({bool? onlyClose}) {
   }
 }
 
-void tryGettingNewHomeworks(WidgetRef ref) async {
+void tryGettingNewHomeworks() async {
   try {
-    await ref.read(bakaProvider.notifier).getHomeworks(
+    await bakaService.getHomeworks(
       onNewFound: (numberOfNew) {
         if (navigatorKey.currentContext != null) {
           final context = navigatorKey.currentContext!;
@@ -266,7 +269,7 @@ class _TasksAppState extends ConsumerState<TasksApp> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        tryGettingNewHomeworks(ref);
+        tryGettingNewHomeworks();
       },
     );
   }

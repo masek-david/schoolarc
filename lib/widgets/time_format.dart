@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/time_format_notifier.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 
 /// sets alwaysUse24HourFormat for the child
 class TimeFormat extends ConsumerWidget {

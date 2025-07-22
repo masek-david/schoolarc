@@ -11,10 +11,14 @@ class ErrorTile extends StatelessWidget {
     this.text,
     required this.error,
     this.actions,
+    this.allowActions = true,
+    this.contentPadding,
   });
 
   final String? text;
   final Object? error;
+  final bool allowActions;
+  final EdgeInsetsGeometry? contentPadding;
   final List<Widget>? actions;
 
   @override
@@ -31,78 +35,76 @@ class ErrorTile extends StatelessWidget {
       action = ExceptionActions.bakaLogin;
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (text != null)
-                  Text(
-                    text ?? '',
-                    softWrap: true,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.error,
+    return ListTile(
+      contentPadding: contentPadding,
+      leading: const Icon(Icons.error, color: Colors.red),
+      title: Text(
+        text ?? '',
+        softWrap: true,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.error,
+        ),
+      ),
+      subtitle: Text(
+        error.toString(),
+        maxLines: 5,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.error,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: allowActions
+            ? [
+                if (action == ExceptionActions.stravaLogin)
+                  FilledButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll(scheme.errorContainer),
+                      foregroundColor:
+                          WidgetStatePropertyAll(scheme.onErrorContainer),
+                    ),
+                    onPressed: () {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) {
+                          return const StravaLoginScreen();
+                        },
+                      ));
+                    },
+                    child: Text(
+                      context.loc.login,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 10),
-                Text(
-                  error.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
+                if (action == ExceptionActions.bakaLogin)
+                  FilledButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll(scheme.errorContainer),
+                      foregroundColor:
+                          WidgetStatePropertyAll(scheme.onErrorContainer),
+                    ),
+                    onPressed: () {
+                      navigatorKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) {
+                          return const BakaLoginScreen();
+                        },
+                      ));
+                    },
+                    child: Text(
+                      context.loc.login,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (action == ExceptionActions.stravaLogin)
-          FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(scheme.errorContainer),
-              foregroundColor: WidgetStatePropertyAll(scheme.onErrorContainer),
-            ),
-            onPressed: () {
-              navigatorKey.currentState?.push(MaterialPageRoute(
-                builder: (context) {
-                  return const StravaLoginScreen();
-                },
-              ));
-            },
-            child: Text(
-              context.loc.login,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-          ),
-        if (action == ExceptionActions.bakaLogin)
-          FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(scheme.errorContainer),
-              foregroundColor: WidgetStatePropertyAll(scheme.onErrorContainer),
-            ),
-            onPressed: () {
-              navigatorKey.currentState?.push(MaterialPageRoute(
-                builder: (context) {
-                  return const BakaLoginScreen();
-                },
-              ));
-            },
-            child: Text(
-              context.loc.login,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-          ),
-        if (actions != null) ...actions!
-      ],
+                if (actions != null) ...actions!
+              ]
+            : [],
+      ),
     );
   }
 }

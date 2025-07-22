@@ -49,11 +49,11 @@ class UseCloudSyncNotifier extends Notifier<bool> {
   @override
   bool build() {
     return settings.get(Setting.useFirebase) &&
-        settings.get(Setting.cloudSyncConsent) == true;
+        settings.get(Setting.cloudSyncConsent);
   }
 
   Future<void> set(bool value, BuildContext context, WidgetRef ref) async {
-    if (settings.get(Setting.cloudSyncConsent) == true || value == false) {
+    if (settings.get(Setting.cloudSyncConsent)|| value == false) {
       settings.save(Setting.useFirebase, value);
       state = value;
       return;

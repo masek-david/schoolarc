@@ -370,7 +370,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bakalari => 'Bakaláři';
 
   @override
+  String get useBakalari => 'Use Bakaláři';
+
+  @override
   String get loggedIn => 'Logged in';
+
+  @override
+  String get loggedOut => 'Logged out';
 
   @override
   String get schoolWebId => 'School web';
@@ -457,7 +463,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loggingIn => 'Logging in';
 
   @override
-  String get loggedOut => 'Logged out';
+  String get youWereLoggedOut => 'Logged out';
 
   @override
   String get loggedInSynced => 'Logged in, everything has been synced';
@@ -693,6 +699,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stravaCz => 'Strava.cz';
+
+  @override
+  String get useStravaCz => 'Use Strava.cz';
 
   @override
   String get viewAppChangelog => 'View app changelog';

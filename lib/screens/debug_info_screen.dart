@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/exam_database.dart';
@@ -27,35 +28,25 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
-            FloatingActionButton.extended(
-              onPressed: () {
-                HomeworksDatabase().deleteAllFromDisk();
-                SubjectDatabase().deleteAllFromDisk();
-                ExamDatabase().deleteAllFromDisk();
-              },
-              label: const Text('delete from disk'),
-              icon: const Icon(Icons.bug_report),
-            ),
+            if (kDebugMode)
+              FloatingActionButton.extended(
+                onPressed: () {
+                  HomeworksDatabase().deleteAllFromDisk();
+                  SubjectDatabase().deleteAllFromDisk();
+                  ExamDatabase().deleteAllFromDisk();
+                },
+                label: const Text('delete from disk'),
+                icon: const Icon(Icons.bug_report),
+              ),
             const Divider(),
             const Text('SECURE STORAGE'),
             FilledButton(
               onPressed: () async {
-                await SecureStorage()
-                    .write(SecureStorage.bakaRefreshTokenKey, 'randomstring');
-
-                final text = await SecureStorage()
-                    .read(SecureStorage.bakaRefreshTokenKey);
+                final text =
+                    await secureStorage.read(SecureStorage.bakaRefreshTokenKey);
                 print(text);
               },
-              child: const Text('write and read'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                final text = await SecureStorage()
-                    .read(SecureStorage.bakaRefreshTokenKey);
-                print(text);
-              },
-              child: const Text('only read'),
+              child: const Text('read refreshToken'),
             ),
             const Divider(),
             const Text('FIREBASE'),
@@ -63,7 +54,8 @@ class DbInfoScreen extends ConsumerWidget {
               onPressed: () async {
                 late List<HomeworkWithID>? fireHws;
                 try {
-                  fireHws = await ref.read(firebaseServiceProvider).getAllHomeworks();
+                  fireHws =
+                      await ref.read(firebaseServiceProvider).getAllHomeworks();
                 } catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
