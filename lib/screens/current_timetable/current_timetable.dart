@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/error_tile.dart';
-import 'package:school_manager/widgets/list_bottom_spacer.dart';
-import 'package:school_manager/widgets/non_scrollable_refresh_indicator.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
+import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/non_scrollable_refresh_indicator.dart';
 
 class CurrentTimetableScreen extends ConsumerStatefulWidget {
   const CurrentTimetableScreen({super.key});

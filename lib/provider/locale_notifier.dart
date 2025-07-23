@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final localeProvider =
     NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);

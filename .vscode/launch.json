@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "school_manager",
+            "name": "Schoolarc",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "school_manager (profile mode)",
+            "name": "Schoolarc (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "school_manager (release mode)",
+            "name": "Schoolarc (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

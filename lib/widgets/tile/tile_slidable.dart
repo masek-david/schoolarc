@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class TileSlidable extends StatelessWidget {
   const TileSlidable({

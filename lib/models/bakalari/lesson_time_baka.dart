@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 
 class LessonTimesBaka {
   final TimeOfDay startTime;

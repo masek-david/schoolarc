@@ -2,9 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/app_localizations.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/app_localizations.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final supportedLocales = {
   const Locale('en'): 'English',

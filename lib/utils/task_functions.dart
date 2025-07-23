@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/task_model.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 
 Future<void> addNewHw(
   BuildContext context,

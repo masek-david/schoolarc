@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 Future<Subject?> showSelectSubject({
   required BuildContext context,

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/timetable_model.dart';
-import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/extensions/string_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/screens/empty_message.dart';
+import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class TimetableView extends StatelessWidget {
   const TimetableView({

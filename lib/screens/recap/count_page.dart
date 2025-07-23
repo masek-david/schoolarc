@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
 
 class CountPage extends StatefulWidget {
   const CountPage({

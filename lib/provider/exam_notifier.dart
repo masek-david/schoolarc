@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/exams/exam_entity_model.dart';
-import 'package:school_manager/models/exams/exam_id_model.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/provider/firebase_activity_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/exams/exam_id_model.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final examProvider =
     NotifierProvider<ExamNotifier, Map<String, Exam>>(ExamNotifier.new);

@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
 
 class PriorityPage extends StatefulWidget {
   const PriorityPage({

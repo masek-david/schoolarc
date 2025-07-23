@@ -1,9 +1,9 @@
-import 'package:school_manager/models/exams/exam_entity_model.dart';
-import 'package:school_manager/models/homeworks/hw_entity_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 
 class Task {
   final String id;

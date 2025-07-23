@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/utils/intent/intents.dart';
-import 'package:school_manager/utils/task_functions.dart';
+import 'package:schoolarc/utils/intent/intents.dart';
+import 'package:schoolarc/utils/task_functions.dart';
 
 class MyShortcuts extends StatelessWidget {
   const MyShortcuts({super.key, required this.child, required this.ref});

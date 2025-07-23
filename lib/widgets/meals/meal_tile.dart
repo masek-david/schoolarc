@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/meal_model.dart';
+import 'package:schoolarc/models/meal_model.dart';
 
 class MealTile extends StatelessWidget {
   const MealTile({

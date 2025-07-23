@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/screens/main_screens/exams/exam_tile.dart';
-import 'package:school_manager/screens/tutorial/animated_page.dart';
-import 'package:school_manager/screens/tutorial/tutorial.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/screens/main_screens/exams/exam_tile.dart';
+import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/screens/tutorial/tutorial.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/tile/hw_tile.dart';
 
 class TutorialSubjects extends StatefulWidget {
   const TutorialSubjects({super.key});

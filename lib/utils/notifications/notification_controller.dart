@@ -1,6 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/notifications/notification_sender.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
 class NotificationController {
   /// Use this method to detect when a new notification or a schedule is created

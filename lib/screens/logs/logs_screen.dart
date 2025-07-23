@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/logs/log_model.dart';
-import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/screens/logs/log_screen.dart';
-import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/send_bug_report.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/models/logs/log_model.dart';
+import 'package:schoolarc/screens/empty_message.dart';
+import 'package:schoolarc/screens/logs/log_screen.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/send_bug_report.dart';
+import 'package:schoolarc/utils/show_adaptive_dialog.dart';
 
 class LogsScreen extends StatefulWidget {
   const LogsScreen({super.key});

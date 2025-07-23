@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/firebase_activity_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/models/subjects/subject_entity_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final subjectsProvider =
     NotifierProvider<SubjectNotifier, Map<String, Subject>>(

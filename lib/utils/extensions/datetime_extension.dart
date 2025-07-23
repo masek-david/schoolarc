@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 
 extension BetterDateTime on DateTime {

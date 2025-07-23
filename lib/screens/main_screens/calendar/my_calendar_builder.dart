@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
-import 'package:school_manager/widgets/reschedule_drag_target.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/utils/extensions/color_extension.dart';
+import 'package:schoolarc/widgets/reschedule_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({

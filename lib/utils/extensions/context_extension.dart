@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/l10n/app_localizations.dart';
+import 'package:schoolarc/l10n/app_localizations.dart';
 
 extension ContextExtension on BuildContext {
   ColorScheme get col => Theme.of(this).colorScheme;

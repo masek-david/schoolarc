@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ProgressDialog extends StatefulWidget {
   const ProgressDialog({

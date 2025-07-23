@@ -1,8 +1,8 @@
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/models/timetable/lesson_times_model.dart';
-import 'package:school_manager/models/timetable/timetable_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class TimeTableEntity extends HiveObject {
   // index and times for lessons times

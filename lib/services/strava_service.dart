@@ -5,11 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/models/exception_model.dart';
-import 'package:school_manager/models/meal_model.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/windows1250.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/exception_model.dart';
+import 'package:schoolarc/models/meal_model.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/windows1250.dart';
 import 'package:xml/xml.dart';
 
 class StravaService {
@@ -103,7 +103,13 @@ class StravaService {
     }
 
     if (response.statusCode != 200) {
-      throw ServiceException(response.reasonPhrase);
+      String message;
+      try {
+        message = jsonDecode(response.body)['message'];
+      } on Object {
+        message = response.reasonPhrase ?? '';
+      }
+      throw ServiceException(message);
     }
 
     final parsedJson = json.decode(response.body);

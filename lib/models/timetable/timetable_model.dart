@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/bakalari/timetable_lesson_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 
 class TimeTable {
   List<LessonTimes> lessonTimes;

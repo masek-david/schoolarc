@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:school_manager/database/hive/hive_init.dart';
-import 'package:school_manager/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 
 class HomeworksDatabase {
   /// returns map of homeworks with their dbIndexes

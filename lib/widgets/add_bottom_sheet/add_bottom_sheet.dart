@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/models/task_model.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/screens/timetable/select_subject.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/intent/intents.dart';
-import 'package:school_manager/widgets/cancel_save_button.dart';
-import 'package:school_manager/widgets/keyboard_date_picker/keyboard_date_picker.dart';
-import 'package:school_manager/widgets/priority_picker.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/screens/timetable/select_subject.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/intent/intents.dart';
+import 'package:schoolarc/widgets/cancel_save_button.dart';
+import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
+import 'package:schoolarc/widgets/priority_picker.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({

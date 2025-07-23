@@ -3,15 +3,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/provider/strava_login_notifier.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
-import 'package:school_manager/widgets/error_tile.dart';
-import 'package:school_manager/widgets/login_status_icon.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/strava_login_notifier.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/login_status_icon.dart';
 
 class StravaLoginScreen extends ConsumerStatefulWidget {
   const StravaLoginScreen({super.key});

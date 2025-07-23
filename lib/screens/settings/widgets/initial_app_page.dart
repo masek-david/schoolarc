@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/navigation_bar/bottom_nav_bar.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
 
 class InitialAppPage extends StatefulWidget {
   const InitialAppPage({super.key});

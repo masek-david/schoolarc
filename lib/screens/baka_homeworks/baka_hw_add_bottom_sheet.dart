@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/bakalari/baka_hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/widgets/priority_picker.dart';
+import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/priority_picker.dart';
 
 class BakaHwAddBottomSheet extends StatefulWidget {
   const BakaHwAddBottomSheet({

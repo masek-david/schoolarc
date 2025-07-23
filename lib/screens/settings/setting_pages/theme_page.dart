@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/screens/settings/widgets/color_picker_action.dart';
-import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
-import 'package:school_manager/screens/settings/widgets/scheme_variant_picker_action.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/theme_colors_showcase.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/settings/widgets/color_picker_action.dart';
+import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
+import 'package:schoolarc/screens/settings/widgets/scheme_variant_picker_action.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/screens/settings/widgets/theme_colors_showcase.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ThemePage extends ConsumerWidget {
   const ThemePage({super.key});

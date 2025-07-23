@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/services/firebase/firebase_service.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 
 final firebaseLoginProvider =
     AsyncNotifierProvider<FirebaseLoginNotifier, bool>(

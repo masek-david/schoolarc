@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/tutorial/animated_page.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/roboto_serif.dart';
-import 'package:school_manager/widgets/animated_shape.dart';
+import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/roboto_serif.dart';
+import 'package:schoolarc/widgets/animated_shape.dart';
 
 class TutorialWelcome extends StatelessWidget {
   const TutorialWelcome({super.key});

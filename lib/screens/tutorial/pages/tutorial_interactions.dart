@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/screens/tutorial/animated_page.dart';
-import 'package:school_manager/screens/tutorial/tutorial.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/screens/tutorial/tutorial.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/tile/hw_tile.dart';
 
 class TutorialInteractions extends StatefulWidget {
   const TutorialInteractions({super.key});

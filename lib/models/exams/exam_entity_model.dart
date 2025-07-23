@@ -1,8 +1,8 @@
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
 class ExamEntity extends HiveObject {
   ExamEntity({

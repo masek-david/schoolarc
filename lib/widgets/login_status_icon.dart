@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class LoginStatusIcon extends ConsumerWidget {
   const LoginStatusIcon(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/recap/recap_screen.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/screens/recap/recap_screen.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class RecapButton extends StatelessWidget {
   const RecapButton({super.key, required this.child});

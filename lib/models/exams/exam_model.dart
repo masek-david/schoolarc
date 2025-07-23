@@ -1,7 +1,7 @@
-import 'package:school_manager/models/exams/exam_entity_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/models/task_model.dart';
+import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/task_model.dart';
 
 class Exam extends Task {
   Exam({

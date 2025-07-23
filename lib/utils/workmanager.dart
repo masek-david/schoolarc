@@ -1,4 +1,4 @@
-import 'package:school_manager/services/home_widget_service.dart';
+import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:workmanager/workmanager.dart';
 
 @pragma('vm:entry-point')

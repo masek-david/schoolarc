@@ -1,4 +1,4 @@
-import 'package:school_manager/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 
 class HomeworkWithID extends HomeworkEntity {
   HomeworkWithID({
