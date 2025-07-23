@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
 
-class MealsScreen extends StatefulWidget {
+class MealsScreen extends ConsumerStatefulWidget {
   const MealsScreen({
     super.key,
   });
 
   @override
-  State<MealsScreen> createState() => _MealsScreenState();
+  ConsumerState<MealsScreen> createState() => _MealsScreenState();
 }
 
-class _MealsScreenState extends State<MealsScreen> {
+class _MealsScreenState extends ConsumerState<MealsScreen> {
   var meals = stravaService.getMeals();
 
   void refresh() {
@@ -30,8 +31,9 @@ class _MealsScreenState extends State<MealsScreen> {
   Widget build(BuildContext context) {
     var now = DateTime.now();
 
-    if (settings
-        .get(Setting.mealsShowTodayUntil)
+    final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
+
+    if (showMealsUntil
         .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }

@@ -29,8 +29,8 @@ extension DiacriticsAwareString on String {
   }
 
   String toVocative() {
-    if(getLocale().languageCode != 'cs') return this;
-    
+    if (getLocale().languageCode != 'cs') return this;
+
     final name = trim();
 
     if (name.isEmpty) return name;

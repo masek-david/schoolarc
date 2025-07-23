@@ -18,18 +18,13 @@ import 'package:school_manager/screens/settings/widgets/import_export_row.dart';
 import 'package:school_manager/screens/settings/widgets/package_info.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/widgets/login_status_icon.dart';
 
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({
-    super.key,
-    required this.refreshTheme,
-  });
-
-  final void Function() refreshTheme;
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,26 +42,14 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: loc.colorThemeDescription,
             leading: const Icon(Icons.palette_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => ThemePage(
-                  refreshTheme: refreshTheme,
-                ),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const ThemePage()),
           ),
           SettingTile(
             title: loc.styleMotion,
             subtitle: loc.styleMotionDescription,
             leading: const Icon(Icons.animation),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => StyleMotionPage(
-                  refreshTheme: refreshTheme,
-                ),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const StyleMotionPage()),
           ),
           if (NotificationSender.isCompatiblePlatform() || kDebugMode)
             SettingTile(
@@ -74,13 +57,10 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: loc.upcomingDayNotificationsDescription,
               leading: const Icon(Icons.notifications_outlined),
               trailing: const Icon(Icons.keyboard_arrow_right),
-              onTap: (context) => navigatorKey.currentState
-                  ?.push(
-                MaterialPageRoute(
-                  builder: (context) => const TomorrowNotificationsPage(),
-                ),
-              )
-                  .then(
+              onTap: (context) => pushScreen(
+                context,
+                const TomorrowNotificationsPage(),
+              ).then(
                 (value) {
                   NotificationSender.scheduletomorrowNotification(
                       showSnackbar: (text) => showMessage(context, text));
@@ -92,34 +72,20 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: loc.localizationSubtitle,
             leading: const Icon(Icons.language_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => LocalizationPage(
-                  refreshTheme: refreshTheme,
-                ),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const LocalizationPage()),
           ),
           SettingTile(
             title: loc.shortcuts,
             subtitle: loc.shortcutsDescription,
             leading: const Icon(Icons.keyboard_alt_outlined),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const ShortcutsPage(),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const ShortcutsPage()),
           ),
           const Divider(),
           SettingTile(
             title: loc.bakalari,
             leading: const Icon(Icons.hexagon_outlined),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const BakaLoginScreen(),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const BakaLoginScreen()),
             trailing: LoginStatusIcon(
               provider: bakaLoginProvider,
               showProvider: useBakaProvider,
@@ -128,11 +94,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.stravaCz,
             leading: const Icon(Icons.restaurant_outlined),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const StravaLoginScreen(),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const StravaLoginScreen()),
             trailing: LoginStatusIcon(
               provider: stravaLoginProvider,
               showProvider: useMealsProvider,
@@ -141,11 +103,8 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: loc.cloudSync,
             leading: const Icon(Icons.cloud_outlined),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const FirebaseLoginScreen(),
-              ),
-            ),
+            onTap: (context) =>
+                pushScreen(context, const FirebaseLoginScreen()),
             trailing: LoginStatusIcon(
               provider: firebaseLoginProvider,
               showProvider: useCloudSyncProvider,
@@ -156,11 +115,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             title: context.loc.aboutApp,
             leading: const Icon(Icons.info_outline_rounded),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const AboutApp(),
-              ),
-            ),
+            onTap: (context) => pushScreen(context, const AboutApp()),
           ),
           if (debugMode || kDebugMode)
             SettingTile.withSwitch(

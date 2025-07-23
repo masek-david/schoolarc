@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 // NOTE: this is really important, it will make overscroll look the same on both platforms
 class _ClampingScrollBehavior extends ScrollBehavior {
   @override
-  ScrollPhysics getScrollPhysics(BuildContext context) => const ClampingScrollPhysics();
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
 }
 
 class NonScrollableRefreshIndicator extends StatelessWidget {
@@ -29,9 +30,8 @@ class NonScrollableRefreshIndicator extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                  maxHeight: constraints.maxHeight
-                ),
+                    minHeight: constraints.maxHeight,
+                    maxHeight: constraints.maxHeight),
                 child: child,
               ),
             ),

@@ -1,29 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 
-class CalendarSettings extends StatefulWidget {
-  const CalendarSettings({
-    super.key,
-    required this.changeShowMissed,
-  });
-
-  final void Function(bool value) changeShowMissed;
+class CalendarSettings extends ConsumerWidget {
+  const CalendarSettings({super.key});
 
   @override
-  State<CalendarSettings> createState() => _CalendarSettingsState();
-}
-
-class _CalendarSettingsState extends State<CalendarSettings> {
-  bool showMissed = settings.get(Setting.calendarShowMissed);
-  bool showArrows = settings.get(Setting.calendarShowArrows);
-  bool initialIsTomorrow = settings.get(Setting.calendarInitialIsTomorrow);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final showMissed = ref.watch(calendarShowMissedProvider);
+    final showArrows = ref.watch(calendarShowArrowsProvider);
+    final initialIsTomorrow = ref.watch(calendarInitialIsTomorrowProvider);
     final loc = context.loc;
 
     return Column(
@@ -44,10 +33,9 @@ class _CalendarSettingsState extends State<CalendarSettings> {
               ),
             ],
             onChanged: (value) {
-              settings.save(Setting.calendarInitialIsTomorrow, value);
-              setState(() {
-                initialIsTomorrow = value as bool;
-              });
+              ref
+                  .read(calendarInitialIsTomorrowProvider.notifier)
+                  .set(value as bool);
             },
           ),
         ),
@@ -55,11 +43,7 @@ class _CalendarSettingsState extends State<CalendarSettings> {
           title: loc.showMissedHomeworks,
           value: showMissed,
           onChanged: (value) {
-            settings.save(Setting.calendarShowMissed, value);
-            setState(() {
-              showMissed = value;
-            });
-            widget.changeShowMissed(value);
+            ref.read(calendarShowMissedProvider.notifier).set(value);
           },
         ),
         SettingTile.withSwitch(
@@ -67,11 +51,7 @@ class _CalendarSettingsState extends State<CalendarSettings> {
           subtitle: loc.showArrowsSubtitle,
           value: showArrows,
           onChanged: (value) {
-            settings.save(Setting.calendarShowArrows, value);
-            setState(() {
-              showArrows = value;
-            });
-            widget.changeShowMissed(showMissed);
+            ref.read(calendarShowArrowsProvider.notifier).set(value);
           },
         ),
       ],

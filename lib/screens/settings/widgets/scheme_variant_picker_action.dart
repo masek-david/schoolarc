@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
 
-class SchemeVariantPickerAction extends StatefulWidget {
-  const SchemeVariantPickerAction({
-    super.key,
-    required this.onChanged,
-    required this.initialScheme,
-  });
-
-  final void Function(int schemeVariantInt) onChanged;
-  final int initialScheme;
+class SchemeVariantPickerAction extends ConsumerStatefulWidget {
+  const SchemeVariantPickerAction({super.key});
 
   @override
-  State<SchemeVariantPickerAction> createState() =>
+  ConsumerState<SchemeVariantPickerAction> createState() =>
       _SchemeVariantPickerActionState();
 }
 
-class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
-  static final schemeVariants = DynamicSchemeVariant.values;
+class _SchemeVariantPickerActionState
+    extends ConsumerState<SchemeVariantPickerAction> {
+  static const schemeVariants = DynamicSchemeVariant.values;
+  // for tooltips
   final List<GlobalKey<TooltipState>> keys = List.generate(
     schemeVariants.length,
     (index) => GlobalKey(),
@@ -28,6 +23,8 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final schemeIndex = ref.watch(themeDynamicSchemeVariantProvider);
+    final color = Color(ref.watch(themeColorValueProvider));
 
     return Center(
       child: Padding(
@@ -40,12 +37,12 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
             schemeVariants.length,
             (index) {
               final schemeVariant = schemeVariants[index];
-              final isHighlighted = index == widget.initialScheme;
+              final isHighlighted = index == schemeIndex;
 
               final brightness = Theme.of(context).brightness;
 
               final scheme = ColorScheme.fromSeed(
-                seedColor: Color(settings.get(Setting.themeColorValue)),
+                seedColor: color,
                 brightness: brightness,
                 dynamicSchemeVariant: schemeVariant,
               );
@@ -64,7 +61,9 @@ class _SchemeVariantPickerActionState extends State<SchemeVariantPickerAction> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          widget.onChanged(index);
+                          ref
+                              .read(themeDynamicSchemeVariantProvider.notifier)
+                              .set(index);
                           keys[index].currentState?.ensureTooltipVisible();
                         },
                         child: Stack(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+@Deprecated('use context.isWide')
 class ScreenSize {
   static ValueNotifier<bool> isWideScreen = ValueNotifier(false);
   static ValueNotifier<bool> isWiderThanTaller = ValueNotifier(false);

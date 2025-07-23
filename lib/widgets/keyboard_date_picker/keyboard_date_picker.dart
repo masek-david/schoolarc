@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
+import 'package:school_manager/screens/main_screens/calendar/my_calendar_builder.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
 

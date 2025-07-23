@@ -17,8 +17,8 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 final hwProvider =
     NotifierProvider<HwNotifier, Map<String, Homework>>(HwNotifier.new);
@@ -227,7 +227,8 @@ class HwNotifier extends Notifier<Map<String, Homework>>
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref.read(firebaseServiceProvider).listenHomeworks().listen((event) async {
+    listenFirebase = ref.read(firebaseServiceProvider).listenHomeworks().listen(
+        (event) async {
       ref.read(firebaseActivityProvider.notifier).read(1);
 
       if (!Hive.box(hwBox).isOpen) {
@@ -325,7 +326,9 @@ class HwNotifier extends Notifier<Map<String, Homework>>
     state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
 
     if (addToFire) {
-      await ref.read(firebaseServiceProvider).addHomework(hw.convert(id, subjects[hw.subjectId]));
+      await ref
+          .read(firebaseServiceProvider)
+          .addHomework(hw.convert(id, subjects[hw.subjectId]));
     }
 
     return;
@@ -394,7 +397,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
       };
 
       await Future.delayed(const Duration(seconds: 1));
-      // remove the animation only if it was this call of this method that set the animation to true the first 
+      // remove the animation only if it was this call of this method that set the animation to true the first
       if (state[editedHw.id]!.timestamp == editedHw.timestamp) {
         state = {
           ...state,
@@ -495,7 +498,9 @@ class HwNotifier extends Notifier<Map<String, Homework>>
       },
     );
 
-    ref.read(firebaseServiceProvider).editHomeworks(editedHomeworks.values.toList());
+    ref
+        .read(firebaseServiceProvider)
+        .editHomeworks(editedHomeworks.values.toList());
 
     state = {...state, ...editedHomeworks};
     return;
@@ -595,7 +600,9 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
-      ref.read(firebaseServiceProvider).editHomeworks([localHw.copyWith(id: fireHw.id)]);
+      ref
+          .read(firebaseServiceProvider)
+          .editHomeworks([localHw.copyWith(id: fireHw.id)]);
     }
     return;
   }

@@ -1,16 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/screens/calendar/my_calendar_builder.dart';
-import 'package:school_manager/screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/screens/main_screens/calendar/my_calendar_builder.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarWidget extends StatefulWidget {
+class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({
     super.key,
     required this.focusedDay,
@@ -41,10 +44,10 @@ class CalendarWidget extends StatefulWidget {
   final void Function(DateTime)? onPageChanged;
 
   @override
-  State<CalendarWidget> createState() => _CalendarWidgetState();
+  ConsumerState<CalendarWidget> createState() => _CalendarWidgetState();
 }
 
-class _CalendarWidgetState extends State<CalendarWidget> {
+class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   late final PageController pageController;
   bool isHoveringLeft = false;
   bool isHoveringRight = false;
@@ -101,7 +104,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     final maxNumberOfExamsPerDay = getMaxNumberOfExamsPerDay();
-    final bool showArrows = settings.get(Setting.calendarShowArrows) &&
+    final bool showArrows = ref.watch(calendarShowArrowsProvider) &&
         widget.calendarFormat.name == 'month';
 
     return Stack(
@@ -197,7 +200,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 56),
+              // offset from appbar
+              padding: const EdgeInsets.only(bottom: kIsWeb ? 56 : 32),
               child: ArrowButtonsRow(
                 onPressedLeft: previousPage,
                 onPressedRight: nextPage,

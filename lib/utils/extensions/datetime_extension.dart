@@ -1,7 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
+
 
 extension BetterDateTime on DateTime {
   bool isSameDay(DateTime comparedDate) {
@@ -102,7 +103,7 @@ extension BetterDateTime on DateTime {
     if (settings.get(Setting.use24HourFormat)) {
       return DateFormat.Hm().format(date);
     }
-    return DateFormat.jm(settings.get(Setting.localeLanguage)).format(date);
+    return DateFormat.jm(getLocale().languageCode).format(date);
   }
 
   /// formats using saved dateformat and using apps language, but if the year is the

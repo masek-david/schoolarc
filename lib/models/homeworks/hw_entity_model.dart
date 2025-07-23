@@ -1,4 +1,3 @@
-
 import 'package:hive_ce/hive.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/priority_model.dart';

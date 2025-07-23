@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:school_manager/models/exams/exam_id_model.dart';
 import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
+
 
 class ImportExport {
   ImportExport(

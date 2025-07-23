@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/main_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 
 class SideNavBar extends StatelessWidget {
@@ -21,9 +21,8 @@ class SideNavBar extends StatelessWidget {
       },
       labelType: NavigationRailLabelType.all,
       groupAlignment: 0.0,
-      // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      leading: const DrawerButton(onPressed: switchDrawer),
+      leading: const DrawerButton(onPressed: openDrawer),
       trailing: const Icon(Icons.abc, color: Colors.transparent),
       destinations: [
         NavigationRailDestination(

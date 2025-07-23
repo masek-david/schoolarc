@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/widgets/exam_list.dart';
@@ -12,7 +12,7 @@ import 'package:school_manager/widgets/homework_list.dart';
 import 'package:school_manager/widgets/list_bottom_spacer.dart';
 import 'package:school_manager/widgets/reschedule_drag_target.dart';
 
-class PagesWidget extends StatelessWidget {
+class PagesWidget extends ConsumerWidget {
   const PagesWidget({
     super.key,
     required this.pageController,
@@ -21,7 +21,6 @@ class PagesWidget extends StatelessWidget {
     required this.hwByDate,
     required this.examByDate,
     required this.missedHwList,
-    required this.showMissed,
     required this.examOnDelete,
     required this.examOnEdit,
     required this.hwOnEdit,
@@ -46,11 +45,11 @@ class PagesWidget extends StatelessWidget {
   final Map<DateTime, List<Homework>> hwByDate;
   final Map<DateTime, List<Exam>> examByDate;
   final List<Homework> missedHwList;
-  final bool showMissed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
+    final settingShowMissed = ref.watch(calendarShowMissedProvider);
 
     return Stack(
       children: [
@@ -69,7 +68,7 @@ class PagesWidget extends StatelessWidget {
 
             final bool showMissed = missedHwList.isNotEmpty &&
                 !date.isBeforeToday() &&
-                this.showMissed;
+                settingShowMissed;
 
             return RescheduleDragTarget(
               currentDate: date,
@@ -107,7 +106,8 @@ class PagesWidget extends StatelessWidget {
                                     text: context.loc.missedHomework(2),
                                     bold: false,
                                     textColor: scheme.error,
-                                    countContainerColor: context.col.errorContainer,
+                                    countContainerColor:
+                                        context.col.errorContainer,
                                     count: missedHwList.length,
                                   ),
                                   children: [
@@ -132,7 +132,8 @@ class PagesWidget extends StatelessWidget {
                             onConvert: examOnConvert,
                             showDates: false,
                             draggable: true,
-                            text: context.loc.examAbsence(examListForDay.isEmpty.toString()),
+                            text: context.loc
+                                .examAbsence(examListForDay.isEmpty.toString()),
                           ),
                           HomeworkList(
                             hwList: hwListForDay,
@@ -142,7 +143,8 @@ class PagesWidget extends StatelessWidget {
                             onConvert: hwOnConvert,
                             showDates: false,
                             draggable: true,
-                            text: context.loc.homeworkAbsence(hwListForDay.isEmpty.toString()),
+                            text: context.loc.homeworkAbsence(
+                                hwListForDay.isEmpty.toString()),
                           ),
                           const ListBottomSpacer(),
                           const ListBottomSpacer(),
@@ -187,24 +189,24 @@ class PagesWidget extends StatelessWidget {
             );
           },
         ),
-        if(settings.get(Setting.calendarShowArrows))
-        Align(
-          alignment: Alignment.center,
-          child: ArrowButtonsRow(
-            onPressedLeft: () {
-              pageController.previousPage(
-                duration: Durations.medium2,
-                curve: Curves.easeInOut,
-              );
-            },
-            onPressedRight: () {
-              pageController.nextPage(
-                duration: Durations.medium2,
-                curve: Curves.easeInOut,
-              );
-            },
+        if (ref.watch(calendarShowArrowsProvider))
+          Align(
+            alignment: Alignment.center,
+            child: ArrowButtonsRow(
+              onPressedLeft: () {
+                pageController.previousPage(
+                  duration: Durations.medium2,
+                  curve: Curves.easeInOut,
+                );
+              },
+              onPressedRight: () {
+                pageController.nextPage(
+                  duration: Durations.medium2,
+                  curve: Curves.easeInOut,
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }

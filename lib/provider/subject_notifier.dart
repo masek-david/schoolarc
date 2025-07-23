@@ -8,7 +8,7 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 
 final subjectsProvider =
     NotifierProvider<SubjectNotifier, Map<String, Subject>>(
@@ -87,7 +87,8 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref.read(firebaseServiceProvider).listenSubjects().listen((event) async {
+    listenFirebase = ref.read(firebaseServiceProvider).listenSubjects().listen(
+        (event) async {
       ref.read(firebaseActivityProvider.notifier).read(0);
 
       await checkFireSubject(event);
@@ -212,7 +213,8 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     subjectsDb.saveEditedSubject(editedSubject.id, editedSubject.convert());
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider)
+      await ref
+          .read(firebaseServiceProvider)
           .editSubjects([editedSubject.copyWith(id: editedSubject.id)]);
     }
   }
@@ -266,7 +268,9 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
     state = {...state, ...editedSubjects};
 
-    await ref.read(firebaseServiceProvider).editSubjects(editedSubjects.values.toList());
+    await ref
+        .read(firebaseServiceProvider)
+        .editSubjects(editedSubjects.values.toList());
     return;
   }
 
@@ -307,7 +311,8 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     List<Subject> hwsToDelete = [];
 
     for (var hw in _dbState.values) {
-      if (hw.isDeleted && now.difference(hw.timestamp) > const Duration(days: 7)) {
+      if (hw.isDeleted &&
+          now.difference(hw.timestamp) > const Duration(days: 7)) {
         hwsToDelete.add(hw);
       }
     }
@@ -355,7 +360,9 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
-      ref.read(firebaseServiceProvider).editSubjects([localSubject.copyWith(id: fireSubject.id)]);
+      ref
+          .read(firebaseServiceProvider)
+          .editSubjects([localSubject.copyWith(id: fireSubject.id)]);
     } else {
       // print('same date');
     }

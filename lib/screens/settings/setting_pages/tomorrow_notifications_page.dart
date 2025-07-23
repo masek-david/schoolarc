@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
+import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
+import 'package:school_manager/utils/notifications/notification_sender.dart';
 
 class TomorrowNotificationsPage extends StatefulWidget {
   const TomorrowNotificationsPage({super.key});
@@ -39,7 +39,6 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
     setState(() {
       enabled = value;
     });
-    settings.save(Setting.tomorrowNotificationEnabled, value);
     settings.save(Setting.stopAskingForNotifications, false);
     if (value) {
       bool nowHasPermission = await NotificationSender.getPermission(
@@ -51,6 +50,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
           enabled = false;
         });
       } else {
+        settings.save(Setting.tomorrowNotificationEnabled, value);
         setState(() {
           areNotificationsAllowed = true;
         });

@@ -12,9 +12,10 @@ class ArrowButtonsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(120);
+    final color =
+        Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(120);
     final padding = const EdgeInsets.all(6);
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/main_app.dart';
 
 class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const WideScreenAppBar({
@@ -33,13 +33,15 @@ class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
           backgroundColor: backgroundColor,
           title: title,
           leading:
-              isWideScreen ? null : const DrawerButton(onPressed: switchDrawer),
+              isWideScreen ? null : const DrawerButton(onPressed: openDrawer),
           actions: actions,
         ),
       ),
     );
   }
 
+// TODO why is this for web?? check this and arrows for page switching
   @override
-  Size get preferredSize => Size.fromHeight(isWideScreen && !kIsWeb ? 32 : kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(isWideScreen && !kIsWeb ? 32 : kToolbarHeight);
 }

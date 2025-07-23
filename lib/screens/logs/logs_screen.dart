@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/logs/log_model.dart';
-import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/logs/log_screen.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/send_bug_report.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
@@ -177,12 +177,9 @@ class _LogsScreenState extends State<LogsScreen> {
                             ),
                             IconButton(
                               onPressed: () {
-                                navigatorKey.currentState?.push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return LogScreen(log: logs[index].$2);
-                                    },
-                                  ),
+                                pushScreen(
+                                  context,
+                                  LogScreen(log: logs[index].$2),
                                 );
                               },
                               icon: const Icon(Icons.keyboard_arrow_right),

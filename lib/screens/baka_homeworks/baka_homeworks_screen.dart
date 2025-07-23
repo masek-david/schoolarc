@@ -5,8 +5,8 @@ import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
 import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerStatefulWidget {
@@ -95,6 +95,7 @@ class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
             );
           } else if (snapshot.data?.isEmpty ?? true) {
             return EmptyMessage(
+              asset: 'assets/confetti.svg',
               message: context.loc.noHomeworks,
             );
           }

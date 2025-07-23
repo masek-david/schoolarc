@@ -22,7 +22,8 @@ class Activity {
 
 /// 0: subject, 1: homeworks, 2: exams
 final firebaseActivityProvider =
-    NotifierProvider<FirebaseActivityNotifier, Map<int, Activity>>(FirebaseActivityNotifier.new);
+    NotifierProvider<FirebaseActivityNotifier, Map<int, Activity>>(
+        FirebaseActivityNotifier.new);
 
 /// 0: subject, 1: homeworks, 2: exams
 class FirebaseActivityNotifier extends Notifier<Map<int, Activity>> {

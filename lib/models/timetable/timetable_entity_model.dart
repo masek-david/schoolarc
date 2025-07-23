@@ -14,10 +14,11 @@ class TimeTableEntity extends HiveObject {
   TimeTableEntity(List<LessonTimes>? lessonTimes, List<List<String?>>? table) {
     this.lessonTimes = lessonTimes ?? [];
 
-    this.table = table ?? List.generate(
-      7,
-      (_) => List.filled(this.lessonTimes.length, null, growable: true),
-    );
+    this.table = table ??
+        List.generate(
+          7,
+          (_) => List.filled(this.lessonTimes.length, null, growable: true),
+        );
   }
 
   TimeTable convert(Map<String, Subject> subjects) {

@@ -10,8 +10,8 @@ import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/firebase_login/firebase_login_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/login_status_icon.dart';
 
 class TutorialExtensions extends ConsumerWidget {
@@ -47,10 +47,9 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => const BakaLoginScreen(),
-                      ),
+                    pushScreen(
+                      context,
+                      const BakaLoginScreen(),
                     );
                   },
                   child: Text(context.loc.login),
@@ -69,10 +68,9 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => const StravaLoginScreen(),
-                      ),
+                    pushScreen(
+                      context,
+                      const StravaLoginScreen(),
                     );
                   },
                   child: Text(context.loc.login),
@@ -93,10 +91,9 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => const FirebaseLoginScreen(),
-                      ),
+                    pushScreen(
+                      context,
+                      const FirebaseLoginScreen(),
                     );
                   },
                   child: Text(context.loc.login),

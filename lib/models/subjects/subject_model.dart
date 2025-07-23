@@ -74,14 +74,14 @@ class Subject {
     return {
       'n': name,
       's': shortcut,
-      if(bakaId != null) 'b': bakaId,
-      if(order != 0) 'o': order,
-      if(isDeleted) 'del': isDeleted,
+      if (bakaId != null) 'b': bakaId,
+      if (order != 0) 'o': order,
+      if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
     };
   }
 
-  Subject.fromFireJson(Map<String, dynamic>  json)
+  Subject.fromFireJson(Map<String, dynamic> json)
       : name = json['n'],
         id = json['id'],
         shortcut = json['s'],

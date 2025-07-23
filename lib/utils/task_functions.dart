@@ -5,8 +5,8 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/task_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 
 Future<void> addNewHw(
@@ -50,22 +50,25 @@ void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
   ref.read(hwProvider.notifier).convert(hw);
 }
 
-void completeHw(
-    BuildContext context, WidgetRef ref, Homework hw, bool value) {
+void completeHw(BuildContext context, WidgetRef ref, Homework hw, bool value) {
   ref.read(hwProvider.notifier).complete(hw, value);
 }
 
 void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   ref.read(hwProvider.notifier).delete(hw);
 
-  showMessage(context, '${context.loc.deletedHomework} \'${hw.text}\'', actions: [
-    SnackBarAction(
-      label: context.loc.undo,
-      onPressed: () {
-        ref.read(hwProvider.notifier).revertDelete(hw);
-      },
-    ),
-  ]);
+  showMessage(
+    context,
+    '${context.loc.deletedHomework} \'${hw.text}\'',
+    actions: [
+      SnackBarAction(
+        label: context.loc.undo,
+        onPressed: () {
+          ref.read(hwProvider.notifier).revertDelete(hw);
+        },
+      ),
+    ],
+  );
 }
 
 Future<void> addNewExam(

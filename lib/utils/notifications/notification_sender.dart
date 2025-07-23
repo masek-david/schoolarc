@@ -1,20 +1,21 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 const String tomorrowChannel = 'tomorrow_channel';

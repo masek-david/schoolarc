@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 

@@ -5,10 +5,10 @@ import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/provider/exam_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/screens/exams/exam_tile.dart';
-import 'package:school_manager/widgets/tile/hw_tile.dart';
+import 'package:school_manager/screens/main_screens/exams/exam_tile.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
 import 'package:school_manager/utils/task_functions.dart';
+import 'package:school_manager/widgets/tile/hw_tile.dart';
 
 class MySearchBar extends ConsumerWidget {
   const MySearchBar({super.key});

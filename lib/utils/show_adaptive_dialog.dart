@@ -71,9 +71,11 @@ Widget adaptiveDialogButton({
     }
     return TextButton(
       onPressed: onPressed,
-      style: isDestructiveAction ? ButtonStyle(
-        overlayColor: WidgetStatePropertyAll(context.col.errorContainer),
-      ) : null,
+      style: isDestructiveAction
+          ? ButtonStyle(
+              overlayColor: WidgetStatePropertyAll(context.col.errorContainer),
+            )
+          : null,
       child: DefaultTextStyle(
         style: TextStyle(color: textColor),
         child: child,

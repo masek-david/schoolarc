@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/widgets/tile/hw_tile.dart';
 
 class HomeworkList extends StatelessWidget {

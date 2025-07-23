@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/settings/widgets/initial_app_page.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/settings/widgets/slider_action.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
-class StyleMotionPage extends StatefulWidget {
-  const StyleMotionPage({super.key, required this.refreshTheme});
-
-  final void Function() refreshTheme;
-
-  @override
-  State<StyleMotionPage> createState() => _StyleMotionPageState();
-}
-
-class _StyleMotionPageState extends State<StyleMotionPage> {
-  bool showBorder = settings.get(Setting.showAppOverlay);
+class StyleMotionPage extends ConsumerWidget {
+  const StyleMotionPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final showAppBorders = ref.watch(showAppBordersProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.loc.styleMotion),
@@ -44,13 +39,9 @@ class _StyleMotionPageState extends State<StyleMotionPage> {
           SettingTile.withSwitch(
             title: context.loc.styleMotionShowBorderTitle,
             subtitle: context.loc.styleMotionShowBorderSubtitle,
-            value: showBorder,
+            value: showAppBorders,
             onChanged: (value) {
-              settings.save(Setting.showAppOverlay, value);
-              setState(() {
-                showBorder = value;
-              });
-              widget.refreshTheme();
+              ref.read(showAppBordersProvider.notifier).set(value);
             },
           ),
         ],

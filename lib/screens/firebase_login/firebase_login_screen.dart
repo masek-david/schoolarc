@@ -5,10 +5,11 @@ import 'package:school_manager/provider/use_cloudsync_notifier.dart';
 import 'package:school_manager/screens/login_input_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/error_tile.dart';
+import 'package:school_manager/widgets/login_status_icon.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
 class FirebaseLoginScreen extends ConsumerWidget {
@@ -57,7 +58,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                 title: data ? context.loc.loggedIn : context.loc.loggedOut,
                 leading: data
                     ? const Icon(Icons.check_circle, color: Colors.green)
-                    : null,
+                    : const LoggedOutIcon(),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
               ),
               error: (error, stackTrace) => ErrorTile(
@@ -72,8 +73,9 @@ class FirebaseLoginScreen extends ConsumerWidget {
               OutlinedButton(
                 onPressed: useCloudSync
                     ? () async {
-                        navigatorKey.currentState?.push(MaterialPageRoute(
-                          builder: (context) => LoginInputScreen(
+                        pushScreen(
+                          context,
+                          LoginInputScreen(
                             actionName: context.loc.logIn,
                             fields: [
                               LoginField(
@@ -151,7 +153,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               }
                             },
                           ),
-                        ));
+                        );
                       }
                     : null,
                 child: Text(context.loc.logIn),
@@ -160,8 +162,9 @@ class FirebaseLoginScreen extends ConsumerWidget {
               OutlinedButton(
                 onPressed: useCloudSync
                     ? () async {
-                        navigatorKey.currentState?.push(MaterialPageRoute(
-                          builder: (context) => LoginInputScreen(
+                        pushScreen(
+                          context,
+                          LoginInputScreen(
                             actionName: context.loc.register,
                             fields: [
                               LoginField(
@@ -248,7 +251,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               }
                             },
                           ),
-                        ));
+                        );
                       }
                     : null,
                 child: Text(context.loc.register),
@@ -257,8 +260,9 @@ class FirebaseLoginScreen extends ConsumerWidget {
               OutlinedButton(
                 onPressed: useCloudSync
                     ? () async {
-                        navigatorKey.currentState?.push(MaterialPageRoute(
-                          builder: (context) => LoginInputScreen(
+                        pushScreen(
+                          context,
+                          LoginInputScreen(
                             actionName: context.loc.changePassword,
                             fields: [
                               LoginField(
@@ -315,7 +319,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               }
                             },
                           ),
-                        ));
+                        );
                       }
                     : null,
                 child: Text(context.loc.changePassword),
@@ -397,8 +401,9 @@ class FirebaseLoginScreen extends ConsumerWidget {
                 ),
                 onPressed: useCloudSync
                     ? () async {
-                        navigatorKey.currentState?.push(MaterialPageRoute(
-                          builder: (context) => LoginInputScreen(
+                        pushScreen(
+                          context,
+                          LoginInputScreen(
                             actionName: context.loc.deleteAllData,
                             fields: [
                               LoginField(
@@ -450,7 +455,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               );
                             },
                           ),
-                        ));
+                        );
                       }
                     : null,
                 child: Text(context.loc.deleteAllData),

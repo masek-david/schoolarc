@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,18 +10,18 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/database/hive/hive_registrar.g.dart';
+import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/meal_model.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:workmanager/workmanager.dart';
 
 void updateHwWidget(List<Homework> hws) {
-  if(kIsWeb || !Platform.isAndroid) return;
-  
+  if (kIsWeb || !Platform.isAndroid) return;
+
   List<dynamic> json = [];
 
   for (var element in hws) {
@@ -32,7 +33,7 @@ void updateHwWidget(List<Homework> hws) {
 }
 
 void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
-  if(kIsWeb || !Platform.isAndroid) return;
+  if (kIsWeb || !Platform.isAndroid) return;
   Map<String, dynamic> json = {};
   final now = DateTime.now();
 
@@ -87,9 +88,7 @@ Future<void> completeHwBackground(
       // WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform);
-      await container
-          .read(hwProvider.notifier)
-          .completeById(id, isCompleted);
+      await container.read(hwProvider.notifier).completeById(id, isCompleted);
 
       updateHwWidget(container.read(hwWidgetProvider));
 

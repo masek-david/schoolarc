@@ -16,6 +16,7 @@ import 'package:school_manager/screens/tutorial/pages/tutorial_welcome.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+
 Subject exampleSubject(AppLocalizations loc) => Subject(
       name: loc.exampleSubjectName1,
       shortcut: loc.exampleSubjectShort1,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/logs/log_model.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';

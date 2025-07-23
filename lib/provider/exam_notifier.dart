@@ -11,8 +11,8 @@ import 'package:school_manager/provider/firebase_activity_notifier.dart';
 import 'package:school_manager/provider/hw_notifier.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 final examProvider =
     NotifierProvider<ExamNotifier, Map<String, Exam>>(ExamNotifier.new);
@@ -162,11 +162,12 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       },
     );
   }
-  
+
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref.read(firebaseServiceProvider).listenExams().listen((event) async {
+    listenFirebase =
+        ref.read(firebaseServiceProvider).listenExams().listen((event) async {
       ref.read(firebaseActivityProvider.notifier).read(2);
 
       await checkFireExam(event);
@@ -290,7 +291,9 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
     state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
     if (addToFire) {
-      await ref.read(firebaseServiceProvider).addExam(exam.convert(id, subjects[exam.subjectId]));
+      await ref
+          .read(firebaseServiceProvider)
+          .addExam(exam.convert(id, subjects[exam.subjectId]));
     }
 
     return;
@@ -518,7 +521,9 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       // print(
       //     '\u001b[1;93mediting exam from hive: ${fireExam.toString()}');
 
-      ref.read(firebaseServiceProvider).editExams([localExam.copyWith(id: fireExam.id)]);
+      ref
+          .read(firebaseServiceProvider)
+          .editExams([localExam.copyWith(id: fireExam.id)]);
     }
     return;
   }

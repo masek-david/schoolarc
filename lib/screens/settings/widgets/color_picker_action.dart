@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ColorPickerAction extends StatefulWidget {
+class ColorPickerAction extends StatelessWidget {
   const ColorPickerAction({
     super.key,
     required this.onChanged,
-    required this.initialColor,
+    required this.color,
   });
 
   final void Function(Color color) onChanged;
-  final Color initialColor;
+  final Color color;
 
-  @override
-  State<ColorPickerAction> createState() => _ColorPickerActionState();
-}
-
-class _ColorPickerActionState extends State<ColorPickerAction> {
   static const colors = [
     Colors.red,
     Colors.orange,
@@ -34,8 +29,7 @@ class _ColorPickerActionState extends State<ColorPickerAction> {
     int? selectedColorIndex;
 
     for (int i = 0; i < colors.length; i++) {
-      // ignore: deprecated_member_use
-      if (colors[i].value == widget.initialColor.value) {
+      if (colors[i].toARGB32() == color.toARGB32()) {
         selectedColorIndex = i;
         break;
       }
@@ -53,7 +47,7 @@ class _ColorPickerActionState extends State<ColorPickerAction> {
             (index) {
               final color = colors[index];
               final isHighlighted = index == selectedColorIndex;
-              
+
               return ClipRRect(
                 borderRadius: BorderRadius.circular(1000),
                 child: Container(
@@ -61,17 +55,19 @@ class _ColorPickerActionState extends State<ColorPickerAction> {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: isHighlighted ? Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 4,
-                    ) : null,
+                    border: isHighlighted
+                        ? Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 4,
+                          )
+                        : null,
                     color: color,
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        widget.onChanged(color);
+                        onChanged(color);
                       },
                       child: isHighlighted ? const Icon(Icons.check) : null,
                     ),

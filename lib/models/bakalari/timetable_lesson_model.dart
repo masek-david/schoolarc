@@ -5,8 +5,8 @@ import 'package:school_manager/models/bakalari/teacher_model.dart';
 import 'package:school_manager/models/bakalari/timetable_change.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class TimeTableLesson {
   TimeTableLesson({

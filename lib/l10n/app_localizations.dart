@@ -1883,6 +1883,18 @@ abstract class AppLocalizations {
   /// **'Disagree'**
   String get disagree;
 
+  /// No description provided for @view.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get view;
+
+  /// No description provided for @newHomeworksFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new {count, plural, one{piece} other{pieces}} of homework found'**
+  String newHomeworksFound(num count);
+
   /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:

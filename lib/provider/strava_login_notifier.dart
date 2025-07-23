@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 
 final stravaLoginProvider =
     AsyncNotifierProvider<StravaLoginNotifier, bool>(StravaLoginNotifier.new);
@@ -21,6 +21,18 @@ class StravaLoginNotifier extends AsyncNotifier<bool> {
     } else {
       return false;
     }
+  }
+
+  Future<bool> refreshLogin() async {
+    state = const AsyncValue.loading();
+    try {
+      await stravaService.login();
+    } catch (e, stack) {
+      state = AsyncError(e, stack);
+      return false;
+    }
+    state = const AsyncValue.data(true);
+    return true;
   }
 
   Future<void> register({

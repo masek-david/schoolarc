@@ -33,9 +33,6 @@ class WideScreenBorders extends StatelessWidget {
       child: Container(
         color: Theme.of(context).colorScheme.surfaceContainer,
         padding: show
-            // ? MediaQuery.paddingOf(context).add(
-            //     EdgeInsets.only(right: MediaQuery.paddingOf(context).bottom),
-            //   )
             ? EdgeInsets.only(top: top, bottom: bottom, right: bottom)
             : null,
         child: ClipRRect(

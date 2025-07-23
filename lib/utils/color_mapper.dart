@@ -22,11 +22,11 @@ class LogoColorMapper extends ColorMapper {
         return theme.colorScheme.secondary;
       }
     }
-    
+
     if (color == const Color.fromARGB(255, 217, 226, 255) &&
         theme.brightness == Brightness.light) {
-          return const Color.fromARGB(255, 66, 100, 144);
-        }
+      return const Color.fromARGB(255, 66, 100, 144);
+    }
 
     return color;
   }

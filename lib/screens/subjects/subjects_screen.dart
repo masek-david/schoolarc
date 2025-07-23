@@ -11,8 +11,8 @@ import 'package:school_manager/provider/use_cloudsync_notifier.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});

@@ -87,7 +87,8 @@ class FirebaseOverlay extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () {
-            ref.read(_opacityProvider.notifier).state = !ref.read(_opacityProvider.notifier).state;
+            ref.read(_opacityProvider.notifier).state =
+                !ref.read(_opacityProvider.notifier).state;
           },
           icon: const Icon(Icons.hide_source),
         ),

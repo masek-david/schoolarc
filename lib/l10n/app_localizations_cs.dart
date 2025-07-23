@@ -1057,5 +1057,19 @@ class AppLocalizationsCs extends AppLocalizations {
   String get disagree => 'Nesouhlasím';
 
   @override
+  String get view => 'View';
+
+  @override
+  String newHomeworksFound(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'pieces',
+      one: 'piece',
+    );
+    return '$count new $_temp0 of homework found';
+  }
+
+  @override
   String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
 }

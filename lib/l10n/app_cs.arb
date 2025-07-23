@@ -345,5 +345,7 @@
   "getAllData": "Stáhnout všechna data",
   "agree": "Souhlasím",
   "disagree": "Nesouhlasím",
+  "view": "Zobrazit",
+  "newHomeworksFound": "Nalezeno {count} {count, plural, one{nový úkol} few{nové úkoly} other{nových úkolů}}",
   "privacyPolicy": "# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase"
 }

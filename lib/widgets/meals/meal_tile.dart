@@ -16,11 +16,10 @@ class MealTile extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-      color: meal.selected == true
-          ? Theme.of(context).colorScheme.tertiaryContainer
-          : null,
-        borderRadius: BorderRadius.circular(12)
-      ),
+          color: meal.selected == true
+              ? Theme.of(context).colorScheme.tertiaryContainer
+              : null,
+          borderRadius: BorderRadius.circular(12)),
       padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

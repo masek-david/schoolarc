@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -138,7 +137,8 @@ class _DaysPageState extends State<DaysPage> {
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) =>
+                            const SizedBox.shrink(),
                         reservedSize: 36,
                       ),
                     ),
@@ -148,7 +148,8 @@ class _DaysPageState extends State<DaysPage> {
                         reservedSize: 48,
                         getTitlesWidget: (value, meta) {
                           // it should show only for whole numbers
-                          if ((value.round() - value).abs() > 0.00000000000001) {
+                          if ((value.round() - value).abs() >
+                              0.00000000000001) {
                             return const SizedBox.shrink();
                           }
 

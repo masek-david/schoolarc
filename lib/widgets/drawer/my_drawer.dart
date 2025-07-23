@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:school_manager/screens/changelog_screen.dart';
@@ -15,20 +14,18 @@ import 'package:school_manager/screens/settings/settings_screen.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
 import 'package:school_manager/screens/subjects/subjects_screen.dart';
 import 'package:school_manager/screens/timetable/timetable_screen.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/color_mapper.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/drawer/drawer_button.dart';
 import 'package:school_manager/widgets/drawer/search_bar.dart';
 
 class MyDrawer extends ConsumerWidget {
   const MyDrawer({
     super.key,
-    required this.refreshTheme,
     required this.startTutorial,
   });
 
-  final void Function() refreshTheme;
   final void Function() startTutorial;
 
   void showSnackbar(BuildContext context, String text) {
@@ -40,7 +37,9 @@ class MyDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    late final bool debugMode = ref.watch(debugModeProvider);
+    final bool debugMode = ref.watch(debugModeProvider);
+    final bool showFire = ref.watch(debugShowFireOverlayProvider);
+    final bool showPerformance = ref.watch(debugShowPerformanceOverlayProvider);
     final loc = context.loc;
 
     return Drawer(
@@ -71,10 +70,9 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.subjects,
                       icon: const Icon(Icons.school_outlined),
                       onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) => const SubjectsScreen(),
-                          ),
+                        pushScreen(
+                          context,
+                          const SubjectsScreen(),
                         );
                       },
                     ),
@@ -82,10 +80,9 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_outlined),
                       onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) => const TimetableScreen(),
-                          ),
+                        pushScreen(
+                          context,
+                          const TimetableScreen(),
                         );
                       },
                     ),
@@ -94,10 +91,9 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.hwFromBaka,
                       icon: const Icon(Icons.home_work_outlined),
                       onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) => const BakaHomeworksScreen(),
-                          ),
+                        pushScreen(
+                          context,
+                          const BakaHomeworksScreen(),
                         );
                       },
                     ),
@@ -106,10 +102,9 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.recentlyDeleted,
                       icon: const Icon(Icons.delete_forever),
                       onTap: () {
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute(
-                            builder: (context) => const RecentlyDeletedScreen(),
-                          ),
+                        pushScreen(
+                          context,
+                          const RecentlyDeletedScreen(),
                         );
                       },
                     ),
@@ -126,21 +121,22 @@ class MyDrawer extends ConsumerWidget {
                     if (debugMode)
                       SettingTile.withSwitch(
                         title: loc.showPerformanceOverlay,
-                        value:
-                            settings.get(Setting.debugShowPerformanceOverlay),
+                        value: showPerformance,
                         onChanged: (value) {
-                          settings.save(
-                              Setting.debugShowPerformanceOverlay, value);
-                          refreshTheme();
+                          ref
+                              .read(
+                                  debugShowPerformanceOverlayProvider.notifier)
+                              .set(value);
                         },
                       ),
                     if (debugMode)
                       SettingTile.withSwitch(
                         title: loc.showFirebaseOverlay,
-                        value: settings.get(Setting.debugShowFireOverlay),
+                        value: showFire,
                         onChanged: (value) {
-                          settings.save(Setting.debugShowFireOverlay, value);
-                          refreshTheme();
+                          ref
+                              .read(debugShowFireOverlayProvider.notifier)
+                              .set(value);
                         },
                       ),
                     if (debugMode)
@@ -148,10 +144,9 @@ class MyDrawer extends ConsumerWidget {
                           text: loc.viewDatabase,
                           icon: const Icon(Icons.data_array),
                           onTap: () {
-                            navigatorKey.currentState?.push(
-                              MaterialPageRoute(
-                                builder: (context) => DbInfoScreen(),
-                              ),
+                            pushScreen(
+                              context,
+                              DbInfoScreen(),
                             );
                           }),
                     if (debugMode)
@@ -159,10 +154,9 @@ class MyDrawer extends ConsumerWidget {
                         text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
                         onTap: () {
-                          navigatorKey.currentState?.push(
-                            MaterialPageRoute(
-                              builder: (context) => const LogsScreen(),
-                            ),
+                          pushScreen(
+                            context,
+                            const LogsScreen(),
                           );
                         },
                       ),
@@ -199,20 +193,15 @@ class MyDrawer extends ConsumerWidget {
               text: loc.settings,
               icon: const Icon(Icons.settings),
               onTap: () {
-                navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
-                      refreshTheme: refreshTheme,
-                    ),
-                  ),
+                pushScreen(
+                  context,
+                  const SettingsScreen(),
                 );
               },
             ),
             if (debugMode || kDebugMode)
               GestureDetector(
-                onTap: () => navigatorKey.currentState?.push(MaterialPageRoute(
-                  builder: (context) => const ChangelogScreen(),
-                )),
+                onTap: () => pushScreen(context, const ChangelogScreen()),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(

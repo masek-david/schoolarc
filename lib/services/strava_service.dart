@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/models/meal_model.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/windows1250.dart';
 import 'package:xml/xml.dart';
 
@@ -96,6 +96,8 @@ class StravaService {
           'zustatPrihlasen': false,
         }),
       );
+    } on SocketException catch (_) {
+      throw ServiceException(getLocalization().checkConnection);
     } on Object {
       rethrow;
     }
@@ -114,20 +116,9 @@ class StravaService {
   }
 
   Future<Map<DateTime, List<Meal>>> getMeals() async {
-    try {
-      try {
-        final loggedIn = await login();
-        if (!loggedIn) {
-          // just to get to getMealsNoLogin
-          throw Exception();
-        }
-      } on Object {
-        return await getMealsNoLogin();
-      }
-    } on SocketException catch (_) {
-      throw ServiceException('Check your internet connection');
-    } on Object {
-      rethrow;
+    final loggedIn = await login();
+    if (!loggedIn) {
+      return await getMealsNoLogin();
     }
 
     Response response;

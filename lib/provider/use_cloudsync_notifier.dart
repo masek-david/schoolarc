@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 Future<bool?> showConsentDialog(BuildContext context, WidgetRef ref) {
   return showDialog<bool>(
@@ -53,7 +53,7 @@ class UseCloudSyncNotifier extends Notifier<bool> {
   }
 
   Future<void> set(bool value, BuildContext context, WidgetRef ref) async {
-    if (settings.get(Setting.cloudSyncConsent)|| value == false) {
+    if (settings.get(Setting.cloudSyncConsent) || value == false) {
       settings.save(Setting.useFirebase, value);
       state = value;
       return;

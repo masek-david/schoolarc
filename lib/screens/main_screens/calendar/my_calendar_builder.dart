@@ -230,7 +230,8 @@ CalendarBuilders<Object?> myCalendarBuilder({
 
 Widget _buildExamTile(Exam exam, BuildContext context, ThemeData theme) {
   final isLight = theme.brightness == Brightness.light;
-  final color = exam.priority.getContainerColor(context, subtle: exam.isCompleted);
+  final color =
+      exam.priority.getContainerColor(context, subtle: exam.isCompleted);
   final shortcut = exam.subject?.trimmedShortcut ?? '';
   Color textColor = theme.colorScheme.onSurface;
   if (exam.isCompleted) {

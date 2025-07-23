@@ -1,4 +1,5 @@
 # FIX
+test notifications
 
 # NEW:
 
@@ -8,6 +9,7 @@
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
 - ⬜ plus plan - one time/yearly ???
+    - ⬜ add to tutorial
 
 
 
@@ -32,12 +34,10 @@
         - ✅ priorities
         - ✅ subjects
     - ✅ translation
-    - ⬜ plus plan
 - ⬜ riverpod
-    - ⬜ remake app isWide as riverpod provider
     - ⬜ strava
     - ⬜ bakalari
-- ⬜ reset password
+- ⬜ reset password for firebase
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
@@ -64,6 +64,8 @@
 - ⬜ translation - google sheets
 
 ## notifications:
+- ⬜ migrate to flutter_local_notifications
+- ⬜ remove some code for awesome notifications that was fixing something (not dart code)
 - ⬜ turn off notifications for weekend
 - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 

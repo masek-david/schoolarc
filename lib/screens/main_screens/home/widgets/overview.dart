@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/roboto_serif.dart';
 
-class Overview extends StatelessWidget {
+class Overview extends ConsumerWidget {
   const Overview({
     super.key,
     required this.hwNumberOfIncomplete,
@@ -40,15 +42,14 @@ class Overview extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
     final showMissed = hwNumberOfMissed != 0;
 
     String? userName = settings.get(Setting.userName);
-    bool showUserName =
-        settings.get(Setting.homeShowUserName) && userName != null;
+    bool showUserName = ref.watch(greetUsernameProvider) && userName != null;
 
     return Padding(
       padding: const EdgeInsets.all(8),

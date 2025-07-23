@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {

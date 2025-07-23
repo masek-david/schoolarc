@@ -19,8 +19,8 @@ import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/services/secure_storage.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class BakaService {
   String? _accessToken;

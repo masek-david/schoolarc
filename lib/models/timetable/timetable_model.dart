@@ -14,7 +14,7 @@ class TimeTable {
     this.dates,
   });
 
-  /// creates [TimeTable] with lessonTimes, but empty table, so it can be added later 
+  /// creates [TimeTable] with lessonTimes, but empty table, so it can be added later
   TimeTable.withoutTable({
     required this.lessonTimes,
   }) {

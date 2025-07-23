@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/models/exception_model.dart';
 import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
 import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class ErrorTile extends StatelessWidget {
   const ErrorTile({
@@ -66,11 +66,7 @@ class ErrorTile extends StatelessWidget {
                           WidgetStatePropertyAll(scheme.onErrorContainer),
                     ),
                     onPressed: () {
-                      navigatorKey.currentState?.push(MaterialPageRoute(
-                        builder: (context) {
-                          return const StravaLoginScreen();
-                        },
-                      ));
+                      pushScreen(context, const StravaLoginScreen());
                     },
                     child: Text(
                       context.loc.login,
@@ -88,11 +84,7 @@ class ErrorTile extends StatelessWidget {
                           WidgetStatePropertyAll(scheme.onErrorContainer),
                     ),
                     onPressed: () {
-                      navigatorKey.currentState?.push(MaterialPageRoute(
-                        builder: (context) {
-                          return const BakaLoginScreen();
-                        },
-                      ));
+                      pushScreen(context, const BakaLoginScreen());
                     },
                     child: Text(
                       context.loc.login,

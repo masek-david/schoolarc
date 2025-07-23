@@ -10,7 +10,7 @@ import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/priority_model.dart';
 import 'package:school_manager/services/firebase/firebase_service.dart';
 import 'package:school_manager/services/secure_storage.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 
 class DbInfoScreen extends ConsumerWidget {

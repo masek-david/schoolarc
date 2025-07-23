@@ -1,49 +1,51 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_manager/models/meal_model.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
+import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:school_manager/screens/meals/meals_screen.dart';
-import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/error_tile.dart';
 import 'package:school_manager/widgets/meals/meal_tile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class MealsCard extends StatefulWidget {
+class MealsCard extends ConsumerStatefulWidget {
   const MealsCard({
     super.key,
     required this.meals,
     required this.refresh,
-    required this.isVisible,
   });
 
   final Future<Map<DateTime, List<Meal>>>? meals;
-  final bool isVisible;
   final Future<void> Function() refresh;
 
   @override
-  State<MealsCard> createState() => _MealsCardState();
+  ConsumerState<MealsCard> createState() => _MealsCardState();
 }
 
-class _MealsCardState extends State<MealsCard> {
+class _MealsCardState extends ConsumerState<MealsCard> {
   final PageController _pageController = PageController();
 
   @override
-  void dispose(){
+  void dispose() {
     _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isVisible = ref.watch(useMealsProvider);
+    final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
+
     var now = DateTime.now();
 
-    if (settings
-        .get(Setting.mealsShowTodayUntil)
-        .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
+    if (showMealsUntil.isBefore(
+      TimeOfDay(hour: now.hour, minute: now.minute),
+    )) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }
 
@@ -52,7 +54,7 @@ class _MealsCardState extends State<MealsCard> {
     return AnimatedSize(
       duration: Durations.medium1,
       child: SizedBox(
-        height: widget.isVisible ? null : 0,
+        height: isVisible ? null : 0,
         child: FutureBuilder(
           future: widget.meals,
           builder: (context, snapshot) {
@@ -72,9 +74,7 @@ class _MealsCardState extends State<MealsCard> {
                   ),
                   IconButton(
                     onPressed: () {
-                      navigatorKey.currentState?.push(MaterialPageRoute(
-                        builder: (context) => const MealsScreen(),
-                      ));
+                      pushScreen(context, const MealsScreen());
                     },
                     icon: const Icon(Icons.keyboard_arrow_right_rounded),
                   ),
@@ -128,10 +128,7 @@ class _MealsCardState extends State<MealsCard> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    navigatorKey.currentState
-                                        ?.push(MaterialPageRoute(
-                                      builder: (context) => const MealsScreen(),
-                                    ));
+                                    pushScreen(context, const MealsScreen());
                                   },
                                   icon: const Icon(
                                       Icons.keyboard_arrow_right_rounded),

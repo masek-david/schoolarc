@@ -4,15 +4,15 @@ import 'dart:math';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/roboto_serif.dart';
 import 'package:school_manager/widgets/shapes_list.dart';
 
-class AnimatedShape extends StatefulWidget {
+class AnimatedShape extends ConsumerStatefulWidget {
   const AnimatedShape({
     super.key,
     this.size = 200,
@@ -74,10 +74,10 @@ class AnimatedShape extends StatefulWidget {
   final Duration? shapeChangeDuration;
 
   @override
-  State<AnimatedShape> createState() => _AnimatedShapeState();
+  ConsumerState<AnimatedShape> createState() => _AnimatedShapeState();
 }
 
-class _AnimatedShapeState extends State<AnimatedShape>
+class _AnimatedShapeState extends ConsumerState<AnimatedShape>
     with TickerProviderStateMixin {
   late final size = widget.size;
   late String text = widget.text;
@@ -217,7 +217,7 @@ class _AnimatedShapeState extends State<AnimatedShape>
                                     polygon: shapes[shapeIndex]),
                               ),
                             ),
-                            if (settings.get(Setting.themeUseOled))
+                            if (ref.watch(themeUseOledProvider))
                               Padding(
                                 padding: const EdgeInsets.all(4),
                                 child: AnimatedContainer(

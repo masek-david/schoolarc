@@ -16,7 +16,8 @@ import 'package:school_manager/models/homeworks/homework_id_model.dart';
 import 'package:school_manager/models/homeworks/hw_model.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
 import 'package:school_manager/provider/firebase_activity_notifier.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
+
 
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
   return FirebaseService(ref: ref);

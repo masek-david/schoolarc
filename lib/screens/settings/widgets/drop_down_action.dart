@@ -14,7 +14,8 @@ class DropDownAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(items.map((e) => e.value).contains(value), 'items doesn\'t include this value');
+    assert(items.map((e) => e.value).contains(value),
+        'items doesn\'t include this value');
 
     return DropdownButton(
       value: value,

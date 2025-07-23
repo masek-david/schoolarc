@@ -42,9 +42,9 @@ class Exam extends Task {
       if (description != null && description != '') 'i': description,
       if (subject != null) 's': subject?.id,
       'd': deadline.millisecondsSinceEpoch,
-      if(priority.index != 0) 'p': priority.index,
-      if(order != 0) 'o': order,
-      if(isDeleted) 'del': isDeleted,
+      if (priority.index != 0) 'p': priority.index,
+      if (order != 0) 'o': order,
+      if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
     };
   }

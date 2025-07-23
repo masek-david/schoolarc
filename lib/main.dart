@@ -8,10 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:school_manager/app_config.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/services/firebase/firebase_options.dart';
 import 'package:school_manager/services/home_widget_service.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/licenses.dart';
 import 'package:school_manager/utils/notifications/notification_sender.dart';
 import 'package:school_manager/utils/workmanager.dart';
@@ -64,6 +65,6 @@ void main() async {
   addLicenses();
 
   runApp(
-    const ProviderScope(child: TasksApp()),
+    const ProviderScope(child: AppConfig()),
   );
 }

@@ -4,9 +4,9 @@ import 'package:school_manager/screens/changelog_screen.dart';
 import 'package:school_manager/screens/logs/logs_screen.dart';
 import 'package:school_manager/screens/settings/widgets/package_info.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/color_mapper.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/send_bug_report.dart';
 
 class AboutApp extends StatelessWidget {
@@ -34,25 +34,22 @@ class AboutApp extends StatelessWidget {
           SettingTile(
             title: context.loc.viewAppChangelog,
             leading: const Icon(Icons.history_outlined),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const ChangelogScreen(),
-              ),
+            onTap: (context) => pushScreen(
+              context,
+              const ChangelogScreen(),
             ),
           ),
           SettingTile(
               title: context.loc.reportBug,
-              subtitle:
-              context.loc.reportBugPolicy,
+              subtitle: context.loc.reportBugPolicy,
               leading: const Icon(Icons.bug_report_outlined),
               onTap: sendBugReport),
           SettingTile(
             title: context.loc.viewLogs,
             leading: const Icon(Icons.data_array),
-            onTap: (context) => navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => const LogsScreen(),
-              ),
+            onTap: (context) => pushScreen(
+              context,
+              const LogsScreen(),
             ),
           ),
           SettingTile(

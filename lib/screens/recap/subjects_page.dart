@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/models/exams/exam_model.dart';
@@ -159,7 +158,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) =>
+                            const SizedBox.shrink(),
                         reservedSize: 48,
                       ),
                     ),

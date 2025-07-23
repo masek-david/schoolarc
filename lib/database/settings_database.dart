@@ -6,9 +6,9 @@ import 'package:hive_ce/hive.dart';
 import 'package:school_manager/database/hive/hive_init.dart';
 import 'package:school_manager/l10n/my_localization.dart';
 
-/// To define a new setting, create a field in [Setting] enum 
+/// To define a new setting, create a field in [Setting] enum
 /// and then create [SettingModel] in [SettingsDatabase] [_settings]
-/// 
+///
 /// To create a provider for this setting, define it inside settings_notifiers.dart
 
 enum Setting {
@@ -36,7 +36,7 @@ enum Setting {
   calendarShowArrows,
   mealsShowTodayUntil,
   userName,
-  homeShowUserName,
+  greetUsername,
   useMeals,
   allowStravaLogin,
   useBakalari,
@@ -157,7 +157,7 @@ class SettingsDatabase {
       defaultValue: null,
       key: 'userName',
     ),
-    Setting.homeShowUserName: const SettingModel(
+    Setting.greetUsername: const SettingModel(
       defaultValue: true,
       key: 'homeShowUserName',
     ),

@@ -109,7 +109,9 @@ class _SubjectsPageState extends State<PriorityPage> {
                         x: index,
                         barRods: [
                           BarChartRodData(
-                            toY: visibleIndex >= 2 ? priorities[index].toDouble() : 0,
+                            toY: visibleIndex >= 2
+                                ? priorities[index].toDouble()
+                                : 0,
                             width: 16,
                             color: TaskPriority(index).getColor(context),
                           )
@@ -142,7 +144,8 @@ class _SubjectsPageState extends State<PriorityPage> {
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => const SizedBox.shrink(),
+                        getTitlesWidget: (value, meta) =>
+                            const SizedBox.shrink(),
                         reservedSize: 48,
                       ),
                     ),

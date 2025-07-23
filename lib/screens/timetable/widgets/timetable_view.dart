@@ -7,10 +7,10 @@ import 'package:school_manager/models/timetable/lesson_times_model.dart';
 import 'package:school_manager/models/timetable/timetable_model.dart';
 import 'package:school_manager/screens/empty_message.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
 import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class TimetableView extends StatelessWidget {
   const TimetableView({

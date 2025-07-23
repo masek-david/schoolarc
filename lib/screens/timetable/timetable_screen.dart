@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/timetable/lesson_times_model.dart';
+import 'package:school_manager/provider/subject_notifier.dart';
 import 'package:school_manager/screens/timetable/new_lesson_times.dart';
 import 'package:school_manager/screens/timetable/select_subject.dart';
 import 'package:school_manager/screens/timetable/timetable_settings.dart';
 import 'package:school_manager/screens/timetable/widgets/timetable_view.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
+
 
 class TimetableScreen extends ConsumerStatefulWidget {
   const TimetableScreen({super.key});

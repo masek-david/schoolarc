@@ -3,24 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/l10n/my_localization.dart';
+import 'package:school_manager/provider/locale_notifier.dart';
 import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/settings/widgets/drop_down_action.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
 import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 
 class LocalizationPage extends ConsumerStatefulWidget {
-  const LocalizationPage({super.key, required this.refreshTheme});
-
-  final void Function() refreshTheme;
+  const LocalizationPage({super.key});
 
   @override
   ConsumerState<LocalizationPage> createState() => _LocalizationPageState();
 }
 
 class _LocalizationPageState extends ConsumerState<LocalizationPage> {
-  late String language = getLocale().languageCode;
   String dateFormat = settings.get(Setting.dateFormat);
   bool weekStartsOnMonday = settings.get(Setting.weekStartsOnMonday);
   final date = DateTime(2025, 1, 31, 20, 45);
@@ -29,6 +27,7 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
   Widget build(BuildContext context) {
     final loc = context.loc;
     bool use24HourFormat = ref.watch(use24HourFormatProvider);
+    final language = ref.watch(localeProvider).languageCode;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,9 +40,7 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
             trailing: DropDownAction(
               value: language,
               onChanged: (value) {
-                settings.save(Setting.localeLanguage, value as String);
-                language = value;
-                widget.refreshTheme();
+                ref.read(localeProvider.notifier).set(value as String);
               },
               items: supportedLocales
                   .map(

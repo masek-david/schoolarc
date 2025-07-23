@@ -1,0 +1,171 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_manager/l10n/app_localizations.dart';
+import 'package:school_manager/l10n/my_localization.dart';
+import 'package:school_manager/main_app.dart';
+import 'package:school_manager/provider/locale_notifier.dart';
+import 'package:school_manager/provider/settings_notifiers.dart';
+import 'package:school_manager/screens/main_screens/home/home_screen.dart';
+import 'package:school_manager/utils/extensions/color_extension.dart';
+import 'package:school_manager/utils/globals.dart';
+import 'package:school_manager/utils/theme_generate.dart';
+
+
+/// defines theme
+class AppConfig extends ConsumerWidget {
+  const AppConfig({super.key});
+
+  ThemeMode _getThemeMode(bool? value) {
+    switch (value) {
+      case null:
+        return ThemeMode.system;
+
+      case true:
+        return ThemeMode.dark;
+
+      case false:
+        return ThemeMode.light;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Color defaultColor = Color(ref.watch(themeColorValueProvider));
+    final dynamicSchemeVariant = ref.watch(themeDynamicSchemeVariantProvider);
+    final themeMode = _getThemeMode(ref.watch(themeModeProvider));
+    final useOled = ref.watch(themeUseOledProvider);
+    final useDeviceColor = ref.watch(themeUseDeviceColorProvider);
+    final locale = ref.watch(localeProvider);
+
+    return DynamicColorBuilder(
+      builder: (
+        ColorScheme? deviceLight,
+        ColorScheme? deviceDark,
+      ) {
+        var defaultLight = ColorScheme.fromSeed(
+          seedColor: defaultColor,
+          brightness: Brightness.light,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
+        var defaultDark = ColorScheme.fromSeed(
+          seedColor: defaultColor,
+          brightness: Brightness.dark,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
+
+        if (useDeviceColor) {
+          if (deviceLight != null && deviceDark != null) {
+            defaultLight = deviceLight;
+            defaultDark = deviceDark;
+          }
+        }
+
+        (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
+          defaultLight,
+          defaultDark,
+        );
+
+        final light = schemes.$1;
+        final dark = schemes.$2.copyWith(
+          surface: useOled ? Colors.black : null,
+          surfaceContainer: useOled ? Colors.black : null,
+          surfaceContainerLow:
+              useOled ? schemes.$2.surfaceContainerLow.darken(0.05) : null,
+          surfaceContainerHigh:
+              useOled ? schemes.$2.surfaceContainerHigh.darken(0.05) : null,
+          surfaceContainerHighest:
+              useOled ? schemes.$2.surfaceContainerHighest.darken(0.05) : null,
+          surfaceContainerLowest:
+              useOled ? schemes.$2.surfaceContainerLowest.darken(0.02) : null,
+        );
+
+        return MaterialApp(
+          navigatorKey: navigatorKey,
+          title: 'Schoolarc',
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: supportedLocales.keys,
+          locale: locale,
+          debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: ref.watch(debugModeProvider) &&
+              ref.watch(debugShowPerformanceOverlayProvider),
+          theme: ThemeData(
+            colorScheme: light,
+            sliderTheme: const SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(year2023: false),
+            filledButtonTheme: FilledButtonThemeData(
+              style: ButtonStyle(
+                side: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.focused)) {
+                    return BorderSide(
+                      color: light.primary,
+                      width: 3,
+                      strokeAlign: 3,
+                    );
+                  }
+                  return null;
+                }),
+              ),
+            ),
+          ),
+          darkTheme: ThemeData(
+            colorScheme: dark,
+            sliderTheme: const SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            // pageTransitionsTheme: const PageTransitionsTheme(
+            //   builders: <TargetPlatform, PageTransitionsBuilder>{
+            //     // Set the predictive back transitions for Android.
+            //     TargetPlatform.android:
+            //         PredictiveBackPageTransitionsBuilder(),
+            //   },
+            // ),
+            filledButtonTheme: FilledButtonThemeData(
+              style: ButtonStyle(
+                side: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.focused)) {
+                    return BorderSide(
+                      color: dark.primary,
+                      width: 3,
+                      strokeAlign: 3,
+                    );
+                  }
+                  return null;
+                }),
+              ),
+            ),
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(year2023: false),
+          ),
+          themeMode: themeMode,
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/':
+                return MaterialPageRoute(
+                  builder: (context) => const HomeScreen(),
+                );
+
+              case '/calendar':
+                // TODO create calendar page
+                break;
+
+              default:
+                assert(false, 'Page ${settings.name} not found');
+                return null;
+            }
+            return null;
+          },
+          home: const MainApp(),
+        );
+      },
+    );
+  }
+}

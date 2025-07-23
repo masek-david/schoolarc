@@ -4,10 +4,11 @@ import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/provider/baka_login_notifier.dart';
 import 'package:school_manager/provider/settings_notifiers.dart';
 import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/tasks_app.dart';
 import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/utils/show_adaptive_dialog.dart';
 import 'package:school_manager/widgets/error_tile.dart';
+import 'package:school_manager/widgets/login_status_icon.dart';
 import 'package:school_manager/widgets/progress_dialog.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
@@ -58,6 +59,12 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
         title: Text(context.loc.bakalari),
         actions: [
           IconButton(
+            onPressed: () {
+              ref.read(bakaLoginProvider.notifier).refreshLogin();
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+          IconButton(
             onPressed: () => showDialogAdaptive(
               context: context,
               title: Text(context.loc.secureLogin),
@@ -91,7 +98,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                 title: data ? context.loc.loggedIn : context.loc.loggedOut,
                 leading: data
                     ? const Icon(Icons.check_circle, color: Colors.green)
-                    : null,
+                    : const LoggedOutIcon(),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
               ),
               error: (error, stackTrace) {

@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:school_manager/database/settings_database.dart';
 import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/tasks_app.dart';
+import 'package:school_manager/utils/globals.dart';
 import 'package:school_manager/widgets/subject_shortcut.dart';
 
 class SubjectTile extends StatelessWidget {
