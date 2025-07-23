@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/database/hive/hive_init.dart';
-import 'package:school_manager/l10n/my_localization.dart';
+import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
 
 /// To define a new setting, create a field in [Setting] enum
 /// and then create [SettingModel] in [SettingsDatabase] [_settings]

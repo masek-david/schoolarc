@@ -1,5 +1,5 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:school_manager/database/hive/hive_registrar.g.dart';
+import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 
 const String subjectBox = 'subjectBox';
 const String hwBox = 'hwBox';

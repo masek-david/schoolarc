@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class TutorialEnd extends StatefulWidget {
   const TutorialEnd({super.key, required this.onEnd});

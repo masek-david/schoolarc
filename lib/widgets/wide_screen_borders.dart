@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
-import 'package:school_manager/utils/web/bar_color.dart';
+import 'package:schoolarc/utils/extensions/color_extension.dart';
+import 'package:schoolarc/utils/web/bar_color.dart';
 
 class WideScreenBorders extends StatelessWidget {
   const WideScreenBorders({

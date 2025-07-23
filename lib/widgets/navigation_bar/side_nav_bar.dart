@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/main_app.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/main_app.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class SideNavBar extends StatelessWidget {
   const SideNavBar({

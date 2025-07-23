@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/widgets/exam_list.dart';
-import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/widgets/homework_list.dart';
-import 'package:school_manager/widgets/list_bottom_spacer.dart';
-import 'package:school_manager/widgets/reschedule_drag_target.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/widgets/exam_list.dart';
+import 'package:schoolarc/widgets/expansion_title.dart';
+import 'package:schoolarc/widgets/homework_list.dart';
+import 'package:schoolarc/widgets/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/reschedule_drag_target.dart';
 
 class PagesWidget extends ConsumerWidget {
   const PagesWidget({

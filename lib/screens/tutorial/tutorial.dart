@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/l10n/app_localizations.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_basics.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_end.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_extensions.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_interactions.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_priorities.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_subjects.dart';
-import 'package:school_manager/screens/tutorial/pages/tutorial_welcome.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/l10n/app_localizations.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_basics.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_end.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_extensions.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_interactions.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_priorities.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_subjects.dart';
+import 'package:schoolarc/screens/tutorial/pages/tutorial_welcome.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/exception_model.dart';
-import 'package:school_manager/screens/bakalari/bakalari_login_screen.dart';
-import 'package:school_manager/screens/strava_cz/strava_login_screen.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/models/exception_model.dart';
+import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
+import 'package:schoolarc/screens/strava_cz/strava_login_screen.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class ErrorTile extends StatelessWidget {
   const ErrorTile({

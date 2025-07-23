@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class FinalPage extends StatefulWidget {
   const FinalPage({super.key});

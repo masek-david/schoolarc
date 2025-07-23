@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/screens/main_screens/calendar/my_calendar_builder.dart';
-import 'package:school_manager/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/main_screens/calendar/my_calendar_builder.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {

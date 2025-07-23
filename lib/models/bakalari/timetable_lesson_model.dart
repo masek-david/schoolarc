@@ -1,12 +1,12 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/bakalari/teacher_model.dart';
-import 'package:school_manager/models/bakalari/timetable_change.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/models/bakalari/teacher_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_change.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class TimeTableLesson {
   TimeTableLesson({
@@ -29,17 +29,6 @@ class TimeTableLesson {
 
   void showLessonDialog(BuildContext context, WidgetRef ref) {
     String? title = subject?.name;
-
-    if (title == null) {
-      if (change != null) {
-        title = change!.name;
-      }
-    }
-    if (title == null) {
-      if (change?.description != null) {
-        title = change!.description;
-      }
-    }
 
     title ??= context.loc.emptyLesson;
 

@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
 
 class HomeworkEntity extends HiveObject {
   HomeworkEntity({

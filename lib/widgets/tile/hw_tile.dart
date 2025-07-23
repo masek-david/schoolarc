@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/models/homeworks/hw_model.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/shapes_list.dart';
-import 'package:school_manager/widgets/subject_shortcut.dart';
-import 'package:school_manager/widgets/tile/animated_checkbox.dart';
-import 'package:school_manager/widgets/tile/tile_slidable.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/shapes_list.dart';
+import 'package:schoolarc/widgets/subject_shortcut.dart';
+import 'package:schoolarc/widgets/tile/animated_checkbox.dart';
+import 'package:schoolarc/widgets/tile/tile_slidable.dart';
 
 class HwTile extends StatefulWidget {
   const HwTile({

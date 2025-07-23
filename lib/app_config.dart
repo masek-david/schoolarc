@@ -3,15 +3,15 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/l10n/app_localizations.dart';
-import 'package:school_manager/l10n/my_localization.dart';
-import 'package:school_manager/main_app.dart';
-import 'package:school_manager/provider/locale_notifier.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/screens/main_screens/home/home_screen.dart';
-import 'package:school_manager/utils/extensions/color_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/theme_generate.dart';
+import 'package:schoolarc/l10n/app_localizations.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/main_app.dart';
+import 'package:schoolarc/provider/locale_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
+import 'package:schoolarc/utils/extensions/color_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/theme_generate.dart';
 
 
 /// defines theme

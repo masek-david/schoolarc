@@ -1,6 +1,6 @@
 
 import 'package:hive_ce/hive.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
 
 class SubjectEntity extends HiveObject {
   SubjectEntity({

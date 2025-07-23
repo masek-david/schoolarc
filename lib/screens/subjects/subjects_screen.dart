@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
-import 'package:school_manager/models/subjects/subject_model.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/provider/use_cloudsync_notifier.dart';
-import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/screens/subjects/widgets/new_subject_dialog.dart';
-import 'package:school_manager/screens/subjects/widgets/subject_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/models/subjects/subject_entity_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/screens/empty_message.dart';
+import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
+import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});

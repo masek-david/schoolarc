@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/subject_shortcut.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/subject_shortcut.dart';
 
 class ExamTile extends StatelessWidget {
   const ExamTile({

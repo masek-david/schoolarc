@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:school_manager/utils/color_mapper.dart';
+import 'package:schoolarc/utils/color_mapper.dart';
 
 class EmptyMessage extends StatelessWidget {
   const EmptyMessage({

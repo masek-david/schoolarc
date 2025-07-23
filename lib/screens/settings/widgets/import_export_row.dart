@@ -5,15 +5,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/provider/subject_notifier.dart';
-import 'package:school_manager/provider/use_cloudsync_notifier.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/import_export.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
-import 'package:school_manager/widgets/progress_dialog.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/import_export.dart';
+import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/progress_dialog.dart';
 
 class ImportExportRow extends ConsumerWidget {
   const ImportExportRow({super.key});

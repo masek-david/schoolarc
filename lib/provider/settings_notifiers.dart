@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final useMealsProvider = settingProvider<bool>(Setting.useMeals);
 final useBakaProvider = settingProvider<bool>(Setting.useBakalari);

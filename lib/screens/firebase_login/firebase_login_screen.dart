@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/firebase_login_notifier.dart';
-import 'package:school_manager/provider/use_cloudsync_notifier.dart';
-import 'package:school_manager/screens/login_input_screen.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/services/firebase/firebase_service.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/show_adaptive_dialog.dart';
-import 'package:school_manager/widgets/error_tile.dart';
-import 'package:school_manager/widgets/login_status_icon.dart';
-import 'package:school_manager/widgets/progress_dialog.dart';
+import 'package:schoolarc/provider/firebase_login_notifier.dart';
+import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/screens/login_input_screen.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/login_status_icon.dart';
+import 'package:schoolarc/widgets/progress_dialog.dart';
 
 class FirebaseLoginScreen extends ConsumerWidget {
   const FirebaseLoginScreen({

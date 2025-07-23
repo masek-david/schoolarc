@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/notifications/notification_sender.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
 class TomorrowNotificationsPage extends StatefulWidget {
   const TomorrowNotificationsPage({super.key});

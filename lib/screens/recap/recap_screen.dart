@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/database/settings_database.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/screens/recap/count_page.dart';
-import 'package:school_manager/screens/recap/days_page.dart';
-import 'package:school_manager/screens/recap/final_page.dart';
-import 'package:school_manager/screens/recap/priority_page.dart';
-import 'package:school_manager/screens/recap/subjects_page.dart';
-import 'package:school_manager/utils/globals.dart';
+import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/screens/recap/count_page.dart';
+import 'package:schoolarc/screens/recap/days_page.dart';
+import 'package:schoolarc/screens/recap/final_page.dart';
+import 'package:schoolarc/screens/recap/priority_page.dart';
+import 'package:schoolarc/screens/recap/subjects_page.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 bool hasSeenRecap() {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/main_app.dart';
+import 'package:schoolarc/main_app.dart';
 
 class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const WideScreenAppBar({

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
-import 'package:school_manager/models/priority_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
 
 class AnimatedCheckbox extends StatelessWidget {
   const AnimatedCheckbox({

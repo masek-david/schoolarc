@@ -1,16 +1,16 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/meal_model.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/screens/current_timetable/loading_icon_button.dart';
-import 'package:school_manager/screens/main_screens/calendar/widgets/text_separator.dart';
-import 'package:school_manager/screens/meals/meals_screen.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/error_tile.dart';
-import 'package:school_manager/widgets/meals/meal_tile.dart';
+import 'package:schoolarc/models/meal_model.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
+import 'package:schoolarc/screens/meals/meals_screen.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/meals/meal_tile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MealsCard extends ConsumerStatefulWidget {

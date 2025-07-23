@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/bakalari/baka_hw_model.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/hw_notifier.dart';
-import 'package:school_manager/screens/baka_homeworks/baka_hw_tile.dart';
-import 'package:school_manager/screens/empty_message.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/widgets/error_tile.dart';
+import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/screens/baka_homeworks/baka_hw_tile.dart';
+import 'package:schoolarc/screens/empty_message.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerStatefulWidget {
   const BakaHomeworksScreen({super.key});

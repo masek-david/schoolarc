@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/models/logs/log_model.dart';
-import 'package:school_manager/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/models/logs/log_model.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key, required this.log});

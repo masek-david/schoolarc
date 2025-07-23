@@ -1,6 +1,6 @@
 
-import 'package:school_manager/models/subjects/subject_entity_model.dart';
-import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:schoolarc/models/subjects/subject_entity_model.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 
 class Subject {
   Subject({

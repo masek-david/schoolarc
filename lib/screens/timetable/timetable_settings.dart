@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/screens/settings/widgets/slider_action.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/screens/settings/widgets/slider_action.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class TimetableSettings extends StatefulWidget {
   const TimetableSettings({

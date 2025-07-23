@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:school_manager/screens/changelog_screen.dart';
-import 'package:school_manager/screens/logs/logs_screen.dart';
-import 'package:school_manager/screens/settings/widgets/package_info.dart';
-import 'package:school_manager/screens/settings/widgets/setting_tile.dart';
-import 'package:school_manager/utils/color_mapper.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/send_bug_report.dart';
+import 'package:schoolarc/screens/changelog_screen.dart';
+import 'package:schoolarc/screens/logs/logs_screen.dart';
+import 'package:schoolarc/screens/settings/widgets/package_info.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/utils/color_mapper.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/send_bug_report.dart';
 
 class AboutApp extends StatelessWidget {
   const AboutApp({super.key});

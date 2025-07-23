@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/provider/settings_notifiers.dart';
-import 'package:school_manager/utils/extensions/string_extension.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 
 class SchemeVariantPickerAction extends ConsumerStatefulWidget {
   const SchemeVariantPickerAction({super.key});

@@ -2,17 +2,17 @@ import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:school_manager/models/exams/exam_model.dart';
-import 'package:school_manager/models/priority_model.dart';
-import 'package:school_manager/provider/exam_notifier.dart';
-import 'package:school_manager/provider/use_cloudsync_notifier.dart';
-import 'package:school_manager/screens/main_screens/exams/exam_tile.dart';
-import 'package:school_manager/utils/extensions/context_extension.dart';
-import 'package:school_manager/utils/globals.dart';
-import 'package:school_manager/utils/task_functions.dart';
-import 'package:school_manager/widgets/animated_shape.dart';
-import 'package:school_manager/widgets/expansion_title.dart';
-import 'package:school_manager/widgets/wide_screen_app_bar.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/screens/main_screens/exams/exam_tile.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/task_functions.dart';
+import 'package:schoolarc/widgets/animated_shape.dart';
+import 'package:schoolarc/widgets/expansion_title.dart';
+import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {
   _AnimatedReorderableListItem({this.exam, this.priority}) {

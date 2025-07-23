@@ -1,4 +1,4 @@
-import 'package:school_manager/l10n/my_localization.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
 
 extension DiacriticsAwareString on String {
   static const diacritics =
