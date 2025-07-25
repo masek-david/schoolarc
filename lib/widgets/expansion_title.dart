@@ -40,7 +40,7 @@ class TitleWithCount extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
+              padding: const EdgeInsets.only(bottom: 1),
               child: Text(count.toString()),
             ),
           ),

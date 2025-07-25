@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class EmptyMessage extends StatelessWidget {
   const EmptyMessage({
@@ -22,7 +23,9 @@ class EmptyMessage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 32),
             child: SvgPicture.asset(
               asset,
-              colorMapper: PrimaryColorMapper(Theme.of(context)),
+              colorMapper: BasicColorMapper(
+                context.col.primary.toARGB32(),
+              ),
               height: 200,
             ),
           ),

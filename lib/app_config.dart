@@ -12,7 +12,7 @@ import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/theme_generate.dart';
-
+import 'package:schoolarc/widgets/time_format.dart';
 
 /// defines theme
 class AppConfig extends ConsumerWidget {
@@ -163,6 +163,9 @@ class AppConfig extends ConsumerWidget {
             }
             return null;
           },
+          builder: (context, child) => TimeFormat(
+            child: child ?? const SizedBox.shrink(),
+          ),
           home: const MainApp(),
         );
       },

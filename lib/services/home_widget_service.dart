@@ -29,7 +29,10 @@ void updateHwWidget(List<Homework> hws) {
   }
 
   HomeWidget.saveWidgetData('hw', jsonEncode(json));
-  HomeWidget.updateWidget(androidName: 'HwWidgetReceiver');
+  HomeWidget.updateWidget(
+    androidName: 'HwWidgetReceiver',
+    qualifiedAndroidName: 'cz.masci.schoolarc.HwWidgetReceiver',
+  );
 }
 
 void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
@@ -52,7 +55,10 @@ void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
     },
   );
   HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
-  HomeWidget.updateWidget(androidName: 'StravaWidgetReceiver');
+  HomeWidget.updateWidget(
+    androidName: 'StravaWidgetReceiver',
+    qualifiedAndroidName: 'cz.masci.schoolarc.StravaWidgetReceiver',
+  );
 }
 
 /// called from widget, when completing homework

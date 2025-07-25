@@ -24,7 +24,9 @@ class AboutApp extends StatelessWidget {
             'assets/schoolarc_logo.svg',
             height: 100,
             colorMapper: LogoColorMapper(
-              Theme.of(context),
+              isDark: Theme.of(context).brightness == Brightness.dark,
+              primaryFixedDimColor: context.col.primaryFixedDim.toARGB32(),
+              secondaryColor: context.col.secondary.toARGB32(),
               useThemeColors: false,
             ),
           ),
@@ -63,7 +65,10 @@ class AboutApp extends StatelessWidget {
                   'assets/schoolarc_icon.svg',
                   height: 80,
                   colorMapper: LogoColorMapper(
-                    Theme.of(context),
+                    isDark: Theme.of(context).brightness == Brightness.dark,
+                    primaryFixedDimColor:
+                        context.col.primaryFixedDim.toARGB32(),
+                    secondaryColor: context.col.secondary.toARGB32(),
                     useThemeColors: false,
                   ),
                 ),

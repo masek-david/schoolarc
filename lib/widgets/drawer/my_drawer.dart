@@ -54,7 +54,12 @@ class MyDrawer extends ConsumerWidget {
                 child: SvgPicture.asset(
                   alignment: Alignment.centerLeft,
                   'assets/schoolarc_logo.svg',
-                  colorMapper: LogoColorMapper(Theme.of(context)),
+                  colorMapper: LogoColorMapper(
+                    isDark: Theme.of(context).brightness == Brightness.dark,
+                    primaryFixedDimColor:
+                        context.col.primaryFixedDim.toARGB32(),
+                    secondaryColor: context.col.secondary.toARGB32(),
+                  ),
                 ),
               ),
             ),

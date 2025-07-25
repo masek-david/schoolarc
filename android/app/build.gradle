@@ -72,6 +72,20 @@ android {
         }
     }
 
+    flavorDimensions += "default"
+
+    productFlavors {
+        dev {
+            dimension = "default"
+            applicationIdSuffix = ".dev"
+        }
+
+        prod {
+            dimension = "default"
+            applicationIdSuffix = ""
+        }
+    }
+
     buildFeatures {
         compose true
     }

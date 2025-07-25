@@ -995,6 +995,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendReport => 'Send bug report?';
 
   @override
+  String get sendAllReports => 'Send report about all bugs?';
+
+  @override
   String get send => 'Send';
 
   @override

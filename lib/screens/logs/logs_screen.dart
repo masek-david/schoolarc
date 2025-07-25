@@ -36,7 +36,7 @@ class _LogsScreenState extends State<LogsScreen> {
             onPressed: () {
               showDialogAdaptive(
                 context: context,
-                title: Text(context.loc.sendReport),
+                title: Text(context.loc.sendAllReports),
                 content: Text(context.loc.reportBugPolicy),
                 actions: [
                   adaptiveDialogButton(

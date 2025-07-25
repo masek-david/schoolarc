@@ -1793,6 +1793,12 @@ abstract class AppLocalizations {
   /// **'Send bug report?'**
   String get sendReport;
 
+  /// No description provided for @sendAllReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report about all bugs?'**
+  String get sendAllReports;
+
   /// No description provided for @send.
   ///
   /// In en, this message translates to:

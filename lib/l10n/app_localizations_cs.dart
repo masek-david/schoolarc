@@ -1003,13 +1003,16 @@ class AppLocalizationsCs extends AppLocalizations {
   String get reportBug => 'Nahlásit chybu';
 
   @override
-  String get reportBugPolicy => 'Odesláním chyby souhlasíte se sdílením uvedených informací výhradně za účelem opravy chyb.';
+  String get reportBugPolicy => 'Odesláním zprávy souhlasíte se sdílením uvedených informací výhradně za účelem opravy chyb.';
 
   @override
   String get viewLicenses => 'Zobrazit licence';
 
   @override
   String get sendReport => 'Odeslat zprávu o chybě?';
+
+  @override
+  String get sendAllReports => 'Odeslat zprávu o všech chybách?';
 
   @override
   String get send => 'Odeslat';
@@ -1057,17 +1060,18 @@ class AppLocalizationsCs extends AppLocalizations {
   String get disagree => 'Nesouhlasím';
 
   @override
-  String get view => 'View';
+  String get view => 'Zobrazit';
 
   @override
   String newHomeworksFound(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'pieces',
-      one: 'piece',
+      other: 'nových úkolů',
+      few: 'nové úkoly',
+      one: 'nový úkol',
     );
-    return '$count new $_temp0 of homework found';
+    return 'Nalezeno $count $_temp0';
   }
 
   @override

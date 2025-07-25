@@ -47,7 +47,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   );
 
   final _resizeController = ResizableController();
-  final List<double> initialRatios =
+  List<double> initialRatios =
       List<double>.from(settings.get(Setting.calendarResizableContainerRatio));
 
   // for shorcuts
@@ -191,7 +191,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final missedHws = ref.watch(hwMissedProvider);
     final exams = ref.watch(examsDatesProvider);
 
-    final isWide = context.isWide;
+    final isWide = MediaQuery.of(context).size.width > 750;
 
     return Shortcuts(
       shortcuts: {
@@ -250,41 +250,52 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               body: isWide
                   ? Container(
-                      // this is what is shown behind the resizable container
+                      // this is what is shown behind the resizable container divider
                       color: Theme.of(context).colorScheme.surfaceContainer,
-                      child: ResizableContainer(
-                        controller: _resizeController,
-                        direction: Axis.horizontal,
-                        children: [
-                          ResizableChild(
-                            size:
-                                ResizableSize.ratio(initialRatios[0], min: 300),
-                            divider: const ResizableDivider(
-                              thickness: 4,
-                              length: ResizableSize.pixels(60),
-                              padding: 12,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Scaffold(
-                                appBar: buildAppBar(isWide),
-                                body: buildCalendar(isWide, hws, exams),
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        // if the screen was big, but now is small, it wouldnt fit, so i check it here and reset it if needed
+                        for (var element in initialRatios) {
+                          if (element * constraints.maxWidth < 300) {
+                            initialRatios = [0.5, 0.5];
+                          }
+                        }
+
+                        return ResizableContainer(
+                          controller: _resizeController,
+                          direction: Axis.horizontal,
+                          children: [
+                            ResizableChild(
+                              size: ResizableSize.ratio(initialRatios[0],
+                                  min: 300),
+                              // size: const ResizableSize.expand(min: 300),
+                              divider: const ResizableDivider(
+                                thickness: 4,
+                                length: ResizableSize.pixels(60),
+                                padding: 12,
                               ),
-                            ),
-                          ),
-                          ResizableChild(
-                            size:
-                                ResizableSize.ratio(initialRatios[1], min: 300),
-                            child: Container(
-                              decoration: BoxDecoration(
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                color: Theme.of(context).colorScheme.surface,
+                                child: Scaffold(
+                                  appBar: buildAppBar(isWide),
+                                  body: buildCalendar(isWide, hws, exams),
+                                ),
                               ),
-                              child: buildPages(hws, exams, missedHws),
                             ),
-                          ),
-                        ],
-                      ),
+                            ResizableChild(
+                              // size: const ResizableSize.expand(min: 300),
+                              size: ResizableSize.ratio(initialRatios[1],
+                                  min: 300),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                                child: buildPages(hws, exams, missedHws),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                     )
                   : Column(
                       children: [

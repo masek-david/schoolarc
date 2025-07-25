@@ -1,5 +1,5 @@
 # FIX
-test notifications
+cant complete homework from widget
 
 # NEW:
 
@@ -18,7 +18,6 @@ test notifications
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
 - ✅ add errors message for baka/strava
 - ✅ proper firebase error handling, if no user dont even try it,...
-- ✅ fix arrows in calendar (not centered on web)
 - ✅ create baka provider
 - ✅ localizations
     - ✅ date format 
@@ -48,6 +47,7 @@ test notifications
     - ⬜ check it works 
     - ⬜ stop saving the password 
 - ⬜ on weekend, show info about upcoming week
+- ⬜ settings use bigger headlines and scroll them
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
@@ -65,7 +65,7 @@ test notifications
 
 ## notifications:
 - ⬜ migrate to flutter_local_notifications
-- ⬜ remove some code for awesome notifications that was fixing something (not dart code)
+- ⬜ remove some code for awesome notifications that was fixing something (in podfiles, other os setup)
 - ⬜ turn off notifications for weekend
 - ⬜ edge case - when the app is opened at 18:00 the notification could be old
 

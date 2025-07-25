@@ -181,7 +181,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
                         Color markerColor = hw.priority.getColor(context);
 
                         return Container(
-                          margin: const EdgeInsets.all(1.2),
+                          margin: const EdgeInsets.all(1),
                           decoration: BoxDecoration(
                             color: hw.isCompleted
                                 ? markerColor.withAlpha(40)

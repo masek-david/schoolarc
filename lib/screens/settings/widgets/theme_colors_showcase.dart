@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ThemeColorsShowcase extends StatelessWidget {
   const ThemeColorsShowcase({super.key});
@@ -16,12 +17,16 @@ class ThemeColorsShowcase extends StatelessWidget {
             SvgPicture.asset(
               'assets/book.svg',
               height: 150,
-              colorMapper: PrimaryColorMapper(Theme.of(context)),
+              colorMapper: BasicColorMapper(
+                context.col.primary.toARGB32(),
+              ),
             ),
             SvgPicture.asset(
               'assets/pen.svg',
               height: 140,
-              colorMapper: TertiaryColorMapper(Theme.of(context)),
+              colorMapper: BasicColorMapper(
+                context.col.tertiary.toARGB32(),
+              ),
             ),
           ],
         ),

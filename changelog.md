@@ -1,4 +1,4 @@
-## [2.1.0]() - 2025-
+## [2.1.0]() - 2025-07-25
 ### Added
 - Added app logo to drawer
 - Added image showing app colors in theme settings

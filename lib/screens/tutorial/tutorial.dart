@@ -76,6 +76,7 @@ class Tutorial extends StatelessWidget {
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            centerTitle: false,
             title: TextButton(
               onPressed: onEnd,
               child: Text(context.loc.skip),

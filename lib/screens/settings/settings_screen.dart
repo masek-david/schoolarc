@@ -133,7 +133,10 @@ class SettingsScreen extends ConsumerWidget {
                         Theme.of(context).colorScheme.surfaceContainerHighest),
               ),
             ),
-          const Center(child: PackageInfoWidget())
+          const Center(
+            child: PackageInfoWidget(enableTap: true),
+          ),
+          const SizedBox(height: 50),
         ],
       ),
     );

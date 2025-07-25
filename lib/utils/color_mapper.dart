@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LogoColorMapper extends ColorMapper {
-  const LogoColorMapper(this.theme, {this.useThemeColors = true});
-
-  final ThemeData theme;
+  final int primaryFixedDimColor;
+  final int secondaryColor;
+  final bool isDark;
   final bool useThemeColors;
+
+  const LogoColorMapper({
+    required this.primaryFixedDimColor,
+    required this.secondaryColor,
+    required this.isDark,
+    this.useThemeColors = true,
+  });
 
   @override
   Color substitute(
@@ -16,15 +23,16 @@ class LogoColorMapper extends ColorMapper {
   ) {
     if (useThemeColors) {
       if (color == const Color(0xFF7F9DC4)) {
-        return theme.colorScheme.primaryFixedDim;
+        return Color(primaryFixedDimColor);
       }
       if (color == const Color.fromARGB(255, 217, 226, 255)) {
-        return theme.colorScheme.secondary;
+        return Color(secondaryColor);
       }
     }
 
-    if (color == const Color.fromARGB(255, 217, 226, 255) &&
-        theme.brightness == Brightness.light) {
+    if (color.toARGB32() ==
+            const Color.fromARGB(255, 217, 226, 255).toARGB32() &&
+        isDark == false) {
       return const Color.fromARGB(255, 66, 100, 144);
     }
 
@@ -32,26 +40,10 @@ class LogoColorMapper extends ColorMapper {
   }
 }
 
-class PrimaryColorMapper extends ColorMapper {
-  const PrimaryColorMapper(this.theme);
+class BasicColorMapper extends ColorMapper {
+  const BasicColorMapper(this.mappedColor);
 
-  final ThemeData theme;
-
-  @override
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  ) {
-    return theme.colorScheme.primary;
-  }
-}
-
-class TertiaryColorMapper extends ColorMapper {
-  const TertiaryColorMapper(this.theme);
-
-  final ThemeData theme;
+  final int mappedColor;
 
   @override
   Color substitute(
@@ -60,6 +52,6 @@ class TertiaryColorMapper extends ColorMapper {
     String attributeName,
     Color color,
   ) {
-    return theme.colorScheme.tertiary;
+    return Color(mappedColor);
   }
 }

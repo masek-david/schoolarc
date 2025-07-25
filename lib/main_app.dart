@@ -23,11 +23,9 @@ import 'package:schoolarc/widgets/firebase_overlay.dart';
 import 'package:schoolarc/widgets/my_shortcuts.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:schoolarc/widgets/navigation_bar/side_nav_bar.dart';
-import 'package:schoolarc/widgets/time_format.dart';
 import 'package:schoolarc/widgets/wide_screen_borders.dart';
 
 var _scaffoldKey = GlobalKey<ScaffoldState>();
-
 
 void openDrawer() {
   _scaffoldKey.currentState?.openDrawer();
@@ -160,68 +158,67 @@ class _MainAppState extends ConsumerState<MainApp> {
   Widget build(BuildContext context) {
     final isWide = context.isWide;
 
-    return TimeFormat(
-      child: Stack(
-        children: [
-          MyShortcuts(
-            ref: ref,
-            child: Scaffold(
-              key: _scaffoldKey,
-              appBar: AppBar(
-                toolbarHeight: 0,
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  systemNavigationBarColor: Colors.transparent,
-                ),
+    return Stack(
+      children: [
+        MyShortcuts(
+          ref: ref,
+          child: Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              toolbarHeight: 0,
+              systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: Colors.transparent,
               ),
-              body: SlidableAutoCloseBehavior(
-                child: Row(
-                  children: [
-                    if (isWide)
-                      SideNavBar(
-                        onTap: switchPage,
-                        pageIndex: currentPageIndex,
-                      ),
-                    WideScreenBorders(
-                      show: isWide && ref.watch(showAppBordersProvider),
-                      child: PageView(
-                        key: _pageViewKey,
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: _pageController,
-                        children: const [
-                          HomeScreen(),
-                          CalendarScreen(
-                            // TODO remove showtomorrow (get a key of it instead???)
-                            showtomorrow: false,
-                          ),
-                          HomeworksScreen(),
-                          ExamsScreen(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              drawer: MyDrawer(
-                startTutorial: startTutorial,
-              ),
-              bottomNavigationBar: isWide
-                  ? null
-                  : BottomNavBar(
+            ),
+            body: SlidableAutoCloseBehavior(
+              child: Row(
+                children: [
+                  if (isWide)
+                    SideNavBar(
                       onTap: switchPage,
                       pageIndex: currentPageIndex,
                     ),
+                  WideScreenBorders(
+                    show: isWide && ref.watch(showAppBordersProvider),
+                    child: PageView(
+                      key: _pageViewKey,
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _pageController,
+                      children: const [
+                        HomeScreen(),
+                        CalendarScreen(
+                          // TODO remove showtomorrow (get a key of it instead???)
+                          showtomorrow: false,
+                        ),
+                        HomeworksScreen(),
+                        ExamsScreen(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+            drawer: MyDrawer(
+              startTutorial: startTutorial,
+            ),
+            bottomNavigationBar: isWide
+                ? null
+                : BottomNavBar(
+                    onTap: switchPage,
+                    pageIndex: currentPageIndex,
+                  ),
           ),
-          if (showingTutorial) Tutorial(onEnd: endTutorial),
-          if (ref.watch(debugShowFireOverlayProvider))
-            const Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: FirebaseOverlay(),
-            ),
-        ],
-      ),
+        ),
+        if (showingTutorial) Tutorial(onEnd: endTutorial),
+        if (ref.watch(debugShowFireOverlayProvider))
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: FirebaseOverlay(),
+          ),
+      ],
     );
   }
 }

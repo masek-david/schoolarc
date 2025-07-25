@@ -56,6 +56,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
             state.when(
               data: (data) => SettingTile(
                 title: data ? context.loc.loggedIn : context.loc.loggedOut,
+                subtitle: ref.read(firebaseServiceProvider).userEmail,
                 leading: data
                     ? const Icon(Icons.check_circle, color: Colors.green)
                     : const LoggedOutIcon(),
