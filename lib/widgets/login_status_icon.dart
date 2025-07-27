@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class LoginStatusIcon extends ConsumerWidget {
@@ -43,7 +44,12 @@ class LoggedOutIcon extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        const Icon(Icons.circle, color: Colors.yellow),
+        Icon(
+          Icons.circle,
+          color: Theme.brightnessOf(context) == Brightness.dark
+              ? Colors.yellow
+              : Colors.yellow.darken(0.2),
+        ),
         // to set the weight of the icon
         Text(
           String.fromCharCode(Icons.logout.codePoint),

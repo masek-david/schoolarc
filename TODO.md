@@ -33,6 +33,10 @@ cant complete homework from widget
         - ✅ priorities
         - ✅ subjects
     - ✅ translation
+- ⬜ restore state
+    - ✅ routing
+    - ⬜ addbottomsheet
+    - ⬜ calendar day
 - ⬜ riverpod
     - ⬜ strava
     - ⬜ bakalari
@@ -42,7 +46,6 @@ cant complete homework from widget
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ fix the frequency when is app searching for baka homeworks
-- ⬜ restore state (tasks_app.dart refactor probably needed, maybe use go_router ??)
 - ⬜ strava service
     - ⬜ check it works 
     - ⬜ stop saving the password 

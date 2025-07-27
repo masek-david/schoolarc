@@ -14,14 +14,14 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/show_adaptive_dialog.dart';
 
 class DbInfoScreen extends ConsumerWidget {
-  DbInfoScreen({super.key});
-
-  late final exams = examsDb.getDatabase();
-  late final hws = homeworksDb.getDatabase();
-  late final subjects = subjectsDb.getDatabase();
+  const DbInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final exams = examsDb.getDatabase();
+    final hws = homeworksDb.getDatabase();
+    final subjects = subjectsDb.getDatabase();
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(

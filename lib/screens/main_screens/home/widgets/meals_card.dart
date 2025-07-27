@@ -5,10 +5,8 @@ import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
-import 'package:schoolarc/screens/meals/meals_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/error_tile.dart';
 import 'package:schoolarc/widgets/meals/meal_tile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -74,7 +72,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                   ),
                   IconButton(
                     onPressed: () {
-                      pushScreen(context, const MealsScreen());
+                      Navigator.restorablePushNamed(context, '/meals');
                     },
                     icon: const Icon(Icons.keyboard_arrow_right_rounded),
                   ),
@@ -128,7 +126,8 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    pushScreen(context, const MealsScreen());
+                                    Navigator.restorablePushNamed(
+                                        context, '/meals');
                                   },
                                   icon: const Icon(
                                       Icons.keyboard_arrow_right_rounded),

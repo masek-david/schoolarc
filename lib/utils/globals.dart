@@ -9,7 +9,6 @@ import 'package:schoolarc/database/timetable_database.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:schoolarc/services/bakalari/baka_homeworks_service.dart';
 import 'package:schoolarc/services/bakalari/baka_service.dart';
 import 'package:schoolarc/services/logs_service.dart';
@@ -94,12 +93,6 @@ void showMessage(
   }
 }
 
-Future<void> pushScreen(BuildContext context, Widget screen) {
-  return Navigator.of(context).push(MaterialPageRoute(
-    builder: (context) => screen,
-  ));
-}
-
 void tryGettingNewHomeworks(BuildContext context) async {
   try {
     await bakaService.getHomeworks(
@@ -111,7 +104,7 @@ void tryGettingNewHomeworks(BuildContext context) async {
           actions: [
             FilledButton(
               onPressed: () {
-                pushScreen(context, const BakaHomeworksScreen());
+                Navigator.restorablePushNamed(context, '/bakalari-homeworks');
                 ScaffoldMessenger.of(context).clearSnackBars();
               },
               child: Text(context.loc.view),

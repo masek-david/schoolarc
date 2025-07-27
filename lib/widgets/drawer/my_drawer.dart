@@ -3,17 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/baka_homeworks/baka_homeworks_screen.dart';
-import 'package:schoolarc/screens/changelog_screen.dart';
-import 'package:schoolarc/screens/debug_info_screen.dart';
-import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
-import 'package:schoolarc/screens/recently_deleted_screen.dart';
-import 'package:schoolarc/screens/settings/settings_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
-import 'package:schoolarc/screens/subjects/subjects_screen.dart';
-import 'package:schoolarc/screens/timetable/timetable_screen.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -75,20 +67,15 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.subjects,
                       icon: const Icon(Icons.school_outlined),
                       onTap: () {
-                        pushScreen(
-                          context,
-                          const SubjectsScreen(),
-                        );
+                        Navigator.restorablePushNamed(context, '/subjects');
                       },
                     ),
                     MyDrawerButton(
                       text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_outlined),
                       onTap: () {
-                        pushScreen(
-                          context,
-                          const TimetableScreen(),
-                        );
+                        Navigator.restorablePushNamed(
+                            context, '/timetable');
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
@@ -96,10 +83,8 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.hwFromBaka,
                       icon: const Icon(Icons.home_work_outlined),
                       onTap: () {
-                        pushScreen(
-                          context,
-                          const BakaHomeworksScreen(),
-                        );
+                        Navigator.restorablePushNamed(
+                            context, '/bakalari-homeworks');
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
@@ -107,10 +92,7 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.recentlyDeleted,
                       icon: const Icon(Icons.delete_forever),
                       onTap: () {
-                        pushScreen(
-                          context,
-                          const RecentlyDeletedScreen(),
-                        );
+                        Navigator.restorablePushNamed(context, '/deleted');
                       },
                     ),
                     if (kDebugMode || debugMode)
@@ -146,23 +128,18 @@ class MyDrawer extends ConsumerWidget {
                       ),
                     if (debugMode)
                       MyDrawerButton(
-                          text: loc.viewDatabase,
-                          icon: const Icon(Icons.data_array),
-                          onTap: () {
-                            pushScreen(
-                              context,
-                              DbInfoScreen(),
-                            );
-                          }),
+                        text: loc.viewDatabase,
+                        icon: const Icon(Icons.data_array),
+                        onTap: () {
+                          Navigator.restorablePushNamed(context, '/database');
+                        },
+                      ),
                     if (debugMode)
                       MyDrawerButton(
                         text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
                         onTap: () {
-                          pushScreen(
-                            context,
-                            const LogsScreen(),
-                          );
+                          Navigator.restorablePushNamed(context, '/logs');
                         },
                       ),
                   ],
@@ -198,15 +175,15 @@ class MyDrawer extends ConsumerWidget {
               text: loc.settings,
               icon: const Icon(Icons.settings),
               onTap: () {
-                pushScreen(
-                  context,
-                  const SettingsScreen(),
-                );
+                Navigator.restorablePushNamed(context, '/settings');
               },
             ),
             if (debugMode || kDebugMode)
               GestureDetector(
-                onTap: () => pushScreen(context, const ChangelogScreen()),
+                onTap: () => Navigator.restorablePushNamed(
+                  context,
+                  '/changelog',
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(
@@ -217,7 +194,7 @@ class MyDrawer extends ConsumerWidget {
                     ),
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),

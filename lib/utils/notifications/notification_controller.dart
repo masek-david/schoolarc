@@ -36,7 +36,7 @@ class NotificationController {
 
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
     if (receivedAction.channelKey == 'tomorrow_channel') {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      navigatorKey.currentState?.restorablePushNamedAndRemoveUntil(
         '/calendar',
         (route) => (route.settings.name != '/calendar') || route.isFirst,
         arguments: receivedAction,

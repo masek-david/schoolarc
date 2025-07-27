@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schoolarc/screens/changelog_screen.dart';
-import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
@@ -36,10 +34,8 @@ class AboutApp extends StatelessWidget {
           SettingTile(
             title: context.loc.viewAppChangelog,
             leading: const Icon(Icons.history_outlined),
-            onTap: (context) => pushScreen(
-              context,
-              const ChangelogScreen(),
-            ),
+            onTap: (context) =>
+                Navigator.restorablePushNamed(context, '/changelog'),
           ),
           SettingTile(
               title: context.loc.reportBug,
@@ -49,10 +45,8 @@ class AboutApp extends StatelessWidget {
           SettingTile(
             title: context.loc.viewLogs,
             leading: const Icon(Icons.data_array),
-            onTap: (context) => pushScreen(
-              context,
-              const LogsScreen(),
-            ),
+            onTap: (context) =>
+                Navigator.restorablePushNamed(context, '/logs'),
           ),
           SettingTile(
             title: context.loc.viewLicenses,
