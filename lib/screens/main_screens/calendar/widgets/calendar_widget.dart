@@ -24,9 +24,6 @@ class CalendarWidget extends ConsumerStatefulWidget {
     required this.onHeaderTapped,
     required this.onFormatChanged,
     required this.onPageChanged,
-    required this.homeworks,
-    required this.exams,
-    required this.setFocusedDay,
     required this.onEdit,
   });
 
