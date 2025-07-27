@@ -268,7 +268,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         deleteHw(context, ref, hw),
                                     onConvert: (hw) =>
                                         convertHw(context, ref, hw),
-                                    onEdit: (hw) => editHw(context, ref, hw),
+                                    onEdit: (hw) => editHw(context, hw),
                                     showDates: true,
                                     text: context.loc.missedHomework(2)),
                               ),
@@ -282,7 +282,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: ExamList(
                                 onDelete: (exam) =>
                                     deleteExam(context, ref, exam),
-                                onEdit: (exam) => editExam(context, ref, exam),
+                                onEdit: (exam) => editExam(context, exam),
                                 onConvert: (exam) =>
                                     convertExam(context, ref, exam),
                                 text: context.loc
@@ -307,7 +307,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 onChangedCompletion: (hw, value) =>
                                     completeHw(context, ref, hw, value),
                                 onDelete: (hw) => deleteHw(context, ref, hw),
-                                onEdit: (hw) => editHw(context, ref, hw),
+                                onEdit: (hw) => editHw(context, hw),
                                 onConvert: (hw) => convertHw(context, ref, hw),
                                 showDates: false,
                                 text: context.loc

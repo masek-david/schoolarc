@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 
 class MyShortcuts extends StatelessWidget {
-  const MyShortcuts({super.key, required this.child, required this.ref});
+  const MyShortcuts({super.key, required this.child});
 
   final Widget child;
-  final WidgetRef ref;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +20,10 @@ class MyShortcuts extends StatelessWidget {
       child: Actions(
         actions: {
           NewHomeworkIntent: CallbackAction(
-            onInvoke: (intent) => addNewHw(context, ref),
+            onInvoke: (intent) => addNewHw(context),
           ),
           NewExamIntent: CallbackAction(
-            onInvoke: (intent) => addNewExam(context, ref),
+            onInvoke: (intent) => addNewExam(context),
           ),
         },
         child: Focus(

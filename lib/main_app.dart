@@ -30,6 +30,9 @@ var _scaffoldKey = GlobalKey<ScaffoldState>();
 void openDrawer() {
   _scaffoldKey.currentState?.openDrawer();
 }
+void closeDrawer() {
+  _scaffoldKey.currentState?.closeDrawer();
+}
 
 class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key});
@@ -38,14 +41,14 @@ class MainApp extends ConsumerStatefulWidget {
   ConsumerState<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends ConsumerState<MainApp> {
-  late final _pageController = PageController(
-    initialPage: settings.get(Setting.initialAppPage),
-  );
+class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
+  late final _pageController =
+      PageController(initialPage: currentPageIndex.value);
   late final AppLifecycleListener appStateListener;
   final Key _pageViewKey = GlobalKey();
 
-  late int currentPageIndex = settings.get(Setting.initialAppPage);
+  late RestorableInt currentPageIndex =
+      RestorableInt(settings.get(Setting.initialAppPage));
 
   bool showingTutorial = false;
 
@@ -101,7 +104,7 @@ class _MainAppState extends ConsumerState<MainApp> {
     }
 
     setState(() {
-      currentPageIndex = newScreenIndex;
+      currentPageIndex.value = newScreenIndex;
     });
   }
 
@@ -150,18 +153,36 @@ class _MainAppState extends ConsumerState<MainApp> {
 
   @override
   void dispose() {
+    currentPageIndex.dispose();
+    _pageController.dispose();
     appStateListener.dispose();
     super.dispose();
+  }
+
+  @override
+  String? get restorationId => 'mainApp';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(currentPageIndex, 'currentPage');
   }
 
   @override
   Widget build(BuildContext context) {
     final isWide = context.isWide;
 
+    if (ref.watch(showCalendarProvider)) {
+      switchPage(newScreenIndex: 1);
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          ref.read(showCalendarProvider.notifier).state = false;
+        },
+      );
+    }
+
     return Stack(
       children: [
         MyShortcuts(
-          ref: ref,
           child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
@@ -177,7 +198,7 @@ class _MainAppState extends ConsumerState<MainApp> {
                   if (isWide)
                     SideNavBar(
                       onTap: switchPage,
-                      pageIndex: currentPageIndex,
+                      pageIndex: currentPageIndex.value,
                     ),
                   WideScreenBorders(
                     show: isWide && ref.watch(showAppBordersProvider),
@@ -187,10 +208,7 @@ class _MainAppState extends ConsumerState<MainApp> {
                       controller: _pageController,
                       children: const [
                         HomeScreen(),
-                        CalendarScreen(
-                          // TODO remove showtomorrow (get a key of it instead???)
-                          showtomorrow: false,
-                        ),
+                        CalendarScreen(),
                         HomeworksScreen(),
                         ExamsScreen(),
                       ],
@@ -206,7 +224,7 @@ class _MainAppState extends ConsumerState<MainApp> {
                 ? null
                 : BottomNavBar(
                     onTap: switchPage,
-                    pageIndex: currentPageIndex,
+                    pageIndex: currentPageIndex.value,
                   ),
           ),
         ),

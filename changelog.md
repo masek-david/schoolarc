@@ -1,3 +1,16 @@
+
+## [2.1.0]() - 2025-07-08
+### Added
+- Added state restoration on Android
+
+### Changed
+
+### Fixed
+- Fixed calendar issue when week starts on monday was disabled
+- Notification now opens calendar correctly
+
+---
+
 ## [2.1.0]() - 2025-07-25
 ### Added
 - Added app logo to drawer

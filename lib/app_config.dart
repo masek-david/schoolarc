@@ -167,9 +167,38 @@ class AppConfig extends ConsumerWidget {
           ),
           themeMode: themeMode,
           home: const MainApp(),
-          builder: (context, child) => TimeFormat(
-            child: child ?? const SizedBox.shrink(),
+          builder: (context, child) => Stack(
+            alignment: Alignment.center,
+            children: [
+              TimeFormat(
+                child: child ?? const SizedBox.shrink(),
+              ),
+              FilledButton(
+                  onPressed: () {
+                    navigatorKey.currentState?.pushNamed('/calendar');
+                  },
+                  child: const Text('push')),
+            ],
           ),
+          onGenerateRoute: (settings) {
+            // we have to psuh a route, else it throws
+            // we also cant return mainapp, since it throws multiple widgets use the same key
+            if (settings.name == '/calendar') {
+              navigatorKey.currentState?.popUntil((route) => route.isFirst);
+              ref.read(showCalendarProvider.notifier).state = true;
+              closeDrawer();
+
+              return MaterialPageRoute(
+                builder: (context) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pop(context);
+                  });
+                  return const Scaffold(); // Blank page briefly shown
+                },
+              );
+            }
+            return null;
+          },
           routes: {
             '/settings': (context) => const SettingsScreen(),
             '/subjects': (context) => const SubjectsScreen(),
@@ -192,9 +221,6 @@ class AppConfig extends ConsumerWidget {
             '/settings/shortcuts': (context) => const ShortcutsPage(),
             '/about': (context) => const AboutApp(),
             '/changelog': (context) => const ChangelogScreen(),
-
-            // TODO add calendar
-            '/calendar': (context) => const CalendarScreen(),
           },
         );
       },

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -20,29 +24,40 @@ import 'package:schoolarc/widgets/priority_picker.dart';
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
     super.key,
-    required this.initialTask,
-
-    /// if true, when a subject is selected the date will be set to first appearance of this subject in constant timetable
+    required this.initialTaskId,
+    required this.isHomework,
+    required this.initialDate,
     required this.autoSetDate,
   });
 
-  final Task initialTask;
+  /// if [initialTaskId] is null, a empty task is created
+  final String? initialTaskId;
+  final DateTime? initialDate;
+
+  /// if true, when a subject is selected, the date will be set to first appearance of this subject in constant timetable
   final bool autoSetDate;
+  final bool isHomework;
 
   @override
   ConsumerState<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
 }
 
-class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
-  late final nameController = TextEditingController.fromValue(
-    TextEditingValue(text: widget.initialTask.text),
+class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
+    with RestorationMixin {
+  late final initialTask = (widget.isHomework
+          ? ref.read(hwProvider)[widget.initialTaskId]
+          : ref.read(examProvider)[widget.initialTaskId]) ??
+      Task.empty().copyWith(deadline: widget.initialDate);
+  late final nameController = RestorableTextEditingController.fromValue(
+    TextEditingValue(text: initialTask.text),
   );
-  late final descriptionController = TextEditingController.fromValue(
-    TextEditingValue(text: widget.initialTask.description ?? ''),
+  late final descriptionController = RestorableTextEditingController.fromValue(
+    TextEditingValue(text: initialTask.description ?? ''),
   );
-  late Subject? pickedSubject = widget.initialTask.subject;
-  late DateTime pickedDate = widget.initialTask.deadline;
-  late int pickedPriority = widget.initialTask.priority.index;
+  late RestorableStringN pickedSubjectId =
+      RestorableStringN(initialTask.subject?.id);
+  late RestorableDateTime pickedDate = RestorableDateTime(initialTask.deadline);
+  late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
   final _timetable = timetableDb.timeTable;
@@ -53,24 +68,36 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   );
 
   void onSave() {
-    Navigator.pop(
-      context,
-      widget.initialTask.copyWith(
-        subject: pickedSubject,
-        text: nameController.text,
-        description: descriptionController.text,
-        deadline: pickedDate,
-        priority: TaskPriority(pickedPriority),
-        timestamp: DateTime.now().toUtc(),
-      ),
+    final task = initialTask.copyWith(
+      subject: ref.read(subjectsProvider)[pickedSubjectId.value],
+      text: nameController.value.text,
+      description: descriptionController.value.text,
+      deadline: pickedDate.value,
+      priority: TaskPriority(pickedPriority.value),
+      timestamp: DateTime.now().toUtc(),
     );
+
+    if (widget.isHomework) {
+      if (task.id == '') {
+        ref.read(hwProvider.notifier).saveNew(task.toHw());
+      } else {
+        ref.read(hwProvider.notifier).edit(task as Homework);
+      }
+    } else {
+      if (task.id == '') {
+        ref.read(examProvider.notifier).saveNew(task.toExam());
+      } else {
+        ref.read(examProvider.notifier).edit(task as Exam);
+      }
+    }
   }
 
   void setSubject(Subject? subject) {
     setState(() {
-      pickedSubject = subject;
+      pickedSubjectId.value = subject?.id;
       if (widget.autoSetDate && subject != null) {
-        pickedDate = _timetable.nextDateForSubject(subject) ?? pickedDate;
+        pickedDate.value =
+            _timetable.nextDateForSubject(subject) ?? pickedDate.value;
       }
     });
     if (subject != null) {
@@ -85,16 +112,16 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     if (keyboard) {
       newDate = await showDialog<DateTime?>(
         context: context,
-        builder: (context) => KeyboardDatePicker(initialDate: pickedDate),
+        builder: (context) => KeyboardDatePicker(initialDate: pickedDate.value),
       );
     } else {
       newDate = await showDatePicker(
         context: context,
         locale: Locale(
           Localizations.localeOf(context).languageCode,
-          settings.get(Setting.weekStartsOnMonday) ? 'GB' : 'US',
+          ref.watch(weekStartsOnMondayProvider) ? 'GB' : 'US',
         ),
-        initialDate: pickedDate,
+        initialDate: pickedDate.value,
         firstDate: DateTime.utc(0),
         lastDate: DateTime.utc(3000),
       );
@@ -103,7 +130,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     if (newDate == null) return;
 
     setState(() {
-      pickedDate = newDate!;
+      pickedDate.value = newDate!;
     });
     return;
   }
@@ -124,10 +151,10 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (pickedSubject != null) {
+      if (pickedSubjectId.value != null) {
         Scrollable.ensureVisible(
           keysList[subjects.indexWhere(
-            (element) => pickedSubject!.id == element.id,
+            (element) => pickedSubjectId.value == element.id,
           )]
               .currentContext!,
           duration: const Duration(milliseconds: 500),
@@ -140,8 +167,23 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   void dispose() {
     nameController.dispose();
     descriptionController.dispose();
+    pickedDate.dispose();
+    pickedSubjectId.dispose();
+    pickedPriority.dispose();
 
     super.dispose();
+  }
+
+  @override
+  String? get restorationId => 'addBottomSheet';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(nameController, 'nameController');
+    registerForRestoration(descriptionController, 'descriptionController');
+    registerForRestoration(pickedDate, 'pickedDate');
+    registerForRestoration(pickedSubjectId, 'pickedSubject');
+    registerForRestoration(pickedPriority, 'pickedPriority');
   }
 
   @override
@@ -173,7 +215,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
         actions: {
           PickPriorityIntent: CallbackAction(
             onInvoke: (intent) => setState(() {
-              pickedPriority = (intent as PickPriorityIntent).priority;
+              pickedPriority.value = (intent as PickPriorityIntent).priority;
             }),
           ),
           PickDateIntent: CallbackAction(
@@ -214,8 +256,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                                 padding: const EdgeInsets.only(right: 8),
                                 child: ChoiceChip(
                                   key: keysList[index],
-                                  selected:
-                                      pickedSubject?.id == subjects[index].id,
+                                  selected: pickedSubjectId.value ==
+                                      subjects[index].id,
                                   label: Text(subjects[index].name),
                                   onSelected: (value) {
                                     if (!value) {
@@ -237,16 +279,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     fieldViewBuilder: (context, textEditingController,
                         focusNode, onFieldSubmitted) {
                       return TextField(
-                        controller: nameController,
+                        controller: nameController.value,
                         focusNode: focusNode,
                         autofocus: true,
                         maxLines: null,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (value) {
-                          if (pickedSubject == null) {
-                            onFieldSubmitted();
-                          }
-                          if (nameController.text.isNotEmpty) {
+                          if (nameController.value.text.isNotEmpty) {
                             onSave();
                           }
                         },
@@ -261,7 +300,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       );
                     },
                     onSelected: (subject) {
-                      nameController.text = '';
+                      nameController.value.text = '';
                       setSubject(subject);
                     },
                     displayStringForOption: (subject) {
@@ -269,7 +308,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     },
                     optionsBuilder: (textEditingValue) {
                       if (textEditingValue.text == '' ||
-                          pickedSubject != null) {
+                          pickedSubjectId.value != null) {
                         return const Iterable.empty();
                       }
                       return subjects.where(
@@ -284,9 +323,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     // listview musi mit vysku, kterou urci sizedbox
                     height: 40,
                     child: PriorityPicker(
-                      selectedPriority: pickedPriority,
+                      selectedPriority: pickedPriority.value,
                       onSelected: (value) => setState(() {
-                        pickedPriority = value;
+                        pickedPriority.value = value;
                       }),
                     ),
                   ),
@@ -304,7 +343,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                             style: const TextStyle(fontSize: 16),
                           ),
                           Text(
-                            pickedDate.formatWithoutYear(),
+                            pickedDate.value.formatWithoutYear(),
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -315,24 +354,26 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     children: [
                       ChoiceChip(
                         label: Text(context.loc.today),
-                        selected: pickedDate.isSameDay(DateTime.now()),
+                        selected: pickedDate.value.isSameDay(DateTime.now()),
                         onSelected: (value) {
                           DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate = DateTime(now.year, now.month, now.day);
+                            pickedDate.value =
+                                DateTime(now.year, now.month, now.day);
                           });
                         },
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
                         label: Text(context.loc.tomorrow),
-                        selected: pickedDate.isSameDay(
+                        selected: pickedDate.value.isSameDay(
                             DateTime.now().add(const Duration(days: 1))),
                         onSelected: (value) {
                           DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate = DateTime(now.year, now.month, now.day)
-                                .add(const Duration(days: 1));
+                            pickedDate.value =
+                                DateTime(now.year, now.month, now.day)
+                                    .add(const Duration(days: 1));
                           });
                         },
                       ),
@@ -340,13 +381,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       ChoiceChip(
                         label: Text(
                             '${context.loc.next} ${DateFormat.EEEE(getLocale().languageCode).format(DateTime.now()).toLowerCase()}'),
-                        selected: pickedDate.isSameDay(
+                        selected: pickedDate.value.isSameDay(
                             DateTime.now().add(const Duration(days: 7))),
                         onSelected: (value) {
                           DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate = DateTime(now.year, now.month, now.day)
-                                .add(const Duration(days: 7));
+                            pickedDate.value =
+                                DateTime(now.year, now.month, now.day)
+                                    .add(const Duration(days: 7));
                           });
                         },
                       ),
@@ -354,7 +396,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
-                    controller: descriptionController,
+                    controller: descriptionController.value,
                     maxLines: null,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(15),

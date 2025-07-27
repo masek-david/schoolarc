@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -10,7 +9,6 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/calendar/my_calendar_builder.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
@@ -18,27 +16,22 @@ class CalendarWidget extends ConsumerStatefulWidget {
     super.key,
     required this.focusedDay,
     required this.selectedDay,
-    required this.negativePageCount,
     required this.calendarFormat,
-    required this.jumpToPage,
-    required this.onHeaderTapped,
-    required this.onFormatChanged,
-    required this.onPageChanged,
+    required this.homeworks,
+    required this.exams,
+    required this.setSelectedDay,
+    required this.setFocusedDay,
     required this.onEdit,
   });
 
-  final void Function(Exam exam) onEdit;
   final DateTime focusedDay;
   final DateTime selectedDay;
-  final Map<DateTime, List<Homework>> homeworks;
-  final Map<DateTime, List<Exam>> exams;
-  final int negativePageCount;
   final CalendarFormat calendarFormat;
+  final Map<DateTime, List<Exam>> exams;
+  final Map<DateTime, List<Homework>> homeworks;
   final void Function(DateTime date) setFocusedDay;
-  final Function(int page) jumpToPage;
-  final void Function(DateTime)? onHeaderTapped;
-  final void Function(CalendarFormat)? onFormatChanged;
-  final void Function(DateTime)? onPageChanged;
+  final void Function(DateTime date) setSelectedDay;
+  final void Function(Exam exam) onEdit;
 
   @override
   ConsumerState<CalendarWidget> createState() => _CalendarWidgetState();
@@ -118,7 +111,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 lastDay: DateTime(5000),
                 focusedDay: widget.focusedDay,
                 availableGestures: AvailableGestures.horizontalSwipe,
-                startingDayOfWeek: settings.get(Setting.weekStartsOnMonday)
+                startingDayOfWeek: ref.watch(weekStartsOnMondayProvider)
                     ? StartingDayOfWeek.monday
                     : StartingDayOfWeek.sunday,
                 calendarFormat: widget.calendarFormat,
@@ -156,28 +149,12 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   return isSameDay(widget.selectedDay, day);
                 },
                 onDaySelected: (selectedDayNew, focusedDayNew) {
-                  // if (!selectedDayNew.isSameMonth(widget.focusedDay) &&
-                  //     widget.calendarFormat.name == 'month') {
-                  //   return;
-                  // }
-
-                  if (!isSameDay(selectedDayNew, widget.selectedDay)) {
-                    // Call `setState()` when updating the selected day
-                    DateTime now = DateTime.now();
-                    // kdyz to neni utc neni to schopnej spravne porovnat
-                    DateTime nowOnlyDate =
-                        DateTime.utc(now.year, now.month, now.day);
-                    int dayDifferenceFromNow =
-                        selectedDayNew.difference(nowOnlyDate).inDays;
-                    int correctPageIndex =
-                        widget.negativePageCount + dayDifferenceFromNow;
-
-                    widget.jumpToPage(correctPageIndex);
-                  }
+                  widget.setSelectedDay(selectedDayNew);
                 },
-                onHeaderTapped: widget.onHeaderTapped,
-                onFormatChanged: widget.onFormatChanged,
-                onPageChanged: widget.onPageChanged,
+                onHeaderTapped: (focusedDay) {
+                  widget.setSelectedDay(DateTime.now());
+                },
+                onPageChanged: widget.setFocusedDay,
                 onCalendarCreated: (pageController) {
                   this.pageController = pageController;
                 },

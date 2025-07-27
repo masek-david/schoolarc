@@ -79,7 +79,7 @@ class ExamsScreen extends ConsumerWidget {
           tooltip: context.loc.addNewExam,
           onPressed: () async {
             HapticFeedback.mediumImpact();
-            addNewExam(context, ref);
+            addNewExam(context);
           },
           enableFeedback: true,
           child: const Icon(Icons.add),
@@ -151,7 +151,7 @@ class ExamsScreen extends ConsumerWidget {
                           child: ExamTile(
                             exam: exam,
                             onDelete: () => deleteExam(context, ref, exam),
-                            onEdit: () => editExam(context, ref, exam),
+                            onEdit: () => editExam(context, exam),
                             onConvert: () => convertExam(context, ref, exam),
                           ),
                         );
@@ -206,7 +206,7 @@ class ExamsScreen extends ConsumerWidget {
               child: ExamTile(
                 exam: exam,
                 onDelete: () => deleteExam(context, ref, exam),
-                onEdit: () => editExam(context, ref, exam),
+                onEdit: () => editExam(context, exam),
                 onConvert: () => convertExam(context, ref, exam),
               ),
             );

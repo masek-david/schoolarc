@@ -2,48 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/add_bottom_sheet/add_bottom_sheet.dart';
 
-Future<void> addNewHw(
-  BuildContext context,
-  WidgetRef ref, {
-  DateTime? initialDate,
-}) async {
-  final newHw = await showModalBottomSheet<Task?>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
+@pragma('vm:entry-point')
+Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
+  assert(arguments is Map);
+  arguments as Map;
+
+  final initialDateString = arguments['date'] as String?;
+  final initialDate =
+      initialDateString != null ? DateTime.parse(initialDateString) : null;
+
+  return ModalBottomSheetRoute(
     builder: (context) => AddTaskBottomSheet(
-      initialTask: Task.empty().copyWith(deadline: initialDate),
+      initialTaskId: arguments['id'],
+      initialDate: initialDate,
+      isHomework: arguments['isHomework'],
       autoSetDate: initialDate == null,
     ),
+    isScrollControlled: true,
   );
-
-  if (newHw != null) {
-    ref.read(hwProvider.notifier).saveNew(newHw.toHw());
-  }
-  return;
 }
 
-void editHw(BuildContext context, WidgetRef ref, Homework hw) async {
-  Homework? edited = await showModalBottomSheet<Homework>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialTask: hw,
-      autoSetDate: false,
-    ),
-  );
+void addNewHw(BuildContext context, {DateTime? initialDate}) async {
+  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'date': initialDate?.toIso8601String(),
+    'id': null,
+    'isHomework': true,
+  });
+}
 
-  if (edited != null) {
-    ref.read(hwProvider.notifier).edit(edited);
-  }
+void editHw(BuildContext context, Homework hw) async {
+  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'id': hw.id,
+    'isHomework': true,
+  });
 }
 
 void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
@@ -71,40 +68,19 @@ void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   );
 }
 
-Future<void> addNewExam(
-  BuildContext context,
-  WidgetRef ref, {
-  DateTime? initialDate,
-}) async {
-  final newExam = await showModalBottomSheet<Task?>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialTask: Task.empty().copyWith(deadline: initialDate),
-      autoSetDate: initialDate == null,
-    ),
-  );
-
-  if (newExam != null) {
-    ref.read(examProvider.notifier).saveNew(newExam.toExam());
-  }
+Future<void> addNewExam(BuildContext context, {DateTime? initialDate}) async {
+  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'date': initialDate?.toIso8601String(),
+    'id': null,
+    'isHomework': false,
+  });
 }
 
-void editExam(BuildContext context, WidgetRef ref, Exam exam) async {
-  Exam? edited = await showModalBottomSheet<Exam>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (context) => AddTaskBottomSheet(
-      initialTask: exam,
-      autoSetDate: false,
-    ),
-  );
-
-  if (edited != null) {
-    ref.read(examProvider.notifier).edit(edited);
-  }
+void editExam(BuildContext context, Exam exam) async {
+  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'id': exam.id,
+    'isHomework': false,
+  });
 }
 
 void convertExam(BuildContext context, WidgetRef ref, Exam exam) {

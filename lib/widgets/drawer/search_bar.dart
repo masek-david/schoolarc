@@ -63,7 +63,7 @@ class MySearchBar extends ConsumerWidget {
                 onChangedCompletion: (p0) {},
                 onDelete: null,
                 onEdit: () {
-                  editHw(context, ref, task);
+                  editHw(context, task);
                 },
                 onConvert: null,
               );
@@ -72,7 +72,7 @@ class MySearchBar extends ConsumerWidget {
                 exam: task as Exam,
                 onDelete: null,
                 onEdit: () {
-                  editExam(context, ref, task);
+                  editExam(context, task);
                 },
                 onConvert: null,
               );

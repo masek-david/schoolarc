@@ -35,7 +35,7 @@ cant complete homework from widget
     - ✅ translation
 - ⬜ restore state
     - ✅ routing
-    - ⬜ addbottomsheet
+    - ✅ addbottomsheet
     - ⬜ calendar day
 - ⬜ riverpod
     - ⬜ strava
@@ -79,6 +79,7 @@ cant complete homework from widget
 
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
+- ⬜ ? share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
