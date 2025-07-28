@@ -6,12 +6,8 @@ import 'package:schoolarc/provider/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava_login_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
-import 'package:schoolarc/screens/firebase_login/firebase_login_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
-import 'package:schoolarc/screens/strava_cz/strava_login_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 
 class TutorialExtensions extends ConsumerWidget {
@@ -47,10 +43,7 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    pushScreen(
-                      context,
-                      const BakaLoginScreen(),
-                    );
+                    Navigator.restorablePushNamed(context, '/bakalari');
                   },
                   child: Text(context.loc.login),
                 ),
@@ -68,10 +61,7 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    pushScreen(
-                      context,
-                      const StravaLoginScreen(),
-                    );
+                    Navigator.restorablePushNamed(context, '/strava');
                   },
                   child: Text(context.loc.login),
                 ),
@@ -91,10 +81,7 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
                 button: FilledButton(
                   onPressed: () {
-                    pushScreen(
-                      context,
-                      const FirebaseLoginScreen(),
-                    );
+                    Navigator.restorablePushNamed(context, '/cloudsync');
                   },
                   child: Text(context.loc.login),
                 ),

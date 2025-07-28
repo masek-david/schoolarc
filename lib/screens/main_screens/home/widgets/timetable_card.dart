@@ -4,7 +4,6 @@ import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
-import 'package:schoolarc/screens/current_timetable/current_timetable.dart';
 import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
@@ -91,7 +90,8 @@ class TimetableCard extends StatelessWidget {
                       ),
                     IconButton(
                       onPressed: () {
-                        pushScreen(context, const CurrentTimetableScreen());
+                        Navigator.restorablePushNamed(
+                            context, '/timetable-current');
                       },
                       icon: const Icon(Icons.keyboard_arrow_right_rounded),
                     ),

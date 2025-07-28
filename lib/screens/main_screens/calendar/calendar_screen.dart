@@ -21,6 +21,11 @@ import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+/// this provider switches on and off when /calendar route is pushed 
+/// 
+/// that will switch current page, pop everything and show tomorrow date in calendar
+final showCalendarProvider = StateProvider<bool>((ref) => false);
+
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
@@ -33,9 +38,13 @@ class CalendarScreen extends ConsumerStatefulWidget {
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends ConsumerState<CalendarScreen> {
-  DateTime _focusedDay = DateTime.now();
-  late DateTime _selectedDay = _focusedDay;
+class _CalendarScreenState extends ConsumerState<CalendarScreen>
+    with RestorationMixin {
+  late final RestorableDateTime _focusedDay = RestorableDateTime(showtomorrow
+      ? DateTime.now().toUtc().add(const Duration(days: 1)).toLocal()
+      : DateTime.now());
+  late final RestorableDateTime _selectedDay =
+      RestorableDateTime(_focusedDay.value);
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
@@ -43,7 +52,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       ref.read(calendarInitialIsTomorrowProvider) || widget.showtomorrow;
   late final PageController _pageController = PageController(
     viewportFraction: 0.90,
-    initialPage: negativePageCount + (showtomorrow ? 1 : 0),
+    initialPage: getPageIndex(_selectedDay.value),
   );
 
   final _resizeController = ResizableController();
@@ -56,12 +65,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-
-    if (showtomorrow) {
-      _focusedDay =
-          DateTime.now().toUtc().add(const Duration(days: 1)).toLocal();
-      _selectedDay = _focusedDay;
-    }
 
     _resizeController.addListener(
       () {
@@ -81,8 +84,27 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   void dispose() {
     _pageController.dispose();
     _focus.dispose();
+    _focusedDay.dispose();
+    _selectedDay.dispose();
 
     super.dispose();
+  }
+
+  @override
+  String? get restorationId => 'calendar';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_focusedDay, 'focusedDay');
+    registerForRestoration(_selectedDay, 'selectedDay');
+  }
+
+  int getPageIndex(DateTime date) {
+    final now = DateTime.now();
+    final nowOnlyDay = DateTime(now.year, now.month, now.day);
+    final dateOnlyDay = DateTime(date.year, date.month, date.day);
+    final dayDifferenceFromNow = dateOnlyDay.difference(nowOnlyDay).inDays;
+    return negativePageCount + dayDifferenceFromNow;
   }
 
   Widget buildCalendar(
@@ -91,34 +113,22 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     Map<DateTime, List<Exam>> exams,
   ) {
     return CalendarWidget(
-      onEdit: (exam) => editExam(context, ref, exam),
-      focusedDay: _focusedDay,
-      selectedDay: _selectedDay,
-      negativePageCount: negativePageCount,
-      setFocusedDay: (date) {
-        if (mounted) {
-          setState(() {
-            _focusedDay = date;
-          });
-        }
-      },
-      calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
+      focusedDay: _focusedDay.value,
+      selectedDay: _selectedDay.value,
       homeworks: hws,
       exams: exams,
-      jumpToPage: (page) {
-        _pageController.jumpToPage(page);
-      },
-      onHeaderTapped: (date) {
+      calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
+      onEdit: (exam) => editExam(context, exam),
+      setFocusedDay: (date) {
         setState(() {
-          _focusedDay = DateTime.now();
+          _focusedDay.value = date;
         });
-        _pageController.jumpToPage(negativePageCount);
       },
-      onFormatChanged: (format) {},
-      onPageChanged: (focusedDay) {
-        setState(() {
-          _focusedDay = focusedDay;
-        });
+      setSelectedDay: (date) {
+        if (!mounted) return;
+        if (!isSameDay(date, _selectedDay.value)) {
+          _pageController.jumpToPage(getPageIndex(date));
+        }
       },
     );
   }
@@ -130,20 +140,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   ) {
     return PagesWidget(
       examOnDelete: (exam) => deleteExam(context, ref, exam),
-      examOnEdit: (exam) => editExam(context, ref, exam),
+      examOnEdit: (exam) => editExam(context, exam),
       examOnConvert: (exam) => convertExam(context, ref, exam),
       hwOnChangedCompletion: (hw, value) => completeHw(context, ref, hw, value),
       hwOnDelete: (hw) => deleteHw(context, ref, hw),
-      hwOnEdit: (hw) => editHw(context, ref, hw),
+      hwOnEdit: (hw) => editHw(context, hw),
       hwOnConvert: (hw) => convertHw(context, ref, hw),
       pageController: _pageController,
       onPageChanged: (page) {
+        if (!mounted) return;
         setState(() {
-          _focusedDay = DateTime.now()
+          _focusedDay.value = DateTime.now()
               .toUtc()
               .add(Duration(days: page - negativePageCount))
               .toLocal();
-          _selectedDay = _focusedDay;
+          _selectedDay.value = _focusedDay.value;
         });
       },
       negativePageCount: negativePageCount,
@@ -192,6 +203,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final exams = ref.watch(examsDatesProvider);
 
     final isWide = MediaQuery.of(context).size.width > 750;
+    if (ref.watch(showCalendarProvider)) {
+      setState(() {
+        _focusedDay.value = DateTime.now().add(const Duration(days: 1));
+        _selectedDay.value = _focusedDay.value;
+      });
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          _pageController.jumpToPage(getPageIndex(_focusedDay.value));
+          ref.read(showCalendarProvider.notifier).state = false;
+        },
+      );
+    }
 
     return Shortcuts(
       shortcuts: {
@@ -204,11 +227,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         actions: {
           NewHomeworkIntent: CallbackAction(
             onInvoke: (intent) =>
-                addNewHw(context, ref, initialDate: _selectedDay),
+                addNewHw(context, initialDate: _selectedDay.value),
           ),
           NewExamIntent: CallbackAction(
             onInvoke: (intent) =>
-                addNewExam(context, ref, initialDate: _selectedDay),
+                addNewExam(context, initialDate: _selectedDay.value),
           ),
         },
         child: Focus(
@@ -225,11 +248,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 children: [
                   FloatingActionButton.extended(
                     tooltip:
-                        '${context.loc.addNewExamFor} ${_selectedDay.dateText().toLowerCase()}',
+                        '${context.loc.addNewExamFor} ${_selectedDay.value.dateText().toLowerCase()}',
                     heroTag: 'exam_btn',
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      addNewExam(context, ref, initialDate: _selectedDay);
+                      addNewExam(context, initialDate: _selectedDay.value);
                     },
                     icon: const Icon(Icons.add),
                     label: Text(context.loc.exams(1)),
@@ -237,11 +260,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   const SizedBox(height: 10),
                   FloatingActionButton.extended(
                     tooltip:
-                        '${context.loc.addNewHomeworkFor} ${_selectedDay.dateText().toLowerCase()}',
+                        '${context.loc.addNewHomeworkFor} ${_selectedDay.value.dateText().toLowerCase()}',
                     heroTag: 'homework_btn',
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      addNewHw(context, ref, initialDate: _selectedDay);
+                      addNewHw(context, initialDate: _selectedDay.value);
                     },
                     icon: const Icon(Icons.add),
                     label: Text(context.loc.homeworks(1)),

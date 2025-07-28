@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/screens/recap/recap_screen.dart';
-import 'package:schoolarc/utils/globals.dart';
 
 class RecapButton extends StatelessWidget {
   const RecapButton({super.key, required this.child});
@@ -14,7 +12,7 @@ class RecapButton extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          pushScreen(context, const RecapScreen());
+          Navigator.restorablePushNamed(context, '/recap');
         },
         child: Container(
           decoration: BoxDecoration(

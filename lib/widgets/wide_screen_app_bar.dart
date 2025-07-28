@@ -40,8 +40,10 @@ class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-// TODO why is this for web?? check this and arrows for page switching
+// TODO is this correct on ipad?
   @override
   Size get preferredSize =>
-      Size.fromHeight(isWideScreen && !kIsWeb ? 32 : kToolbarHeight);
+      // Size.fromHeight(isWideScreen && !kIsWeb ? 32 : kToolbarHeight);
+      Size.fromHeight(
+          isWideScreen && !kIsWeb ? kToolbarHeight : kToolbarHeight);
 }

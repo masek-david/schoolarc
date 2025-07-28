@@ -79,7 +79,7 @@ class HomeworksScreen extends ConsumerWidget {
           tooltip: context.loc.addNewHomework,
           onPressed: () async {
             HapticFeedback.mediumImpact();
-            addNewHw(context, ref);
+            addNewHw(context);
           },
           enableFeedback: true,
           child: const Icon(Icons.add),
@@ -155,7 +155,7 @@ class HomeworksScreen extends ConsumerWidget {
                               ref.read(hwProvider.notifier).complete(hw, value);
                             },
                             onDelete: () => deleteHw(context, ref, hw),
-                            onEdit: () => editHw(context, ref, hw),
+                            onEdit: () => editHw(context, hw),
                             onConvert: () => convertHw(context, ref, hw),
                           ),
                         );
@@ -220,7 +220,7 @@ class HomeworksScreen extends ConsumerWidget {
                   ref.read(hwProvider.notifier).complete(hw, value);
                 },
                 onDelete: () => deleteHw(context, ref, hw),
-                onEdit: () => editHw(context, ref, hw),
+                onEdit: () => editHw(context, hw),
                 onConvert: () => convertHw(context, ref, hw),
               ),
             );

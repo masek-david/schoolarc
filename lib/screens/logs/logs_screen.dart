@@ -177,9 +177,12 @@ class _LogsScreenState extends State<LogsScreen> {
                             ),
                             IconButton(
                               onPressed: () {
-                                pushScreen(
+                                Navigator.push(
                                   context,
-                                  LogScreen(log: logs[index].$2),
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        LogScreen(log: logs[index].$2),
+                                  ),
                                 );
                               },
                               icon: const Icon(Icons.keyboard_arrow_right),

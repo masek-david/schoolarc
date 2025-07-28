@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/provider/locale_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
@@ -9,25 +8,18 @@ import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 
-class LocalizationPage extends ConsumerStatefulWidget {
+class LocalizationPage extends ConsumerWidget {
   const LocalizationPage({super.key});
 
   @override
-  ConsumerState<LocalizationPage> createState() => _LocalizationPageState();
-}
-
-class _LocalizationPageState extends ConsumerState<LocalizationPage> {
-  String dateFormat = settings.get(Setting.dateFormat);
-  bool weekStartsOnMonday = settings.get(Setting.weekStartsOnMonday);
-  final date = DateTime(2025, 1, 31, 20, 45);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final date = DateTime(2025, 1, 31, 20, 45);
     final loc = context.loc;
-    bool use24HourFormat = ref.watch(use24HourFormatProvider);
+    final use24HourFormat = ref.watch(use24HourFormatProvider);
     final language = ref.watch(localeProvider).languageCode;
+    final dateFormat = ref.watch(dateFormatProvider);
+    final weekStartsOnMonday = ref.watch(weekStartsOnMondayProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -62,10 +54,7 @@ class _LocalizationPageState extends ConsumerState<LocalizationPage> {
             trailing: DropDownAction(
               value: dateFormat,
               onChanged: (value) {
-                settings.save(Setting.dateFormat, value as String);
-                setState(() {
-                  dateFormat = value;
-                });
+                ref.read(dateFormatProvider.notifier).set(value as String);
               },
               items: supportedDateFormats
                   .map(
@@ -96,10 +85,7 @@ ${loc.now}: ${TimeOfDay.now().format(context)}''',
             subtitle: loc.weekStartsOnMondaySubtitle,
             value: weekStartsOnMonday,
             onChanged: (value) {
-              settings.save(Setting.weekStartsOnMonday, value);
-              setState(() {
-                weekStartsOnMonday = value;
-              });
+              ref.read(weekStartsOnMondayProvider.notifier).set(value);
             },
           ),
         ],

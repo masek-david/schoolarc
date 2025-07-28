@@ -3,7 +3,6 @@ import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-
 extension BetterDateTime on DateTime {
   bool isSameDay(DateTime comparedDate) {
     comparedDate = comparedDate.toLocal();
@@ -60,15 +59,16 @@ extension BetterDateTime on DateTime {
   ///includes whole weeks
   List<DateTime> allDaysInMonthCalendarView() {
     List<DateTime> list = [];
+    final startOnMonday = settings.get(Setting.weekStartsOnMonday);
 
     final firstDayOfMonth = DateTime(year, month, 1);
     final firstDayWeekday = firstDayOfMonth.weekday;
-    final firstDayIndex = -firstDayWeekday + 2;
+    final firstDayIndex = -firstDayWeekday + (startOnMonday ? 2 : 1);
 
     final lastDayOfMonth = DateTime(year, month + 1, 0);
     final daysInMonth = lastDayOfMonth.day;
     final lastDayWeekday = lastDayOfMonth.weekday;
-    final lastDayIndex = daysInMonth + (7 - lastDayWeekday);
+    final lastDayIndex = daysInMonth + ((startOnMonday ? 7 : 6) - lastDayWeekday);
 
     for (int i = firstDayIndex; i <= lastDayIndex; i++) {
       list.add(DateTime(year, month, i));

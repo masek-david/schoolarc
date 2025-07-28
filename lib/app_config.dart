@@ -8,7 +8,27 @@ import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/provider/locale_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
+import 'package:schoolarc/screens/baka_homeworks/baka_homeworks_screen.dart';
+import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
+import 'package:schoolarc/screens/changelog_screen.dart';
+import 'package:schoolarc/screens/current_timetable/current_timetable.dart';
+import 'package:schoolarc/screens/debug_info_screen.dart';
+import 'package:schoolarc/screens/firebase_login/firebase_login_screen.dart';
+import 'package:schoolarc/screens/logs/logs_screen.dart';
+import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
+import 'package:schoolarc/screens/meals/meals_screen.dart';
+import 'package:schoolarc/screens/recap/recap_screen.dart';
+import 'package:schoolarc/screens/recently_deleted_screen.dart';
+import 'package:schoolarc/screens/settings/about_app.dart';
+import 'package:schoolarc/screens/settings/setting_pages/localization_page.dart';
+import 'package:schoolarc/screens/settings/setting_pages/shortcuts_page.dart';
+import 'package:schoolarc/screens/settings/setting_pages/style_motion_page.dart';
+import 'package:schoolarc/screens/settings/setting_pages/theme_page.dart';
+import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_page.dart';
+import 'package:schoolarc/screens/settings/settings_screen.dart';
+import 'package:schoolarc/screens/strava_cz/strava_login_screen.dart';
+import 'package:schoolarc/screens/subjects/subjects_screen.dart';
+import 'package:schoolarc/screens/timetable/timetable_screen.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/theme_generate.dart';
@@ -85,6 +105,7 @@ class AppConfig extends ConsumerWidget {
         );
 
         return MaterialApp(
+          restorationScopeId: 'root',
           navigatorKey: navigatorKey,
           title: 'Schoolarc',
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -145,28 +166,52 @@ class AppConfig extends ConsumerWidget {
                 const ProgressIndicatorThemeData(year2023: false),
           ),
           themeMode: themeMode,
-          initialRoute: '/',
-          onGenerateRoute: (settings) {
-            switch (settings.name) {
-              case '/':
-                return MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                );
-
-              case '/calendar':
-                // TODO create calendar page
-                break;
-
-              default:
-                assert(false, 'Page ${settings.name} not found');
-                return null;
-            }
-            return null;
-          },
+          home: const MainApp(),
           builder: (context, child) => TimeFormat(
             child: child ?? const SizedBox.shrink(),
           ),
-          home: const MainApp(),
+          onGenerateRoute: (settings) {
+            // we have to psuh a route, else it throws
+            // we also cant return mainapp, since it throws multiple widgets use the same key
+            if (settings.name == '/calendar') {
+              navigatorKey.currentState?.popUntil((route) => route.isFirst);
+              ref.read(showCalendarProvider.notifier).state = true;
+              closeDrawer();
+
+              return MaterialPageRoute(
+                builder: (context) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pop(context);
+                  });
+                  return const Scaffold(); // Blank page briefly shown
+                },
+              );
+            }
+            return null;
+          },
+          routes: {
+            '/settings': (context) => const SettingsScreen(),
+            '/subjects': (context) => const SubjectsScreen(),
+            '/timetable': (context) => const TimetableScreen(),
+            '/timetable-current': (context) => const CurrentTimetableScreen(),
+            '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
+            '/deleted': (context) => const RecentlyDeletedScreen(),
+            '/database': (context) => const DbInfoScreen(),
+            '/meals': (context) => const MealsScreen(),
+            '/bakalari': (context) => const BakaLoginScreen(),
+            '/strava': (context) => const StravaLoginScreen(),
+            '/logs': (context) => const LogsScreen(),
+            '/recap': (context) => const RecapScreen(),
+            '/cloudsync': (context) => const FirebaseLoginScreen(),
+            '/settings/theme': (context) => const ThemePage(),
+            '/settings/style': (context) => const StyleMotionPage(),
+            '/settings/notifications': (context) =>
+                const TomorrowNotificationsPage(),
+            '/settings/localization': (context) => const LocalizationPage(),
+            '/settings/shortcuts': (context) => const ShortcutsPage(),
+            '/about': (context) => const AboutApp(),
+            '/changelog': (context) => const ChangelogScreen(),
+          },
         );
       },
     );

@@ -20,6 +20,12 @@ class FirebaseLoginScreen extends ConsumerWidget {
 
   final void Function()? onHide;
 
+  Future<void> pushScreen(BuildContext context, Widget screen) {
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => screen,
+    ));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool useCloudSync = ref.watch(useCloudSyncProvider);
