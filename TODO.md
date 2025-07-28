@@ -12,7 +12,6 @@ cant complete homework from widget
     - ⬜ add to tutorial
 
 
-
 - ✅ when should the widget be updated??
 - ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
@@ -33,10 +32,10 @@ cant complete homework from widget
         - ✅ priorities
         - ✅ subjects
     - ✅ translation
-- ⬜ restore state
+- ✅ restore state
     - ✅ routing
     - ✅ addbottomsheet
-    - ⬜ calendar day
+    - ✅ calendar day
 - ⬜ riverpod
     - ⬜ strava
     - ⬜ bakalari
@@ -77,15 +76,19 @@ cant complete homework from widget
 - ⬜ in background move this years hws and exams tiles
 - ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
 
+
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
-- ⬜ ? share tasks
+- ⬜ make everything react to touch (shrink)
+- ⬜ share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
-- ⬜ make everything react to touch (shrink)
     
+## iOS
+- ⬜ state restoration
+- ⬜ widgets
 
 
 

@@ -7,11 +7,19 @@ App to help students manage their homeworks and exams, simply in one app.
 - Save homework and exams
     - Priorities (🔴🟠🟢🔵)
     - Assign subjects
-- Import subjects and timetable from Bakaláři
-- View meals from Strava.cz
+- Save subjects
+- Save timetable
+- Bakaláři integration
+    - Import timetable, subjects
+    - View current timetable with changes
+    - View current homeworks
+- Strava.cz integration - view meals
+- Support Material You theming
+- Support for big screens
 
 ## Screenshots
 
+TODO
 
 ## Platforms
 Schoolarc can run on most platforms, however, some functions don't work on some operating systems.
@@ -27,7 +35,7 @@ Schoolarc can run on most platforms, however, some functions don't work on some 
 
  ✅ working       ❌ not working     ❔not tested
 
-## How to run
+## How to run locally
 First, install [flutter sdk](https://docs.flutter.dev/install). Copy the repository and inside the console run
 ```
 flutter pub get 

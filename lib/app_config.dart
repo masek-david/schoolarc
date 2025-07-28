@@ -167,18 +167,8 @@ class AppConfig extends ConsumerWidget {
           ),
           themeMode: themeMode,
           home: const MainApp(),
-          builder: (context, child) => Stack(
-            alignment: Alignment.center,
-            children: [
-              TimeFormat(
-                child: child ?? const SizedBox.shrink(),
-              ),
-              FilledButton(
-                  onPressed: () {
-                    navigatorKey.currentState?.pushNamed('/calendar');
-                  },
-                  child: const Text('push')),
-            ],
+          builder: (context, child) => TimeFormat(
+            child: child ?? const SizedBox.shrink(),
           ),
           onGenerateRoute: (settings) {
             // we have to psuh a route, else it throws
