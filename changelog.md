@@ -1,5 +1,4 @@
-
-## [2.1.1]() - 2025-
+## [2.1.1]() - 2025-07-28
 ### Added
 - Added state restoration on Android
 
