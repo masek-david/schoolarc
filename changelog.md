@@ -1,3 +1,14 @@
+## [2.1.2]() - 2025-
+### Added
+
+### Changed
+- Improved Strava.cz login page
+- Improved fetching of meals
+
+### Fixed
+
+---
+
 ## [2.1.1]() - 2025-07-28
 ### Added
 - Added state restoration on Android

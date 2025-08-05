@@ -48,3 +48,30 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
     );
   }
 }
+
+class LoadingIconButtonStateless extends StatelessWidget {
+  const LoadingIconButtonStateless({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    required this.isLoading,
+  });
+
+  final void Function() onTap;
+  final IconData icon;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        if (isLoading) const CircularProgressIndicator(),
+        IconButton(
+          onPressed: onTap,
+          icon: Icon(icon),
+        ),
+      ],
+    );
+  }
+}

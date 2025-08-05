@@ -273,6 +273,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get showMeals => 'Zobrazit jídla';
 
   @override
+  String get mealsDisabled => 'Jídla jsou vypnuta';
+
+  @override
   String get lunchTime => 'Čas oběda';
 
   @override
@@ -316,6 +319,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get passwordCantBeChanged => 'Heslo nelze změnit';
+
+  @override
+  String get canteen => 'Jídelna';
 
   @override
   String get invalidCanteenNumber => 'Neplatné číslo jídelny';
@@ -1076,4 +1082,16 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
+
+  @override
+  String get secondShort => ' sek';
+
+  @override
+  String get minutesShort => ' min';
+
+  @override
+  String get hoursShort => 'h';
+
+  @override
+  String get daysShort => 'd';
 }

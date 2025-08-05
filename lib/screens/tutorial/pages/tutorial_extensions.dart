@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/provider/baka_login_notifier.dart';
 import 'package:schoolarc/provider/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/strava_login_notifier.dart';
+import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

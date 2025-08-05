@@ -431,6 +431,12 @@ abstract class AppLocalizations {
   /// **'Show meals'**
   String get showMeals;
 
+  /// No description provided for @mealsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals disabled'**
+  String get mealsDisabled;
+
   /// No description provided for @lunchTime.
   ///
   /// In en, this message translates to:
@@ -520,6 +526,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password can\'t be changed'**
   String get passwordCantBeChanged;
+
+  /// No description provided for @canteen.
+  ///
+  /// In en, this message translates to:
+  /// **'Canteen'**
+  String get canteen;
 
   /// No description provided for @invalidCanteenNumber.
   ///
@@ -1220,7 +1232,7 @@ abstract class AppLocalizations {
   /// No description provided for @becameDeveloper.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve become the developer'**
+  /// **'You are now the developer'**
   String get becameDeveloper;
 
   /// No description provided for @settings.
@@ -1906,6 +1918,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase'**
   String get privacyPolicy;
+
+  /// No description provided for @secondShort.
+  ///
+  /// In en, this message translates to:
+  /// **' sec'**
+  String get secondShort;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **' min'**
+  String get minutesShort;
+
+  /// No description provided for @hoursShort.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursShort;
+
+  /// No description provided for @daysShort.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get daysShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

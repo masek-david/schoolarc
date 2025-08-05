@@ -144,7 +144,7 @@ class BakaService {
     }
 
     final parsedJson = json.decode(response.body);
-    final error = parsedJson['error'];
+    final error = parsedJson['error_description'];
     if (error != null) {
       throw ServiceException(error);
     }

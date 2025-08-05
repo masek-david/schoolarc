@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/baka_login_notifier.dart';
 import 'package:schoolarc/provider/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/strava_login_notifier.dart';
+import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/settings/widgets/import_export_row.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
