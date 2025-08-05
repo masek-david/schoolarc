@@ -52,4 +52,14 @@ class StravaLoginNotifier extends AsyncNotifier<bool> {
       state = AsyncError(e, stack);
     }
   }
+
+  Future<void> logOut() async {
+    state = const AsyncValue.loading();
+    try {
+      await stravaService.logOut();
+      state = const AsyncValue.data(false);
+    } catch (e, stack) {
+      state = AsyncError(e, stack);
+    }
+  }
 }

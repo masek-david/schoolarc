@@ -1,9 +1,14 @@
 # FIX
 cant complete homework from widget
+the specified refresh token has already been reddemed (in bakaservice)
 
-# NEW:
+write this somewhere else
 
-## RELEASE
+tests:
+    check translations
+    check dispose
+
+# RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
@@ -11,7 +16,67 @@ cant complete homework from widget
 - ⬜ plus plan - one time/yearly ???
     - ⬜ add to tutorial
 
+# FEATURES
 
+## UI
+- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
+- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
+- ⬜ rethink addnewtask bottom sheet
+    - ⬜ show on top if it is hw/exam
+    - ⬜ prevent from accidental scroll closing 
+    - ⬜ fix the scrolling
+    - ⬜ is everything needed to be shown ??
+- ⬜ settings use bigger headlines and scroll them
+- ⬜ on weekend, show info about upcoming week
+- ⬜ icons - hws, exams, subjects
+
+## RIVERPOD
+- ⬜ strava
+    - ⬜ stop saving the password 
+- ⬜ bakalari
+    - ⬜ timetable
+    - ⬜ homeworks
+        - ⬜ fix the frequency when is app searching for baka homeworks
+    - ⬜ name
+
+## OTHER
+- ⬜ reset password for firebase
+- ⬜ sync everything (hws, exams, subjects) properly 
+- ⬜ add google sign in + sign in with apple
+- ⬜ create settings for initial task
+    - ⬜ priority
+    - ⬜ subject
+    - ⬜ date
+    - ⬜ auto set date to next appearance
+- ⬜ translation - google sheets
+
+## notifications:
+- ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
+- ⬜ turn off notifications for weekend
+- ⬜ meals notifications (before meal?, remind to pick a week before?)
+
+## year recap
+- ⬜ translate
+- ⬜ in background move this years hws and exams tiles
+- ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
+
+## iOS
+- ⬜ state restoration
+- ⬜ widgets
+
+# MAYBE
+- ⬜ refactor baka_service - add separate file for http requests
+- ⬜ make everything react to touch (shrink)
+- ⬜ share tasks
+- ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
+- ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
+- ⬜ ? add images to meals
+- ⬜ ? remove slide to delete
+    
+
+
+# DONE
 - ✅ when should the widget be updated??
 - ✅ rework reorder methods (dont include old priority, old index, instead the Homework)
 - ✅ prejmenovat DTO na bez, ten pro hive na Data, Entity, DB, nebo DBO (database object)
@@ -36,62 +101,6 @@ cant complete homework from widget
     - ✅ routing
     - ✅ addbottomsheet
     - ✅ calendar day
-- ⬜ riverpod
-    - ⬜ strava
-    - ⬜ bakalari
-- ⬜ reset password for firebase
-- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
-- ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
-- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
-- ⬜ sync everything (hws, exams, subjects) properly 
-- ⬜ fix the frequency when is app searching for baka homeworks
-- ⬜ strava service
-    - ⬜ check it works 
-    - ⬜ stop saving the password 
-- ⬜ on weekend, show info about upcoming week
-- ⬜ settings use bigger headlines and scroll them
-- ⬜ create settings for initial task
-    - ⬜ priority
-    - ⬜ subject
-    - ⬜ date
-    - ⬜ auto set date to next appearance
-- ⬜ icons - hws, exams, subjects
-- ⬜ rethink addnewtask bottom sheet
-    - ⬜ show on top if it is hw/exam
-    - ⬜ prevent from accidental scroll closing 
-    - ⬜ fix the scrolling
-    - ⬜ is everything needed to be shown ??
-- ⬜ add google sign in + sign in with apple
-- ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ translation - google sheets
-
-## notifications:
-- ⬜ migrate to flutter_local_notifications
-- ⬜ remove some code for awesome notifications that was fixing something (in podfiles, other os setup)
-- ⬜ turn off notifications for weekend
-- ⬜ edge case - when the app is opened at 18:00 the notification could be old
-
-## year recap
-- ⬜ translate
-- ⬜ in background move this years hws and exams tiles
-- ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
-
-
-# MAYBE
-- ⬜ refactor baka_service - add separate file for http requests
-- ⬜ make everything react to touch (shrink)
-- ⬜ share tasks
-- ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
-- ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
-- ⬜ ? add images to meals
-- ⬜ ? remove slide to delete
-    
-## iOS
-- ⬜ state restoration
-- ⬜ widgets
-
-
-
 
 # VERSION 2.0.0
 - ✅ change package name (cz.masci.schoolarc)

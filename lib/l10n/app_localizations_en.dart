@@ -265,6 +265,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showMeals => 'Show meals';
 
   @override
+  String get mealsDisabled => 'Meals disabled';
+
+  @override
   String get lunchTime => 'Lunch time';
 
   @override
@@ -308,6 +311,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordCantBeChanged => 'Password can\'t be changed';
+
+  @override
+  String get canteen => 'Canteen';
 
   @override
   String get invalidCanteenNumber => 'Invalid canteen number';
@@ -680,7 +686,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pressMoreTimesToBecomeDeveloper => 'Press 2 more times to become the developer';
 
   @override
-  String get becameDeveloper => 'You\'ve become the developer';
+  String get becameDeveloper => 'You are now the developer';
 
   @override
   String get settings => 'Settings';
@@ -1058,4 +1064,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicy => '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
+
+  @override
+  String get secondShort => ' sec';
+
+  @override
+  String get minutesShort => ' min';
+
+  @override
+  String get hoursShort => 'h';
+
+  @override
+  String get daysShort => 'd';
 }

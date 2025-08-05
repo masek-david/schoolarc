@@ -18,9 +18,9 @@ class StravaService {
   bool? _ignoreCert;
   String? canteenCode;
 
-  final canteenCodeKey = 'canteenCode';
-  final usernameKey = 'stravaUsername';
-  final passwordKey = 'stravaPassword';
+  static const canteenCodeKey = 'canteenCode';
+  static const usernameKey = 'stravaUsername';
+  static const passwordKey = 'stravaPassword';
 
   /// saves the login info
   Future<void> registerUser({
@@ -121,7 +121,20 @@ class StravaService {
     return true;
   }
 
+  Future<void> logOut() async {
+    _sid = null;
+    _s5url = null;
+    _ignoreCert = null;
+    canteenCode = null;
+
+    await secureStorage.write(canteenCodeKey, '');
+    await secureStorage.write(usernameKey, '');
+    await secureStorage.write(passwordKey, '');
+  }
+
   Future<Map<DateTime, List<Meal>>> getMeals() async {
+    // await Future.delayed(const Duration(seconds: 1));
+    // return {};
     final loggedIn = await login();
     if (!loggedIn) {
       return await getMealsNoLogin();

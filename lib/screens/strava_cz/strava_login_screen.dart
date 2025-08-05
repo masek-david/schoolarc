@@ -1,11 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/strava_login_notifier.dart';
+import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -26,6 +24,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
   final _passwordController = TextEditingController();
   bool allowLogin = settings.get(Setting.allowStravaLogin);
   bool obscure = true;
+  String? loggedInSubtitle;
 
   @override
   void dispose() {
@@ -38,6 +37,16 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
   Future<void> getInfoFromStorage() async {
     _canteenController.text = await stravaService.getCanteenCode;
     _usernameController.text = await stravaService.getUsername;
+
+    if (_usernameController.text != '') {
+      setState(() {
+        loggedInSubtitle = _usernameController.text;
+      });
+    } else if (_canteenController.text != '') {
+      setState(() {
+        loggedInSubtitle = '${context.loc.canteen} ${_canteenController.text}';
+      });
+    }
   }
 
   @override
@@ -50,6 +59,11 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
   Widget build(BuildContext context) {
     final loc = context.loc;
     final useMeals = ref.watch(useMealsProvider);
+
+    final login = ref.watch(stravaLoginProvider);
+    final isLoading = login.isLoading;
+    final error = login.error;
+    final loggedIn = login.value == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,71 +104,73 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 4),
             ),
             const Divider(),
-            ref.watch(stravaLoginProvider).when(
-                  data: (data) => SettingTile(
-                    title: data ? context.loc.loggedIn : context.loc.loggedOut,
-                    leading: data
-                        ? const Icon(Icons.check_circle, color: Colors.green)
-                        : const LoggedOutIcon(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                  ),
-                  error: (error, stackTrace) => ErrorTile(
-                    error: error,
-                    text: context.loc.errorLoggingIn,
-                    allowActions: false,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                  ),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                ),
+            if (error == null && !isLoading)
+              SettingTile(
+                title: loggedIn ? context.loc.loggedIn : context.loc.loggedOut,
+                subtitle: loggedIn ? loggedInSubtitle : null,
+                leading: loggedIn
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : const LoggedOutIcon(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+            if (error != null)
+              ErrorTile(
+                error: error,
+                text: context.loc.errorLoggingIn,
+                allowActions: false,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+            if (isLoading) const Center(child: CircularProgressIndicator()),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    enabled: useMeals,
-                    keyboardType: TextInputType.number,
-                    controller: _canteenController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(15),
-                      border: const OutlineInputBorder(),
-                      labelText: loc.schoolCanteenId,
+            if (loggedIn == false)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      enabled: useMeals,
+                      keyboardType: TextInputType.number,
+                      controller: _canteenController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(15),
+                        border: const OutlineInputBorder(),
+                        labelText: loc.schoolCanteenId,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialogAdaptive(
-                      context: context,
-                      title: Text(loc.schoolCanteenId),
-                      content: Text(loc.schoolCanteenIdDescription),
-                      actions: [
-                        adaptiveDialogButton(
-                          context: context,
-                          child: Text(loc.close),
-                          onPressed: () => Navigator.pop(context),
-                        )
-                      ],
-                    );
-                  },
-                  icon: const Icon(Icons.info_outline),
-                ),
-              ],
-            ),
-            if (ref.watch(debugModeProvider) || kDebugMode)
-              SettingTile.withSwitch(
-                enabled: useMeals,
-                contentPadding: const EdgeInsets.all(0),
-                title: loc.allowStravaLogin,
-                onChanged: (value) {
-                  setState(() {
-                    settings.save(Setting.allowStravaLogin, value);
-                    allowLogin = value;
-                  });
-                },
-                value: allowLogin,
+                  IconButton(
+                    onPressed: () {
+                      showDialogAdaptive(
+                        context: context,
+                        title: Text(loc.schoolCanteenId),
+                        content: Text(loc.schoolCanteenIdDescription),
+                        actions: [
+                          adaptiveDialogButton(
+                            context: context,
+                            child: Text(loc.close),
+                            onPressed: () => Navigator.pop(context),
+                          )
+                        ],
+                      );
+                    },
+                    icon: const Icon(Icons.info_outline),
+                  ),
+                ],
               ),
-            if (allowLogin)
+            if (loggedIn == false)
+              if (ref.watch(debugModeProvider) || kDebugMode)
+                SettingTile.withSwitch(
+                  enabled: useMeals,
+                  contentPadding: const EdgeInsets.all(0),
+                  title: loc.allowStravaLogin,
+                  onChanged: (value) {
+                    setState(() {
+                      settings.save(Setting.allowStravaLogin, value);
+                      allowLogin = value;
+                    });
+                  },
+                  value: allowLogin,
+                ),
+            if (allowLogin && loggedIn == false)
               TextField(
                 enabled: useMeals,
                 controller: _usernameController,
@@ -165,8 +181,8 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                   labelText: loc.username,
                 ),
               ),
-            if (allowLogin) const SizedBox(height: 12),
-            if (allowLogin)
+            if (allowLogin && loggedIn == false) const SizedBox(height: 12),
+            if (allowLogin && loggedIn == false)
               Row(
                 children: [
                   Expanded(
@@ -193,20 +209,33 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 ],
               ),
             const SizedBox(height: 8),
-            FilledButton(
-              onPressed: useMeals
-                  ? () {
-                      ref.read(stravaLoginProvider.notifier).register(
-                            canteenCode: _canteenController.text,
-                            username:
-                                allowLogin ? _usernameController.text : '',
-                            password:
-                                allowLogin ? _passwordController.text : '',
-                          );
-                    }
-                  : null,
-              child: Text(loc.logIn),
-            ),
+            if (loggedIn == false)
+              FilledButton(
+                onPressed: useMeals
+                    ? () {
+                        ref.read(stravaLoginProvider.notifier).register(
+                              canteenCode: _canteenController.text,
+                              username:
+                                  allowLogin ? _usernameController.text : '',
+                              password:
+                                  allowLogin ? _passwordController.text : '',
+                            );
+                      }
+                    : null,
+                child: Text(loc.logIn),
+              ),
+            if (loggedIn == true)
+              OutlinedButton(
+                onPressed: useMeals
+                    ? () {
+                        _canteenController.clear();
+                        _passwordController.clear();
+                        _usernameController.clear();
+                        ref.read(stravaLoginProvider.notifier).logOut();
+                      }
+                    : null,
+                child: Text(loc.logOut),
+              ),
           ],
         ),
       ),

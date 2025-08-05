@@ -95,6 +95,7 @@
   "showMyNameSubtitle": "If enabled and logged in to Bakaláři, you will be greeted with your name",
   "showBakalariTimetable": "Show Bakaláři timetable",
   "showMeals": "Show meals",
+  "mealsDisabled": "Meals disabled",
   "lunchTime": "Lunch time",
   "lunchTimeSubtitle": "When meals for next day appear",
   "initialDate": "Initial date",
@@ -110,6 +111,7 @@
   "usernameMissing": "Username is missing",
   "passwordMissing": "Password is missing",
   "passwordCantBeChanged": "Password can't be changed",
+  "canteen": "Canteen",
   "invalidCanteenNumber": "Invalid canteen number",
   "invalidCanteenNumberLength": "Invalid canteen number length, only allowed is 4",
   "canteenNumberMissing": "Canteen number is missing",
@@ -347,6 +349,10 @@
   "agree": "Agree",
   "disagree": "Disagree",
   "view": "View",
-  "newHomeworksFound":"{count} new {count, plural, one{piece} other{pieces}} of homework found",
-  "privacyPolicy": "# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase"
+  "newHomeworksFound": "{count} new {count, plural, one{piece} other{pieces}} of homework found",
+  "privacyPolicy": "# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase",
+  "secondShort": " sec",
+  "minutesShort": " min",
+  "hoursShort": "h",
+  "daysShort": "d"
 }

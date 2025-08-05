@@ -1,118 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/error_tile.dart';
 import 'package:schoolarc/widgets/meals/meal_tile.dart';
 
-class MealsScreen extends ConsumerStatefulWidget {
-  const MealsScreen({
-    super.key,
-  });
+class MealsScreen extends ConsumerWidget {
+  const MealsScreen({super.key});
 
-  @override
-  ConsumerState<MealsScreen> createState() => _MealsScreenState();
-}
-
-class _MealsScreenState extends ConsumerState<MealsScreen> {
-  var meals = stravaService.getMeals();
-
-  void refresh() {
-    setState(() {
-      meals = stravaService.getMeals();
-    });
+  void refresh(WidgetRef ref) {
+    ref.read(stravaMealsProvider.notifier).refresh();
   }
 
   @override
-  Widget build(BuildContext context) {
-    var now = DateTime.now();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meals = ref.watch(stravaMealsProvider);
+    final isLoading = meals.isLoading;
+    final error = meals.error;
+    final data = meals.value;
 
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
+    var now = DateTime.now();
 
-    if (showMealsUntil
-        .isBefore(TimeOfDay(hour: now.hour, minute: now.minute))) {
+    if (showMealsUntil.isBefore(
+      TimeOfDay(hour: now.hour, minute: now.minute),
+    )) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }
 
-    final todayLocal000 = DateTime(now.year, now.month, now.day, 0, 0);
+    final todayLocalDate = DateTime(now.year, now.month, now.day, 0, 0);
+
+    int itemCount = data?.keys.length ?? 1;
+    if (itemCount == 0) {
+      itemCount = 1;
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(context.loc.meals),
+        actions: [
+          AgoText(stream: stravaMealsAgeProvider),
+          LoadingIconButtonStateless(
+            icon: Icons.refresh,
+            onTap: () => refresh(ref),
+            isLoading: isLoading,
+          ),
+        ],
       ),
-      body: FutureBuilder(
-        future: meals,
-        builder: (context, snapshot) {
-          bool isLoading = false;
+      body: RefreshIndicator(
+        onRefresh: () async {
+          refresh(ref);
+        },
+        child: ListView.builder(
+          itemCount: itemCount,
+          itemBuilder: (context, index) {
+            if (error != null) {
+              return ErrorTile(
+                error: error,
+                text: context.loc.mealsNotLoaded,
+              );
+            }
+            if (data?.isEmpty ?? false) {
+              Center(child: Text(context.loc.noMealsFound));
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            isLoading = true;
-          } else if (snapshot.hasError) {
-            return ErrorTile(
-              error: snapshot.error,
-              text: context.loc.mealsNotLoaded,
-            );
-          } else if (!snapshot.hasData) {
-            return Center(child: Text(context.loc.noMealsFound));
-          }
+            final date =
+                todayLocalDate.toUtc().add(Duration(days: index)).toLocal();
 
-          int itemCount = snapshot.data?.keys.length ?? 1;
-          if (itemCount == 0) {
-            itemCount = 1;
-          }
+            final mealsForToday = data?[date];
+            final bool empty = mealsForToday == null;
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              refresh();
-            },
-            child: ListView.builder(
-              itemCount: itemCount,
-              itemBuilder: (context, index) {
-                final date =
-                    todayLocal000.toUtc().add(Duration(days: index)).toLocal();
-
-                final mealsForToday = snapshot.data?[date];
-                final bool empty = mealsForToday == null;
-
-                return Card(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextSeparator(
-                          text: isLoading
+            return Card(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          isLoading
                               ? context.loc.loading
                               : empty
                                   ? '${context.loc.noMealsFor} ${date.dateText().toLowerCase()}'
                                   : '${context.loc.mealsFor} ${date.dateText().toLowerCase()}',
-                          actions: [
-                            if (isLoading)
-                              LoadingIconButton(
-                                icon: Icons.refresh,
-                                onTap: () async {},
-                                isLoading: true,
-                              ),
-                          ],
-                        ),
-                        if (!empty)
-                          ...mealsForToday.map((meal) {
-                            return MealTile(meal: meal);
-                          }),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
+                          style: context.txt.bodyLarge,
+                        )),
+                    if (!empty)
+                      ...mealsForToday.map(
+                        (meal) => MealTile(meal: meal),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

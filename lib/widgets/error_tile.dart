@@ -15,11 +15,16 @@ class ErrorTile extends StatelessWidget {
   final String? text;
   final Object? error;
   final bool allowActions;
+
+  /// If this property is null, then [ListTileThemeData.contentPadding] is used.
+  /// If that is also null and [ThemeData.useMaterial3] is true, then a default value of
+  /// EdgeInsetsDirectional.only(start: 16.0, end: 24.0) will be used.
+  /// Otherwise, a default value of EdgeInsets.symmetric(horizontal: 16.0) will be used.
   final EdgeInsetsGeometry? contentPadding;
   final List<Widget>? actions;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     final scheme = Theme.of(context).colorScheme;
     ExceptionActions? action;
 

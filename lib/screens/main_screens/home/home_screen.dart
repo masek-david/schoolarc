@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
@@ -16,7 +16,6 @@ import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
-import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
@@ -39,18 +38,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   late TimeTable defaultTimeTable = timetableDb.timeTable;
   Future<TimeTable?>? bakaTimetable;
-  late Future<Map<DateTime, List<Meal>>>? mealsFuture;
 
   @override
   void initState() {
     super.initState();
-
-    mealsFuture = stravaService.getMeals().then(
-      (value) {
-        updateStravaWidget(value);
-        return value;
-      },
-    );
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
@@ -61,32 +52,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> refresh(BuildContext context) async {
     tryGettingNewHomeworks(context);
+    ref.read(stravaMealsProvider.notifier).refresh();
 
     try {
       Future.wait([
-        refreshMeals(),
         refreshTimetable(ref),
         if (ref.watch(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
       showMessage(context, e.toString(), isError: true);
     }
-
-    return;
-  }
-
-  Future<void> refreshMeals() async {
-    setState(() {
-      mealsFuture = stravaService.getMeals();
-    });
-
-    try {
-      final meals = await mealsFuture;
-
-      if (meals != null) {
-        updateStravaWidget(meals);
-      }
-    } catch (_) {}
 
     return;
   }
@@ -218,10 +193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Flexible(
                           child: Column(
                         children: [
-                          MealsCard(
-                            meals: mealsFuture,
-                            refresh: refreshMeals,
-                          ),
+                          const MealsCard(),
                           TimetableCard(
                             refresh: () => refreshTimetable(ref),
                             defaultTimeTable: defaultTimeTable,
@@ -238,11 +210,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (!isWide)
-                            MealsCard(
-                              meals: mealsFuture,
-                              refresh: refreshMeals,
-                            ),
+                          if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
                               refresh: () => refreshTimetable(ref),
