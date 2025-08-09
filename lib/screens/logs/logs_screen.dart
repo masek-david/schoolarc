@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
 import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/logs/log_screen.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/send_bug_report.dart';
@@ -118,7 +118,7 @@ class _LogsScreenState extends State<LogsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSeparator(
+                        TextActions(
                           text: logs[index].$2.date.toString(),
                           actions: [
                             IconButton(

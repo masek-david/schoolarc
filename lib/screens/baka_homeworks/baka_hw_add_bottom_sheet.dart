@@ -56,12 +56,22 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
                 ),
               ],
             ),
+          if (widget.hw.subject?.id == '')
+            Row(
+              spacing: 8,
+              children: [
+                Icon(Icons.info, color: errorColor),
+                Text(
+                  '${context.loc.subjectHasntBeenAdded}\n${context.loc.tryImportingSubjectFromBakalari}',
+                  style: TextStyle(color: errorColor),
+                ),
+              ],
+            ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               FilledButton(
                 onPressed: () {
-                  Navigator.pop(context);
                   widget.onSave(
                     true,
                     widget.hw.copyWith(
@@ -73,7 +83,6 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
               ),
               FilledButton(
                 onPressed: () {
-                  Navigator.pop(context);
                   widget.onSave(
                     false,
                     widget.hw.copyWith(

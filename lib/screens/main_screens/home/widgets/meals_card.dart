@@ -22,17 +22,6 @@ class _MealsCardState extends ConsumerState<MealsCard> {
   final PageController _pageController = PageController();
 
   @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        ref.read(stravaMealsProvider.notifier).refreshIfOld();
-      },
-    );
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -47,7 +36,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.value;
+    final data = meals.valueOrNull;
 
     final isVisible = ref.watch(useMealsProvider);
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
@@ -90,14 +79,13 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                   final bool empty = mealsForToday == null;
 
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.only(left: 4),
                           child: Row(
                             children: [
                               if (isLoading && error == null)
@@ -124,7 +112,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                     text: context.loc.mealsNotLoaded,
                                   ),
                                 ),
-                              LoadingIconButtonStateless(
+                              LoadingIconButton(
                                 icon: Icons.refresh,
                                 onTap: refresh,
                                 isLoading: isLoading,

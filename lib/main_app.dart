@@ -5,9 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/exams/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
@@ -30,6 +33,7 @@ var _scaffoldKey = GlobalKey<ScaffoldState>();
 void openDrawer() {
   _scaffoldKey.currentState?.openDrawer();
 }
+
 void closeDrawer() {
   _scaffoldKey.currentState?.closeDrawer();
 }
@@ -103,6 +107,12 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       );
     }
 
+    // try refreshing data for homescreen
+    if (newScreenIndex == 0) {
+      ref.read(currentTimetableProvider.notifier).refreshIfOld();
+      ref.read(stravaMealsProvider.notifier).refreshIfOld();
+    }
+
     setState(() {
       currentPageIndex.value = newScreenIndex;
     });
@@ -146,7 +156,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        tryGettingNewHomeworks(context);
+        ref.read(bakaHomeworksProvider.notifier);
       },
     );
   }

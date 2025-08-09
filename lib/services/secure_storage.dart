@@ -14,4 +14,8 @@ class SecureStorage {
   Future<void> write(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
+
+  void deleteAllFromDisk(){
+    _storage.deleteAll();
+  }
 }

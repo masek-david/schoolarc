@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
 import 'package:schoolarc/widgets/tile/hw_tile.dart';
 
 class HomeworkList extends StatelessWidget {
@@ -30,7 +30,7 @@ class HomeworkList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (text != null) TextSeparator(text: text!, greydOut: hwList.isEmpty),
+        if (text != null) TextActions(text: text!, greydOut: hwList.isEmpty),
         ...List.generate(
           hwList.length,
           (index) {

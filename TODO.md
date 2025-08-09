@@ -1,4 +1,6 @@
 # FIX
+update state when importing subject from current timetable
+rework notifiers (baka and strava) - add isFetching, listen() instead of watch()
 cant complete homework from widget
 the specified refresh token has already been reddemed (in bakaservice)
 
@@ -32,13 +34,11 @@ tests:
 - ⬜ icons - hws, exams, subjects
 
 ## RIVERPOD
-- ⬜ strava
-    - ⬜ stop saving the password 
 - ⬜ bakalari
-    - ⬜ timetable
+    - ✅ timetable
     - ⬜ homeworks
         - ⬜ fix the frequency when is app searching for baka homeworks
-    - ⬜ name
+    - ✅ name
 
 ## OTHER
 - ⬜ reset password for firebase
@@ -49,6 +49,7 @@ tests:
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
+- ⬜ strava stop saving the password 
 - ⬜ translation - google sheets
 
 ## notifications:
@@ -73,6 +74,7 @@ tests:
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
+- ⬜ merge duplicate subjects
     
 
 

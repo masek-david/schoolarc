@@ -13,13 +13,13 @@ class Subject {
     required this.order,
   });
 
-  String name;
-  String shortcut;
-  String id;
-  String? bakaId;
-  DateTime timestamp;
-  bool isDeleted;
-  int order;
+  final String name;
+  final String shortcut;
+  final String id;
+  final String? bakaId;
+  final DateTime timestamp;
+  final bool isDeleted;
+  final int order;
 
   SubjectEntity convert() {
     return SubjectEntity(

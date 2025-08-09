@@ -80,6 +80,12 @@ class TimeTableLesson {
             if (room != null) Text('${context.loc.room}: $room'),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.loc.close),
+          ),
+        ],
       ),
     );
   }

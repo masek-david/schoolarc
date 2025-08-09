@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-class LoadingIconButton extends StatefulWidget {
-  const LoadingIconButton({
+class LoadingIconButtonWithFuture extends StatefulWidget {
+  const LoadingIconButtonWithFuture({
     super.key,
     required this.icon,
     required this.onTap,
-    this.isLoading,
   });
 
   final Future<void> Function() onTap;
   final IconData icon;
-  final bool? isLoading;
 
   @override
-  State<LoadingIconButton> createState() => _LoadingIconButtonState();
+  State<LoadingIconButtonWithFuture> createState() =>
+      _LoadingIconButtonWithFutureState();
 }
 
-class _LoadingIconButtonState extends State<LoadingIconButton> {
+class _LoadingIconButtonWithFutureState
+    extends State<LoadingIconButtonWithFuture> {
   bool isLoading = false;
 
   @override
@@ -24,8 +24,7 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (isLoading || widget.isLoading == true)
-          const CircularProgressIndicator(),
+        if (isLoading) const CircularProgressIndicator(),
         IconButton(
           onPressed: () {
             setState(() {
@@ -49,8 +48,8 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
   }
 }
 
-class LoadingIconButtonStateless extends StatelessWidget {
-  const LoadingIconButtonStateless({
+class LoadingIconButton extends StatelessWidget {
+  const LoadingIconButton({
     super.key,
     required this.icon,
     required this.onTap,

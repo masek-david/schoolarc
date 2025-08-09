@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_separator.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
 import 'package:schoolarc/screens/main_screens/exams/exam_tile.dart';
 
 class ExamList extends ConsumerWidget {
@@ -42,7 +42,7 @@ class ExamList extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextSeparator(text: text, greydOut: examList.isEmpty),
+        TextActions(text: text, greydOut: examList.isEmpty),
         ...List.generate(
           examList.length,
           (index) {

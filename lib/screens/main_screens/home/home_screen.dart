@@ -4,10 +4,10 @@ import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
@@ -26,55 +26,22 @@ import 'package:schoolarc/widgets/homework_list.dart';
 import 'package:schoolarc/widgets/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  var dateToShow = DateTime.now();
-
-  late TimeTable defaultTimeTable = timetableDb.timeTable;
-  Future<TimeTable?>? bakaTimetable;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        refreshTimetable(ref);
-      },
-    );
-  }
-
-  Future<void> refresh(BuildContext context) async {
-    tryGettingNewHomeworks(context);
-    ref.read(stravaMealsProvider.notifier).refresh();
-
+  Future<void> refresh(BuildContext context, WidgetRef ref) async {
     try {
-      Future.wait([
-        refreshTimetable(ref),
-        if (ref.watch(useCloudSyncProvider)) syncAllTasks(ref),
+      await Future.wait([
+        ref.read(bakaHomeworksProvider.notifier).refresh(),
+        ref.read(stravaMealsProvider.notifier).refresh(),
+        ref.read(currentTimetableProvider.notifier).refresh(),
+        if (ref.read(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
-      showMessage(context, e.toString(), isError: true);
+      if (context.mounted) {
+        showMessage(context, e.toString(), isError: true);
+      }
     }
-
-    return;
-  }
-
-  Future<void> refreshTimetable(WidgetRef ref) async {
-    setState(() {
-      bakaTimetable = bakaService.getCurrentTimetable(dateToShow, ref);
-    });
-
-    try {
-      await bakaTimetable;
-    } catch (_) {}
-
     return;
   }
 
@@ -91,7 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
     final exams = ref.watch(examsDatesProvider);
@@ -111,7 +78,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     List<Homework> hwToShow = [];
     List<Exam> examToShow = [];
 
-    dateToShow = DateTime.now();
+    var dateToShow = DateTime.now();
+    final defaultTimeTable = timetableDb.timeTable;
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
 
     bool showtomorrow = isLessonsEmpty(upcomingLessons);
@@ -134,7 +102,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     String whenText = showtomorrow
         ? context.loc.tomorrow.toLowerCase()
         : context.loc.today.toLowerCase();
-    bool showBaka = ref.watch(useBakaProvider);
 
     final isWide = context.isWide;
 
@@ -159,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: () => refresh(context),
+          onRefresh: () => refresh(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
@@ -195,13 +162,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           const MealsCard(),
                           TimetableCard(
-                            refresh: () => refreshTimetable(ref),
-                            defaultTimeTable: defaultTimeTable,
-                            bakaTimetable: bakaTimetable,
                             dateToShow: dateToShow,
                             whenText: whenText,
-                            showOnline: showBaka,
-                            ref: ref,
                           ),
                         ],
                       )),
@@ -213,13 +175,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              refresh: () => refreshTimetable(ref),
-                              defaultTimeTable: defaultTimeTable,
-                              bakaTimetable: bakaTimetable,
                               dateToShow: dateToShow,
                               whenText: whenText,
-                              showOnline: showBaka,
-                              ref: ref,
                             ),
                           if (missedHw.isNotEmpty)
                             Card(

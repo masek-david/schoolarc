@@ -70,8 +70,12 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _rotationController.dispose();
-    _scaleController.dispose();
+    try {
+      _rotationController.dispose();
+      _scaleController.dispose();
+    } on Object {
+      // somehow, sometimes the controllers are already disposed
+    }
     super.dispose();
   }
 

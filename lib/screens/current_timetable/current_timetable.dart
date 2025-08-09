@@ -20,13 +20,13 @@ class CurrentTimetableScreen extends ConsumerStatefulWidget {
 
 class _CurrentTimetableScreenState
     extends ConsumerState<CurrentTimetableScreen> {
-  late Future<TimeTable> timetable = bakaService.getCurrentTimetable(date, ref);
+  late Future<TimeTable> timetable = bakaService.getCurrentTimetable(date);
   DateTime date = DateTime.now();
   bool isLoading = true;
 
   Future<void> refresh() async {
     setState(() {
-      timetable = bakaService.getCurrentTimetable(date, ref);
+      timetable = bakaService.getCurrentTimetable(date);
     });
 
     try {
@@ -51,21 +51,21 @@ class _CurrentTimetableScreenState
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            LoadingIconButton(
+            LoadingIconButtonWithFuture(
               icon: Icons.arrow_back,
               onTap: () async {
                 date = date.subtract(const Duration(days: 7));
                 return refresh();
               },
             ),
-            LoadingIconButton(
+            LoadingIconButtonWithFuture(
               icon: Icons.home,
               onTap: () async {
                 date = DateTime.now();
                 return refresh();
               },
             ),
-            LoadingIconButton(
+            LoadingIconButtonWithFuture(
               icon: Icons.arrow_forward,
               onTap: () async {
                 date = date.add(const Duration(days: 7));

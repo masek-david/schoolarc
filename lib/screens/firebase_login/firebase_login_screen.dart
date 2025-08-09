@@ -31,7 +31,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
     bool useCloudSync = ref.watch(useCloudSyncProvider);
 
     final state = ref.watch(firebaseLoginProvider);
-    final loggedIn = state.value == true;
+    final loggedIn = state.valueOrNull == true;
 
     return Scaffold(
       appBar: AppBar(

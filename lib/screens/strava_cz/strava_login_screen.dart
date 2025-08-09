@@ -63,7 +63,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
     final login = ref.watch(stravaLoginProvider);
     final isLoading = login.isLoading;
     final error = login.error;
-    final loggedIn = login.value == true;
+    final loggedIn = login.valueOrNull == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -213,13 +213,16 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               FilledButton(
                 onPressed: useMeals
                     ? () {
-                        ref.read(stravaLoginProvider.notifier).register(
+                        ref
+                            .read(stravaLoginProvider.notifier)
+                            .register(
                               canteenCode: _canteenController.text,
                               username:
                                   allowLogin ? _usernameController.text : '',
                               password:
                                   allowLogin ? _passwordController.text : '',
-                            );
+                            )
+                            .then((value) => getInfoFromStorage());
                       }
                     : null,
                 child: Text(loc.logIn),

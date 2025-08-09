@@ -178,11 +178,11 @@ class HwNotifier extends Notifier<Map<String, Homework>>
   @override
   Map<String, Homework> build() {
     // listen to subjectsProvider changes
-    ref.listen(subjectsProvider, (_, next) {
+    ref.listen(subjectsNonDeletedProvider, (_, next) {
       subjects = next;
       _loadState();
     });
-    subjects = ref.read(subjectsProvider);
+    subjects = ref.read(subjectsNonDeletedProvider);
 
     listenToFirebase();
     _checkForDeleted();
@@ -409,7 +409,6 @@ class HwNotifier extends Notifier<Map<String, Homework>>
         ...state,
         editedHw.id: editedHw.copyWith(isBeingAnimated: false)
       };
-      state = Map.from(state);
     }
   }
 
@@ -508,7 +507,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
 
   void convert(Homework hw) {
     delete(hw);
-    ref.read(examProvider.notifier).saveNew(hw.toExam());
+    ref.read(examProvider.notifier).saveNew(hw.toExamEntity());
   }
 
   Future<void> completeById(String id, bool nowIsCompleted) async {

@@ -235,4 +235,8 @@ class SettingsDatabase {
       return false;
     }
   }
+
+  void deleteAllFromDisk(){
+    _settingsBox.deleteFromDisk();
+  }
 }

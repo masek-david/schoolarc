@@ -22,10 +22,10 @@ class BakaHomework extends Task {
   });
 
   final String bakaId;
-  bool alreadyAdded;
+  final bool alreadyAdded;
   final bool alreadySeen;
 
-  Homework toNormalHw() {
+  Homework toHw() {
     return Homework(
         subject: subject,
         text: text,

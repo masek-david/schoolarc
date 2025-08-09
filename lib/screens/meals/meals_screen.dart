@@ -21,7 +21,7 @@ class MealsScreen extends ConsumerWidget {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.value;
+    final data = meals.valueOrNull;
 
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
     var now = DateTime.now();
@@ -44,7 +44,7 @@ class MealsScreen extends ConsumerWidget {
         title: Text(context.loc.meals),
         actions: [
           AgoText(stream: stravaMealsAgeProvider),
-          LoadingIconButtonStateless(
+          LoadingIconButton(
             icon: Icons.refresh,
             onTap: () => refresh(ref),
             isLoading: isLoading,

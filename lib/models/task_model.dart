@@ -49,9 +49,8 @@ class Task {
         timestamp = DateTime.now().toUtc(),
         stateReaddingVersion = 0;
 
-  HomeworkEntity toHw() {
+  HomeworkEntity toHwEntity() {
     return HomeworkEntity(
-      // id: id,
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
@@ -64,7 +63,7 @@ class Task {
     );
   }
 
-  ExamEntity toExam() {
+  ExamEntity toExamEntity() {
     return ExamEntity(
       isDeleted: isDeleted,
       subjectId: subject?.id,

@@ -80,6 +80,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       return;
     }
     _tokenExpirationTimer?.cancel();
-    state = const AsyncValue.data(true);
+    state = const AsyncValue.data(false);
   }
 }

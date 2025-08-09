@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
+import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/homework_id_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/services/bakalari/baka_homeworks_database.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/secure_storage.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -29,13 +31,27 @@ class DbInfoScreen extends ConsumerWidget {
         child: ListView(
           children: [
             if (kDebugMode)
-              FloatingActionButton.extended(
+              FilledButton.tonalIcon(
                 onPressed: () {
                   HomeworksDatabase().deleteAllFromDisk();
                   SubjectDatabase().deleteAllFromDisk();
                   ExamDatabase().deleteAllFromDisk();
+                  SettingsDatabase().deleteAllFromDisk();
+                  BakaHomeworksDatbase().deleteAllFromDisk();
                 },
                 label: const Text('delete from disk'),
+                icon: const Icon(Icons.bug_report),
+              ),
+            const SizedBox(height: 8),
+            if (kDebugMode)
+              FilledButton.tonalIcon(
+                onPressed: () {
+                  bakaService.logOut();
+                  stravaService.logOut();
+                  ref.read(firebaseServiceProvider).logOut();
+                  secureStorage.deleteAllFromDisk();
+                },
+                label: const Text('sign out everywhere'),
                 icon: const Icon(Icons.bug_report),
               ),
             const Divider(),

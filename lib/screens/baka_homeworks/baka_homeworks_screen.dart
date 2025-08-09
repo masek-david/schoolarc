@@ -1,156 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
-import 'package:schoolarc/provider/exam_notifier.dart';
-import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/screens/baka_homeworks/baka_hw_tile.dart';
+import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
 import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/error_tile.dart';
 
-class BakaHomeworksScreen extends ConsumerStatefulWidget {
+class BakaHomeworksScreen extends ConsumerWidget {
   const BakaHomeworksScreen({super.key});
 
-  @override
-  ConsumerState<BakaHomeworksScreen> createState() =>
-      _BakaHomeworksScreenState();
-}
+  void import(BuildContext context, BakaHomework hw, bool isHomework,
+      WidgetRef ref) async {
+    await ref.read(bakaHomeworksProvider.notifier).import(hw, isHomework);
 
-class _BakaHomeworksScreenState extends ConsumerState<BakaHomeworksScreen> {
-  Future<List<BakaHomework>>? homeworksFuture;
-  var homeworks = <BakaHomework>[];
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        refresh();
-      },
-    );
-    super.initState();
-  }
-
-  void add(BuildContext context, BakaHomework hw, bool isHomework) {
-    if (isHomework) {
-      ref.read(hwProvider.notifier).saveNew(
-            hw
-                .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false)
-                .toHw(),
-          );
-    } else {
-      ref.read(examProvider.notifier).saveNew(
-            hw.copyWith(timestamp: DateTime.now().toUtc()).toExam(),
-          );
+    if (context.mounted) {
+      final loc = context.loc;
+      showMessage(context,
+          '${isHomework ? loc.homeworks(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
     }
-
-    bakaHomeworkService.addedHomework(hw.bakaId);
-
-    setState(() {
-      homeworks
-          .firstWhere(
-            (element) => element.bakaId == hw.bakaId,
-          )
-          .alreadyAdded = true;
-    });
-    final loc = context.loc;
-    showMessage(context,
-        '${isHomework ? loc.homeworks(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
-  }
-
-  Future<void> refresh() async {
-    setState(() {
-      homeworksFuture = bakaService.getHomeworks();
-    });
-
-    try {
-      await homeworksFuture;
-    } catch (_) {}
-
-    return;
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bakaHw = ref.watch(bakaHomeworksProvider);
+    final isLoading = bakaHw.isLoading;
+    final error = bakaHw.error;
+    final data = bakaHw.value;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.loc.hwFromBaka),
+        actions: [
+          AgoText(stream: bakaHomeworksAgeProvider),
+          LoadingIconButton(
+            isLoading: isLoading,
+            onTap: ref.read(bakaHomeworksProvider.notifier).refresh,
+            icon: Icons.refresh,
+          ),
+        ],
       ),
-      body: FutureBuilder(
-        future: homeworksFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Builder(
+        builder: (context) {
+          if (isLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (snapshot.hasError) {
+          }
+          if (error != null) {
             return ErrorTile(
-              error: snapshot.error,
+              error: error,
               actions: [
                 IconButton(
-                  onPressed: refresh,
+                  onPressed: ref.read(bakaHomeworksProvider.notifier).refresh,
                   icon: const Icon(Icons.refresh),
                 ),
               ],
             );
-          } else if (snapshot.data?.isEmpty ?? true) {
+          }
+          if (data == null || data.isEmpty) {
             return EmptyMessage(
               asset: 'assets/confetti.svg',
               message: context.loc.noHomeworks,
             );
           }
 
-          homeworks = snapshot.data!;
-
-          final newHw = homeworks.where((hw) => !hw.alreadySeen).toList();
-          final otherHw = homeworks.where((hw) => hw.alreadySeen).toList();
-          otherHw.sort((a, b) => (a.deadline.compareTo(b.deadline)));
-          otherHw.sort((a, b) => (a.alreadyAdded == b.alreadyAdded
-              ? 0
-              : (a.alreadyAdded ? 1 : -1)));
-
-          bool showNew = newHw.isNotEmpty;
+          data.sort(
+            (a, b) => a.deadline.compareTo(b.deadline),
+          );
+          data.sort((a, b) =>
+              (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)));
 
           return ListView.builder(
-            itemCount: otherHw.length + (showNew ? 1 : 0),
+            itemCount: data.length,
             itemBuilder: (context, index) {
-              if (index == 0 && showNew) {
-                return Card(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16, top: 16),
-                        child: Text(
-                          context.loc.newHomeworks,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                      ...newHw.map(
-                        (hw) {
-                          bakaHomeworkService.seenHomework(hw.bakaId);
+              final hw = data[index];
+              final isFirstNew = !hw.alreadySeen && index == 0;
+              final isLastNew = index == data.length - 1 ||
+                  !hw.alreadySeen &&
+                      data.elementAtOrNull(index)?.alreadySeen == true;
 
-                          return BakaHwTile(
-                            hw: hw,
-                            onSave: (isHomework, hw) =>
-                                add(context, hw, isHomework),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+              final tile = BakaHwTile(
+                hw: hw,
+                onSave: (isHomework, hw) =>
+                    import(context, hw, isHomework, ref),
+              );
+
+              if (hw.alreadySeen) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  child: tile,
                 );
               }
 
-              BakaHomework hw = otherHw[index - (showNew ? 1 : 0)];
-
-              return BakaHwTile(
-                hw: hw,
-                onSave: (isHomework, hw) {
-                  add(context, hw, isHomework);
-                  Navigator.pop(context);
-                },
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(isFirstNew ? 16 : 0),
+                    bottom: Radius.circular(isLastNew ? 16 : 0),
+                  ),
+                  color: context.col.surfaceContainerHighest,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 8, 8),
+                  child: isFirstNew
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                context.loc.newHomeworks,
+                                style: context.txt.titleMedium,
+                              ),
+                            ),
+                            tile
+                          ],
+                        )
+                      : tile,
+                ),
               );
             },
           );

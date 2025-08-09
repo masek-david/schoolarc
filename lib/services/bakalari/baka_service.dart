@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
@@ -72,8 +71,6 @@ class BakaService {
         'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
     await _callLogin(url, head, body);
-
-    loadName();
     return;
   }
 
@@ -99,9 +96,10 @@ class BakaService {
     await _callLogin(url, head, body);
 
     if (keepLoggedIn) {
-      secureStorage.write(SecureStorage.bakaRefreshTokenKey, _refreshToken!);
-      secureStorage.write(SecureStorage.bakaSchoolNameKey, school);
-      secureStorage.write(SecureStorage.bakaUsernameKey, username);
+      await secureStorage.write(
+          SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+      await secureStorage.write(SecureStorage.bakaSchoolNameKey, school);
+      await secureStorage.write(SecureStorage.bakaUsernameKey, username);
     } else {
       // it has to be overwriten if the user chooses
       logOut();
@@ -113,11 +111,9 @@ class BakaService {
     _refreshToken = null;
     tokenExpiration = null;
 
-    Future.wait([
-      secureStorage.write(SecureStorage.bakaRefreshTokenKey, ''),
-      secureStorage.write(SecureStorage.bakaSchoolNameKey, ''),
-      secureStorage.write(SecureStorage.bakaUsernameKey, ''),
-    ]);
+    await secureStorage.write(SecureStorage.bakaRefreshTokenKey, '');
+    await secureStorage.write(SecureStorage.bakaSchoolNameKey, '');
+    await secureStorage.write(SecureStorage.bakaUsernameKey, '');
   }
 
   /// logs in, returns errors and sets this._refreshToken, this._accessToken
@@ -165,36 +161,27 @@ class BakaService {
         );
   }
 
-  Future<void> loadName() async {
-    if (settings.get(Setting.userName) != null || !isLoggedIn) {
-      return;
-    }
-
+  Future<String> getUsername() async {
     Response response;
-    try {
-      String schoolName = await this.schoolName;
-      final url = Uri(
-        scheme: 'https',
-        host: "$schoolName.bakalari.cz",
-        path: "/api/3/user",
-      );
+    String schoolName = await this.schoolName;
+    final url = Uri(
+      scheme: 'https',
+      host: "$schoolName.bakalari.cz",
+      path: "/api/3/user",
+    );
 
-      response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": " Bearer $_accessToken",
-        },
-      );
-    } on Object {
-      return;
-    }
+    response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": " Bearer $_accessToken",
+      },
+    );
 
     final json = jsonDecode(response.body);
-
     String fullName = json['FullName'];
 
-    settings.save(Setting.userName, fullName.replaceAll(',', '').split(' ')[1]);
+    return fullName.replaceAll(',', '').split(' ')[1];
   }
 
   /// imports permanent timetable and saves it
@@ -277,7 +264,7 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTable> getCurrentTimetable(DateTime date, WidgetRef ref) async {
+  Future<TimeTable> getCurrentTimetable(DateTime date) async {
     if (!isLoggedIn) {
       await refreshLogin();
     }
@@ -342,7 +329,7 @@ class BakaService {
     final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
       subjectsJson,
       createIfMissing: false,
-      ref: ref,
+      ref: null,
     );
 
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
@@ -404,16 +391,21 @@ class BakaService {
     return timeTable;
   }
 
-  /// to each bakalari subjects ID maps a local subject, based on saved bakaId
+  /// To each bakalari subject ID maps a local subject, based on the saved bakaId
   ///
-  /// if such subject doesnt exist yet, it is created
-  /// and if [createIfMissing] is true, it is also permanently saved
+  /// If such subject doesnt exist yet, it is created
+  /// and if [createIfMissing] is true, it is also  saved
+  ///
+  /// If [createIfMissing] is true, [ref] can't be null
   Future<Map<String, Subject>> _bakaSubjectIdToSubject(
     List<dynamic> subjectsJson, {
     required bool createIfMissing,
-    required WidgetRef ref,
+    required WidgetRef? ref,
   }) async {
-    // bakaId to subject
+    if (createIfMissing && ref == null) {
+      throw Exception('If createIfMissing is true, ref can\'t be null');
+    }
+
     final db = subjectsDb.getDatabase();
     db.removeWhere((key, value) => value.isDeleted);
 
@@ -444,7 +436,7 @@ class BakaService {
         timestamp: DateTime.now().toUtc(),
       );
       if (createIfMissing) {
-        newSubject = await ref
+        newSubject = await ref!
             .read(subjectsProvider.notifier)
             .saveNew(newSubject.convert());
       }
@@ -486,68 +478,132 @@ class BakaService {
     return lessons;
   }
 
-  Future<List<BakaHomework>> getHomeworks(
-      {void Function(int count)? onNewFound}) async {
-    if (!isLoggedIn) {
-      await refreshLogin();
-    }
+  Future<List<BakaHomework>> getHomeworks() async {
+    // if (!isLoggedIn) {
+    //   await refreshLogin();
+    // }
 
-    String schoolName = await this.schoolName;
-    final url = Uri.https(
-      "$schoolName.bakalari.cz",
-      "/api/3/homeworks",
+    // String schoolName = await this.schoolName;
+    // final url = Uri.https(
+    //   "$schoolName.bakalari.cz",
+    //   "/api/3/homeworks",
+    //   {
+    //     'to': DateFormat('yyyy-MM-dd')
+    //         .format(DateTime.now().add(const Duration(days: 365)))
+    //   },
+    // );
+
+    // Response response;
+    // final loc = getLocalization();
+    // try {
+    //   response = await http.get(url, headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //     "Authorization": "Bearer $_accessToken",
+    //   });
+    // } on SocketException {
+    //   throw ServiceException(loc.checkConnection);
+    // } catch (e) {
+    //   throw ServiceException('${loc.unexpectedError}: $e');
+    // }
+
+    // final parsedJson = jsonDecode(response.body);
+
+    print('calling for homeworks...');
+    await Future.delayed(Durations.medium4);
+
+    final parsedJson = jsonDecode('''{
+   "Homeworks":[
       {
-        'to': DateFormat('yyyy-MM-dd')
-            .format(DateTime.now().add(const Duration(days: 365)))
+         "ID":"f",
+         "DateEnd":"2025-11-11T00:00:00+01:00",
+         "Content":"ukol ucebnice",
+         "Subject":{
+            "Id":"44",
+            "Abbrev":"Skrtk",
+            "Name":"Předmět"
+         },
+         "Finished":false
       },
-    );
-
-    Response response;
-    final loc = getLocalization();
-    try {
-      response = await http.get(url, headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Bearer $_accessToken",
-      });
-    } on SocketException {
-      throw ServiceException(loc.checkConnection);
-    } catch (e) {
-      throw ServiceException('${loc.unexpectedError}: $e');
-    }
-
-    final parsedJson = jsonDecode(response.body);
+      {
+         "ID":"g",
+         "DateEnd":"2025-11-12T00:00:00+01:00",
+         "Content":"ukol ucebnice",
+         "Subject":{
+            "Id":"44",
+            "Abbrev":"Skrtk",
+            "Name":"Předmět"
+         },
+         "Finished":false
+      },
+      {
+         "ID":"h",
+         "DateEnd":"2025-09-12T00:00:00+01:00",
+         "Content":"ukol ucebnice",
+         "Subject":{
+            "Id":"44",
+            "Abbrev":"Skrtk",
+            "Name":"Předmět"
+         },
+         "Finished":false
+      },
+      {
+         "ID":"5",
+         "DateEnd":"2024-11-11T00:00:00+01:00",
+         "Content":"ukol ucebnice",
+         "Subject":{
+            "Id":"44",
+            "Abbrev":"Skrtk",
+            "Name":"Předmět"
+         },
+         "Finished":false
+      },
+      {
+         "ID":"4",
+         "DateEnd":"2020-11-11T00:00:00+01:00",
+         "Content":"Text zadaného úkolu/nDokonce ve dvou řádcích/na ještě k tomu s odkazem https://github.com/bakalari-api/bakalari-api-v3",
+         "Subject":{
+            "Id":"44",
+            "Abbrev":"Skrtk",
+            "Name":"Předmět"
+         },
+         "Finished":false
+      }
+  ]
+}  ''');
 
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
     final subjects = subjectsDb.getDatabase();
-
-    int newHomeworks = 0;
+    subjects.removeWhere((key, value) => value.isDeleted);
 
     for (var homework in homeworksJson) {
-      Subject? subject = subjects.entries
-          .where(
-            (entry) {
-              return entry.value.bakaId == homework['Subject']['Id'];
-            },
-          )
-          .firstOrNull
-          ?.value;
-
-      final String id = homework['ID'];
+      final String bakaId = homework['ID'];
       final String text = homework['Content'];
       final DateTime deadline = DateTime.parse(homework['DateEnd']).toLocal();
       final bool isCompleted = homework['Finished'];
 
-      bool isSeen = bakaHomeworkService.isSeen(id);
-      if (!isSeen) {
-        newHomeworks++;
-      }
+      Subject? subject = subjects.entries
+          .where((entry) => entry.value.bakaId == bakaId)
+          .firstOrNull
+          ?.value;
+
+      subject ??= Subject(
+        name: homework['Subject']['Name'],
+        shortcut: homework['Subject']['Abbrev'],
+        id: '',
+        bakaId: bakaId,
+        timestamp: DateTime.now(),
+        isDeleted: false,
+        order: 0,
+      );
+
+      bool isSeen = bakaHomeworkService.isSeen(bakaId);
 
       homeworks.add(
         BakaHomework(
-          bakaId: id,
-          alreadyAdded: bakaHomeworkService.isAdded(id),
+          bakaId: bakaId,
+          alreadyAdded: bakaHomeworkService.isAdded(bakaId),
           alreadySeen: isSeen,
           subject: subject,
           text: text,
@@ -555,16 +611,12 @@ class BakaService {
           isCompleted: isCompleted,
           priority: TaskPriority(0),
           description: null,
-          id: id,
+          id: bakaId,
           isDeleted: false,
           timestamp: DateTime.now().toUtc(),
           order: 0,
         ),
       );
-    }
-
-    if (newHomeworks != 0 && onNewFound != null) {
-      onNewFound(newHomeworks);
     }
 
     return homeworks;

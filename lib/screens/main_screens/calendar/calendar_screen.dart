@@ -170,7 +170,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       title: Text(context.loc.calendar),
       actions: [
         if (ref.watch(useCloudSyncProvider))
-          LoadingIconButton(
+          LoadingIconButtonWithFuture(
             icon: Icons.refresh,
             onTap: () async {
               try {

@@ -134,6 +134,7 @@ class NotificationSender {
 
     await initHive();
     final subjects = subjectsDb.getDatabase();
+    subjects.removeWhere((key, value) => value.isDeleted);
     final hwsInDb = homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(key, value.convert(key, subjects[value.subjectId]));

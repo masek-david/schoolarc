@@ -277,7 +277,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initialDate => 'Initial date';
 
   @override
-  String get showMissedHomeworks => 'Show missed homeworks';
+  String get showMissedHomeworks => 'Show missed homework';
 
   @override
   String get showArrows => 'Show arrows';
@@ -286,7 +286,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showArrowsSubtitle => 'Show arrows for switching between pages';
 
   @override
-  String get upcomingDayChannelDescription => 'Here you will find upcoming exams and homeworks';
+  String get upcomingDayChannelDescription => 'Here you will find upcoming exams and homework';
 
   @override
   String get mainChannel => 'Main channel';
@@ -340,10 +340,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyLesson => 'Empty lesson';
 
   @override
-  String get subjectHasntBeenAdded => 'This subject hasn\\\'t been added.';
+  String get subjectHasntBeenAdded => 'This subject hasn\'t been added yet.';
 
   @override
   String get importedSubject => 'Imported subject';
+
+  @override
+  String get tryImportingSubjectFromBakalari => 'Try importing subjects from Bakaláři screen before.';
 
   @override
   String get change => 'Change';
@@ -355,13 +358,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get room => 'Room';
 
   @override
-  String get hwFromBaka => 'Homeworks from Bakaláři';
+  String get hwFromBaka => 'Bakaláři homework';
 
   @override
   String get noData => 'No data';
 
   @override
-  String get newHomeworks => 'New homeworks';
+  String get newHomeworks => 'New homework';
 
   @override
   String get homeworkAlreadyAdded => 'This homework has been already added';
@@ -377,6 +380,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get useBakalari => 'Use Bakaláři';
+
+  @override
+  String get bakalariDisabled => 'Bakaláři disabled';
 
   @override
   String get loggedIn => 'Logged in';
@@ -412,7 +418,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rememberMeTitle => 'Remember me?';
 
   @override
-  String get rememberMeWarning => 'If you continue, you won\'t be able to view your current timetable and current homeworks.';
+  String get rememberMeWarning => 'If you continue, you won\'t be able to view your current timetable and current homework.';
 
   @override
   String get continueAction => 'Continue';
@@ -424,7 +430,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importTimetableTitle => 'Import timetable and subjects?';
 
   @override
-  String get importTimetableWarning => 'Importing the timetable will replace your existing timetable. Are you sure?';
+  String get importTimetableWarning => 'Importing the timetable will replace your existing timetable. Existing subjects will be reused. Are you sure?';
 
   @override
   String get import => 'Import';
@@ -442,7 +448,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTimetable => 'No timetable found';
 
   @override
-  String get noHomeworks => 'No homeworks found';
+  String get noHomeworks => 'No homework found';
 
   @override
   String get noRecentlyDeleted => 'No recently deleted items found';
@@ -624,7 +630,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsNotAllowedMessage => 'Notifications not allowed, click here to grant permission';
 
   @override
-  String get upcomingDayNotificationsDescription => 'Receive notifications with homeworks and exams for the next day';
+  String get upcomingDayNotificationsDescription => 'Receive notifications with homework and exams for the next day';
 
   @override
   String get arrivalTimeTitle => 'Arrival time';
