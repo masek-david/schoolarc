@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
-import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
-import 'package:schoolarc/widgets/list_bottom_spacer.dart';
-import 'package:schoolarc/widgets/non_scrollable_refresh_indicator.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/lists/non_scrollable_refresh_indicator.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class CurrentTimetableScreen extends ConsumerStatefulWidget {
   const CurrentTimetableScreen({super.key});

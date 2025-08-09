@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/priority_model.dart';
-import 'package:schoolarc/screens/main_screens/exams/exam_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
-import 'package:schoolarc/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/widgets/tiles/exam_tile.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
 class TutorialPriorities extends StatefulWidget {
   const TutorialPriorities({super.key});

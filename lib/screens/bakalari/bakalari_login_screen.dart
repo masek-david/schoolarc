@@ -6,10 +6,10 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
-import 'package:schoolarc/widgets/progress_dialog.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
   const BakaLoginScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/priority_model.dart';
-import 'package:schoolarc/widgets/group_button.dart';
+import 'package:schoolarc/widgets/buttons/group_button.dart';
 
 class PriorityPicker extends StatefulWidget {
   const PriorityPicker({

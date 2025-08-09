@@ -21,9 +21,9 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
-import 'package:schoolarc/widgets/exam_list.dart';
-import 'package:schoolarc/widgets/homework_list.dart';
-import 'package:schoolarc/widgets/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/lists/exam_list.dart';
+import 'package:schoolarc/widgets/lists/homework_list.dart';
+import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -204,6 +204,7 @@ class HomeScreen extends ConsumerWidget {
                                 .surfaceContainerLowest,
                             child: Padding(
                               padding: const EdgeInsets.all(12),
+                              // TODO have only one card for tomorrow
                               child: ExamList(
                                 onDelete: (exam) =>
                                     deleteExam(context, ref, exam),

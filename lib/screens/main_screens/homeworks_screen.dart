@@ -10,8 +10,8 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
-import 'package:schoolarc/widgets/expansion_title.dart';
-import 'package:schoolarc/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/widgets/lists/title_with_count.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {

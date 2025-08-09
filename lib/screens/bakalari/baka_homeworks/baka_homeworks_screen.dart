@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
-import 'package:schoolarc/screens/baka_homeworks/baka_hw_tile.dart';
-import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
-import 'package:schoolarc/screens/empty_message.dart';
+import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_hw_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerWidget {
   const BakaHomeworksScreen({super.key});
@@ -29,7 +29,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
     final bakaHw = ref.watch(bakaHomeworksProvider);
     final isLoading = bakaHw.isLoading;
     final error = bakaHw.error;
-    final data = bakaHw.value;
+    final data = bakaHw.valueOrNull;
 
     return Scaffold(
       appBar: AppBar(

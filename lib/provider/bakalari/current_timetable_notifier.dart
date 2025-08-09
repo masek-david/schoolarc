@@ -27,17 +27,56 @@ final currentTimetableProvider =
 
 class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   DateTime? lastFetched;
+  bool isFetching = false;
 
   @override
   FutureOr<TimeTable> build() async {
-    final useBaka = ref.watch(useBakaProvider);
+    _setupListeners();
+    try {
+      final data = await _fetch();
+      return data;
+    } finally {
+      isFetching = false;
+    }
+  }
+
+  /// listen to login and useBaka
+  void _setupListeners() {
+    ref.listen<bool>(useBakaProvider, (previous, next) {
+      refresh();
+    });
+
+    ref.listen<AsyncValue<bool>>(bakaLoginProvider, (previous, next) {
+      next.whenData((value) => refresh());
+    });
+  }
+
+  /// Doesnt refresh if it is already fetching
+  Future<void> refresh() async {
+    if (isFetching) return;
+
+    state = const AsyncLoading();
+    try {
+      final data = await _fetch();
+      state = AsyncData(data);
+    } catch (e, s) {
+      state = AsyncError(e, s);
+    }
+    isFetching = false;
+  }
+
+  /// Gets only if logged in and using baka
+  Future<TimeTable> _fetch() async {
+    isFetching = true;
+
+    final useBaka = ref.read(useBakaProvider);
     final loc = getLocalization();
 
     if (!useBaka) {
       throw ServiceException(loc.bakalariDisabled);
     }
 
-    final isLoggedIn = await ref.watch(bakaLoginProvider.future);
+    final isLoggedIn = await ref.read(bakaLoginProvider.future);
 
     if (!isLoggedIn) {
       throw ServiceException(
@@ -46,7 +85,8 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
       );
     }
 
-    final data = bakaService.getCurrentTimetable(DateTime.now());
+    lastFetched = null;
+    final data = await bakaService.getCurrentTimetable(DateTime.now());
     lastFetched = DateTime.now();
     return data;
   }
@@ -57,21 +97,5 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
       return refresh();
     }
     return;
-  }
-
-  Future<void> refresh() async {
-    if (!ref.read(useBakaProvider)) {
-      return;
-    }
-
-    state = const AsyncLoading();
-    lastFetched = null;
-    try {
-      final timetable = await bakaService.getCurrentTimetable(DateTime.now());
-      lastFetched = DateTime.now();
-      state = AsyncData(timetable);
-    } catch (e, s) {
-      state = AsyncError(e, s);
-    }
   }
 }

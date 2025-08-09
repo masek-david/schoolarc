@@ -3,17 +3,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
+import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/homework_id_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
-import 'package:schoolarc/services/bakalari/baka_homeworks_database.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
-import 'package:schoolarc/services/secure_storage.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
 class DbInfoScreen extends ConsumerWidget {
   const DbInfoScreen({super.key});

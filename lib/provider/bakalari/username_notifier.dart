@@ -9,6 +9,7 @@ final usernameProvider =
 class UsernameNotifier extends Notifier<String?> {
   @override
   String? build() {
+    _setupListeners();
     try {
       final db = settings.get(Setting.userName);
       if (db != null) {
@@ -22,18 +23,21 @@ class UsernameNotifier extends Notifier<String?> {
     return null;
   }
 
-  Future<void> updateName() async {
-    try {
-      final isLoggedIn = await ref.watch(bakaLoginProvider.future);
-      if (!isLoggedIn) {
-        return;
-      }
+  /// listen to login
+  void _setupListeners() {
+    ref.listen<AsyncValue<bool>>(bakaLoginProvider, (previous, next) {
+      next.whenData((value) => updateName());
+    });
+  }
 
-      final name = await bakaService.getUsername();
-      state = name;
-      settings.save(Setting.userName, name);
-    } on Object {
-      // nothing should happen
+  Future<void> updateName() async {
+    final isLoggedIn = await ref.read(bakaLoginProvider.future);
+    if (!isLoggedIn) {
+      return;
     }
+
+    final name = await bakaService.getUsername();
+    state = name;
+    settings.save(Setting.userName, name);
   }
 }

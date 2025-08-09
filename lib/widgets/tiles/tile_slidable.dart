@@ -11,11 +11,13 @@ class TileSlidable extends StatelessWidget {
     this.onDelete,
     this.onConvert,
     required this.borderRadius,
+    required this.isHomework,
   });
 
   final Widget child;
   final SlidableController? slidableController;
   final double borderRadius;
+  final bool isHomework;
   final void Function()? onDelete;
   final void Function()? onConvert;
 
@@ -44,7 +46,9 @@ class TileSlidable extends StatelessWidget {
                         onConvert!();
                       },
                       icon: Icons.swap_vertical_circle_outlined,
-                      label: context.loc.toExam,
+                      label: isHomework
+                          ? context.loc.toExam
+                          : context.loc.toHomework,
                       foregroundColor:
                           Theme.of(context).colorScheme.onTertiaryContainer,
                       backgroundColor:

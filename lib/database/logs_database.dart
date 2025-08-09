@@ -2,7 +2,9 @@ import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
 
-class LogsService {
+// i think i dont have one main box because it needs 
+//to be able to save even when nothing is initiated
+class LogsDatabase {
   void save(String log) async {
     final box = await Hive.openBox(logBox);
     box.add(Log(log: log, date: DateTime.now()));

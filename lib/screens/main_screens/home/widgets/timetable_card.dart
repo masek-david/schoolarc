@@ -6,15 +6,15 @@ import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/text_actions.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 bool _isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
   bool isEmpty = true;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
-import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/logs/log_screen.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/send_bug_report.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/text_actions.dart';
 
 class LogsScreen extends StatefulWidget {
   const LogsScreen({super.key});

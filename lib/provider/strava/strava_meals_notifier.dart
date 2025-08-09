@@ -27,25 +27,65 @@ final stravaMealsProvider =
 
 class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
   DateTime? lastFetched;
+  bool isFetching = false;
 
   @override
   FutureOr<Map<DateTime, List<Meal>>> build() async {
-    final useMeals = ref.watch(useMealsProvider);
+    _setupListeners();
+    try {
+      final data = await _fetch();
+      return data;
+    } finally {
+      isFetching = false;
+    }
+  }
+
+  /// listen to login and usemeals
+  void _setupListeners() {
+    ref.listen<bool>(useMealsProvider, (previous, next) {
+      refresh();
+    });
+
+    ref.listen<AsyncValue<bool>>(stravaLoginProvider, (previous, next) {
+      next.whenData((value) => refresh());
+    });
+  }
+
+  /// Doesnt refresh if it is already fetching
+  Future<void> refresh() async {
+    if (isFetching) return;
+
+    state = const AsyncLoading();
+    try {
+      final data = await _fetch();
+      state = AsyncData(data);
+    } catch (e, s) {
+      state = AsyncError(e, s);
+    }
+    isFetching = false;
+  }
+
+  /// Gets only if logged in and using meals
+  Future<Map<DateTime, List<Meal>>> _fetch() async {
+    isFetching = true;
+
+    final useMeals = ref.read(useMealsProvider);
     final loc = getLocalization();
 
     if (!useMeals) {
       throw ServiceException(loc.mealsDisabled);
     }
 
-    final isLoggedIn = await ref.watch(stravaLoginProvider.future);
+    final isLoggedIn = await ref.read(stravaLoginProvider.future);
 
     if (!isLoggedIn) {
       throw ServiceException(
         loc.loggedOut,
-        action: ExceptionActions.stravaLogin,
+        action: ExceptionActions.bakaLogin,
       );
     }
 
+    lastFetched = null;
     final data = await stravaService.getMeals();
     lastFetched = DateTime.now();
     return data;
@@ -57,21 +97,5 @@ class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
       return refresh();
     }
     return;
-  }
-
-  Future<void> refresh() async {
-    if (!ref.read(useMealsProvider)) {
-      return;
-    }
-
-    state = const AsyncLoading();
-    lastFetched = null;
-    try {
-      final meals = await stravaService.getMeals();
-      lastFetched = DateTime.now();
-      state = AsyncData(meals);
-    } catch (e, s) {
-      state = AsyncError(e, s);
-    }
   }
 }

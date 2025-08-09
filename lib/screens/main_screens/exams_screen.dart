@@ -6,12 +6,12 @@ import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/main_screens/exams/exam_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
-import 'package:schoolarc/widgets/expansion_title.dart';
+import 'package:schoolarc/widgets/lists/title_with_count.dart';
+import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {

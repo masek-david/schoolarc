@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/text_actions.dart';
-import 'package:schoolarc/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/widgets/text_actions.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
 class HomeworkList extends StatelessWidget {
   const HomeworkList({

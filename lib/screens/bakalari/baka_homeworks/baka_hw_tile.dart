@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
-import 'package:schoolarc/screens/baka_homeworks/baka_hw_add_bottom_sheet.dart';
-import 'package:schoolarc/widgets/tile/hw_tile.dart';
+import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_hw_add_bottom_sheet.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
 class BakaHwTile extends StatelessWidget {
   const BakaHwTile({

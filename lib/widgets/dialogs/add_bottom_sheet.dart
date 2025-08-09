@@ -17,7 +17,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
-import 'package:schoolarc/widgets/cancel_save_button.dart';
+import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 

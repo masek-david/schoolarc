@@ -8,15 +8,15 @@ import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/provider/locale_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/baka_homeworks/baka_homeworks_screen.dart';
+import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
 import 'package:schoolarc/screens/changelog_screen.dart';
-import 'package:schoolarc/screens/current_timetable/current_timetable_screen.dart';
 import 'package:schoolarc/screens/debug_info_screen.dart';
-import 'package:schoolarc/screens/firebase_login/firebase_login_screen.dart';
+import 'package:schoolarc/screens/firebase_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
+import 'package:schoolarc/screens/meals/strava_login_screen.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/screens/recently_deleted_screen.dart';
 import 'package:schoolarc/screens/settings/about_app.dart';
@@ -26,13 +26,13 @@ import 'package:schoolarc/screens/settings/setting_pages/style_motion_page.dart'
 import 'package:schoolarc/screens/settings/setting_pages/theme_page.dart';
 import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_page.dart';
 import 'package:schoolarc/screens/settings/settings_screen.dart';
-import 'package:schoolarc/screens/strava_cz/strava_login_screen.dart';
 import 'package:schoolarc/screens/subjects/subjects_screen.dart';
+import 'package:schoolarc/screens/timetable/current_timetable_screen.dart';
 import 'package:schoolarc/screens/timetable/timetable_screen.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/theme_generate.dart';
-import 'package:schoolarc/widgets/time_format.dart';
+import 'package:schoolarc/widgets/config/time_format.dart';
 
 /// defines theme
 class AppConfig extends ConsumerWidget {

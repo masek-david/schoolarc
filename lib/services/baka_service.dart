@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
@@ -17,7 +18,6 @@ import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/services/secure_storage.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -479,97 +479,34 @@ class BakaService {
   }
 
   Future<List<BakaHomework>> getHomeworks() async {
-    // TODO remove this
-    // if (!isLoggedIn) {
-    //   await refreshLogin();
-    // }
+    if (!isLoggedIn) {
+      await refreshLogin();
+    }
 
-    // String schoolName = await this.schoolName;
-    // final url = Uri.https(
-    //   "$schoolName.bakalari.cz",
-    //   "/api/3/homeworks",
-    //   {
-    //     'to': DateFormat('yyyy-MM-dd')
-    //         .format(DateTime.now().add(const Duration(days: 365)))
-    //   },
-    // );
-
-    // Response response;
-    // final loc = getLocalization();
-    // try {
-    //   response = await http.get(url, headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //     "Authorization": "Bearer $_accessToken",
-    //   });
-    // } on SocketException {
-    //   throw ServiceException(loc.checkConnection);
-    // } catch (e) {
-    //   throw ServiceException('${loc.unexpectedError}: $e');
-    // }
-
-    // final parsedJson = jsonDecode(response.body);
-
-    await Future.delayed(Durations.medium4);
-
-    final parsedJson = jsonDecode('''{
-   "Homeworks":[
+    String schoolName = await this.schoolName;
+    final url = Uri.https(
+      "$schoolName.bakalari.cz",
+      "/api/3/homeworks",
       {
-         "ID":"f",
-         "DateEnd":"2025-11-11T00:00:00+01:00",
-         "Content":"ukol ucebnice",
-         "Subject":{
-            "Id":"44",
-            "Abbrev":"Skrtk",
-            "Name":"Předmět"
-         },
-         "Finished":false
+        'to': DateFormat('yyyy-MM-dd')
+            .format(DateTime.now().add(const Duration(days: 365)))
       },
-      {
-         "ID":"g",
-         "DateEnd":"2025-11-12T00:00:00+01:00",
-         "Content":"ukol ucebnice",
-         "Subject":{
-            "Id":"44",
-            "Abbrev":"Skrtk",
-            "Name":"Předmět"
-         },
-         "Finished":false
-      },
-      {
-         "ID":"h",
-         "DateEnd":"2025-09-12T00:00:00+01:00",
-         "Content":"ukol ucebnice",
-         "Subject":{
-            "Id":"44",
-            "Abbrev":"Skrtk",
-            "Name":"Předmět"
-         },
-         "Finished":false
-      },
-      {
-         "ID":"5",
-         "DateEnd":"2024-11-11T00:00:00+01:00",
-         "Content":"ukol ucebnice",
-         "Subject":{
-            "Id":"44",
-            "Abbrev":"Skrtk",
-            "Name":"Předmět"
-         },
-         "Finished":false
-      },
-      {
-         "ID":"4",
-         "DateEnd":"2020-11-11T00:00:00+01:00",
-         "Content":"Text zadaného úkolu/nDokonce ve dvou řádcích/na ještě k tomu s odkazem https://github.com/bakalari-api/bakalari-api-v3",
-         "Subject":{
-            "Id":"44",
-            "Abbrev":"Skrtk",
-            "Name":"Předmět"
-         },
-         "Finished":false
-      }
-  ]
-}  ''');
+    );
+
+    Response response;
+    final loc = getLocalization();
+    try {
+      response = await http.get(url, headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Bearer $_accessToken",
+      });
+    } on SocketException {
+      throw ServiceException(loc.checkConnection);
+    } catch (e) {
+      throw ServiceException('${loc.unexpectedError}: $e');
+    }
+
+    final parsedJson = jsonDecode(response.body);
 
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 

@@ -12,8 +12,8 @@ import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/import_export.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
-import 'package:schoolarc/widgets/progress_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
 class ImportExportRow extends ConsumerWidget {
   const ImportExportRow({super.key});

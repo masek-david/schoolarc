@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/subject_shortcut.dart';
+import 'package:schoolarc/widgets/tiles/tile_slidable.dart';
 
 class ExamTile extends StatelessWidget {
   const ExamTile({
@@ -38,51 +36,11 @@ class ExamTile extends StatelessWidget {
         extentRatio = 1;
       }
 
-      return Slidable(
-        groupTag: '0',
-        startActionPane: onConvert == null
-            ? null
-            : ActionPane(
-                motion: const StretchMotion(),
-                extentRatio: extentRatio,
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {
-                      HapticFeedback.lightImpact();
-                      onConvert!();
-                    },
-                    icon: Icons.swap_vertical_circle_outlined,
-                    label: context.loc.toHomework,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onTertiaryContainer,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(100),
-                    flex: 10,
-                  ),
-                ],
-              ),
-        endActionPane: onDelete == null
-            ? null
-            : ActionPane(
-                motion: const StretchMotion(),
-                extentRatio: extentRatio,
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {
-                      HapticFeedback.lightImpact();
-                      onDelete!();
-                    },
-                    icon: Icons.delete,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onErrorContainer,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(35),
-                    flex: 10,
-                  ),
-                ],
-              ),
+      return TileSlidable(
+        isHomework: false,
+        borderRadius: 100,
+        onDelete: onDelete,
+        onConvert: onConvert,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),

@@ -8,11 +8,11 @@ import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});

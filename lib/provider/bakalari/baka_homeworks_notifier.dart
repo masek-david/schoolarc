@@ -36,9 +36,8 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
   @override
   FutureOr<List<BakaHomework>> build() async {
     _setupListeners();
-    _setupListeners();
     try {
-      final data = await _fetchHomeworks();
+      final data = await _fetch();
       return data;
     } finally {
       isFetching = false;
@@ -62,7 +61,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
 
     state = const AsyncLoading();
     try {
-      final data = await _fetchHomeworks();
+      final data = await _fetch();
       state = AsyncData(data);
     } catch (e, s) {
       state = AsyncError(e, s);
@@ -71,7 +70,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
   }
 
   /// Gets only if logged in and using baka
-  Future<List<BakaHomework>> _fetchHomeworks() async {
+  Future<List<BakaHomework>> _fetch() async {
     isFetching = true;
 
     final useBaka = ref.read(useBakaProvider);
