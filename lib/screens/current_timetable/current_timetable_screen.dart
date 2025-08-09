@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
+import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -20,20 +23,45 @@ class CurrentTimetableScreen extends ConsumerStatefulWidget {
 
 class _CurrentTimetableScreenState
     extends ConsumerState<CurrentTimetableScreen> {
-  late Future<TimeTable> timetable = bakaService.getCurrentTimetable(date);
+  late Future<TimeTable> timetableFuture =
+      bakaService.getCurrentTimetable(date);
+  TimeTable? timetable;
   DateTime date = DateTime.now();
-  bool isLoading = true;
 
   Future<void> refresh() async {
     setState(() {
-      timetable = bakaService.getCurrentTimetable(date);
+      timetableFuture = bakaService.getCurrentTimetable(date);
     });
 
     try {
-      await timetable;
+      await timetableFuture;
     } catch (_) {}
 
     return;
+  }
+
+  void reassignSubjects() {
+    if (timetable == null) return;
+    final subjects = ref.read(subjectsNonDeletedProvider);
+    subjects.removeWhere((key, value) => value.bakaId == null);
+    final subjectsBakaId =
+        subjects.map((key, value) => MapEntry(value.bakaId!, value));
+
+    for (var dayIndex = 0; dayIndex < timetable!.table.length; dayIndex++) {
+      for (var lessonIndex = 0;
+          lessonIndex < timetable!.table[dayIndex].length;
+          lessonIndex++) {
+        final lesson = timetable!.table[dayIndex][lessonIndex];
+        if (lesson.subject?.id == '') {
+          timetable!.table[dayIndex][lessonIndex] = lesson.copyWith(
+            subject: subjectsBakaId[lesson.subject?.bakaId],
+          );
+        }
+      }
+    }
+    setState(() {
+      timetable = timetable;
+    });
   }
 
   @override
@@ -51,6 +79,14 @@ class _CurrentTimetableScreenState
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (kDebugMode)
+              LoadingIconButtonWithFuture(
+                icon: Icons.bug_report,
+                onTap: () async {
+                  date = DateTime(2025, 5, 27);
+                  return refresh();
+                },
+              ),
             LoadingIconButtonWithFuture(
               icon: Icons.arrow_back,
               onTap: () async {
@@ -80,31 +116,38 @@ class _CurrentTimetableScreenState
           await refresh();
         },
         child: FutureBuilder(
-          future: timetable,
+          future: timetableFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
+              timetable = null;
               return const Center(
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
+              timetable = null;
               return Center(child: ErrorTile(error: snapshot.error));
             } else if (!snapshot.hasData) {
-              return Center(
-                child: Text(context.loc.noTimetable),
-              );
+              timetable = null;
+              return EmptyMessage(message: context.loc.noTimetable);
             }
+
+            timetable ??= snapshot.data!;
 
             return Column(
               children: [
                 Expanded(
                   child: TimetableView(
                     textWhenEmpty: context.loc.noTimetable,
-                    timeTable: snapshot.data,
+                    timeTable: timetable,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
                     columnWidth: settings.get(Setting.timeTableTileWidth),
                     onLessonTimesTapped: null,
                     onSubjectTapped: (weekday, lessonIndex, lesson) {
-                      lesson.showLessonDialog(context, ref);
+                      lesson.showLessonDialog(
+                        context,
+                        ref,
+                        onSubjectAdded: reassignSubjects,
+                      );
                     },
                   ),
                 ),

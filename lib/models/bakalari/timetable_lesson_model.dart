@@ -16,18 +16,37 @@ class TimeTableLesson {
     this.room,
   });
 
-  TimeTableLesson.empty();
+  TimeTableLesson.empty()
+      : subject = null,
+        change = null,
+        room = null,
+        teacher = null;
 
-  Subject? subject;
-  BakaChange? change;
-  String? room;
-  Teacher? teacher;
+  final Subject? subject;
+  final BakaChange? change;
+  final String? room;
+  final Teacher? teacher;
 
   bool get isEmpty {
     return subject == null && change == null;
   }
 
-  void showLessonDialog(BuildContext context, WidgetRef ref) {
+  TimeTableLesson copyWith({
+    Subject? subject,
+    BakaChange? change,
+    Teacher? teacher,
+    String? room,
+  }) {
+    return TimeTableLesson(
+      subject: subject ?? this.subject,
+      change: change ?? this.change,
+      teacher: teacher ?? this.teacher,
+      room: room ?? this.room,
+    );
+  }
+
+  void showLessonDialog(BuildContext context, WidgetRef ref,
+      {void Function()? onSubjectAdded}) {
     String? title = subject?.name;
 
     title ??= context.loc.emptyLesson;
@@ -64,6 +83,9 @@ class TimeTableLesson {
                         await ref.read(subjectsProvider.notifier).saveNew(
                               subject!.convert(),
                             );
+                        if (onSubjectAdded != null) {
+                          onSubjectAdded();
+                        }
                         if (context.mounted) {
                           showMessage(context, context.loc.importedSubject);
                         }

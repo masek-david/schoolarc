@@ -11,7 +11,7 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/baka_homeworks/baka_homeworks_screen.dart';
 import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
 import 'package:schoolarc/screens/changelog_screen.dart';
-import 'package:schoolarc/screens/current_timetable/current_timetable.dart';
+import 'package:schoolarc/screens/current_timetable/current_timetable_screen.dart';
 import 'package:schoolarc/screens/debug_info_screen.dart';
 import 'package:schoolarc/screens/firebase_login/firebase_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';

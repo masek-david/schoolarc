@@ -479,6 +479,7 @@ class BakaService {
   }
 
   Future<List<BakaHomework>> getHomeworks() async {
+    // TODO remove this
     // if (!isLoggedIn) {
     //   await refreshLogin();
     // }
@@ -508,7 +509,6 @@ class BakaService {
 
     // final parsedJson = jsonDecode(response.body);
 
-    print('calling for homeworks...');
     await Future.delayed(Durations.medium4);
 
     final parsedJson = jsonDecode('''{
