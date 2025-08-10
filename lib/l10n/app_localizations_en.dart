@@ -253,6 +253,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String nothingPlannedFor(Object whenText) {
+    return 'Nothing planned for $whenText';
+  }
+
+  @override
   String get showMyName => 'Show my name';
 
   @override

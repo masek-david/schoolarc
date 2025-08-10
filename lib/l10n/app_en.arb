@@ -91,6 +91,7 @@
   "toHomework": "To homework",
   "homeworksFor": "{isEmpty, select, true{No homeworks} other{Homeworks}} {whenText}",
   "homeworkAbsence": "{isAbsent, select, true{No homework} other{Homework}}",
+  "nothingPlannedFor" : "Nothing planned for {whenText}",
   "showMyName": "Show my name",
   "showMyNameSubtitle": "If enabled and logged in to Bakaláři, you will be greeted with your name",
   "showBakalariTimetable": "Show Bakaláři timetable",

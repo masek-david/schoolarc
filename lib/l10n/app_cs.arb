@@ -91,6 +91,7 @@
   "toHomework": "Jako úkol",
   "homeworksFor": "{isEmpty, select, true{{whenText} žádné úkoly} other{Úkoly na {whenText}}}",
   "homeworkAbsence": "{isAbsent, select, true{Žádné úkoly} other{Úkoly}}",
+  "nothingPlannedFor": "Na {whenText} není nic naplánováno",
   "showMyName": "Zobrazit moje jméno",
   "showMyNameSubtitle": "Pokud je povoleno a jste přihlášeni do Bakalářů, budete uvítáni svým jménem",
   "showBakalariTimetable": "Zobrazit rozvrh z Bakalářů",

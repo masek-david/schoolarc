@@ -16,24 +16,25 @@ class EmptyMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: SvgPicture.asset(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16,
+          children: [
+            SvgPicture.asset(
               asset,
               colorMapper: BasicColorMapper(
                 context.col.primary.toARGB32(),
               ),
               height: 200,
             ),
-          ),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-          ),
-        ],
+            Text(
+              message,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

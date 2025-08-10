@@ -407,6 +407,12 @@ abstract class AppLocalizations {
   /// **'{isAbsent, select, true{No homework} other{Homework}}'**
   String homeworkAbsence(String isAbsent);
 
+  /// No description provided for @nothingPlannedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned for {whenText}'**
+  String nothingPlannedFor(Object whenText);
+
   /// No description provided for @showMyName.
   ///
   /// In en, this message translates to:

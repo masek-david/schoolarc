@@ -31,13 +31,20 @@ class UsernameNotifier extends Notifier<String?> {
   }
 
   Future<void> updateName() async {
-    final isLoggedIn = await ref.read(bakaLoginProvider.future);
-    if (!isLoggedIn) {
-      return;
-    }
+    try {
+      final db = settings.get(Setting.userName);
+      if (db != null) return;
 
-    final name = await bakaService.getUsername();
-    state = name;
-    settings.save(Setting.userName, name);
+      final isLoggedIn = await ref.read(bakaLoginProvider.future);
+      if (!isLoggedIn) {
+        return;
+      }
+
+      final name = await bakaService.getUsername();
+      state = name;
+      settings.save(Setting.userName, name);
+    } on Object {
+      // nothing
+    }
   }
 }

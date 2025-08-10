@@ -261,6 +261,11 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
+  String nothingPlannedFor(Object whenText) {
+    return 'Na $whenText není nic naplánováno';
+  }
+
+  @override
   String get showMyName => 'Zobrazit moje jméno';
 
   @override

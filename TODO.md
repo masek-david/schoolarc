@@ -1,10 +1,9 @@
 # FIX
-update state when importing subject from current timetable
-rework notifiers (baka and strava) - add isFetching, listen() instead of watch()
 cant complete homework from widget
 the specified refresh token has already been reddemed (in bakaservice)
 
-write this somewhere else
+password reset
+sharing
 
 tests:
     check translations
@@ -33,15 +32,8 @@ tests:
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
 
-## RIVERPOD
-- ⬜ bakalari
-    - ✅ timetable
-    - ⬜ homeworks
-        - ⬜ fix the frequency when is app searching for baka homeworks
-    - ✅ name
-
 ## OTHER
-- ⬜ reset password for firebase
+- ⬜ reset password for firebase + verify email
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ add google sign in + sign in with apple
 - ⬜ create settings for initial task
@@ -68,13 +60,14 @@ tests:
 
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
-- ⬜ make everything react to touch (shrink)
+- ⬜ make everything react to touch (shrink) 
 - ⬜ share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
-- ⬜ merge duplicate subjects
+- ⬜ ? remake subject, hw, exam notifiers - too much reading database, recursive edit() calls, ...
+- ⬜ ? merge duplicate subjects (is it really needed?)
     
 
 
@@ -127,3 +120,10 @@ tests:
 - ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
 - ✅ onHover
 - ✅ keyboard shortcuts
+
+## RIVERPOD
+- ✅ bakalari
+    - ✅ timetable
+    - ✅ homeworks
+        - ✅ fix the frequency when is app searching for baka homeworks
+    - ✅ name

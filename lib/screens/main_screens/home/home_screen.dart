@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -21,9 +19,11 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
-import 'package:schoolarc/widgets/lists/exam_list.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/tiles/exam_tile.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -61,22 +61,19 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
-    final exams = ref.watch(examsDatesProvider);
-    final uncompletedHw = ref.watch(hwProvider).values.where(
+    final int uncompletedHw = ref.watch(hwProvider).values.where(
       (element) {
         return !element.isDeleted &&
             !element.isCompleted &&
             !element.deadline.isBeforeToday();
       },
     ).length;
-    final upcomingExams = ref.watch(examProvider).values.where(
+    final exams = ref.watch(examsDatesProvider);
+    final int upcomingExams = ref.watch(examProvider).values.where(
       (element) {
         return !element.isDeleted && !element.isCompleted;
       },
     ).length;
-
-    List<Homework> hwToShow = [];
-    List<Exam> examToShow = [];
 
     var dateToShow = DateTime.now();
     final defaultTimeTable = timetableDb.timeTable;
@@ -88,17 +85,11 @@ class HomeScreen extends ConsumerWidget {
               dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
           .add(const Duration(days: 1))
           .toLocal();
-
-      final dateToShowOnlyDate = dateToShow.onlyDate();
-
-      upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = hws[dateToShowOnlyDate] ?? [];
-      examToShow = exams[dateToShowOnlyDate] ?? [];
-    } else {
-      final dateToShowOnlyDate = dateToShow.onlyDate();
-      hwToShow = hws[dateToShowOnlyDate] ?? [];
-      examToShow = exams[dateToShowOnlyDate] ?? [];
     }
+    final dateToShowOnlyDate = dateToShow.onlyDate();
+    final hwToShow = hws[dateToShowOnlyDate] ?? [];
+    final examsToShow = exams[dateToShowOnlyDate] ?? [];
+
     String whenText = showtomorrow
         ? context.loc.tomorrow.toLowerCase()
         : context.loc.today.toLowerCase();
@@ -203,46 +194,53 @@ class HomeScreen extends ConsumerWidget {
                                 .colorScheme
                                 .surfaceContainerLowest,
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              // TODO have only one card for tomorrow
-                              child: ExamList(
-                                onDelete: (exam) =>
-                                    deleteExam(context, ref, exam),
-                                onEdit: (exam) => editExam(context, exam),
-                                onConvert: (exam) =>
-                                    convertExam(context, ref, exam),
-                                text: context.loc
-                                    .examsFor(
-                                      examToShow.isEmpty.toString(),
-                                      whenText,
+                              padding: const EdgeInsets.all(8),
+                              child: examsToShow.isEmpty && hwToShow.isEmpty
+                                  ? EmptyMessage(
+                                      // TODO translate
+                                      message: context.loc
+                                          .nothingPlannedFor(whenText),
+                                      asset: 'assets/confetti.svg',
                                     )
-                                    .capitalize(),
-                                showDates: false,
-                                examList: examToShow,
-                              ),
-                            ),
-                          ),
-                          Card(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLowest,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: HomeworkList(
-                                hwList: hwToShow,
-                                onChangedCompletion: (hw, value) =>
-                                    completeHw(context, ref, hw, value),
-                                onDelete: (hw) => deleteHw(context, ref, hw),
-                                onEdit: (hw) => editHw(context, hw),
-                                onConvert: (hw) => convertHw(context, ref, hw),
-                                showDates: false,
-                                text: context.loc
-                                    .homeworksFor(
-                                      hwToShow.isEmpty.toString(),
-                                      whenText,
-                                    )
-                                    .capitalize(),
-                              ),
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      spacing: 8,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            whenText.capitalize(),
+                                            style: context.txt.bodyLarge,
+                                          ),
+                                        ),
+                                        ...examsToShow.map(
+                                          (e) => ExamTile(
+                                            exam: e,
+                                            showDeadline: false,
+                                            onDelete: () =>
+                                                deleteExam(context, ref, e),
+                                            onEdit: () => editExam(context, e),
+                                            onConvert: () =>
+                                                convertExam(context, ref, e),
+                                          ),
+                                        ),
+                                        ...hwToShow.map(
+                                          (hw) => HwTile(
+                                            hw: hw,
+                                            showDate: false,
+                                            onChangedCompletion: (value) =>
+                                                completeHw(
+                                                    context, ref, hw, value),
+                                            onDelete: () =>
+                                                deleteHw(context, ref, hw),
+                                            onEdit: () => editHw(context, hw),
+                                            onConvert: () =>
+                                                convertHw(context, ref, hw),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
                           const ListBottomSpacer()
