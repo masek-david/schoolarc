@@ -5,22 +5,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
-import 'package:schoolarc/screens/main_screens/exams/exams_screen.dart';
+import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
-import 'package:schoolarc/screens/main_screens/homeworks/homeworks_screen.dart';
+import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_controller.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
+import 'package:schoolarc/widgets/config/my_shortcuts.dart';
 import 'package:schoolarc/widgets/drawer/my_drawer.dart';
 import 'package:schoolarc/widgets/firebase_overlay.dart';
-import 'package:schoolarc/widgets/my_shortcuts.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:schoolarc/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:schoolarc/widgets/wide_screen_borders.dart';
@@ -30,6 +33,7 @@ var _scaffoldKey = GlobalKey<ScaffoldState>();
 void openDrawer() {
   _scaffoldKey.currentState?.openDrawer();
 }
+
 void closeDrawer() {
   _scaffoldKey.currentState?.closeDrawer();
 }
@@ -103,6 +107,12 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       );
     }
 
+    // try refreshing data for homescreen
+    if (newScreenIndex == 0) {
+      ref.read(currentTimetableProvider.notifier).refreshIfOld();
+      ref.read(stravaMealsProvider.notifier).refreshIfOld();
+    }
+
     setState(() {
       currentPageIndex.value = newScreenIndex;
     });
@@ -146,7 +156,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        tryGettingNewHomeworks(context);
+        ref.read(bakaHomeworksProvider.notifier);
       },
     );
   }

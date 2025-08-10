@@ -133,11 +133,11 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   @override
   Map<String, Exam> build() {
     // listen to subjectsProvider changes
-    ref.listen(subjectsProvider, (_, next) {
+    ref.listen(subjectsNonDeletedProvider, (_, next) {
       subjects = next;
       _loadState();
     });
-    subjects = ref.read(subjectsProvider);
+    subjects = ref.read(subjectsNonDeletedProvider);
 
     listenToFirebase();
     _checkForDeleted();
@@ -442,7 +442,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
   void convert(Exam exam) {
     delete(exam);
-    ref.read(hwProvider.notifier).saveNew(exam.toHw());
+    ref.read(hwProvider.notifier).saveNew(exam.toHwEntity());
   }
 
   void delete(Exam exam) {

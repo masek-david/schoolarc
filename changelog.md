@@ -3,7 +3,10 @@
 
 ### Changed
 - Improved Strava.cz login page
+- Improved home page
 - Improved fetching of meals
+- Improved fetching of timetable and homeworks
+- Current timetable now updates when subject is imported
 
 ### Fixed
 

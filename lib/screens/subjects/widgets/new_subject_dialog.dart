@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/widgets/cancel_save_button.dart';
+import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 
 class SubjectDialog extends StatelessWidget {
   const SubjectDialog({

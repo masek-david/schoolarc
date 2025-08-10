@@ -261,6 +261,11 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
+  String nothingPlannedFor(Object whenText) {
+    return 'Na $whenText není nic naplánováno';
+  }
+
+  @override
   String get showMyName => 'Zobrazit moje jméno';
 
   @override
@@ -348,10 +353,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get emptyLesson => 'Prázdná hodina';
 
   @override
-  String get subjectHasntBeenAdded => 'Tento předmět nebyl přidán.';
+  String get subjectHasntBeenAdded => 'Tento předmět ještě nebyl přidán.';
 
   @override
   String get importedSubject => 'Importován předmět';
+
+  @override
+  String get tryImportingSubjectFromBakalari => 'Nejdříve zkuste importovat předměty z obrazovky Bakalářů';
 
   @override
   String get change => 'Změna';
@@ -385,6 +393,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get useBakalari => 'Používat Bakaláře';
+
+  @override
+  String get bakalariDisabled => 'Bakaláři jsou vypnuty';
 
   @override
   String get loggedIn => 'Přihlášeni';
@@ -432,7 +443,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get importTimetableTitle => 'Importovat rozvrh a předměty?';
 
   @override
-  String get importTimetableWarning => 'Importování rozvrhu přepíše váš současný rozvrh. Chcete pokračovat?';
+  String get importTimetableWarning => 'Importování rozvrhu přepíše váš současný rozvrh. Existující předměty budou využity znovu. Chcete pokračovat?';
 
   @override
   String get import => 'Importovat';

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
-import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
-import 'package:schoolarc/widgets/meals/meal_tile.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
+import 'package:schoolarc/widgets/tiles/meal_tile.dart';
 
 class MealsScreen extends ConsumerWidget {
   const MealsScreen({super.key});
@@ -21,7 +21,7 @@ class MealsScreen extends ConsumerWidget {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.value;
+    final data = meals.valueOrNull;
 
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
     var now = DateTime.now();
@@ -44,7 +44,7 @@ class MealsScreen extends ConsumerWidget {
         title: Text(context.loc.meals),
         actions: [
           AgoText(stream: stravaMealsAgeProvider),
-          LoadingIconButtonStateless(
+          LoadingIconButton(
             icon: Icons.refresh,
             onTap: () => refresh(ref),
             isLoading: isLoading,

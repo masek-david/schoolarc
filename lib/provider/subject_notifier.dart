@@ -22,6 +22,12 @@ final subjectsSortedProvider = Provider<List<Subject>>((ref) {
     ..sort((a, b) => (a.order).compareTo(b.order));
 });
 
+final subjectsNonDeletedProvider = Provider<Map<String, Subject>>((ref) {
+  final subjects = Map<String, Subject>.from(ref.watch(subjectsProvider));
+  subjects.removeWhere((key, value) => value.isDeleted);
+  return subjects;
+});
+
 final subjectsUsedTimesProvider = Provider<Map<String, int>>((ref) {
   final Map<String, int> map = {};
   final exams = ref.watch(examProvider);
@@ -224,7 +230,6 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   ///
   /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
   Future<void> reorder(
-    // int? oldIndex,
     int? newIndex,
     final Subject originalSubject, {
     bool addTimestamp = false,

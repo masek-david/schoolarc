@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
@@ -74,8 +75,7 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_outlined),
                       onTap: () {
-                        Navigator.restorablePushNamed(
-                            context, '/timetable');
+                        Navigator.restorablePushNamed(context, '/timetable');
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
@@ -83,6 +83,7 @@ class MyDrawer extends ConsumerWidget {
                       text: loc.hwFromBaka,
                       icon: const Icon(Icons.home_work_outlined),
                       onTap: () {
+                        ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
                         Navigator.restorablePushNamed(
                             context, '/bakalari-homeworks');
                       },
@@ -134,7 +135,7 @@ class MyDrawer extends ConsumerWidget {
                           Navigator.restorablePushNamed(context, '/database');
                         },
                       ),
-                    if (debugMode)
+                    if (kDebugMode || debugMode)
                       MyDrawerButton(
                         text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
@@ -188,10 +189,7 @@ class MyDrawer extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(
                     '${packageInfo.version} build ${packageInfo.buildNumber}',
-                    style: TextStyle(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerLowest,
-                    ),
+                    style: TextStyle(color: getSubtleTextColor(context)),
                   ),
                 ),
               ),

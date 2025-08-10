@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
@@ -21,60 +19,29 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
-import 'package:schoolarc/widgets/exam_list.dart';
-import 'package:schoolarc/widgets/homework_list.dart';
-import 'package:schoolarc/widgets/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/lists/homework_list.dart';
+import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/tiles/exam_tile.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  var dateToShow = DateTime.now();
-
-  late TimeTable defaultTimeTable = timetableDb.timeTable;
-  Future<TimeTable?>? bakaTimetable;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        refreshTimetable(ref);
-      },
-    );
-  }
-
-  Future<void> refresh(BuildContext context) async {
-    tryGettingNewHomeworks(context);
-    ref.read(stravaMealsProvider.notifier).refresh();
-
+  Future<void> refresh(BuildContext context, WidgetRef ref) async {
     try {
-      Future.wait([
-        refreshTimetable(ref),
-        if (ref.watch(useCloudSyncProvider)) syncAllTasks(ref),
+      await Future.wait([
+        ref.read(bakaHomeworksProvider.notifier).refresh(),
+        ref.read(stravaMealsProvider.notifier).refresh(),
+        ref.read(currentTimetableProvider.notifier).refresh(),
+        if (ref.read(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
-      showMessage(context, e.toString(), isError: true);
+      if (context.mounted) {
+        showMessage(context, e.toString(), isError: true);
+      }
     }
-
-    return;
-  }
-
-  Future<void> refreshTimetable(WidgetRef ref) async {
-    setState(() {
-      bakaTimetable = bakaService.getCurrentTimetable(dateToShow, ref);
-    });
-
-    try {
-      await bakaTimetable;
-    } catch (_) {}
-
     return;
   }
 
@@ -91,27 +58,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
-    final exams = ref.watch(examsDatesProvider);
-    final uncompletedHw = ref.watch(hwProvider).values.where(
+    final int uncompletedHw = ref.watch(hwProvider).values.where(
       (element) {
         return !element.isDeleted &&
             !element.isCompleted &&
             !element.deadline.isBeforeToday();
       },
     ).length;
-    final upcomingExams = ref.watch(examProvider).values.where(
+    final exams = ref.watch(examsDatesProvider);
+    final int upcomingExams = ref.watch(examProvider).values.where(
       (element) {
         return !element.isDeleted && !element.isCompleted;
       },
     ).length;
 
-    List<Homework> hwToShow = [];
-    List<Exam> examToShow = [];
-
-    dateToShow = DateTime.now();
+    var dateToShow = DateTime.now();
+    final defaultTimeTable = timetableDb.timeTable;
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
 
     bool showtomorrow = isLessonsEmpty(upcomingLessons);
@@ -120,21 +85,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
           .add(const Duration(days: 1))
           .toLocal();
-
-      final dateToShowOnlyDate = dateToShow.onlyDate();
-
-      upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
-      hwToShow = hws[dateToShowOnlyDate] ?? [];
-      examToShow = exams[dateToShowOnlyDate] ?? [];
-    } else {
-      final dateToShowOnlyDate = dateToShow.onlyDate();
-      hwToShow = hws[dateToShowOnlyDate] ?? [];
-      examToShow = exams[dateToShowOnlyDate] ?? [];
     }
+    final dateToShowOnlyDate = dateToShow.onlyDate();
+    final hwToShow = hws[dateToShowOnlyDate] ?? [];
+    final examsToShow = exams[dateToShowOnlyDate] ?? [];
+
     String whenText = showtomorrow
         ? context.loc.tomorrow.toLowerCase()
         : context.loc.today.toLowerCase();
-    bool showBaka = ref.watch(useBakaProvider);
 
     final isWide = context.isWide;
 
@@ -159,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: () => refresh(context),
+          onRefresh: () => refresh(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
@@ -195,13 +153,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           const MealsCard(),
                           TimetableCard(
-                            refresh: () => refreshTimetable(ref),
-                            defaultTimeTable: defaultTimeTable,
-                            bakaTimetable: bakaTimetable,
                             dateToShow: dateToShow,
                             whenText: whenText,
-                            showOnline: showBaka,
-                            ref: ref,
                           ),
                         ],
                       )),
@@ -213,13 +166,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              refresh: () => refreshTimetable(ref),
-                              defaultTimeTable: defaultTimeTable,
-                              bakaTimetable: bakaTimetable,
                               dateToShow: dateToShow,
                               whenText: whenText,
-                              showOnline: showBaka,
-                              ref: ref,
                             ),
                           if (missedHw.isNotEmpty)
                             Card(
@@ -246,45 +194,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 .colorScheme
                                 .surfaceContainerLowest,
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: ExamList(
-                                onDelete: (exam) =>
-                                    deleteExam(context, ref, exam),
-                                onEdit: (exam) => editExam(context, exam),
-                                onConvert: (exam) =>
-                                    convertExam(context, ref, exam),
-                                text: context.loc
-                                    .examsFor(
-                                      examToShow.isEmpty.toString(),
-                                      whenText,
+                              padding: const EdgeInsets.all(8),
+                              child: examsToShow.isEmpty && hwToShow.isEmpty
+                                  ? EmptyMessage(
+                                      // TODO translate
+                                      message: context.loc
+                                          .nothingPlannedFor(whenText),
+                                      asset: 'assets/confetti.svg',
                                     )
-                                    .capitalize(),
-                                showDates: false,
-                                examList: examToShow,
-                              ),
-                            ),
-                          ),
-                          Card(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLowest,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: HomeworkList(
-                                hwList: hwToShow,
-                                onChangedCompletion: (hw, value) =>
-                                    completeHw(context, ref, hw, value),
-                                onDelete: (hw) => deleteHw(context, ref, hw),
-                                onEdit: (hw) => editHw(context, hw),
-                                onConvert: (hw) => convertHw(context, ref, hw),
-                                showDates: false,
-                                text: context.loc
-                                    .homeworksFor(
-                                      hwToShow.isEmpty.toString(),
-                                      whenText,
-                                    )
-                                    .capitalize(),
-                              ),
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      spacing: 8,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            whenText.capitalize(),
+                                            style: context.txt.bodyLarge,
+                                          ),
+                                        ),
+                                        ...examsToShow.map(
+                                          (e) => ExamTile(
+                                            exam: e,
+                                            showDeadline: false,
+                                            onDelete: () =>
+                                                deleteExam(context, ref, e),
+                                            onEdit: () => editExam(context, e),
+                                            onConvert: () =>
+                                                convertExam(context, ref, e),
+                                          ),
+                                        ),
+                                        ...hwToShow.map(
+                                          (hw) => HwTile(
+                                            hw: hw,
+                                            showDate: false,
+                                            onChangedCompletion: (value) =>
+                                                completeHw(
+                                                    context, ref, hw, value),
+                                            onDelete: () =>
+                                                deleteHw(context, ref, hw),
+                                            onEdit: () => editHw(context, hw),
+                                            onConvert: () =>
+                                                convertHw(context, ref, hw),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
                           const ListBottomSpacer()

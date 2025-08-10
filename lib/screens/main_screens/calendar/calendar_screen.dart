@@ -9,7 +9,6 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/current_timetable/loading_icon_button.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/calendar_widget.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/pages_widget.dart';
@@ -18,6 +17,7 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -170,7 +170,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       title: Text(context.loc.calendar),
       actions: [
         if (ref.watch(useCloudSyncProvider))
-          LoadingIconButton(
+          LoadingIconButtonWithFuture(
             icon: Icons.refresh,
             onTap: () async {
               try {

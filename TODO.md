@@ -2,7 +2,8 @@
 cant complete homework from widget
 the specified refresh token has already been reddemed (in bakaservice)
 
-write this somewhere else
+password reset
+sharing
 
 tests:
     check translations
@@ -31,17 +32,8 @@ tests:
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
 
-## RIVERPOD
-- ⬜ strava
-    - ⬜ stop saving the password 
-- ⬜ bakalari
-    - ⬜ timetable
-    - ⬜ homeworks
-        - ⬜ fix the frequency when is app searching for baka homeworks
-    - ⬜ name
-
 ## OTHER
-- ⬜ reset password for firebase
+- ⬜ reset password for firebase + verify email
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ add google sign in + sign in with apple
 - ⬜ create settings for initial task
@@ -49,6 +41,7 @@ tests:
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
+- ⬜ strava stop saving the password 
 - ⬜ translation - google sheets
 
 ## notifications:
@@ -67,12 +60,14 @@ tests:
 
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
-- ⬜ make everything react to touch (shrink)
+- ⬜ make everything react to touch (shrink) 
 - ⬜ share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
+- ⬜ ? remake subject, hw, exam notifiers - too much reading database, recursive edit() calls, ...
+- ⬜ ? merge duplicate subjects (is it really needed?)
     
 
 
@@ -125,3 +120,10 @@ tests:
 - ✅ web FAB a appbary jsou divne dole, asi protoze na webu neni safearea
 - ✅ onHover
 - ✅ keyboard shortcuts
+
+## RIVERPOD
+- ✅ bakalari
+    - ✅ timetable
+    - ✅ homeworks
+        - ✅ fix the frequency when is app searching for baka homeworks
+    - ✅ name

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class AgoText extends ConsumerWidget {
   const AgoText({
@@ -33,7 +34,7 @@ class AgoText extends ConsumerWidget {
       return const SizedBox(height: 24);
     }
 
-    final color = context.col.surfaceBright;
+    final color = getSubtleTextColor(context);
 
     return Row(
       spacing: 2,

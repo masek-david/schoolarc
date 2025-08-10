@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/roboto_serif.dart';
 
 class Overview extends ConsumerWidget {
@@ -48,7 +47,7 @@ class Overview extends ConsumerWidget {
 
     final showMissed = hwNumberOfMissed != 0;
 
-    String? userName = settings.get(Setting.userName);
+    String? userName = ref.watch(usernameProvider);
     bool showUserName = ref.watch(greetUsernameProvider) && userName != null;
 
     return Padding(

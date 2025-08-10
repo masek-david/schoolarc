@@ -407,6 +407,12 @@ abstract class AppLocalizations {
   /// **'{isAbsent, select, true{No homework} other{Homework}}'**
   String homeworkAbsence(String isAbsent);
 
+  /// No description provided for @nothingPlannedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned for {whenText}'**
+  String nothingPlannedFor(Object whenText);
+
   /// No description provided for @showMyName.
   ///
   /// In en, this message translates to:
@@ -458,7 +464,7 @@ abstract class AppLocalizations {
   /// No description provided for @showMissedHomeworks.
   ///
   /// In en, this message translates to:
-  /// **'Show missed homeworks'**
+  /// **'Show missed homework'**
   String get showMissedHomeworks;
 
   /// No description provided for @showArrows.
@@ -476,7 +482,7 @@ abstract class AppLocalizations {
   /// No description provided for @upcomingDayChannelDescription.
   ///
   /// In en, this message translates to:
-  /// **'Here you will find upcoming exams and homeworks'**
+  /// **'Here you will find upcoming exams and homework'**
   String get upcomingDayChannelDescription;
 
   /// No description provided for @mainChannel.
@@ -584,7 +590,7 @@ abstract class AppLocalizations {
   /// No description provided for @subjectHasntBeenAdded.
   ///
   /// In en, this message translates to:
-  /// **'This subject hasn\\\'t been added.'**
+  /// **'This subject hasn\'t been added yet.'**
   String get subjectHasntBeenAdded;
 
   /// No description provided for @importedSubject.
@@ -592,6 +598,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Imported subject'**
   String get importedSubject;
+
+  /// No description provided for @tryImportingSubjectFromBakalari.
+  ///
+  /// In en, this message translates to:
+  /// **'Try importing subjects from Bakaláři screen before.'**
+  String get tryImportingSubjectFromBakalari;
 
   /// No description provided for @change.
   ///
@@ -614,7 +626,7 @@ abstract class AppLocalizations {
   /// No description provided for @hwFromBaka.
   ///
   /// In en, this message translates to:
-  /// **'Homeworks from Bakaláři'**
+  /// **'Bakaláři homework'**
   String get hwFromBaka;
 
   /// No description provided for @noData.
@@ -626,7 +638,7 @@ abstract class AppLocalizations {
   /// No description provided for @newHomeworks.
   ///
   /// In en, this message translates to:
-  /// **'New homeworks'**
+  /// **'New homework'**
   String get newHomeworks;
 
   /// No description provided for @homeworkAlreadyAdded.
@@ -658,6 +670,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use Bakaláři'**
   String get useBakalari;
+
+  /// No description provided for @bakalariDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Bakaláři disabled'**
+  String get bakalariDisabled;
 
   /// No description provided for @loggedIn.
   ///
@@ -728,7 +746,7 @@ abstract class AppLocalizations {
   /// No description provided for @rememberMeWarning.
   ///
   /// In en, this message translates to:
-  /// **'If you continue, you won\'t be able to view your current timetable and current homeworks.'**
+  /// **'If you continue, you won\'t be able to view your current timetable and current homework.'**
   String get rememberMeWarning;
 
   /// No description provided for @continueAction.
@@ -752,7 +770,7 @@ abstract class AppLocalizations {
   /// No description provided for @importTimetableWarning.
   ///
   /// In en, this message translates to:
-  /// **'Importing the timetable will replace your existing timetable. Are you sure?'**
+  /// **'Importing the timetable will replace your existing timetable. Existing subjects will be reused. Are you sure?'**
   String get importTimetableWarning;
 
   /// No description provided for @import.
@@ -788,7 +806,7 @@ abstract class AppLocalizations {
   /// No description provided for @noHomeworks.
   ///
   /// In en, this message translates to:
-  /// **'No homeworks found'**
+  /// **'No homework found'**
   String get noHomeworks;
 
   /// No description provided for @noRecentlyDeleted.
@@ -1148,7 +1166,7 @@ abstract class AppLocalizations {
   /// No description provided for @upcomingDayNotificationsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Receive notifications with homeworks and exams for the next day'**
+  /// **'Receive notifications with homework and exams for the next day'**
   String get upcomingDayNotificationsDescription;
 
   /// No description provided for @arrivalTimeTitle.

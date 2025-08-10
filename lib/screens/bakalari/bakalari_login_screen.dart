@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/provider/baka_login_notifier.dart';
+import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
-import 'package:schoolarc/widgets/error_tile.dart';
+import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
-import 'package:schoolarc/widgets/progress_dialog.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
   const BakaLoginScreen({super.key});
@@ -25,7 +25,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
 
   late bool keepLoggedIn = settings.get(Setting.bakaKeepLoggedIn);
   bool obscureText = true;
-  Object? lastError;
+  String? subtitle;
 
   @override
   void initState() {
@@ -37,6 +37,11 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   void setToInitialValues() async {
     _schoolController.text = await bakaService.schoolName;
     _usernameController.text = await bakaService.username;
+    if (_usernameController.text != '') {
+      setState(() {
+        subtitle = _usernameController.text;
+      });
+    }
   }
 
   @override
@@ -52,7 +57,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     final useBaka = ref.watch(useBakaProvider);
 
     final baka = ref.watch(bakaLoginProvider);
-    final isLoggedIn = baka.value == true;
+    final error = baka.error;
+    final isLoading = baka.isLoading;
+    final isLoggedIn = baka.valueOrNull == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -93,187 +100,189 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 4),
             ),
             const Divider(),
-            baka.when(
-              data: (data) => SettingTile(
-                title: data ? context.loc.loggedIn : context.loc.loggedOut,
-                leading: data
+            if (error == null && !isLoading)
+              SettingTile(
+                title:
+                    isLoggedIn ? context.loc.loggedIn : context.loc.loggedOut,
+                subtitle: subtitle,
+                leading: isLoggedIn
                     ? const Icon(Icons.check_circle, color: Colors.green)
                     : const LoggedOutIcon(),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
               ),
-              error: (error, stackTrace) {
-                return ErrorTile(
-                  error: error,
-                  text: context.loc.errorLoggingIn,
-                  allowActions: false,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              enabled: !baka.isLoading && useBaka,
-              controller: _schoolController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                border: const OutlineInputBorder(),
-                labelText: context.loc.schoolWebId,
+            if (error != null)
+              ErrorTile(
+                error: error,
+                text: context.loc.errorLoggingIn,
+                allowActions: false,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              autofillHints: const [AutofillHints.username],
-              enabled: !baka.isLoading && useBaka,
-              controller: _usernameController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                border: const OutlineInputBorder(),
-                labelText: context.loc.username,
+            if (isLoading) const Center(child: CircularProgressIndicator()),
+            if (!isLoggedIn) const SizedBox(height: 12),
+            if (!isLoggedIn)
+              TextField(
+                enabled: !baka.isLoading && useBaka,
+                controller: _schoolController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: context.loc.schoolWebId,
+                ),
               ),
-            ),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    autofillHints: const [AutofillHints.password],
-                    enabled: !baka.isLoading && useBaka,
-                    controller: _passwordController,
-                    obscureText: obscureText,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(15),
-                      border: const OutlineInputBorder(),
-                      labelText: context.loc.password,
+            if (!isLoggedIn)
+              TextField(
+                autofillHints: const [AutofillHints.username],
+                enabled: !baka.isLoading && useBaka,
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15),
+                  border: const OutlineInputBorder(),
+                  labelText: context.loc.username,
+                ),
+              ),
+            const SizedBox(height: 12),
+            if (!isLoggedIn)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      autofillHints: const [AutofillHints.password],
+                      enabled: !baka.isLoading && useBaka,
+                      controller: _passwordController,
+                      obscureText: obscureText,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(15),
+                        border: const OutlineInputBorder(),
+                        labelText: context.loc.password,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      obscureText = !obscureText;
-                    });
-                  },
-                  icon: Icon(
-                    obscureText ? Icons.visibility : Icons.visibility_off,
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        obscureText = !obscureText;
+                      });
+                    },
+                    icon: Icon(
+                      obscureText ? Icons.visibility : Icons.visibility_off,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(context.loc.rememberMe),
-                Checkbox(
-                  value: keepLoggedIn,
-                  onChanged: !baka.isLoading && useBaka
-                      ? (value) async {
-                          if (!value!) {
-                            value = await showDialogAdaptive(
-                              context: context,
-                              title: Text(context.loc.rememberMeTitle),
-                              content: Text(context.loc.rememberMeWarning),
-                              actions: [
-                                adaptiveDialogButton(
-                                  context: context,
-                                  child: Text(context.loc.cancel),
-                                  onPressed: () => Navigator.pop(context, true),
-                                ),
-                                adaptiveDialogButton(
-                                  isDestructiveAction: true,
-                                  context: context,
-                                  child: Text(context.loc.continueAction),
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                ),
-                              ],
-                            );
-                          }
-
-                          setState(() {
-                            keepLoggedIn = value!;
-                          });
-                          settings.save(Setting.bakaKeepLoggedIn, value);
-                        }
-                      : null,
-                ),
-              ],
-            ),
-            Row(
-              spacing: 16,
-              children: [
-                FilledButton(
-                  onPressed: !baka.isLoading && useBaka
-                      ? () async {
-                          ref.read(bakaLoginProvider.notifier).firstLogin(
-                                school: _schoolController.text,
-                                username: _usernameController.text,
-                                password: _passwordController.text,
-                                keepLoggedIn: keepLoggedIn,
-                              );
-                        }
-                      : null,
-                  child: Text(context.loc.logIn),
-                ),
-                if (isLoggedIn)
-                  OutlinedButton(
-                    onPressed: baka.isLoading
-                        ? null
-                        : () async {
-                            ref.read(bakaLoginProvider.notifier).logOut();
-                          },
-                    child: Text(context.loc.logOut),
-                  ),
-              ],
-            ),
-            const Divider(),
-            OutlinedButton(
-              onPressed: isLoggedIn && !baka.isLoading
-                  ? () {
-                      showDialogAdaptive(
-                        context: context,
-                        title: Text(context.loc.importTimetableTitle),
-                        content: Text(context.loc.importTimetableWarning),
-                        actions: [
-                          adaptiveDialogButton(
-                            context: context,
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(context.loc.cancel),
-                          ),
-                          adaptiveDialogButton(
-                            context: context,
-                            isDestructiveAction: true,
-                            onPressed: () async {
-                              Navigator.pop(context);
-
-                              showDialog(
+                ],
+              ),
+            if (!isLoggedIn)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(context.loc.rememberMe),
+                  Checkbox(
+                    value: keepLoggedIn,
+                    onChanged: !baka.isLoading && useBaka
+                        ? (value) async {
+                            if (!value!) {
+                              value = await showDialogAdaptive(
                                 context: context,
-                                barrierDismissible: false,
-                                builder: (context) => const ProgressDialog(
-                                  showProgressNumber: false,
-                                ),
+                                title: Text(context.loc.rememberMeTitle),
+                                content: Text(context.loc.rememberMeWarning),
+                                actions: [
+                                  adaptiveDialogButton(
+                                    context: context,
+                                    child: Text(context.loc.cancel),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                  ),
+                                  adaptiveDialogButton(
+                                    isDestructiveAction: true,
+                                    context: context,
+                                    child: Text(context.loc.continueAction),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                  ),
+                                ],
                               );
+                            }
 
-                              try {
-                                await bakaService.importTimeTable(ref);
-                              } catch (e) {
-                                if (context.mounted) {
-                                  showMessage(context, e.toString(),
-                                      isError: true);
-                                }
-                              }
-                              if (context.mounted) {
+                            setState(() {
+                              keepLoggedIn = value!;
+                            });
+                            settings.save(Setting.bakaKeepLoggedIn, value);
+                          }
+                        : null,
+                  ),
+                ],
+              ),
+            if (!isLoggedIn)
+              FilledButton(
+                onPressed: !baka.isLoading && useBaka
+                    ? () async {
+                        ref.read(bakaLoginProvider.notifier).firstLogin(
+                              school: _schoolController.text,
+                              username: _usernameController.text,
+                              password: _passwordController.text,
+                              keepLoggedIn: keepLoggedIn,
+                            );
+                      }
+                    : null,
+                child: Text(context.loc.logIn),
+              ),
+            if (isLoggedIn)
+              OutlinedButton(
+                onPressed: baka.isLoading
+                    ? null
+                    : () async {
+                        ref.read(bakaLoginProvider.notifier).logOut();
+                      },
+                child: Text(context.loc.logOut),
+              ),
+            if (isLoggedIn) const Divider(),
+            if (isLoggedIn)
+              FilledButton.tonal(
+                onPressed: !isLoading
+                    ? () {
+                        showDialogAdaptive(
+                          context: context,
+                          title: Text(context.loc.importTimetableTitle),
+                          content: Text(context.loc.importTimetableWarning),
+                          actions: [
+                            adaptiveDialogButton(
+                              context: context,
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(context.loc.cancel),
+                            ),
+                            adaptiveDialogButton(
+                              context: context,
+                              isDestructiveAction: true,
+                              onPressed: () async {
                                 Navigator.pop(context);
-                              }
-                            },
-                            child: Text(context.loc.import),
-                          ),
-                        ],
-                      );
-                    }
-                  : null,
-              child: Text(context.loc.importTimetable),
-            ),
+
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const ProgressDialog(
+                                    showProgressNumber: false,
+                                  ),
+                                );
+
+                                try {
+                                  await bakaService.importTimeTable(ref);
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    showMessage(context, e.toString(),
+                                        isError: true);
+                                  }
+                                }
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text(context.loc.import),
+                            ),
+                          ],
+                        );
+                      }
+                    : null,
+                child: Text(context.loc.importTimetable),
+              ),
           ],
         ),
       ),

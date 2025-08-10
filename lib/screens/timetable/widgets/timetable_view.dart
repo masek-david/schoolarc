@@ -5,12 +5,12 @@ import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
-import 'package:schoolarc/screens/empty_message.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 
 class TimetableView extends StatelessWidget {
   const TimetableView({

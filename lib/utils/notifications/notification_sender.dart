@@ -16,7 +16,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
 const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
@@ -134,6 +134,7 @@ class NotificationSender {
 
     await initHive();
     final subjects = subjectsDb.getDatabase();
+    subjects.removeWhere((key, value) => value.isDeleted);
     final hwsInDb = homeworksDb.getDatabase().map(
       (key, value) {
         return MapEntry(key, value.convert(key, subjects[value.subjectId]));
