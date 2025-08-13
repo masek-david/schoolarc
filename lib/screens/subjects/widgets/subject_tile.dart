@@ -73,6 +73,7 @@ class SubjectTile extends StatelessWidget {
                     child: Text(subject.name),
                   ),
                   if (debug && usedTimes != null) Text(usedTimes.toString()),
+                  if (subject.isShared) const Icon(Icons.share),
                   if (subject.isFromBakalari)
                     Stack(
                       alignment: Alignment.center,

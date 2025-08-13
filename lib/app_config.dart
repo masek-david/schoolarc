@@ -12,7 +12,7 @@ import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_homeworks_screen.
 import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
 import 'package:schoolarc/screens/changelog_screen.dart';
 import 'package:schoolarc/screens/debug_info_screen.dart';
-import 'package:schoolarc/screens/firebase_login_screen.dart';
+import 'package:schoolarc/screens/firebase/firebase_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
@@ -26,6 +26,7 @@ import 'package:schoolarc/screens/settings/setting_pages/style_motion_page.dart'
 import 'package:schoolarc/screens/settings/setting_pages/theme_page.dart';
 import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_page.dart';
 import 'package:schoolarc/screens/settings/settings_screen.dart';
+import 'package:schoolarc/screens/shared/group_screen.dart';
 import 'package:schoolarc/screens/subjects/subjects_screen.dart';
 import 'package:schoolarc/screens/timetable/current_timetable_screen.dart';
 import 'package:schoolarc/screens/timetable/timetable_screen.dart';
@@ -197,6 +198,7 @@ class AppConfig extends ConsumerWidget {
             '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
             '/deleted': (context) => const RecentlyDeletedScreen(),
             '/database': (context) => const DbInfoScreen(),
+            '/group': (context) => const GroupScreen(),
             '/meals': (context) => const MealsScreen(),
             '/bakalari': (context) => const BakaLoginScreen(),
             '/strava': (context) => const StravaLoginScreen(),

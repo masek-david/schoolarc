@@ -1,4 +1,3 @@
-
 import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 
@@ -11,6 +10,7 @@ class Subject {
     required this.timestamp,
     required this.isDeleted,
     required this.order,
+    required this.isShared,
   });
 
   final String name;
@@ -20,6 +20,7 @@ class Subject {
   final DateTime timestamp;
   final bool isDeleted;
   final int order;
+  final bool isShared;
 
   SubjectEntity convert() {
     return SubjectEntity(
@@ -29,6 +30,7 @@ class Subject {
       isDeleted: isDeleted,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -58,6 +60,8 @@ class Subject {
       'id': id,
       'order': order,
       'isDeleted': isDeleted,
+      'isShared': isShared,
+      // TODO add timestamp
     };
   }
 
@@ -68,6 +72,7 @@ class Subject {
         bakaId = json['bakaId'],
         order = json['order'],
         isDeleted = json['isDeleted'],
+        isShared = json['isShared'] ?? false,
         timestamp = DateTime.now().toUtc();
 
   Map<String, dynamic> toFireJson() {
@@ -78,6 +83,7 @@ class Subject {
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
+      if (isShared) 'sh': true,
     };
   }
 
@@ -88,6 +94,7 @@ class Subject {
         bakaId = json['b'],
         order = json['o'] ?? 0,
         isDeleted = json['del'] ?? false,
+        isShared = json['sh'] ?? false,
         timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
 
   bool get isFromBakalari {
@@ -102,6 +109,7 @@ class Subject {
     String? bakaId,
     DateTime? timestamp,
     int? order,
+    bool? isShared,
   }) {
     return Subject(
       name: name ?? this.name,
@@ -111,6 +119,7 @@ class Subject {
       bakaId: bakaId ?? this.bakaId,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
+      isShared: isShared ?? this.isShared,
     );
   }
 }

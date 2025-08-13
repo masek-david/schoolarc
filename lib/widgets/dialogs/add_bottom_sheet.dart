@@ -12,6 +12,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
@@ -20,6 +21,7 @@ import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -31,10 +33,12 @@ class AddTaskBottomSheet extends ConsumerStatefulWidget {
   });
 
   /// if [initialTaskId] is null, a empty task is created
+  // TODO instead provide each value?
   final String? initialTaskId;
   final DateTime? initialDate;
 
   /// if true, when a subject is selected, the date will be set to first appearance of this subject in constant timetable
+  // TODO when this happens, show a message?
   final bool autoSetDate;
   final bool isHomework;
 
@@ -58,6 +62,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       RestorableStringN(initialTask.subject?.id);
   late RestorableDateTime pickedDate = RestorableDateTime(initialTask.deadline);
   late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
+  late RestorableBool share = RestorableBool(initialTask.isShared);
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
   final _timetable = timetableDb.timeTable;
@@ -75,6 +80,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       deadline: pickedDate.value,
       priority: TaskPriority(pickedPriority.value),
       timestamp: DateTime.now().toUtc(),
+      isShared: share.value,
     );
 
     if (widget.isHomework) {
@@ -184,6 +190,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     registerForRestoration(pickedDate, 'pickedDate');
     registerForRestoration(pickedSubjectId, 'pickedSubject');
     registerForRestoration(pickedPriority, 'pickedPriority');
+    registerForRestoration(share, 'share');
   }
 
   @override
@@ -240,6 +247,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   const SizedBox(height: 12),
                   CancelSaveButton(onSave: onSave),
                   const SizedBox(height: 15),
+                  // TODO use SubjectPicker
                   Row(
                     children: [
                       IconButton(
@@ -258,7 +266,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                                   key: keysList[index],
                                   selected: pickedSubjectId.value ==
                                       subjects[index].id,
-                                  label: Text(subjects[index].name),
+                                  label: Row(
+                                    children: [
+                                      // TODO maybe show which are shared here ?
+                                      // if(share.value && subjects[index].isShared) const Icon(Icons.share),
+                                      Text(subjects[index].name),
+                                    ],
+                                  ),
                                   onSelected: (value) {
                                     if (!value) {
                                       setSubject(null);
@@ -274,6 +288,17 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       ),
                     ],
                   ),
+                  if (share.value &&
+                      subjects
+                              .where((element) =>
+                                  element.id == pickedSubjectId.value)
+                              .firstOrNull
+                              ?.isShared ==
+                          false)
+                    const ErrorTile(
+                      error: null,
+                      text: 'The selected subject isn\'t shared',
+                    ),
                   const SizedBox(height: 10),
                   Autocomplete<Subject>(
                     fieldViewBuilder: (context, textEditingController,
@@ -329,12 +354,20 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       }),
                     ),
                   ),
+                  SettingTile.withCheckbox(
+                    contentPadding: const EdgeInsets.all(0),
+                    title: 'Share',
+                    value: share.value,
+                    onChanged: (value) => setState(() {
+                      share.value = value;
+                    }),
+                  ),
                   const Divider(),
                   InkWell(
                     onTap: pickDate,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 15, bottom: 15, left: 5, right: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 4),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

@@ -200,14 +200,31 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         child: SubjectShortcut(subject: widget.hw.subject),
                       ),
                       const SizedBox(width: 8),
+                      // TODO if we display it, dont forget to put it to exam and subject too
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (widget.hw.isShared)
+                            Icon(
+                              Icons.share,
+                              size: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                          if (widget.hw.description != null &&
+                              widget.hw.description != '')
+                            Icon(
+                              Icons.notes,
+                              size: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                        ],
+                      ),
                       if (widget.hw.description != null &&
-                          widget.hw.description != '')
-                        Icon(
-                          Icons.notes,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      if (widget.hw.description != null &&
-                          widget.hw.description != '')
+                          widget.hw.description != '' || widget.hw.isShared)
                         const SizedBox(width: 8),
                       Expanded(child: Text(widget.hw.text, maxLines: 2)),
                       const SizedBox(width: 5),

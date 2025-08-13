@@ -29,8 +29,8 @@ class SettingTile extends StatelessWidget {
     required bool value,
     required void Function(bool value) onChanged,
     String? subtitle,
-    bool? enabled,
-    bool? highlighted,
+    bool enabled = true,
+    bool highlighted = false,
     Widget? leading,
     Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
@@ -39,13 +39,42 @@ class SettingTile extends StatelessWidget {
     return SettingTile(
       title: title,
       subtitle: subtitle,
-      enabled: enabled ?? true,
-      highlighted: highlighted ?? false,
+      enabled: enabled,
+      highlighted: highlighted,
       contentPadding: contentPadding,
       leading: leading,
       onTap: (context) => onChanged(!value),
       trailing:
           Switch(value: value, onChanged: enabled == false ? null : onChanged),
+      key: key,
+    );
+  }
+
+  static SettingTile withCheckbox({
+    required String title,
+    required bool value,
+    required void Function(bool value) onChanged,
+    String? subtitle,
+    bool enabled = true,
+    bool highlighted = false,
+    Widget? leading,
+    Color? iconColor,
+    EdgeInsetsGeometry? contentPadding,
+    Key? key,
+  }) {
+    return SettingTile(
+      title: title,
+      subtitle: subtitle,
+      enabled: enabled,
+      highlighted: highlighted,
+      contentPadding: contentPadding,
+      leading: leading,
+      onTap: (context) => onChanged(!value),
+      trailing: Checkbox(
+          value: value,
+          tristate: false,
+          onChanged:
+              enabled == false ? null : (value) => onChanged(value as bool)),
       key: key,
     );
   }

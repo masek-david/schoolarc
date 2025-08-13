@@ -1,22 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 
-class SubjectDialog extends StatelessWidget {
+class SubjectDialog extends ConsumerStatefulWidget {
   const SubjectDialog({
     super.key,
-    required this.nameController,
-    required this.shortcutController,
-    required this.onSave,
-    required this.text,
+    required this.isEditing,
+    required this.initial,
     this.usedTimes,
   });
-
-  final String text;
-  final TextEditingController nameController;
-  final TextEditingController shortcutController;
   final int? usedTimes;
-  final void Function() onSave;
+
+  /// If this is false, the user is creating new subject
+  final bool isEditing;
+  final Subject initial;
+
+  @override
+  ConsumerState<SubjectDialog> createState() => _SubjectDialogState();
+}
+
+class _SubjectDialogState extends ConsumerState<SubjectDialog> {
+  late final TextEditingController nameController =
+      TextEditingController(text: widget.initial.name);
+  late final TextEditingController shortcutController =
+      TextEditingController(text: widget.initial.shortcut);
+  late bool isShared = widget.initial.isShared;
+
+  void onSave() {
+    final edited = widget.initial.copyWith(
+      name: nameController.text,
+      shortcut: shortcutController.text,
+      isShared: isShared,
+      timestamp: DateTime.now(),
+    );
+
+    if (widget.isEditing) {
+      ref.read(subjectsProvider.notifier).edit(edited);
+    } else {
+      ref.read(subjectsProvider.notifier).saveNew(edited.convert());
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    shortcutController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +66,9 @@ class SubjectDialog extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               child: Text(
-                text,
+                widget.isEditing
+                    ? context.loc.editSubject
+                    : context.loc.addNewSubject,
                 style: const TextStyle(fontSize: 18),
               ),
             ),
@@ -61,9 +98,17 @@ class SubjectDialog extends StatelessWidget {
                 labelText: loc.shortcutMax5Chars,
               ),
             ),
-            if (usedTimes != null)
+            SettingTile.withCheckbox(
+              contentPadding: const EdgeInsets.all(0),
+              title: 'Share',
+              value: isShared,
+              onChanged: (value) => setState(() {
+                isShared = value;
+              }),
+            ),
+            if (widget.usedTimes != null)
               Text(
-                loc.subjectUsedTimes(usedTimes!),
+                loc.subjectUsedTimes(widget.usedTimes!),
               ),
             CancelSaveButton(onSave: onSave)
           ],

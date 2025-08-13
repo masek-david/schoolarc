@@ -1,9 +1,22 @@
+fire rules
+add group names (create, view)
+check im not saving null values with copyWith()
+show only tasks that havent been saved yet
+group notifier - group name, tasks, users?
+legal
+    add name and groups? to export and delete data
+    update privacy policy
+move all json formatters to one place
+show username in firebase login  (create a provider for it?)
+set isShared to true when shared subject is selected
+password reset
+
 # FIX
-cant complete homework from widget
+enter in addbottomsheet doesnt close, and doesnt set subject
+cant complete homework from widget + notifications now dont work
+    rework with isolatedHive??
 the specified refresh token has already been reddemed (in bakaservice)
 
-password reset
-sharing
 
 tests:
     check translations
@@ -14,7 +27,10 @@ tests:
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
-- ⬜ plus plan - one time/yearly ???
+- ⬜ plus plan
+    - ⬜ one time/yearly ???
+    - ⬜ cloud sync
+    - ⬜ sharing
     - ⬜ add to tutorial
 
 # FEATURES

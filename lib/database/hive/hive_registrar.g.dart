@@ -7,24 +7,12 @@ import 'package:schoolarc/database/hive/hive_adapters.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
-    if (!Hive.isAdapterRegistered(ExamEntityAdapter().typeId)) {
-      Hive.registerAdapter(ExamEntityAdapter());
-    }
-    if (!Hive.isAdapterRegistered(HomeworkEntityAdapter().typeId)) {
-      Hive.registerAdapter(HomeworkEntityAdapter());
-    }
-    if (!Hive.isAdapterRegistered(LessonTimesAdapter().typeId)) {
-      Hive.registerAdapter(LessonTimesAdapter());
-    }
-    if (!Hive.isAdapterRegistered(LogAdapter().typeId)) {
-      Hive.registerAdapter(LogAdapter());
-    }
-    if (!Hive.isAdapterRegistered(SubjectEntityAdapter().typeId)) {
-      Hive.registerAdapter(SubjectEntityAdapter());
-    }
-    if (!Hive.isAdapterRegistered(TimeTableEntityAdapter().typeId)) {
-      Hive.registerAdapter(TimeTableEntityAdapter());
-    }
+    registerAdapter(ExamEntityAdapter());
+    registerAdapter(HomeworkEntityAdapter());
+    registerAdapter(LessonTimesAdapter());
+    registerAdapter(LogAdapter());
+    registerAdapter(SubjectEntityAdapter());
+    registerAdapter(TimeTableEntityAdapter());
   }
 }
 

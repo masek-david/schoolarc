@@ -61,7 +61,13 @@
     });
 
     window.setBarColor = function (color) {
-      document.querySelector('meta[name="theme-color"]').setAttribute("content", color);
+      try {
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute("content", color);
+      } catch (e) {
+        console.error("Failed to set bar color:", e);
+      }
     };
 
     document.addEventListener('touchstart', (startEvent) => {

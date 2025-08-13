@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -30,6 +33,14 @@ final bakaService = BakaService();
 final logsService = LogsDatabase();
 final uuid = const Uuid();
 late PackageInfo packageInfo;
+
+/// returns true for web, windows, macos and linux
+bool needsRefreshButton() {
+  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    return true;
+  }
+  return false;
+}
 
 Color getSubtleTextColor(BuildContext context) {
   if (Theme.brightnessOf(context) == Brightness.dark) {

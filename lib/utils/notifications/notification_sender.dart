@@ -65,6 +65,8 @@ class NotificationSender {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       return;
     }
+    // TODO dont init hive this way
+    return;
     await initHive();
 
     if (!await areNotificationsAllowed(tomorrowChannel)) {

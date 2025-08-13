@@ -1,0 +1,284 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/screens/shared/join_group_dialog.dart';
+import 'package:schoolarc/screens/shared/members_screen.dart';
+import 'package:schoolarc/screens/shared/shared_add_bottom_sheet.dart';
+import 'package:schoolarc/screens/shared/username_text.dart';
+import 'package:schoolarc/services/firebase/firebase_sharing_service.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/tiles/exam_tile.dart';
+import 'package:schoolarc/widgets/tiles/hw_tile.dart';
+
+class GroupScreen extends ConsumerStatefulWidget {
+  const GroupScreen({super.key});
+
+  @override
+  ConsumerState<GroupScreen> createState() => _GroupScreenState();
+}
+
+final fireShareService = FirebaseSharingService();
+
+class _GroupScreenState extends ConsumerState<GroupScreen> {
+  Map<MyUser, List<Task>>? data;
+
+  @override
+  void initState() {
+    super.initState();
+    refresh();
+  }
+
+  Future<void> refresh() {
+    return fireShareService.getSharedTasks().then((value) {
+      setState(() {
+        data = value;
+      });
+    }, onError: (e) {
+      if (mounted) {
+        showMessage(context, e.toString(), isError: true);
+      }
+    });
+  }
+
+  void showSheet(Task task, MyUser owner) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SharedAddBottomSheet(
+          task: task,
+          owner: owner,
+          isHomework: task.runtimeType == Homework,
+          subjects: ref.read(subjectsSortedProvider),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final users = data?.keys.toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        // TODO could be the group name
+        title: const Text('Group'),
+        actions: [
+          if (needsRefreshButton())
+            LoadingIconButtonWithFuture(
+              onTap: refresh,
+              icon: Icons.refresh,
+            ),
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: const Text('View members'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MembersScreen(users: users ?? []),
+                      ),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Join group'),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => JoinGroupDialog(
+                        title: 'Paste the code of the group:',
+                        confirmText: 'Join',
+                        onConfirm: (id) async {
+                          if (id == '') return;
+                          try {
+                            await fireShareService.joinGroup(id);
+                            if (context.mounted) {
+                              showMessage(
+                                  context, 'Wait for group owner to approve');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              showMessage(context, e.toString(), isError: true);
+                            }
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Leave group'),
+                  onTap: () {
+                    showDialogAdaptive(
+                      context: context,
+                      title: const Text('Leave the group?'),
+                      actions: [
+                        adaptiveDialogButton(
+                          context: context,
+                          child: Text(context.loc.cancel),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        adaptiveDialogButton(
+                          context: context,
+                          child: const Text('Leave'),
+                          isDestructiveAction: true,
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            try {
+                              await fireShareService.leaveGroup();
+                              if (context.mounted) {
+                                showMessage(context, 'Left the group');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                showMessage(context, e.toString(),
+                                    isError: true);
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Invite to group'),
+                  onTap: () async {
+                    // TODO
+                    await Clipboard.setData(
+                        const ClipboardData(text: 'data.groupId'));
+                    if (context.mounted) {
+                      showMessage(context, 'Share the copied code with friends',
+                          duration: const Duration(seconds: 10));
+                    }
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Create new group'),
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) => JoinGroupDialog(
+                        title: 'Create the name for the group',
+                        confirmText: 'Create',
+                        onConfirm: (name) async {
+                          try {
+                            await fireShareService.createGroup(name: name);
+                            if (context.mounted) {
+                              showMessage(context, 'Created new group');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              showMessage(context, e.toString(), isError: true);
+                            }
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Delete your group'),
+                  onTap: () {
+                    showDialogAdaptive(
+                      context: context,
+                      title: const Text('Delete your group?'),
+                      content: const Text('This action is irreversible'),
+                      actions: [
+                        adaptiveDialogButton(
+                          context: context,
+                          child: Text(context.loc.cancel),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        adaptiveDialogButton(
+                          context: context,
+                          child: const Text('Delete'),
+                          isDestructiveAction: true,
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            try {
+                              await fireShareService.deleteGroup();
+                              if (context.mounted) {
+                                showMessage(context, 'Group deleted');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                showMessage(context, e.toString(),
+                                    isError: true);
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ];
+            },
+          ),
+        ],
+      ),
+      body: data == null && users == null
+          ? const EmptyMessage(message: 'no hws')
+          : RefreshIndicator(
+              onRefresh: refresh,
+              child: ListView.builder(
+                itemCount: users!.length,
+                // TODO make this build for each task, not user - dont show users with no tasks
+                itemBuilder: (context, index) {
+                  final user = users[index];
+                  final tasks = data![user];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 4),
+                        child: UsernameText(user: user),
+                      ),
+                      ...List.generate(
+                        tasks!.length,
+                        (indexInner) {
+                          final task = tasks[indexInner];
+                          if (task.runtimeType == Homework) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: HwTile(
+                                hw: task as Homework,
+                                onChangedCompletion: null,
+                                onDelete: null,
+                                onEdit: () => showSheet(task, user),
+                                onConvert: null,
+                              ),
+                            );
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: ExamTile(
+                                exam: task as Exam,
+                                onDelete: null,
+                                onEdit: () => showSheet(task, user),
+                                onConvert: null,
+                              ),
+                            );
+                          }
+                        },
+                      )
+                    ],
+                  );
+                },
+              ),
+            ),
+    );
+  }
+}

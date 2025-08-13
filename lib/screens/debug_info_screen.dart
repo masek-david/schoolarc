@@ -9,7 +9,7 @@ import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/models/homeworks/homework_id_model.dart';
+import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -68,7 +68,7 @@ class DbInfoScreen extends ConsumerWidget {
             const Text('FIREBASE'),
             FilledButton(
               onPressed: () async {
-                late List<HomeworkWithID>? fireHws;
+                late List<HomeworkEntityWithID>? fireHws;
                 try {
                   fireHws =
                       await ref.read(firebaseServiceProvider).getAllHomeworks();

@@ -6,10 +6,12 @@ class LoginField {
     this.obscure = false,
     this.initialValue,
     this.autofillHints,
+    this.info,
   });
 
   String name;
   bool obscure;
+  String? info;
   Iterable<String>? autofillHints;
   String? initialValue;
 }
@@ -106,6 +108,23 @@ class _FirebaseLoginPageState extends State<LoginInputScreen> {
                     ),
                   ),
                 ),
+                if (field.info != null)
+                  ExcludeFocus(
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(field.info!),
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.info_outline),
+                    ),
+                  ),
                 if (obscure != null)
                   ExcludeFocus(
                     child: IconButton(

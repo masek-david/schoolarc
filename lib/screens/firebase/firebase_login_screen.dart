@@ -182,6 +182,12 @@ class FirebaseLoginScreen extends ConsumerWidget {
                                 ],
                               ),
                               LoginField(
+                                name: 'Username',
+                                info: 'Username is visible to other users',
+                                obscure: false,
+                                autofillHints: [AutofillHints.newUsername],
+                              ),
+                              LoginField(
                                 name: context.loc.password,
                                 obscure: true,
                                 autofillHints: [AutofillHints.newPassword],
@@ -216,7 +222,8 @@ class FirebaseLoginScreen extends ConsumerWidget {
                                   .read(firebaseLoginProvider.notifier)
                                   .register(
                                     email: fields[0],
-                                    password: fields[1],
+                                    password: fields[2],
+                                    username: fields[1]
                                   );
 
                               if (ref.read(firebaseLoginProvider).value !=
@@ -262,6 +269,47 @@ class FirebaseLoginScreen extends ConsumerWidget {
                       }
                     : null,
                 child: Text(context.loc.register),
+              ),
+            if (loggedIn) const SizedBox(height: 16),
+            if (loggedIn)
+              OutlinedButton(
+                onPressed: useCloudSync
+                    ? () async {
+                        pushScreen(
+                          context,
+                          LoginInputScreen(
+                            actionName: 'Change username',
+                            fields: [
+                              LoginField(
+                                name: 'New username',
+                                obscure: false,
+                                autofillHints: [AutofillHints.newUsername],
+                              ),
+                            ],
+                            onSubmit: (fields) async {
+                              try {
+                                await ref
+                                    .read(firebaseServiceProvider)
+                                    .saveUsername(fields[0]);
+                              } on Object catch (e) {
+                                if (context.mounted) {
+                                  showMessage(context, e.toString(),
+                                      isError: true);
+                                }
+                                return;
+                              }
+
+                              if (context.mounted) {
+                                showMessage(
+                                    context, 'Username changed successfully');
+                                Navigator.pop(context);
+                              }
+                            },
+                          ),
+                        );
+                      }
+                    : null,
+                child: const Text('Change username'),
               ),
             if (loggedIn)
               OutlinedButton(
@@ -323,6 +371,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               if (context.mounted) {
                                 showMessage(context,
                                     context.loc.passwordChangedSuccessfully);
+                                Navigator.pop(context);
                               }
                             },
                           ),

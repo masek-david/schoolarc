@@ -33,13 +33,16 @@ class FirebaseLoginNotifier extends AsyncNotifier<bool> {
     }
   }
 
-  Future<void> register(
-      {required String email, required String password}) async {
+  Future<void> register({
+    required String email,
+    required String password,
+    required String username,
+  }) async {
     state = const AsyncValue.loading();
     try {
       await ref
           .read(firebaseServiceProvider)
-          .createUser(email: email, password: password);
+          .createUser(email: email, password: password, username: username);
       state = const AsyncValue.data(true);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

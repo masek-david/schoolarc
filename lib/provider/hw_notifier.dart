@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
-import 'package:schoolarc/models/homeworks/homework_id_model.dart';
+import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -173,7 +173,7 @@ List<Homework> hwsGetMissed(Map<String, Homework> original) {
 class HwNotifier extends Notifier<Map<String, Homework>>
     with WidgetsBindingObserver {
   Map<String, Subject> subjects = {};
-  StreamSubscription<HomeworkWithID>? listenFirebase;
+  StreamSubscription<HomeworkEntityWithID>? listenFirebase;
 
   @override
   Map<String, Homework> build() {
@@ -563,7 +563,7 @@ class HwNotifier extends Notifier<Map<String, Homework>>
   }
 
   /// checks and updates/adds hw from firestore, overwrites the newest version
-  Future<void> checkFireHomework(HomeworkWithID fireHw) async {
+  Future<void> checkFireHomework(HomeworkEntityWithID fireHw) async {
     // print('checking hw from fire: ${fireHw.toString()}');
 
     final localHw = _dbState.values.where(

@@ -15,6 +15,7 @@ class Exam extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
+    required super.isShared,
     super.stateReaddingVersion,
   });
 
@@ -27,6 +28,7 @@ class Exam extends Task {
       priority: priority.index,
       description: description,
       timestamp: timestamp,
+      isShared: isShared,
       order: order,
     );
   }
@@ -46,6 +48,7 @@ class Exam extends Task {
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
+      if (isShared) 'sh': deadline.millisecondsSinceEpoch + 2.592e+8,
     };
   }
 
@@ -61,6 +64,7 @@ class Exam extends Task {
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
+    bool? isShared,
     int? stateReaddingVersion,
   }) {
     return Exam(
@@ -74,6 +78,7 @@ class Exam extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      isShared: isShared ?? this.isShared,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }

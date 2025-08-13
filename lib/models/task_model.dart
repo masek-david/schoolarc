@@ -16,6 +16,7 @@ class Task {
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
+  final bool isShared;
 
   /// stateReaddingVersion changes when the task is re-added, so it doesnt trigger
   /// Multiple widgets use the same globalkey error in AnimatedReorderableListView
@@ -33,6 +34,7 @@ class Task {
     required this.priority,
     required this.description,
     required this.order,
+    required this.isShared,
     this.stateReaddingVersion = 0,
   });
 
@@ -47,6 +49,7 @@ class Task {
         description = null,
         subject = null,
         timestamp = DateTime.now().toUtc(),
+        isShared = false,
         stateReaddingVersion = 0;
 
   HomeworkEntity toHwEntity() {
@@ -60,6 +63,7 @@ class Task {
       description: description,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -73,6 +77,7 @@ class Task {
       description: description,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -115,6 +120,7 @@ class Task {
     bool? isDeleted,
     int? order,
     int? stateReaddingVersion,
+    bool? isShared,
   }) {
     return Task(
       subject: subject ?? this.subject,
@@ -128,6 +134,7 @@ class Task {
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
+      isShared: isShared ?? this.isShared,
     );
   }
 }

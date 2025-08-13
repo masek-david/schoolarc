@@ -71,6 +71,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
           data.sort(
             (a, b) => a.deadline.compareTo(b.deadline),
           );
+          // bool .sort()
           data.sort((a, b) =>
               (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)));
 

@@ -9,15 +9,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/exams/exam_id_model.dart';
+import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/homeworks/homework_id_model.dart';
+import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase_activity_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
-
 
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
   return FirebaseService(ref: ref);
@@ -78,9 +77,10 @@ class FirebaseService {
   }
 
   Future<void> createUser(
-      {required String email, required String password}) async {
+      {required String email, required String password, required String username,}) async {
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     refLocation();
+    await saveUsername(username);
     return;
   }
 
@@ -157,19 +157,35 @@ class FirebaseService {
     }
   }
 
+  Future<String>? getUsername() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return '';
+
+    final snapshot =
+        await FirebaseDatabase.instance.ref('users/${user.uid}/n').get();
+    return snapshot.value as String;
+  }
+
+  Future<void> saveUsername(String name) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseDatabase.instance.ref('users/${user.uid}/n').set(name);
+  }
+
   // EXAMS
-  Stream<ExamWithID> listenExams() {
+  Stream<ExamEntityWithID> listenExams() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = exams.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamWithID.fromFireJson(json);
+      return ExamEntityWithID.fromFireJson(json);
     });
     final changed = exams.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamWithID.fromFireJson(json);
+      return ExamEntityWithID.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
@@ -223,16 +239,16 @@ class FirebaseService {
     return;
   }
 
-  Future<List<ExamWithID>?> getAllExams() async {
+  Future<List<ExamEntityWithID>?> getAllExams() async {
     if (auth.currentUser == null) return null;
-    List<ExamWithID> examsList = [];
+    List<ExamEntityWithID> examsList = [];
     try {
       final snapshot = await exams.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        examsList.add(ExamWithID.fromFireJson(json));
+        examsList.add(ExamEntityWithID.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
@@ -243,18 +259,18 @@ class FirebaseService {
   }
 
   // HOMEWORKS
-  Stream<HomeworkWithID> listenHomeworks() {
+  Stream<HomeworkEntityWithID> listenHomeworks() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = homeworks.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkWithID.fromFireJson(json);
+      return HomeworkEntityWithID.fromFireJson(json);
     });
     final changed = homeworks.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkWithID.fromFireJson(json);
+      return HomeworkEntityWithID.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
@@ -308,16 +324,16 @@ class FirebaseService {
     return;
   }
 
-  Future<List<HomeworkWithID>?> getAllHomeworks() async {
+  Future<List<HomeworkEntityWithID>?> getAllHomeworks() async {
     if (auth.currentUser == null) return null;
-    List<HomeworkWithID> homeworksList = [];
+    List<HomeworkEntityWithID> homeworksList = [];
     try {
       final snapshot = await homeworks.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        homeworksList.add(HomeworkWithID.fromFireJson(json));
+        homeworksList.add(HomeworkEntityWithID.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');

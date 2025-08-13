@@ -76,6 +76,7 @@ FutureOr<void> backgroundCallback(Uri? data) async {
 Future<void> completeHwBackground(
   Uri data,
 ) async {
+  return;
   if (data.host == 'complete') {
     String? id = data.queryParameters['db'];
     bool? isCompleted = bool.tryParse(data.queryParameters['complete'] ?? '');

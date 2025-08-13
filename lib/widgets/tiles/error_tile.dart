@@ -24,7 +24,7 @@ class ErrorTile extends StatelessWidget {
   final List<Widget>? actions;
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     ExceptionActions? action;
 
@@ -48,13 +48,15 @@ class ErrorTile extends StatelessWidget {
           color: Theme.of(context).colorScheme.error,
         ),
       ),
-      subtitle: Text(
-        error.toString(),
-        maxLines: 5,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.error,
-        ),
-      ),
+      subtitle: error == null
+          ? null
+          : Text(
+              error.toString(),
+              maxLines: 5,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: allowActions
