@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
@@ -28,7 +28,7 @@ class GroupScreen extends ConsumerStatefulWidget {
 final fireShareService = FirebaseSharingService();
 
 class _GroupScreenState extends ConsumerState<GroupScreen> {
-  Map<MyUser, List<Task>>? data;
+  Group? group;
 
   @override
   void initState() {
@@ -37,9 +37,10 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
   }
 
   Future<void> refresh() {
-    return fireShareService.getSharedTasks().then((value) {
+    return fireShareService.getGroup();
+    return fireShareService.getGroup().then((value) {
       setState(() {
-        data = value;
+        group = value;
       });
     }, onError: (e) {
       if (mounted) {
@@ -48,13 +49,13 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
     });
   }
 
-  void showSheet(Task task, MyUser owner) {
+  void showSheet(Task task, Member member) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
         return SharedAddBottomSheet(
           task: task,
-          owner: owner,
+          member: member,
           isHomework: task.runtimeType == Homework,
           subjects: ref.read(subjectsSortedProvider),
         );
@@ -64,12 +65,21 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final users = data?.keys.toList();
+    final tasks = group?.tasks;
+    tasks?.sort((a, b) {
+      int result = a.member.id.compareTo(b.member.id);
+      if (result != 0) return result;
+
+      result =
+          (a is GroupHomework ? 1 : 0).compareTo(b is GroupHomework ? 1 : 0);
+      if (result != 0) return result;
+
+      return a.deadline.compareTo(b.deadline);
+    });
 
     return Scaffold(
       appBar: AppBar(
-        // TODO could be the group name
-        title: const Text('Group'),
+        title: Text(group?.groupName ?? context.loc.loading),
         actions: [
           if (needsRefreshButton())
             LoadingIconButtonWithFuture(
@@ -85,7 +95,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MembersScreen(users: users ?? []),
+                        builder: (context) =>
+                            MembersScreen(members: group?.members ?? []),
                       ),
                     );
                   },
@@ -95,7 +106,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                   onTap: () {
                     showDialog(
                       context: context,
-                      builder: (context) => JoinGroupDialog(
+                      builder: (_) => JoinGroupDialog(
                         title: 'Paste the code of the group:',
                         confirmText: 'Join',
                         onConfirm: (id) async {
@@ -103,8 +114,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                           try {
                             await fireShareService.joinGroup(id);
                             if (context.mounted) {
-                              showMessage(
-                                  context, 'Wait for group owner to approve');
+                              showMessage(context,
+                                  'Wait for the group owner to approve');
                             }
                           } catch (e) {
                             if (context.mounted) {
@@ -154,9 +165,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                 PopupMenuItem(
                   child: const Text('Invite to group'),
                   onTap: () async {
-                    // TODO
                     await Clipboard.setData(
-                        const ClipboardData(text: 'data.groupId'));
+                        ClipboardData(text: group?.groupId ?? ''));
                     if (context.mounted) {
                       showMessage(context, 'Share the copied code with friends',
                           duration: const Duration(seconds: 10));
@@ -168,7 +178,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                   onTap: () async {
                     showDialog(
                       context: context,
-                      builder: (context) => JoinGroupDialog(
+                      builder: (_) => JoinGroupDialog(
                         title: 'Create the name for the group',
                         confirmText: 'Create',
                         onConfirm: (name) async {
@@ -176,6 +186,30 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                             await fireShareService.createGroup(name: name);
                             if (context.mounted) {
                               showMessage(context, 'Created new group');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              showMessage(context, e.toString(), isError: true);
+                            }
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('Change group name'),
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (_) => JoinGroupDialog(
+                        title: 'Change the name of the group',
+                        confirmText: 'Change',
+                        onConfirm: (name) async {
+                          try {
+                            await fireShareService.changeGroupName(name: name);
+                            if (context.mounted) {
+                              showMessage(context, 'Changed the group\'s name');
                             }
                           } catch (e) {
                             if (context.mounted) {
@@ -228,57 +262,63 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           ),
         ],
       ),
-      body: data == null && users == null
-          ? const EmptyMessage(message: 'no hws')
-          : RefreshIndicator(
-              onRefresh: refresh,
-              child: ListView.builder(
-                itemCount: users!.length,
-                // TODO make this build for each task, not user - dont show users with no tasks
+      body: RefreshIndicator(
+        onRefresh: refresh,
+        child: group == null
+            ? const SingleChildScrollView(
+                child: EmptyMessage(message: 'no group'),
+              )
+            : ListView.builder(
+                itemCount: group!.tasks.length,
                 itemBuilder: (context, index) {
-                  final user = users[index];
-                  final tasks = data![user];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 4),
-                        child: UsernameText(user: user),
+                  final task = group!.tasks[index];
+                  final member = task.member;
+                  final isFirstFromMember =
+                      index == 0 || tasks![index - 1].member.id != member.id;
+                  late final Widget tile;
+
+                  if (task is GroupHomework) {
+                    tile = Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: HwTile(
+                        hw: task.toHomework(),
+                        onChangedCompletion: null,
+                        showBorderIfMissed: false,
+                        onDelete: null,
+                        onEdit: () => showSheet(task, member),
+                        onConvert: null,
                       ),
-                      ...List.generate(
-                        tasks!.length,
-                        (indexInner) {
-                          final task = tasks[indexInner];
-                          if (task.runtimeType == Homework) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: HwTile(
-                                hw: task as Homework,
-                                onChangedCompletion: null,
-                                onDelete: null,
-                                onEdit: () => showSheet(task, user),
-                                onConvert: null,
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: ExamTile(
-                                exam: task as Exam,
-                                onDelete: null,
-                                onEdit: () => showSheet(task, user),
-                                onConvert: null,
-                              ),
-                            );
-                          }
-                        },
-                      )
-                    ],
-                  );
+                    );
+                  } else {
+                    task as GroupExam;
+                    tile = Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: ExamTile(
+                        exam: task.toExam(),
+                        onDelete: null,
+                        onEdit: () => showSheet(task, member),
+                        onConvert: null,
+                      ),
+                    );
+                  }
+                  if (isFirstFromMember) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 16, 12, 4),
+                          child: UsernameText(user: member),
+                        ),
+                        tile
+                      ],
+                    );
+                  }
+                  return tile;
                 },
               ),
-            ),
+      ),
     );
   }
 }

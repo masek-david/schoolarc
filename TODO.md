@@ -10,8 +10,10 @@ move all json formatters to one place
 show username in firebase login  (create a provider for it?)
 set isShared to true when shared subject is selected
 password reset
+qr group invite?
 
 # FIX
+not booting after update
 enter in addbottomsheet doesnt close, and doesnt set subject
 cant complete homework from widget + notifications now dont work
     rework with isolatedHive??

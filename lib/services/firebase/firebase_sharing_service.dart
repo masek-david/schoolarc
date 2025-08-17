@@ -1,33 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
+import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/task_model.dart';
 // TODO translate
-
-class MyUser {
-  MyUser(
-    this.id,
-    this.name, {
-    this.waitingForApproval = false,
-    this.isLocal = false,
-    this.isOwner = false,
-  });
-  final String name;
-  final String id;
-  final bool waitingForApproval;
-  final bool isLocal;
-  final bool isOwner;
-}
 
 class FirebaseSharingService {
   final _db = FirebaseDatabase.instance;
 
-  /// returns map of all member of the group, and the tasks shared by them
-  Future<Map<MyUser, List<Task>>> getSharedTasks() async {
+  Future<Group> getGroup() async {
     final user = currentUserId;
     final db = FirebaseDatabase.instance;
 
@@ -37,54 +19,69 @@ class FirebaseSharingService {
     }
     final groupSnapshot = await db.ref('groups/$groupId').get();
     if (!groupSnapshot.exists) {
+      leaveGroup();
       throw ServiceException('This group doesn\'t exist');
     }
 
-    final groupUsersIds = {
+    final groupName = groupSnapshot.child('n').value as String? ?? '';
+    final membersIds = {
       for (var snap in groupSnapshot.child('u').children)
         snap.key!: snap.value as bool?
     };
 
     // add the group owner to users
-    groupUsersIds[groupId] = true;
+    membersIds[groupId] = true;
     // check if you have permission
-    if (groupUsersIds[user] == false) {
+    if (membersIds[user] == false) {
       throw ServiceException('Waiting for approval');
+    }
+    // check if you have been removed
+    if (membersIds[user] == null) {
+      leaveGroup();
+      throw ServiceException('You have been removed from the group');
     }
 
     final now = DateTime.now().millisecondsSinceEpoch;
 
     final List<Future> futures = [];
 
-    // Map of userId to User
-    final Map<String, MyUser> users = {};
+    // Map of userId to Member
+    final Map<String, Member> members = {};
     // Map of subjectId to subject
     final Map<String, Subject> subjectsMap = {};
-    // Map of userId to hw
-    final Map<String, List<HomeworkEntityWithID>> hws = {};
-    // Map of userId to exam
-    final Map<String, List<ExamEntityWithID>> exams = {};
+    final List<GroupHomeworkData> hws = [];
+    final List<GroupExamData> exams = [];
 
-    groupUsersIds.forEach((groupUserId, groupUserState) {
-      // usernames
-      futures.add(db.ref('users/$groupUserId/n').get().then(
+    membersIds.forEach((memberId, memberState) async {
+      if (memberState != true || memberId == user) return;
+      final test = await db
+          .ref('users/$memberId/s')
+          .orderByChild('sh')
+          .equalTo(true)
+          .get();
+      print(test);
+    });
+
+    membersIds.forEach((memberId, memberState) {
+      // members
+      futures.add(db.ref('users/$memberId/n').get().then(
         (snapshot) {
-          users[groupUserId] = MyUser(
-            groupUserId,
+          members[memberId] = Member(
+            memberId,
             snapshot.value as String? ?? '',
-            waitingForApproval: groupUserState == false,
-            isLocal: groupUserId == user,
-            isOwner: groupUserId == groupId,
+            waitingForApproval: memberState == false,
+            isYou: memberId == user,
+            isOwner: memberId == groupId,
           );
         },
       ));
-      // if the user is waiting for aproval or its you, dont fetch
-      if (groupUserState == false || groupUserId == user) return;
+      // if the user is waiting for approval or its you, dont fetch
+      if (memberState != true || memberId == user) return;
 
-      // Subjects - dont need to save the user
+      // Subjects - dont need to save the member
       futures.add(
         db
-            .ref('users/$groupUserId/s')
+            .ref('users/$memberId/s')
             .orderByChild('sh')
             .equalTo(true)
             .get()
@@ -102,19 +99,17 @@ class FirebaseSharingService {
       // Homework
       futures.add(
         db
-            .ref('users/$groupUserId/h')
+            .ref('users/$memberId/h')
             .orderByChild('sh')
             .startAt(now)
             .get()
             .then((snapshot) {
           for (var hw in snapshot.children) {
             final map = Map<String, dynamic>.from(hw.value as Map);
-            map.putIfAbsent('id', () => hw.key);
-            map['sh'] = null;
+            map['id'] = hw.key;
             map['c'] = false;
-            hws
-                .putIfAbsent(groupUserId, () => [])
-                .add(HomeworkEntityWithID.fromFireJson(map));
+            map['memberId'] = memberId;
+            hws.add(GroupHomeworkData.fromJson(map));
           }
         }),
       );
@@ -122,18 +117,16 @@ class FirebaseSharingService {
       // Exams
       futures.add(
         db
-            .ref('users/$groupUserId/e')
+            .ref('users/$memberId/e')
             .orderByChild('sh')
             .startAt(now)
             .get()
             .then((snapshot) {
           for (var exam in snapshot.children) {
             final map = Map<String, dynamic>.from(exam.value as Map);
-            map.putIfAbsent('id', () => exam.key);
-            map['sh'] = null;
-            exams
-                .putIfAbsent(groupUserId, () => [])
-                .add(ExamEntityWithID.fromFireJson(map));
+            map['id'] = exam.key;
+            map['memberId'] = memberId;
+            exams.add(GroupExamData.fromJson(map));
           }
         }),
       );
@@ -141,36 +134,34 @@ class FirebaseSharingService {
 
     await Future.wait(futures);
     // now we have all subjects and homeworks/exams (these have only their subjectId)
-    final Map<MyUser, List<Task>> tasks = {};
+    final List<GroupTask> tasks = [];
 
-    users.forEach(
-      (key, value) {
-        tasks[value] = [];
-      },
+    for (var exam in exams) {
+      final member = members[exam.memberId];
+      // just to be safe
+      if (member != null) {
+        tasks.add(
+          exam.convert(subjectsMap[exam.exam.subjectId], member),
+        );
+      }
+    }
+
+    for (var hw in hws) {
+      final member = members[hw.memberId];
+      // just to be safe
+      if (member != null) {
+        tasks.add(
+          hw.convert(subjectsMap[hw.hw.subjectId], member),
+        );
+      }
+    }
+
+    return Group(
+      groupId: groupId,
+      groupName: groupName,
+      members: members.values.toList(),
+      tasks: tasks,
     );
-
-    exams.forEach((userId, list) {
-      final user = users[userId];
-      if (user != null) {
-        for (var element in list) {
-          tasks
-              .putIfAbsent(user, () => [])
-              .add(element.convert(element.id, subjectsMap[element.subjectId]));
-        }
-      }
-    });
-    hws.forEach((userId, list) {
-      final user = users[userId];
-      if (user != null) {
-        for (var element in list) {
-          tasks
-              .putIfAbsent(user, () => [])
-              .add(element.convert(element.id, subjectsMap[element.subjectId]));
-        }
-      }
-    });
-
-    return tasks;
   }
 
   /// Throws logged out message if current user is null
@@ -230,10 +221,19 @@ class FirebaseSharingService {
       throw ServiceException('First leave the old group');
     }
     final user = currentUserId;
-    // temporary bool, so its not empty
     await _db.ref('groups/$user/n').set(name);
     // set the group id inside the profile
     await _db.ref('users/$user/g').set(user);
+  }
+
+  Future<void> changeGroupName({required String name}) async {
+    final currentGroup = await getGroupId();
+    final user = currentUserId;
+    if (currentGroup != user) {
+      throw ServiceException('You can\'t change this group\'s name');
+    }
+    // TODO check that the group exists
+    await _db.ref('groups/$user/n').set(name);
   }
 
   Future<void> deleteGroup() async {

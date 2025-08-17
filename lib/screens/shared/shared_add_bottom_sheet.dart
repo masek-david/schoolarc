@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exception_model.dart';
+import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/shared/username_text.dart';
-import 'package:schoolarc/services/firebase/firebase_sharing_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -20,12 +20,12 @@ class SharedAddBottomSheet extends ConsumerStatefulWidget {
     required this.task,
     required this.isHomework,
     required this.subjects,
-    required this.owner,
+    required this.member,
   });
 
   final bool isHomework;
   final List<Subject> subjects;
-  final MyUser owner;
+  final Member member;
   final Task task;
 
   @override
@@ -162,7 +162,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              UsernameText(user: widget.owner),
+              UsernameText(user: widget.member),
               FilledButton(
                 onPressed: onSave,
                 child: Text(context.loc.import),
