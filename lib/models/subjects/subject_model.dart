@@ -62,7 +62,7 @@ class Subject {
       'order': order,
       'isDeleted': isDeleted,
       'isShared': isShared,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toUtc().toIso8601String(),
     };
   }
 

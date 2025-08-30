@@ -1,6 +1,7 @@
 # FIX
-cant complete homework from widget + notifications now dont work
-    rework with isolatedHive??
+update gradle + kotlin
+test filepicker on real device (saving, picking)
+test that notifications are set after being displayed
 the specified refresh token has already been redeemed (in bakaservice)
 
 # RELEASE
@@ -9,7 +10,9 @@ the specified refresh token has already been redeemed (in bakaservice)
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
 - ⬜ widgets
-    - ⬜ just save info about completed hw, dont spawn it using isolate?
+    - ⬜ cant complete homework from widget + notifications now dont work
+        - ⬜ just save info about completed hw, dont spawn it using isolate?
+        - ⬜ rework with isolatedHive??
 - ⬜ forgot password for firebase + verify email
 - ⬜ plus plan
     - ⬜ one time/yearly ???
@@ -27,12 +30,25 @@ the specified refresh token has already been redeemed (in bakaservice)
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
-    - ⬜ is everything needed to be shown ??
+    - ⬜ animation FAB morph to the sheet?
+    - ⬜ does everything need to be shown ??
 - ⬜ settings use bigger headlines and scroll them
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
 - ⬜ check scrolling in timetable
 - ⬜ ? use expressive progress
+
+## OTHER
+- ⬜ sync everything (hws, exams, subjects) properly 
+- ⬜ add google sign in + sign in with apple
+- ⬜ create settings for initial task
+    - ⬜ priority
+    - ⬜ subject
+    - ⬜ date
+    - ⬜ auto set date to next appearance
+- ⬜ strava stop saving the password 
+- ⬜ save only date for deadlines
+- ⬜ translation - google sheets
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)
@@ -49,18 +65,6 @@ the specified refresh token has already been redeemed (in bakaservice)
     - ⬜ add name and groups? to export and delete data
     - ⬜ update privacy policy
 - ⬜ qr group invite?
-
-## OTHER
-- ⬜ sync everything (hws, exams, subjects) properly 
-- ⬜ add google sign in + sign in with apple
-- ⬜ create settings for initial task
-    - ⬜ priority
-    - ⬜ subject
-    - ⬜ date
-    - ⬜ auto set date to next appearance
-- ⬜ strava stop saving the password 
-- ⬜ save only date for deadlines
-- ⬜ translation - google sheets
 
 ## notifications:
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
@@ -79,7 +83,6 @@ the specified refresh token has already been redeemed (in bakaservice)
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
 - ⬜ make everything react to touch (shrink) 
-- ⬜ share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
