@@ -14,7 +14,7 @@
             ]
         },
         {
-            "name": "Schoolarc (profile mode)",
+            "name": "Schoolarc (profile)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
@@ -24,7 +24,7 @@
             ]
         },
         {
-            "name": "Schoolarc (release mode)",
+            "name": "Schoolarc (release)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -34,14 +34,13 @@
             ]
         },
         {
-            "name": "Flutter for web (hot reloadable)",
-            "type": "dart",
+            "name": "Schoolarc (debug prod)",
             "request": "launch",
-            "program": "lib/main.dart",
+            "type": "dart",
+            "flutterMode": "debug",
             "args": [
-                "-d",
-                "chrome",
-                "--web-experimental-hot-reload",
+                "--flavor",
+                "prod"
             ]
         }
     ]

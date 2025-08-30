@@ -2,6 +2,7 @@ import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class Exam extends Task {
   Exam({
@@ -41,20 +42,20 @@ class Exam extends Task {
   Map<String, dynamic> toFireJson() {
     return {
       'n': text,
-      if (description != null && description != '') 'i': description,
+      if (description != '') 'i': description,
       if (subject != null) 's': subject?.id,
       'd': deadline.millisecondsSinceEpoch,
       if (priority.index != 0) 'p': priority.index,
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
-      if (isShared) 'sh': deadline.millisecondsSinceEpoch + 2.592e+8,
+      if (isShared) 'sh': isShared,
     };
   }
 
   @override
   Exam copyWith({
-    Subject? subject,
+    Object? subject = noChange,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
@@ -68,7 +69,7 @@ class Exam extends Task {
     int? stateReaddingVersion,
   }) {
     return Exam(
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,

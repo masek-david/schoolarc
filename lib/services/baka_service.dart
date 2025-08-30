@@ -549,7 +549,7 @@ class BakaService {
             deadline: deadline,
             isCompleted: isCompleted,
             priority: TaskPriority(0),
-            description: null,
+            description: '',
             id: bakaId,
             isDeleted: false,
             timestamp: DateTime.now().toUtc(),

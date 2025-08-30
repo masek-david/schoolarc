@@ -701,6 +701,42 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get username;
 
+  /// No description provided for @changeUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Change username'**
+  String get changeUsername;
+
+  /// No description provided for @usernameChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Username changed successfully'**
+  String get usernameChanged;
+
+  /// No description provided for @newUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'New username'**
+  String get newUsername;
+
+  /// No description provided for @usernameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is publicly visible to other users'**
+  String get usernameInfo;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @subjectIsntShared.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected subject isn\'t shared'**
+  String get subjectIsntShared;
+
   /// No description provided for @password.
   ///
   /// In en, this message translates to:

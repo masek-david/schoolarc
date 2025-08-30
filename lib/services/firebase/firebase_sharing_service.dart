@@ -4,7 +4,6 @@ import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-// TODO translate
 
 class FirebaseSharingService {
   final _db = FirebaseDatabase.instance;
@@ -51,16 +50,6 @@ class FirebaseSharingService {
     final Map<String, Subject> subjectsMap = {};
     final List<GroupHomeworkData> hws = [];
     final List<GroupExamData> exams = [];
-
-    membersIds.forEach((memberId, memberState) async {
-      if (memberState != true || memberId == user) return;
-      final test = await db
-          .ref('users/$memberId/s')
-          .orderByChild('sh')
-          .equalTo(true)
-          .get();
-      print(test);
-    });
 
     membersIds.forEach((memberId, memberState) {
       // members

@@ -78,13 +78,13 @@ class MyDrawer extends ConsumerWidget {
                         Navigator.restorablePushNamed(context, '/timetable');
                       },
                     ),
-                    MyDrawerButton(
-                      text: 'Group',
-                      icon: const Icon(Icons.group_outlined),
-                      onTap: () {
-                        Navigator.restorablePushNamed(context, '/group');
-                      },
-                    ),
+                    // MyDrawerButton(
+                    //   text: context.loc.group,
+                    //   icon: const Icon(Icons.group_outlined),
+                    //   onTap: () {
+                    //     Navigator.restorablePushNamed(context, '/group');
+                    //   },
+                    // ),
                     const Divider(indent: 28, endIndent: 28),
                     MyDrawerButton(
                       text: loc.hwFromBaka,

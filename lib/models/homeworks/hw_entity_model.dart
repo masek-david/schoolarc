@@ -2,11 +2,12 @@ import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class HomeworkEntity extends HiveObject {
   HomeworkEntity({
     required this.text,
-    required this.description,
+    this.description = '',
     required this.subjectId,
     required this.deadline,
     required this.priority,
@@ -18,7 +19,7 @@ class HomeworkEntity extends HiveObject {
   });
 
   final String text;
-  final String? description;
+  final String description;
   final String? subjectId;
   final DateTime deadline;
   final int priority;
@@ -45,14 +46,12 @@ class HomeworkEntity extends HiveObject {
       'isDeleted': isDeleted,
       'isCompleted': isCompleted,
       'isShared': isShared,
-      // TODO add timestamp
+      'timestamp': timestamp,
     };
   }
 
-  static const _noChange = Object();
-
   HomeworkEntity copyWith({
-    Object? subjectId = _noChange,
+    Object? subjectId = noChange,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
@@ -64,7 +63,7 @@ class HomeworkEntity extends HiveObject {
     bool? isShared,
   }) {
     return HomeworkEntity(
-      subjectId: subjectId == _noChange ? this.subjectId : subjectId as String?,
+      subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,

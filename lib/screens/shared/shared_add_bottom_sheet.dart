@@ -118,7 +118,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
             textAlign: TextAlign.start,
             style: context.txt.titleMedium,
           ),
-          if (widget.task.description != null) Text(widget.task.description!),
+          if (widget.task.description != '') Text(widget.task.description),
           SubjectPicker(
             keys: keys,
             subjects: widget.subjects,

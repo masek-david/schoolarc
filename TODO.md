@@ -1,34 +1,16 @@
-fire rules
-add group names (create, view)
-check im not saving null values with copyWith()
-show only tasks that havent been saved yet
-group notifier - group name, tasks, users?
-legal
-    add name and groups? to export and delete data
-    update privacy policy
-move all json formatters to one place
-show username in firebase login  (create a provider for it?)
-set isShared to true when shared subject is selected
-password reset
-qr group invite?
-
 # FIX
-not booting after update
-enter in addbottomsheet doesnt close, and doesnt set subject
 cant complete homework from widget + notifications now dont work
     rework with isolatedHive??
-the specified refresh token has already been reddemed (in bakaservice)
-
-
-tests:
-    check translations
-    check dispose
+the specified refresh token has already been redeemed (in bakaservice)
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
+- ⬜ widgets
+    - ⬜ just save info about completed hw, dont spawn it using isolate?
+- ⬜ forgot password for firebase + verify email
 - ⬜ plus plan
     - ⬜ one time/yearly ???
     - ⬜ cloud sync
@@ -49,9 +31,26 @@ tests:
 - ⬜ settings use bigger headlines and scroll them
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
+- ⬜ check scrolling in timetable
+- ⬜ ? use expressive progress
+
+## SHARING
+- ✅ show username in firebase login (create a provider for it?)
+- ⬜ firebase rules
+- ⬜ show shared indicator for hw, exam, subject
+- ⬜ addbottomsheet 
+    - ⬜ show which subjects are shared
+    - ⬜ set isShared to true when shared subject is selected
+- ⬜ add group names (create, view)
+- ⬜ show only tasks that havent been saved yet
+- ⬜ group notifier - group name, tasks, users?
+- ⬜ translate
+- ⬜ legal
+    - ⬜ add name and groups? to export and delete data
+    - ⬜ update privacy policy
+- ⬜ qr group invite?
 
 ## OTHER
-- ⬜ reset password for firebase + verify email
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ add google sign in + sign in with apple
 - ⬜ create settings for initial task
@@ -60,6 +59,7 @@ tests:
     - ⬜ date
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
+- ⬜ save only date for deadlines
 - ⬜ translation - google sheets
 
 ## notifications:

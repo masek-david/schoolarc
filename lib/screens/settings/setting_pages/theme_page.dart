@@ -41,14 +41,15 @@ class ThemePage extends ConsumerWidget {
               ],
             ),
           ),
-          SettingTile.withSwitch(
-            title: loc.themeOLEDTitle,
-            subtitle: loc.themeOLEDSubtitle,
-            value: themeUseOled,
-            onChanged: (value) {
-              ref.read(themeUseOledProvider.notifier).set(value);
-            },
-          ),
+          if (context.isDark)
+            SettingTile.withSwitch(
+              title: loc.themeOLEDTitle,
+              subtitle: loc.themeOLEDSubtitle,
+              value: themeUseOled,
+              onChanged: (value) {
+                ref.read(themeUseOledProvider.notifier).set(value);
+              },
+            ),
           SettingTile.withSwitch(
             title: loc.themeUseDeviceColors,
             value: useDeviceColor,

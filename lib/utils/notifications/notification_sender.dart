@@ -65,8 +65,6 @@ class NotificationSender {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       return;
     }
-    // TODO dont init hive this way
-    return;
     await initHive();
 
     if (!await areNotificationsAllowed(tomorrowChannel)) {
@@ -134,7 +132,6 @@ class NotificationSender {
     final dateUtc = arriveDateTime.add(const Duration(days: 1));
     final tomorrowDate = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
 
-    await initHive();
     final subjects = subjectsDb.getDatabase();
     subjects.removeWhere((key, value) => value.isDeleted);
     final hwsInDb = homeworksDb.getDatabase().map(

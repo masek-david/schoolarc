@@ -410,6 +410,24 @@ class AppLocalizationsCs extends AppLocalizations {
   String get username => 'Uživatelské jméno';
 
   @override
+  String get changeUsername => 'Změnit uživatelské jméno';
+
+  @override
+  String get usernameChanged => 'Uživatelské jméno bylo úspěšně změněno';
+
+  @override
+  String get newUsername => 'Nové uživatelské jméno';
+
+  @override
+  String get usernameInfo => 'Uživatelské jméno je veřejně viditelné ostatním uživatelům';
+
+  @override
+  String get group => 'Skupina';
+
+  @override
+  String get subjectIsntShared => 'Zvolený předmět není sdílen';
+
+  @override
   String get password => 'Heslo';
 
   @override

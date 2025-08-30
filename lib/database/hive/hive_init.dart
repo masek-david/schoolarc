@@ -13,7 +13,11 @@ const String logBox = 'logBox';
 /// inits hive, can be called even if it is already initialised
 Future<void> initHive() async {
   await Hive.initFlutter();
-  Hive.registerAdapters();
+  try {
+    Hive.registerAdapters();
+  } catch (e) {
+    // the adapters are already registered
+  }
 
   await Future.wait([
     Hive.openBox(subjectBox),
@@ -26,4 +30,3 @@ Future<void> initHive() async {
     Hive.openBox(logBox),
   ]);
 }
-

@@ -73,14 +73,15 @@ class ExamTile extends StatelessWidget {
                               color: exam.priority.getContainerColor(context)),
                           child: SubjectShortcut(
                               subject: exam.subject,
-                              color: exam.priority.getOnContainerColor(context)),
+                              color:
+                                  exam.priority.getOnContainerColor(context)),
                         ),
-                        if (exam.description != null && exam.description != '')
-                          const SizedBox(width: 8),
-                        if (exam.description != null && exam.description != '')
+                        if (exam.description != '') const SizedBox(width: 8),
+                        if (exam.description != '')
                           Icon(
                             Icons.notes,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         const SizedBox(width: 8),
                         Expanded(child: Text(exam.text, maxLines: 2)),

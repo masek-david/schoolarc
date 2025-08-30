@@ -4,11 +4,12 @@ import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class Task {
   final String id;
   final String text;
-  final String? description;
+  final String description;
   final Subject? subject;
   final DateTime deadline;
   final TaskPriority priority;
@@ -46,7 +47,7 @@ class Task {
         id = '',
         isDeleted = false,
         order = 0,
-        description = null,
+        description = '',
         subject = null,
         timestamp = DateTime.now().toUtc(),
         isShared = false,
@@ -89,7 +90,7 @@ class Task {
       'deadline': deadline.dateText(),
       'isCompleted': isCompleted,
       'priority': priority.index,
-      'hasDescription': description != null,
+      'hasDescription': description != '',
     };
   }
 
@@ -98,8 +99,7 @@ class Task {
     if (this.text.withoutDiacriticalMarks.toLowerCase().contains(text)) {
       return true;
     }
-    if (description != null &&
-        description!.withoutDiacriticalMarks.toLowerCase().contains(text)) {
+    if (description.withoutDiacriticalMarks.toLowerCase().contains(text)) {
       return true;
     }
     if (subject != null && subject!.containsText(text)) {
@@ -109,7 +109,7 @@ class Task {
   }
 
   Task copyWith({
-    Subject? subject,
+    Object? subject = noChange,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
@@ -123,7 +123,7 @@ class Task {
     bool? isShared,
   }) {
     return Task(
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,

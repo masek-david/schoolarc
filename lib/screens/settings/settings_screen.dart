@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
-import 'package:schoolarc/provider/firebase_login_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
@@ -54,9 +54,6 @@ class SettingsScreen extends ConsumerWidget {
                   Navigator.restorablePushNamed(
                     context,
                     '/settings/notifications',
-                  );
-                  NotificationSender.scheduletomorrowNotification(
-                    showSnackbar: (text) => showMessage(context, text),
                   );
                 }),
           SettingTile(

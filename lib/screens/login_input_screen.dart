@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class LoginField {
   LoginField({
@@ -114,11 +115,14 @@ class _FirebaseLoginPageState extends State<LoginInputScreen> {
                       onPressed: () {
                         showDialog(
                           context: context,
-                          builder: (context) => Dialog(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Text(field.info!),
-                            ),
+                          builder: (context) => AlertDialog(
+                            title: Text(field.name),
+                            content: Text(field.info!),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(context.loc.ok))
+                            ],
                           ),
                         );
                       },

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 
@@ -98,14 +97,14 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
                 labelText: loc.shortcutMax5Chars,
               ),
             ),
-            SettingTile.withCheckbox(
-              contentPadding: const EdgeInsets.all(0),
-              title: 'Share',
-              value: isShared,
-              onChanged: (value) => setState(() {
-                isShared = value;
-              }),
-            ),
+            // SettingTile.withCheckbox(
+            //   contentPadding: const EdgeInsets.all(0),
+            //   title: 'Share',
+            //   value: isShared,
+            //   onChanged: (value) => setState(() {
+            //     isShared = value;
+            //   }),
+            // ),
             if (widget.usedTimes != null)
               Text(
                 loc.subjectUsedTimes(widget.usedTimes!),

@@ -1,5 +1,6 @@
 import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class Subject {
   Subject({
@@ -61,19 +62,22 @@ class Subject {
       'order': order,
       'isDeleted': isDeleted,
       'isShared': isShared,
-      // TODO add timestamp
+      'timestamp': timestamp,
     };
   }
 
-  Subject.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        id = json['id'],
-        shortcut = json['shortcut'],
-        bakaId = json['bakaId'],
-        order = json['order'],
-        isDeleted = json['isDeleted'],
-        isShared = json['isShared'] ?? false,
-        timestamp = DateTime.now().toUtc();
+  factory Subject.fromJson(Map<String, dynamic> json) {
+    return Subject(
+      name: json['name'],
+      id: json['id'],
+      shortcut: json['shortcut'],
+      bakaId: json['bakaId'],
+      order: json['order'],
+      isDeleted: json['isDeleted'],
+      isShared: json['isShared'] ?? false,
+      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
+    );
+  }
 
   Map<String, dynamic> toFireJson() {
     return {
@@ -83,7 +87,7 @@ class Subject {
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
-      if (isShared) 'sh': true,
+      if (isShared) 'sh': isShared,
     };
   }
 
@@ -106,7 +110,7 @@ class Subject {
     String? shortcut,
     String? id,
     bool? isDeleted,
-    String? bakaId,
+    Object? bakaId = noChange,
     DateTime? timestamp,
     int? order,
     bool? isShared,
@@ -116,7 +120,7 @@ class Subject {
       shortcut: shortcut ?? this.shortcut,
       id: id ?? this.id,
       isDeleted: isDeleted ?? this.isDeleted,
-      bakaId: bakaId ?? this.bakaId,
+      bakaId: bakaId == noChange ? this.bakaId : bakaId as String?,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
       isShared: isShared ?? this.isShared,

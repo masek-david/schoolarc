@@ -27,7 +27,7 @@ class ExamEntityWithID extends ExamEntity {
       order: json['o'] ?? 0,
       isDeleted: json['del'] ?? false,
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
-      isShared: json['sh'] != null,
+      isShared: json['sh'] ?? false,
     );
   }
 
@@ -41,7 +41,7 @@ class ExamEntityWithID extends ExamEntity {
       description: json['description'],
       order: json['order'],
       isDeleted: json['isDeleted'],
-      timestamp: DateTime.now(),
+      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
       isShared: json['isShared'] ?? false,
     );
   }

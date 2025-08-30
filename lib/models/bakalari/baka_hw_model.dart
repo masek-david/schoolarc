@@ -2,6 +2,7 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class BakaHomework extends Task {
   BakaHomework({
@@ -49,7 +50,7 @@ class BakaHomework extends Task {
     DateTime? deadline,
     String? description,
     TaskPriority? priority,
-    Subject? subject,
+    Object? subject = noChange,
     String? text,
     String? fireId,
     DateTime? timestamp,
@@ -67,7 +68,7 @@ class BakaHomework extends Task {
       deadline: deadline ?? this.deadline,
       description: description ?? this.description,
       priority: priority ?? this.priority,
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       alreadyAdded: alreadyAdded ?? this.alreadyAdded,
       alreadySeen: alreadySeen ?? this.alreadySeen,

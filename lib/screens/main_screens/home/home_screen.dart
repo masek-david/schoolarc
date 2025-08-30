@@ -20,7 +20,6 @@ import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
@@ -128,7 +127,6 @@ class HomeScreen extends ConsumerWidget {
                   examNumberOfIncomplete: upcomingExams,
                   hwNumberOfMissed: missedHw.length,
                 ),
-                const ExpressiveLoading(),
                 if (isRecapDate() && !hasSeenRecap())
                   RecapButton(
                     child: Padding(
@@ -199,7 +197,6 @@ class HomeScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(8),
                               child: examsToShow.isEmpty && hwToShow.isEmpty
                                   ? EmptyMessage(
-                                      // TODO translate
                                       message: context.loc
                                           .nothingPlannedFor(whenText),
                                       asset: 'assets/confetti.svg',

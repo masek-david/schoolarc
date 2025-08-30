@@ -1,4 +1,5 @@
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class HomeworkEntityWithID extends HomeworkEntity {
   HomeworkEntityWithID({
@@ -17,15 +18,13 @@ class HomeworkEntityWithID extends HomeworkEntity {
 
   String id;
 
-  static const _noChange = Object();
-
   @override
   HomeworkEntityWithID copyWith({
     String? id,
     DateTime? deadline,
     String? text,
     String? description,
-    Object? subjectId = _noChange,
+    Object? subjectId = noChange,
     int? priority,
     int? order,
     bool? isCompleted,
@@ -38,7 +37,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       deadline: deadline ?? this.deadline,
       text: text ?? this.text,
       description: description ?? this.description,
-      subjectId: subjectId == _noChange ? this.subjectId : subjectId as String?,
+      subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       priority: priority ?? this.priority,
       order: order ?? this.order,
       isCompleted: isCompleted ?? this.isCompleted,
@@ -60,7 +59,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       isCompleted: json['c'] ?? true,
       isDeleted: json['del'] ?? false,
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
-      isShared: json['sh'] != null,
+      isShared: json['sh'] ?? false,
     );
   }
 
@@ -76,8 +75,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       isDeleted: json['isDeleted'],
       isCompleted: json['isCompleted'],
       isShared: json['isShared'] ?? false,
-      // TODO should we same timestamp too?
-      timestamp: DateTime.now(),
+      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
     );
   }
 }

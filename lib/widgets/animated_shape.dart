@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
@@ -24,7 +25,6 @@ class AnimatedShape extends ConsumerStatefulWidget {
     this.textColor,
     this.excludeShapes = true,
     this.secondsBeforeShapeChange,
-    this.shapeChangeDuration,
   });
 
   AnimatedShape.error({
@@ -36,7 +36,6 @@ class AnimatedShape extends ConsumerStatefulWidget {
     this.excludeShapes = true,
     this.secondsBeforeShapeChange,
     required ColorScheme scheme,
-    this.shapeChangeDuration,
   })  : firstColor = scheme.errorContainer,
         secondColor = scheme.error,
         textColor = scheme.onErrorContainer;
@@ -51,7 +50,6 @@ class AnimatedShape extends ConsumerStatefulWidget {
     this.secondsBeforeShapeChange,
     required Color primary,
     required bool isDark,
-    this.shapeChangeDuration,
   })  : firstColor = isDark
             ? const Color.fromARGB(255, 0, 107, 30).harmonizeWith(primary)
             : const Color.fromARGB(255, 174, 255, 168).harmonizeWith(primary),
@@ -71,7 +69,6 @@ class AnimatedShape extends ConsumerStatefulWidget {
   final int secondsForOneRotation;
   final bool excludeShapes;
   final int? secondsBeforeShapeChange;
-  final Duration? shapeChangeDuration;
 
   @override
   ConsumerState<AnimatedShape> createState() => _AnimatedShapeState();
@@ -89,23 +86,24 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
   late Color textColor =
       widget.textColor ?? Theme.of(context).colorScheme.onTertiaryContainer;
 
-  late final duration =
-      widget.shapeChangeDuration ?? const Duration(milliseconds: 500);
-  final curve = Curves.decelerate;
+  /// Updates every frame
   late final _rotationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: widget.secondsForOneRotation.abs()));
-  late final _scaleController =
-      AnimationController(vsync: this, duration: duration * 0.5);
+
+  late final shapeController = AnimationController(
+      vsync: this, lowerBound: -10, upperBound: 10, value: 0);
 
   late final shapes = widget.excludeShapes ? textShapes : MaterialShapes.values;
-  int shapeIndex = 14;
+  late ShapeBorder from = RoundedPolygonBorder(polygon: shapes[14]);
+  late ShapeBorder _currentShape;
+  late int nextShapeIndex = getRandom(14);
+  bool animating = false;
   var turns = 0.0;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     firstColor =
         widget.firstColor ?? Theme.of(context).colorScheme.primaryContainer;
     secondColor =
@@ -125,33 +123,57 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
       );
     }
 
-    _scaleController.animateTo(0.95);
-
     _rotationController.repeat();
   }
 
   @override
   void dispose() {
     _rotationController.dispose();
-    _scaleController.dispose();
+    shapeController.dispose();
 
     super.dispose();
   }
 
+  int getRandom(int exclude) {
+    int random = 0;
+    do {
+      random = Random().nextInt(shapes.length);
+    } while (random == exclude);
+    return random;
+  }
+
+  Future<void> animateTo(double value) {
+    final springSimulation = SpringSimulation(
+      const SpringDescription(
+        mass: 1,
+        stiffness: 250,
+        damping: 12,
+      ),
+      shapeController.value, // starting position
+      value, // ending position
+      0, // initial velocity
+    );
+    return shapeController.animateWith(springSimulation);
+  }
+
   void changeShape() {
     if (!mounted) return;
-    _scaleController.animateTo(1, duration: duration * 0.5).then(
-        (_) => _scaleController.animateTo(0.95, duration: duration * 0.5));
+    turns += 0.1 * (widget.secondsForOneRotation.isNegative ? -1 : 1);
 
-    int random = Random().nextInt(shapes.length);
-    while (random == shapeIndex) {
-      random = Random().nextInt(shapes.length);
+    if (animating) {
+      from = _currentShape;
+      shapeController.value = 0;
+      nextShapeIndex = getRandom(nextShapeIndex);
     }
-
-    setState(() {
-      shapeIndex = random;
-      turns += 0.1 * (widget.secondsForOneRotation.isNegative ? -1 : 1);
-    });
+    animating = true;
+    animateTo(1).then(
+      (value) {
+        from = _currentShape;
+        nextShapeIndex = getRandom(nextShapeIndex);
+        animating = false;
+        shapeController.value = 0;
+      },
+    );
   }
 
   @override
@@ -167,9 +189,21 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
     return Padding(
       padding: EdgeInsets.all(size * 0.3),
       child: GestureDetector(
+        onTapCancel: widget.reactive
+            ? () {
+                animateTo(0);
+              }
+            : null,
         onTapDown: widget.reactive
             ? (details) {
-                _scaleController.animateTo(0.9, duration: duration * 0.5);
+                HapticFeedback.lightImpact();
+                if (animating) {
+                  from = _currentShape;
+                  nextShapeIndex = getRandom(nextShapeIndex);
+                  animating = false;
+                  shapeController.value = 0;
+                }
+                animateTo(0.2);
               }
             : null,
         onTap: widget.reactive
@@ -183,89 +217,86 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
           child: AnimatedBuilder(
             animation: _rotationController,
             builder: (context, child) {
-              return Transform.scale(
-                scale: _scaleController.value,
-                child: Stack(
-                  children: [
-                    AnimatedRotation(
-                      duration: duration,
-                      curve: curve,
-                      turns: turns,
-                      child: Transform.rotate(
-                        angle: pi *
-                            2 *
-                            _rotationController.value *
-                            (widget.secondsForOneRotation.isNegative ? -1 : 1),
-                        child: Stack(
-                          children: [
-                            AnimatedContainer(
-                              duration: duration,
-                              curve: curve,
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    blurRadius: 30,
-                                    spreadRadius: -1,
-                                    color: secondColor,
-                                  ),
-                                ],
-                                gradient: LinearGradient(
-                                  stops: const [0.1, 0.9],
-                                  colors: [secondColor, firstColor],
+              _currentShape = ShapeBorder.lerp(
+                from,
+                RoundedPolygonBorder(polygon: shapes[nextShapeIndex]),
+                shapeController.value,
+              )!;
+
+              return Stack(
+                children: [
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.decelerate,
+                    turns: turns,
+                    child: Transform.rotate(
+                      angle: pi *
+                          2 *
+                          _rotationController.value *
+                          (widget.secondsForOneRotation.isNegative ? -1 : 1),
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  blurRadius: 30,
+                                  spreadRadius: -1,
+                                  color: secondColor,
                                 ),
-                                shape: RoundedPolygonBorder(
-                                    polygon: shapes[shapeIndex]),
+                              ],
+                              gradient: LinearGradient(
+                                stops: const [0.1, 0.9],
+                                colors: [secondColor, firstColor],
+                              ),
+                              shape: _currentShape,
+                            ),
+                          ),
+                          if (ref.watch(themeUseOledProvider))
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Container(
+                                decoration: ShapeDecoration(
+                                  shadows: [
+                                    BoxShadow(
+                                      blurRadius: 30,
+                                      spreadRadius: -1,
+                                      color: secondColor,
+                                    ),
+                                  ],
+                                  color: Colors.black,
+                                  shape: _currentShape,
+                                ),
                               ),
                             ),
-                            if (ref.watch(themeUseOledProvider))
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: AnimatedContainer(
-                                  duration: duration,
-                                  curve: curve,
-                                  decoration: ShapeDecoration(
-                                    shadows: [
-                                      BoxShadow(
-                                        blurRadius: 30,
-                                        spreadRadius: -1,
-                                        color: secondColor,
-                                      ),
-                                    ],
-                                    color: Colors.black,
-                                    shape: RoundedPolygonBorder(
-                                        polygon: shapes[shapeIndex]),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
                     ),
-                    Center(
-                      child: SizedBox(
-                        width: size - 16,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            text,
-                            maxLines: 2,
-                            style: robotoSerif(
-                                    size: 22,
-                                    width: 50,
-                                    grade: -50,
-                                    weight: 500,
-                                    color: textColor)
-                                .copyWith(
-                              shadows: [
-                                Shadow(color: firstColor, blurRadius: 10)
-                              ],
-                            ),
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: size - 16,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          text,
+                          maxLines: 2,
+                          style: robotoSerif(
+                                  size: 22,
+                                  width: 50,
+                                  grade: -50,
+                                  weight: 500,
+                                  color: textColor)
+                              .copyWith(
+                            shadows: [
+                              Shadow(color: firstColor, blurRadius: 10)
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

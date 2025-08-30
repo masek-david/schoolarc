@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class SubjectEntity extends HiveObject {
   SubjectEntity({
@@ -37,7 +38,7 @@ class SubjectEntity extends HiveObject {
     String? name,
     String? shortcut,
     bool? isDeleted,
-    String? bakaId,
+    Object? bakaId = noChange,
     DateTime? timestamp,
     int? order,
     bool? isShared,
@@ -46,7 +47,7 @@ class SubjectEntity extends HiveObject {
       name: name ?? this.name,
       shortcut: shortcut ?? this.shortcut,
       isDeleted: isDeleted ?? this.isDeleted,
-      bakaId: bakaId ?? this.bakaId,
+      bakaId: bakaId == noChange ? this.bakaId : bakaId as String?,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
       isShared: isShared ?? this.isShared,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/provider/firebase_login_notifier.dart';
+import 'package:schoolarc/models/group_models.dart';
+import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_username_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/login_input_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/screens/shared/username_text.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -31,6 +34,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
     bool useCloudSync = ref.watch(useCloudSyncProvider);
 
     final state = ref.watch(firebaseLoginProvider);
+    final username = ref.watch(firebaseUsernameProvider);
     final loggedIn = state.valueOrNull == true;
 
     return Scaffold(
@@ -182,8 +186,8 @@ class FirebaseLoginScreen extends ConsumerWidget {
                                 ],
                               ),
                               LoginField(
-                                name: 'Username',
-                                info: 'Username is visible to other users',
+                                name: context.loc.username,
+                                info: context.loc.usernameInfo,
                                 obscure: false,
                                 autofillHints: [AutofillHints.newUsername],
                               ),
@@ -221,10 +225,9 @@ class FirebaseLoginScreen extends ConsumerWidget {
                               await ref
                                   .read(firebaseLoginProvider.notifier)
                                   .register(
-                                    email: fields[0],
-                                    password: fields[2],
-                                    username: fields[1]
-                                  );
+                                      email: fields[0],
+                                      password: fields[2],
+                                      username: fields[1]);
 
                               if (ref.read(firebaseLoginProvider).value !=
                                   true) {
@@ -270,46 +273,64 @@ class FirebaseLoginScreen extends ConsumerWidget {
                     : null,
                 child: Text(context.loc.register),
               ),
-            if (loggedIn) const SizedBox(height: 16),
             if (loggedIn)
-              OutlinedButton(
-                onPressed: useCloudSync
-                    ? () async {
-                        pushScreen(
-                          context,
-                          LoginInputScreen(
-                            actionName: 'Change username',
-                            fields: [
-                              LoginField(
-                                name: 'New username',
-                                obscure: false,
-                                autofillHints: [AutofillHints.newUsername],
-                              ),
-                            ],
-                            onSubmit: (fields) async {
-                              try {
-                                await ref
-                                    .read(firebaseServiceProvider)
-                                    .saveUsername(fields[0]);
-                              } on Object catch (e) {
-                                if (context.mounted) {
-                                  showMessage(context, e.toString(),
-                                      isError: true);
-                                }
-                                return;
-                              }
+              Row(
+                children: [
+                  if (username.isLoading) const CircularProgressIndicator(),
+                  Expanded(
+                    child: UsernameText(
+                      user: Member(
+                          ref
+                                  .read(firebaseServiceProvider)
+                                  .auth
+                                  .currentUser
+                                  ?.uid ??
+                              '',
+                          username.valueOrNull ?? ''),
+                      radius: 18,
+                    ),
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.edit_outlined),
+                    onPressed: useCloudSync
+                        ? () async {
+                            pushScreen(
+                              context,
+                              LoginInputScreen(
+                                actionName: context.loc.changeUsername,
+                                fields: [
+                                  LoginField(
+                                    name: context.loc.newUsername,
+                                    obscure: false,
+                                    autofillHints: [AutofillHints.newUsername],
+                                  ),
+                                ],
+                                onSubmit: (fields) async {
+                                  try {
+                                    await ref
+                                        .read(firebaseUsernameProvider.notifier)
+                                        .saveUsername(fields[0]);
+                                  } on Object catch (e) {
+                                    if (context.mounted) {
+                                      showMessage(context, e.toString(),
+                                          isError: true);
+                                    }
+                                    return;
+                                  }
 
-                              if (context.mounted) {
-                                showMessage(
-                                    context, 'Username changed successfully');
-                                Navigator.pop(context);
-                              }
-                            },
-                          ),
-                        );
-                      }
-                    : null,
-                child: const Text('Change username'),
+                                  if (context.mounted) {
+                                    showMessage(
+                                        context, context.loc.usernameChanged);
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              ),
+                            );
+                          }
+                        : null,
+                    label: Text(context.loc.changeUsername),
+                  ),
+                ],
               ),
             if (loggedIn)
               OutlinedButton(

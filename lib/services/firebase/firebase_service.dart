@@ -15,7 +15,7 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
@@ -76,8 +76,11 @@ class FirebaseService {
     return;
   }
 
-  Future<void> createUser(
-      {required String email, required String password, required String username,}) async {
+  Future<void> createUser({
+    required String email,
+    required String password,
+    required String username,
+  }) async {
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     refLocation();
     await saveUsername(username);
@@ -140,6 +143,7 @@ class FirebaseService {
 
       final exportData = {
         "profile": {
+          "username": snapshot.child('n').value,
           "uid": auth.currentUser!.uid,
           "email": auth.currentUser!.email,
         },

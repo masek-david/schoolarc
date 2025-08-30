@@ -32,16 +32,16 @@ class TimeTableLesson {
   }
 
   TimeTableLesson copyWith({
-    Subject? subject,
-    BakaChange? change,
-    Teacher? teacher,
-    String? room,
+    Object? subject = noChange,
+    Object? change = noChange,
+    Object? teacher = noChange,
+    Object? room = noChange,
   }) {
     return TimeTableLesson(
-      subject: subject ?? this.subject,
-      change: change ?? this.change,
-      teacher: teacher ?? this.teacher,
-      room: room ?? this.room,
+      subject: subject == noChange ? this.subject : subject as Subject?,
+      change: change == noChange ? this.change : change as BakaChange?,
+      teacher: teacher == noChange ? this.teacher : teacher as Teacher?,
+      room: room == noChange ? this.room : room as String?,
     );
   }
 

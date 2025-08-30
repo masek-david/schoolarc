@@ -1,3 +1,15 @@
+## [2.1.3]() - 2025-
+### Added
+
+### Changed
+- Improved Animated shape
+- Improved Firebase login screen
+
+### Fixed
+- Fix notifications
+
+---
+
 ## [2.1.2]() - 2025-08-11
 ### Added
 

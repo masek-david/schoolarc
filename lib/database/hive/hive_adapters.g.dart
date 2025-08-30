@@ -95,7 +95,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
     };
     return HomeworkEntity(
       text: fields[0] as String,
-      description: fields[1] as String?,
+      description: fields[1] == null ? '' : fields[1] as String,
       subjectId: fields[2] as String?,
       deadline: fields[3] as DateTime,
       priority: (fields[4] as num).toInt(),
@@ -158,7 +158,7 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
       isDeleted: fields[6] as bool,
       subjectId: fields[0] as String?,
       text: fields[1] as String,
-      description: fields[4] as String?,
+      description: fields[4] == null ? '' : fields[4] as String,
       date: fields[2] as DateTime,
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,

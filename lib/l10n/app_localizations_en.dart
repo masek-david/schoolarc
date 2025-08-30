@@ -402,6 +402,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get username => 'Username';
 
   @override
+  String get changeUsername => 'Change username';
+
+  @override
+  String get usernameChanged => 'Username changed successfully';
+
+  @override
+  String get newUsername => 'New username';
+
+  @override
+  String get usernameInfo => 'Username is publicly visible to other users';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String get subjectIsntShared => 'The selected subject isn\'t shared';
+
+  @override
   String get password => 'Password';
 
   @override

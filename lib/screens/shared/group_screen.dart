@@ -36,17 +36,23 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
     refresh();
   }
 
-  Future<void> refresh() {
-    return fireShareService.getGroup();
-    return fireShareService.getGroup().then((value) {
-      setState(() {
-        group = value;
+  Future<void> refresh() async {
+    try {
+      await fireShareService.getGroup().then((value) {
+        setState(() {
+          group = value;
+        });
+      }, onError: (e) {
+        if (mounted) {
+          showMessage(context, e.toString(), isError: true);
+        }
       });
-    }, onError: (e) {
+    } catch (e) {
       if (mounted) {
         showMessage(context, e.toString(), isError: true);
       }
-    });
+    }
+    return;
   }
 
   void showSheet(Task task, Member member) {

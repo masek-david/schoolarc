@@ -34,6 +34,8 @@ final logsService = LogsDatabase();
 final uuid = const Uuid();
 late PackageInfo packageInfo;
 
+const noChange = Object();
+
 /// returns true for web, windows, macos and linux
 bool needsRefreshButton() {
   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
