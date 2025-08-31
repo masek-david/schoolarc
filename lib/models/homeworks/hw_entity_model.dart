@@ -46,7 +46,7 @@ class HomeworkEntity extends HiveObject {
       'isDeleted': isDeleted,
       'isCompleted': isCompleted,
       'isShared': isShared,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toUtc().toIso8601String(),
     };
   }
 

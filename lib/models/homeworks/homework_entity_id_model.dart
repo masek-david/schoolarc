@@ -51,7 +51,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
     return HomeworkEntityWithID(
       id: json['id'],
       text: json['n'],
-      description: json['i'],
+      description: json['i'] ?? '',
       subjectId: json['s'],
       deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,

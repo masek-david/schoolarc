@@ -1,7 +1,9 @@
 # FIX
-update gradle + kotlin
-test filepicker on real device (saving, picking)
+home screen meals shouldnt always enlarge
 test that notifications are set after being displayed
+errors messages for export/import
+fix black android topbar text
+red dots for logs?
 the specified refresh token has already been redeemed (in bakaservice)
 
 # RELEASE
@@ -10,6 +12,7 @@ the specified refresh token has already been redeemed (in bakaservice)
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
 - ⬜ widgets
+    - ⬜ add from widget
     - ⬜ cant complete homework from widget + notifications now dont work
         - ⬜ just save info about completed hw, dont spawn it using isolate?
         - ⬜ rework with isolatedHive??
@@ -69,6 +72,7 @@ the specified refresh token has already been redeemed (in bakaservice)
 ## notifications:
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
 - ⬜ turn off notifications for weekend
+- ⬜ switch to local_notifications (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
 
 ## year recap

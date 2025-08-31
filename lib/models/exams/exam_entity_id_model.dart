@@ -20,7 +20,7 @@ class ExamEntityWithID extends ExamEntity {
     return ExamEntityWithID(
       id: json['id'],
       text: json['n'],
-      description: json['i'],
+      description: json['i'] ?? '',
       subjectId: json['s'],
       date: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,

@@ -1,12 +1,9 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
-import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
@@ -58,11 +55,29 @@ class DbInfoScreen extends ConsumerWidget {
             const Text('SECURE STORAGE'),
             FilledButton(
               onPressed: () async {
-                final text =
-                    await secureStorage.read(SecureStorage.bakaRefreshTokenKey);
-                print(text);
+                try {
+                  await secureStorage.write('test',
+                      'this was the saved value at time: ${DateTime.now()}');
+                } catch (e) {
+                  if (context.mounted) {
+                    showMessage(context, e.toString());
+                  }
+                  return;
+                }
+                if (context.mounted) {
+                  showMessage(context, 'success');
+                }
               },
-              child: const Text('read refreshToken'),
+              child: const Text('write test'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                final text = await secureStorage.read('test');
+                if (context.mounted) {
+                  showMessage(context, text);
+                }
+              },
+              child: const Text('read test'),
             ),
             const Divider(),
             const Text('FIREBASE'),

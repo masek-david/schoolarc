@@ -46,3 +46,9 @@ You can also build with (replace \<target> with desired platform)
 ```
 flutter build <target>
 ```
+
+for android, i recommend
+```
+flutter build apk --flavor prod --target-platform=android-arm64
+```
+as it is compatible with most devices and has the smallest sizes
