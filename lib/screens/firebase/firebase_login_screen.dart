@@ -205,7 +205,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                             onSubmit: (fields) async {
                               final key = GlobalKey<ProgressDialogState>();
 
-                              if (fields[1] != fields[2]) {
+                              if (fields[2] != fields[3]) {
                                 showMessage(
                                     context, context.loc.notSamePassword,
                                     isError: true);
