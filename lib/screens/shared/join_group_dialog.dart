@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
@@ -31,7 +32,7 @@ class _JoinGroupDialogState extends State<JoinGroupDialog> {
     return AlertDialog(
       title: Text(widget.title),
       content: TextField(
-        autofocus: true,
+        autofocus: !kIsWeb,
         controller: controller,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(15),

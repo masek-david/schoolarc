@@ -12,6 +12,7 @@ import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class SubjectsScreen extends ConsumerWidget {
   const SubjectsScreen({super.key});
@@ -41,6 +42,26 @@ class SubjectsScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> add(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      builder: (context) => SubjectDialog(
+        isEditing: false,
+        initial: Subject(
+          name: '',
+          shortcut: '',
+          id: '',
+          bakaId: null,
+          timestamp: DateTime.now(),
+          isDeleted: false,
+          order: 0,
+          isShared: false,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final map = ref.read(subjectsUsedTimesProvider);
@@ -52,33 +73,18 @@ class SubjectsScreen extends ConsumerWidget {
         actions: [
           if (kIsWeb && ref.watch(useCloudSyncProvider))
             IconButton(
-              onPressed:() =>  onRefresh(context, ref),
+              onPressed: () => onRefresh(context, ref),
               icon: const Icon(Icons.refresh_outlined),
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: context.loc.addNewSubject,
-        onPressed: () {
-          HapticFeedback.mediumImpact();
-          showDialog(
-            context: context,
-            builder: (context) => SubjectDialog(
-              isEditing: false,
-              initial: Subject(
-                name: '',
-                shortcut: '',
-                id: '',
-                bakaId: null,
-                timestamp: DateTime.now(),
-                isDeleted: false,
-                order: 0,
-                isShared: false,
-              ),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: WebRequestFocus(
+        onPressed: () => add(context),
+        child: FloatingActionButton(
+          tooltip: context.loc.addNewSubject,
+          onPressed: () => add(context),
+          child: const Icon(Icons.add),
+        ),
       ),
       body: SlidableAutoCloseBehavior(
         child: Padding(

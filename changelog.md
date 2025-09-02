@@ -1,3 +1,15 @@
+## [2.1.4]() - 2025-09-02
+### Added
+
+### Changed
+- Date no longer changes when updating subject when editing
+- Updated web icon
+
+### Fixed
+- Fixed keyboard not opening on web on ios
+
+---
+
 ## [2.1.3]() - 2025-09-01
 ### Added
 

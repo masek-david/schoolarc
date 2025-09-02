@@ -42,6 +42,17 @@
                 "--flavor",
                 "prod"
             ]
+        },
+        {
+            "name": "Schoolarc web 8080",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                // "--no-web-experimental-hot-reload",
+                "--web-hostname=192.168.100.107",
+                "--web-port=8080"
+            ]
         }
     ]
 }

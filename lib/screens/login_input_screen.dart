@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
@@ -30,10 +31,10 @@ class LoginInputScreen extends StatefulWidget {
   final void Function(List<String> fieldValues) onSubmit;
 
   @override
-  State<LoginInputScreen> createState() => _FirebaseLoginPageState();
+  State<LoginInputScreen> createState() => _LoginInputScreenState();
 }
 
-class _FirebaseLoginPageState extends State<LoginInputScreen> {
+class _LoginInputScreenState extends State<LoginInputScreen> {
   late List<TextEditingController> controllers = List.generate(
     widget.fields.length,
     (index) => TextEditingController(text: widget.fields[index].initialValue),
@@ -87,7 +88,7 @@ class _FirebaseLoginPageState extends State<LoginInputScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    autofocus: index == 0,
+                    autofocus: index == 0 && !kIsWeb,
                     onChanged: (value) {
                       if (value == '') {
                         setState(() {

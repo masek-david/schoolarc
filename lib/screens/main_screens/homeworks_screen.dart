@@ -13,6 +13,7 @@ import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {
@@ -76,14 +77,20 @@ class HomeworksScreen extends ConsumerWidget {
           isWideScreen: isWide,
           title: Text(context.loc.homeworks(2)),
         ),
-        floatingActionButton: FloatingActionButton(
-          tooltip: context.loc.addNewHomework,
+        floatingActionButton: WebRequestFocus(
           onPressed: () async {
             HapticFeedback.mediumImpact();
             addNewHw(context);
           },
-          enableFeedback: true,
-          child: const Icon(Icons.add),
+          child: FloatingActionButton(
+            tooltip: context.loc.addNewHomework,
+            onPressed: () async {
+              HapticFeedback.mediumImpact();
+              addNewHw(context);
+            },
+            enableFeedback: true,
+            child: const Icon(Icons.add),
+          ),
         ),
         body: Theme(
           data: Theme.of(context).copyWith(

@@ -18,11 +18,12 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-/// this provider switches on and off when /calendar route is pushed 
-/// 
+/// this provider switches on and off when /calendar route is pushed
+///
 /// that will switch current page, pop everything and show tomorrow date in calendar
 final showCalendarProvider = StateProvider<bool>((ref) => false);
 
@@ -246,28 +247,40 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  FloatingActionButton.extended(
-                    tooltip:
-                        '${context.loc.addNewExamFor} ${_selectedDay.value.dateText().toLowerCase()}',
-                    heroTag: 'exam_btn',
-                    onPressed: () {
+                  WebRequestFocus(
+                    onPressed: () async {
                       HapticFeedback.mediumImpact();
                       addNewExam(context, initialDate: _selectedDay.value);
                     },
-                    icon: const Icon(Icons.add),
-                    label: Text(context.loc.exams(1)),
+                    child: FloatingActionButton.extended(
+                      tooltip:
+                          '${context.loc.addNewExamFor} ${_selectedDay.value.dateText().toLowerCase()}',
+                      heroTag: 'exam_btn',
+                      onPressed: () {
+                        HapticFeedback.mediumImpact();
+                        addNewExam(context, initialDate: _selectedDay.value);
+                      },
+                      icon: const Icon(Icons.add),
+                      label: Text(context.loc.exams(1)),
+                    ),
                   ),
                   const SizedBox(height: 10),
-                  FloatingActionButton.extended(
-                    tooltip:
-                        '${context.loc.addNewHomeworkFor} ${_selectedDay.value.dateText().toLowerCase()}',
-                    heroTag: 'homework_btn',
-                    onPressed: () {
+                  WebRequestFocus(
+                    onPressed: () async {
                       HapticFeedback.mediumImpact();
                       addNewHw(context, initialDate: _selectedDay.value);
                     },
-                    icon: const Icon(Icons.add),
-                    label: Text(context.loc.homeworks(1)),
+                    child: FloatingActionButton.extended(
+                      tooltip:
+                          '${context.loc.addNewHomeworkFor} ${_selectedDay.value.dateText().toLowerCase()}',
+                      heroTag: 'homework_btn',
+                      onPressed: () {
+                        HapticFeedback.mediumImpact();
+                        addNewHw(context, initialDate: _selectedDay.value);
+                      },
+                      icon: const Icon(Icons.add),
+                      label: Text(context.loc.homeworks(1)),
+                    ),
                   ),
                 ],
               ),

@@ -146,13 +146,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   }
 
   void pickSubject() async {
-    final newSubject = await showDialog(
-      context: context,
-      builder: (context) => SelectSubjectDialog(
-        subjects: subjects,
-        showAllSubjects: false,
-      ),
-    );
+    final newSubject = await showSelectSubject(context: context, subjects: subjects);
 
     setSubject(newSubject);
   }

@@ -6,7 +6,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 Future<Subject?> showSelectSubject({
   required BuildContext context,
   required List<Subject> subjects,
-  required Function delete,
+  Function? delete,
 }) {
   return showDialog<Subject?>(
     context: context,
