@@ -76,6 +76,8 @@ FutureOr<void> backgroundCallback(Uri? data) async {
 Future<void> completeHwBackground(
   Uri data,
 ) async {
+  // TODO fix completing homeworks, at least disable it
+  return;
   if (data.host == 'complete') {
     String? id = data.queryParameters['db'];
     bool? isCompleted = bool.tryParse(data.queryParameters['complete'] ?? '');

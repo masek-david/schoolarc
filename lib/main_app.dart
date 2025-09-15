@@ -16,12 +16,14 @@ import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_controller.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 import 'package:schoolarc/widgets/config/my_shortcuts.dart';
+import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 import 'package:schoolarc/widgets/drawer/my_drawer.dart';
 import 'package:schoolarc/widgets/firebase_overlay.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
@@ -83,9 +85,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   }
 
   void firstTimeOpeningApp() {
-    if (!kIsWeb) {
-      showingTutorial = true;
-    }
+    showingTutorial = true;
   }
 
   void switchPage({required int newScreenIndex}) {
@@ -131,6 +131,49 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
     } else {
+      if (kIsWeb &&
+          !settings.get(Setting.stopPwaCloudSyncWarning) &&
+          !FirebaseService.hasUser) {
+        Future.delayed(
+          Duration.zero,
+          () {
+            if (mounted) {
+              showDialogAdaptive(
+                context: context,
+                title: Text( context.loc.cloudSyncDisabled),
+                content: Text(context.loc.cloudSyncDisabledWarning),
+                actions: [
+                  adaptiveDialogButton(
+                    context: context,
+                    isDefaultAction: true,
+                    child: Text(context.loc.enable),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.restorablePushNamed(context, '/cloudsync');
+                    },
+                  ),
+                  adaptiveDialogButton(
+                    context: context,
+                    isDestructiveAction: true,
+                    child: Text(context.loc.keepDisabled),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  adaptiveDialogButton(
+                    context: context,
+                    isDestructiveAction: true,
+                    child: Text( context.loc.dontShowAgain),
+                    onPressed: () {
+                      settings.save(Setting.stopPwaCloudSyncWarning, true);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      }
+
       if (settings.get(Setting.stopAskingForNotifications) != true) {
         Future.delayed(
           Duration.zero,

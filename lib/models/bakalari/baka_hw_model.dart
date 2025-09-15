@@ -2,6 +2,7 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class BakaHomework extends Task {
   BakaHomework({
@@ -18,6 +19,7 @@ class BakaHomework extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
+    required super.isShared,
     super.stateReaddingVersion,
   });
 
@@ -27,16 +29,18 @@ class BakaHomework extends Task {
 
   Homework toHw() {
     return Homework(
-        subject: subject,
-        text: text,
-        deadline: deadline,
-        isCompleted: isCompleted,
-        priority: priority,
-        id: id,
-        description: description,
-        timestamp: timestamp,
-        isDeleted: isDeleted,
-        order: order);
+      subject: subject,
+      text: text,
+      deadline: deadline,
+      isCompleted: isCompleted,
+      priority: priority,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+      isShared: isShared,
+    );
   }
 
   @override
@@ -46,7 +50,7 @@ class BakaHomework extends Task {
     DateTime? deadline,
     String? description,
     TaskPriority? priority,
-    Subject? subject,
+    Object? subject = noChange,
     String? text,
     String? fireId,
     DateTime? timestamp,
@@ -56,6 +60,7 @@ class BakaHomework extends Task {
     bool? alreadyAdded,
     bool? alreadySeen,
     String? bakaId,
+    bool? isShared,
   }) {
     return BakaHomework(
       isCompleted: isCompleted ?? this.isCompleted,
@@ -63,7 +68,7 @@ class BakaHomework extends Task {
       deadline: deadline ?? this.deadline,
       description: description ?? this.description,
       priority: priority ?? this.priority,
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       alreadyAdded: alreadyAdded ?? this.alreadyAdded,
       alreadySeen: alreadySeen ?? this.alreadySeen,
@@ -71,6 +76,7 @@ class BakaHomework extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      isShared: isShared ?? this.isShared,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }

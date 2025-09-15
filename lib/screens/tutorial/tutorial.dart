@@ -16,7 +16,6 @@ import 'package:schoolarc/screens/tutorial/pages/tutorial_welcome.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-
 Subject exampleSubject(AppLocalizations loc) => Subject(
       name: loc.exampleSubjectName1,
       shortcut: loc.exampleSubjectShort1,
@@ -25,6 +24,7 @@ Subject exampleSubject(AppLocalizations loc) => Subject(
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
+      isShared: false,
     );
 Homework exampleHw(AppLocalizations loc) => Homework(
       subject: exampleSubject(loc),
@@ -33,10 +33,11 @@ Homework exampleHw(AppLocalizations loc) => Homework(
       isCompleted: false,
       priority: TaskPriority(0),
       id: '',
-      description: null,
+      description: '',
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
+      isShared: false,
     );
 Exam exampleExam(AppLocalizations loc) => Exam(
       subject: exampleSubject(loc),
@@ -45,17 +46,25 @@ Exam exampleExam(AppLocalizations loc) => Exam(
       isCompleted: false,
       priority: TaskPriority(0),
       id: '',
-      description: null,
+      description: '',
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
+      isShared: false,
     );
 
-class Tutorial extends StatelessWidget {
-  Tutorial({super.key, required this.onEnd});
+class Tutorial extends StatefulWidget {
+  const Tutorial({super.key, required this.onEnd});
 
   final void Function() onEnd;
+
+  @override
+  State<Tutorial> createState() => _TutorialState();
+}
+
+class _TutorialState extends State<Tutorial> {
   final _controller = PageController();
+  bool showSkip = false;
 
   late final pages = [
     const TutorialWelcome(),
@@ -64,8 +73,15 @@ class Tutorial extends StatelessWidget {
     const TutorialSubjects(),
     const TutorialInteractions(),
     const TutorialExtensions(),
-    TutorialEnd(onEnd: onEnd),
+    TutorialEnd(onEnd: widget.onEnd),
   ];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +94,11 @@ class Tutorial extends StatelessWidget {
           appBar: AppBar(
             centerTitle: false,
             title: TextButton(
-              onPressed: onEnd,
-              child: Text(context.loc.skip),
+              onPressed: () {
+                _controller.animateToPage(5,
+                    duration: Durations.long4, curve: Curves.decelerate);
+              },
+              child: Text(showSkip ? context.loc.skip : context.loc.alreadyUsedApp),
             ),
             backgroundColor: Colors.transparent,
           ),
@@ -121,6 +140,11 @@ class Tutorial extends StatelessWidget {
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
+                  onPageChanged: (value) {
+                    setState(() {
+                      showSkip = value != 0;
+                    });
+                  },
                   itemCount: pages.length,
                   itemBuilder: (context, index) {
                     if (index == pages.length - 1) {

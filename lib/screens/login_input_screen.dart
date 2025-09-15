@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class LoginField {
   LoginField({
@@ -6,10 +8,12 @@ class LoginField {
     this.obscure = false,
     this.initialValue,
     this.autofillHints,
+    this.info,
   });
 
   String name;
   bool obscure;
+  String? info;
   Iterable<String>? autofillHints;
   String? initialValue;
 }
@@ -27,10 +31,10 @@ class LoginInputScreen extends StatefulWidget {
   final void Function(List<String> fieldValues) onSubmit;
 
   @override
-  State<LoginInputScreen> createState() => _FirebaseLoginPageState();
+  State<LoginInputScreen> createState() => _LoginInputScreenState();
 }
 
-class _FirebaseLoginPageState extends State<LoginInputScreen> {
+class _LoginInputScreenState extends State<LoginInputScreen> {
   late List<TextEditingController> controllers = List.generate(
     widget.fields.length,
     (index) => TextEditingController(text: widget.fields[index].initialValue),
@@ -84,7 +88,7 @@ class _FirebaseLoginPageState extends State<LoginInputScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    autofocus: index == 0,
+                    autofocus: index == 0 && !kIsWeb,
                     onChanged: (value) {
                       if (value == '') {
                         setState(() {
@@ -106,6 +110,26 @@ class _FirebaseLoginPageState extends State<LoginInputScreen> {
                     ),
                   ),
                 ),
+                if (field.info != null)
+                  ExcludeFocus(
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(field.name),
+                            content: Text(field.info!),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(context.loc.ok))
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.info_outline),
+                    ),
+                  ),
                 if (obscure != null)
                   ExcludeFocus(
                     child: IconButton(

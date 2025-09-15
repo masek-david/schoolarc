@@ -25,12 +25,12 @@ class _TutorialInteractionsState extends State<TutorialInteractions>
 
     _controller = SlidableController(this);
 
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(milliseconds: 1800), () {
       if (mounted) {
         _controller.openTo(-0.3);
       }
     });
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
         _controller.close();
       }

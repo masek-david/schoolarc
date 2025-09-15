@@ -1,7 +1,8 @@
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
-class HomeworkWithID extends HomeworkEntity {
-  HomeworkWithID({
+class HomeworkEntityWithID extends HomeworkEntity {
+  HomeworkEntityWithID({
     required super.deadline,
     required super.text,
     required super.description,
@@ -11,43 +12,46 @@ class HomeworkWithID extends HomeworkEntity {
     required super.isCompleted,
     required super.isDeleted,
     required super.timestamp,
+    required super.isShared,
     required this.id,
   });
 
   String id;
 
   @override
-  HomeworkWithID copyWith({
+  HomeworkEntityWithID copyWith({
     String? id,
     DateTime? deadline,
     String? text,
     String? description,
-    String? subjectId,
+    Object? subjectId = noChange,
     int? priority,
     int? order,
     bool? isCompleted,
     bool? isDeleted,
     DateTime? timestamp,
+    bool? isShared,
   }) {
-    return HomeworkWithID(
+    return HomeworkEntityWithID(
       id: id ?? this.id,
       deadline: deadline ?? this.deadline,
       text: text ?? this.text,
       description: description ?? this.description,
-      subjectId: subjectId ?? this.subjectId,
+      subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       priority: priority ?? this.priority,
       order: order ?? this.order,
       isCompleted: isCompleted ?? this.isCompleted,
       isDeleted: isDeleted ?? this.isDeleted,
       timestamp: timestamp ?? this.timestamp,
+      isShared: isShared ?? this.isShared,
     );
   }
 
-  factory HomeworkWithID.fromFireJson(Map<String, dynamic> json) {
-    return HomeworkWithID(
+  factory HomeworkEntityWithID.fromFireJson(Map<String, dynamic> json) {
+    return HomeworkEntityWithID(
       id: json['id'],
       text: json['n'],
-      description: json['i'],
+      description: json['i'] ?? '',
       subjectId: json['s'],
       deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,
@@ -55,11 +59,12 @@ class HomeworkWithID extends HomeworkEntity {
       isCompleted: json['c'] ?? true,
       isDeleted: json['del'] ?? false,
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
+      isShared: json['sh'] ?? false,
     );
   }
 
-  factory HomeworkWithID.fromJson(Map<String, dynamic> json) {
-    return HomeworkWithID(
+  factory HomeworkEntityWithID.fromJson(Map<String, dynamic> json) {
+    return HomeworkEntityWithID(
       id: json['id'],
       subjectId: json['subjectId'],
       text: json['text'],
@@ -69,7 +74,8 @@ class HomeworkWithID extends HomeworkEntity {
       order: json['order'],
       isDeleted: json['isDeleted'],
       isCompleted: json['isCompleted'],
-      timestamp: DateTime.now(),
+      isShared: json['isShared'] ?? false,
+      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
     );
   }
 }

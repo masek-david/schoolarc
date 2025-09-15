@@ -7,4 +7,5 @@ extension ContextExtension on BuildContext {
   AppLocalizations get loc => AppLocalizations.of(this)!;
 
   bool get isWide => MediaQuery.of(this).size.width > 600;
+  bool get isDark => Theme.brightnessOf(this) == Brightness.dark;
 }

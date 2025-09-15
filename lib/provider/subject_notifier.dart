@@ -5,7 +5,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
-import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';

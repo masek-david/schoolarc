@@ -410,6 +410,24 @@ class AppLocalizationsCs extends AppLocalizations {
   String get username => 'Uživatelské jméno';
 
   @override
+  String get changeUsername => 'Změnit uživatelské jméno';
+
+  @override
+  String get usernameChanged => 'Uživatelské jméno bylo úspěšně změněno';
+
+  @override
+  String get newUsername => 'Nové uživatelské jméno';
+
+  @override
+  String get usernameInfo => 'Uživatelské jméno je veřejně viditelné ostatním uživatelům';
+
+  @override
+  String get group => 'Skupina';
+
+  @override
+  String get subjectIsntShared => 'Zvolený předmět není sdílen';
+
+  @override
   String get password => 'Heslo';
 
   @override
@@ -1093,6 +1111,24 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
+
+  @override
+  String get cloudSyncDisabled => 'Synchronizace je vypnutá';
+
+  @override
+  String get cloudSyncDisabledWarning => 'Při používání webové aplikace je doporučeno zapnout synchronizaci, aby nedošlo ke ztrátě dat.';
+
+  @override
+  String get enable => 'Zapnout';
+
+  @override
+  String get keepDisabled => 'Nechat vypnuté';
+
+  @override
+  String get dontShowAgain => 'Nezobrazovat znovu';
+
+  @override
+  String get alreadyUsedApp => 'Už jste aplikaci používali?';
 
   @override
   String get secondShort => ' sek';

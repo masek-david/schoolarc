@@ -11,7 +11,9 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
+import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class _AnimatedReorderableListItem {
@@ -75,14 +77,20 @@ class ExamsScreen extends ConsumerWidget {
           isWideScreen: isWide,
           title: Text(context.loc.exams(2)),
         ),
-        floatingActionButton: FloatingActionButton(
-          tooltip: context.loc.addNewExam,
+        floatingActionButton: WebRequestFocus(
           onPressed: () async {
             HapticFeedback.mediumImpact();
             addNewExam(context);
           },
-          enableFeedback: true,
-          child: const Icon(Icons.add),
+          child: FloatingActionButton(
+            tooltip: context.loc.addNewExam,
+            onPressed: () async {
+              HapticFeedback.mediumImpact();
+              addNewExam(context);
+            },
+            enableFeedback: true,
+            child: const Icon(Icons.add),
+          ),
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -108,7 +116,7 @@ class ExamsScreen extends ConsumerWidget {
               },
               child: itemList.length == 5
                   ? ListView(children: [
-                      const AnimatedShape(),
+                      const Snappable(child: AnimatedShape()),
                       _buildCompletedList(context, ref, completedExams)
                     ])
                   : AnimatedReorderableListView(

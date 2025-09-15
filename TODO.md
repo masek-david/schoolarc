@@ -1,25 +1,38 @@
 # FIX
-cant complete homework from widget
-the specified refresh token has already been reddemed (in bakaservice)
-
-password reset
-sharing
-
-tests:
-    check translations
-    check dispose
+notifications arent set after being displayed
+in home screen, show info about today too, if it is already showing about tomorrow
+home screen meals shouldnt always enlarge
+errors messages for export/import
+fix black android topbar text
+red dots for logs?
+the specified refresh token has already been redeemed (in bakaservice)
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
-- ⬜ plus plan - one time/yearly ???
-    - ⬜ add to tutorial
+- ⬜ widgets
+    - ⬜ add from widget
+    - ⬜ cant complete homework from widget
+        - ⬜ just save info about completed hw, dont spawn it using isolate?
+        - ⬜ rework with isolatedHive??
+- ⬜ forgot password for firebase + verify email
+- ⬜ tutorial
+    - ✅ choose language
+    - ✅ offer import from bakalari
+    - ⬜ offer import from json
+- ⬜ plus - 5 usd, limit to 100 users?
+- ⬜ add to tutorial
+    - ⬜ colors
+    - ⬜ ? widgets
+    - ⬜ notifications
+    - ⬜ cloud sync
 
 # FEATURES
 
 ## UI
+- ⬜ in calendar tasks are hidden again a little bit
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
@@ -27,26 +40,47 @@ tests:
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing 
     - ⬜ fix the scrolling
-    - ⬜ is everything needed to be shown ??
+    - ⬜ animation FAB morph to the sheet?
+    - ⬜ does everything need to be shown ??
 - ⬜ settings use bigger headlines and scroll them
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
+- ⬜ check scrolling in timetable
+- ⬜ ? use expressive progress
 
 ## OTHER
-- ⬜ reset password for firebase + verify email
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ add google sign in + sign in with apple
+- ⬜ ? refactor to use date instead of datetime
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
+- ⬜ save only date for deadlines
 - ⬜ translation - google sheets
+
+## SHARING
+- ✅ show username in firebase login (create a provider for it?)
+- ⬜ firebase rules
+- ⬜ show shared indicator for hw, exam, subject
+- ⬜ addbottomsheet 
+    - ⬜ show which subjects are shared
+    - ⬜ set isShared to true when shared subject is selected
+- ⬜ add group names (create, view)
+- ⬜ show only tasks that havent been saved yet
+- ⬜ group notifier - group name, tasks, users?
+- ⬜ translate
+- ⬜ legal
+    - ⬜ add name and groups? to export and delete data
+    - ⬜ update privacy policy
+- ⬜ qr group invite?
 
 ## notifications:
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
 - ⬜ turn off notifications for weekend
+- ⬜ switch to local_notifications (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
 
 ## year recap
@@ -61,7 +95,6 @@ tests:
 # MAYBE
 - ⬜ refactor baka_service - add separate file for http requests
 - ⬜ make everything react to touch (shrink) 
-- ⬜ share tasks
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals

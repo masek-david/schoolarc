@@ -18,8 +18,10 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
+import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -52,12 +54,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     TextEditingValue(text: initialTask.text),
   );
   late final descriptionController = RestorableTextEditingController.fromValue(
-    TextEditingValue(text: initialTask.description ?? ''),
+    TextEditingValue(text: initialTask.description),
   );
   late RestorableStringN pickedSubjectId =
       RestorableStringN(initialTask.subject?.id);
   late RestorableDateTime pickedDate = RestorableDateTime(initialTask.deadline);
   late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
+  late RestorableBool share = RestorableBool(initialTask.isShared);
+  late RestorableBool dateIsAutoSet = RestorableBool(false);
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
   final _timetable = timetableDb.timeTable;
@@ -75,6 +79,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       deadline: pickedDate.value,
       priority: TaskPriority(pickedPriority.value),
       timestamp: DateTime.now().toUtc(),
+      isShared: share.value,
     );
 
     if (widget.isHomework) {
@@ -95,9 +100,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   void setSubject(Subject? subject) {
     setState(() {
       pickedSubjectId.value = subject?.id;
+      dateIsAutoSet.value = false;
       if (widget.autoSetDate && subject != null) {
-        pickedDate.value =
-            _timetable.nextDateForSubject(subject) ?? pickedDate.value;
+        final newDate = _timetable.nextDateForSubject(subject);
+        if (newDate != null) {
+          dateIsAutoSet.value = true;
+          pickedDate.value = newDate;
+        }
       }
     });
     if (subject != null) {
@@ -130,19 +139,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     if (newDate == null) return;
 
     setState(() {
+      dateIsAutoSet.value = false;
       pickedDate.value = newDate!;
     });
     return;
   }
 
   void pickSubject() async {
-    final newSubject = await showDialog(
-      context: context,
-      builder: (context) => SelectSubjectDialog(
-        subjects: subjects,
-        showAllSubjects: false,
-      ),
-    );
+    final newSubject = await showSelectSubject(context: context, subjects: subjects);
 
     setSubject(newSubject);
   }
@@ -184,6 +188,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     registerForRestoration(pickedDate, 'pickedDate');
     registerForRestoration(pickedSubjectId, 'pickedSubject');
     registerForRestoration(pickedPriority, 'pickedPriority');
+    registerForRestoration(dateIsAutoSet, 'dateIsAutoSet');
+    registerForRestoration(share, 'share');
   }
 
   @override
@@ -240,40 +246,23 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   const SizedBox(height: 12),
                   CancelSaveButton(onSave: onSave),
                   const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: pickSubject,
-                        icon: const Icon(Icons.search),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            // cant use .map(), i need the index
-                            children: List.generate(subjects.length, (index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: ChoiceChip(
-                                  key: keysList[index],
-                                  selected: pickedSubjectId.value ==
-                                      subjects[index].id,
-                                  label: Text(subjects[index].name),
-                                  onSelected: (value) {
-                                    if (!value) {
-                                      setSubject(null);
-                                    } else {
-                                      setSubject(subjects[index]);
-                                    }
-                                  },
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                    ],
+                  SubjectPicker(
+                    subjects: subjects,
+                    pickedSubjectId: pickedSubjectId.value,
+                    onSelected: setSubject,
+                    keys: keysList,
                   ),
+                  if (share.value &&
+                      subjects
+                              .where((element) =>
+                                  element.id == pickedSubjectId.value)
+                              .firstOrNull
+                              ?.isShared ==
+                          false)
+                    ErrorTile(
+                      error: null,
+                      text: context.loc.subjectIsntShared,
+                    ),
                   const SizedBox(height: 10),
                   Autocomplete<Subject>(
                     fieldViewBuilder: (context, textEditingController,
@@ -285,7 +274,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                         maxLines: null,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (value) {
+                          onFieldSubmitted();
                           if (nameController.value.text.isNotEmpty) {
+                            Navigator.pop(context);
                             onSave();
                           }
                         },
@@ -320,7 +311,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    // listview musi mit vysku, kterou urci sizedbox
+                    // listview need height, which is ensured by the sizedbox
                     height: 40,
                     child: PriorityPicker(
                       selectedPriority: pickedPriority.value,
@@ -329,18 +320,30 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       }),
                     ),
                   ),
+                  // SettingTile.withCheckbox(
+                  //   contentPadding: const EdgeInsets.all(0),
+                  //   title: 'Share',
+                  //   value: share.value,
+                  //   onChanged: (value) => setState(() {
+                  //     share.value = value;
+                  //   }),
+                  // ),
                   const Divider(),
+
                   InkWell(
                     onTap: pickDate,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 15, bottom: 15, left: 5, right: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 4),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            context.loc.deadline,
-                            style: const TextStyle(fontSize: 16),
+                          Expanded(
+                            child: Text(
+                              dateIsAutoSet.value
+                                  ? '${context.loc.next} ${subjects.where((element) => element.id == pickedSubjectId.value).firstOrNull?.name}:'
+                                  : context.loc.deadline,
+                              style: const TextStyle(fontSize: 16),
+                            ),
                           ),
                           Text(
                             pickedDate.value.formatWithoutYear(),

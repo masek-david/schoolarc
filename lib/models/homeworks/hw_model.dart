@@ -2,6 +2,7 @@ import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class Homework extends Task {
   Homework({
@@ -15,6 +16,7 @@ class Homework extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
+    required super.isShared,
     super.stateReaddingVersion = 0,
     this.isBeingAnimated = false,
   });
@@ -32,6 +34,7 @@ class Homework extends Task {
       description: description,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -43,7 +46,7 @@ class Homework extends Task {
   Map<String, dynamic> toFireJson() {
     return {
       'n': text,
-      if (description != null && description != '') 'i': description,
+      if (description != '') 'i': description,
       if (subject != null) 's': subject?.id,
       'd': deadline.millisecondsSinceEpoch,
       if (priority.index != 0) 'p': priority.index,
@@ -51,26 +54,29 @@ class Homework extends Task {
       if (!isCompleted) 'c': isCompleted,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
+      if (isShared) 'sh': isShared,
     };
   }
 
   @override
-  Homework copyWith(
-      {Subject? subject,
-      String? text,
-      DateTime? deadline,
-      bool? isCompleted,
-      TaskPriority? priority,
-      String? id,
-      String? description,
-      String? fireId,
-      DateTime? timestamp,
-      bool? isDeleted,
-      int? order,
-      bool? isBeingAnimated,
-      int? stateReaddingVersion}) {
+  Homework copyWith({
+    Object? subject = noChange,
+    String? text,
+    DateTime? deadline,
+    bool? isCompleted,
+    TaskPriority? priority,
+    String? id,
+    String? description,
+    String? fireId,
+    DateTime? timestamp,
+    bool? isDeleted,
+    int? order,
+    bool? isShared,
+    bool? isBeingAnimated,
+    int? stateReaddingVersion,
+  }) {
     return Homework(
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
@@ -80,6 +86,7 @@ class Homework extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      isShared: isShared ?? this.isShared,
       isBeingAnimated: isBeingAnimated ?? this.isBeingAnimated,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );

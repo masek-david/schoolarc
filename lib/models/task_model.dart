@@ -4,11 +4,12 @@ import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class Task {
   final String id;
   final String text;
-  final String? description;
+  final String description;
   final Subject? subject;
   final DateTime deadline;
   final TaskPriority priority;
@@ -16,6 +17,7 @@ class Task {
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
+  final bool isShared;
 
   /// stateReaddingVersion changes when the task is re-added, so it doesnt trigger
   /// Multiple widgets use the same globalkey error in AnimatedReorderableListView
@@ -33,6 +35,7 @@ class Task {
     required this.priority,
     required this.description,
     required this.order,
+    required this.isShared,
     this.stateReaddingVersion = 0,
   });
 
@@ -44,9 +47,10 @@ class Task {
         id = '',
         isDeleted = false,
         order = 0,
-        description = null,
+        description = '',
         subject = null,
         timestamp = DateTime.now().toUtc(),
+        isShared = false,
         stateReaddingVersion = 0;
 
   HomeworkEntity toHwEntity() {
@@ -60,6 +64,7 @@ class Task {
       description: description,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -73,6 +78,7 @@ class Task {
       description: description,
       timestamp: timestamp,
       order: order,
+      isShared: isShared,
     );
   }
 
@@ -84,7 +90,7 @@ class Task {
       'deadline': deadline.dateText(),
       'isCompleted': isCompleted,
       'priority': priority.index,
-      'hasDescription': description != null,
+      'hasDescription': description != '',
     };
   }
 
@@ -93,8 +99,7 @@ class Task {
     if (this.text.withoutDiacriticalMarks.toLowerCase().contains(text)) {
       return true;
     }
-    if (description != null &&
-        description!.withoutDiacriticalMarks.toLowerCase().contains(text)) {
+    if (description.withoutDiacriticalMarks.toLowerCase().contains(text)) {
       return true;
     }
     if (subject != null && subject!.containsText(text)) {
@@ -104,7 +109,7 @@ class Task {
   }
 
   Task copyWith({
-    Subject? subject,
+    Object? subject = noChange,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
@@ -115,9 +120,10 @@ class Task {
     bool? isDeleted,
     int? order,
     int? stateReaddingVersion,
+    bool? isShared,
   }) {
     return Task(
-      subject: subject ?? this.subject,
+      subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
@@ -128,6 +134,7 @@ class Task {
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
+      isShared: isShared ?? this.isShared,
     );
   }
 }

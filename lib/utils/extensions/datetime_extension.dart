@@ -68,7 +68,8 @@ extension BetterDateTime on DateTime {
     final lastDayOfMonth = DateTime(year, month + 1, 0);
     final daysInMonth = lastDayOfMonth.day;
     final lastDayWeekday = lastDayOfMonth.weekday;
-    final lastDayIndex = daysInMonth + ((startOnMonday ? 7 : 6) - lastDayWeekday);
+    final lastDayIndex =
+        daysInMonth + ((startOnMonday ? 7 : 6) - lastDayWeekday);
 
     for (int i = firstDayIndex; i <= lastDayIndex; i++) {
       list.add(DateTime(year, month, i));
@@ -115,7 +116,7 @@ extension BetterDateTime on DateTime {
         ? supportedDateFormatsNoYear[supportedDateFormats.indexOf(dateFormat)]
         : dateFormat;
 
-    return DateFormat(format, getLocale().languageCode).format(this);
+    return DateFormat(format, getLocale().languageCode).format(toLocal());
   }
 
   /// formats the date, replaces yesterday, today and tomorrow, or calls [formatWithoutYear]
@@ -127,10 +128,12 @@ extension BetterDateTime on DateTime {
     if (localDate.isSameDay(now)) {
       return loc.today;
     }
-    if (localDate.isSameDay(now.toUtc().add(const Duration(days: 1)))) {
+    if (localDate
+        .isSameDay(now.toUtc().add(const Duration(days: 1)).toLocal())) {
       return loc.tomorrow;
     }
-    if (localDate.isSameDay(now.toUtc().subtract(const Duration(days: 1)))) {
+    if (localDate
+        .isSameDay(now.toUtc().subtract(const Duration(days: 1)).toLocal())) {
       return loc.yesterday;
     }
     return formatWithoutYear();

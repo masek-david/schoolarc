@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/provider/locale_notifier.dart';
+import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/roboto_serif.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 
-class TutorialWelcome extends StatelessWidget {
+class TutorialWelcome extends ConsumerWidget {
   const TutorialWelcome({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Stack(
@@ -24,7 +29,6 @@ class TutorialWelcome extends StatelessWidget {
               text: '',
               excludeShapes: false,
               secondsBeforeShapeChange: 3,
-              shapeChangeDuration: Duration(milliseconds: 1000),
               reactive: false,
               secondsForOneRotation: -50,
             ),
@@ -41,7 +45,6 @@ class TutorialWelcome extends StatelessWidget {
               text: '',
               excludeShapes: false,
               secondsBeforeShapeChange: 5,
-              shapeChangeDuration: Duration(milliseconds: 1000),
               reactive: false,
               secondsForOneRotation: 80,
             ),
@@ -76,6 +79,30 @@ class TutorialWelcome extends StatelessWidget {
                 context.loc.tutorialIntro,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.left,
+              ),
+            ),
+            AnimatedItem(
+              builder: (isShown) => SettingTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 64),
+                title: context.loc.language,
+                trailing: DropDownAction(
+                  value: ref.watch(localeProvider).languageCode,
+                  onChanged: (value) {
+                    ref.read(localeProvider.notifier).set(value as String);
+                  },
+                  items: supportedLocales
+                      .map(
+                        (key, value) => MapEntry(
+                          key,
+                          DropdownMenuItem<String>(
+                            value: key.languageCode,
+                            child: Text(value),
+                          ),
+                        ),
+                      )
+                      .values
+                      .toList(),
+                ),
               ),
             ),
           ],

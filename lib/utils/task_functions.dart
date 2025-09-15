@@ -38,6 +38,7 @@ void addNewHw(BuildContext context, {DateTime? initialDate}) async {
 
 void editHw(BuildContext context, Homework hw) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'date': hw.deadline.toIso8601String(),
     'id': hw.id,
     'isHomework': true,
   });
@@ -78,6 +79,7 @@ Future<void> addNewExam(BuildContext context, {DateTime? initialDate}) async {
 
 void editExam(BuildContext context, Exam exam) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
+    'date': exam.deadline.toIso8601String(),
     'id': exam.id,
     'isHomework': false,
   });

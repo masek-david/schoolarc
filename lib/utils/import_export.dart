@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:schoolarc/models/exams/exam_id_model.dart';
-import 'package:schoolarc/models/homeworks/homework_id_model.dart';
+import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
+import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -11,8 +11,8 @@ class ImportExport {
       {required this.exams, required this.hws, required this.subjects});
 
   final List<Subject> subjects;
-  final List<ExamWithID> exams;
-  final List<HomeworkWithID> hws;
+  final List<ExamEntityWithID> exams;
+  final List<HomeworkEntityWithID> hws;
 }
 
 String export() {
@@ -49,8 +49,8 @@ String export() {
 
 ImportExport import({required String jsonString}) {
   final json = jsonDecode(jsonString);
-  final List<ExamWithID> exams = [];
-  final List<HomeworkWithID> hws = [];
+  final List<ExamEntityWithID> exams = [];
+  final List<HomeworkEntityWithID> hws = [];
   final List<Subject> subjects = [];
 
   for (var element in (json['subjects'] as List)) {
@@ -59,13 +59,13 @@ ImportExport import({required String jsonString}) {
   subjects.sort((a, b) => a.order.compareTo(b.order));
 
   for (var element in (json['exams'] as List)) {
-    exams.add(ExamWithID
+    exams.add(ExamEntityWithID
     .fromJson(element));
   }
   exams.sort((a, b) => a.order.compareTo(b.order));
 
   for (var element in (json['homework'] as List)) {
-    hws.add(HomeworkWithID.fromJson(element));
+    hws.add(HomeworkEntityWithID.fromJson(element));
   }
   hws.sort((a, b) => a.order.compareTo(b.order));
 

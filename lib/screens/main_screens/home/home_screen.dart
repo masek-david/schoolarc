@@ -197,7 +197,6 @@ class HomeScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(8),
                               child: examsToShow.isEmpty && hwToShow.isEmpty
                                   ? EmptyMessage(
-                                      // TODO translate
                                       message: context.loc
                                           .nothingPlannedFor(whenText),
                                       asset: 'assets/confetti.svg',

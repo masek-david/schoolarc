@@ -1,15 +1,12 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
-import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/models/homeworks/homework_id_model.dart';
+import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -42,7 +39,7 @@ class DbInfoScreen extends ConsumerWidget {
                 label: const Text('delete from disk'),
                 icon: const Icon(Icons.bug_report),
               ),
-            const SizedBox(height: 8),
+            if (kDebugMode) const SizedBox(height: 8),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
@@ -54,148 +51,235 @@ class DbInfoScreen extends ConsumerWidget {
                 label: const Text('sign out everywhere'),
                 icon: const Icon(Icons.bug_report),
               ),
-            const Divider(),
+            if (kDebugMode) const Divider(),
             const Text('SECURE STORAGE'),
-            FilledButton(
-              onPressed: () async {
-                final text =
-                    await secureStorage.read(SecureStorage.bakaRefreshTokenKey);
-                print(text);
-              },
-              child: const Text('read refreshToken'),
+            Row(
+              spacing: 8,
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      try {
+                        await secureStorage.write('test',
+                            'this was the saved value at time: ${DateTime.now()}');
+                      } catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString());
+                        }
+                        return;
+                      }
+                      if (context.mounted) {
+                        showMessage(context, 'success');
+                      }
+                    },
+                    child: const Text('write test'),
+                  ),
+                ),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      final text = await secureStorage.read('test');
+                      if (context.mounted) {
+                        showMessage(context, text);
+                      }
+                    },
+                    child: const Text('read test'),
+                  ),
+                ),
+              ],
             ),
             const Divider(),
             const Text('FIREBASE'),
-            FilledButton(
-              onPressed: () async {
-                late List<HomeworkWithID>? fireHws;
-                try {
-                  fireHws =
-                      await ref.read(firebaseServiceProvider).getAllHomeworks();
-                } catch (e) {
-                  if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
-                  }
-                }
-                if (context.mounted) {
-                  showDialogAdaptive(
-                      context: context,
-                      content: SingleChildScrollView(
-                        child: Text(fireHws.toString()),
-                      ),
-                      actions: [
-                        adaptiveDialogButton(
-                          context: context,
-                          child: const Text('Close'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ]);
-                }
-              },
-              child: const Text('test firebase'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                ref.read(firebaseServiceProvider).logOut();
-              },
-              child: const Text('logout from firebase'),
+            Row(
+              spacing: 8,
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      late List<HomeworkEntityWithID>? fireHws;
+                      try {
+                        fireHws = await ref
+                            .read(firebaseServiceProvider)
+                            .getAllHomeworks();
+                      } catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, e.toString(), isError: true);
+                        }
+                      }
+                      if (context.mounted) {
+                        showDialogAdaptive(
+                            context: context,
+                            content: SingleChildScrollView(
+                              child: Text(fireHws.toString()),
+                            ),
+                            actions: [
+                              adaptiveDialogButton(
+                                context: context,
+                                child: const Text('Close'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ]);
+                      }
+                    },
+                    child: const Text('test firebase'),
+                  ),
+                ),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      ref.read(firebaseServiceProvider).logOut();
+                    },
+                    child: const Text('logout from firebase'),
+                  ),
+                ),
+              ],
             ),
             const Text('SUBJECTS'),
             const Divider(),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: subjects.entries.map((entry) {
-                var item = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 50,
-                        child: Text(entry.key.toString()),
-                      ),
-                      SizedBox(
-                        width: 60,
-                        child: Text(item.shortcut),
-                      ),
-                      Expanded(child: Text(item.name)),
-                      if (item.isDeleted) const Icon(Icons.delete)
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+            ...subjects.entries.map((entry) {
+              var item = entry.value;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    idText(entry.key, context),
+                    SizedBox(
+                      width: 60,
+                      child: Center(child: Text(item.shortcut)),
+                    ),
+                    Expanded(child: Text(item.name)),
+                    SizedBox(
+                      width: 20,
+                      child: Text(item.bakaId ?? ''),
+                    ),
+                    SizedBox(
+                      width: 20,
+                      child: item.isDeleted ? const Icon(Icons.delete) : null,
+                    ),
+                    SizedBox(
+                      width: 20,
+                      child: item.isShared ? const Icon(Icons.share) : null,
+                    ),
+                  ],
+                ),
+              );
+            }),
             const SizedBox(height: 50),
             const Text('HOMEWORKS'),
             const Divider(),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: hws.entries.map((entry) {
-                var item = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 50,
-                        child: Text(entry.key.toString()),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        child: Text(
-                          item.priority.toString(),
-                          style: TextStyle(
-                            color: TaskPriority(item.priority).color,
-                          ),
+            ...hws.entries.map((entry) {
+              var item = entry.value;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    idText(entry.key, context),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        item.priority.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: TaskPriority(item.priority).color,
                         ),
                       ),
-                      Expanded(child: Text(item.text)),
-                      if (item.isCompleted) const Icon(Icons.check),
-                      if (entry.value.isDeleted) const Icon(Icons.delete),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(item.text),
+                          Text(
+                            item.deadline.toString(),
+                            style:
+                                TextStyle(color: getSubtleTextColor(context)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                      child: item.isDeleted ? const Icon(Icons.delete) : null,
+                    ),
+                    SizedBox(
+                      width: 20,
+                      child: item.isShared ? const Icon(Icons.share) : null,
+                    ),
+                    SizedBox(
+                      width: 20,
+                      child: item.isCompleted ? const Icon(Icons.check) : null,
+                    ),
+                  ],
+                ),
+              );
+            }),
             const SizedBox(height: 50),
             const Text('EXAMS'),
             const Divider(),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: exams.entries.map((entry) {
+            ...exams.entries.map(
+              (entry) {
                 var item = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 50,
-                        child: Text(entry.key.toString()),
-                      ),
-                      SizedBox(
-                        width: 30,
+                      idText(entry.key, context),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
                           item.priority.toString(),
                           style: TextStyle(
+                            fontWeight: FontWeight.bold,
                             color: TaskPriority(item.priority).color,
                           ),
                         ),
                       ),
-                      Expanded(child: Text(item.text)),
-                      if (entry.value.isDeleted) const Icon(Icons.delete),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(item.text),
+                            Text(
+                              item.date.toString(),
+                              style:
+                                  TextStyle(color: getSubtleTextColor(context)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                        child: item.isDeleted ? const Icon(Icons.delete) : null,
+                      ),
+                      SizedBox(
+                        width: 20,
+                        child: item.isShared ? const Icon(Icons.share) : null,
+                      ),
                     ],
                   ),
                 );
-              }).toList(),
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  SizedBox idText(String entry, BuildContext context) {
+    return SizedBox(
+      width: 40,
+      child: Text(
+        entry,
+        maxLines: 2,
+        style: TextStyle(color: getSubtleTextColor(context)),
       ),
     );
   }

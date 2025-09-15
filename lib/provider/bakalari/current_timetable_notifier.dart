@@ -76,13 +76,16 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
       throw ServiceException(loc.bakalariDisabled);
     }
 
-    final isLoggedIn = await ref.read(bakaLoginProvider.future);
+    bool isLoggedIn = await ref.read(bakaLoginProvider.future);
 
     if (!isLoggedIn) {
-      throw ServiceException(
-        loc.loggedOut,
-        action: ExceptionActions.bakaLogin,
-      );
+      isLoggedIn = await ref.read(bakaLoginProvider.notifier).refreshLogin();
+      if (!isLoggedIn) {
+        throw ServiceException(
+          loc.loggedOut,
+          action: ExceptionActions.bakaLogin,
+        );
+      }
     }
 
     lastFetched = null;

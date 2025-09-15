@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 
 final _opacityProvider = StateProvider<bool>((ref) => false);
 

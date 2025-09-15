@@ -23,7 +23,7 @@ types:
         index: 2
   HomeworkEntity:
     typeId: 9
-    nextIndex: 9
+    nextIndex: 10
     fields:
       text:
         index: 0
@@ -43,9 +43,11 @@ types:
         index: 7
       timestamp:
         index: 8
+      isShared:
+        index: 9
   ExamEntity:
     typeId: 10
-    nextIndex: 8
+    nextIndex: 9
     fields:
       subjectId:
         index: 0
@@ -63,9 +65,11 @@ types:
         index: 6
       order:
         index: 7
+      isShared:
+        index: 8
   SubjectEntity:
     typeId: 11
-    nextIndex: 6
+    nextIndex: 7
     fields:
       name:
         index: 0
@@ -79,6 +83,8 @@ types:
         index: 4
       order:
         index: 5
+      isShared:
+        index: 6
   TimeTableEntity:
     typeId: 12
     nextIndex: 2

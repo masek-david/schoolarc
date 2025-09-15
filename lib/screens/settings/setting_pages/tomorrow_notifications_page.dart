@@ -62,71 +62,79 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   Widget build(BuildContext context) {
     final loc = context.loc;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.upcomingDayNotifications),
-      ),
-      body: ListView(
-        children: [
-          if (areNotificationsAllowed == false)
-            Container(
-              color: Theme.of(context).colorScheme.errorContainer,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    NotificationSender.getPermission(
-                            context, 'tomorrow_channel')
-                        .then(
-                      (value) async {
-                        setState(() {
-                          areNotificationsAllowed = value;
-                        });
-                      },
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      loc.notificationsNotAllowedMessage,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onErrorContainer,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        NotificationSender.scheduletomorrowNotification(
+          showSnackbar: (text) => showMessage(context, text),
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(loc.upcomingDayNotifications),
+        ),
+        body: ListView(
+          children: [
+            if (areNotificationsAllowed == false)
+              Container(
+                color: Theme.of(context).colorScheme.errorContainer,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      NotificationSender.getPermission(
+                              context, 'tomorrow_channel')
+                          .then(
+                        (value) async {
+                          setState(() {
+                            areNotificationsAllowed = value;
+                          });
+                        },
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        loc.notificationsNotAllowedMessage,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
+            SettingTile.withSwitch(
+              title: loc.upcomingDayNotifications,
+              highlighted: true,
+              onChanged: setEnabled,
+              value: enabled,
             ),
-          SettingTile.withSwitch(
-            title: loc.upcomingDayNotifications,
-            highlighted: true,
-            onChanged: setEnabled,
-            value: enabled,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(loc.upcomingDayNotificationsDescription),
-          ),
-          SettingTile.withTimePicker(
-            title: loc.arrivalTimeTitle,
-            subtitle: loc.arrivalTimeSubtitle,
-            time: time,
-            onChanged: (value) {
-              settings.save(Setting.tomorrowNotificationTime, value);
-              setState(() {
-                time = value;
-              });
-            },
-          ),
-          SettingTile(
-            title: loc.sendNotificationNow,
-            enabled: areNotificationsAllowed == true,
-            onTap: (context) => NotificationSender.scheduletomorrowNotification(
-              scheduled: false,
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(loc.upcomingDayNotificationsDescription),
             ),
-          ),
-        ],
+            SettingTile.withTimePicker(
+              title: loc.arrivalTimeTitle,
+              subtitle: loc.arrivalTimeSubtitle,
+              time: time,
+              onChanged: (value) {
+                settings.save(Setting.tomorrowNotificationTime, value);
+                setState(() {
+                  time = value;
+                });
+              },
+            ),
+            SettingTile(
+              title: loc.sendNotificationNow,
+              enabled: areNotificationsAllowed == true,
+              onTap: (context) =>
+                  NotificationSender.scheduletomorrowNotification(
+                scheduled: false,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

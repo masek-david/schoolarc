@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
@@ -13,91 +12,12 @@ import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 
-class SubjectsScreen extends ConsumerStatefulWidget {
+class SubjectsScreen extends ConsumerWidget {
   const SubjectsScreen({super.key});
 
-  @override
-  ConsumerState<SubjectsScreen> createState() => _SubjectsScreenState();
-}
-
-class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController shortcutController = TextEditingController();
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    shortcutController.dispose();
-
-    super.dispose();
-  }
-
-  void createNewSubject(WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => SubjectDialog(
-        text: context.loc.addNewSubject,
-        nameController: nameController,
-        shortcutController: shortcutController,
-        onSave: () async {
-          ref.read(subjectsProvider.notifier).saveNew(
-                SubjectEntity(
-                  name: nameController.text,
-                  shortcut: shortcutController.text,
-                  isDeleted: false,
-                  timestamp: DateTime.now().toUtc(),
-                  bakaId: null,
-                  order: 0,
-                ),
-              );
-        },
-      ),
-    ).then(
-      (value) => {
-        nameController.clear(),
-        shortcutController.clear(),
-      },
-    );
-  }
-
-  void editSubject(Subject subject, WidgetRef ref) {
-    nameController.text = subject.name;
-    shortcutController.text = subject.shortcut;
-
-    final map = ref.read(subjectsUsedTimesProvider);
-    final usedTimes = map[subject.id];
-
-    showDialog(
-      context: context,
-      builder: (context) => SubjectDialog(
-        text: context.loc.editSubject,
-        nameController: nameController,
-        shortcutController: shortcutController,
-        usedTimes: usedTimes,
-        onSave: () {
-          Subject newSubject = Subject(
-            name: nameController.text,
-            shortcut: shortcutController.text,
-            id: subject.id,
-            bakaId: subject.bakaId,
-            isDeleted: subject.isDeleted,
-            timestamp: DateTime.now().toUtc(),
-            order: subject.order,
-          );
-
-          ref.read(subjectsProvider.notifier).edit(newSubject);
-        },
-      ),
-    ).then(
-      (value) => {
-        nameController.clear(),
-        shortcutController.clear(),
-      },
-    );
-  }
-
-  void deleteSubject(Subject subject, WidgetRef ref) {
+  void deleteSubject(BuildContext context, WidgetRef ref, Subject subject) {
     ref.read(subjectsProvider.notifier).deleteSubject(subject);
 
     showMessage(context, context.loc.deletedSubjectMessage(subject.name),
@@ -111,7 +31,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         ]);
   }
 
-  Future<void> onRefresh() async {
+  Future<void> onRefresh(BuildContext context, WidgetRef ref) async {
     try {
       return await ref.read(subjectsProvider.notifier).syncAll();
     } on Object catch (e) {
@@ -122,8 +42,28 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     }
   }
 
+  Future<void> add(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      builder: (context) => SubjectDialog(
+        isEditing: false,
+        initial: Subject(
+          name: '',
+          shortcut: '',
+          id: '',
+          bakaId: null,
+          timestamp: DateTime.now(),
+          isDeleted: false,
+          order: 0,
+          isShared: false,
+        ),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final map = ref.read(subjectsUsedTimesProvider);
     final subjects = ref.watch(subjectsSortedProvider);
 
@@ -133,18 +73,18 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         actions: [
           if (kIsWeb && ref.watch(useCloudSyncProvider))
             IconButton(
-              onPressed: onRefresh,
+              onPressed: () => onRefresh(context, ref),
               icon: const Icon(Icons.refresh_outlined),
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: context.loc.addNewSubject,
-        onPressed: () {
-          HapticFeedback.mediumImpact();
-          createNewSubject(ref);
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: WebRequestFocus(
+        onPressed: () => add(context),
+        child: FloatingActionButton(
+          tooltip: context.loc.addNewSubject,
+          onPressed: () => add(context),
+          child: const Icon(Icons.add),
+        ),
       ),
       body: SlidableAutoCloseBehavior(
         child: Padding(
@@ -157,7 +97,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                   notificationPredicate: ref.watch(useCloudSyncProvider)
                       ? (_) => true
                       : (_) => false,
-                  onRefresh: onRefresh,
+                  onRefresh: () => onRefresh(context, ref),
                   child: AnimatedReorderableListView(
                     onReorderStart: (index) => HapticFeedback.mediumImpact(),
                     items: subjects,
@@ -171,8 +111,20 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         child: SubjectTile(
                           usedTimes: map[subject.id],
                           subject: subject,
-                          onTap: () => editSubject(subject, ref),
-                          onDelete: () => deleteSubject(subject, ref),
+                          onTap: () {
+                            final map = ref.read(subjectsUsedTimesProvider);
+                            final usedTimes = map[subject.id];
+
+                            showDialog(
+                              context: context,
+                              builder: (context) => SubjectDialog(
+                                isEditing: true,
+                                initial: subject,
+                                usedTimes: usedTimes,
+                              ),
+                            );
+                          },
+                          onDelete: () => deleteSubject(context, ref, subject),
                         ),
                       );
                     },

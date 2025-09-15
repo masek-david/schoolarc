@@ -701,6 +701,42 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get username;
 
+  /// No description provided for @changeUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Change username'**
+  String get changeUsername;
+
+  /// No description provided for @usernameChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Username changed successfully'**
+  String get usernameChanged;
+
+  /// No description provided for @newUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'New username'**
+  String get newUsername;
+
+  /// No description provided for @usernameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is publicly visible to other users'**
+  String get usernameInfo;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @subjectIsntShared.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected subject isn\'t shared'**
+  String get subjectIsntShared;
+
   /// No description provided for @password.
   ///
   /// In en, this message translates to:
@@ -1936,6 +1972,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase'**
   String get privacyPolicy;
+
+  /// No description provided for @cloudSyncDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync is disabled'**
+  String get cloudSyncDisabled;
+
+  /// No description provided for @cloudSyncDisabledWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'When running Schoolarc as a web app, it is highly recommended to enable Cloud sync to prevent data loss.'**
+  String get cloudSyncDisabledWarning;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @keepDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep disabled'**
+  String get keepDisabled;
+
+  /// No description provided for @dontShowAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show again'**
+  String get dontShowAgain;
+
+  /// No description provided for @alreadyUsedApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used the app?'**
+  String get alreadyUsedApp;
 
   /// No description provided for @secondShort.
   ///

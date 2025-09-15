@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
+import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
-import 'package:schoolarc/models/exams/exam_id_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/provider/firebase_activity_notifier.dart';
+import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
@@ -128,7 +128,7 @@ final examDeletedProvider = Provider<List<Exam>>(
 
 class ExamNotifier extends Notifier<Map<String, Exam>> {
   Map<String, Subject> subjects = {};
-  StreamSubscription<ExamWithID>? listenFirebase;
+  StreamSubscription<ExamEntityWithID>? listenFirebase;
 
   @override
   Map<String, Exam> build() {
@@ -482,7 +482,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   /// checks and updates/adds exam from firestore, overwrites the newest version
-  Future<void> checkFireExam(ExamWithID fireExam) async {
+  Future<void> checkFireExam(ExamEntityWithID fireExam) async {
     // print('checking exam from fire: ${fireExam.toString()}');
 
     final localExam = _dbState.values.where(

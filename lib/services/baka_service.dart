@@ -434,6 +434,7 @@ class BakaService {
         isDeleted: false,
         order: 0,
         timestamp: DateTime.now().toUtc(),
+        isShared: false,
       );
       if (createIfMissing) {
         newSubject = await ref!
@@ -533,26 +534,27 @@ class BakaService {
         timestamp: DateTime.now(),
         isDeleted: false,
         order: 0,
+        isShared: false,
       );
 
       bool isSeen = bakaHomeworkService.isSeen(bakaId);
 
       homeworks.add(
         BakaHomework(
-          bakaId: bakaId,
-          alreadyAdded: bakaHomeworkService.isAdded(bakaId),
-          alreadySeen: isSeen,
-          subject: subject,
-          text: text,
-          deadline: deadline,
-          isCompleted: isCompleted,
-          priority: TaskPriority(0),
-          description: null,
-          id: bakaId,
-          isDeleted: false,
-          timestamp: DateTime.now().toUtc(),
-          order: 0,
-        ),
+            bakaId: bakaId,
+            alreadyAdded: bakaHomeworkService.isAdded(bakaId),
+            alreadySeen: isSeen,
+            subject: subject,
+            text: text,
+            deadline: deadline,
+            isCompleted: isCompleted,
+            priority: TaskPriority(0),
+            description: '',
+            id: bakaId,
+            isDeleted: false,
+            timestamp: DateTime.now().toUtc(),
+            order: 0,
+            isShared: false),
       );
     }
 

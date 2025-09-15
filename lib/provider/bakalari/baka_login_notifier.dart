@@ -47,7 +47,7 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
     return true;
   }
 
-  Future<void> firstLogin({
+  Future<bool> firstLogin({
     required String school,
     required String username,
     required String password,
@@ -64,10 +64,11 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       );
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      return;
+      return false;
     }
     _tokenExpirationTime();
     state = const AsyncValue.data(true);
+    return true;
   }
 
   Future<void> logOut() async {

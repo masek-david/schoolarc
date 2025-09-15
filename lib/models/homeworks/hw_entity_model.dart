@@ -2,11 +2,12 @@ import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class HomeworkEntity extends HiveObject {
   HomeworkEntity({
     required this.text,
-    required this.description,
+    this.description = '',
     required this.subjectId,
     required this.deadline,
     required this.priority,
@@ -14,10 +15,11 @@ class HomeworkEntity extends HiveObject {
     required this.isCompleted,
     required this.isDeleted,
     required this.timestamp,
+    this.isShared = false,
   });
 
   final String text;
-  final String? description;
+  final String description;
   final String? subjectId;
   final DateTime deadline;
   final int priority;
@@ -25,6 +27,7 @@ class HomeworkEntity extends HiveObject {
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
+  final bool isShared;
 
   @override
   String toString() {
@@ -42,11 +45,13 @@ class HomeworkEntity extends HiveObject {
       'order': order,
       'isDeleted': isDeleted,
       'isCompleted': isCompleted,
+      'isShared': isShared,
+      'timestamp': timestamp.toUtc().toIso8601String(),
     };
   }
 
   HomeworkEntity copyWith({
-    String? subjectId,
+    Object? subjectId = noChange,
     String? text,
     DateTime? deadline,
     bool? isCompleted,
@@ -55,9 +60,10 @@ class HomeworkEntity extends HiveObject {
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
+    bool? isShared,
   }) {
     return HomeworkEntity(
-      subjectId: subjectId ?? this.subjectId,
+      subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       text: text ?? this.text,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
@@ -66,6 +72,7 @@ class HomeworkEntity extends HiveObject {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
+      isShared: isShared ?? this.isShared,
     );
   }
 
@@ -81,6 +88,7 @@ class HomeworkEntity extends HiveObject {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
+      isShared: isShared,
     );
   }
 }

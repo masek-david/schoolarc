@@ -81,7 +81,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
     if (!isLoggedIn) {
       throw ServiceException(
         loc.loggedOut,
-        action: ExceptionActions.bakaLogin,
+        action: ExceptionActions.stravaLogin,
       );
     }
 

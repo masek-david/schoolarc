@@ -56,10 +56,7 @@ void main() async {
   if (!kIsWeb && Platform.isAndroid) {
     HomeWidget.registerInteractivityCallback(backgroundCallback);
 
-    Workmanager().initialize(
-      myCallbackDispatcher,
-      isInDebugMode: kDebugMode,
-    );
+    Workmanager().initialize(myCallbackDispatcher);
   }
 
   addLicenses();
