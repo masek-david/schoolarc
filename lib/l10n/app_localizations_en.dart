@@ -1095,6 +1095,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicy => '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
 
   @override
+  String get cloudSyncDisabled => 'Cloud sync is disabled';
+
+  @override
+  String get cloudSyncDisabledWarning => 'When running Schoolarc as a web app, it is highly recommended to enable Cloud sync to prevent data loss.';
+
+  @override
+  String get enable => 'Enable';
+
+  @override
+  String get keepDisabled => 'Keep disabled';
+
+  @override
+  String get dontShowAgain => 'Don\'t show again';
+
+  @override
+  String get alreadyUsedApp => 'Already used the app?';
+
+  @override
   String get secondShort => ' sec';
 
   @override

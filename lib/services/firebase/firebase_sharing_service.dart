@@ -221,7 +221,7 @@ class FirebaseSharingService {
     if (currentGroup != user) {
       throw ServiceException('You can\'t change this group\'s name');
     }
-    // TODO check that the group exists
+    // todo check that the group exists
     await _db.ref('groups/$user/n').set(name);
   }
 

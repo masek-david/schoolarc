@@ -26,6 +26,7 @@ enum Setting {
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
   stopAskingForNotifications,
+  stopPwaCloudSyncWarning,
   themeMode,
   timeTableShowWholeWeek,
   timeTableTileWidth,
@@ -117,6 +118,10 @@ class SettingsDatabase {
       defaultValue: null,
       key: 'stopAskingForNotifications',
     ),
+    Setting.stopPwaCloudSyncWarning: const SettingModel(
+      defaultValue: false,
+      key: 'stopPwaCloudSyncWarning',
+    ),
     Setting.themeMode: const SettingModel(
       defaultValue: null,
       key: 'themeMode',
@@ -174,7 +179,7 @@ class SettingsDatabase {
       key: 'homeShowBaka',
     ),
     Setting.useFirebase: const SettingModel(
-      defaultValue: false,
+      defaultValue: kIsWeb,
       key: 'useFirebase',
     ),
     Setting.debugMode: const SettingModel(

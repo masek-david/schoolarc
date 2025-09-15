@@ -40,30 +40,31 @@ class MyDrawer extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SizedBox(
-                height: 100,
-                child: SvgPicture.asset(
-                  alignment: Alignment.centerLeft,
-                  'assets/schoolarc_logo.svg',
-                  colorMapper: LogoColorMapper(
-                    isDark: Theme.of(context).brightness == Brightness.dark,
-                    primaryFixedDimColor:
-                        context.col.primaryFixedDim.toARGB32(),
-                    secondaryColor: context.col.secondary.toARGB32(),
-                  ),
-                ),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
-              child: MySearchBar(),
-            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: SizedBox(
+                        height: 100,
+                        child: SvgPicture.asset(
+                          alignment: Alignment.centerLeft,
+                          'assets/schoolarc_logo.svg',
+                          colorMapper: LogoColorMapper(
+                            isDark:
+                                Theme.of(context).brightness == Brightness.dark,
+                            primaryFixedDimColor:
+                                context.col.primaryFixedDim.toARGB32(),
+                            secondaryColor: context.col.secondary.toARGB32(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
+                      child: MySearchBar(),
+                    ),
                     MyDrawerButton(
                       text: loc.subjects,
                       icon: const Icon(Icons.school_outlined),

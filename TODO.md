@@ -1,6 +1,7 @@
 # FIX
+notifications arent set after being displayed
+in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
-test that notifications are set after being displayed
 errors messages for export/import
 fix black android topbar text
 red dots for logs?
@@ -13,19 +14,25 @@ the specified refresh token has already been redeemed (in bakaservice)
 - ✅ privacy policy info for cloud sync
 - ⬜ widgets
     - ⬜ add from widget
-    - ⬜ cant complete homework from widget + notifications now dont work
+    - ⬜ cant complete homework from widget
         - ⬜ just save info about completed hw, dont spawn it using isolate?
         - ⬜ rework with isolatedHive??
 - ⬜ forgot password for firebase + verify email
-- ⬜ plus plan
-    - ⬜ one time/yearly ???
+- ⬜ tutorial
+    - ✅ choose language
+    - ✅ offer import from bakalari
+    - ⬜ offer import from json
+- ⬜ plus - 5 usd, limit to 100 users?
+- ⬜ add to tutorial
+    - ⬜ colors
+    - ⬜ ? widgets
+    - ⬜ notifications
     - ⬜ cloud sync
-    - ⬜ sharing
-    - ⬜ add to tutorial
 
 # FEATURES
 
 ## UI
+- ⬜ in calendar tasks are hidden again a little bit
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
@@ -44,6 +51,7 @@ the specified refresh token has already been redeemed (in bakaservice)
 ## OTHER
 - ⬜ sync everything (hws, exams, subjects) properly 
 - ⬜ add google sign in + sign in with apple
+- ⬜ ? refactor to use date instead of datetime
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject

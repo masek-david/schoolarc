@@ -27,6 +27,49 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   bool obscureText = true;
   String? subtitle;
 
+  void importTimetable() {
+    if (!mounted) return;
+    showDialogAdaptive(
+      context: context,
+      title: Text(context.loc.importTimetableTitle),
+      content: Text(context.loc.importTimetableWarning),
+      actions: [
+        adaptiveDialogButton(
+          context: context,
+          onPressed: () => Navigator.pop(context),
+          child: Text(context.loc.cancel),
+        ),
+        adaptiveDialogButton(
+          context: context,
+          isDestructiveAction: true,
+          onPressed: () async {
+            Navigator.pop(context);
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => const ProgressDialog(
+                showProgressNumber: false,
+              ),
+            );
+
+            try {
+              await bakaService.importTimeTable(ref);
+            } catch (e) {
+              if (mounted) {
+                showMessage(context, e.toString(), isError: true);
+              }
+            }
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: Text(context.loc.import),
+        ),
+      ],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -215,12 +258,18 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               FilledButton(
                 onPressed: !baka.isLoading && useBaka
                     ? () async {
-                        ref.read(bakaLoginProvider.notifier).firstLogin(
+                        final result = await ref
+                            .read(bakaLoginProvider.notifier)
+                            .firstLogin(
                               school: _schoolController.text,
                               username: _usernameController.text,
                               password: _passwordController.text,
                               keepLoggedIn: keepLoggedIn,
                             );
+
+                        if (result) {
+                          importTimetable();
+                        }
                       }
                     : null,
                 child: Text(context.loc.logIn),
@@ -237,50 +286,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             if (isLoggedIn) const Divider(),
             if (isLoggedIn)
               FilledButton.tonal(
-                onPressed: !isLoading
-                    ? () {
-                        showDialogAdaptive(
-                          context: context,
-                          title: Text(context.loc.importTimetableTitle),
-                          content: Text(context.loc.importTimetableWarning),
-                          actions: [
-                            adaptiveDialogButton(
-                              context: context,
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(context.loc.cancel),
-                            ),
-                            adaptiveDialogButton(
-                              context: context,
-                              isDestructiveAction: true,
-                              onPressed: () async {
-                                Navigator.pop(context);
-
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) => const ProgressDialog(
-                                    showProgressNumber: false,
-                                  ),
-                                );
-
-                                try {
-                                  await bakaService.importTimeTable(ref);
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    showMessage(context, e.toString(),
-                                        isError: true);
-                                  }
-                                }
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: Text(context.loc.import),
-                            ),
-                          ],
-                        );
-                      }
-                    : null,
+                onPressed: !isLoading ? importTimetable : null,
                 child: Text(context.loc.importTimetable),
               ),
           ],

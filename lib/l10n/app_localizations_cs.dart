@@ -1113,6 +1113,24 @@ class AppLocalizationsCs extends AppLocalizations {
   String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
 
   @override
+  String get cloudSyncDisabled => 'Synchronizace je vypnutá';
+
+  @override
+  String get cloudSyncDisabledWarning => 'Při používání webové aplikace je doporučeno zapnout synchronizaci, aby nedošlo ke ztrátě dat.';
+
+  @override
+  String get enable => 'Zapnout';
+
+  @override
+  String get keepDisabled => 'Nechat vypnuté';
+
+  @override
+  String get dontShowAgain => 'Nezobrazovat znovu';
+
+  @override
+  String get alreadyUsedApp => 'Už jste aplikaci používali?';
+
+  @override
   String get secondShort => ' sek';
 
   @override

@@ -42,6 +42,10 @@ class FirebaseService {
     return auth.currentUser?.email;
   }
 
+  static bool get hasUser {
+    return FirebaseAuth.instance.currentUser != null;
+  }
+
   void refLocation() {
     if (!kIsWeb && Platform.isWindows) return;
 
