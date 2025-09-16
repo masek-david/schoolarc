@@ -32,6 +32,17 @@
 
   <title>Schoolarc</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="preload" href="main.dart.js" as="script">
+  <link rel="preload" href="icons/Icon-192.png" as="image">
+
+  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
+    <img src="icons/Icon-192.png" srcset="icons/Icon-192.png 1x, icons/Icon-512.png 2x" alt="icon"
+      style="width: 35vmin; height: auto; max-width: 512px; max-height: 512px;">
+
+    <span class="loader"></span>
+  </div>
 
   <style>
     html,
@@ -41,7 +52,7 @@
   </style>
 </head>
 
-<body>
+<body style="background-color:#0c1220;">
   <script>
     window.addEventListener('keydown', function (event) {
       if (event.metaKey || event.ctrlKey) {

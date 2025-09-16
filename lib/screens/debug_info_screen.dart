@@ -27,6 +27,7 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
+            const Text(bool.fromEnvironment('dart.tool.dart2wasm') ? 'Running in wasm' : 'Not running in wasm'),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {

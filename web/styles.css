@@ -1,0 +1,33 @@
+.loader{
+      display: block;
+      position: relative;
+      height: 12px;
+      width: 40%;
+      background-color: #879cc0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loader::after {
+      content: '';
+      width: 60%;
+      height: 100%;
+      border-radius: 10px;
+      background: #dbe2fc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      box-sizing: border-box;
+      animation: animloader 1.5s linear infinite;
+    }
+    
+    @keyframes animloader {
+      0% {
+        left: 0;
+        transform: translateX(-100%);
+      }
+      100% {
+        left: 100%;
+        transform: translateX(0%);
+      }
+    }
+    
