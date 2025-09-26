@@ -36,7 +36,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.valueOrNull;
+    final data = meals.value;
 
     final isVisible = ref.watch(useMealsProvider);
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);

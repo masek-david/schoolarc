@@ -102,7 +102,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     final baka = ref.watch(bakaLoginProvider);
     final error = baka.error;
     final isLoading = baka.isLoading;
-    final isLoggedIn = baka.valueOrNull == true;
+    final isLoggedIn = baka.value == true;
 
     return Scaffold(
       appBar: AppBar(

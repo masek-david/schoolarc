@@ -62,6 +62,12 @@ void main() async {
   addLicenses();
 
   runApp(
-    const ProviderScope(child: AppConfig()),
+    ProviderScope(
+      child: const AppConfig(),
+      retry: (retryCount, error) {
+        if (retryCount > 3) return null;
+        return Duration(seconds: retryCount * 2);
+      },
+    ),
   );
 }

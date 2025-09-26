@@ -121,7 +121,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
           );
     }
 
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState != null) {
       final index =
           currentState.indexWhere((element) => element.bakaId == hw.bakaId);

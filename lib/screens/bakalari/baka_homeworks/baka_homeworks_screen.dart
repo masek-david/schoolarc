@@ -29,7 +29,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
     final bakaHw = ref.watch(bakaHomeworksProvider);
     final isLoading = bakaHw.isLoading;
     final error = bakaHw.error;
-    final data = bakaHw.valueOrNull;
+    final data = bakaHw.value;
 
     return Scaffold(
       appBar: AppBar(

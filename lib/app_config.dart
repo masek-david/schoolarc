@@ -176,7 +176,7 @@ class AppConfig extends ConsumerWidget {
             // we also cant return mainapp, since it throws multiple widgets use the same key
             if (settings.name == '/calendar') {
               navigatorKey.currentState?.popUntil((route) => route.isFirst);
-              ref.read(showCalendarProvider.notifier).state = true;
+              ref.read(showCalendarProvider.notifier).show();
               closeDrawer();
 
               return MaterialPageRoute(

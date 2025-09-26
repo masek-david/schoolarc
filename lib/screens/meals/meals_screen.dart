@@ -21,7 +21,7 @@ class MealsScreen extends ConsumerWidget {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.valueOrNull;
+    final data = meals.value;
 
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
     var now = DateTime.now();

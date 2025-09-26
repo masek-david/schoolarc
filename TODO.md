@@ -28,10 +28,10 @@ move to android sdk 36
     - ⬜ offer import from json
 - ⬜ plus - 5 usd, limit to 100 users?
 - ⬜ add to tutorial
-    - ⬜ colors
+    - ⬜ app theme
     - ⬜ ? widgets
     - ⬜ notifications
-    - ⬜ cloud sync
+    - ⬜ plus
 
 # FEATURES
 ## questionare

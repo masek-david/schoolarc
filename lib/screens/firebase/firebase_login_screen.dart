@@ -35,7 +35,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
 
     final state = ref.watch(firebaseLoginProvider);
     final username = ref.watch(firebaseUsernameProvider);
-    final loggedIn = state.valueOrNull == true;
+    final loggedIn = state.value == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -286,7 +286,7 @@ class FirebaseLoginScreen extends ConsumerWidget {
                                   .currentUser
                                   ?.uid ??
                               '',
-                          username.valueOrNull ?? ''),
+                          username.value ?? ''),
                       radius: 18,
                     ),
                   ),

@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 
-final _opacityProvider = StateProvider<bool>((ref) => false);
+final _opacityProvider = NotifierProvider<_Opacity, bool>(_Opacity.new);
+
+class _Opacity extends Notifier<bool> {
+  @override
+  build() {
+    return false;
+  }
+
+  void show() {
+    state = true;
+  }
+
+  void hide() {
+    state = false;
+  }
+}
 
 class FirebaseOverlay extends ConsumerWidget {
   const FirebaseOverlay({super.key});
@@ -14,11 +29,11 @@ class FirebaseOverlay extends ConsumerWidget {
     // Listen to changes on firebaseActivityProvider and update opacity accordingly.
     ref.listen<Map<int, Activity>>(firebaseActivityProvider, (previous, next) {
       // Immediately set the opacity to true
-      ref.read(_opacityProvider.notifier).state = true;
+      ref.read(_opacityProvider.notifier).show();
       // After 2 seconds, set the opacity back to false (fade out)
       Future.delayed(const Duration(seconds: 5), () {
         // Make sure to update the provider even if the widget has rebuilt.
-        ref.read(_opacityProvider.notifier).state = false;
+        ref.read(_opacityProvider.notifier).hide();
       });
     });
 
@@ -87,8 +102,11 @@ class FirebaseOverlay extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () {
-            ref.read(_opacityProvider.notifier).state =
-                !ref.read(_opacityProvider.notifier).state;
+            if (ref.read(_opacityProvider)) {
+              ref.read(_opacityProvider.notifier).hide();
+            } else {
+              ref.read(_opacityProvider.notifier).show();
+            }
           },
           icon: const Icon(Icons.hide_source),
         ),

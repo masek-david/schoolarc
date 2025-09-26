@@ -63,7 +63,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
     final login = ref.watch(stravaLoginProvider);
     final isLoading = login.isLoading;
     final error = login.error;
-    final loggedIn = login.valueOrNull == true;
+    final loggedIn = login.value == true;
 
     return Scaffold(
       appBar: AppBar(

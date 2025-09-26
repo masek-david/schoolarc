@@ -228,7 +228,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       switchPage(newScreenIndex: 1);
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
-          ref.read(showCalendarProvider.notifier).state = false;
+          ref.read(showCalendarProvider.notifier).hide();
         },
       );
     }

@@ -49,7 +49,7 @@ class TimetableCard extends ConsumerWidget {
     final current = ref.watch(currentTimetableProvider);
     final isLoading = current.isLoading;
     final error = current.error;
-    final data = current.valueOrNull;
+    final data = current.value;
 
     final defaultTimetable = timetableDb.timeTable;
     TimeTable timetable = defaultTimetable;

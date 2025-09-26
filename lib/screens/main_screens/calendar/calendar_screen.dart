@@ -25,7 +25,23 @@ import 'package:table_calendar/table_calendar.dart';
 /// this provider switches on and off when /calendar route is pushed
 ///
 /// that will switch current page, pop everything and show tomorrow date in calendar
-final showCalendarProvider = StateProvider<bool>((ref) => false);
+final showCalendarProvider =
+    NotifierProvider<ShowCalendar, bool>(ShowCalendar.new);
+
+class ShowCalendar extends Notifier<bool> {
+  @override
+  build() {
+    return false;
+  }
+
+  void show() {
+    state = true;
+  }
+
+  void hide() {
+    state = false;
+  }
+}
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
@@ -212,7 +228,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           _pageController.jumpToPage(getPageIndex(_focusedDay.value));
-          ref.read(showCalendarProvider.notifier).state = false;
+          ref.read(showCalendarProvider.notifier).hide();
         },
       );
     }
