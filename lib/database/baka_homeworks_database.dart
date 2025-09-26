@@ -2,7 +2,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 
 /// Database for storing bakalari id of seen and imported homeworks from Bakalari
-class BakaHomeworksDatbase {
+class BakaHomeworksDatabase {
   final _addedBox = Hive.box(bakaAddedHw);
   final _seenBox = Hive.box(bakaSeenHw);
 

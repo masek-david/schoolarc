@@ -34,7 +34,7 @@ class BottomNavBar extends StatelessWidget {
         NavigationDestination(
           icon: const Icon(Icons.home_work_outlined),
           selectedIcon: const Icon(Icons.home_work),
-          label: context.loc.homeworks(2),
+          label: context.loc.homework(2),
         ),
         NavigationDestination(
           icon: const Icon(Icons.description_outlined),

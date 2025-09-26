@@ -1,3 +1,17 @@
+## [2.1.4]() - 2025-09-25
+### Added
+- Added loading animation for web
+
+### Changed
+
+### Fixed
+- Fixed bakalari homeworks not assigning correct subjects
+- Fixed bakalari homeworks not saving viewed homeworks
+- Fixed some translation strings
+- Fixed wrong calendar page in some time zones
+
+---
+
 ## [2.1.4]() - 2025-09-02
 ### Added
 

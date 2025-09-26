@@ -35,7 +35,7 @@ class DbInfoScreen extends ConsumerWidget {
                   SubjectDatabase().deleteAllFromDisk();
                   ExamDatabase().deleteAllFromDisk();
                   SettingsDatabase().deleteAllFromDisk();
-                  BakaHomeworksDatbase().deleteAllFromDisk();
+                  BakaHomeworksDatabase().deleteAllFromDisk();
                 },
                 label: const Text('delete from disk'),
                 icon: const Icon(Icons.bug_report),

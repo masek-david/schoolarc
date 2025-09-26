@@ -20,7 +20,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
     if (context.mounted) {
       final loc = context.loc;
       showMessage(context,
-          '${isHomework ? loc.homeworks(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
+          '${isHomework ? loc.homework(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
     }
   }
 
@@ -64,14 +64,13 @@ class BakaHomeworksScreen extends ConsumerWidget {
           if (data == null || data.isEmpty) {
             return EmptyMessage(
               asset: 'assets/confetti.svg',
-              message: context.loc.noHomeworks,
+              message: context.loc.noHomework,
             );
           }
 
           data.sort(
             (a, b) => a.deadline.compareTo(b.deadline),
           );
-          // bool .sort()
           data.sort((a, b) =>
               (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)));
 
@@ -89,6 +88,8 @@ class BakaHomeworksScreen extends ConsumerWidget {
                 onSave: (isHomework, hw) =>
                     import(context, hw, isHomework, ref),
               );
+
+              bakaHwDb.markAsSeen(hw.bakaId);
 
               if (hw.alreadySeen) {
                 return Padding(
@@ -115,7 +116,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Text(
-                                context.loc.newHomeworks,
+                                context.loc.newHomework,
                                 style: context.txt.titleMedium,
                               ),
                             ),

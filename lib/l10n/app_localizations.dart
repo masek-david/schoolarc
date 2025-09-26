@@ -110,13 +110,13 @@ abstract class AppLocalizations {
   /// Label for missed homework count
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Missed homework} other{Missed homeworks}}'**
+  /// **'{count, plural, one{Missed piece of homework} other{Missed pieces of homework}}'**
   String missedHomework(int count);
 
   /// Label for upcoming homework count
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Upcoming homework} other{Upcoming homeworks}}'**
+  /// **'{count, plural, one{Upcoming homework} other{Upcoming homework}}'**
   String upcomingHomework(int count);
 
   /// Label for upcoming exams count
@@ -365,11 +365,11 @@ abstract class AppLocalizations {
   /// **'{isAbsent, select, true{No exams} other{Exams}}'**
   String examAbsence(String isAbsent);
 
-  /// No description provided for @homeworks.
+  /// No description provided for @homework.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Homework} other{Homeworks}}'**
-  String homeworks(num count);
+  /// **'{count, plural, one{Homework} other{Homework}}'**
+  String homework(num count);
 
   /// No description provided for @addNewHomework.
   ///
@@ -395,11 +395,11 @@ abstract class AppLocalizations {
   /// **'To homework'**
   String get toHomework;
 
-  /// No description provided for @homeworksFor.
+  /// No description provided for @homeworkFor.
   ///
   /// In en, this message translates to:
-  /// **'{isEmpty, select, true{No homeworks} other{Homeworks}} {whenText}'**
-  String homeworksFor(String isEmpty, Object whenText);
+  /// **'{isEmpty, select, true{No homework} other{Homework}} {whenText}'**
+  String homeworkFor(String isEmpty, Object whenText);
 
   /// No description provided for @homeworkAbsence.
   ///
@@ -461,11 +461,11 @@ abstract class AppLocalizations {
   /// **'Initial date'**
   String get initialDate;
 
-  /// No description provided for @showMissedHomeworks.
+  /// No description provided for @showMissedHomework.
   ///
   /// In en, this message translates to:
   /// **'Show missed homework'**
-  String get showMissedHomeworks;
+  String get showMissedHomework;
 
   /// No description provided for @showArrows.
   ///
@@ -635,11 +635,11 @@ abstract class AppLocalizations {
   /// **'No data'**
   String get noData;
 
-  /// No description provided for @newHomeworks.
+  /// No description provided for @newHomework.
   ///
   /// In en, this message translates to:
   /// **'New homework'**
-  String get newHomeworks;
+  String get newHomework;
 
   /// No description provided for @homeworkAlreadyAdded.
   ///
@@ -839,11 +839,11 @@ abstract class AppLocalizations {
   /// **'No timetable found'**
   String get noTimetable;
 
-  /// No description provided for @noHomeworks.
+  /// No description provided for @noHomework.
   ///
   /// In en, this message translates to:
   /// **'No homework found'**
-  String get noHomeworks;
+  String get noHomework;
 
   /// No description provided for @noRecentlyDeleted.
   ///
@@ -1961,11 +1961,11 @@ abstract class AppLocalizations {
   /// **'View'**
   String get view;
 
-  /// No description provided for @newHomeworksFound.
+  /// No description provided for @newHomeworkFound.
   ///
   /// In en, this message translates to:
   /// **'{count} new {count, plural, one{piece} other{pieces}} of homework found'**
-  String newHomeworksFound(num count);
+  String newHomeworkFound(num count);
 
   /// No description provided for @privacyPolicy.
   ///

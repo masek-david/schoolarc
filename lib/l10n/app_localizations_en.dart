@@ -31,8 +31,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Missed homeworks',
-      one: 'Missed homework',
+      other: 'Missed pieces of homework',
+      one: 'Missed piece of homework',
     );
     return '$_temp0';
   }
@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Upcoming homeworks',
+      other: 'Upcoming homework',
       one: 'Upcoming homework',
     );
     return '$_temp0';
@@ -206,11 +206,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeworks(num count) {
+  String homework(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Homeworks',
+      other: 'Homework',
       one: 'Homework',
     );
     return '$_temp0';
@@ -229,12 +229,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toHomework => 'To homework';
 
   @override
-  String homeworksFor(String isEmpty, Object whenText) {
+  String homeworkFor(String isEmpty, Object whenText) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
-        'true': 'No homeworks',
-        'other': 'Homeworks',
+        'true': 'No homework',
+        'other': 'Homework',
       },
     );
     return '$_temp0 $whenText';
@@ -282,7 +282,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initialDate => 'Initial date';
 
   @override
-  String get showMissedHomeworks => 'Show missed homework';
+  String get showMissedHomework => 'Show missed homework';
 
   @override
   String get showArrows => 'Show arrows';
@@ -369,7 +369,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noData => 'No data';
 
   @override
-  String get newHomeworks => 'New homework';
+  String get newHomework => 'New homework';
 
   @override
   String get homeworkAlreadyAdded => 'This homework has been already added';
@@ -471,7 +471,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTimetable => 'No timetable found';
 
   @override
-  String get noHomeworks => 'No homework found';
+  String get noHomework => 'No homework found';
 
   @override
   String get noRecentlyDeleted => 'No recently deleted items found';
@@ -1081,7 +1081,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get view => 'View';
 
   @override
-  String newHomeworksFound(num count) {
+  String newHomeworkFound(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,

@@ -57,11 +57,11 @@ class PagesWidget extends ConsumerWidget {
           controller: pageController,
           onPageChanged: onPageChanged,
           itemBuilder: (context, pageIndex) {
-            final now = DateTime.now().toUtc();
-            final nowOnlyDate = DateTime.utc(now.year, now.month, now.day);
+            final now = DateTime.now();
+            final nowOnlyDate = DateTime(now.year, now.month, now.day);
             final daysToAdd = pageIndex - negativePageCount;
-            final dateUtc = nowOnlyDate.add(Duration(days: daysToAdd));
-            final date = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
+            final date =
+                nowOnlyDate.toUtc().add(Duration(days: daysToAdd)).toLocal();
 
             List<Homework> hwListForDay = hwByDate[date] ?? [];
             List<Exam> examListForDay = examByDate[date] ?? [];

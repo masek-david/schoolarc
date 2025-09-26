@@ -114,6 +114,22 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
               padding: const EdgeInsets.all(16),
               child: Text(loc.upcomingDayNotificationsDescription),
             ),
+            Container(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Material(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Notification will be received only if you open the app that day.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             SettingTile.withTimePicker(
               title: loc.arrivalTimeTitle,
               subtitle: loc.arrivalTimeSubtitle,

@@ -75,7 +75,7 @@ class HomeworksScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: WideScreenAppBar(
           isWideScreen: isWide,
-          title: Text(context.loc.homeworks(2)),
+          title: Text(context.loc.homework(2)),
         ),
         floatingActionButton: WebRequestFocus(
           onPressed: () async {

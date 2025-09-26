@@ -131,14 +131,14 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
         state = AsyncData(updatedList);
       }
     }
-    await bakaHomeworkService.markAsAdded(hw.bakaId);
+    await bakaHwDb.markAsAdded(hw.bakaId);
   }
 
   void _checkForNew(List<BakaHomework> hws) {
     int newHomeworks = 0;
 
     for (var element in hws) {
-      if (!bakaHomeworkService.isSeen(element.id)) {
+      if (!bakaHwDb.isSeen(element.id)) {
         newHomeworks++;
       }
     }
@@ -153,7 +153,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
     if (context != null) {
       showMessage(
         context,
-        context.loc.newHomeworksFound(count),
+        context.loc.newHomeworkFound(count),
         duration: const Duration(days: 100),
         actions: [
           FilledButton(

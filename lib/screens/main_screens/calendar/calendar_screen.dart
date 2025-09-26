@@ -279,7 +279,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                         addNewHw(context, initialDate: _selectedDay.value);
                       },
                       icon: const Icon(Icons.add),
-                      label: Text(context.loc.homeworks(1)),
+                      label: Text(context.loc.homework(1)),
                     ),
                   ),
                 ],

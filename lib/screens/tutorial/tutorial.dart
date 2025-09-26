@@ -28,7 +28,7 @@ Subject exampleSubject(AppLocalizations loc) => Subject(
     );
 Homework exampleHw(AppLocalizations loc) => Homework(
       subject: exampleSubject(loc),
-      text: loc.homeworks(1),
+      text: loc.homework(1),
       deadline: DateTime.now().add(const Duration(days: 1)),
       isCompleted: false,
       priority: TaskPriority(0),

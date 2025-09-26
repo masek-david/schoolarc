@@ -11,7 +11,7 @@
     }
   },
   "youHave": "You have",
-  "missedHomework": "{count, plural, one{Missed homework} other{Missed homeworks}}",
+  "missedHomework": "{count, plural, one{Missed piece of homework} other{Missed pieces of homework}}",
   "@missedHomework": {
     "description": "Label for missed homework count",
     "placeholders": {
@@ -20,7 +20,7 @@
       }
     }
   },
-  "upcomingHomework": "{count, plural, one{Upcoming homework} other{Upcoming homeworks}}",
+  "upcomingHomework": "{count, plural, one{Upcoming homework} other{Upcoming homework}}",
   "@upcomingHomework": {
     "description": "Label for upcoming homework count",
     "placeholders": {
@@ -84,12 +84,12 @@
   "toExam": "To exam",
   "examsFor": "{isEmpty, select, true{No exams} other{Exams}} {whenText}",
   "examAbsence": "{isAbsent, select, true{No exams} other{Exams}}",
-  "homeworks": "{count, plural, one{Homework} other{Homeworks}}",
+  "homework": "{count, plural, one{Homework} other{Homework}}",
   "addNewHomework": "Add new homework",
   "addNewHomeworkFor": "Add new homework for",
   "deletedHomework": "Deleted homework",
   "toHomework": "To homework",
-  "homeworksFor": "{isEmpty, select, true{No homeworks} other{Homeworks}} {whenText}",
+  "homeworkFor": "{isEmpty, select, true{No homework} other{Homework}} {whenText}",
   "homeworkAbsence": "{isAbsent, select, true{No homework} other{Homework}}",
   "nothingPlannedFor": "Nothing planned for {whenText}",
   "showMyName": "Show my name",
@@ -100,7 +100,7 @@
   "lunchTime": "Lunch time",
   "lunchTimeSubtitle": "When meals for next day appear",
   "initialDate": "Initial date",
-  "showMissedHomeworks": "Show missed homework",
+  "showMissedHomework": "Show missed homework",
   "showArrows": "Show arrows",
   "showArrowsSubtitle": "Show arrows for switching between pages",
   "upcomingDayChannelDescription": "Here you will find upcoming exams and homework",
@@ -129,7 +129,7 @@
   "room": "Room",
   "hwFromBaka": "Bakaláři homework",
   "noData": "No data",
-  "newHomeworks": "New homework",
+  "newHomework": "New homework",
   "homeworkAlreadyAdded": "This homework has been already added",
   "addAsHomework": "Add as homework",
   "addAsExam": "Add as an exam",
@@ -163,7 +163,7 @@
   "changeDateTo": "Change date to",
   "currentTimetable": "Current timetable",
   "noTimetable": "No timetable found",
-  "noHomeworks": "No homework found",
+  "noHomework": "No homework found",
   "noRecentlyDeleted": "No recently deleted items found",
   "timetable": "Timetable",
   "convertToHomework": "Convert to homework",
@@ -358,7 +358,7 @@
   "agree": "Agree",
   "disagree": "Disagree",
   "view": "View",
-  "newHomeworksFound": "{count} new {count, plural, one{piece} other{pieces}} of homework found",
+  "newHomeworkFound": "{count} new {count, plural, one{piece} other{pieces}} of homework found",
   "privacyPolicy": "# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase",
   "cloudSyncDisabled": "Cloud sync is disabled",
   "cloudSyncDisabledWarning": "When running Schoolarc as a web app, it is highly recommended to enable Cloud sync to prevent data loss.",

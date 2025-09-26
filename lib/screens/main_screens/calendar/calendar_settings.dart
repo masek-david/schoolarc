@@ -40,7 +40,7 @@ class CalendarSettings extends ConsumerWidget {
           ),
         ),
         SettingTile.withSwitch(
-          title: loc.showMissedHomeworks,
+          title: loc.showMissedHomework,
           value: showMissed,
           onChanged: (value) {
             ref.read(calendarShowMissedProvider.notifier).set(value);

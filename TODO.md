@@ -1,17 +1,21 @@
 # FIX
-notifications arent set after being displayed
+fix web blue top bar [web]
+add autofill group [device]
+fix black android topbar text
+add skip button to tutorial if it isnt viewed for the first time
+notifications are set only for this day
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
 errors messages for export/import
-fix black android topbar text
-red dots for logs?
 the specified refresh token has already been redeemed (in bakaservice)
+move to android sdk 36
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
+- ⬜ push info to the app from web + min required version
 - ⬜ widgets
     - ⬜ add from widget
     - ⬜ cant complete homework from widget
@@ -30,6 +34,8 @@ the specified refresh token has already been redeemed (in bakaservice)
     - ⬜ cloud sync
 
 # FEATURES
+## questionare
+do you want to share - if yes, would you mind sharing everything?? 
 
 ## UI
 - ⬜ in calendar tasks are hidden again a little bit

@@ -38,7 +38,7 @@ class SideNavBar extends StatelessWidget {
         NavigationRailDestination(
           icon: const Icon(Icons.home_work_outlined),
           selectedIcon: const Icon(Icons.home_work),
-          label: Text(context.loc.homeworks(2)),
+          label: Text(context.loc.homework(2)),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.description_outlined),

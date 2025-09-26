@@ -189,7 +189,7 @@ class NotificationSender {
     }
 
     notificationText =
-        '${missedHwTextList != null ? '<b>${loc.missedHomework(2)}:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTomorrow.isEmpty ? loc.examsFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.exams(2)}:</b>'}$lineBreak$examsTextList$lineBreak${hwsFortomorrow.isEmpty ? loc.homeworksFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.homeworks(2)}:</b>'}$lineBreak$homeworksTextList';
+        '${missedHwTextList != null ? '<b>${loc.missedHomework(2)}:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTomorrow.isEmpty ? loc.examsFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.exams(2)}:</b>'}$lineBreak$examsTextList$lineBreak${hwsFortomorrow.isEmpty ? loc.homeworkFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.homework(2)}:</b>'}$lineBreak$homeworksTextList';
 
     String summary = '';
 
@@ -202,7 +202,7 @@ class NotificationSender {
         summary += ', ';
       }
       summary +=
-          '${hwsFortomorrow.length} ${loc.homeworks(hwsFortomorrow.length).toLowerCase()}';
+          '${hwsFortomorrow.length} ${loc.homework(hwsFortomorrow.length).toLowerCase()}';
     }
     if (examsForTomorrow.isNotEmpty) {
       if (!summary.endsWith(', ')) {

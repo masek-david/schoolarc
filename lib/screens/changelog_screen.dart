@@ -12,14 +12,15 @@ class ChangelogScreen extends StatelessWidget {
         title: const Text('Changelog'),
       ),
       body: FutureBuilder(
-          future: rootBundle.loadString('changelog.md'),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const CircularProgressIndicator();
-            }
+        future: rootBundle.loadString('changelog.md'),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
+          }
 
-            return Markdown(data: snapshot.data!);
-          }),
+          return Markdown(data: snapshot.data!);
+        },
+      ),
     );
   }
 }

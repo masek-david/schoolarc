@@ -213,7 +213,7 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String homeworks(num count) {
+  String homework(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -237,7 +237,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get toHomework => 'Jako úkol';
 
   @override
-  String homeworksFor(String isEmpty, Object whenText) {
+  String homeworkFor(String isEmpty, Object whenText) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
@@ -290,7 +290,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get initialDate => 'Počáteční datum';
 
   @override
-  String get showMissedHomeworks => 'Zobrazit zmeškané úkoly';
+  String get showMissedHomework => 'Zobrazit zmeškané úkoly';
 
   @override
   String get showArrows => 'Zobrazit šipky';
@@ -377,7 +377,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noData => 'Žádná data';
 
   @override
-  String get newHomeworks => 'Nové úkoly';
+  String get newHomework => 'Nové úkoly';
 
   @override
   String get homeworkAlreadyAdded => 'Tento úkol již byl přidán';
@@ -479,7 +479,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noTimetable => 'Nebyl nalezen žádný rozvrh';
 
   @override
-  String get noHomeworks => 'Nebyly nalezeny žádné úkoly';
+  String get noHomework => 'Nebyly nalezeny žádné úkoly';
 
   @override
   String get noRecentlyDeleted => 'Nebyly nalezeny žádné nedávno smazané položky';
@@ -1098,15 +1098,15 @@ class AppLocalizationsCs extends AppLocalizations {
   String get view => 'Zobrazit';
 
   @override
-  String newHomeworksFound(num count) {
+  String newHomeworkFound(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'nových úkolů',
-      few: 'nové úkoly',
-      one: 'nový úkol',
+      other: 'Nalezeno $count nových úkolů',
+      few: 'Nalezeny $count nové úkoly',
+      one: 'Nalezen $count nový úkol',
     );
-    return 'Nalezeno $count $_temp0';
+    return '$_temp0';
   }
 
   @override

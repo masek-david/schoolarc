@@ -517,12 +517,13 @@ class BakaService {
 
     for (var homework in homeworksJson) {
       final String bakaId = homework['ID'];
+      final String subjectBakaId = homework['Subject']['Id'];
       final String text = homework['Content'];
       final DateTime deadline = DateTime.parse(homework['DateEnd']).toLocal();
       final bool isCompleted = homework['Finished'];
 
       Subject? subject = subjects.entries
-          .where((entry) => entry.value.bakaId == bakaId)
+          .where((entry) => entry.value.bakaId == subjectBakaId)
           .firstOrNull
           ?.value;
 
@@ -530,19 +531,19 @@ class BakaService {
         name: homework['Subject']['Name'],
         shortcut: homework['Subject']['Abbrev'],
         id: '',
-        bakaId: bakaId,
+        bakaId: subjectBakaId,
         timestamp: DateTime.now(),
         isDeleted: false,
         order: 0,
         isShared: false,
       );
 
-      bool isSeen = bakaHomeworkService.isSeen(bakaId);
+      bool isSeen = bakaHwDb.isSeen(bakaId);
 
       homeworks.add(
         BakaHomework(
             bakaId: bakaId,
-            alreadyAdded: bakaHomeworkService.isAdded(bakaId),
+            alreadyAdded: bakaHwDb.isAdded(bakaId),
             alreadySeen: isSeen,
             subject: subject,
             text: text,
