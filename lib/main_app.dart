@@ -12,8 +12,10 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
+import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
+import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
@@ -57,6 +59,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       RestorableInt(settings.get(Setting.initialAppPage));
 
   bool showingTutorial = false;
+  bool firstTimeOpening = false;
 
   void startTutorial() {
     setState(() {
@@ -85,6 +88,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   }
 
   void firstTimeOpeningApp() {
+    firstTimeOpening = true;
     showingTutorial = true;
   }
 
@@ -140,7 +144,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             if (mounted) {
               showDialogAdaptive(
                 context: context,
-                title: Text( context.loc.cloudSyncDisabled),
+                title: Text(context.loc.cloudSyncDisabled),
                 content: Text(context.loc.cloudSyncDisabledWarning),
                 actions: [
                   adaptiveDialogButton(
@@ -161,7 +165,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                   adaptiveDialogButton(
                     context: context,
                     isDestructiveAction: true,
-                    child: Text( context.loc.dontShowAgain),
+                    child: Text(context.loc.dontShowAgain),
                     onPressed: () {
                       settings.save(Setting.stopPwaCloudSyncWarning, true);
                       Navigator.pop(context);
@@ -233,18 +237,44 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       );
     }
 
+    final Widget? action = switch (currentPageIndex.value) {
+      0 => IconButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return const HomeSettings();
+              },
+            );
+          },
+          icon: const Icon(Icons.settings),
+        ),
+      1 => IconButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => const CalendarSettings(),
+            );
+          },
+          icon: const Icon(Icons.settings),
+        ),
+      _ => null,
+    };
+
     return Stack(
       children: [
         MyShortcuts(
           child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              toolbarHeight: 0,
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Colors.transparent,
-              ),
-            ),
+            appBar: !isWide
+                ? AppBar(
+                    actions: [if (action != null) action],
+                    systemOverlayStyle: const SystemUiOverlayStyle(
+                      statusBarColor: Colors.transparent,
+                      systemNavigationBarColor: Colors.transparent,
+                    ),
+                  )
+                : null,
             body: SlidableAutoCloseBehavior(
               child: Row(
                 children: [
@@ -252,6 +282,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                     SideNavBar(
                       onTap: switchPage,
                       pageIndex: currentPageIndex.value,
+                      action: action,
                     ),
                   WideScreenBorders(
                     show: isWide && ref.watch(showAppBordersProvider),
@@ -281,7 +312,11 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                   ),
           ),
         ),
-        if (showingTutorial) Tutorial(onEnd: endTutorial),
+        if (showingTutorial)
+          Tutorial(
+            onEnd: endTutorial,
+            firstTime: firstTimeOpening,
+          ),
         if (ref.watch(debugShowFireOverlayProvider))
           const Positioned(
             top: 0,

@@ -8,7 +8,6 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart';
@@ -24,7 +23,6 @@ import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
-import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -99,29 +97,15 @@ class HomeScreen extends ConsumerWidget {
     return MediaQuery.removePadding(
       context: context,
       removeBottom: true,
-      child: Scaffold(
-        appBar: WideScreenAppBar(
-          isWideScreen: isWide,
-          actions: [
-            IconButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return const HomeSettings();
-                  },
-                );
-              },
-              icon: const Icon(Icons.settings),
-            ),
-          ],
-        ),
-        body: RefreshIndicator(
+      child: Container(
+        color: context.col.surface,
+        child: RefreshIndicator(
           onRefresh: () => refresh(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
               children: [
+                const SizedBox(height: 16),
                 Overview(
                   hwNumberOfIncomplete: uncompletedHw,
                   examNumberOfIncomplete: upcomingExams,
@@ -180,8 +164,7 @@ class HomeScreen extends ConsumerWidget {
                                     hwList: missedHw,
                                     onChangedCompletion: (hw, value) =>
                                         completeHw(context, ref, hw, value),
-                                    onDelete: (hw) =>
-                                        deleteHw(context, ref, hw),
+                                    onDelete: (hw) => deleteHw(context, ref, hw),
                                     onConvert: (hw) =>
                                         convertHw(context, ref, hw),
                                     onEdit: (hw) => editHw(context, hw),
@@ -197,8 +180,8 @@ class HomeScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(8),
                               child: examsToShow.isEmpty && hwToShow.isEmpty
                                   ? EmptyMessage(
-                                      message: context.loc
-                                          .nothingPlannedFor(whenText),
+                                      message:
+                                          context.loc.nothingPlannedFor(whenText),
                                       asset: 'assets/confetti.svg',
                                     )
                                   : Column(

@@ -54,9 +54,10 @@ Exam exampleExam(AppLocalizations loc) => Exam(
     );
 
 class Tutorial extends StatefulWidget {
-  const Tutorial({super.key, required this.onEnd});
+  const Tutorial({super.key, required this.onEnd, required this.firstTime});
 
   final void Function() onEnd;
+  final bool firstTime;
 
   @override
   State<Tutorial> createState() => _TutorialState();
@@ -95,10 +96,18 @@ class _TutorialState extends State<Tutorial> {
             centerTitle: false,
             title: TextButton(
               onPressed: () {
-                _controller.animateToPage(5,
-                    duration: Durations.long4, curve: Curves.decelerate);
+                if (!widget.firstTime) {
+                  widget.onEnd();
+                } else {
+                  _controller.animateToPage(5,
+                      duration: Durations.long4, curve: Curves.decelerate);
+                }
               },
-              child: Text(showSkip ? context.loc.skip : context.loc.alreadyUsedApp),
+              child: Text(!widget.firstTime
+                  ? context.loc.skip
+                  : showSkip
+                      ? context.loc.skip
+                      : context.loc.alreadyUsedApp),
             ),
             backgroundColor: Colors.transparent,
           ),

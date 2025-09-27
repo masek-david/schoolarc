@@ -1,11 +1,8 @@
 # FIX
-fix black android topbar text
-add skip button to tutorial if it isnt viewed for the first time
 notifications are set only for this day
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
 errors messages for export/import
-the specified refresh token has already been redeemed (in bakaservice)
 move to android sdk 36
 
 # RELEASE

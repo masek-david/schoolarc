@@ -8,8 +8,6 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
-import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/calendar_widget.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/pages_widget.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -17,9 +15,7 @@ import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
-import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
-import 'package:schoolarc/widgets/wide_screen_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 /// this provider switches on and off when /calendar route is pushed
@@ -181,38 +177,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     );
   }
 
-  PreferredSizeWidget buildAppBar(bool isWide) {
-    return WideScreenAppBar(
-      isWideScreen: isWide,
-      title: Text(context.loc.calendar),
-      actions: [
-        if (ref.watch(useCloudSyncProvider))
-          LoadingIconButtonWithFuture(
-            icon: Icons.refresh,
-            onTap: () async {
-              try {
-                await syncAllTasks(ref);
-              } on Object catch (e) {
-                if (mounted) {
-                  showMessage(context, e.toString(), isError: true);
-                }
-                return;
-              }
-            },
-          ),
-        IconButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => const CalendarSettings(),
-            );
-          },
-          icon: const Icon(Icons.settings),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final hws = ref.watch(hwDatesProvider);
@@ -258,7 +222,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
             context: context,
             removeBottom: true,
             child: Scaffold(
-              appBar: isWide ? null : buildAppBar(isWide),
               floatingActionButton: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -327,10 +290,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Scaffold(
-                                  appBar: buildAppBar(isWide),
-                                  body: buildCalendar(isWide, hws, exams),
-                                ),
+                                child: buildCalendar(isWide, hws, exams),
                               ),
                             ),
                             ResizableChild(

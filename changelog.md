@@ -6,6 +6,8 @@
 - Improved autofill services
 
 ### Fixed
+- You no longer have to scroll through the whole tutorial each time you opened it
+- Improve main app bar
 
 ---
 
