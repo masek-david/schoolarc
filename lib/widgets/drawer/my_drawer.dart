@@ -108,6 +108,8 @@ class MyDrawer extends ConsumerWidget {
                       const Divider(indent: 28, endIndent: 28),
                     if (kDebugMode || debugMode)
                       SettingTile.withSwitch(
+                        isFirst: true,
+                        isLast: !debugMode,
                         title: loc.developerMode,
                         value: debugMode,
                         onChanged: (value) {
@@ -127,6 +129,7 @@ class MyDrawer extends ConsumerWidget {
                       ),
                     if (debugMode)
                       SettingTile.withSwitch(
+                        isLast: true,
                         title: loc.showFirebaseOverlay,
                         value: showFire,
                         onChanged: (value) {

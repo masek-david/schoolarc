@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.1.5+28
+version: 2.1.6+29
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -76,6 +76,7 @@ dependencies:
   url_launcher: ^6.3.2
   device_info_plus: ^12.1.0
   mesh_gradient: ^1.3.8
+  material_color_utilities: ^0.13.0
 
 dev_dependencies:
   flutter_test:
@@ -128,4 +129,9 @@ flutter:
       fonts:
         - asset: assets/fonts/RobotoSerif-VariableFont_GRAD,opsz,wdth,wght.ttf
         - asset: assets/fonts/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf
+          style: italic
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-VariableFont_wght.ttf
+        - asset: assets/fonts/Nunito-Italic-VariableFont_wght.ttf
           style: italic

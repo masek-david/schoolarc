@@ -2,43 +2,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 
-final firebaseUsernameProvider =
-    AsyncNotifierProvider<FirebaseUsernameNotifier, String?>(
-        FirebaseUsernameNotifier.new);
+final firebaseNicknameProvider =
+    AsyncNotifierProvider<FirebaseNicknameNotifier, String?>(
+        FirebaseNicknameNotifier.new);
 
-class FirebaseUsernameNotifier extends AsyncNotifier<String?> {
+class FirebaseNicknameNotifier extends AsyncNotifier<String?> {
   @override
   Future<String?> build() async {
     ref.listen(
       firebaseLoginProvider,
       (previous, next) {
-        loadUsername();
+        loadNickname();
       },
     );
-    return _fetchUsername();
+    return _fetchNickname();
   }
 
-  Future<void> loadUsername() async {
+  Future<void> loadNickname() async {
     state = const AsyncLoading();
     try {
-      final name = await _fetchUsername();
+      final name = await _fetchNickname();
       state = AsyncData(name);
     } catch (e, s) {
       state = AsyncError(e, s);
     }
   }
 
-  Future<String?> _fetchUsername() async {
-    return ref.read(firebaseServiceProvider).getUsername();
+  Future<String?> _fetchNickname() async {
+    return ref.read(firebaseServiceProvider).getNickname();
   }
 
-  Future<void> saveUsername(String newUsername) async {
+  Future<void> saveNickname(String newNickname) async {
     state = const AsyncLoading();
 
     state = const AsyncValue.loading();
     try {
-      await ref.read(firebaseServiceProvider).saveUsername(newUsername);
-      state = AsyncData(newUsername);
+      await ref.read(firebaseServiceProvider).saveNickname(newNickname);
+      state = AsyncData(newNickname);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

@@ -315,7 +315,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(12, 16, 12, 4),
-                          child: UsernameText(user: member),
+                          child: NicknameText(user: member),
                         ),
                         tile
                       ],

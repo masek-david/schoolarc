@@ -6,6 +6,7 @@ import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/import_export_row.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -22,118 +23,131 @@ class SettingsScreen extends ConsumerWidget {
     final loc = context.loc;
     final debugMode = ref.watch(debugModeProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.settings),
-      ),
-      body: ListView(
-        children: [
+    return SettingsScaffold(
+      heroTag: 'settings',
+      title: loc.settings,
+      children: [
+        SettingTile(
+          heroTag: 'theme',
+          isFirst: true,
+          title: loc.colorTheme,
+          subtitle: loc.colorThemeDescription,
+          leading: const Icon(Icons.palette_outlined),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/settings/theme'),
+        ),
+        SettingTile(
+          heroTag: 'style',
+          title: loc.styleMotion,
+          subtitle: loc.styleMotionDescription,
+          leading: const Icon(Icons.animation),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/settings/style'),
+        ),
+        if (NotificationSender.isCompatiblePlatform() || kDebugMode)
           SettingTile(
-            title: loc.colorTheme,
-            subtitle: loc.colorThemeDescription,
-            leading: const Icon(Icons.palette_outlined),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/settings/theme'),
+            heroTag: 'notifications',
+              title: loc.upcomingDayNotifications,
+              subtitle: loc.upcomingDayNotificationsDescription,
+              leading: const Icon(Icons.notifications_outlined),
+              trailing: const Icon(Icons.keyboard_arrow_right),
+              onTap: (context) {
+                Navigator.restorablePushNamed(
+                  context,
+                  '/settings/notifications',
+                );
+              }),
+        SettingTile(
+          heroTag: 'localizations',
+          title: loc.localization,
+          subtitle: loc.localizationSubtitle,
+          leading: const Icon(Icons.language_outlined),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/settings/localization'),
+        ),
+        SettingTile(
+          heroTag: 'shortcuts',
+          isLast: true,
+          title: loc.shortcuts,
+          subtitle: loc.shortcutsDescription,
+          leading: const Icon(Icons.keyboard_alt_outlined),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/settings/shortcuts'),
+        ),
+        SettingTile(
+          heroTag: 'bakalari',
+          isFirst: true,
+          title: loc.bakalari,
+          leading: const Icon(Icons.hexagon_outlined),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/bakalari'),
+          trailing: LoginStatusIcon(
+            provider: bakaLoginProvider,
+            showProvider: useBakaProvider,
           ),
-          SettingTile(
-            title: loc.styleMotion,
-            subtitle: loc.styleMotionDescription,
-            leading: const Icon(Icons.animation),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/settings/style'),
+        ),
+        SettingTile(
+          heroTag: 'strava',
+          title: loc.stravaCz,
+          leading: const Icon(Icons.restaurant_outlined),
+          onTap: (context) => Navigator.restorablePushNamed(context, '/strava'),
+          trailing: LoginStatusIcon(
+            provider: stravaLoginProvider,
+            showProvider: useMealsProvider,
           ),
-          if (NotificationSender.isCompatiblePlatform() || kDebugMode)
-            SettingTile(
-                title: loc.upcomingDayNotifications,
-                subtitle: loc.upcomingDayNotificationsDescription,
-                leading: const Icon(Icons.notifications_outlined),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: (context) {
-                  Navigator.restorablePushNamed(
-                    context,
-                    '/settings/notifications',
-                  );
-                }),
-          SettingTile(
-            title: loc.localization,
-            subtitle: loc.localizationSubtitle,
-            leading: const Icon(Icons.language_outlined),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) => Navigator.restorablePushNamed(
-                context, '/settings/localization'),
+        ),
+        SettingTile(
+          heroTag: 'cloudsync',
+          title: loc.cloudSync,
+          isLast: true,
+          leading: const Icon(Icons.cloud_outlined),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/cloudsync'),
+          trailing: LoginStatusIcon(
+            provider: firebaseLoginProvider,
+            showProvider: useCloudSyncProvider,
           ),
-          SettingTile(
-            title: loc.shortcuts,
-            subtitle: loc.shortcutsDescription,
-            leading: const Icon(Icons.keyboard_alt_outlined),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/settings/shortcuts'),
+        ),
+        SettingTile(
+          heroTag: 'about',
+          isFirst: true,
+          title: context.loc.aboutApp,
+          leading: const Icon(Icons.info_outline_rounded),
+          onTap: (context) => Navigator.restorablePushNamed(context, '/about'),
+        ),
+        SettingTile(
+          isLast: !(debugMode || kDebugMode),
+          title: context.loc.appDataLabel,
+          newLineAction: const ImportExportButtonsRow(),
+        ),
+        if (debugMode || kDebugMode)
+          SettingTile.withSwitch(
+            isLast: true,
+            leading: const Icon(Icons.bug_report_outlined),
+            title: loc.developerMode,
+            value: debugMode,
+            onChanged: (value) {
+              ref.read(debugModeProvider.notifier).set(value);
+            },
           ),
-          const Divider(),
-          SettingTile(
-            title: loc.bakalari,
-            leading: const Icon(Icons.hexagon_outlined),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/bakalari'),
-            trailing: LoginStatusIcon(
-              provider: bakaLoginProvider,
-              showProvider: useBakaProvider,
-            ),
-          ),
-          SettingTile(
-            title: loc.stravaCz,
-            leading: const Icon(Icons.restaurant_outlined),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/strava'),
-            trailing: LoginStatusIcon(
-              provider: stravaLoginProvider,
-              showProvider: useMealsProvider,
-            ),
-          ),
-          SettingTile(
-            title: loc.cloudSync,
-            leading: const Icon(Icons.cloud_outlined),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/cloudsync'),
-            trailing: LoginStatusIcon(
-              provider: firebaseLoginProvider,
-              showProvider: useCloudSyncProvider,
-            ),
-          ),
-          const Divider(),
-          const ImportExportRow(),
-          SettingTile(
-            title: context.loc.aboutApp,
-            leading: const Icon(Icons.info_outline_rounded),
-            onTap: (context) =>
-                Navigator.restorablePushNamed(context, '/about'),
-          ),
-          if (debugMode || kDebugMode)
-            SettingTile.withSwitch(
-              title: loc.developerMode,
-              value: debugMode,
-              onChanged: (value) {
-                ref.read(debugModeProvider.notifier).set(value);
-              },
-            ),
-          if (debugMode)
-            Center(
-              child: Text(
-                packageInfo.packageName,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                ),
+        if (debugMode)
+          Center(
+            child: Text(
+              packageInfo.packageName,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
             ),
-          const Center(
-            child: PackageInfoWidget(enableTap: true),
           ),
-          const SizedBox(height: 50),
-        ],
-      ),
+        const Center(
+          child: PackageInfoWidget(enableTap: true),
+        ),
+        const SizedBox(height: 100),
+      ],
     );
   }
 }

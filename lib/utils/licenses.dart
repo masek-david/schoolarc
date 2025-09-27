@@ -12,6 +12,15 @@ void addLicenses() {
       'https://github.com/googlefonts/RobotoSerif',
     );
     yield const LicenseEntryWithLineBreaks(
+      ['Nunito'],
+      'Nunito\n\n'
+      'Designed by Vernon Adams, Cyreal, Jacques Le Bailly\n\n'
+      'Copyright 2014 The Nunito Project Authors\n\n'
+      'This Font Software is licensed under the SIL Open Font License, Version 1.1\n\n'
+      'https://fonts.google.com/specimen/Nunito\n\n'
+      ' (https://github.com/googlefonts/nunito)',
+    );
+    yield const LicenseEntryWithLineBreaks(
       ['SVG Repo'],
       'Icons by Solar Icons\n\n'
       'Licensed under Creative Commons Attribution 4.0 (CC BY 4.0)\n\n'

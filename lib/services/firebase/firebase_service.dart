@@ -83,11 +83,11 @@ class FirebaseService {
   Future<void> createUser({
     required String email,
     required String password,
-    required String username,
+    required String nickname,
   }) async {
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     refLocation();
-    await saveUsername(username);
+    await saveNickname(nickname);
     return;
   }
 
@@ -147,7 +147,7 @@ class FirebaseService {
 
       final exportData = {
         "profile": {
-          "username": snapshot.child('n').value,
+          "nickname": snapshot.child('n').value,
           "uid": auth.currentUser!.uid,
           "email": auth.currentUser!.email,
         },
@@ -165,7 +165,7 @@ class FirebaseService {
     }
   }
 
-  Future<String>? getUsername() async {
+  Future<String>? getNickname() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return '';
 
@@ -174,7 +174,7 @@ class FirebaseService {
     return snapshot.value as String;
   }
 
-  Future<void> saveUsername(String name) async {
+  Future<void> saveNickname(String name) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 

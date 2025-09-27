@@ -413,13 +413,22 @@ class AppLocalizationsCs extends AppLocalizations {
   String get changeUsername => 'Změnit uživatelské jméno';
 
   @override
-  String get usernameChanged => 'Uživatelské jméno bylo úspěšně změněno';
+  String get changeNickname => 'Změnit přezdívku';
+
+  @override
+  String get nicknameChanged => 'Přezdívka byla úspěšně změněna';
 
   @override
   String get newUsername => 'Nové uživatelské jméno';
 
   @override
-  String get usernameInfo => 'Uživatelské jméno je veřejně viditelné ostatním uživatelům';
+  String get newNickname => 'Nová přezdívka';
+
+  @override
+  String get nicknameInfo => 'Přezdívka je veřejně viditelná ostatním uživatelům';
+
+  @override
+  String get nickname => 'Přezdívka';
 
   @override
   String get group => 'Skupina';

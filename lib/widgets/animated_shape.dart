@@ -10,7 +10,7 @@ import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/roboto_serif.dart';
+import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/shapes_list.dart';
 
 class AnimatedShape extends ConsumerStatefulWidget {

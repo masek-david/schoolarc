@@ -41,7 +41,7 @@ class MembersScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      UsernameText(
+                      NicknameText(
                         user: user,
                         radius: 24,
                       ),

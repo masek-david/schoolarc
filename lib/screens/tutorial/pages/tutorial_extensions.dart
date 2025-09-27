@@ -31,6 +31,8 @@ class TutorialExtensions extends ConsumerWidget {
               ),
               const SizedBox(height: 28),
               _ExtensionButton(
+                isFirst: true,
+                isLast: useBaka,
                 value: useBaka,
                 title: context.loc.bakalari,
                 subtitle: context.loc.bakalariSubtitle,
@@ -49,6 +51,8 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
               ),
               _ExtensionButton(
+                isFirst: useBaka,
+                isLast: useMeals,
                 title: context.loc.stravaCz,
                 subtitle: context.loc.stravaCzSubtitle,
                 value: useMeals,
@@ -67,6 +71,8 @@ class TutorialExtensions extends ConsumerWidget {
                 ),
               ),
               _ExtensionButton(
+                isFirst: useMeals,
+                isLast: true,
                 title: context.loc.cloudSync,
                 subtitle: context.loc.cloudSyncSubtitle,
                 value: useCloudSync,
@@ -104,6 +110,8 @@ class _ExtensionButton extends StatelessWidget {
     required this.onChanged,
     required this.button,
     this.leading,
+    this.isFirst = false,
+    this.isLast = false,
   });
 
   final bool value;
@@ -112,12 +120,16 @@ class _ExtensionButton extends StatelessWidget {
   final void Function(bool) onChanged;
   final Widget button;
   final Widget? leading;
+  final bool isFirst;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SettingTile.withSwitch(
+          isFirst: isFirst,
+          isLast: isLast,
           title: title,
           leading: leading,
           subtitle: subtitle,

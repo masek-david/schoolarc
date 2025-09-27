@@ -10,20 +10,27 @@ class ThemeColorsShowcase extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
               'assets/book.svg',
-              height: 150,
+              height: 110,
               colorMapper: BasicColorMapper(
                 context.col.primary.toARGB32(),
               ),
             ),
             SvgPicture.asset(
+              'assets/confetti.svg',
+              height: 110,
+              colorMapper: BasicColorMapper(
+                context.col.secondary.toARGB32(),
+              ),
+            ),
+            SvgPicture.asset(
               'assets/pen.svg',
-              height: 140,
+              height: 110,
               colorMapper: BasicColorMapper(
                 context.col.tertiary.toARGB32(),
               ),

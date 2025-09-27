@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/textstyle_extension.dart';
 
 class SettingTile extends StatelessWidget {
-  const SettingTile({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.leading,
-    this.trailing,
-    this.newLineAction,
-    this.onTap,
-    this.highlighted = false,
-    this.enabled = true,
-    this.contentPadding,
-  });
+  const SettingTile(
+      {super.key,
+      required this.title,
+      this.subtitle,
+      this.leading,
+      this.trailing,
+      this.newLineAction,
+      this.onTap,
+      this.highlighted = false,
+      this.enabled = true,
+      this.contentPadding,
+      this.isLast = false,
+      this.isFirst = false,
+      this.heroTag,
+      this.titleColor});
 
   final String title;
   final String? subtitle;
@@ -23,6 +28,10 @@ class SettingTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final bool highlighted;
   final bool enabled;
+  final bool isLast;
+  final bool isFirst;
+  final String? heroTag;
+  final Color? titleColor;
 
   static SettingTile withSwitch({
     required String title,
@@ -34,6 +43,8 @@ class SettingTile extends StatelessWidget {
     Widget? leading,
     Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
+    bool isFirst = false,
+    bool isLast = false,
     Key? key,
   }) {
     return SettingTile(
@@ -46,6 +57,8 @@ class SettingTile extends StatelessWidget {
       onTap: (context) => onChanged(!value),
       trailing:
           Switch(value: value, onChanged: enabled == false ? null : onChanged),
+      isFirst: isFirst,
+      isLast: isLast,
       key: key,
     );
   }
@@ -60,6 +73,8 @@ class SettingTile extends StatelessWidget {
     Widget? leading,
     Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
+    bool isFirst = false,
+    bool isLast = false,
     Key? key,
   }) {
     return SettingTile(
@@ -75,6 +90,8 @@ class SettingTile extends StatelessWidget {
           tristate: false,
           onChanged:
               enabled == false ? null : (value) => onChanged(value as bool)),
+      isFirst: isFirst,
+      isLast: isLast,
       key: key,
     );
   }
@@ -88,6 +105,8 @@ class SettingTile extends StatelessWidget {
     bool? highlighted,
     Widget? leading,
     Color? iconColor,
+    bool isFirst = false,
+    bool isLast = false,
   }) {
     return SettingTile(
       title: title,
@@ -111,49 +130,88 @@ class SettingTile extends StatelessWidget {
           style: const TextStyle(fontSize: 16),
         );
       }),
+      isFirst: isFirst,
+      isLast: isLast,
+    );
+  }
+
+  Text buildText(BuildContext context) {
+    return Text(
+      title,
+      style: context.txt.bodyMedium!
+          .copyWithNunito(weight: 700, color: titleColor),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AbsorbPointer(
-      absorbing: !enabled,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: highlighted
-                ? const EdgeInsets.all(16)
-                : const EdgeInsets.all(0),
-            child: ListTile(
-              enabled: enabled,
-              onTap: onTap == null ? null : () => onTap!(context),
-              tileColor: highlighted
-                  ? Theme.of(context).colorScheme.primaryContainer
-                  : null,
-              shape: highlighted
-                  ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32))
-                  : null,
-              contentPadding:
-                  highlighted ? const EdgeInsets.all(12) : contentPadding,
-              leading: leading,
-              title: Text(
-                title,
-                style: TextStyle(
-                  fontSize: highlighted ? 19 : null,
-                ),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: isFirst || highlighted ? 8 : 1,
+        bottom: isLast || highlighted ? 8 : 1,
+      ),
+      child: ClipRRect(
+        borderRadius: highlighted
+            ? BorderRadiusGeometry.circular(1000)
+            : BorderRadius.vertical(
+                top: isFirst
+                    ? const Radius.circular(20)
+                    : const Radius.circular(4),
+                bottom: isLast
+                    ? const Radius.circular(20)
+                    : const Radius.circular(4),
               ),
-              subtitle: subtitle == null ? null : Text(subtitle!),
-              trailing: trailing,
+        child: Material(
+          color: highlighted
+              ? context.col.primaryContainer
+              : context.col.surfaceContainerLowest,
+          child: InkWell(
+            splashFactory: InkSparkle.splashFactory,
+            onTap: enabled && onTap != null ? () => onTap!(context) : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(
+                children: [
+                  Row(
+                    spacing: 16,
+                    children: [
+                      if (leading != null)
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: leading!,
+                        ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            heroTag != null
+                                ? Hero(
+                                    tag: heroTag!,
+                                    child: buildText(context),
+                                  )
+                                : buildText(context),
+                            if (subtitle != null) Text(subtitle!),
+                          ],
+                        ),
+                      ),
+                      if (trailing != null) trailing!,
+                    ],
+                  ),
+                  if (newLineAction != null) ...[
+                    const SizedBox(height: 12),
+                    AbsorbPointer(
+                      absorbing: enabled == false,
+                      child: Opacity(
+                        opacity: enabled ? 1 : 0.3,
+                        child: newLineAction!,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
-          if (newLineAction != null)
-            Opacity(
-              opacity: enabled ? 1 : 0.3,
-              child: newLineAction!,
-            ),
-        ],
+        ),
       ),
     );
   }

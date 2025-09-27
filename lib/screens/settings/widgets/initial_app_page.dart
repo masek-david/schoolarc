@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
 
@@ -17,28 +15,17 @@ class _InitialAppPageState extends State<InitialAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SettingTile(
-          title: context.loc.initialPageTitle,
-          subtitle: context.loc.initialPageSubtitle,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: BottomNavBar(
-              pageIndex: appPage,
-              onTap: ({required newScreenIndex}) {
-                settings.save(Setting.initialAppPage, newScreenIndex);
-                setState(() {
-                  appPage = newScreenIndex;
-                });
-              },
-            ),
-          ),
-        ),
-      ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BottomNavBar(
+        pageIndex: appPage,
+        onTap: ({required newScreenIndex}) {
+          settings.save(Setting.initialAppPage, newScreenIndex);
+          setState(() {
+            appPage = newScreenIndex;
+          });
+        },
+      ),
     );
   }
 }

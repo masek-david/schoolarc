@@ -14,40 +14,45 @@ class HomeSettings extends ConsumerWidget {
     final showMyName = ref.watch(greetUsernameProvider);
     final lunchTime = ref.watch(mealsShowTodayUntilProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SettingTile.withSwitch(
-          title: context.loc.showMyName,
-          subtitle: context.loc.showMyNameSubtitle,
-          value: showMyName,
-          onChanged: (value) {
-            ref.read(greetUsernameProvider.notifier).set(value);
-          },
-        ),
-        SettingTile.withSwitch(
-          title: context.loc.showBakalariTimetable,
-          value: showBaka,
-          onChanged: (value) {
-            ref.read(useBakaProvider.notifier).set(value);
-          },
-        ),
-        SettingTile.withSwitch(
-          title: context.loc.showMeals,
-          value: showMeals,
-          onChanged: (value) {
-            ref.read(useMealsProvider.notifier).set(value);
-          },
-        ),
-        SettingTile.withTimePicker(
-          title: context.loc.lunchTime,
-          subtitle: context.loc.lunchTimeSubtitle,
-          time: lunchTime,
-          onChanged: (value) {
-            ref.read(mealsShowTodayUntilProvider.notifier).set(value);
-          },
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SettingTile.withSwitch(
+            isFirst: true,
+            title: context.loc.showMyName,
+            subtitle: context.loc.showMyNameSubtitle,
+            value: showMyName,
+            onChanged: (value) {
+              ref.read(greetUsernameProvider.notifier).set(value);
+            },
+          ),
+          SettingTile.withSwitch(
+            title: context.loc.showBakalariTimetable,
+            value: showBaka,
+            onChanged: (value) {
+              ref.read(useBakaProvider.notifier).set(value);
+            },
+          ),
+          SettingTile.withSwitch(
+            title: context.loc.showMeals,
+            value: showMeals,
+            onChanged: (value) {
+              ref.read(useMealsProvider.notifier).set(value);
+            },
+          ),
+          SettingTile.withTimePicker(
+            isLast: true,
+            title: context.loc.lunchTime,
+            subtitle: context.loc.lunchTimeSubtitle,
+            time: lunchTime,
+            onChanged: (value) {
+              ref.read(mealsShowTodayUntilProvider.notifier).set(value);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

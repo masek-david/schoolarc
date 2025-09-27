@@ -12,7 +12,7 @@ import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_homeworks_screen.
 import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
 import 'package:schoolarc/screens/changelog_screen.dart';
 import 'package:schoolarc/screens/debug_info_screen.dart';
-import 'package:schoolarc/screens/firebase/firebase_login_screen.dart';
+import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
@@ -122,6 +122,15 @@ class AppConfig extends ConsumerWidget {
             visualDensity: VisualDensity.standard,
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(year2023: false),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              contentPadding: const EdgeInsets.all(15),
+              fillColor: light.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             filledButtonTheme: FilledButtonThemeData(
               style: ButtonStyle(
                 side: WidgetStateProperty.resolveWith((states) {
@@ -149,6 +158,15 @@ class AppConfig extends ConsumerWidget {
             //         PredictiveBackPageTransitionsBuilder(),
             //   },
             // ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              contentPadding: const EdgeInsets.all(15),
+              fillColor: dark.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             filledButtonTheme: FilledButtonThemeData(
               style: ButtonStyle(
                 side: WidgetStateProperty.resolveWith((states) {
@@ -204,7 +222,7 @@ class AppConfig extends ConsumerWidget {
             '/strava': (context) => const StravaLoginScreen(),
             '/logs': (context) => const LogsScreen(),
             '/recap': (context) => const RecapScreen(),
-            '/cloudsync': (context) => const FirebaseLoginScreen(),
+            '/cloudsync': (context) => const CloudSyncLoginScreen(),
             '/settings/theme': (context) => const ThemePage(),
             '/settings/style': (context) => const StyleMotionPage(),
             '/settings/notifications': (context) =>

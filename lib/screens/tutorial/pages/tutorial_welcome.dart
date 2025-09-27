@@ -6,7 +6,7 @@ import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/roboto_serif.dart';
+import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 
 class TutorialWelcome extends ConsumerWidget {
@@ -83,6 +83,8 @@ class TutorialWelcome extends ConsumerWidget {
             ),
             AnimatedItem(
               builder: (isShown) => SettingTile(
+                isFirst: true,
+                isLast: true,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 64),
                 title: context.loc.language,
                 trailing: DropDownAction(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/initial_app_page.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/settings/widgets/slider_action.dart';
@@ -15,37 +16,40 @@ class StyleMotionPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final showAppBorders = ref.watch(showAppBordersProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.loc.styleMotion),
-      ),
-      body: ListView(
-        children: [
-          const InitialAppPage(),
-          SettingTile(
-            title: context.loc.styleMotionScreenSwitchAnimationTitle,
-            subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
-            leading: const Icon(Icons.timelapse),
-            newLineAction: SliderAction(
-              inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
-              divisions: 10,
-              min: 0,
-              max: 500,
-              onChanged: (value) {
-                settings.save(Setting.pageSwitchAnimationDuration, value);
-              },
-            ),
-          ),
-          SettingTile.withSwitch(
-            title: context.loc.styleMotionShowBorderTitle,
-            subtitle: context.loc.styleMotionShowBorderSubtitle,
-            value: showAppBorders,
+    return SettingsScaffold(
+      heroTag: 'style',
+      title: context.loc.styleMotion,
+      children: [
+        SettingTile(
+          isFirst: true,
+          title: context.loc.initialPageTitle,
+          subtitle: context.loc.initialPageSubtitle,
+          newLineAction: const InitialAppPage(),
+        ),
+        SettingTile(
+          title: context.loc.styleMotionScreenSwitchAnimationTitle,
+          subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
+          leading: const Icon(Icons.timelapse),
+          newLineAction: SliderAction(
+            inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
+            divisions: 10,
+            min: 0,
+            max: 500,
             onChanged: (value) {
-              ref.read(showAppBordersProvider.notifier).set(value);
+              settings.save(Setting.pageSwitchAnimationDuration, value);
             },
           ),
-        ],
-      ),
+        ),
+        SettingTile.withSwitch(
+          isLast: true,
+          title: context.loc.styleMotionShowBorderTitle,
+          subtitle: context.loc.styleMotionShowBorderSubtitle,
+          value: showAppBorders,
+          onChanged: (value) {
+            ref.read(showAppBordersProvider.notifier).set(value);
+          },
+        ),
+      ],
     );
   }
 }

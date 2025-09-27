@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/provider/locale_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -21,75 +22,73 @@ class LocalizationPage extends ConsumerWidget {
     final dateFormat = ref.watch(dateFormatProvider);
     final weekStartsOnMonday = ref.watch(weekStartsOnMondayProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.localization),
-      ),
-      body: ListView(
-        children: [
-          SettingTile(
-            title: loc.language,
-            trailing: DropDownAction(
-              value: language,
-              onChanged: (value) {
-                ref.read(localeProvider.notifier).set(value as String);
-              },
-              items: supportedLocales
-                  .map(
-                    (key, value) => MapEntry(
-                      key,
-                      DropdownMenuItem<String>(
-                        value: key.languageCode,
-                        child: Text(value),
-                      ),
+    return SettingsScaffold(
+      heroTag: 'localizations',
+      title: loc.localization,
+      children: [
+        SettingTile(
+          isFirst: true,
+          title: loc.language,
+          trailing: DropDownAction(
+            value: language,
+            onChanged: (value) {
+              ref.read(localeProvider.notifier).set(value as String);
+            },
+            items: supportedLocales
+                .map(
+                  (key, value) => MapEntry(
+                    key,
+                    DropdownMenuItem<String>(
+                      value: key.languageCode,
+                      child: Text(value),
                     ),
-                  )
-                  .values
-                  .toList(),
-            ),
+                  ),
+                )
+                .values
+                .toList(),
           ),
-          SettingTile(
-            title: loc.dateFormat,
-            subtitle: '${loc.today}: ${DateTime.now().format()}',
-            trailing: DropDownAction(
-              value: dateFormat,
-              onChanged: (value) {
-                ref.read(dateFormatProvider.notifier).set(value as String);
-              },
-              items: supportedDateFormats
-                  .map(
-                    (value) => DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        DateFormat(value, getLocale().languageCode)
-                            .format(date),
-                      ),
+        ),
+        SettingTile(
+          title: loc.dateFormat,
+          subtitle: '${loc.today}: ${DateTime.now().format()}',
+          trailing: DropDownAction(
+            value: dateFormat,
+            onChanged: (value) {
+              ref.read(dateFormatProvider.notifier).set(value as String);
+            },
+            items: supportedDateFormats
+                .map(
+                  (value) => DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      DateFormat(value, getLocale().languageCode).format(date),
                     ),
-                  )
-                  .toList(),
-            ),
+                  ),
+                )
+                .toList(),
           ),
-          // show setting for 24 hour format only if it is supported
-          if (DateFormat.jm(language).format(date).contains('PM'))
-            SettingTile.withSwitch(
-              title: loc.timeFormat,
-              value: use24HourFormat,
-              subtitle: '''
+        ),
+        // show setting for 24 hour format only if it is supported
+        if (DateFormat.jm(language).format(date).contains('PM'))
+          SettingTile.withSwitch(
+            title: loc.timeFormat,
+            value: use24HourFormat,
+            subtitle: '''
 ${loc.timeFormatSubtitle}
 ${loc.now}: ${TimeOfDay.now().format(context)}''',
-              onChanged: (value) =>
-                  ref.read(use24HourFormatProvider.notifier).set(value),
-            ),
-          SettingTile.withSwitch(
-            title: loc.weekStartsOnMonday,
-            subtitle: loc.weekStartsOnMondaySubtitle,
-            value: weekStartsOnMonday,
-            onChanged: (value) {
-              ref.read(weekStartsOnMondayProvider.notifier).set(value);
-            },
+            onChanged: (value) =>
+                ref.read(use24HourFormatProvider.notifier).set(value),
           ),
-        ],
-      ),
+        SettingTile.withSwitch(
+          isLast: true,
+          title: loc.weekStartsOnMonday,
+          subtitle: loc.weekStartsOnMondaySubtitle,
+          value: weekStartsOnMonday,
+          onChanged: (value) {
+            ref.read(weekStartsOnMondayProvider.notifier).set(value);
+          },
+        ),
+      ],
     );
   }
 }

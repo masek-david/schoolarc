@@ -1,6 +1,4 @@
 # FIX
-fix web blue top bar [web]
-add autofill group [device]
 fix black android topbar text
 add skip button to tutorial if it isnt viewed for the first time
 notifications are set only for this day
@@ -34,10 +32,9 @@ move to android sdk 36
     - ⬜ plus
 
 # FEATURES
-## questionare
-do you want to share - if yes, would you mind sharing everything?? 
 
 ## UI
+- ✅ settings use bigger headlines and scroll them
 - ⬜ in calendar tasks are hidden again a little bit
 - ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
@@ -48,14 +45,13 @@ do you want to share - if yes, would you mind sharing everything??
     - ⬜ fix the scrolling
     - ⬜ animation FAB morph to the sheet?
     - ⬜ does everything need to be shown ??
-- ⬜ settings use bigger headlines and scroll them
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
 - ⬜ check scrolling in timetable
 - ⬜ ? use expressive progress
 
 ## OTHER
-- ⬜ sync everything (hws, exams, subjects) properly 
+- ⬜ sync everything (hws, exams, subjects) properly
 - ⬜ add google sign in + sign in with apple
 - ⬜ ? refactor to use date instead of datetime
 - ⬜ create settings for initial task

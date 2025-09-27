@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/roboto_serif.dart';
+import 'package:schoolarc/utils/fonts.dart';
 
 Color colorFromString(String input, bool isDark) {
   final hash = input.codeUnits.fold(0, (prev, elem) => prev + elem);
@@ -17,8 +17,8 @@ Color colorFromString(String input, bool isDark) {
   ).toColor();
 }
 
-class UsernameText extends StatelessWidget {
-  const UsernameText({
+class NicknameText extends StatelessWidget {
+  const NicknameText({
     super.key,
     required this.user,
     this.radius = 14,

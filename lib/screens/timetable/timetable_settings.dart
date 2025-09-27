@@ -31,35 +31,40 @@ class _TimetableSettingsState extends State<TimetableSettings> {
 
     return SizedBox(
       height: 400,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SettingTile.withSwitch(
-            title: loc.show7DayWeek,
-            value: showWholeWeek,
-            onChanged: (value) {
-              setState(() {
-                widget.changeShowWholeWeek(value);
-                showWholeWeek = value;
-              });
-            },
-          ),
-          SettingTile(
-            title: loc.timetableTileWidth,
-            newLineAction: SliderAction(
-              inititalValue: tileWidth.toDouble(),
-              min: 60,
-              max: 160,
-              divisions: 10,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SettingTile.withSwitch(
+              isFirst: true,
+              title: loc.show7DayWeek,
+              value: showWholeWeek,
               onChanged: (value) {
                 setState(() {
-                  widget.changeTileWidth(value);
-                  tileWidth = value;
+                  widget.changeShowWholeWeek(value);
+                  showWholeWeek = value;
                 });
               },
             ),
-          ),
-        ],
+            SettingTile(
+              isLast: true,
+              title: loc.timetableTileWidth,
+              newLineAction: SliderAction(
+                inititalValue: tileWidth.toDouble(),
+                min: 60,
+                max: 160,
+                divisions: 10,
+                onChanged: (value) {
+                  setState(() {
+                    widget.changeTileWidth(value);
+                    tileWidth = value;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

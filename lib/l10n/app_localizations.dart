@@ -707,11 +707,17 @@ abstract class AppLocalizations {
   /// **'Change username'**
   String get changeUsername;
 
-  /// No description provided for @usernameChanged.
+  /// No description provided for @changeNickname.
   ///
   /// In en, this message translates to:
-  /// **'Username changed successfully'**
-  String get usernameChanged;
+  /// **'Change nickname'**
+  String get changeNickname;
+
+  /// No description provided for @nicknameChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname changed successfully'**
+  String get nicknameChanged;
 
   /// No description provided for @newUsername.
   ///
@@ -719,11 +725,23 @@ abstract class AppLocalizations {
   /// **'New username'**
   String get newUsername;
 
-  /// No description provided for @usernameInfo.
+  /// No description provided for @newNickname.
   ///
   /// In en, this message translates to:
-  /// **'Username is publicly visible to other users'**
-  String get usernameInfo;
+  /// **'New nickname'**
+  String get newNickname;
+
+  /// No description provided for @nicknameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname is publicly visible to other users'**
+  String get nicknameInfo;
+
+  /// No description provided for @nickname.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get nickname;
 
   /// No description provided for @group.
   ///

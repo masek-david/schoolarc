@@ -15,46 +15,51 @@ class CalendarSettings extends ConsumerWidget {
     final initialIsTomorrow = ref.watch(calendarInitialIsTomorrowProvider);
     final loc = context.loc;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SettingTile(
-          title: loc.initialDate,
-          trailing: DropDownAction(
-            value: initialIsTomorrow,
-            items: [
-              DropdownMenuItem(
-                value: false,
-                child: Text(loc.today),
-              ),
-              DropdownMenuItem(
-                value: true,
-                child: Text(loc.tomorrow),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SettingTile(
+            isFirst: true,
+            title: loc.initialDate,
+            trailing: DropDownAction(
+              value: initialIsTomorrow,
+              items: [
+                DropdownMenuItem(
+                  value: false,
+                  child: Text(loc.today),
+                ),
+                DropdownMenuItem(
+                  value: true,
+                  child: Text(loc.tomorrow),
+                ),
+              ],
+              onChanged: (value) {
+                ref
+                    .read(calendarInitialIsTomorrowProvider.notifier)
+                    .set(value as bool);
+              },
+            ),
+          ),
+          SettingTile.withSwitch(
+            title: loc.showMissedHomework,
+            value: showMissed,
             onChanged: (value) {
-              ref
-                  .read(calendarInitialIsTomorrowProvider.notifier)
-                  .set(value as bool);
+              ref.read(calendarShowMissedProvider.notifier).set(value);
             },
           ),
-        ),
-        SettingTile.withSwitch(
-          title: loc.showMissedHomework,
-          value: showMissed,
-          onChanged: (value) {
-            ref.read(calendarShowMissedProvider.notifier).set(value);
-          },
-        ),
-        SettingTile.withSwitch(
-          title: loc.showArrows,
-          subtitle: loc.showArrowsSubtitle,
-          value: showArrows,
-          onChanged: (value) {
-            ref.read(calendarShowArrowsProvider.notifier).set(value);
-          },
-        ),
-      ],
+          SettingTile.withSwitch(
+            isLast: true,
+            title: loc.showArrows,
+            subtitle: loc.showArrowsSubtitle,
+            value: showArrows,
+            onChanged: (value) {
+              ref.read(calendarShowArrowsProvider.notifier).set(value);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,14 @@
+## [2.1.6]() - 2025-
+### Added
+
+### Changed
+- Changed design of settings
+- Improved autofill services
+
+### Fixed
+
+---
+
 ## [2.1.5]() - 2025-09-25
 ### Added
 - Added loading animation for web

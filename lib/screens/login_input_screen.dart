@@ -64,89 +64,92 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
       appBar: AppBar(
         title: Text(widget.actionName),
       ),
-      body: ListView.builder(
-        itemCount: controllers.length + 1,
-        itemBuilder: (context, index) {
-          if (index == controllers.length) {
-            return Center(
-              child: FilledButton(
-                onPressed: actionEnabled
-                    ? () =>
-                        widget.onSubmit(controllers.map((e) => e.text).toList())
-                    : null,
-                child: Text(widget.actionName),
-              ),
-            );
-          }
-
-          final field = widget.fields[index];
-          final obscure = obscures[index];
-
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    autofocus: index == 0 && !kIsWeb,
-                    onChanged: (value) {
-                      if (value == '') {
-                        setState(() {
-                          actionEnabled = false;
-                        });
-                      } else {
-                        setState(() {
-                          actionEnabled = enabled();
-                        });
-                      }
-                    },
-                    controller: controllers[index],
-                    autofillHints: field.autofillHints,
-                    obscureText: obscures[index] ?? false,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(15),
-                      border: const OutlineInputBorder(),
-                      labelText: field.name,
-                    ),
+      body: AutofillGroup(
+        child: ListView.builder(
+          itemCount: controllers.length + 1,
+          itemBuilder: (context, index) {
+            if (index == controllers.length) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FilledButton(
+                    onPressed: actionEnabled
+                        ? () => widget
+                            .onSubmit(controllers.map((e) => e.text).toList())
+                        : null,
+                    child: Text(widget.actionName),
                   ),
                 ),
-                if (field.info != null)
-                  ExcludeFocus(
-                    child: IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(field.name),
-                            content: Text(field.info!),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(context.loc.ok))
-                            ],
-                          ),
-                        );
+              );
+            }
+
+            final field = widget.fields[index];
+            final obscure = obscures[index];
+
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      autofocus: index == 0 && !kIsWeb, 
+                      onChanged: (value) {
+                        if (value == '') {
+                          setState(() {
+                            actionEnabled = false;
+                          });
+                        } else {
+                          setState(() {
+                            actionEnabled = enabled();
+                          });
+                        }
                       },
-                      icon: const Icon(Icons.info_outline),
-                    ),
-                  ),
-                if (obscure != null)
-                  ExcludeFocus(
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscures[index] = !obscure;
-                        });
-                      },
-                      icon: Icon(
-                        obscure ? Icons.visibility : Icons.visibility_off,
+                      controller: controllers[index],
+                      autofillHints: field.autofillHints,
+                      obscureText: obscures[index] ?? false,
+                      decoration: InputDecoration(
+                        labelText: field.name,
                       ),
                     ),
                   ),
-              ],
-            ),
-          );
-        },
+                  if (field.info != null)
+                    ExcludeFocus(
+                      child: IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(field.name),
+                              content: Text(field.info!),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(context.loc.ok))
+                              ],
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.info_outline),
+                      ),
+                    ),
+                  if (obscure != null)
+                    ExcludeFocus(
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            obscures[index] = !obscure;
+                          });
+                        },
+                        icon: Icon(
+                          obscure ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

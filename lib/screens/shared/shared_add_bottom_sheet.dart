@@ -162,7 +162,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              UsernameText(user: widget.member),
+              NicknameText(user: widget.member),
               FilledButton(
                 onPressed: onSave,
                 child: Text(context.loc.import),
