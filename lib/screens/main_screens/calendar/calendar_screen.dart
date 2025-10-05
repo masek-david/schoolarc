@@ -218,7 +218,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
         child: Focus(
           focusNode: _focus,
           child: MediaQuery.removePadding(
-            // the padding doesnt need to exist anymore, the fabs would be too high
             context: context,
             removeBottom: true,
             child: Scaffold(
@@ -274,14 +273,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             initialRatios = [0.5, 0.5];
                           }
                         }
-
+            
                         return ResizableContainer(
                           controller: _resizeController,
                           direction: Axis.horizontal,
                           children: [
                             ResizableChild(
-                              size: ResizableSize.ratio(initialRatios[0],
-                                  min: 300),
+                              size:
+                                  ResizableSize.ratio(initialRatios[0], min: 300),
                               // size: const ResizableSize.expand(min: 300),
                               divider: const ResizableDivider(
                                 thickness: 4,
@@ -295,8 +294,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             ),
                             ResizableChild(
                               // size: const ResizableSize.expand(min: 300),
-                              size: ResizableSize.ratio(initialRatios[1],
-                                  min: 300),
+                              size:
+                                  ResizableSize.ratio(initialRatios[1], min: 300),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),

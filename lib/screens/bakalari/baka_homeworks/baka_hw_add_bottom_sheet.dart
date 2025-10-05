@@ -61,9 +61,11 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
               spacing: 8,
               children: [
                 Icon(Icons.info, color: errorColor),
-                Text(
-                  '${context.loc.subjectHasntBeenAdded}\n${context.loc.tryImportingSubjectFromBakalari}',
-                  style: TextStyle(color: errorColor),
+                Expanded(
+                  child: Text(
+                    '${context.loc.subjectHasntBeenAdded}\n${context.loc.tryImportingSubjectFromBakalari}',
+                    style: TextStyle(color: errorColor),
+                  ),
                 ),
               ],
             ),

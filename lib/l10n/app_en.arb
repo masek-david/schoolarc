@@ -11,6 +11,7 @@
     }
   },
   "youHave": "You have",
+  "missedHomeworkTitle": "Missed homework",
   "missedHomework": "{count, plural, one{Missed piece of homework} other{Missed pieces of homework}}",
   "@missedHomework": {
     "description": "Label for missed homework count",
@@ -65,6 +66,8 @@
   "save": "Save",
   "add": "Add",
   "added": "Added",
+  "addedHomework": "Homework added",
+  "addedExam": "Exam added",
   "close": "Close",
   "undo": "Undo",
   "ok": "Ok",

@@ -18,9 +18,9 @@ class BakaHomeworksScreen extends ConsumerWidget {
     await ref.read(bakaHomeworksProvider.notifier).import(hw, isHomework);
 
     if (context.mounted) {
+      Navigator.pop(context);
       final loc = context.loc;
-      showMessage(context,
-          '${isHomework ? loc.homework(1) : loc.exams(1)} ${loc.added.toLowerCase()}');
+      showMessage(context, isHomework ? loc.addedHomework : loc.addedExam);
     }
   }
 
@@ -81,7 +81,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
               final isFirstNew = !hw.alreadySeen && index == 0;
               final isLastNew = index == data.length - 1 ||
                   !hw.alreadySeen &&
-                      data.elementAtOrNull(index)?.alreadySeen == true;
+                      data.elementAtOrNull(index + 1)?.alreadySeen == true;
 
               final tile = BakaHwTile(
                 hw: hw,

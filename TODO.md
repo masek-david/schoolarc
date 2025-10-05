@@ -3,7 +3,6 @@ notifications are set only for this day
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
 errors messages for export/import
-move to android sdk 36
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -44,7 +43,7 @@ move to android sdk 36
     - ⬜ does everything need to be shown ??
 - ⬜ on weekend, show info about upcoming week
 - ⬜ icons - hws, exams, subjects
-- ⬜ check scrolling in timetable
+- ⬜ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ⬜ ? use expressive progress
 
 ## OTHER

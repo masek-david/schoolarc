@@ -24,8 +24,12 @@ class SettingsScaffold extends StatelessWidget {
       body: NestedScrollView(
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: ListView(
-            children: children,
+          child: MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: ListView(
+              children: children,
+            ),
           ),
         ),
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -48,7 +52,8 @@ class SettingsScaffold extends StatelessWidget {
 
                   return FlexibleSpaceBar(
                     titlePadding: EdgeInsets.only(
-                        left: leftPadding.toDouble(), bottom: lerpDouble(14, 0, t)!),
+                        left: leftPadding.toDouble(),
+                        bottom: lerpDouble(14, 0, t)!),
                     expandedTitleScale: 1,
                     title: Hero(
                       tag: heroTag,

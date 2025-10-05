@@ -151,22 +151,22 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ),
             ],
           ),
-        if (loggedIn == false)
-          if (ref.watch(debugModeProvider) || kDebugMode)
-            SettingTile.withSwitch(
-              isLast: true,
-              isFirst: true,
-              enabled: useMeals,
-              contentPadding: const EdgeInsets.all(0),
-              title: loc.allowStravaLogin,
-              onChanged: (value) {
-                setState(() {
-                  settings.save(Setting.allowStravaLogin, value);
-                  allowLogin = value;
-                });
-              },
-              value: allowLogin,
-            ),
+        (!loggedIn && (ref.watch(debugModeProvider) || kDebugMode))
+            ? SettingTile.withSwitch(
+                isLast: true,
+                isFirst: true,
+                enabled: useMeals,
+                contentPadding: const EdgeInsets.all(0),
+                title: loc.allowStravaLogin,
+                onChanged: (value) {
+                  setState(() {
+                    settings.save(Setting.allowStravaLogin, value);
+                    allowLogin = value;
+                  });
+                },
+                value: allowLogin,
+              )
+            : const SizedBox(height: 8),
         if (allowLogin && loggedIn == false)
           AutofillGroup(
             child: Column(

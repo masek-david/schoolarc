@@ -29,7 +29,6 @@ final themeUseDeviceColorProvider =
     settingProvider<bool>(Setting.themeUseDeviceColor);
 final themeUseOledProvider = settingProvider<bool>(Setting.themeUseOled);
 
-final showAppBordersProvider = settingProvider<bool>(Setting.showAppOverlay);
 final debugShowFireOverlayProvider =
     settingProvider<bool>(Setting.debugShowFireOverlay);
 final debugShowPerformanceOverlayProvider =

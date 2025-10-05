@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/reschedule_drag_target.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/widgets/hold_drag_target.dart';
 import 'package:schoolarc/widgets/lists/exam_list.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
@@ -70,16 +72,39 @@ class PagesWidget extends ConsumerWidget {
                 !date.isBeforeToday() &&
                 settingShowMissed;
 
-            return RescheduleDragTarget(
-              currentDate: date,
-              onMove: (details) {
+            return HoldDragTarget(
+              heldAction: () {
                 if (pageController.page?.round() !=
                     negativePageCount + daysToAdd) {
                   pageController.animateToPage(
                     negativePageCount + daysToAdd,
-                    duration: Durations.long2,
+                    duration: Durations.medium3,
                     curve: Curves.easeInOut,
                   );
+                }
+              },
+              onAcceptWithDetails: (details) async {
+                if (details.data.runtimeType == Homework) {
+                  final hw = details.data as Homework;
+                  if (!hw.deadline.isSameDay(date)) {
+                    ref.read(hwProvider.notifier).edit(
+                          hw.copyWith(
+                            deadline: date.toLocal(),
+                            timestamp: DateTime.now().toUtc(),
+                          ),
+                        );
+                  }
+                }
+                if (details.data.runtimeType == Exam) {
+                  final exam = details.data as Exam;
+                  if (!exam.deadline.isSameDay(date)) {
+                    ref.read(examProvider.notifier).edit(
+                          exam.copyWith(
+                            deadline: date.toLocal(),
+                            timestamp: DateTime.now().toUtc(),
+                          ),
+                        );
+                  }
                 }
               },
               builder: (context, candidateData, rejectedData) {
@@ -103,7 +128,7 @@ class PagesWidget extends ConsumerWidget {
                                   shape: const Border(),
                                   dense: true,
                                   title: TitleWithCount(
-                                    text: context.loc.missedHomework(2),
+                                    text: context.loc.missedHomeworkTitle,
                                     bold: false,
                                     textColor: scheme.error,
                                     countContainerColor:

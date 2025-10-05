@@ -27,6 +27,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get youHave => 'You have';
 
   @override
+  String get missedHomeworkTitle => 'Missed homework';
+
+  @override
   String missedHomework(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -121,6 +124,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get added => 'Added';
+
+  @override
+  String get addedHomework => 'Homework added';
+
+  @override
+  String get addedExam => 'Exam added';
 
   @override
   String get close => 'Close';

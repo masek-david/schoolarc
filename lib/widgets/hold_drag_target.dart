@@ -1,0 +1,61 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+/// A drag target that triggers [heldAction] if a draggable is held over it for a certain duration.
+///
+/// The [heldAction] is called repeatedly while a draggable is held over the target.
+class HoldDragTarget extends StatefulWidget {
+  const HoldDragTarget(
+      {super.key,
+      required this.heldAction,
+      required this.builder,
+      this.onAcceptWithDetails});
+
+  final void Function() heldAction;
+  final Widget Function(BuildContext context, List<Object?> candidateData,
+      List<dynamic> rejectedData) builder;
+  final void Function(DragTargetDetails details)? onAcceptWithDetails;
+
+  @override
+  State<HoldDragTarget> createState() => _HoldDragTargetState();
+}
+
+class _HoldDragTargetState extends State<HoldDragTarget> {
+  bool isHovering = false;
+
+  Timer? timer;
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  void setTimer() {
+    timer = Timer(
+      const Duration(milliseconds: 1000),
+      () {
+        HapticFeedback.lightImpact();
+        widget.heldAction();
+        setTimer();
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget(
+      onMove: (details) async {
+        if (timer?.isActive == true) return;
+        setTimer();
+      },
+      onLeave: (data) {
+        timer?.cancel();
+      },
+      onAcceptWithDetails: widget.onAcceptWithDetails,
+      builder: widget.builder,
+    );
+  }
+}

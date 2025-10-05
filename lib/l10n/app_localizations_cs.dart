@@ -27,6 +27,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get youHave => 'Máte';
 
   @override
+  String get missedHomeworkTitle => 'Zmeškané úkoly';
+
+  @override
   String missedHomework(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -127,6 +130,12 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get added => 'Přidáno';
+
+  @override
+  String get addedHomework => 'Úkol přidán';
+
+  @override
+  String get addedExam => 'Test přidán';
 
   @override
   String get close => 'Zavřít';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/initial_app_page.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -14,8 +13,6 @@ class StyleMotionPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showAppBorders = ref.watch(showAppBordersProvider);
-
     return SettingsScaffold(
       heroTag: 'style',
       title: context.loc.styleMotion,
@@ -27,6 +24,7 @@ class StyleMotionPage extends ConsumerWidget {
           newLineAction: const InitialAppPage(),
         ),
         SettingTile(
+          isLast: true,
           title: context.loc.styleMotionScreenSwitchAnimationTitle,
           subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
           leading: const Icon(Icons.timelapse),
@@ -39,15 +37,6 @@ class StyleMotionPage extends ConsumerWidget {
               settings.save(Setting.pageSwitchAnimationDuration, value);
             },
           ),
-        ),
-        SettingTile.withSwitch(
-          isLast: true,
-          title: context.loc.styleMotionShowBorderTitle,
-          subtitle: context.loc.styleMotionShowBorderSubtitle,
-          value: showAppBorders,
-          onChanged: (value) {
-            ref.read(showAppBordersProvider.notifier).set(value);
-          },
         ),
       ],
     );

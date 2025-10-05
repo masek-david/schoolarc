@@ -285,7 +285,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                       action: action,
                     ),
                   WideScreenBorders(
-                    show: isWide && ref.watch(showAppBordersProvider),
+                    show: isWide,
                     child: PageView(
                       key: _pageViewKey,
                       physics: const NeverScrollableScrollPhysics(),

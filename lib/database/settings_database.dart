@@ -22,7 +22,6 @@ enum Setting {
   weekStartsOnMonday,
   initialAppPage,
   pageSwitchAnimationDuration,
-  showAppOverlay,
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
   stopAskingForNotifications,
@@ -101,10 +100,6 @@ class SettingsDatabase {
     Setting.pageSwitchAnimationDuration: const SettingModel(
       key: 'pageSwitchDuration',
       defaultValue: 0.0,
-    ),
-    Setting.showAppOverlay: const SettingModel(
-      defaultValue: true,
-      key: 'showOverlay',
     ),
     Setting.tomorrowNotificationEnabled: const SettingModel(
       defaultValue: true,

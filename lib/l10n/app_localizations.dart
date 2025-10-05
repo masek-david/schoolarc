@@ -107,6 +107,12 @@ abstract class AppLocalizations {
   /// **'You have'**
   String get youHave;
 
+  /// No description provided for @missedHomeworkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed homework'**
+  String get missedHomeworkTitle;
+
   /// Label for missed homework count
   ///
   /// In en, this message translates to:
@@ -250,6 +256,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added'**
   String get added;
+
+  /// No description provided for @addedHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework added'**
+  String get addedHomework;
+
+  /// No description provided for @addedExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam added'**
+  String get addedExam;
 
   /// No description provided for @close.
   ///

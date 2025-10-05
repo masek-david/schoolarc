@@ -1,4 +1,18 @@
-## [2.1.6]() - 2025-
+## [2.1.7]() - 2025-10-
+### Added
+
+### Changed
+
+
+### Fixed
+- Improved dragging in calendar
+- Improved translations
+- Fixed dialog not closing when adding homework from Bakaláři
+- Fixed some paddings 
+
+---
+
+## [2.1.6]() - 2025-09-27
 ### Added
 
 ### Changed

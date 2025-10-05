@@ -161,15 +161,16 @@ class HomeScreen extends ConsumerWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: HomeworkList(
-                                    hwList: missedHw,
-                                    onChangedCompletion: (hw, value) =>
-                                        completeHw(context, ref, hw, value),
-                                    onDelete: (hw) => deleteHw(context, ref, hw),
-                                    onConvert: (hw) =>
-                                        convertHw(context, ref, hw),
-                                    onEdit: (hw) => editHw(context, hw),
-                                    showDates: true,
-                                    text: context.loc.missedHomework(2)),
+                                  hwList: missedHw,
+                                  onChangedCompletion: (hw, value) =>
+                                      completeHw(context, ref, hw, value),
+                                  onDelete: (hw) => deleteHw(context, ref, hw),
+                                  onConvert: (hw) =>
+                                      convertHw(context, ref, hw),
+                                  onEdit: (hw) => editHw(context, hw),
+                                  showDates: true,
+                                  text: context.loc.missedHomeworkTitle,
+                                ),
                               ),
                             ),
                           Card(
@@ -180,8 +181,8 @@ class HomeScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(8),
                               child: examsToShow.isEmpty && hwToShow.isEmpty
                                   ? EmptyMessage(
-                                      message:
-                                          context.loc.nothingPlannedFor(whenText),
+                                      message: context.loc
+                                          .nothingPlannedFor(whenText),
                                       asset: 'assets/confetti.svg',
                                     )
                                   : Column(
