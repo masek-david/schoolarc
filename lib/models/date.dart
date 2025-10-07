@@ -1,14 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/utils/globals.dart';
 
 part 'date.g.dart';
 
 // I dont extend HiveObject so Date can have const constructor
+// Maybe we dont have to save it?
 @HiveType(typeId: 100)
-class Date {
+class Date implements Comparable<Date> {
   @HiveField(0)
   final int year;
   @HiveField(1)
@@ -19,23 +18,23 @@ class Date {
   const Date(this.year, this.month, this.day);
   // TODO how to ensure that this number is valid ?
 
-  factory Date.now() {
+  factory Date.today() {
     final now = DateTime.now();
     return Date(now.year, now.month, now.day);
   }
 
-  Date.fromSavebleInt(int dateInt)
+  Date.fromPrimitiveInt(int dateInt)
       : year = dateInt ~/ 10000,
         month = (dateInt % 10000) ~/ 100,
         day = dateInt % 100;
 
-  // TODO what if its utc or local??
+  /// Just saves the date, so keeps utc/local
   Date.fromDateTime(DateTime dateTime)
       : year = dateTime.year,
         month = dateTime.month,
         day = dateTime.day;
 
-  int toSaveableInt() {
+  int toPrimitiveInt() {
     return year * 10000 + month * 100 + day;
   }
 
@@ -53,7 +52,15 @@ class Date {
 
   @override
   String toString() {
-    return '${_padToDigits(year, 4)}-${_padToDigits(month, 2)}-${_padToDigits(day, 2)}';
+    return format('yyyy-MM-dd', 'en');
+  }
+
+  /// Returns -1 if other is before this, 1 if other is after this and 0 if they are the same
+  @override
+  int compareTo(Date other) {
+    if (isBefore(other)) return -1;
+    if (isAfter(other)) return 1;
+    return 0;
   }
 
   bool isSameDay(Date other) {
@@ -110,10 +117,8 @@ class Date {
     return DateTime.utc(year, month, day);
   }
 
-  String format() {
-    return DateFormat(
-            settings.get(Setting.dateFormat), getLocale().languageCode)
-        .format(toDateTimeLocal());
+  String format(String format, String languageCode) {
+    return DateFormat(format, languageCode).format(toDateTimeLocal());
   }
 
   /// returns all days in this week
@@ -163,11 +168,31 @@ class Date {
   }
 }
 
-/// Pads a number with leading zeros to ensure it has at least [digits] digits.
-///
-/// For example, [_padToDigits(5, 3) returns '005'.
-///
-/// If the number has more digits than [digits], it returns the number as a string without truncation.
-String _padToDigits(int number, int digits) {
-  return number.toString().padLeft(digits, '0');
+class RestorableDate extends RestorableValue<Date> {
+  RestorableDate(this._defaultValue);
+
+  final Date _defaultValue;
+
+  @override
+  Date createDefaultValue() => _defaultValue;
+
+  @override
+  void didUpdateValue(Date? oldValue) {
+    if (oldValue == null || oldValue != value) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Date fromPrimitives(Object? data) {
+    if (data != null) {
+      return Date.fromPrimitiveInt(data as int);
+    }
+    return Date.today();
+  }
+
+  @override
+  Object toPrimitives() {
+    return value.toPrimitiveInt();
+  }
 }

@@ -15,12 +15,12 @@ class HomeworksDatabase {
 
   /// adds new homework and returns dbIndex of the new homework
   Future<void> addHw(String id, HomeworkEntity hw) async {
-    return Hive.box(hwBox).put(id, hw.copyWith(deadline: hw.deadline.toUtc()));
+    return Hive.box(hwBox).put(id, hw.copyWith(date: hw.date.toUtc()));
   }
 
   /// puts/replaces homework at dbIndex with new one
   Future<void> editHw(String id, HomeworkEntity hw) {
-    return Hive.box(hwBox).put(id, hw.copyWith(deadline: hw.deadline.toUtc()));
+    return Hive.box(hwBox).put(id, hw.copyWith(date: hw.date.toUtc()));
   }
 
   void deleteHw(String id) {

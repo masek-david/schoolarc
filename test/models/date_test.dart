@@ -1,14 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:schoolarc/models/date.dart';
 
 void main() {
   group('Date class', () {
     test('creates from int and converts back correctly', () {
-      final date = Date.fromSavebleInt(20250930);
+      final date = Date.fromPrimitiveInt(20250930);
       expect(date.year, 2025);
       expect(date.month, 9);
       expect(date.day, 30);
-      expect(date.toSaveableInt(), 20250930);
+      expect(date.toPrimitiveInt(), 20250930);
     });
 
     test('creates from DateTime correctly', () {
@@ -21,16 +22,36 @@ void main() {
 
     test('now() creates today’s date', () {
       final now = DateTime.now();
-      final date = Date.now();
+      final date = Date.today();
       expect(date.year, now.year);
       expect(date.month, now.month);
       expect(date.day, now.day);
     });
 
     test('toString returns formatted YYYY-MM-DD', () {
+      initializeDateFormatting('en');
+      
       final date = const Date(2025, 9, 30);
       expect(date.toString(), '2025-09-30');
     });
+
+    test(
+      'compareTo returns correct values',
+      () {
+        final a = const Date(2025, 9, 30);
+        final b = const Date(2024, 9, 30);
+        final c = const Date(2025, 9, 1);
+        final d = const Date(2025, 10, 30);
+
+        expect(a.compareTo(a), 0);
+        expect(a.compareTo(b), 1);
+        expect(a.compareTo(c), 1);
+        expect(a.compareTo(d), -1);
+
+        final list = [a, b, c, d]..sort();
+        expect(list, [b, c, a, d]);
+      },
+    );
 
     test('isSameDay, isSameMonth, isSameYear work correctly', () {
       final a = const Date(2025, 9, 30);
@@ -62,7 +83,7 @@ void main() {
 
       expect(a.isBefore(b), true);
       expect(b.isAfter(a), true);
-      expect(a.isAfter(b), false);  
+      expect(a.isAfter(b), false);
       expect(b.isBefore(a), false);
     });
 
@@ -95,6 +116,23 @@ void main() {
       expect(utc.month, date.month);
       expect(utc.day, date.day);
       expect(utc.isUtc, true);
+    });
+
+    test('format() correctly formats date for different patterns and locales',
+        () {
+      initializeDateFormatting('en');
+      initializeDateFormatting('cs');
+      final date = const Date(2025, 10, 6);
+
+      expect(date.format('yyyy-MM-dd', 'en'), '2025-10-06');
+      expect(date.format('dd/MM/yyyy', 'cs'), '06/10/2025');
+
+      // English vs Czech month names
+      final englishMonth = date.format('MMMM', 'en').toLowerCase();
+      final czechMonth = date.format('MMMM', 'cs').toLowerCase();
+
+      expect(englishMonth, 'october');
+      expect(czechMonth, 'říjen');
     });
 
     test('allDaysInThisMonth returns correct days', () {

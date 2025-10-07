@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -14,7 +15,6 @@ import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart'
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
@@ -63,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
       (element) {
         return !element.isDeleted &&
             !element.isCompleted &&
-            !element.deadline.isBeforeToday();
+            !element.date.isBefore(Date.today());
       },
     ).length;
     final exams = ref.watch(examsDatesProvider);
@@ -73,20 +73,20 @@ class HomeScreen extends ConsumerWidget {
       },
     ).length;
 
-    var dateToShow = DateTime.now();
     final defaultTimeTable = timetableDb.timeTable;
-    var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
+    var upcomingLessons = defaultTimeTable.getUpcomingLessons(DateTime.now());
 
-    bool showtomorrow = isLessonsEmpty(upcomingLessons);
+    final showtomorrow = isLessonsEmpty(upcomingLessons);
+    final dateToShow = showtomorrow ? Date.today() : Date.today().addDays(1);
+    final hwToShow = hws[dateToShow] ?? [];
+    final examsToShow = exams[dateToShow] ?? [];
+
+    // we need the time so we can show timetable for now or for tomorrow whole day
+    DateTime dateTimeToShow = DateTime.now();
     if (showtomorrow) {
-      dateToShow = DateTime.utc(dateToShow.toUtc().year,
-              dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
-          .add(const Duration(days: 1))
-          .toLocal();
+      dateTimeToShow =
+          dateToShow.toDateTimeUTC().add(const Duration(days: 1)).toLocal();
     }
-    final dateToShowOnlyDate = dateToShow.onlyDate();
-    final hwToShow = hws[dateToShowOnlyDate] ?? [];
-    final examsToShow = exams[dateToShowOnlyDate] ?? [];
 
     String whenText = showtomorrow
         ? context.loc.tomorrow.toLowerCase()
@@ -137,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           const MealsCard(),
                           TimetableCard(
-                            dateToShow: dateToShow,
+                            dateToShow: dateTimeToShow,
                             whenText: whenText,
                           ),
                         ],
@@ -150,7 +150,7 @@ class HomeScreen extends ConsumerWidget {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              dateToShow: dateToShow,
+                              dateToShow: dateTimeToShow,
                               whenText: whenText,
                             ),
                           if (missedHw.isNotEmpty)

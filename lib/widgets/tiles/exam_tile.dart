@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/subject_shortcut.dart';
 import 'package:schoolarc/widgets/tiles/tile_slidable.dart';
@@ -93,7 +93,7 @@ class ExamTile extends StatelessWidget {
                           const SizedBox(width: 8),
                           if (showDeadline)
                             Text(
-                              exam.deadline.dateText(),
+                              exam.date.formatWithText(),
                               maxLines: 2,
                               style: const TextStyle(fontSize: 12),
                             ),

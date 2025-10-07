@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -13,9 +14,9 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
   assert(arguments is Map);
   arguments as Map;
 
-  final initialDateString = arguments['date'] as String?;
+  final initialDateInt = arguments['date'] as int?;
   final initialDate =
-      initialDateString != null ? DateTime.parse(initialDateString) : null;
+      initialDateInt != null ? Date.fromPrimitiveInt(initialDateInt) : null;
 
   return ModalBottomSheetRoute(
     builder: (context) => AddTaskBottomSheet(
@@ -28,9 +29,9 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
   );
 }
 
-void addNewHw(BuildContext context, {DateTime? initialDate}) async {
+void addNewHw(BuildContext context, {Date? initialDate}) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': initialDate?.toIso8601String(),
+    'date': initialDate?.toPrimitiveInt(),
     'id': null,
     'isHomework': true,
   });
@@ -38,7 +39,7 @@ void addNewHw(BuildContext context, {DateTime? initialDate}) async {
 
 void editHw(BuildContext context, Homework hw) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': hw.deadline.toIso8601String(),
+    'date': hw.date.toPrimitiveInt(),
     'id': hw.id,
     'isHomework': true,
   });
@@ -69,9 +70,9 @@ void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   );
 }
 
-Future<void> addNewExam(BuildContext context, {DateTime? initialDate}) async {
+Future<void> addNewExam(BuildContext context, {Date? initialDate}) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': initialDate?.toIso8601String(),
+    'date': initialDate?.toPrimitiveInt(),
     'id': null,
     'isHomework': false,
   });
@@ -79,7 +80,7 @@ Future<void> addNewExam(BuildContext context, {DateTime? initialDate}) async {
 
 void editExam(BuildContext context, Exam exam) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': exam.deadline.toIso8601String(),
+    'date': exam.date.toPrimitiveInt(),
     'id': exam.id,
     'isHomework': false,
   });

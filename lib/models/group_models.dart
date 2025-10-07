@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
@@ -43,7 +44,7 @@ class GroupTask extends Task {
     required super.isDeleted,
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.description,
@@ -72,7 +73,7 @@ class GroupHomeworkData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
+        date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
         order: json['o'] ?? 0,
         isCompleted: json['c'] ?? true,
@@ -88,7 +89,7 @@ class GroupHomeworkData {
     return GroupHomework(
       subject: subject,
       text: hw.text,
-      deadline: hw.deadline,
+      date: Date.fromDateTime(hw.date.toLocal()),
       isCompleted: hw.isCompleted,
       priority: TaskPriority(hw.priority),
       id: id,
@@ -106,7 +107,7 @@ class GroupHomework extends GroupTask {
   GroupHomework({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.id,
@@ -122,7 +123,7 @@ class GroupHomework extends GroupTask {
     return Homework(
       subject: subject,
       text: text,
-      deadline: deadline,
+      date: date,
       isCompleted: isCompleted,
       priority: priority,
       id: id,
@@ -167,7 +168,7 @@ class GroupExamData {
     return GroupExam(
       subject: subject,
       text: exam.text,
-      deadline: exam.date,
+      date: Date.fromDateTime(exam.date.toLocal()),
       isCompleted: exam.date.isBeforeToday(),
       priority: TaskPriority(exam.priority),
       id: id,
@@ -185,7 +186,7 @@ class GroupExam extends GroupTask {
   GroupExam({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.id,
@@ -201,7 +202,7 @@ class GroupExam extends GroupTask {
     return Exam(
       subject: subject,
       text: text,
-      deadline: deadline,
+      date: date,
       priority: priority,
       id: id,
       isCompleted: isCompleted,

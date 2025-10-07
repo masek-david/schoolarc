@@ -97,7 +97,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       text: fields[0] as String,
       description: fields[1] == null ? '' : fields[1] as String,
       subjectId: fields[2] as String?,
-      deadline: fields[3] as DateTime,
+      date: fields[3] as DateTime,
       priority: (fields[4] as num).toInt(),
       order: (fields[5] as num).toInt(),
       isCompleted: fields[6] as bool,
@@ -118,7 +118,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       ..writeByte(2)
       ..write(obj.subjectId)
       ..writeByte(3)
-      ..write(obj.deadline)
+      ..write(obj.date)
       ..writeByte(4)
       ..write(obj.priority)
       ..writeByte(5)

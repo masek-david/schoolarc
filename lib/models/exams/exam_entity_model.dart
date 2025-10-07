@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -78,7 +79,7 @@ class ExamEntity extends HiveObject {
       subject: subject,
       text: text,
       description: description,
-      deadline: date,
+      date: Date.fromDateTime(date.toLocal()),
       priority: TaskPriority(priority),
       isCompleted: date.isBeforeToday(),
       timestamp: timestamp,

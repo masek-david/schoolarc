@@ -1,8 +1,9 @@
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -11,7 +12,7 @@ class Task {
   final String text;
   final String description;
   final Subject? subject;
-  final DateTime deadline;
+  final Date date;
   final TaskPriority priority;
   final int order;
   final bool isCompleted;
@@ -30,7 +31,7 @@ class Task {
     required this.isDeleted,
     required this.subject,
     required this.text,
-    required this.deadline,
+    required this.date,
     required this.isCompleted,
     required this.priority,
     required this.description,
@@ -39,8 +40,8 @@ class Task {
     this.stateReaddingVersion = 0,
   });
 
-  Task.empty({DateTime? deadline})
-      : deadline = deadline ?? DateTime.now(),
+  Task.empty({Date? deadline})
+      : date = deadline ?? Date.today(),
         text = '',
         isCompleted = false,
         priority = TaskPriority(0),
@@ -53,12 +54,13 @@ class Task {
         isShared = false,
         stateReaddingVersion = 0;
 
+// TODO try making it external
   HomeworkEntity toHwEntity() {
     return HomeworkEntity(
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      deadline: deadline,
+      date: date.toDateTimeUTC(),
       isCompleted: isCompleted,
       priority: priority.index,
       description: description,
@@ -73,7 +75,7 @@ class Task {
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      date: deadline,
+      date: date.toDateTimeUTC(),
       priority: priority.index,
       description: description,
       timestamp: timestamp,
@@ -87,7 +89,7 @@ class Task {
       'id': id,
       'text': text,
       'subject': subject?.shortcut ?? '',
-      'deadline': deadline.dateText(),
+      'deadline': date.formatWithText(),
       'isCompleted': isCompleted,
       'priority': priority.index,
       'hasDescription': description != '',
@@ -111,7 +113,7 @@ class Task {
   Task copyWith({
     Object? subject = noChange,
     String? text,
-    DateTime? deadline,
+    Date? date,
     bool? isCompleted,
     TaskPriority? priority,
     String? id,
@@ -125,7 +127,7 @@ class Task {
     return Task(
       subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       id: id ?? this.id,

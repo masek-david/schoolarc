@@ -1,10 +1,11 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -49,8 +50,6 @@ class _MealsCardState extends ConsumerState<MealsCard> {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }
 
-    final todayLocalDate = DateTime(now.year, now.month, now.day, 0, 0);
-
     int pagesCount = data?.keys.length ?? 1;
     if (pagesCount == 0) {
       pagesCount = 1;
@@ -70,10 +69,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                 animationDuration: Durations.medium2,
                 itemCount: pagesCount,
                 itemBuilder: (context, index) {
-                  final date = todayLocalDate
-                      .toUtc()
-                      .add(Duration(days: index))
-                      .toLocal();
+                  final date = Date.today().addDays(index);
 
                   final mealsForToday = data?[date];
                   final bool empty = mealsForToday == null;
@@ -99,8 +95,8 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 Expanded(
                                   child: Text(
                                     empty
-                                        ? '${context.loc.noMealsFor} ${date.dayOfWeekText().toLowerCase()}'
-                                        : '${context.loc.mealsFor} ${date.dayOfWeekText().toLowerCase()}',
+                                        ? '${context.loc.noMealsFor} ${date.formatWithText().toLowerCase()}'
+                                        : '${context.loc.mealsFor} ${date.formatWithText().toLowerCase()}',
                                     style: context.txt.bodyLarge,
                                   ),
                                 ),

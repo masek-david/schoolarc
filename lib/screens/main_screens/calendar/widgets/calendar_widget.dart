@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/calendar/my_calendar_builder.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/hold_drag_target.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -27,8 +29,8 @@ class CalendarWidget extends ConsumerStatefulWidget {
   final DateTime focusedDay;
   final DateTime selectedDay;
   final CalendarFormat calendarFormat;
-  final Map<DateTime, List<Exam>> exams;
-  final Map<DateTime, List<Homework>> homeworks;
+  final Map<Date, List<Exam>> exams;
+  final Map<Date, List<Homework>> homeworks;
   final void Function(DateTime date) setFocusedDay;
   final void Function(DateTime date) setSelectedDay;
   final void Function(Exam exam) onEdit;
@@ -43,31 +45,30 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   bool isHoveringRight = false;
 
   /// used for getting number of markers
-  List<Object> getEventsForDay(DateTime day) {
-    final currentExams =
-        widget.exams[DateTime(day.year, day.month, day.day)] ?? [];
+  List<Object> getEventsForDay(Date day) {
+    final currentExams = widget.exams[day] ?? [];
 
     List<Object> listOfEvents = [
-      ...widget.homeworks[DateTime(day.year, day.month, day.day)] ?? [],
+      ...widget.homeworks[day] ?? [],
       ...currentExams
     ];
     return listOfEvents;
   }
 
   int getMaxNumberOfExamsPerDay() {
-    List<DateTime> days = [];
+    List<Date> days = [];
+    bool startOnMonday = settings.get(Setting.weekStartsOnMonday);
 
     if (widget.calendarFormat.name == 'month') {
-      days = widget.focusedDay.toUtc().allDaysInMonthCalendarView();
+      days = Date.fromDateTime(widget.focusedDay).allDaysInMonthCalendarView(startOnMonday);
     } else {
-      days = widget.focusedDay.toUtc().allDaysInThisWeek();
+      days = Date.fromDateTime(widget.focusedDay).allDaysInThisWeek(startOnMonday);
     }
 
     int examsCount = 0;
 
-    for (DateTime date in days) {
-      int examsInDate =
-          widget.exams[DateTime(date.year, date.month, date.day)]?.length ?? 0;
+    for (final date in days) {
+      int examsInDate = widget.exams[date]?.length ?? 0;
 
       if (examsInDate > examsCount) {
         examsCount = examsInDate;
@@ -151,7 +152,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       tablePadding: EdgeInsets.symmetric(horizontal: 8),
                     ),
                     eventLoader: (day) {
-                      return getEventsForDay(day);
+                      return getEventsForDay(Date.fromDateTime(day.toLocal()));
                     },
                     selectedDayPredicate: (day) {
                       // Use `selectedDayPredicate` to determine which day is currently selected.

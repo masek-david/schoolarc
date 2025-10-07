@@ -8,8 +8,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/shapes_list.dart';
 import 'package:schoolarc/widgets/subject_shortcut.dart';
@@ -134,7 +135,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
 
   Widget buildTile() {
     final bool isMissed =
-        widget.hw.isCompleted == false && widget.hw.deadline.isBeforeToday();
+        widget.hw.isCompleted == false && widget.hw.date.isBefore(Date.today());
     final missedColor = isMissed
         ? Colors.red.harmonizeWith(Theme.of(context).primaryColor)
         : null;
@@ -231,7 +232,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         const SizedBox(width: 5),
                         if (widget.showDate)
                           Text(
-                            widget.hw.deadline.dateText(),
+                            widget.hw.date.formatWithText(),
                             maxLines: 2,
                             style: TextStyle(
                               color: isMissed ? missedColor : null,

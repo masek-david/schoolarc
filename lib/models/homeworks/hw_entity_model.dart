@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -9,7 +10,7 @@ class HomeworkEntity extends HiveObject {
     required this.text,
     this.description = '',
     required this.subjectId,
-    required this.deadline,
+    required this.date,
     required this.priority,
     required this.order,
     required this.isCompleted,
@@ -21,7 +22,7 @@ class HomeworkEntity extends HiveObject {
   final String text;
   final String description;
   final String? subjectId;
-  final DateTime deadline;
+  final DateTime date;
   final int priority;
   final int order;
   final bool isCompleted;
@@ -39,7 +40,7 @@ class HomeworkEntity extends HiveObject {
       'id': id,
       'text': text,
       'subjectId': subjectId,
-      'date': deadline.toUtc().toIso8601String(),
+      'date': date.toUtc().toIso8601String(),
       'priority': priority,
       'description': description,
       'order': order,
@@ -53,7 +54,7 @@ class HomeworkEntity extends HiveObject {
   HomeworkEntity copyWith({
     Object? subjectId = noChange,
     String? text,
-    DateTime? deadline,
+    DateTime? date,
     bool? isCompleted,
     int? priority,
     String? description,
@@ -65,7 +66,7 @@ class HomeworkEntity extends HiveObject {
     return HomeworkEntity(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       text: text ?? this.text,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       description: description ?? this.description,
@@ -81,7 +82,7 @@ class HomeworkEntity extends HiveObject {
       subject: subject,
       text: text,
       description: description,
-      deadline: deadline,
+      date: Date.fromDateTime(date.toLocal()),
       isCompleted: isCompleted,
       priority: TaskPriority(priority),
       id: id,

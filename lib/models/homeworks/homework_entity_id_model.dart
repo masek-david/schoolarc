@@ -3,7 +3,7 @@ import 'package:schoolarc/utils/globals.dart';
 
 class HomeworkEntityWithID extends HomeworkEntity {
   HomeworkEntityWithID({
-    required super.deadline,
+    required super.date,
     required super.text,
     required super.description,
     required super.subjectId,
@@ -21,7 +21,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
   @override
   HomeworkEntityWithID copyWith({
     String? id,
-    DateTime? deadline,
+    DateTime? date,
     String? text,
     String? description,
     Object? subjectId = noChange,
@@ -34,7 +34,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
   }) {
     return HomeworkEntityWithID(
       id: id ?? this.id,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       text: text ?? this.text,
       description: description ?? this.description,
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
@@ -53,7 +53,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       text: json['n'],
       description: json['i'] ?? '',
       subjectId: json['s'],
-      deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
+      date: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,
       order: json['o'] ?? 0,
       isCompleted: json['c'] ?? true,
@@ -68,7 +68,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       id: json['id'],
       subjectId: json['subjectId'],
       text: json['text'],
-      deadline: DateTime.parse(json['date']),
+      date: DateTime.parse(json['date']),
       priority: json['priority'],
       description: json['description'],
       order: json['order'],

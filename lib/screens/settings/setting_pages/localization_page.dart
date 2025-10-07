@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/provider/locale_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 
 class LocalizationPage extends ConsumerWidget {
   const LocalizationPage({super.key});
@@ -50,7 +51,7 @@ class LocalizationPage extends ConsumerWidget {
         ),
         SettingTile(
           title: loc.dateFormat,
-          subtitle: '${loc.today}: ${DateTime.now().format()}',
+          subtitle: '${loc.today}: ${Date.today().formatFromSettings()}',
           trailing: DropDownAction(
             value: dateFormat,
             onChanged: (value) {

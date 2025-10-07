@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -17,7 +18,6 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final hwProvider =
@@ -55,8 +55,7 @@ final hwSortedProvider = Provider<Map<int, List<Homework>>>(
   },
 );
 
-// key for each day is the utc value, with time being 0:00:00
-final hwDatesProvider = Provider<Map<DateTime, List<Homework>>>(
+final hwDatesProvider = Provider<Map<Date, List<Homework>>>(
   (ref) {
     final hws = ref.watch(hwProvider);
 
@@ -64,24 +63,20 @@ final hwDatesProvider = Provider<Map<DateTime, List<Homework>>>(
   },
 );
 
-/// key for each day is the local date value, with time being 0:00:00
-Map<DateTime, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
-  Map<DateTime, List<Homework>> hwDateMap = {};
+Map<Date, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
+  Map<Date, List<Homework>> hwDateMap = {};
 
   original.forEach(
     (dbIndex, homework) {
-      final hwDeadlineLocal = homework.deadline.toLocal();
-
-      DateTime dateNoTime = DateTime(
-          hwDeadlineLocal.year, hwDeadlineLocal.month, hwDeadlineLocal.day);
+      final date = homework.date;
 
       if (!homework.isDeleted) {
-        if (hwDateMap.containsKey(dateNoTime)) {
+        if (hwDateMap.containsKey(date)) {
           // If it exists, add the event to the existing list
-          hwDateMap[dateNoTime]!.add(homework);
+          hwDateMap[date]!.add(homework);
         } else {
           // If it does not exist, create a new list with the exam
-          hwDateMap[dateNoTime] = [homework];
+          hwDateMap[date] = [homework];
         }
       }
     },
@@ -158,7 +153,7 @@ List<Homework> hwsGetMissed(Map<String, Homework> original) {
 
   original.forEach(
     (dbIndex, hw) {
-      if (hw.deadline.isBeforeToday() &&
+      if (hw.date.isBefore(Date.today()) &&
           !hw.isDeleted &&
           (!hw.isCompleted || hw.isBeingAnimated)) {
         missedHw.add(hw);
@@ -166,7 +161,7 @@ List<Homework> hwsGetMissed(Map<String, Homework> original) {
     },
   );
 
-  missedHw.sort((a, b) => a.deadline.compareTo(b.deadline));
+  missedHw.sort((a, b) => a.date.compareTo(b.date));
   return missedHw;
 }
 

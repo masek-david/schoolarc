@@ -8,7 +8,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/shared/username_text.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
@@ -152,7 +152,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  widget.task.deadline.formatWithoutYear(),
+                  widget.task.date.formatFromSettings(),
                   style: const TextStyle(fontSize: 16),
                 ),
               ],

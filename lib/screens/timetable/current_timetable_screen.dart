@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
@@ -26,7 +27,7 @@ class _CurrentTimetableScreenState
   late Future<TimeTable> timetableFuture =
       bakaService.getCurrentTimetable(date);
   TimeTable? timetable;
-  DateTime date = DateTime.now();
+  Date date = Date.today();
 
   Future<void> refresh() async {
     setState(() {
@@ -83,28 +84,28 @@ class _CurrentTimetableScreenState
               LoadingIconButtonWithFuture(
                 icon: Icons.bug_report,
                 onTap: () async {
-                  date = DateTime(2025, 5, 27);
+                  date = const Date(2025, 5, 27);
                   return refresh();
                 },
               ),
             LoadingIconButtonWithFuture(
               icon: Icons.arrow_back,
               onTap: () async {
-                date = date.subtract(const Duration(days: 7));
+                date = date.subtractDays(7);
                 return refresh();
               },
             ),
             LoadingIconButtonWithFuture(
               icon: Icons.home,
               onTap: () async {
-                date = DateTime.now();
+                date = Date.today();
                 return refresh();
               },
             ),
             LoadingIconButtonWithFuture(
               icon: Icons.arrow_forward,
               onTap: () async {
-                date = date.add(const Duration(days: 7));
+                date = date.addDays(7);
                 return refresh();
               },
             )

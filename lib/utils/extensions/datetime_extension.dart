@@ -14,16 +14,8 @@ extension BetterDateTime on DateTime {
         localDate.day == comparedDate.day);
   }
 
-  bool isSameMonth(DateTime comparedDate) {
-    comparedDate = comparedDate.toLocal();
-
-    final localDate = toLocal();
-
-    return (localDate.year == comparedDate.year &&
-        localDate.month == comparedDate.month);
-  }
-
-  /// vrati true pokud je date vcera a drive, false pokud dnes
+  /// Returs true if this is yesterday and before, false if it's today
+  @Deprecated('Use Date instead')
   bool isBeforeToday() {
     final local = toLocal();
     DateTime now = DateTime.now();
@@ -34,17 +26,8 @@ extension BetterDateTime on DateTime {
         !dateOnlyDate.isAtSameMomentAs(nowOnlyDate);
   }
 
-  DateTime onlyDate() {
-    return DateTime(year, month, day);
-  }
-
-  DateTime toUtcOnlyDate() {
-    final dateUtc = toUtc();
-
-    return DateTime.utc(dateUtc.year, dateUtc.month, dateUtc.day);
-  }
-
   /// returns all days in this week
+  @Deprecated('Use Date instead')
   List<DateTime> allDaysInThisWeek() {
     DateTime firstDay = subtract(Duration(days: weekday - 1));
     List<DateTime> list = [];
@@ -57,6 +40,7 @@ extension BetterDateTime on DateTime {
   }
 
   ///includes whole weeks
+  @Deprecated('Use Date instead')
   List<DateTime> allDaysInMonthCalendarView() {
     List<DateTime> list = [];
     final startOnMonday = settings.get(Setting.weekStartsOnMonday);
@@ -78,17 +62,13 @@ extension BetterDateTime on DateTime {
     return list;
   }
 
-  /// returns all days in this month
-  List<DateTime> allDaysInThisMonth() {
-    List<DateTime> list = [];
-
-    int daysInMonth = DateTime(year, month + 1, 0).day;
-
-    for (int i = 1; i <= daysInMonth; i++) {
-      list.add(DateTime(year, month, i));
+  /// Returns String of Time using saved date format and using apps language
+  String formatTime() {
+    final date = toLocal();
+    if (settings.get(Setting.use24HourFormat)) {
+      return DateFormat.Hm().format(date);
     }
-
-    return list;
+    return DateFormat.jm(getLocale().languageCode).format(date);
   }
 
   /// formats using saved dateformat and using apps language
@@ -98,17 +78,9 @@ extension BetterDateTime on DateTime {
         .format(this);
   }
 
-  /// formats using saved dateformat and using apps language
-  String formatTime() {
-    final date = toLocal();
-    if (settings.get(Setting.use24HourFormat)) {
-      return DateFormat.Hm().format(date);
-    }
-    return DateFormat.jm(getLocale().languageCode).format(date);
-  }
-
   /// formats using saved dateformat and using apps language, but if the year is the
   /// same as the current, leave it
+  @Deprecated('Use Date instead')
   String formatWithoutYear() {
     String dateFormat = settings.get(Setting.dateFormat);
 
@@ -120,6 +92,7 @@ extension BetterDateTime on DateTime {
   }
 
   /// formats the date, replaces yesterday, today and tomorrow, or calls [formatWithoutYear]
+  @Deprecated('Use Date instead')
   String dateText() {
     final localDate = toLocal();
     final now = DateTime.now();
@@ -140,6 +113,7 @@ extension BetterDateTime on DateTime {
   }
 
   /// returns day of week if it is in less than 7 days, else [formatWithoutYear]
+  @Deprecated('Use Date instead')
   String dayOfWeekText() {
     final localDate = toLocal();
     final now = DateTime.now();

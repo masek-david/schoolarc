@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -7,7 +8,7 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/widgets/hold_drag_target.dart';
 import 'package:schoolarc/widgets/lists/exam_list.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
@@ -44,8 +45,8 @@ class PagesWidget extends ConsumerWidget {
   final void Function(int) onPageChanged;
   final int negativePageCount;
 
-  final Map<DateTime, List<Homework>> hwByDate;
-  final Map<DateTime, List<Exam>> examByDate;
+  final Map<Date, List<Homework>> hwByDate;
+  final Map<Date, List<Exam>> examByDate;
   final List<Homework> missedHwList;
 
   @override
@@ -59,17 +60,14 @@ class PagesWidget extends ConsumerWidget {
           controller: pageController,
           onPageChanged: onPageChanged,
           itemBuilder: (context, pageIndex) {
-            final now = DateTime.now();
-            final nowOnlyDate = DateTime(now.year, now.month, now.day);
             final daysToAdd = pageIndex - negativePageCount;
-            final date =
-                nowOnlyDate.toUtc().add(Duration(days: daysToAdd)).toLocal();
+            final date = Date.today().addDays(daysToAdd);
 
             List<Homework> hwListForDay = hwByDate[date] ?? [];
             List<Exam> examListForDay = examByDate[date] ?? [];
 
             final bool showMissed = missedHwList.isNotEmpty &&
-                !date.isBeforeToday() &&
+                !date.isBefore(Date.today()) &&
                 settingShowMissed;
 
             return HoldDragTarget(
@@ -86,10 +84,10 @@ class PagesWidget extends ConsumerWidget {
               onAcceptWithDetails: (details) async {
                 if (details.data.runtimeType == Homework) {
                   final hw = details.data as Homework;
-                  if (!hw.deadline.isSameDay(date)) {
+                  if (!hw.date.isSameDay(date)) {
                     ref.read(hwProvider.notifier).edit(
                           hw.copyWith(
-                            deadline: date.toLocal(),
+                            date: date,
                             timestamp: DateTime.now().toUtc(),
                           ),
                         );
@@ -97,10 +95,10 @@ class PagesWidget extends ConsumerWidget {
                 }
                 if (details.data.runtimeType == Exam) {
                   final exam = details.data as Exam;
-                  if (!exam.deadline.isSameDay(date)) {
+                  if (!exam.date.isSameDay(date)) {
                     ref.read(examProvider.notifier).edit(
                           exam.copyWith(
-                            deadline: date.toLocal(),
+                            date: date,
                             timestamp: DateTime.now().toUtc(),
                           ),
                         );
@@ -195,7 +193,7 @@ class PagesWidget extends ConsumerWidget {
                           child: showOverlay
                               ? Center(
                                   child: Text(
-                                    '${context.loc.changeDateTo} ${date.formatWithoutYear()}',
+                                    '${context.loc.changeDateTo} ${date.formatFromSettings()}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge

@@ -80,7 +80,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           (a is GroupHomework ? 1 : 0).compareTo(b is GroupHomework ? 1 : 0);
       if (result != 0) return result;
 
-      return a.deadline.compareTo(b.deadline);
+      return a.date.compareTo(b.date);
     });
 
     return Scaffold(

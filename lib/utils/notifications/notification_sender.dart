@@ -21,6 +21,8 @@ import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
 
+// TODO refactor - work with Date, schedule for 7 days ahead
+
 Future<void> initNotifications() async {
   final loc = getLocalization();
 
@@ -176,7 +178,7 @@ class NotificationSender {
       homeworksTextList += '$hwText$lineBreak';
     }
 
-    missedHws.sort((a, b) => a.deadline.compareTo(b.deadline));
+    missedHws.sort((a, b) => a.date.compareTo(b.date));
     for (int i = 0; i < missedHws.length; i++) {
       Homework hw = missedHws[i];
       String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();

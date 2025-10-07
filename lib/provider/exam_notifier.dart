@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
@@ -49,8 +50,7 @@ final examSortedProvider = Provider<Map<int, List<Exam>>>(
   },
 );
 
-// key for each day is the utc value, with time being 0:00:00
-final examsDatesProvider = Provider<Map<DateTime, List<Exam>>>(
+final examsDatesProvider = Provider<Map<Date, List<Exam>>>(
   (ref) {
     final exams = ref.watch(examProvider);
 
@@ -58,24 +58,20 @@ final examsDatesProvider = Provider<Map<DateTime, List<Exam>>>(
   },
 );
 
-// key for each day is the local date value, with time being 0:00:00
-Map<DateTime, List<Exam>> examsSortByDate(Map<String, Exam> original) {
-  Map<DateTime, List<Exam>> examsDateMap = {};
+Map<Date, List<Exam>> examsSortByDate(Map<String, Exam> original) {
+  Map<Date, List<Exam>> examsDateMap = {};
 
   original.forEach(
     (dbIndex, exam) {
-      final examDeadlineLocal = exam.deadline.toLocal();
-
-      DateTime dateNoTime = DateTime(examDeadlineLocal.year,
-          examDeadlineLocal.month, examDeadlineLocal.day);
+      final date = exam.date;
 
       if (!exam.isDeleted) {
-        if (examsDateMap.containsKey(dateNoTime)) {
+        if (examsDateMap.containsKey(date)) {
           // If it exists, add the event to the existing list
-          examsDateMap[dateNoTime]!.add(exam);
+          examsDateMap[date]!.add(exam);
         } else {
           // If it does not exist, create a new list with the exam
-          examsDateMap[dateNoTime] = [exam];
+          examsDateMap[date] = [exam];
         }
       }
     },
@@ -197,7 +193,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     state.forEach(
       (key, value) {
         if (!value.isCompleted && !value.isDeleted) {
-          if (value.deadline.isBeforeToday()) {
+          if (value.date.isBefore(Date.today())) {
             updated[key] = value.copyWith(isCompleted: true);
           }
         }
@@ -304,7 +300,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     final old = _dbState[editedExam.id]!;
 
     editedExam = editedExam.copyWith(
-      isCompleted: editedExam.deadline.isBeforeToday(),
+      isCompleted: editedExam.date.isBefore(Date.today()),
     );
 
     // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort

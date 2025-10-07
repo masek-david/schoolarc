@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -11,7 +12,7 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/calendar_widget.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/pages_widget.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
@@ -122,8 +123,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
 
   Widget buildCalendar(
     bool isWide,
-    Map<DateTime, List<Homework>> hws,
-    Map<DateTime, List<Exam>> exams,
+    Map<Date, List<Homework>> hws,
+    Map<Date, List<Exam>> exams,
   ) {
     return CalendarWidget(
       focusedDay: _focusedDay.value,
@@ -147,8 +148,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
   }
 
   Widget buildPages(
-    Map<DateTime, List<Homework>> hws,
-    Map<DateTime, List<Exam>> exams,
+    Map<Date, List<Homework>> hws,
+    Map<Date, List<Exam>> exams,
     List<Homework> missedHw,
   ) {
     return PagesWidget(
@@ -207,12 +208,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       child: Actions(
         actions: {
           NewHomeworkIntent: CallbackAction(
-            onInvoke: (intent) =>
-                addNewHw(context, initialDate: _selectedDay.value),
+            onInvoke: (intent) => addNewHw(context,
+                initialDate: Date.fromDateTime(_selectedDay.value.toLocal())),
           ),
           NewExamIntent: CallbackAction(
-            onInvoke: (intent) =>
-                addNewExam(context, initialDate: _selectedDay.value),
+            onInvoke: (intent) => addNewExam(context,
+                initialDate: Date.fromDateTime(_selectedDay.value.toLocal())),
           ),
         },
         child: Focus(
@@ -228,15 +229,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                   WebRequestFocus(
                     onPressed: () async {
                       HapticFeedback.mediumImpact();
-                      addNewExam(context, initialDate: _selectedDay.value);
+                      addNewExam(context,
+                          initialDate:
+                              Date.fromDateTime(_selectedDay.value.toLocal()));
                     },
                     child: FloatingActionButton.extended(
                       tooltip:
-                          '${context.loc.addNewExamFor} ${_selectedDay.value.dateText().toLowerCase()}',
+                          '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText().toLowerCase()}',
                       heroTag: 'exam_btn',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
-                        addNewExam(context, initialDate: _selectedDay.value);
+                        addNewExam(context,
+                            initialDate: Date.fromDateTime(
+                                _selectedDay.value.toLocal()));
                       },
                       icon: const Icon(Icons.add),
                       label: Text(context.loc.exams(1)),
@@ -246,15 +251,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                   WebRequestFocus(
                     onPressed: () async {
                       HapticFeedback.mediumImpact();
-                      addNewHw(context, initialDate: _selectedDay.value);
+                      addNewHw(context,
+                          initialDate:
+                              Date.fromDateTime(_selectedDay.value.toLocal()));
                     },
                     child: FloatingActionButton.extended(
                       tooltip:
-                          '${context.loc.addNewHomeworkFor} ${_selectedDay.value.dateText().toLowerCase()}',
+                          '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText().toLowerCase()}',
                       heroTag: 'homework_btn',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
-                        addNewHw(context, initialDate: _selectedDay.value);
+                        addNewHw(context,
+                            initialDate: Date.fromDateTime(
+                                _selectedDay.value.toLocal()));
                       },
                       icon: const Icon(Icons.add),
                       label: Text(context.loc.homework(1)),
@@ -273,14 +282,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             initialRatios = [0.5, 0.5];
                           }
                         }
-            
+
                         return ResizableContainer(
                           controller: _resizeController,
                           direction: Axis.horizontal,
                           children: [
                             ResizableChild(
-                              size:
-                                  ResizableSize.ratio(initialRatios[0], min: 300),
+                              size: ResizableSize.ratio(initialRatios[0],
+                                  min: 300),
                               // size: const ResizableSize.expand(min: 300),
                               divider: const ResizableDivider(
                                 thickness: 4,
@@ -294,8 +303,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             ),
                             ResizableChild(
                               // size: const ResizableSize.expand(min: 300),
-                              size:
-                                  ResizableSize.ratio(initialRatios[1], min: 300),
+                              size: ResizableSize.ratio(initialRatios[1],
+                                  min: 300),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),

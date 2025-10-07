@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -8,7 +9,7 @@ class Exam extends Task {
   Exam({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.priority,
     required super.id,
     required super.isCompleted,
@@ -25,7 +26,7 @@ class Exam extends Task {
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      date: deadline,
+      date: date.toDateTimeUTC(),
       priority: priority.index,
       description: description,
       timestamp: timestamp,
@@ -44,7 +45,8 @@ class Exam extends Task {
       'n': text,
       if (description != '') 'i': description,
       if (subject != null) 's': subject?.id,
-      'd': deadline.millisecondsSinceEpoch,
+      // TODO
+      'd': date.toDateTimeUTC().millisecondsSinceEpoch,
       if (priority.index != 0) 'p': priority.index,
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
@@ -57,7 +59,7 @@ class Exam extends Task {
   Exam copyWith({
     Object? subject = noChange,
     String? text,
-    DateTime? deadline,
+    Date? date,
     bool? isCompleted,
     TaskPriority? priority,
     String? id,
@@ -71,7 +73,7 @@ class Exam extends Task {
     return Exam(
       subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       id: id ?? this.id,

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
@@ -137,11 +137,10 @@ class TimetableView extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(DateFormat(
-                                            'EEE', getLocale().languageCode)
-                                        .format(date)
+                                    Text(date
+                                        .format('EEE', getLocale().languageCode)
                                         .capitalize()),
-                                    Text(date.toLocal().formatWithoutYear()),
+                                    Text(date.formatFromSettings()),
                                   ],
                                 ),
                               );
@@ -156,7 +155,7 @@ class TimetableView extends StatelessWidget {
 
                             if (isHighlighted &&
                                 date != null &&
-                                !date.isSameDay(DateTime.now())) {
+                                !date.isSameDay(Date.today())) {
                               isHighlighted = false;
                             }
 
