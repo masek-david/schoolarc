@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/reschedule_drag_target.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';

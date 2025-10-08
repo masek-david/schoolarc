@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';

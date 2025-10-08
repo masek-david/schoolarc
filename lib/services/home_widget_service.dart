@@ -11,11 +11,12 @@ import 'package:home_widget/home_widget.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_options.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -35,18 +36,18 @@ void updateHwWidget(List<Homework> hws) {
   );
 }
 
-void updateStravaWidget(Map<DateTime, List<Meal>> meals) {
+void updateStravaWidget(Map<Date, List<Meal>> meals) {
   if (kIsWeb || !Platform.isAndroid) return;
   Map<String, dynamic> json = {};
-  final now = DateTime.now();
+  final today = Date.today();
 
   meals.forEach(
     (key, value) {
       // if it is after meal time, dont include meal for today
-      if (!key.isSameDay(now) ||
-          TimeOfDay.fromDateTime(now)
+      if (!key.isSameDay(today) ||
+          TimeOfDay.fromDateTime(DateTime.now())
               .isBefore(settings.get(Setting.mealsShowTodayUntil))) {
-        json[key.dayOfWeekText()] = value
+        json[key.formatWithText()] = value
             .map(
               (e) => e.toJson(),
             )

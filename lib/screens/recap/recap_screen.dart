@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/recap/count_page.dart';

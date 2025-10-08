@@ -14,7 +14,7 @@ import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/timetable_change.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';

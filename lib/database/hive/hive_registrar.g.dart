@@ -4,7 +4,7 @@
 
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_adapters.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';

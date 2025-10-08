@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';

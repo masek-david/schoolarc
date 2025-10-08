@@ -1,4 +1,4 @@
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';

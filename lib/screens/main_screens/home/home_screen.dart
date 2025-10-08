@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';

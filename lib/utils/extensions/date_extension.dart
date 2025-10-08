@@ -1,6 +1,6 @@
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 /// Knows about app settings and locale

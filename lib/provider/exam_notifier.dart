@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';

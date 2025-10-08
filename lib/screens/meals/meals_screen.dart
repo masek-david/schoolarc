@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

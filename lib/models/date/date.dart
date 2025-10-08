@@ -7,7 +7,7 @@ part 'date.g.dart';
 // I dont extend HiveObject so Date can have const constructor
 // Maybe we dont have to save it?
 @HiveType(typeId: 100)
-class Date implements Comparable<Date> {
+class Date implements Comparable<Date>  {
   @HiveField(0)
   final int year;
   @HiveField(1)

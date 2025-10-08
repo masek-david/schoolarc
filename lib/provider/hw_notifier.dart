@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';

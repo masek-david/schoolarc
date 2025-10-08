@@ -8,7 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/date.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
