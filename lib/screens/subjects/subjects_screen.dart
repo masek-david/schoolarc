@@ -56,7 +56,6 @@ class SubjectsScreen extends ConsumerWidget {
           timestamp: DateTime.now(),
           isDeleted: false,
           order: 0,
-          isShared: false,
         ),
       ),
     );

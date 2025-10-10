@@ -27,13 +27,11 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
       TextEditingController(text: widget.initial.name);
   late final TextEditingController shortcutController =
       TextEditingController(text: widget.initial.shortcut);
-  late bool isShared = widget.initial.isShared;
 
   void onSave() {
     final edited = widget.initial.copyWith(
       name: nameController.text,
       shortcut: shortcutController.text,
-      isShared: isShared,
       timestamp: DateTime.now(),
     );
 
@@ -97,14 +95,6 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
                 labelText: loc.shortcutMax5Chars,
               ),
             ),
-            // SettingTile.withCheckbox(
-            //   contentPadding: const EdgeInsets.all(0),
-            //   title: 'Share',
-            //   value: isShared,
-            //   onChanged: (value) => setState(() {
-            //     isShared = value;
-            //   }),
-            // ),
             if (widget.usedTimes != null)
               Text(
                 loc.subjectUsedTimes(widget.usedTimes!),

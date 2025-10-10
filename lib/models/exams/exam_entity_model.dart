@@ -15,7 +15,6 @@ class ExamEntity extends HiveObject {
     required this.priority,
     required this.timestamp,
     required this.order,
-    this.isShared = false,
   });
 
   final String? subjectId;
@@ -26,7 +25,6 @@ class ExamEntity extends HiveObject {
   final DateTime timestamp;
   final bool isDeleted;
   final int order;
-  final bool isShared;
 
   @override
   String toString() {
@@ -43,7 +41,6 @@ class ExamEntity extends HiveObject {
       'id': id,
       'order': order,
       'isDeleted': isDeleted,
-      'isShared': isShared,
       'timestamp':timestamp.toUtc().toIso8601String(),
     };
   }
@@ -57,7 +54,6 @@ class ExamEntity extends HiveObject {
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
-    bool? isShared,
   }) {
     return ExamEntity(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
@@ -68,7 +64,6 @@ class ExamEntity extends HiveObject {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
     );
   }
 
@@ -84,7 +79,6 @@ class ExamEntity extends HiveObject {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }

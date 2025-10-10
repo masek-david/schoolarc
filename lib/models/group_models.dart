@@ -48,7 +48,6 @@ class GroupTask extends Task {
     required super.priority,
     required super.description,
     required super.order,
-    required super.isShared,
     required this.member,
   });
 
@@ -100,7 +99,6 @@ class GroupHomeworkData {
       timestamp: hw.timestamp,
       isDeleted: hw.isDeleted,
       order: hw.order,
-      isShared: hw.isShared,
       member: member,
     );
   }
@@ -118,7 +116,6 @@ class GroupHomework extends GroupTask {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     required super.member,
   });
 
@@ -134,7 +131,6 @@ class GroupHomework extends GroupTask {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }
@@ -181,7 +177,6 @@ class GroupExamData {
       timestamp: exam.timestamp,
       isDeleted: exam.isDeleted,
       order: exam.order,
-      isShared: exam.isShared,
       member: member,
     );
   }
@@ -199,7 +194,6 @@ class GroupExam extends GroupTask {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     required super.member,
   });
 
@@ -215,7 +209,6 @@ class GroupExam extends GroupTask {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }

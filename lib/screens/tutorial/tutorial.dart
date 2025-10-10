@@ -25,7 +25,6 @@ Subject exampleSubject(AppLocalizations loc) => Subject(
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 Homework exampleHw(AppLocalizations loc) => Homework(
       subject: exampleSubject(loc),
@@ -38,7 +37,6 @@ Homework exampleHw(AppLocalizations loc) => Homework(
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 Exam exampleExam(AppLocalizations loc) => Exam(
       subject: exampleSubject(loc),
@@ -51,7 +49,6 @@ Exam exampleExam(AppLocalizations loc) => Exam(
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 
 class Tutorial extends StatefulWidget {

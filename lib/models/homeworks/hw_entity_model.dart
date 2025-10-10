@@ -16,7 +16,6 @@ class HomeworkEntity extends HiveObject {
     required this.isCompleted,
     required this.isDeleted,
     required this.timestamp,
-    this.isShared = false,
   });
 
   final String text;
@@ -28,7 +27,6 @@ class HomeworkEntity extends HiveObject {
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
-  final bool isShared;
 
   @override
   String toString() {
@@ -46,7 +44,6 @@ class HomeworkEntity extends HiveObject {
       'order': order,
       'isDeleted': isDeleted,
       'isCompleted': isCompleted,
-      'isShared': isShared,
       'timestamp': timestamp.toUtc().toIso8601String(),
     };
   }
@@ -61,7 +58,6 @@ class HomeworkEntity extends HiveObject {
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
-    bool? isShared,
   }) {
     return HomeworkEntity(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
@@ -73,7 +69,6 @@ class HomeworkEntity extends HiveObject {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
     );
   }
 
@@ -89,7 +84,6 @@ class HomeworkEntity extends HiveObject {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 
-class FirebaseSharingService {
+class FirebaseGroupService {
   final _db = FirebaseDatabase.instance;
 
   Future<Group> getGroup() async {

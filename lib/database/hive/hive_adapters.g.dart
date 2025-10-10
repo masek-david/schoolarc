@@ -114,14 +114,13 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       isCompleted: fields[6] as bool,
       isDeleted: fields[7] as bool,
       timestamp: fields[8] as DateTime,
-      isShared: fields[9] == null ? false : fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HomeworkEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.text)
       ..writeByte(1)
@@ -139,9 +138,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       ..writeByte(7)
       ..write(obj.isDeleted)
       ..writeByte(8)
-      ..write(obj.timestamp)
-      ..writeByte(9)
-      ..write(obj.isShared);
+      ..write(obj.timestamp);
   }
 
   @override
@@ -185,14 +182,13 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,
       order: (fields[7] as num).toInt(),
-      isShared: fields[8] == null ? false : fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, ExamEntity obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.subjectId)
       ..writeByte(1)
@@ -208,9 +204,7 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
       ..writeByte(6)
       ..write(obj.isDeleted)
       ..writeByte(7)
-      ..write(obj.order)
-      ..writeByte(8)
-      ..write(obj.isShared);
+      ..write(obj.order);
   }
 
   @override
@@ -241,14 +235,13 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
       shortcut: fields[1] as String,
       bakaId: fields[2] as String?,
       order: (fields[5] as num).toInt(),
-      isShared: fields[6] == null ? false : fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SubjectEntity obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -260,9 +253,7 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
       ..writeByte(4)
       ..write(obj.isDeleted)
       ..writeByte(5)
-      ..write(obj.order)
-      ..writeByte(6)
-      ..write(obj.isShared);
+      ..write(obj.order);
   }
 
   @override

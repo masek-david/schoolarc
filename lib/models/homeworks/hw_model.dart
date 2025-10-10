@@ -17,7 +17,6 @@ class Homework extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     super.stateReaddingVersion = 0,
     this.isBeingAnimated = false,
   });
@@ -35,7 +34,6 @@ class Homework extends Task {
       description: description,
       timestamp: timestamp,
       order: order,
-      isShared: isShared,
     );
   }
 
@@ -56,7 +54,6 @@ class Homework extends Task {
       if (!isCompleted) 'c': isCompleted,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
-      if (isShared) 'sh': isShared,
     };
   }
 
@@ -73,7 +70,6 @@ class Homework extends Task {
     DateTime? timestamp,
     bool? isDeleted,
     int? order,
-    bool? isShared,
     bool? isBeingAnimated,
     int? stateReaddingVersion,
   }) {
@@ -88,7 +84,6 @@ class Homework extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
       isBeingAnimated: isBeingAnimated ?? this.isBeingAnimated,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );

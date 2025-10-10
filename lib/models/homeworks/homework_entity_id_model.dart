@@ -13,7 +13,6 @@ class HomeworkEntityWithID extends HomeworkEntity {
     required super.isCompleted,
     required super.isDeleted,
     required super.timestamp,
-    required super.isShared,
     required this.id,
   });
 
@@ -31,7 +30,6 @@ class HomeworkEntityWithID extends HomeworkEntity {
     bool? isCompleted,
     bool? isDeleted,
     DateTime? timestamp,
-    bool? isShared,
   }) {
     return HomeworkEntityWithID(
       id: id ?? this.id,
@@ -44,7 +42,6 @@ class HomeworkEntityWithID extends HomeworkEntity {
       isCompleted: isCompleted ?? this.isCompleted,
       isDeleted: isDeleted ?? this.isDeleted,
       timestamp: timestamp ?? this.timestamp,
-      isShared: isShared ?? this.isShared,
     );
   }
 
@@ -62,7 +59,6 @@ class HomeworkEntityWithID extends HomeworkEntity {
       isCompleted: json['c'] ?? true,
       isDeleted: json['del'] ?? false,
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
-      isShared: json['sh'] ?? false,
     );
   }
 
@@ -77,7 +73,6 @@ class HomeworkEntityWithID extends HomeworkEntity {
       order: json['order'],
       isDeleted: json['isDeleted'],
       isCompleted: json['isCompleted'],
-      isShared: json['isShared'] ?? false,
       timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
     );
   }

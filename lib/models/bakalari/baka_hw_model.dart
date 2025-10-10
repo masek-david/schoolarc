@@ -20,7 +20,6 @@ class BakaHomework extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     super.stateReaddingVersion,
   });
 
@@ -40,7 +39,6 @@ class BakaHomework extends Task {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 
@@ -61,7 +59,6 @@ class BakaHomework extends Task {
     bool? alreadyAdded,
     bool? alreadySeen,
     String? bakaId,
-    bool? isShared,
   }) {
     return BakaHomework(
       isCompleted: isCompleted ?? this.isCompleted,
@@ -77,7 +74,6 @@ class BakaHomework extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }

@@ -199,8 +199,9 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(borderRadius - padding),
-                            color:
-                                Theme.of(context).colorScheme.secondaryContainer,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                           ),
                           child: SubjectShortcut(subject: widget.hw.subject),
                         ),
@@ -208,14 +209,14 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.hw.isShared)
-                              Icon(
-                                Icons.share,
-                                size: 16,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                              ),
+                            // if (widget.hw.isShared)
+                            //   Icon(
+                            //     Icons.share,
+                            //     size: 16,
+                            //     color: Theme.of(context)
+                            //         .colorScheme
+                            //         .onSurfaceVariant,
+                            //   ),
                             if (widget.hw.description != '')
                               Icon(
                                 Icons.notes,
@@ -226,7 +227,8 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                               ),
                           ],
                         ),
-                        if (widget.hw.description != '' || widget.hw.isShared)
+                        // if (widget.hw.description != '' || widget.hw.isShared)
+                        if (widget.hw.description != '')
                           const SizedBox(width: 8),
                         Expanded(child: Text(widget.hw.text, maxLines: 2)),
                         const SizedBox(width: 5),
@@ -252,7 +254,8 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                                     ? (value) {}
                                     : (value) {
                                         HapticFeedback.vibrate();
-                                        if (widget.onChangedCompletion != null) {
+                                        if (widget.onChangedCompletion !=
+                                            null) {
                                           widget.onChangedCompletion!(value);
                                         }
                                         animate(value);

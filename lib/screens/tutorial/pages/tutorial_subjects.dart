@@ -25,7 +25,6 @@ class _TutorialSubjectsState extends State<TutorialSubjects> {
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     ),
     Subject(
       name: context.loc.exampleSubjectName3,
@@ -35,7 +34,6 @@ class _TutorialSubjectsState extends State<TutorialSubjects> {
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     ),
   ];
   late var sub = exampleSubject(context.loc);

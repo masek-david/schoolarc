@@ -11,7 +11,6 @@ class Subject {
     required this.timestamp,
     required this.isDeleted,
     required this.order,
-    required this.isShared,
   });
 
   final String name;
@@ -21,7 +20,6 @@ class Subject {
   final DateTime timestamp;
   final bool isDeleted;
   final int order;
-  final bool isShared;
 
   SubjectEntity convert() {
     return SubjectEntity(
@@ -31,7 +29,6 @@ class Subject {
       isDeleted: isDeleted,
       timestamp: timestamp,
       order: order,
-      isShared: isShared,
     );
   }
 
@@ -61,7 +58,6 @@ class Subject {
       'id': id,
       'order': order,
       'isDeleted': isDeleted,
-      'isShared': isShared,
       'timestamp': timestamp.toUtc().toIso8601String(),
     };
   }
@@ -74,7 +70,6 @@ class Subject {
       bakaId: json['bakaId'],
       order: json['order'],
       isDeleted: json['isDeleted'],
-      isShared: json['isShared'] ?? false,
       timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
     );
   }
@@ -87,7 +82,6 @@ class Subject {
       if (order != 0) 'o': order,
       if (isDeleted) 'del': isDeleted,
       't': timestamp.millisecondsSinceEpoch,
-      if (isShared) 'sh': isShared,
     };
   }
 
@@ -98,7 +92,6 @@ class Subject {
         bakaId = json['b'],
         order = json['o'] ?? 0,
         isDeleted = json['del'] ?? false,
-        isShared = json['sh'] ?? false,
         timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
 
   bool get isFromBakalari {
@@ -113,7 +106,6 @@ class Subject {
     Object? bakaId = noChange,
     DateTime? timestamp,
     int? order,
-    bool? isShared,
   }) {
     return Subject(
       name: name ?? this.name,
@@ -123,7 +115,6 @@ class Subject {
       bakaId: bakaId == noChange ? this.bakaId : bakaId as String?,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
     );
   }
 }

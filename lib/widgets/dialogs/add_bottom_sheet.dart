@@ -22,7 +22,6 @@ import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
-import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -61,7 +60,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       RestorableStringN(initialTask.subject?.id);
   late RestorableDate pickedDate = RestorableDate(initialTask.date);
   late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
-  late RestorableBool share = RestorableBool(initialTask.isShared);
+  late RestorableBool group = RestorableBool(false);
   late RestorableBool dateIsAutoSet = RestorableBool(false);
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
@@ -80,7 +79,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       date: pickedDate.value,
       priority: TaskPriority(pickedPriority.value),
       timestamp: DateTime.now().toUtc(),
-      isShared: share.value,
     );
 
     if (widget.isHomework) {
@@ -192,7 +190,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     registerForRestoration(pickedSubjectId, 'pickedSubject');
     registerForRestoration(pickedPriority, 'pickedPriority');
     registerForRestoration(dateIsAutoSet, 'dateIsAutoSet');
-    registerForRestoration(share, 'share');
+    registerForRestoration(group, 'share');
   }
 
   @override
@@ -255,17 +253,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     onSelected: setSubject,
                     keys: keysList,
                   ),
-                  if (share.value &&
-                      subjects
-                              .where((element) =>
-                                  element.id == pickedSubjectId.value)
-                              .firstOrNull
-                              ?.isShared ==
-                          false)
-                    ErrorTile(
-                      error: null,
-                      text: context.loc.subjectIsntShared,
-                    ),
                   const SizedBox(height: 10),
                   Autocomplete<Subject>(
                     fieldViewBuilder: (context, textEditingController,

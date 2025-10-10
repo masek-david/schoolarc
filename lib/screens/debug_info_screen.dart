@@ -162,10 +162,6 @@ class DbInfoScreen extends ConsumerWidget {
                       width: 20,
                       child: item.isDeleted ? const Icon(Icons.delete) : null,
                     ),
-                    SizedBox(
-                      width: 20,
-                      child: item.isShared ? const Icon(Icons.share) : null,
-                    ),
                   ],
                 ),
               );
@@ -208,10 +204,6 @@ class DbInfoScreen extends ConsumerWidget {
                     SizedBox(
                       width: 20,
                       child: item.isDeleted ? const Icon(Icons.delete) : null,
-                    ),
-                    SizedBox(
-                      width: 20,
-                      child: item.isShared ? const Icon(Icons.share) : null,
                     ),
                     SizedBox(
                       width: 20,
@@ -261,9 +253,8 @@ class DbInfoScreen extends ConsumerWidget {
                         width: 20,
                         child: item.isDeleted ? const Icon(Icons.delete) : null,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
-                        child: item.isShared ? const Icon(Icons.share) : null,
                       ),
                     ],
                   ),
