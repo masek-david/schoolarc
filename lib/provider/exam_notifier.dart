@@ -12,7 +12,6 @@ import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final examProvider =
@@ -268,7 +267,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
             !element.isCompleted)
         .firstOrNull;
 
-    if (!exam.isDeleted && exam.date.isBeforeToday()) {
+    if (!exam.isDeleted && exam.date.isBefore(Date.today())) {
       if (examWithSameOrder != null && !addToEnd) {
         if (exam.timestamp.millisecondsSinceEpoch <
             examWithSameOrder.timestamp.millisecondsSinceEpoch) {

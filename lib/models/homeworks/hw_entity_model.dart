@@ -22,7 +22,7 @@ class HomeworkEntity extends HiveObject {
   final String text;
   final String description;
   final String? subjectId;
-  final DateTime date;
+  final Date date;
   final int priority;
   final int order;
   final bool isCompleted;
@@ -40,7 +40,7 @@ class HomeworkEntity extends HiveObject {
       'id': id,
       'text': text,
       'subjectId': subjectId,
-      'date': date.toUtc().toIso8601String(),
+      'date': date.toString(),
       'priority': priority,
       'description': description,
       'order': order,
@@ -54,7 +54,7 @@ class HomeworkEntity extends HiveObject {
   HomeworkEntity copyWith({
     Object? subjectId = noChange,
     String? text,
-    DateTime? date,
+    Date? date,
     bool? isCompleted,
     int? priority,
     String? description,
@@ -82,7 +82,7 @@ class HomeworkEntity extends HiveObject {
       subject: subject,
       text: text,
       description: description,
-      date: Date.fromDateTime(date.toLocal()),
+      date: date,
       isCompleted: isCompleted,
       priority: TaskPriority(priority),
       id: id,

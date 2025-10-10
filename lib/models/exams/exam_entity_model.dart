@@ -3,7 +3,6 @@ import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class ExamEntity extends HiveObject {
@@ -21,7 +20,7 @@ class ExamEntity extends HiveObject {
 
   final String? subjectId;
   final String text;
-  final DateTime date;
+  final Date date;
   final int priority;
   final String description;
   final DateTime timestamp;
@@ -38,7 +37,7 @@ class ExamEntity extends HiveObject {
     return {
       'text': text,
       'subjectId': subjectId,
-      'date': date.toUtc().toIso8601String(),
+      'date': date.toString(),
       'priority': priority,
       'description': description,
       'id': id,
@@ -52,7 +51,7 @@ class ExamEntity extends HiveObject {
   ExamEntity copyWith({
     Object? subjectId = noChange,
     String? text,
-    DateTime? date,
+    Date? date,
     int? priority,
     String? description,
     DateTime? timestamp,
@@ -79,9 +78,9 @@ class ExamEntity extends HiveObject {
       subject: subject,
       text: text,
       description: description,
-      date: Date.fromDateTime(date.toLocal()),
+      date: date,
       priority: TaskPriority(priority),
-      isCompleted: date.isBeforeToday(),
+      isCompleted: date.isBefore(Date.today()),
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,

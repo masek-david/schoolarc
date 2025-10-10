@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 
 class ExamEntityWithID extends ExamEntity {
@@ -22,7 +23,9 @@ class ExamEntityWithID extends ExamEntity {
       text: json['n'],
       description: json['i'] ?? '',
       subjectId: json['s'],
-      date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+      // TODO fire
+      date: Date.today(),
+      // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,
       order: json['o'] ?? 0,
       isDeleted: json['del'] ?? false,
@@ -36,7 +39,7 @@ class ExamEntityWithID extends ExamEntity {
       id: json['id'],
       subjectId: json['subjectId'],
       text: json['text'],
-      date: DateTime.parse(json['date']),
+      date: Date.fromDateTime(DateTime.parse(json['date']).toLocal()),
       priority: json['priority'],
       description: json['description'],
       order: json['order'],

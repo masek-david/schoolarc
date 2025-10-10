@@ -93,11 +93,22 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
+    // Manual date migration code beginning
+    final date = fields[3];
+    Date finalDate;
+    if (date is DateTime) {
+      finalDate = Date.fromDateTime(date.toLocal());
+    } else {
+      finalDate = date as Date;
+    }
+    // Manual date migration code end
+
     return HomeworkEntity(
       text: fields[0] as String,
       description: fields[1] == null ? '' : fields[1] as String,
       subjectId: fields[2] as String?,
-      date: fields[3] as DateTime,
+      date: finalDate,
       priority: (fields[4] as num).toInt(),
       order: (fields[5] as num).toInt(),
       isCompleted: fields[6] as bool,
@@ -154,12 +165,23 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
+    // Manual date migration code beginning
+    final date = fields[2];
+    Date finalDate;
+    if (date is DateTime) {
+      finalDate = Date.fromDateTime(date.toLocal());
+    } else {
+      finalDate = date as Date;
+    }
+    // Manual date migration code end
+
     return ExamEntity(
       isDeleted: fields[6] as bool,
       subjectId: fields[0] as String?,
       text: fields[1] as String,
       description: fields[4] == null ? '' : fields[4] as String,
-      date: fields[2] as DateTime,
+      date: finalDate,
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,
       order: (fields[7] as num).toInt(),

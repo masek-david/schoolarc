@@ -136,10 +136,13 @@ class SettingTile extends StatelessWidget {
   }
 
   Text buildText(BuildContext context) {
+    final color = titleColor ?? context.col.onSurface;
+
     return Text(
       title,
-      style: context.txt.bodyMedium!
-          .copyWithNunito(weight: 700, color: titleColor),
+      style: context.txt.bodyMedium!.copyWithNunito(
+          weight: enabled ? 700 : 400,
+          color: color.withAlpha(enabled ? 255 : 80)),
     );
   }
 

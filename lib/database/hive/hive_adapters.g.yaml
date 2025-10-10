@@ -23,7 +23,7 @@ types:
         index: 2
   HomeworkEntity:
     typeId: 9
-    nextIndex: 10
+    nextIndex: 12
     fields:
       text:
         index: 0
@@ -31,8 +31,6 @@ types:
         index: 1
       subjectId:
         index: 2
-      deadline:
-        index: 3
       priority:
         index: 4
       order:
@@ -45,6 +43,10 @@ types:
         index: 8
       isShared:
         index: 9
+      dateOld:
+        index: 10
+      date:
+        index: 11
   ExamEntity:
     typeId: 10
     nextIndex: 9

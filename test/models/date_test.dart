@@ -30,9 +30,10 @@ void main() {
 
     test('toString returns formatted YYYY-MM-DD', () {
       initializeDateFormatting('en');
-      
+
       final date = const Date(2025, 9, 30);
       expect(date.toString(), '2025-09-30');
+      expect(DateTime.parse(date.toString()), DateTime(2025, 9, 30));
     });
 
     test(
@@ -92,6 +93,17 @@ void main() {
       expect(date.addDays(1).day, 1);
       expect(date.addDays(1).month, 10);
       expect(date.subtractDays(1).day, 29);
+    });
+
+    test('Date.difference returns correct day difference', () {
+      final a = const Date(2025, 10, 10);
+      final b = const Date(2025, 10, 9);
+      final c = const Date(2025, 10, 5);
+
+      expect(a.difference(a), 0);
+      expect(a.difference(b), 1);
+      expect(b.difference(a), -1);
+      expect(a.difference(c), 5);
     });
 
     test('weekday returns correct value', () {

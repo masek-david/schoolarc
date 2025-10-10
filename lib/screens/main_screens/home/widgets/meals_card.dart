@@ -6,6 +6,7 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -95,8 +96,18 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 Expanded(
                                   child: Text(
                                     empty
-                                        ? '${context.loc.noMealsFor} ${date.formatWithText().toLowerCase()}'
-                                        : '${context.loc.mealsFor} ${date.formatWithText().toLowerCase()}',
+                                        ? context.loc
+                                            .noMealsOn(date
+                                                .formatWithWeekday(
+                                                    useOnFormat: true)
+                                                .unCapitalize())
+                                            .capitalize()
+                                        : context.loc
+                                            .mealsOn(date
+                                                .formatWithWeekday(
+                                                    useOnFormat: true)
+                                                .unCapitalize())
+                                            .capitalize(),
                                     style: context.txt.bodyLarge,
                                   ),
                                 ),

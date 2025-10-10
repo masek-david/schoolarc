@@ -29,7 +29,7 @@ class Homework extends Task {
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      date: date.toDateTimeUTC(),
+      date: date,
       isCompleted: isCompleted,
       priority: priority.index,
       description: description,
@@ -49,7 +49,7 @@ class Homework extends Task {
       'n': text,
       if (description != '') 'i': description,
       if (subject != null) 's': subject?.id,
-      // TODO
+      // TODO fire
       'd': date.toDateTimeUTC().millisecondsSinceEpoch,
       if (priority.index != 0) 'p': priority.index,
       if (order != 0) 'o': order,

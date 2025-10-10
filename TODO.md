@@ -1,8 +1,10 @@
 # FIX
-notifications are set only for this day
+homescreen doesnt show correct meals page
+remove isShared
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
 errors messages for export/import
+merge sorts into one
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -47,6 +49,7 @@ errors messages for export/import
 - ⬜ ? use expressive progress
 
 ## OTHER
+- ✅ save only date for deadlines
 - ⬜ sync everything (hws, exams, subjects) properly
 - ⬜ add google sign in + sign in with apple
 - ⬜ ? refactor to use date instead of datetime
@@ -56,7 +59,6 @@ errors messages for export/import
     - ⬜ date
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
-- ⬜ save only date for deadlines
 - ⬜ translation - google sheets
 
 ## SHARING

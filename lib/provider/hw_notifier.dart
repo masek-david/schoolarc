@@ -148,12 +148,15 @@ final hwDeletedProvider = Provider<List<Homework>>(
   },
 );
 
-List<Homework> hwsGetMissed(Map<String, Homework> original) {
+/// Returns homework that isnt completed and should be completed before [missedBy]
+/// 
+/// [missedBy] is defaultly today
+List<Homework> hwsGetMissed(Map<String, Homework> original, {Date? missedBy}) {
   List<Homework> missedHw = [];
 
   original.forEach(
     (dbIndex, hw) {
-      if (hw.date.isBefore(Date.today()) &&
+      if (hw.date.isBefore(missedBy ?? Date.today()) &&
           !hw.isDeleted &&
           (!hw.isCompleted || hw.isBeingAnimated)) {
         missedHw.add(hw);

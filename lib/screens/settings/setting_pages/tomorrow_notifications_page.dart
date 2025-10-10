@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
@@ -17,6 +20,7 @@ class TomorrowNotificationsPage extends StatefulWidget {
 class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   bool? areNotificationsAllowed;
   bool enabled = settings.get(Setting.tomorrowNotificationEnabled);
+  bool beforeWeekend = settings.get(Setting.tomorrowNotificationBeforeWeekend);
   TimeOfDay time = settings.get(Setting.tomorrowNotificationTime);
 
   @override
@@ -56,6 +60,8 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
           areNotificationsAllowed = true;
         });
       }
+    } else{
+      NotificationSender.cancelByChannelKey(tomorrowChannel);
     }
   }
 
@@ -65,8 +71,16 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
-        NotificationSender.scheduletomorrowNotification(
-          showSnackbar: (text) => showMessage(context, text),
+        NotificationSender.scheduleUpcomingDayNotifications(
+          firstUpcoming: (date, time) {
+            showMessage(
+              context,
+              loc.nextNotificationInfo(
+                date.formatWithWeekday(useOnFormat: true).unCapitalize(),
+                time.format(context),
+              ),
+            );
+          },
         );
       },
       child: SettingsScaffold(
@@ -75,7 +89,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
         children: [
           if (areNotificationsAllowed == false)
             Container(
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 16, top: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: Theme.of(context).colorScheme.errorContainer,
@@ -118,15 +132,6 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             padding: const EdgeInsets.all(16),
             child: Text(loc.upcomingDayNotificationsDescription),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              'Notification will be received only if you open the app that day.',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-          ),
           SettingTile.withTimePicker(
             isFirst: true,
             title: loc.arrivalTimeTitle,
@@ -139,12 +144,31 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
               });
             },
           ),
+          SettingTile.withSwitch(
+            title: loc.upcomingDayNotificationsReceiveBeforeWeekend,
+            subtitle: loc.upcomingDayNotificationsReceiveBeforeWeekendSubtitle,
+            value: beforeWeekend,
+            onChanged: (value) {
+              settings.save(Setting.tomorrowNotificationBeforeWeekend, value);
+              setState(() {
+                beforeWeekend = value;
+              });
+            },
+          ),
+          if (kDebugMode)
+            SettingTile(
+              title: 'Debug new scheduling',
+              onTap: (context) {
+                NotificationSender.scheduleUpcomingDayNotifications();
+              },
+            ),
           SettingTile(
             isLast: true,
             title: loc.sendNotificationNow,
             enabled: areNotificationsAllowed == true,
-            onTap: (context) => NotificationSender.scheduletomorrowNotification(
-              scheduled: false,
+            onTap: (context) =>
+                NotificationSender.scheduleUpcomingDayNotifications(
+              sendNow: true,
             ),
           ),
         ],

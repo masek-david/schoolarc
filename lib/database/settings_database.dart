@@ -24,6 +24,7 @@ enum Setting {
   pageSwitchAnimationDuration,
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
+  tomorrowNotificationBeforeWeekend,
   stopAskingForNotifications,
   stopPwaCloudSyncWarning,
   themeMode,
@@ -108,6 +109,10 @@ class SettingsDatabase {
     Setting.tomorrowNotificationTime: const SettingModel(
       defaultValue: TimeOfDay(hour: 18, minute: 00),
       key: 'tomorrowNotificationTimeOfDay',
+    ),
+    Setting.tomorrowNotificationBeforeWeekend: const SettingModel(
+      defaultValue: false,
+      key: 'tomorrowNotificationBeforeWeekend',
     ),
     Setting.stopAskingForNotifications: const SettingModel(
       defaultValue: null,

@@ -118,7 +118,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   }
 
   void pickDate({bool keyboard = false}) async {
-    // TODO test
     final initial = pickedDate.value.toDateTimeLocal();
     DateTime? newDate;
     if (keyboard) {

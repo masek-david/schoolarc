@@ -1,3 +1,13 @@
+## [2.2.0]() - 2025-
+### Added
+
+### Changed
+
+### Fixed
+- Fixed notifications - now will arrive up to a week after last open of the app
+
+---
+
 ## [2.1.7]() - 2025-10-
 ### Added
 

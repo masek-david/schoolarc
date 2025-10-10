@@ -7,7 +7,7 @@ part 'date.g.dart';
 // I dont extend HiveObject so Date can have const constructor
 // Maybe we dont have to save it?
 @HiveType(typeId: 100)
-class Date implements Comparable<Date>  {
+class Date implements Comparable<Date> {
   @HiveField(0)
   final int year;
   @HiveField(1)
@@ -15,8 +15,8 @@ class Date implements Comparable<Date>  {
   @HiveField(2)
   final int day;
 
+  /// You must assign valid numbers here, there is no check if the new Date will be valid
   const Date(this.year, this.month, this.day);
-  // TODO how to ensure that this number is valid ?
 
   factory Date.today() {
     final now = DateTime.now();
@@ -103,6 +103,11 @@ class Date implements Comparable<Date>  {
   Date subtractDays(int daysToSubtract) {
     final dateTime = toDateTimeUTC().subtract(Duration(days: daysToSubtract));
     return Date(dateTime.year, dateTime.month, dateTime.day);
+  }
+
+  /// Returns number of days between this and [other]
+  int difference(Date other) {
+    return toDateTimeUTC().difference(other.toDateTimeUTC()).inDays;
   }
 
   int get weekday {

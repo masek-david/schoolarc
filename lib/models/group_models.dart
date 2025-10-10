@@ -6,7 +6,6 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
 class Member {
   Member(
@@ -73,7 +72,9 @@ class GroupHomeworkData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+        // TODO fire
+        date: Date.today(),
+        // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
         order: json['o'] ?? 0,
         isCompleted: json['c'] ?? true,
@@ -89,7 +90,9 @@ class GroupHomeworkData {
     return GroupHomework(
       subject: subject,
       text: hw.text,
-      date: Date.fromDateTime(hw.date.toLocal()),
+      // TODO fire
+      // date: Date.fromDateTime(hw.date.toLocal()),
+      date: Date.today(),
       isCompleted: hw.isCompleted,
       priority: TaskPriority(hw.priority),
       id: id,
@@ -153,7 +156,9 @@ class GroupExamData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+        // TODO fire
+        date: Date.today(),
+        // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
         order: json['o'] ?? 0,
         isDeleted: json['del'] ?? false,
@@ -168,8 +173,8 @@ class GroupExamData {
     return GroupExam(
       subject: subject,
       text: exam.text,
-      date: Date.fromDateTime(exam.date.toLocal()),
-      isCompleted: exam.date.isBeforeToday(),
+      date: exam.date,
+      isCompleted: exam.date.isBefore(Date.today()),
       priority: TaskPriority(exam.priority),
       id: id,
       description: exam.description,

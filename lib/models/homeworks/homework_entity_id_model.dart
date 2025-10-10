@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -21,7 +22,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
   @override
   HomeworkEntityWithID copyWith({
     String? id,
-    DateTime? date,
+    Date? date,
     String? text,
     String? description,
     Object? subjectId = noChange,
@@ -53,7 +54,9 @@ class HomeworkEntityWithID extends HomeworkEntity {
       text: json['n'],
       description: json['i'] ?? '',
       subjectId: json['s'],
-      date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+      // TODO fire
+      date: Date.today(),
+      // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
       priority: json['p'] ?? 0,
       order: json['o'] ?? 0,
       isCompleted: json['c'] ?? true,
@@ -68,7 +71,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
       id: json['id'],
       subjectId: json['subjectId'],
       text: json['text'],
-      date: DateTime.parse(json['date']),
+      date: Date.fromDateTime(DateTime.parse(json['date']).toLocal()),
       priority: json['priority'],
       description: json['description'],
       order: json['order'],

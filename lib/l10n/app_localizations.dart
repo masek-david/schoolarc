@@ -1025,17 +1025,17 @@ abstract class AppLocalizations {
   /// **'No meals found'**
   String get noMealsFound;
 
-  /// No description provided for @noMealsFor.
+  /// No description provided for @noMealsOn.
   ///
   /// In en, this message translates to:
-  /// **'No meals for'**
-  String get noMealsFor;
+  /// **'No meals {date}'**
+  String noMealsOn(Object date);
 
-  /// No description provided for @mealsFor.
+  /// No description provided for @mealsOn.
   ///
   /// In en, this message translates to:
-  /// **'Meals for'**
-  String get mealsFor;
+  /// **'Meals {date}'**
+  String mealsOn(Object date);
 
   /// No description provided for @lessons.
   ///
@@ -1240,6 +1240,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Receive notifications with homework and exams for the next day'**
   String get upcomingDayNotificationsDescription;
+
+  /// No description provided for @upcomingDayNotificationsReceiveBeforeWeekend.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications before weekend'**
+  String get upcomingDayNotificationsReceiveBeforeWeekend;
+
+  /// No description provided for @upcomingDayNotificationsReceiveBeforeWeekendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, you will receive notifications even on Friday and Saturday'**
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle;
+
+  /// No description provided for @onWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'On {weekday, select, 1{Monday} 2{Tuesday} 3{Wednesday} 4{Thursday} 5{Friday} 6{Saturday} 7{Sunday} other{unknown}}'**
+  String onWeekday(String weekday);
 
   /// No description provided for @arrivalTimeTitle.
   ///

@@ -16,12 +16,12 @@ class ExamDatabase {
 
   /// adds new Exam
   Future<void> addExam(String id, ExamEntity exam) async {
-    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
+    return _examBox.put(id, exam);
   }
 
   /// puts/replaces Exam at dbIndex with new one
   Future<void> editExam(String id, ExamEntity exam) {
-    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
+    return _examBox.put(id, exam);
   }
 
   void delete(String id) {

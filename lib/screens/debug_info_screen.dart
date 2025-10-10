@@ -6,7 +6,6 @@ import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
@@ -28,7 +27,9 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
-            const Text(bool.fromEnvironment('dart.tool.dart2wasm') ? 'Running in wasm' : 'Not running in wasm'),
+            const Text(bool.fromEnvironment('dart.tool.dart2wasm')
+                ? 'Running in wasm'
+                : 'Not running in wasm'),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
@@ -198,18 +199,6 @@ class DbInfoScreen extends ConsumerWidget {
                           Text(item.text),
                           Text(
                             item.date.toString(),
-                            style:
-                                TextStyle(color: getSubtleTextColor(context)),
-                          ),
-                          Text(
-                            // load
-                            Date.fromDateTime(item.date.toLocal()).toString(),
-                            style:
-                                TextStyle(color: getSubtleTextColor(context)),
-                          ),
-                          Text(
-                            // save
-                            Date.fromDateTime(item.date.toLocal()).toDateTimeUTC().toString(),
                             style:
                                 TextStyle(color: getSubtleTextColor(context)),
                           ),

@@ -76,7 +76,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
     updateHwWidget(ref.read(hwWidgetProvider));
-    NotificationSender.scheduletomorrowNotification();
+    NotificationSender.scheduleUpcomingDayNotifications();
 
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
