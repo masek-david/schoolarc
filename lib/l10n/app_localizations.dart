@@ -341,6 +341,12 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendar;
 
+  /// No description provided for @personal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal'**
+  String get personal;
+
   /// No description provided for @exams.
   ///
   /// In en, this message translates to:

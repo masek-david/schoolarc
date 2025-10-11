@@ -174,6 +174,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get calendar => 'Kalendář';
 
   @override
+  String get personal => 'Osobní';
+
+  @override
   String exams(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

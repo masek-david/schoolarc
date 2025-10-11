@@ -80,6 +80,7 @@
   "description": "Description",
   "home": "Home",
   "calendar": "Calendar",
+  "personal": "Personal",
   "exams": "{count, plural, one{Exam} other{Exams}}",
   "addNewExam": "Add new exam",
   "addNewExamFor": "Add new exam for",

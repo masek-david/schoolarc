@@ -13,7 +13,6 @@ import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
-import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class _AnimatedReorderableListItem {
   _AnimatedReorderableListItem({this.hw, this.priority}) {
@@ -70,21 +69,21 @@ class HomeworksScreen extends ConsumerWidget {
       context: context,
       removeBottom: true,
       child: Scaffold(
-        floatingActionButton: WebRequestFocus(
-          onPressed: () async {
-            HapticFeedback.mediumImpact();
-            addNewHw(context);
-          },
-          child: FloatingActionButton(
-            tooltip: context.loc.addNewHomework,
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              addNewHw(context);
-            },
-            enableFeedback: true,
-            child: const Icon(Icons.add),
-          ),
-        ),
+        // floatingActionButton: WebRequestFocus(
+        //   onPressed: () async {
+        //     HapticFeedback.mediumImpact();
+        //     addNewHw(context);
+        //   },
+        //   child: FloatingActionButton(
+        //     tooltip: context.loc.addNewHomework,
+        //     onPressed: () async {
+        //       HapticFeedback.mediumImpact();
+        //       addNewHw(context);
+        //     },
+        //     enableFeedback: true,
+        //     child: const Icon(Icons.add),
+        //   ),
+        // ),
         body: Theme(
           data: Theme.of(context).copyWith(
             listTileTheme: ListTileTheme.of(context).copyWith(

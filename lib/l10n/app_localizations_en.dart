@@ -168,6 +168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendar => 'Calendar';
 
   @override
+  String get personal => 'Personal';
+
+  @override
   String exams(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

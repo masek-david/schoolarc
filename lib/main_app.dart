@@ -13,10 +13,10 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
-import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
-import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
+import 'package:schoolarc/screens/personal_screen.dart';
+import 'package:schoolarc/screens/shared/group_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
@@ -50,10 +50,7 @@ class MainApp extends ConsumerStatefulWidget {
 }
 
 class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
-  late final _pageController =
-      PageController(initialPage: currentPageIndex.value);
   late final AppLifecycleListener appStateListener;
-  final Key _pageViewKey = GlobalKey();
 
   late RestorableInt currentPageIndex =
       RestorableInt(settings.get(Setting.initialAppPage));
@@ -93,33 +90,15 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   }
 
   void switchPage({required int newScreenIndex}) {
-    double pageDiff =
-        ((_pageController.page ?? 0) - newScreenIndex.toDouble()).abs();
-
-    late final pageSwitchAnimationDuration = Duration(
-      milliseconds:
-          (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt(),
-    );
-
-    if (pageSwitchAnimationDuration.inMilliseconds == 0 || pageDiff == 0.0) {
-      _pageController.jumpToPage(newScreenIndex);
-    } else {
-      _pageController.animateToPage(
-        newScreenIndex,
-        curve: Curves.easeInOut,
-        duration: pageSwitchAnimationDuration * pageDiff,
-      );
-    }
+    setState(() {
+      currentPageIndex.value = newScreenIndex;
+    });
 
     // try refreshing data for homescreen
     if (newScreenIndex == 0) {
       ref.read(currentTimetableProvider.notifier).refreshIfOld();
       ref.read(stravaMealsProvider.notifier).refreshIfOld();
     }
-
-    setState(() {
-      currentPageIndex.value = newScreenIndex;
-    });
   }
 
   @override
@@ -211,7 +190,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   @override
   void dispose() {
     currentPageIndex.dispose();
-    _pageController.dispose();
     appStateListener.dispose();
     super.dispose();
   }
@@ -261,6 +239,15 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       _ => null,
     };
 
+    final Widget screen = switch (currentPageIndex.value) {
+      0 => const HomeScreen(),
+      1 => const CalendarScreen(),
+      2 => const PersonalScreen(),
+      _ => const GroupScreen(),
+    };
+    final miliseconds =
+        (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt();
+
     return Stack(
       children: [
         MyShortcuts(
@@ -286,16 +273,23 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                     ),
                   WideScreenBorders(
                     show: isWide,
-                    child: PageView(
-                      key: _pageViewKey,
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _pageController,
-                      children: const [
-                        HomeScreen(),
-                        CalendarScreen(),
-                        HomeworksScreen(),
-                        ExamsScreen(),
-                      ],
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: miliseconds),
+                      switchInCurve: Curves.easeOutSine,
+                      transitionBuilder: (child, animation) {
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  top: (animation.value - 1) * -50),
+                              child: child,
+                            );
+                          },
+                          child: child,
+                        );
+                      },
+                      child: screen,
                     ),
                   ),
                 ],

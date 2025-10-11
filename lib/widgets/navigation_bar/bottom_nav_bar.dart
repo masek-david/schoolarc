@@ -5,7 +5,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
     super.key,
-    this.pageIndex = 0,
+    required this.pageIndex,
     required this.onTap,
   });
 
@@ -32,14 +32,14 @@ class BottomNavBar extends StatelessWidget {
           label: context.loc.calendar,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.home_work_outlined),
-          selectedIcon: const Icon(Icons.home_work),
-          label: context.loc.homework(2),
+          icon: const Icon(Icons.person_outlined),
+          selectedIcon: const Icon(Icons.person),
+          label: context.loc.personal,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.description_outlined),
-          selectedIcon: const Icon(Icons.description),
-          label: context.loc.exams(2),
+          icon: const Icon(Icons.group_outlined),
+          selectedIcon: const Icon(Icons.group),
+          label: context.loc.group,
         ),
       ],
     );

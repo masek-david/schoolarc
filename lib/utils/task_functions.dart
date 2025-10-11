@@ -29,7 +29,8 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
   );
 }
 
-void addNewHw(BuildContext context, {Date? initialDate}) async {
+// TODO it doesnt return future
+Future<void> addNewHw(BuildContext context, {Date? initialDate}) async {
   Navigator.restorablePush(context, bottomSheetRoute, arguments: {
     'date': initialDate?.toPrimitiveInt(),
     'id': null,

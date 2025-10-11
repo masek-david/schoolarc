@@ -80,6 +80,7 @@
   "description": "Popis",
   "home": "Domů",
   "calendar": "Kalendář",
+  "personal": "Osobní",
   "exams": "{count, plural, one{Test} few{Testy} other{Testů}}",
   "addNewExam": "Přidat nový test",
   "addNewExamFor": "Přidat nový test na",
