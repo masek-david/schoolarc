@@ -1,10 +1,15 @@
+# 2.2.0
+refactor Task to have subject id, not subject??
+refactor order to be fractional indexing
+
+
 # FIX
 homescreen doesnt show correct meals page
-remove isShared
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge
 errors messages for export/import
 merge sorts into one
+
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -60,6 +65,7 @@ merge sorts into one
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
 - ⬜ translation - google sheets
+- ⬜ rework exceptions - string should be just shown in ui, not from service
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)

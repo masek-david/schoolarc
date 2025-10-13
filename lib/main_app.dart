@@ -13,10 +13,10 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
+import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
-import 'package:schoolarc/screens/personal_screen.dart';
-import 'package:schoolarc/screens/shared/group_screen.dart';
+import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
@@ -242,8 +242,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     final Widget screen = switch (currentPageIndex.value) {
       0 => const HomeScreen(),
       1 => const CalendarScreen(),
-      2 => const PersonalScreen(),
-      _ => const GroupScreen(),
+      2 => const HomeworksScreen(),
+      _ => const ExamsScreen(),
     };
     final miliseconds =
         (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt();

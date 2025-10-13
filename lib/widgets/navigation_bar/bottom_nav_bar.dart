@@ -32,14 +32,14 @@ class BottomNavBar extends StatelessWidget {
           label: context.loc.calendar,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.person_outlined),
-          selectedIcon: const Icon(Icons.person),
-          label: context.loc.personal,
+          icon: const Icon(Icons.home_work_outlined),
+          selectedIcon: const Icon(Icons.home_work),
+          label: context.loc.homework(2),
         ),
         NavigationDestination(
-          icon: const Icon(Icons.group_outlined),
-          selectedIcon: const Icon(Icons.group),
-          label: context.loc.group,
+          icon: const Icon(Icons.description_outlined),
+          selectedIcon: const Icon(Icons.description),
+          label: context.loc.exams(2),
         ),
       ],
     );

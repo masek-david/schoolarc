@@ -149,7 +149,7 @@ final hwDeletedProvider = Provider<List<Homework>>(
 );
 
 /// Returns homework that isnt completed and should be completed before [missedBy]
-/// 
+///
 /// [missedBy] is defaultly today
 List<Homework> hwsGetMissed(Map<String, Homework> original, {Date? missedBy}) {
   List<Homework> missedHw = [];
@@ -166,6 +166,14 @@ List<Homework> hwsGetMissed(Map<String, Homework> original, {Date? missedBy}) {
 
   missedHw.sort((a, b) => a.date.compareTo(b.date));
   return missedHw;
+}
+
+double getMiddleIndex(double first, double second) {
+  return smaller(first, second) + (first - second).abs() / 2;
+}
+
+double smaller(double first, double second) {
+  return first < second ? first : second;
 }
 
 class HwNotifier extends Notifier<Map<String, Homework>>
