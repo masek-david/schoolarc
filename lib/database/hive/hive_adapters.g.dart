@@ -110,7 +110,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       subjectId: fields[2] as String?,
       date: finalDate,
       priority: (fields[4] as num).toInt(),
-      order: (fields[5] as num).toInt(),
+      order: (fields[5] as num).toDouble(),
       isCompleted: fields[6] as bool,
       isDeleted: fields[7] as bool,
       timestamp: fields[8] as DateTime,
@@ -181,7 +181,7 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
       date: finalDate,
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,
-      order: (fields[7] as num).toInt(),
+      order: (fields[7] as num).toDouble(),
     );
   }
 
@@ -234,7 +234,7 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
       name: fields[0] as String,
       shortcut: fields[1] as String,
       bakaId: fields[2] as String?,
-      order: (fields[5] as num).toInt(),
+      order: (fields[5] as num).toDouble(),
     );
   }
 

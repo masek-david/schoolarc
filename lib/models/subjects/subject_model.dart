@@ -19,7 +19,7 @@ class Subject {
   final String? bakaId;
   final DateTime timestamp;
   final bool isDeleted;
-  final int order;
+  final double order;
 
   SubjectEntity convert() {
     return SubjectEntity(
@@ -105,7 +105,7 @@ class Subject {
     bool? isDeleted,
     Object? bakaId = noChange,
     DateTime? timestamp,
-    int? order,
+    double? order,
   }) {
     return Subject(
       name: name ?? this.name,

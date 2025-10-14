@@ -244,15 +244,17 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      exam = exam.copyWith(
-          order: _dbState.values
-              .where(
-                (element) =>
-                    !element.isDeleted &&
-                    !element.isCompleted &&
-                    element.priority.index == exam.priority,
-              )
-              .length);
+      final list = _dbState.values
+          .where(
+            (element) =>
+                !element.isDeleted &&
+                !element.isCompleted &&
+                element.priority.index == exam.priority,
+          )
+          .toList();
+      list.sort((a, b) => a.order.compareTo(b.order));
+
+      exam = exam.copyWith(order: list.last.order.ceil() + 1);
     }
 
     final id = overrideId ?? uuid.v4();
@@ -260,29 +262,29 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     final originalState = _dbState;
     await examsDb.addExam(id, exam);
 
-    final Exam? examWithSameOrder = originalState.values
-        .where((element) =>
-            element.order == exam.order &&
-            !element.isDeleted &&
-            !element.isCompleted)
-        .firstOrNull;
+    // final Exam? examWithSameOrder = originalState.values
+    //     .where((element) =>
+    //         element.order == exam.order &&
+    //         !element.isDeleted &&
+    //         !element.isCompleted)
+    //     .firstOrNull;
 
-    if (!exam.isDeleted && exam.date.isBefore(Date.today())) {
-      if (examWithSameOrder != null && !addToEnd) {
-        if (exam.timestamp.millisecondsSinceEpoch <
-            examWithSameOrder.timestamp.millisecondsSinceEpoch) {
-          // if the new one is older, add it after the old one
-          exam = exam.copyWith(order: exam.order + 1);
-          examsDb.editExam(id, exam);
-          // if the new one is newer, add it before old
-        }
-        reorder(
-          exam.order,
-          exam.priority,
-          exam.convert(id, subjects[exam.subjectId]),
-        );
-      }
-    }
+    // if (!exam.isDeleted && exam.date.isBefore(Date.today())) {
+    //   if (examWithSameOrder != null && !addToEnd) {
+    //     if (exam.timestamp.millisecondsSinceEpoch <
+    //         examWithSameOrder.timestamp.millisecondsSinceEpoch) {
+    //       // if the new one is older, add it after the old one
+    //       exam = exam.copyWith(order: exam.order + 1);
+    //       examsDb.editExam(id, exam);
+    //       // if the new one is newer, add it before old
+    //     }
+    //     reorder(
+    //       exam.order,
+    //       exam.priority,
+    //       exam.convert(id, subjects[exam.subjectId]),
+    //     );
+    //   }
+    // }
 
     state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
     if (addToFire) {
@@ -295,50 +297,50 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   /// assign timestamp manually, if no id, it will add it as now
-  void edit(Exam editedExam, {bool syncWithFire = true}) async {
+  Future<void> edit(Exam editedExam, {bool syncWithFire = true}) async {
     final old = _dbState[editedExam.id]!;
 
     editedExam = editedExam.copyWith(
       isCompleted: editedExam.date.isBefore(Date.today()),
     );
 
-    // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
-    if (!((editedExam.isDeleted && old.isDeleted) ||
-        (editedExam.isCompleted && old.isCompleted))) {
-      // if now is deleted or now is completed (should hide)
-      if ((editedExam.isDeleted && !old.isDeleted) ||
-          (editedExam.isCompleted && !old.isCompleted)) {
-        reorder(
-          null,
-          null,
-          old,
-        );
-      }
-      // if now isnt deleted or now isnt completed (should appear)
-      if ((!editedExam.isDeleted && old.isDeleted) ||
-          (!editedExam.isCompleted && old.isCompleted)) {
-        reorder(
-          editedExam.order,
-          editedExam.priority.index,
-          editedExam,
-        );
-      }
+    // // if it wasnt and isnt in the sorted view (if it is and was deleted or is and was completed), dont sort
+    // if (!((editedExam.isDeleted && old.isDeleted) ||
+    //     (editedExam.isCompleted && old.isCompleted))) {
+    //   // if now is deleted or now is completed (should hide)
+    //   if ((editedExam.isDeleted && !old.isDeleted) ||
+    //       (editedExam.isCompleted && !old.isCompleted)) {
+    //     reorder(
+    //       null,
+    //       null,
+    //       old,
+    //     );
+    //   }
+    //   // if now isnt deleted or now isnt completed (should appear)
+    //   if ((!editedExam.isDeleted && old.isDeleted) ||
+    //       (!editedExam.isCompleted && old.isCompleted)) {
+    //     reorder(
+    //       editedExam.order,
+    //       editedExam.priority.index,
+    //       editedExam,
+    //     );
+    //   }
 
-      // if order has been changed
-      if (old.order != editedExam.order ||
-          old.priority.index != editedExam.priority.index) {
-        await reorder(
-          editedExam.order,
-          editedExam.priority.index,
-          old,
-        );
-      }
-    }
+    //   // if order has been changed
+    //   if (old.order != editedExam.order ||
+    //       old.priority.index != editedExam.priority.index) {
+    //     await reorder(
+    //       editedExam.order,
+    //       editedExam.priority.index,
+    //       old,
+    //     );
+    //   }
+    // }
 
-    examsDb.editExam(editedExam.id, editedExam.convert());
+    await examsDb.editExam(editedExam.id, editedExam.convert());
 
     if (syncWithFire) {
-      ref.read(firebaseServiceProvider).editExams([editedExam]);
+      await ref.read(firebaseServiceProvider).editExams([editedExam]);
     }
 
     state = {...state, editedExam.id: editedExam};
@@ -350,15 +352,11 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   ///
   /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from the UI
   Future<void> reorder(
-    int? newIndex,
-    int? newPriority,
-    final Exam originalExam, {
-    bool addTimestamp = false,
-  }) async {
-    // both must be null or both mustnt be null
-    assert((newIndex == null) == (newPriority == null));
-
-    var oldPriorityList = _dbState.values
+    final Exam originalExam,
+    int newIndex,
+    int newPriority,
+  ) async {
+    final list = _dbState.values
         .where(
           (element) =>
               !element.isDeleted &&
@@ -366,74 +364,103 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
               element.priority.index == originalExam.priority.index,
         )
         .toList();
-    var newPriorityList = _dbState.values
-        .where(
-          (element) =>
-              !element.isDeleted &&
-              !element.isCompleted &&
-              element.priority.index == newPriority,
-        )
-        .toList();
+    list.sort((a, b) => a.order.compareTo(b.order));
 
-    oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
-    newPriorityList.sort((a, b) => a.order.compareTo(b.order));
-
-    // if you can remove it from somewhere
-    oldPriorityList.removeWhere((element) => element.id == originalExam.id);
-    // if you arent changing priority, you need to remove it from the [newPriorityList] too
-    newPriorityList.removeWhere((element) => element.id == originalExam.id);
-
-    Exam newExam = originalExam;
-    if (addTimestamp) {
-      newExam = newExam.copyWith(timestamp: DateTime.now().toUtc());
-    }
-
-    // if you want to add it somewhere
-    if (newIndex != null && newPriority != null) {
-      // change the task's priority
-      newExam = newExam.copyWith(priority: TaskPriority(newPriority));
-      // add it to list of [newPriority], at [newIndex]
-      newPriorityList.insert(
-          newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
-          newExam);
-    }
-
-    // now the lists are final, its just about saving all exams with changed values
-
-    final editedExams = <String, Exam>{};
-
-    // if priority has changed, check old list too
-    if (originalExam.priority.index != newPriority) {
-      for (int i = 0; i < oldPriorityList.length; i++) {
-        final edited = oldPriorityList[i].copyWith(order: i);
-        final oldExam = _dbState[edited.id];
-
-        if (edited.order != oldExam?.order) {
-          editedExams[edited.id] = edited;
-        }
-      }
-    }
-    for (int i = 0; i < newPriorityList.length; i++) {
-      final edited = newPriorityList[i].copyWith(order: i);
-      final oldExam = _dbState[edited.id];
-
-      if (edited.order != oldExam?.order ||
-          edited.priority.index != oldExam?.priority.index) {
-        editedExams[edited.id] = edited;
-      }
-    }
-
-    editedExams.forEach(
-      (key, value) async {
-        examsDb.editExam(key, value.convert());
-      },
-    );
-
-    ref.read(firebaseServiceProvider).editExams(editedExams.values.toList());
-
-    state = {...state, ...editedExams};
-    return;
+    await edit(originalExam.copyWith(
+      timestamp: DateTime.now(),
+      priority: TaskPriority(newPriority),
+      order: getMiddleIndex(
+        list.elementAtOrNull(newIndex - 1)?.order ?? 0,
+        list.elementAtOrNull(newIndex)?.order ?? list.last.order.ceilToDouble(),
+      ),
+    ));
   }
+
+  // Future<void> reorder(
+  //   int? newIndex,
+  //   int? newPriority,
+  //   final Exam originalExam, {
+  //   bool addTimestamp = false,
+  // }) async {
+  //   // both must be null or both mustnt be null
+  //   assert((newIndex == null) == (newPriority == null));
+
+  //   var oldPriorityList = _dbState.values
+  //       .where(
+  //         (element) =>
+  //             !element.isDeleted &&
+  //             !element.isCompleted &&
+  //             element.priority.index == originalExam.priority.index,
+  //       )
+  //       .toList();
+  //   var newPriorityList = _dbState.values
+  //       .where(
+  //         (element) =>
+  //             !element.isDeleted &&
+  //             !element.isCompleted &&
+  //             element.priority.index == newPriority,
+  //       )
+  //       .toList();
+
+  //   oldPriorityList.sort((a, b) => a.order.compareTo(b.order));
+  //   newPriorityList.sort((a, b) => a.order.compareTo(b.order));
+
+  //   // if you can remove it from somewhere
+  //   oldPriorityList.removeWhere((element) => element.id == originalExam.id);
+  //   // if you arent changing priority, you need to remove it from the [newPriorityList] too
+  //   newPriorityList.removeWhere((element) => element.id == originalExam.id);
+
+  //   Exam newExam = originalExam;
+  //   if (addTimestamp) {
+  //     newExam = newExam.copyWith(timestamp: DateTime.now().toUtc());
+  //   }
+
+  //   // if you want to add it somewhere
+  //   if (newIndex != null && newPriority != null) {
+  //     // change the task's priority
+  //     newExam = newExam.copyWith(priority: TaskPriority(newPriority));
+  //     // add it to list of [newPriority], at [newIndex]
+  //     newPriorityList.insert(
+  //         newIndex > newPriorityList.length ? newPriorityList.length : newIndex,
+  //         newExam);
+  //   }
+
+  //   // now the lists are final, its just about saving all exams with changed values
+
+  //   final editedExams = <String, Exam>{};
+
+  //   // if priority has changed, check old list too
+  //   if (originalExam.priority.index != newPriority) {
+  //     for (int i = 0; i < oldPriorityList.length; i++) {
+  //       final edited = oldPriorityList[i].copyWith(order: i);
+  //       final oldExam = _dbState[edited.id];
+
+  //       if (edited.order != oldExam?.order) {
+  //         editedExams[edited.id] = edited;
+  //       }
+  //     }
+  //   }
+  //   for (int i = 0; i < newPriorityList.length; i++) {
+  //     final edited = newPriorityList[i].copyWith(order: i);
+  //     final oldExam = _dbState[edited.id];
+
+  //     if (edited.order != oldExam?.order ||
+  //         edited.priority.index != oldExam?.priority.index) {
+  //       editedExams[edited.id] = edited;
+  //     }
+  //   }
+
+  //   editedExams.forEach(
+  //     (key, value) async {
+  //       examsDb.editExam(key, value.convert());
+  //     },
+  //   );
+
+  //   ref.read(firebaseServiceProvider).editExams(editedExams.values.toList());
+
+  //   state = {...state, ...editedExams};
+  //   return;
+  // }
 
   void convert(Exam exam) {
     delete(exam);

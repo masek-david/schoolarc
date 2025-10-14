@@ -69,7 +69,7 @@ class Homework extends Task {
     String? fireId,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     bool? isBeingAnimated,
     int? stateReaddingVersion,
   }) {

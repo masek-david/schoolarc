@@ -129,9 +129,8 @@ class SubjectsScreen extends ConsumerWidget {
                     },
                     onReorder: (int oldIndex, int newIndex) {
                       ref.read(subjectsProvider.notifier).reorder(
-                            newIndex,
                             subjects[oldIndex],
-                            addTimestamp: true,
+                            newIndex,
                           );
                     },
                   ),

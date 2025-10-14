@@ -10,6 +10,8 @@ class TaskPriority {
   late final Color color;
   late final String htmlIcon;
 
+  // TODO remake this to be const, create getter for text
+
   TaskPriority(int index) {
     final loc = getLocalization();
 

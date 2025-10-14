@@ -63,7 +63,7 @@ class Exam extends Task {
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     int? stateReaddingVersion,
   }) {
     return Exam(

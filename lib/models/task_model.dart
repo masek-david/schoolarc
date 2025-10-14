@@ -14,7 +14,7 @@ class Task {
   final Subject? subject;
   final Date date;
   final TaskPriority priority;
-  final int order;
+  final double order;
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
@@ -115,7 +115,7 @@ class Task {
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     int? stateReaddingVersion,
   }) {
     return Task(

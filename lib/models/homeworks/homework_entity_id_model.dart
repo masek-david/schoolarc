@@ -26,7 +26,7 @@ class HomeworkEntityWithID extends HomeworkEntity {
     String? description,
     Object? subjectId = noChange,
     int? priority,
-    int? order,
+    double? order,
     bool? isCompleted,
     bool? isDeleted,
     DateTime? timestamp,

@@ -24,7 +24,7 @@ class ExamEntity extends HiveObject {
   final String description;
   final DateTime timestamp;
   final bool isDeleted;
-  final int order;
+  final double order;
 
   @override
   String toString() {
@@ -53,7 +53,7 @@ class ExamEntity extends HiveObject {
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
   }) {
     return ExamEntity(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,

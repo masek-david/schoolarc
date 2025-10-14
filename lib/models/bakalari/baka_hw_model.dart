@@ -54,7 +54,7 @@ class BakaHomework extends Task {
     String? fireId,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     int? stateReaddingVersion,
     bool? alreadyAdded,
     bool? alreadySeen,

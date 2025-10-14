@@ -171,10 +171,9 @@ class ExamsScreen extends ConsumerWidget {
 
                         if (item.exam != null) {
                           ref.read(examProvider.notifier).reorder(
+                                item.exam!,
                                 newOrder,
                                 newPriority,
-                                item.exam!,
-                                addTimestamp: true,
                               );
                         }
                       },

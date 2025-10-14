@@ -23,7 +23,7 @@ class HomeworkEntity extends HiveObject {
   final String? subjectId;
   final Date date;
   final int priority;
-  final int order;
+  final double order;
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
@@ -57,7 +57,7 @@ class HomeworkEntity extends HiveObject {
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
   }) {
     return HomeworkEntity(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,

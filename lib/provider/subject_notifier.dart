@@ -138,38 +138,37 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      subject = subject.copyWith(
-          order: _dbState.values
-              .where(
-                (element) => !element.isDeleted,
-              )
-              .length);
+      final list =
+          _dbState.values.where((element) => !element.isDeleted).toList();
+      list.sort((a, b) => a.order.compareTo(b.order));
+
+      subject = subject.copyWith(order: list.last.order.ceil() + 1);
     }
 
     final id = overrideId ?? uuid.v4();
 
     await subjectsDb.addSubject(id, subject);
 
-    final Subject? subjectWithSameOrder = _dbState.values
-        .where(
-            (element) => element.order == subject.order && !element.isDeleted)
-        .firstOrNull;
+    // final Subject? subjectWithSameOrder = _dbState.values
+    //     .where(
+    //         (element) => element.order == subject.order && !element.isDeleted)
+    //     .firstOrNull;
 
-    // if there is a subject that already has the order of the newly added
-    if (!subject.isDeleted) {
-      if (subjectWithSameOrder != null && !addToEnd) {
-        if (subject.timestamp.millisecondsSinceEpoch <
-            subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
-          // if the new one is older, add it after the old
-          subject = subject.copyWith(order: subject.order + 1);
-          subjectsDb.saveEditedSubject(id, subject);
-        }
-        reorder(
-          subject.order,
-          subject.convert(id),
-        );
-      }
-    }
+    // // if there is a subject that already has the order of the newly added
+    // if (!subject.isDeleted) {
+    //   if (subjectWithSameOrder != null && !addToEnd) {
+    //     if (subject.timestamp.millisecondsSinceEpoch <
+    //         subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
+    //       // if the new one is older, add it after the old
+    //       subject = subject.copyWith(order: subject.order + 1);
+    //       subjectsDb.saveEditedSubject(id, subject);
+    //     }
+    //     reorder(
+    //       subject.order,
+    //       subject.convert(id),
+    //     );
+    //   }
+    // }
 
     state = {...state, id: subject.convert(id)};
     if (addToFire) {
@@ -190,30 +189,30 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   }) async {
     final old = _dbState[editedSubject.id]!;
 
-    if (checkOrder) {
-      // if now is deleted, remove it
-      if (editedSubject.isDeleted && !old.isDeleted) {
-        reorder(
-          null,
-          old,
-        );
-      }
-      // if now isnt deleted, add it
-      if (!editedSubject.isDeleted && old.isDeleted) {
-        reorder(
-          editedSubject.order,
-          old,
-        );
-      }
+    // if (checkOrder) {
+    //   // if now is deleted, remove it
+    //   if (editedSubject.isDeleted && !old.isDeleted) {
+    //     reorder(
+    //       null,
+    //       old,
+    //     );
+    //   }
+    //   // if now isnt deleted, add it
+    //   if (!editedSubject.isDeleted && old.isDeleted) {
+    //     reorder(
+    //       editedSubject.order,
+    //       old,
+    //     );
+    //   }
 
-      // if order has been changed, reorder
-      if (old.order != editedSubject.order) {
-        await reorder(
-          editedSubject.order,
-          old,
-        );
-      }
-    }
+    //   // if order has been changed, reorder
+    //   if (old.order != editedSubject.order) {
+    //     await reorder(
+    //       editedSubject.order,
+    //       old,
+    //     );
+    //   }
+    // }
 
     state = {...state, editedSubject.id: editedSubject};
     subjectsDb.saveEditedSubject(editedSubject.id, editedSubject.convert());
@@ -229,54 +228,62 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   /// if [newIndex] is null, it will be only removed
   ///
   /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
-  Future<void> reorder(
-    int? newIndex,
-    final Subject originalSubject, {
-    bool addTimestamp = false,
-  }) async {
-    var list = _dbState.values
-        .where(
-          (element) => !element.isDeleted,
-        )
-        .toList();
-
+  Future<void> reorder(final Subject originalSubject, int newIndex) async {
+    final list =
+        _dbState.values.where((element) => !element.isDeleted).toList();
     list.sort((a, b) => a.order.compareTo(b.order));
 
-    list.removeWhere((element) => element.id == originalSubject.id);
+    await edit(originalSubject.copyWith(
+      timestamp: DateTime.now(),
+      order: getMiddleIndex(
+        list.elementAtOrNull(newIndex - 1)?.order ?? 0,
+        list.elementAtOrNull(newIndex)?.order ?? list.last.order.ceilToDouble(),
+      ),
+    ));
 
-    Subject newSubject = originalSubject;
-    if (addTimestamp) {
-      newSubject = newSubject.copyWith(timestamp: DateTime.now().toUtc());
-    }
-    if (newIndex != null) {
-      list.insert(newIndex > list.length ? list.length : newIndex, newSubject);
-    }
+    // var list = _dbState.values
+    //     .where(
+    //       (element) => !element.isDeleted,
+    //     )
+    //     .toList();
 
-    // now the list is final, just save the changes
+    // list.sort((a, b) => a.order.compareTo(b.order));
 
-    final editedSubjects = <String, Subject>{};
+    // list.removeWhere((element) => element.id == originalSubject.id);
 
-    for (int i = 0; i < list.length; i++) {
-      final edited = list[i].copyWith(order: i);
-      final oldSubject = _dbState[edited.id];
+    // Subject newSubject = originalSubject;
+    // if (addTimestamp) {
+    //   newSubject = newSubject.copyWith(timestamp: DateTime.now().toUtc());
+    // }
+    // if (newIndex != null) {
+    //   list.insert(newIndex > list.length ? list.length : newIndex, newSubject);
+    // }
 
-      if (edited.order != oldSubject?.order) {
-        editedSubjects[edited.id] = edited;
-      }
-    }
+    // // now the list is final, just save the changes
 
-    editedSubjects.forEach(
-      (key, value) {
-        subjectsDb.saveEditedSubject(key, value.convert());
-      },
-    );
+    // final editedSubjects = <String, Subject>{};
 
-    state = {...state, ...editedSubjects};
+    // for (int i = 0; i < list.length; i++) {
+    //   final edited = list[i].copyWith(order: i);
+    //   final oldSubject = _dbState[edited.id];
 
-    await ref
-        .read(firebaseServiceProvider)
-        .editSubjects(editedSubjects.values.toList());
-    return;
+    //   if (edited.order != oldSubject?.order) {
+    //     editedSubjects[edited.id] = edited;
+    //   }
+    // }
+
+    // editedSubjects.forEach(
+    //   (key, value) {
+    //     subjectsDb.saveEditedSubject(key, value.convert());
+    //   },
+    // );
+
+    // state = {...state, ...editedSubjects};
+
+    // await ref
+    //     .read(firebaseServiceProvider)
+    //     .editSubjects(editedSubjects.values.toList());
+    // return;
   }
 
   void deleteSubject(Subject subject, {bool nowIsDeleted = true}) {

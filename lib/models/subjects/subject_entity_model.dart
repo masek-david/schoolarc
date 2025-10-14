@@ -17,7 +17,7 @@ class SubjectEntity extends HiveObject {
   final String? bakaId;
   final DateTime timestamp;
   final bool isDeleted;
-  final int order;
+  final double order;
 
   Subject convert(String id) {
     return Subject(
@@ -37,7 +37,7 @@ class SubjectEntity extends HiveObject {
     bool? isDeleted,
     Object? bakaId = noChange,
     DateTime? timestamp,
-    int? order,
+    double? order,
   }) {
     return SubjectEntity(
       name: name ?? this.name,
