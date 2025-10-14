@@ -198,8 +198,9 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(borderRadius - padding),
-                            color:
-                                Theme.of(context).colorScheme.secondaryContainer,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                           ),
                           child: SubjectShortcut(subject: widget.hw.subject),
                         ),
@@ -227,7 +228,13 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         ),
                         if (widget.hw.description != '' || widget.hw.isShared)
                           const SizedBox(width: 8),
-                        Expanded(child: Text(widget.hw.text, maxLines: 2)),
+                        Expanded(
+                          child: Text(
+                            widget.hw.text,
+                            maxLines: 2,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
                         const SizedBox(width: 5),
                         if (widget.showDate)
                           Text(
@@ -251,7 +258,8 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                                     ? (value) {}
                                     : (value) {
                                         HapticFeedback.vibrate();
-                                        if (widget.onChangedCompletion != null) {
+                                        if (widget.onChangedCompletion !=
+                                            null) {
                                           widget.onChangedCompletion!(value);
                                         }
                                         animate(value);

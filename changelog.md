@@ -1,14 +1,15 @@
-## [2.1.7]() - 2025-10-
+## [2.1.7]() - 2025-10-14
 ### Added
 
 ### Changed
-
 
 ### Fixed
 - Improved dragging in calendar
 - Improved translations
 - Fixed dialog not closing when adding homework from Bakaláři
-- Fixed some paddings 
+- Fixed some paddings
+- Fixed tasks not showing in calendar after summer time change
+- Improved multiline task support
 
 ---
 

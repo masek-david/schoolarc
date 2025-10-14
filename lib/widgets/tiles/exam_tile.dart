@@ -89,7 +89,13 @@ class ExamTile extends StatelessWidget {
                                   .onSurfaceVariant,
                             ),
                           const SizedBox(width: 8),
-                          Expanded(child: Text(exam.text, maxLines: 2)),
+                          Expanded(
+                            child: Text(
+                              exam.text,
+                              maxLines: 2,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           if (showDeadline)
                             Text(
