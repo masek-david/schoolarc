@@ -56,125 +56,121 @@ class _MealsCardState extends ConsumerState<MealsCard> {
       pagesCount = 1;
     }
 
-    return AnimatedSize(
-      duration: Durations.medium1,
-      child: SizedBox(
-        height: isVisible ? null : 0,
-        child: Card(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ExpandablePageView.builder(
-                animateFirstPage: true,
-                controller: _pageController,
-                animationDuration: Durations.medium2,
-                itemCount: pagesCount,
-                itemBuilder: (context, index) {
-                  final date = Date.today().addDays(index);
-
-                  final mealsForToday = data?[date];
-                  final bool empty = mealsForToday == null;
-
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Row(
-                            children: [
-                              if (isLoading && error == null)
-                                Expanded(
-                                  child: Text(
-                                    context.loc.loading,
-                                    style: context.txt.bodyLarge,
-                                  ),
-                                ),
-                              if (!isLoading && error == null)
-                                Expanded(
-                                  child: Text(
-                                    empty
-                                        ? context.loc
-                                            .noMealsOn(date
-                                                .formatWithWeekday(
-                                                    useOnFormat: true)
-                                                .unCapitalize())
-                                            .capitalize()
-                                        : context.loc
-                                            .mealsOn(date
-                                                .formatWithWeekday(
-                                                    useOnFormat: true)
-                                                .unCapitalize())
-                                            .capitalize(),
-                                    style: context.txt.bodyLarge,
-                                  ),
-                                ),
-                              if (error != null)
-                                Expanded(
-                                  child: ErrorTile(
-                                    contentPadding: const EdgeInsets.all(0),
-                                    error: error,
-                                    text: context.loc.mealsNotLoaded,
-                                  ),
-                                ),
-                              LoadingIconButton(
-                                icon: Icons.refresh,
-                                onTap: refresh,
-                                isLoading: isLoading,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  ref
-                                      .read(stravaMealsProvider.notifier)
-                                      .refreshIfOld();
-                                  Navigator.restorablePushNamed(
-                                      context, '/meals');
-                                },
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_right_rounded,
+    return SizedBox(
+      height: isVisible ? null : 0,
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ExpandablePageView.builder(
+              controller: _pageController,
+              animationDuration: Durations.medium2,
+              itemCount: pagesCount,
+              itemBuilder: (context, index) {
+                final date = Date.today().addDays(index);
+    
+                final mealsForToday = data?[date];
+                final bool empty = mealsForToday == null;
+    
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Row(
+                          children: [
+                            if (isLoading && error == null)
+                              Expanded(
+                                child: Text(
+                                  context.loc.loading,
+                                  style: context.txt.bodyLarge,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        if (!empty)
-                          ...mealsForToday.map((meal) {
-                            return MealTile(meal: meal);
-                          }),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (data != null)
-                    if (data.keys.length > 1)
-                      SmoothPageIndicator(
-                        controller: _pageController,
-                        count: data.keys.length,
-                        effect: ScrollingDotsEffect(
-                          activeDotColor:
-                              Theme.of(context).colorScheme.tertiary,
-                          dotColor: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                          maxVisibleDots: 7,
-                          dotHeight: 4,
-                          dotWidth: 16,
+                            if (!isLoading && error == null)
+                              Expanded(
+                                child: Text(
+                                  empty
+                                      ? context.loc
+                                          .noMealsOn(date
+                                              .formatWithWeekday(
+                                                  useOnFormat: true)
+                                              .unCapitalize())
+                                          .capitalize()
+                                      : context.loc
+                                          .mealsOn(date
+                                              .formatWithWeekday(
+                                                  useOnFormat: true)
+                                              .unCapitalize())
+                                          .capitalize(),
+                                  style: context.txt.bodyLarge,
+                                ),
+                              ),
+                            if (error != null)
+                              Expanded(
+                                child: ErrorTile(
+                                  contentPadding: const EdgeInsets.all(0),
+                                  error: error,
+                                  text: context.loc.mealsNotLoaded,
+                                ),
+                              ),
+                            LoadingIconButton(
+                              icon: Icons.refresh,
+                              onTap: refresh,
+                              isLoading: isLoading,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(stravaMealsProvider.notifier)
+                                    .refreshIfOld();
+                                Navigator.restorablePushNamed(
+                                    context, '/meals');
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4, right: 12),
-                    child: AgoText(stream: stravaMealsAgeProvider),
+                      if (!empty)
+                        ...mealsForToday.map((meal) {
+                          return MealTile(meal: meal);
+                        }),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                );
+              },
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                if (data != null)
+                  if (data.keys.length > 1)
+                    SmoothPageIndicator(
+                      controller: _pageController,
+                      count: data.keys.length,
+                      effect: ScrollingDotsEffect(
+                        activeDotColor:
+                            Theme.of(context).colorScheme.tertiary,
+                        dotColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        maxVisibleDots: 7,
+                        dotHeight: 4,
+                        dotWidth: 16,
+                      ),
+                    ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4, right: 12),
+                  child: AgoText(stream: stravaMealsAgeProvider),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
