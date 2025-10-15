@@ -104,7 +104,7 @@ class NotificationSender {
 
     final subjects = subjectsDb.getDatabase();
     subjects.removeWhere((key, value) => value.isDeleted);
-    final hwsInDb = homeworksDb.getDatabase().map(
+    final hwsInDb = homeworksDb.readDatabase().map(
       (key, value) {
         return MapEntry(key, value.convert(key, subjects[value.subjectId]));
       },

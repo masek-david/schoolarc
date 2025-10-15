@@ -184,7 +184,9 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                       children: [
                         if (settings.get(Setting.debugMode))
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text(widget.hw.stateReaddingVersion.toString()),
                               Text(widget.hw.order.toString()),
                               if (widget.hw.isBeingAnimated)
                                 const Icon(

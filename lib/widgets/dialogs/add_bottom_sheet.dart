@@ -83,9 +83,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
 
     if (widget.isHomework) {
       if (task.id == '') {
-        ref.read(hwProvider.notifier).saveNew(task.toHwEntity());
+        ref.read(hwProvider.notifier).create(task.toHwEntity());
       } else {
-        ref.read(hwProvider.notifier).edit(task as Homework);
+        ref.read(hwProvider.notifier).update(task as Homework);
       }
     } else {
       if (task.id == '') {

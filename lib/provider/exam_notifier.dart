@@ -464,7 +464,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
   void convert(Exam exam) {
     delete(exam);
-    ref.read(hwProvider.notifier).saveNew(exam.toHwEntity());
+    ref.read(hwProvider.notifier).create(exam.toHwEntity());
   }
 
   void delete(Exam exam) {

@@ -172,6 +172,7 @@ class HomeworksScreen extends ConsumerWidget {
                       isSameItem: (a, b) => a.isSameAs(b),
                       onReorder: (oldIndex, newIndex) {
                         final item = itemList.removeAt(oldIndex);
+                        if (item.hw == null) return;
 
                         final newPriority = itemList[newIndex - 1].getPriority;
                         int newOrder = 0;
@@ -181,13 +182,11 @@ class HomeworksScreen extends ConsumerWidget {
                           }
                         }
 
-                        if (item.hw != null) {
-                          ref.read(hwProvider.notifier).reorder(
-                                item.hw!,
-                                newOrder,
-                                newPriority,
-                              );
-                        }
+                        ref.read(hwProvider.notifier).reorder(
+                              item.hw!,
+                              newOrder,
+                              newPriority,
+                            );
                       },
                     ),
             ),

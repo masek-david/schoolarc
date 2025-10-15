@@ -20,7 +20,7 @@ String export() {
 
   final subjects = subjectsDb.getDatabase();
   final exams = examsDb.getDatabase();
-  final hws = homeworksDb.getDatabase();
+  final hws = homeworksDb.readDatabase();
 
   json = jsonEncode(
     {

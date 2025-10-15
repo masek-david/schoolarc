@@ -18,7 +18,7 @@ class DbInfoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final exams = examsDb.getDatabase();
-    final hws = homeworksDb.getDatabase();
+    final hws = homeworksDb.readDatabase();
     final subjects = subjectsDb.getDatabase();
 
     return Scaffold(
@@ -33,7 +33,7 @@ class DbInfoScreen extends ConsumerWidget {
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
-                  HomeworksDatabase().deleteAllFromDisk();
+                  HomeworksDatabase().deleteBoxFromDisk();
                   SubjectDatabase().deleteAllFromDisk();
                   ExamDatabase().deleteAllFromDisk();
                   SettingsDatabase().deleteAllFromDisk();

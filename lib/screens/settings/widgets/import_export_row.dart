@@ -118,10 +118,10 @@ class ImportExportButtonsRow extends ConsumerWidget {
                             dialogKey.currentState?.addProgress();
                           }
                           for (var element in imported.hws) {
-                            await ref.read(hwProvider.notifier).saveNew(
+                            await ref.read(hwProvider.notifier).create(
                                   element,
                                   overrideId: element.id,
-                                  addToFire: false,
+                                  syncWithFire: false,
                                 );
                             dialogKey.currentState?.addProgress();
                           }

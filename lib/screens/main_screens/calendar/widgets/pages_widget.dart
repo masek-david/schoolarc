@@ -85,7 +85,7 @@ class PagesWidget extends ConsumerWidget {
                 if (details.data.runtimeType == Homework) {
                   final hw = details.data as Homework;
                   if (!hw.date.isSameDay(date)) {
-                    ref.read(hwProvider.notifier).edit(
+                    ref.read(hwProvider.notifier).update(
                           hw.copyWith(
                             date: date,
                             timestamp: DateTime.now().toUtc(),

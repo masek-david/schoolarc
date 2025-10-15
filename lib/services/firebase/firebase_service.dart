@@ -22,6 +22,8 @@ final firebaseServiceProvider = Provider<FirebaseService>((ref) {
   return FirebaseService(ref: ref);
 });
 
+const printLogs = false;
+
 class FirebaseService {
   FirebaseService({required this.ref}) {
     refLocation();
@@ -211,7 +213,7 @@ class FirebaseService {
       await exams.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -229,7 +231,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -242,7 +244,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -260,7 +262,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return examsList;
@@ -296,12 +298,12 @@ class FirebaseService {
       await homeworks.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> editHomeworks(List<Homework> hwsToUpdate) async {
+  Future<void> updateHw(List<Homework> hwsToUpdate) async {
     if (hwsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -314,12 +316,12 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> addHomework(Homework homework) async {
+  Future<void> create(Homework homework) async {
     if (auth.currentUser == null) return;
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
@@ -327,7 +329,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -345,7 +347,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return homeworksList;
@@ -381,7 +383,7 @@ class FirebaseService {
       await subjects.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -399,7 +401,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -412,7 +414,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -430,7 +432,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return subjectsList;

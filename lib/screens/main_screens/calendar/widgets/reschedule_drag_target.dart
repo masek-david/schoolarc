@@ -28,7 +28,7 @@ class RescheduleDragTarget extends ConsumerWidget {
         if (details.data.runtimeType == Homework) {
           final hw = details.data as Homework;
           if (!hw.date.isSameDay(currentDate)) {
-            ref.read(hwProvider.notifier).edit(
+            ref.read(hwProvider.notifier).update(
                   hw.copyWith(
                     date: currentDate,
                     timestamp: DateTime.now().toUtc(),

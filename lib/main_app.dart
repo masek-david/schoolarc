@@ -76,6 +76,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     NotificationSender.scheduleUpcomingDayNotifications();
 
     if (nowActive) {
+      ref.read(hwProvider.notifier).androidReloadBox();
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           ref.read(examProvider.notifier).checkAllIfCompleted();
