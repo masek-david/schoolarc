@@ -548,7 +548,7 @@ class BakaService {
         text: text,
         date: Date.fromDateTime(date.toLocal()),
         isCompleted: isCompleted,
-        priority: TaskPriority(0),
+        priority: const TaskPriority(0),
         description: '',
         id: bakaId,
         isDeleted: false,

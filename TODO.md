@@ -3,6 +3,7 @@ refactor Task to have subject id, not subject??
 
 
 # FIX
+i dont think notifications work
 homescreen doesnt show correct meals page
 in home screen, show info about today too, if it is already showing about tomorrow
 home screen meals shouldnt always enlarge

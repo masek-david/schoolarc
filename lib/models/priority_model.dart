@@ -1,41 +1,39 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:material_color_utilities/hct/hct.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class TaskPriority {
-  late final int index;
-  late final String name;
-  late final Color color;
-  late final String htmlIcon;
+  final int index;
+  final String htmlIcon;
+  final Color color;
 
-  // TODO remake this to be const, create getter for text
+  const TaskPriority(this.index)
+      : htmlIcon = index == 3
+            ? '\uD83D\uDD34'
+            : index == 2
+                ? '\uD83D\uDFE0'
+                : index == 1
+                    ? '\uD83D\uDFE2'
+                    : '\uD83D\uDD35',
+        color = index == 3
+            ? const Color(0xFFF44336)
+            : index == 2
+                ? const Color(0xFFFF9800)
+                : index == 1
+                    ? const Color(0xFF4CAF50)
+                    : const Color(0xFF2196F3);
 
-  TaskPriority(int index) {
-    final loc = getLocalization();
-
+  String name(BuildContext context) {
     switch (index) {
       case 3:
-        color = Colors.red;
-        htmlIcon = '\uD83D\uDD34';
-        name = loc.high;
-        this.index = 3;
+        return context.loc.high;
       case 2:
-        color = Colors.orange;
-        htmlIcon = '\uD83D\uDFE0';
-        name = loc.medium;
-        this.index = 2;
+        return context.loc.medium;
       case 1:
-        color = Colors.green;
-        htmlIcon = '\uD83D\uDFE2';
-        name = loc.low;
-        this.index = 1;
+        return context.loc.low;
       default:
-        color = Colors.blue;
-        htmlIcon = '\uD83D\uDD35';
-        name = loc.noPriority;
-        this.index = 0;
+        return context.loc.noPriority;
     }
   }
 

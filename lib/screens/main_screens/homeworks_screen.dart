@@ -137,7 +137,7 @@ class HomeworksScreen extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             child: TitleWithCount(
-                              text: priority.name,
+                              text: priority.name(context),
                               textColor: priority.getColor(context),
                             ),
                           );

@@ -42,7 +42,7 @@ class Task {
       : date = deadline ?? Date.today(),
         text = '',
         isCompleted = false,
-        priority = TaskPriority(0),
+        priority = const TaskPriority(0),
         id = '',
         isDeleted = false,
         order = 0,
