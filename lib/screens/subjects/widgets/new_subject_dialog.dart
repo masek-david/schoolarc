@@ -36,9 +36,9 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
     );
 
     if (widget.isEditing) {
-      ref.read(subjectsProvider.notifier).edit(edited);
+      ref.read(subjectsProvider.notifier).update(edited);
     } else {
-      ref.read(subjectsProvider.notifier).saveNew(edited.convert());
+      ref.read(subjectsProvider.notifier).create(edited.convert());
     }
   }
 

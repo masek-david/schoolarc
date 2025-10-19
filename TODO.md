@@ -1,6 +1,5 @@
 # 2.2.0
 refactor Task to have subject id, not subject??
-refactor order to be fractional indexing
 
 
 # FIX
@@ -52,6 +51,7 @@ merge sorts into one
 - ⬜ icons - hws, exams, subjects
 - ⬜ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ⬜ ? use expressive progress
+- ⬜ ? display tasks in timetable
 
 ## OTHER
 - ✅ save only date for deadlines

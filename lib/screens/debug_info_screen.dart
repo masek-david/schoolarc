@@ -17,9 +17,9 @@ class DbInfoScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final exams = examsDb.getDatabase();
+    final exams = examsDb.readDatabase();
     final hws = homeworksDb.readDatabase();
-    final subjects = subjectsDb.getDatabase();
+    final subjects = subjectsDb.readDatabase();
 
     return Scaffold(
       appBar: AppBar(),

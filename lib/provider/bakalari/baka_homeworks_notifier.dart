@@ -116,7 +116,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
                 .toHwEntity(),
           );
     } else {
-      await ref.read(examProvider.notifier).saveNew(
+      await ref.read(examProvider.notifier).create(
             hw.copyWith(timestamp: DateTime.now().toUtc()).toExamEntity(),
           );
     }

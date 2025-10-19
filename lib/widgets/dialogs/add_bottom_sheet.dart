@@ -89,9 +89,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       }
     } else {
       if (task.id == '') {
-        ref.read(examProvider.notifier).saveNew(task.toExamEntity());
+        ref.read(examProvider.notifier).create(task.toExamEntity());
       } else {
-        ref.read(examProvider.notifier).edit(task as Exam);
+        ref.read(examProvider.notifier).update(task as Exam);
       }
     }
   }

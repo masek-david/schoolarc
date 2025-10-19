@@ -218,7 +218,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> editExams(List<Exam> examsToUpdate) async {
+  Future<void> updateExams(List<Exam> examsToUpdate) async {
     if (examsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -236,7 +236,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> addExam(Exam exam) async {
+  Future<void> createExam(Exam exam) async {
     if (auth.currentUser == null) return;
     try {
       await exams.child(exam.id).update(exam.toFireJson());
@@ -321,7 +321,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> create(Homework homework) async {
+  Future<void> createHw(Homework homework) async {
     if (auth.currentUser == null) return;
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
@@ -388,7 +388,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> editSubjects(List<Subject> subjectsToUpdate) async {
+  Future<void> updateSubjects(List<Subject> subjectsToUpdate) async {
     if (subjectsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -406,7 +406,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> addSubject(Subject subject) async {
+  Future<void> createSubject(Subject subject) async {
     if (auth.currentUser == null) return;
     try {
       await subjects.child(subject.id).update(subject.toFireJson());

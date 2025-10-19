@@ -80,14 +80,13 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   @override
   Map<String, Subject> build() {
     listenToFirebase();
-
-    _checkForDeleted();
+    Future.microtask(() => _checkForDeleted());
 
     return _dbState;
   }
 
   Map<String, Subject> get _dbState {
-    return subjectsDb.getDatabase();
+    return subjectsDb.readDatabase();
   }
 
   Future<void> listenToFirebase() async {
@@ -113,7 +112,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       },
     );
 
-    for (final subject in _dbState.values) {
+    state.forEach((id, subject) {
       final fireSubject = fireSubjects
           ?.where((element) => element.id == subject.id)
           .firstOrNull;
@@ -121,208 +120,134 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
           fireSubject.timestamp.isBefore(subject.timestamp);
 
       if (needsSync) {
-        await edit(subject);
+        update(subject);
       }
-    }
-
-    return;
+    });
   }
 
-  /// saves new subject to state, to end if [addToEnd] is true
-  Future<Subject> saveNew(
+  /// If [addToEnd] is true, order will be set to end of the list of its priority
+  Future<Subject> create(
     SubjectEntity subject, {
-    // if null, new id is generated
     String? overrideId,
-    bool addToFire = true,
-    // sets the order to put the task to the end
+    bool syncWithFire = true,
     bool addToEnd = true,
   }) async {
     if (addToEnd) {
-      final list =
-          _dbState.values.where((element) => !element.isDeleted).toList();
-      list.sort((a, b) => a.order.compareTo(b.order));
-
-      subject = subject.copyWith(order: list.last.order.ceil() + 1);
+      subject = subject.copyWith(
+        order: _getOrder(index: null, id: null),
+      );
     }
 
     final id = overrideId ?? uuid.v4();
-
-    await subjectsDb.addSubject(id, subject);
-
-    // final Subject? subjectWithSameOrder = _dbState.values
-    //     .where(
-    //         (element) => element.order == subject.order && !element.isDeleted)
-    //     .firstOrNull;
-
-    // // if there is a subject that already has the order of the newly added
-    // if (!subject.isDeleted) {
-    //   if (subjectWithSameOrder != null && !addToEnd) {
-    //     if (subject.timestamp.millisecondsSinceEpoch <
-    //         subjectWithSameOrder.timestamp.millisecondsSinceEpoch) {
-    //       // if the new one is older, add it after the old
-    //       subject = subject.copyWith(order: subject.order + 1);
-    //       subjectsDb.saveEditedSubject(id, subject);
-    //     }
-    //     reorder(
-    //       subject.order,
-    //       subject.convert(id),
-    //     );
-    //   }
-    // }
+    await subjectsDb.put(id, subject);
 
     state = {...state, id: subject.convert(id)};
-    if (addToFire) {
-      await ref.read(firebaseServiceProvider).addSubject(subject.convert(id));
+
+    if (syncWithFire) {
+      await ref.read(firebaseServiceProvider).createSubject(
+            subject.convert(id),
+          );
     }
 
     return subject.convert(id);
   }
 
-  /// assign timestamp manually, if no fireId, it will add it
-  Future<void> edit(
-    Subject editedSubject, {
+  /// You have to assign timestamp manually, if no id, it will add it as now
+  ///
+  /// [checkOrder] is false when calling from reorder, because its not neccesary to check again
+  Future<void> update(
+    Subject edited, {
     bool syncWithFire = true,
-    bool reorderAddTimestamp = true,
-
-    /// [checkOrder] false only when editing from [reorder()]
     bool checkOrder = true,
   }) async {
-    final old = _dbState[editedSubject.id]!;
+    if (!edited.isDeleted && checkOrder) {
+      edited = edited.copyWith(
+        order: _getOrder(
+          index: null,
+          id: edited.id,
+        ),
+      );
+    }
 
-    // if (checkOrder) {
-    //   // if now is deleted, remove it
-    //   if (editedSubject.isDeleted && !old.isDeleted) {
-    //     reorder(
-    //       null,
-    //       old,
-    //     );
-    //   }
-    //   // if now isnt deleted, add it
-    //   if (!editedSubject.isDeleted && old.isDeleted) {
-    //     reorder(
-    //       editedSubject.order,
-    //       old,
-    //     );
-    //   }
-
-    //   // if order has been changed, reorder
-    //   if (old.order != editedSubject.order) {
-    //     await reorder(
-    //       editedSubject.order,
-    //       old,
-    //     );
-    //   }
-    // }
-
-    state = {...state, editedSubject.id: editedSubject};
-    subjectsDb.saveEditedSubject(editedSubject.id, editedSubject.convert());
+    subjectsDb.put(edited.id, edited.convert());
+    state = {...state, edited.id: edited};
 
     if (syncWithFire) {
-      await ref
-          .read(firebaseServiceProvider)
-          .editSubjects([editedSubject.copyWith(id: editedSubject.id)]);
+      ref.read(firebaseServiceProvider).updateSubjects([edited]);
     }
   }
 
-  /// updates all with changed order,
-  /// if [newIndex] is null, it will be only removed
+  /// [newIndex] and [newPriority] are where the item will be placed
   ///
-  /// timestamp updated only for the moved subject if [addTimestamp] is true, which is only when it is called from eg. the UI
-  Future<void> reorder(final Subject originalSubject, int newIndex) async {
-    final list =
-        _dbState.values.where((element) => !element.isDeleted).toList();
-    list.sort((a, b) => a.order.compareTo(b.order));
-
-    await edit(originalSubject.copyWith(
-      timestamp: DateTime.now(),
-      order: getMiddleIndex(
-        list.elementAtOrNull(newIndex - 1)?.order ?? 0,
-        list.elementAtOrNull(newIndex)?.order ?? list.last.order.ceilToDouble(),
+  /// timestamp updated automatically for the moved subject
+  Future<void> reorder(final Subject original, int newIndex) async {
+    await update(
+      original.copyWith(
+        timestamp: DateTime.now(),
+        order: _getOrder(
+          index: newIndex,
+          id: original.id,
+        ),
       ),
-    ));
-
-    // var list = _dbState.values
-    //     .where(
-    //       (element) => !element.isDeleted,
-    //     )
-    //     .toList();
-
-    // list.sort((a, b) => a.order.compareTo(b.order));
-
-    // list.removeWhere((element) => element.id == originalSubject.id);
-
-    // Subject newSubject = originalSubject;
-    // if (addTimestamp) {
-    //   newSubject = newSubject.copyWith(timestamp: DateTime.now().toUtc());
-    // }
-    // if (newIndex != null) {
-    //   list.insert(newIndex > list.length ? list.length : newIndex, newSubject);
-    // }
-
-    // // now the list is final, just save the changes
-
-    // final editedSubjects = <String, Subject>{};
-
-    // for (int i = 0; i < list.length; i++) {
-    //   final edited = list[i].copyWith(order: i);
-    //   final oldSubject = _dbState[edited.id];
-
-    //   if (edited.order != oldSubject?.order) {
-    //     editedSubjects[edited.id] = edited;
-    //   }
-    // }
-
-    // editedSubjects.forEach(
-    //   (key, value) {
-    //     subjectsDb.saveEditedSubject(key, value.convert());
-    //   },
-    // );
-
-    // state = {...state, ...editedSubjects};
-
-    // await ref
-    //     .read(firebaseServiceProvider)
-    //     .editSubjects(editedSubjects.values.toList());
-    // return;
+      checkOrder: false,
+    );
   }
 
-  void deleteSubject(Subject subject, {bool nowIsDeleted = true}) {
-    edit(subject.copyWith(
+  /// If [index] is null, insert at end. If [index] is 0, insert at begining
+  ///
+  /// [id] has to be provided, unless the task doesn't exist
+  double _getOrder({required int? index, required String? id}) {
+    final list = state.values
+        .where(
+          (element) => !element.isDeleted && element.id != id,
+        )
+        .toList();
+    list.sort((a, b) => a.order.compareTo(b.order));
+
+    final double order;
+    final isLast = index == null ? true : index >= list.length;
+
+    if (isLast) {
+      order = (list.lastOrNull?.order.ceilToDouble() ?? 0) + 1;
+    } else {
+      final indexBefore =
+          index == 0 ? 0.0 : list.elementAtOrNull(index - 1)?.order ?? 0;
+      final indexAfter = list.elementAtOrNull(index)?.order ??
+          list.lastOrNull?.order.ceilToDouble() ??
+          0 + 1;
+
+      order = getMiddleIndex(indexBefore, indexAfter);
+    }
+    return order;
+  }
+
+  void delete(Subject subject, {bool nowIsDeleted = true}) {
+    update(subject.copyWith(
       isDeleted: nowIsDeleted,
       timestamp: DateTime.now().toUtc(),
     ));
   }
 
   void revertDelete(Subject subject) {
-    deleteSubject(subject, nowIsDeleted: false);
+    delete(subject, nowIsDeleted: false);
   }
 
-  void deleteAll() {
-    state.forEach(
-      (key, value) {
-        if (!value.isDeleted) {
-          edit(value.copyWith(isDeleted: true));
-        }
-      },
-    );
-  }
-
-  /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  /// deletes from cloud and local, other devices must delete it themself
   Future<void> _permanentDelete(List<Subject> subjects) async {
     if (subjects.isEmpty) return;
     for (var element in subjects) {
       subjectsDb.delete(element.id);
+      state.remove(element.id);
     }
+
+    state = {...state};
     await ref.read(firebaseServiceProvider).deleteSubjects(subjects);
   }
 
-  /// `_checkForDeleted` must be called from build(), because it doesnt update the state
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
     List<Subject> hwsToDelete = [];
 
-    for (var hw in _dbState.values) {
+    for (var hw in state.values) {
       if (hw.isDeleted &&
           now.difference(hw.timestamp) > const Duration(days: 7)) {
         hwsToDelete.add(hw);
@@ -346,10 +271,10 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;92madding from fire: ${fireSubject.name}: ${fireSubject.order}');
 
-      await saveNew(
+      await create(
         fireSubject.convert(),
         overrideId: fireSubject.id,
-        addToFire: false,
+        syncWithFire: false,
         addToEnd: false,
       );
       return;
@@ -362,7 +287,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;93mediting from fire: ${fireSubject.name}: ${fireSubject.order}');
 
-      edit(
+      update(
         fireSubject,
         syncWithFire: false,
         checkOrder: true,
@@ -374,7 +299,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
 
       ref
           .read(firebaseServiceProvider)
-          .editSubjects([localSubject.copyWith(id: fireSubject.id)]);
+          .updateSubjects([localSubject.copyWith(id: fireSubject.id)]);
     } else {
       // print('same date');
     }

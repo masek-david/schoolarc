@@ -408,7 +408,7 @@ class BakaService {
       throw Exception('If createIfMissing is true, ref can\'t be null');
     }
 
-    final db = subjectsDb.getDatabase();
+    final db = subjectsDb.readDatabase();
     db.removeWhere((key, value) => value.isDeleted);
 
     final subjects = db.map(
@@ -440,7 +440,7 @@ class BakaService {
       if (createIfMissing) {
         newSubject = await ref!
             .read(subjectsProvider.notifier)
-            .saveNew(newSubject.convert());
+            .create(newSubject.convert());
       }
       bakaSubjectIdToSubject.addAll({bakaId: newSubject});
     }
@@ -513,7 +513,7 @@ class BakaService {
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
-    final subjects = subjectsDb.getDatabase();
+    final subjects = subjectsDb.readDatabase();
     subjects.removeWhere((key, value) => value.isDeleted);
 
     for (var homework in homeworksJson) {

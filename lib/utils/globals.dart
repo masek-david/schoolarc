@@ -51,6 +51,15 @@ Color getSubtleTextColor(BuildContext context) {
   return context.col.surfaceDim;
 }
 
+/// Used for fractional indexing
+double getMiddleIndex(double first, double second) {
+  return smaller(first, second) + (first - second).abs() / 2;
+}
+
+double smaller(double first, double second) {
+  return first < second ? first : second;
+}
+
 Future<void> syncAllTasks(WidgetRef ref) async {
   await ref.read(subjectsProvider.notifier).syncAll();
   if (ref.context.mounted) {

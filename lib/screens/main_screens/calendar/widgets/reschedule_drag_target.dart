@@ -39,7 +39,7 @@ class RescheduleDragTarget extends ConsumerWidget {
         if (details.data.runtimeType == Exam) {
           final exam = details.data as Exam;
           if (!exam.date.isSameDay(currentDate)) {
-            ref.read(examProvider.notifier).edit(
+            ref.read(examProvider.notifier).update(
                   exam.copyWith(
                     date: currentDate,
                     timestamp: DateTime.now().toUtc(),

@@ -18,7 +18,7 @@ class SubjectsScreen extends ConsumerWidget {
   const SubjectsScreen({super.key});
 
   void deleteSubject(BuildContext context, WidgetRef ref, Subject subject) {
-    ref.read(subjectsProvider.notifier).deleteSubject(subject);
+    ref.read(subjectsProvider.notifier).delete(subject);
 
     showMessage(context, context.loc.deletedSubjectMessage(subject.name),
         actions: [

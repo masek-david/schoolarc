@@ -23,7 +23,7 @@ class TimeTableDatabase {
   }
 
   TimeTable get timeTable {
-    var subjects = subjectsDb.getDatabase();
+    var subjects = subjectsDb.readDatabase();
 
     return _table.convert(subjects);
   }

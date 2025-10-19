@@ -175,9 +175,7 @@ class StravaService {
 
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
-          name: mealJson['druh'] == 'D'
-              ? mealJson['delsiPopis']
-              : mealJson['nazev'],
+          name: mealJson['nazev'],
           selected: mealJson['pocet'] != 0,
         );
 

@@ -96,7 +96,7 @@ class PagesWidget extends ConsumerWidget {
                 if (details.data.runtimeType == Exam) {
                   final exam = details.data as Exam;
                   if (!exam.date.isSameDay(date)) {
-                    ref.read(examProvider.notifier).edit(
+                    ref.read(examProvider.notifier).update(
                           exam.copyWith(
                             date: date,
                             timestamp: DateTime.now().toUtc(),

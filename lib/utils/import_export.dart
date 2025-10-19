@@ -18,8 +18,8 @@ class ImportExport {
 String export() {
   String json = '';
 
-  final subjects = subjectsDb.getDatabase();
-  final exams = examsDb.getDatabase();
+  final subjects = subjectsDb.readDatabase();
+  final exams = examsDb.readDatabase();
   final hws = homeworksDb.readDatabase();
 
   json = jsonEncode(

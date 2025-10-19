@@ -54,7 +54,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
             overrideId: widget.task.id,
           );
     } else {
-      await ref.read(examProvider.notifier).saveNew(
+      await ref.read(examProvider.notifier).create(
             widget.task.toExamEntity().copyWith(
                   subjectId: pickedSubjectId,
                   priority: priority,

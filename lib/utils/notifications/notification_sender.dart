@@ -102,14 +102,14 @@ class NotificationSender {
       }
     }
 
-    final subjects = subjectsDb.getDatabase();
+    final subjects = subjectsDb.readDatabase();
     subjects.removeWhere((key, value) => value.isDeleted);
     final hwsInDb = homeworksDb.readDatabase().map(
       (key, value) {
         return MapEntry(key, value.convert(key, subjects[value.subjectId]));
       },
     );
-    final examsInDb = examsDb.getDatabase().map(
+    final examsInDb = examsDb.readDatabase().map(
       (key, value) {
         return MapEntry(key, value.convert(key, subjects[value.subjectId]));
       },
