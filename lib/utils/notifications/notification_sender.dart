@@ -117,7 +117,8 @@ class NotificationSender {
     final exams = examsSortByDate(examsInDb);
     final hws = hwsSortByDate(hwsInDb);
 
-    for (final day in days) {
+    for (int i = 0; i < days.length; i++) {
+      final day = days[i];
       final aboutDay = day.addDays(1);
       final arrive = day.toDateTimeLocal().copyWith(
             hour: arriveTime.hour,
@@ -125,6 +126,7 @@ class NotificationSender {
           );
 
       createNotification(
+        id: i,
         arrive: sendNow ? null : arrive,
         exams: exams[aboutDay] ?? [],
         hws: hws[aboutDay] ?? [],
@@ -142,6 +144,7 @@ class NotificationSender {
     required List<Exam> exams,
     required List<Homework> hws,
     required List<Homework> missed,
+    required int id,
   }) async {
     final lineBreak = Platform.isIOS ? '\n' : '<br>';
     final loc = getLocalization();
@@ -198,11 +201,11 @@ class NotificationSender {
 
     final schedule =
         arrive != null ? NotificationCalendar.fromDate(date: arrive) : null;
-    await AwesomeNotifications().createNotification(
+    final result = await AwesomeNotifications().createNotification(
       schedule: schedule,
       content: NotificationContent(
         color: Colors.transparent,
-        id: 11,
+        id: id,
         badge: 0,
         channelKey: tomorrowChannel,
         title: loc.tomorrow,
@@ -214,7 +217,11 @@ class NotificationSender {
       ),
     );
 
-    log('\u001b[1;42m\u001b[1;97mTomorrow notification scheduled for: ${arrive?.toLocal().toString()}');
+    if (result) {
+      log('\u001b[1;42m\u001b[1;97mTomorrow notification scheduled for: ${arrive?.toLocal().toString()}');
+    } else {
+      log('error creating notification');
+    }
   }
 
   /// Returns string for task to be put in notification body
@@ -224,7 +231,7 @@ class NotificationSender {
     return '${task.priority.htmlIcon}${subject != null ? ' ${subject.sanitizeHtml()}:' : ''} ${task.text.sanitizeHtml()}';
   }
 
-  static void cancelByChannelKey(String key){
+  static void cancelByChannelKey(String key) {
     AwesomeNotifications().cancelNotificationsByChannelKey(key);
   }
 

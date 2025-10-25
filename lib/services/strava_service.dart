@@ -240,7 +240,7 @@ class StravaService {
       var name = mealXml.findElements('nazev').first.innerText;
 
       if (mealXml.findElements('druh').first.innerText == 'D') {
-        name = mealXml.findElements('popis').first.innerText;
+        name = mealXml.findElements('nazev').first.innerText;
       }
 
       final date = Date.fromDateTime(DateTime.parse(dateXml));

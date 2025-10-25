@@ -43,12 +43,9 @@ class _MealsCardState extends ConsumerState<MealsCard> {
     final isVisible = ref.watch(useMealsProvider);
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
 
-    var now = DateTime.now();
-
-    if (showMealsUntil.isBefore(
-      TimeOfDay(hour: now.hour, minute: now.minute),
-    )) {
-      now = now.toUtc().add(const Duration(days: 1)).toLocal();
+    var today = Date.today();
+    if (showMealsUntil.isBefore(TimeOfDay.now())) {
+      today = today.addDays(1);
     }
 
     int pagesCount = data?.keys.length ?? 1;
@@ -67,11 +64,11 @@ class _MealsCardState extends ConsumerState<MealsCard> {
               animationDuration: Durations.medium2,
               itemCount: pagesCount,
               itemBuilder: (context, index) {
-                final date = Date.today().addDays(index);
-    
+                final date = today.addDays(index);
+
                 final mealsForToday = data?[date];
                 final bool empty = mealsForToday == null;
-    
+
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
                   child: Column(
@@ -154,8 +151,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                       controller: _pageController,
                       count: data.keys.length,
                       effect: ScrollingDotsEffect(
-                        activeDotColor:
-                            Theme.of(context).colorScheme.tertiary,
+                        activeDotColor: Theme.of(context).colorScheme.tertiary,
                         dotColor: Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,
