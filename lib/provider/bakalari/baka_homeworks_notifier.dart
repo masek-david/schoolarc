@@ -110,14 +110,12 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
   /// Saves the bakahw as homework/exam, updates state of everything
   Future<void> import(BakaHomework hw, bool isHomework) async {
     if (isHomework) {
-      await ref.read(hwProvider.notifier).create(
-            hw
-                .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false)
-                .toHwEntity(),
-          );
+      await ref.read(hwDataProvider.notifier).create(hw
+          .toHwData()
+          .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false));
     } else {
-      await ref.read(examProvider.notifier).create(
-            hw.copyWith(timestamp: DateTime.now().toUtc()).toExamEntity(),
+      await ref.read(examDataProvider.notifier).create(
+            hw.toExamData().copyWith(timestamp: DateTime.now().toUtc()),
           );
     }
 

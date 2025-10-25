@@ -1,5 +1,7 @@
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -51,7 +53,6 @@ class Task {
         timestamp = DateTime.now().toUtc(),
         stateReaddingVersion = 0;
 
-// TODO try making it external
   HomeworkEntity toHwEntity() {
     return HomeworkEntity(
       isDeleted: isDeleted,
@@ -76,6 +77,38 @@ class Task {
       description: description,
       timestamp: timestamp,
       order: order,
+    );
+  }
+
+  HomeworkData toHwData() {
+    return HomeworkData(
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+      stateReaddingVersion: stateReaddingVersion,
+    );
+  }
+
+  ExamData toExamData() {
+    return ExamData(
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+      stateReaddingVersion: stateReaddingVersion,
     );
   }
 

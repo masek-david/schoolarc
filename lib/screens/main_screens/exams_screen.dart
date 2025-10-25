@@ -98,7 +98,7 @@ class ExamsScreen extends ConsumerWidget {
                   ref.watch(useCloudSyncProvider) ? (_) => true : (_) => false,
               onRefresh: () async {
                 try {
-                  await ref.read(examProvider.notifier).syncAll();
+                  await ref.read(examDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
@@ -170,8 +170,8 @@ class ExamsScreen extends ConsumerWidget {
                         }
 
                         if (item.exam != null) {
-                          ref.read(examProvider.notifier).reorder(
-                                item.exam!,
+                          ref.read(examDataProvider.notifier).reorder(
+                                item.exam!.toData(),
                                 newOrder,
                                 newPriority,
                               );

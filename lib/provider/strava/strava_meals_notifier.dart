@@ -7,6 +7,7 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
+import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final stravaMealsAgeProvider = StreamProvider<Duration?>((ref) async* {
@@ -88,6 +89,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
 
     lastFetched = null;
     final data = await stravaService.getMeals();
+    updateStravaWidget(data);
     lastFetched = DateTime.now();
     return data;
   }

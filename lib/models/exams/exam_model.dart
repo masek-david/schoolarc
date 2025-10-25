@@ -1,4 +1,5 @@
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -20,8 +21,24 @@ class Exam extends Task {
     super.stateReaddingVersion,
   });
 
-  ExamEntity convert() {
+  ExamEntity toEntity() {
     return ExamEntity(
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
+      order: order,
+    );
+  }
+
+  ExamData toData() {
+    return ExamData(
+      stateReaddingVersion: stateReaddingVersion,
+      id: id,
+      isCompleted: date.isBefore(Date.today()),
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
@@ -36,20 +53,6 @@ class Exam extends Task {
   @override
   String toString() {
     return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
-  }
-
-  Map<String, dynamic> toFireJson() {
-    return {
-      'n': text,
-      if (description != '') 'i': description,
-      if (subject != null) 's': subject?.id,
-      // TODO fire
-      'd': date.toDateTimeUTC().millisecondsSinceEpoch,
-      if (priority.index != 0) 'p': priority.index,
-      if (order != 0) 'o': order,
-      if (isDeleted) 'del': isDeleted,
-      't': timestamp.millisecondsSinceEpoch,
-    };
   }
 
   @override

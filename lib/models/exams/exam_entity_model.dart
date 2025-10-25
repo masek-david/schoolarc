@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -10,6 +11,7 @@ class ExamEntity extends HiveObject {
     required this.isDeleted,
     required this.subjectId,
     required this.text,
+    // Its not requiered, because when loading from hive, it could be Null (thats how it used to be)
     this.description = '',
     required this.date,
     required this.priority,
@@ -31,18 +33,34 @@ class ExamEntity extends HiveObject {
     return 'exam: $text, order: $order, deleted: $isDeleted';
   }
 
-  Map<String, dynamic> toJson(String id) {
-    return {
-      'text': text,
-      'subjectId': subjectId,
-      'date': date.toString(),
-      'priority': priority,
-      'description': description,
-      'id': id,
-      'order': order,
-      'isDeleted': isDeleted,
-      'timestamp':timestamp.toUtc().toIso8601String(),
-    };
+  Exam convert(String id, Subject? subject) {
+    return Exam(
+      id: id,
+      subject: subject,
+      text: text,
+      description: description,
+      date: date,
+      priority: TaskPriority(priority),
+      isCompleted: date.isBefore(Date.today()),
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+    );
+  }
+
+  ExamData toData(String id) {
+    return ExamData(
+      id: id,
+      subjectId: subjectId,
+      text: text,
+      description: description,
+      date: date,
+      priority: priority,
+      isCompleted: date.isBefore(Date.today()),
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+    );
   }
 
   ExamEntity copyWith({
@@ -64,21 +82,6 @@ class ExamEntity extends HiveObject {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-    );
-  }
-
-  Exam convert(String id, Subject? subject) {
-    return Exam(
-      id: id,
-      subject: subject,
-      text: text,
-      description: description,
-      date: date,
-      priority: TaskPriority(priority),
-      isCompleted: date.isBefore(Date.today()),
-      timestamp: timestamp,
-      isDeleted: isDeleted,
-      order: order,
     );
   }
 }

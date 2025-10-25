@@ -44,8 +44,6 @@ class FirebaseGroupService {
       throw ServiceException('You have been removed from the group');
     }
 
-    final now = DateTime.now().millisecondsSinceEpoch;
-
     final List<Future> futures = [];
 
     // Map of userId to Member

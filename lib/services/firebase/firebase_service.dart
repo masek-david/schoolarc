@@ -9,11 +9,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -184,24 +182,24 @@ class FirebaseService {
   }
 
   // EXAMS
-  Stream<ExamEntityWithID> listenExams() {
+  Stream<ExamData> listenExams() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = exams.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamEntityWithID.fromFireJson(json);
+      return ExamData.fromFireJson(json);
     });
     final changed = exams.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamEntityWithID.fromFireJson(json);
+      return ExamData.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteExams(List<Exam> examsToDelete) async {
+  Future<void> deleteExams(List<ExamData> examsToDelete) async {
     if (examsToDelete.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -218,7 +216,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> updateExams(List<Exam> examsToUpdate) async {
+  Future<void> updateExams(List<ExamData> examsToUpdate) async {
     if (examsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -236,7 +234,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> createExam(Exam exam) async {
+  Future<void> createExam(ExamData exam) async {
     if (auth.currentUser == null) return;
     try {
       await exams.child(exam.id).update(exam.toFireJson());
@@ -249,16 +247,16 @@ class FirebaseService {
     return;
   }
 
-  Future<List<ExamEntityWithID>?> getAllExams() async {
+  Future<List<ExamData>?> getAllExams() async {
     if (auth.currentUser == null) return null;
-    List<ExamEntityWithID> examsList = [];
+    List<ExamData> examsList = [];
     try {
       final snapshot = await exams.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        examsList.add(ExamEntityWithID.fromFireJson(json));
+        examsList.add(ExamData.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
@@ -269,24 +267,24 @@ class FirebaseService {
   }
 
   // HOMEWORKS
-  Stream<HomeworkEntityWithID> listenHomeworks() {
+  Stream<HomeworkData> listenHomeworks() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = homeworks.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkEntityWithID.fromFireJson(json);
+      return HomeworkData.fromFireJson(json);
     });
     final changed = homeworks.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkEntityWithID.fromFireJson(json);
+      return HomeworkData.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteHomeworks(List<Homework> hwsToDelete) async {
+  Future<void> deleteHomeworks(List<HomeworkData> hwsToDelete) async {
     if (hwsToDelete.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -303,7 +301,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> updateHw(List<Homework> hwsToUpdate) async {
+  Future<void> updateHw(List<HomeworkData> hwsToUpdate) async {
     if (hwsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -321,7 +319,7 @@ class FirebaseService {
     return;
   }
 
-  Future<void> createHw(Homework homework) async {
+  Future<void> createHw(HomeworkData homework) async {
     if (auth.currentUser == null) return;
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
@@ -334,16 +332,16 @@ class FirebaseService {
     return;
   }
 
-  Future<List<HomeworkEntityWithID>?> getAllHomeworks() async {
+  Future<List<HomeworkData>?> getAllHomeworks() async {
     if (auth.currentUser == null) return null;
-    List<HomeworkEntityWithID> homeworksList = [];
+    List<HomeworkData> homeworksList = [];
     try {
       final snapshot = await homeworks.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        homeworksList.add(HomeworkEntityWithID.fromFireJson(json));
+        homeworksList.add(HomeworkData.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');

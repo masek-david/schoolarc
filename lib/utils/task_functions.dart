@@ -47,15 +47,15 @@ void editHw(BuildContext context, Homework hw) async {
 }
 
 void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
-  ref.read(hwProvider.notifier).convert(hw);
+  ref.read(hwDataProvider.notifier).convert(hw.toData());
 }
 
 void completeHw(BuildContext context, WidgetRef ref, Homework hw, bool value) {
-  ref.read(hwProvider.notifier).complete(hw, value);
+  ref.read(hwDataProvider.notifier).complete(hw.toData(), value);
 }
 
 void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
-  ref.read(hwProvider.notifier).delete(hw);
+  ref.read(hwDataProvider.notifier).delete(hw.toData());
 
   showMessage(
     context,
@@ -64,7 +64,7 @@ void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
       SnackBarAction(
         label: context.loc.undo,
         onPressed: () {
-          ref.read(hwProvider.notifier).revertDelete(hw);
+          ref.read(hwDataProvider.notifier).revertDelete(hw.toData());
         },
       ),
     ],
@@ -88,17 +88,17 @@ void editExam(BuildContext context, Exam exam) async {
 }
 
 void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
-  ref.read(examProvider.notifier).convert(exam);
+  ref.read(examDataProvider.notifier).convert(exam.toData());
 }
 
 void deleteExam(BuildContext context, WidgetRef ref, Exam exam) {
-  ref.read(examProvider.notifier).delete(exam);
+  ref.read(examDataProvider.notifier).delete(exam.toData());
 
   showMessage(context, '${context.loc.deletedExam} \'${exam.text}\'', actions: [
     SnackBarAction(
       label: context.loc.undo,
       onPressed: () {
-        ref.read(examProvider.notifier).revertDelete(exam);
+        ref.read(examDataProvider.notifier).revertDelete(exam.toData());
       },
     ),
   ]);

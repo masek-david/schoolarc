@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/models/task_data_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
@@ -47,9 +46,9 @@ class AddTaskBottomSheet extends ConsumerStatefulWidget {
 class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     with RestorationMixin {
   late final initialTask = (widget.isHomework
-          ? ref.read(hwProvider)[widget.initialTaskId]
-          : ref.read(examProvider)[widget.initialTaskId]) ??
-      Task.empty().copyWith(date: widget.initialDate);
+          ? ref.read(hwDataProvider)[widget.initialTaskId]
+          : ref.read(examDataProvider)[widget.initialTaskId]) ??
+      TaskData.empty().copyWith(date: widget.initialDate);
   late final nameController = RestorableTextEditingController.fromValue(
     TextEditingValue(text: initialTask.text),
   );
@@ -57,9 +56,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     TextEditingValue(text: initialTask.description),
   );
   late RestorableStringN pickedSubjectId =
-      RestorableStringN(initialTask.subject?.id);
+      RestorableStringN(initialTask.subjectId);
   late RestorableDate pickedDate = RestorableDate(initialTask.date);
-  late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
+  late RestorableInt pickedPriority = RestorableInt(initialTask.priority);
   late RestorableBool group = RestorableBool(false);
   late RestorableBool dateIsAutoSet = RestorableBool(false);
 
@@ -73,25 +72,25 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
 
   void onSave() {
     final task = initialTask.copyWith(
-      subject: ref.read(subjectsProvider)[pickedSubjectId.value],
+      subjectId: pickedSubjectId.value,
       text: nameController.value.text,
       description: descriptionController.value.text,
       date: pickedDate.value,
-      priority: TaskPriority(pickedPriority.value),
+      priority: pickedPriority.value,
       timestamp: DateTime.now().toUtc(),
     );
 
     if (widget.isHomework) {
       if (task.id == '') {
-        ref.read(hwProvider.notifier).create(task.toHwEntity());
+        ref.read(hwDataProvider.notifier).create(task.toHw());
       } else {
-        ref.read(hwProvider.notifier).update(task as Homework);
+        ref.read(hwDataProvider.notifier).update(task as HomeworkData);
       }
     } else {
       if (task.id == '') {
-        ref.read(examProvider.notifier).create(task.toExamEntity());
+        ref.read(examDataProvider.notifier).create(task.toExam());
       } else {
-        ref.read(examProvider.notifier).update(task as Exam);
+        ref.read(examDataProvider.notifier).update(task as ExamData);
       }
     }
   }

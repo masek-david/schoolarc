@@ -6,6 +6,7 @@
 ### Fixed
 - Fixed notifications - now will arrive up to a week after last open of the app
 - Fixed meals not showing Doplněk
+- Fixed meals widgt not working 
 
 ---
 

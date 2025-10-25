@@ -71,7 +71,7 @@ class GroupHomeworkData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        // TODO fire
+        // TODO group fire
         date: Date.today(),
         // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
@@ -89,7 +89,7 @@ class GroupHomeworkData {
     return GroupHomework(
       subject: subject,
       text: hw.text,
-      // TODO fire
+      // TODO group fire
       // date: Date.fromDateTime(hw.date.toLocal()),
       date: Date.today(),
       isCompleted: hw.isCompleted,
@@ -152,7 +152,7 @@ class GroupExamData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        // TODO fire
+        // TODO group fire
         date: Date.today(),
         // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,

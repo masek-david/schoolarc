@@ -6,7 +6,7 @@ import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -99,7 +99,7 @@ class DbInfoScreen extends ConsumerWidget {
                 Expanded(
                   child: FilledButton(
                     onPressed: () async {
-                      late List<HomeworkEntityWithID>? fireHws;
+                      late List<HomeworkData>? fireHws;
                       try {
                         fireHws = await ref
                             .read(firebaseServiceProvider)

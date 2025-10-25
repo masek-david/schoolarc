@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -8,6 +9,7 @@ import 'package:schoolarc/utils/globals.dart';
 class HomeworkEntity extends HiveObject {
   HomeworkEntity({
     required this.text,
+    // Its not requiered, because when loading from hive, it could be Null (thats how it used to be)
     this.description = '',
     required this.subjectId,
     required this.date,
@@ -33,19 +35,34 @@ class HomeworkEntity extends HiveObject {
     return 'homework: $text, order: $order, completed: $isCompleted, deleted: $isDeleted';
   }
 
-  Map<String, dynamic> toJson(String id) {
-    return {
-      'id': id,
-      'text': text,
-      'subjectId': subjectId,
-      'date': date.toString(),
-      'priority': priority,
-      'description': description,
-      'order': order,
-      'isDeleted': isDeleted,
-      'isCompleted': isCompleted,
-      'timestamp': timestamp.toUtc().toIso8601String(),
-    };
+  Homework convert(String id, Subject? subject) {
+    return Homework(
+      subject: subject,
+      text: text,
+      description: description,
+      date: date,
+      isCompleted: isCompleted,
+      priority: TaskPriority(priority),
+      id: id,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+    );
+  }
+
+  HomeworkData toData(String id) {
+    return HomeworkData(
+      subjectId: subjectId,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: priority,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+    );
   }
 
   HomeworkEntity copyWith({
@@ -69,21 +86,6 @@ class HomeworkEntity extends HiveObject {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-    );
-  }
-
-  Homework convert(String id, Subject? subject) {
-    return Homework(
-      subject: subject,
-      text: text,
-      description: description,
-      date: date,
-      isCompleted: isCompleted,
-      priority: TaskPriority(priority),
-      id: id,
-      timestamp: timestamp,
-      isDeleted: isDeleted,
-      order: order,
     );
   }
 }

@@ -30,12 +30,12 @@ final subjectsNonDeletedProvider = Provider<Map<String, Subject>>((ref) {
 
 final subjectsUsedTimesProvider = Provider<Map<String, int>>((ref) {
   final Map<String, int> map = {};
-  final exams = ref.watch(examProvider);
+  final exams = ref.watch(examDataProvider);
   final hws = ref.watch(hwProvider);
 
   exams.forEach(
     (key, value) {
-      final subjectId = value.subject?.id;
+      final subjectId = value.subjectId;
 
       if (subjectId != null) {
         map[subjectId] = (map[subjectId] ?? 0) + 1;

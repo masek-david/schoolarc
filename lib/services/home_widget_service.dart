@@ -97,7 +97,7 @@ Future<void> completeHwBackground(
       // WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform);
-      await container.read(hwProvider.notifier).completeById(id, isCompleted);
+      await container.read(hwDataProvider.notifier).completeById(id, isCompleted);
 
       updateHwWidget(container.read(hwWidgetProvider));
 

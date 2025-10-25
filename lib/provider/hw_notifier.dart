@@ -8,10 +8,8 @@ import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
-import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
@@ -19,8 +17,22 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-final hwProvider =
-    NotifierProvider<HwNotifier, Map<String, Homework>>(HwNotifier.new);
+final hwDataProvider =
+    NotifierProvider<HwNotifier, Map<String, HomeworkData>>(HwNotifier.new);
+
+final hwProvider = Provider<Map<String, Homework>>(
+  (ref) {
+    final hws = ref.watch(hwDataProvider);
+    final subjects = ref.watch(subjectsNonDeletedProvider);
+
+    return hws.map(
+      (key, value) => MapEntry(
+        key,
+        value.convert(subjects[value.subjectId]),
+      ),
+    );
+  },
+);
 
 // sorts by priorities (0-3), orders them
 final hwSortedProvider = Provider<Map<int, List<Homework>>>(
@@ -167,23 +179,12 @@ List<Homework> hwsGetMissed(Map<String, Homework> original, {Date? missedBy}) {
   return missedHw;
 }
 
-class HwNotifier extends Notifier<Map<String, Homework>> {
+class HwNotifier extends Notifier<Map<String, HomeworkData>> {
   Map<String, Subject> subjects = {};
-  StreamSubscription<HomeworkEntityWithID>? listenFirebase;
+  StreamSubscription<HomeworkData>? listenFirebase;
 
   @override
-  Map<String, Homework> build() {
-    // listen to subjectsProvider changes
-    Future.microtask(
-      () => ref.listen(subjectsNonDeletedProvider, (_, next) {
-        subjects = next;
-        if (stateOrNull != null) {
-          _reloadState();
-        }
-      }),
-    );
-    subjects = ref.read(subjectsNonDeletedProvider);
-
+  Map<String, HomeworkData> build() {
     listenToFirebase();
     Future.microtask(() => _checkForDeleted());
 
@@ -195,18 +196,16 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
   }
 
   /// returns state saved in database
-  Map<String, Homework> get _dbState {
+  Map<String, HomeworkData> get _dbState {
     return homeworksDb.readDatabase().map(
       (key, value) {
-        return MapEntry(
-          key,
-          value.convert(key, subjects[value.subjectId]),
-        );
+        return MapEntry(key, value.toData(key));
       },
     );
   }
 
   // when reopening app, reload hive, to check for modified homework, only on android
+  // TODO this should load it from sharedpref
   void androidReloadBox() async {
     if (!kIsWeb && Platform.isAndroid) {
       try {
@@ -267,8 +266,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
 
   /// If [addToEnd] is true, order will be set to end of the list of its priority
   Future<void> create(
-    HomeworkEntity hw, {
-    String? overrideId,
+    HomeworkData hw, {
     bool syncWithFire = true,
     bool addToEnd = true,
   }) async {
@@ -282,45 +280,45 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
       );
     }
 
-    final id = overrideId ?? uuid.v4();
-    await homeworksDb.put(id, hw);
+    final id = uuid.v4();
+    hw = hw.copyWith(id: id);
+    await homeworksDb.put(id, hw.toEntity());
 
-    state = {...state, id: hw.convert(id, subjects[hw.subjectId])};
+    state = {...state, id: hw};
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider).createHw(
-            hw.convert(id, subjects[hw.subjectId]),
-          );
+      await ref.read(firebaseServiceProvider).createHw(hw);
     }
   }
 
   /// You have to assign timestamp manually, if no id, it will add it as now
   ///
   /// [checkOrder] is false when calling from reorder, because its not neccesary to check again
+  /// [checkOrder] is false when calling from checkFire, so it is synced
   Future<void> update(
-    Homework edited, {
+    HomeworkData edited, {
     bool syncWithFire = true,
     bool checkOrder = true,
   }) async {
     final isNew = edited.timestamp.difference(DateTime.now()).abs() <
         const Duration(seconds: 5);
-    final old = state[edited.id]!;
-    final bool playAnimation = !old.isCompleted && edited.isCompleted && isNew;
+    final old = state[edited.id];
+    final bool playAnimation = old?.isCompleted == false && edited.isCompleted && isNew;
 
-    if (old.priority.index != edited.priority.index &&
+    if (old?.priority != edited.priority &&
         !edited.isCompleted &&
         !edited.isDeleted &&
         checkOrder) {
       edited = edited.copyWith(
         order: _getOrder(
           index: null,
-          priority: edited.priority.index,
+          priority: edited.priority,
           id: edited.id,
         ),
       );
     }
 
-    homeworksDb.put(edited.id, edited.convert());
+    homeworksDb.put(edited.id, edited.toEntity());
     if (syncWithFire) {
       ref.read(firebaseServiceProvider).updateHw([edited]);
     }
@@ -348,14 +346,14 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
   ///
   /// timestamp updated automatically for the moved subject
   Future<void> reorder(
-    final Homework original,
+    final HomeworkData original,
     int newIndex,
     int newPriority,
   ) async {
     await update(
       original.copyWith(
         timestamp: DateTime.now(),
-        priority: TaskPriority(newPriority),
+        priority: newPriority,
         order: _getOrder(
           index: newIndex,
           priority: newPriority,
@@ -379,7 +377,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == priority &&
+              element.priority == priority &&
               element.id != id,
         )
         .toList();
@@ -403,9 +401,9 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
   }
 
   /// deletes this homework and creates new exam
-  void convert(Homework hw) {
+  void convert(HomeworkData hw) {
     _permanentDelete([hw]);
-    ref.read(examProvider.notifier).create(hw.toExamEntity());
+    ref.read(examDataProvider.notifier).create(hw.toExam());
   }
 
   Future<void> completeById(String id, bool nowIsCompleted) async {
@@ -416,7 +414,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
     }
   }
 
-  Future<void> complete(Homework hw, bool nowIsCompleted) async {
+  Future<void> complete(HomeworkData hw, bool nowIsCompleted) async {
     await update(
       hw.copyWith(
         timestamp: DateTime.now().toUtc(),
@@ -425,11 +423,11 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
     );
   }
 
-  void delete(Homework hw) {
+  void delete(HomeworkData hw) {
     update(hw.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(Homework hw) {
+  void revertDelete(HomeworkData hw) {
     update(
       hw.copyWith(
           timestamp: DateTime.now().toUtc(),
@@ -438,7 +436,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
     );
   }
 
-  Future<void> _permanentDelete(List<Homework> hws) async {
+  Future<void> _permanentDelete(List<HomeworkData> hws) async {
     if (hws.isEmpty) return;
     for (var element in hws) {
       homeworksDb.delete(element.id);
@@ -451,7 +449,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
 
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<Homework> hwsToDelete = [];
+    List<HomeworkData> hwsToDelete = [];
 
     for (var hw in state.values) {
       if (hw.isDeleted &&
@@ -463,7 +461,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
   }
 
   /// checks and updates/adds hw from firestore, overwrites the newest version
-  Future<void> checkFireHomework(HomeworkEntityWithID fireHw) async {
+  Future<void> checkFireHomework(HomeworkData fireHw) async {
     // print('checking hw from fire: ${fireHw.toString()}');
 
     final localHw = state.values.where(
@@ -476,10 +474,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
     if (localHw == null) {
       // print('\u001b[1;92madding hw from fire: ${fireHw.toString()}');
 
-      await update(
-        fireHw.convert(fireHw.id, subjects[fireHw.subjectId]),
-        syncWithFire: false,
-      );
+      await update(fireHw, syncWithFire: false, checkOrder: false);
       return;
     }
 
@@ -489,10 +484,7 @@ class HwNotifier extends Notifier<Map<String, Homework>> {
     if (fireTime.millisecondsSinceEpoch > localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from fire: ${fireHw.toString()}');
 
-      update(
-        fireHw.convert(fireHw.id, subjects[fireHw.subjectId]),
-        syncWithFire: false,
-      );
+      update(fireHw, syncWithFire: false, checkOrder: false);
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');

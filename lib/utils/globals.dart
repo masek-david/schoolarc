@@ -64,8 +64,8 @@ Future<void> syncAllTasks(WidgetRef ref) async {
   await ref.read(subjectsProvider.notifier).syncAll();
   if (ref.context.mounted) {
     await Future.wait([
-      ref.read(hwProvider.notifier).syncAll(),
-      ref.read(examProvider.notifier).syncAll(),
+      ref.read(hwDataProvider.notifier).syncAll(),
+      ref.read(examDataProvider.notifier).syncAll(),
     ]);
   }
   return;

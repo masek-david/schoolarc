@@ -42,6 +42,7 @@ class BakaHomework extends Task {
     );
   }
 
+
   @override
   BakaHomework copyWith({
     bool? isCompleted,

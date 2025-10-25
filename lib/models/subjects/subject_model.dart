@@ -63,12 +63,19 @@ class Subject {
   }
 
   factory Subject.fromJson(Map<String, dynamic> json) {
+    late double order;
+    if (json['order'] is int) {
+      order = (json['order'] as int? ?? 0.1).toDouble();
+    } else {
+      order = json['order'] ?? 0.1;
+    }
+
     return Subject(
       name: json['name'],
       id: json['id'],
       shortcut: json['shortcut'],
       bakaId: json['bakaId'],
-      order: json['order'],
+      order: order,
       isDeleted: json['isDeleted'],
       timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
     );
@@ -85,14 +92,24 @@ class Subject {
     };
   }
 
-  Subject.fromFireJson(Map<String, dynamic> json)
-      : name = json['n'],
-        id = json['id'],
-        shortcut = json['s'],
-        bakaId = json['b'],
-        order = json['o'] ?? 0,
-        isDeleted = json['del'] ?? false,
-        timestamp = DateTime.fromMillisecondsSinceEpoch(json['t']);
+  factory Subject.fromFireJson(Map<String, dynamic> json) {
+    late double order;
+    if (json['o'] is int?) {
+      order = (json['o'] as int? ?? 0.1).toDouble();
+    } else {
+      order = json['o'] ?? 0.1;
+    }
+
+    return Subject(
+      name: json['n'],
+      id: json['id'],
+      shortcut: json['s'],
+      bakaId: json['b'],
+      order: order,
+      isDeleted: json['del'] ?? false,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['t']),
+    );
+  }
 
   bool get isFromBakalari {
     return bakaId != null && bakaId != '';

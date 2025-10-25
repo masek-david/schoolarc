@@ -46,20 +46,18 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
   void onSave() async {
     Navigator.pop(context);
     if (widget.isHomework) {
-      await ref.read(hwProvider.notifier).create(
-            widget.task.toHwEntity().copyWith(
+      await ref.read(hwDataProvider.notifier).update(
+            widget.task.toHwData().copyWith(
                   subjectId: pickedSubjectId,
                   priority: priority,
                 ),
-            overrideId: widget.task.id,
           );
     } else {
-      await ref.read(examProvider.notifier).create(
-            widget.task.toExamEntity().copyWith(
+      await ref.read(examDataProvider.notifier).update(
+            widget.task.toExamData().copyWith(
                   subjectId: pickedSubjectId,
                   priority: priority,
                 ),
-            overrideId: widget.task.id,
           );
     }
     if (mounted) {

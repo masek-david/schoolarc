@@ -28,8 +28,8 @@ class RescheduleDragTarget extends ConsumerWidget {
         if (details.data.runtimeType == Homework) {
           final hw = details.data as Homework;
           if (!hw.date.isSameDay(currentDate)) {
-            ref.read(hwProvider.notifier).update(
-                  hw.copyWith(
+            ref.read(hwDataProvider.notifier).update(
+                  hw.toData().copyWith(
                     date: currentDate,
                     timestamp: DateTime.now().toUtc(),
                   ),
@@ -39,8 +39,8 @@ class RescheduleDragTarget extends ConsumerWidget {
         if (details.data.runtimeType == Exam) {
           final exam = details.data as Exam;
           if (!exam.date.isSameDay(currentDate)) {
-            ref.read(examProvider.notifier).update(
-                  exam.copyWith(
+            ref.read(examDataProvider.notifier).update(
+                  exam.toData().copyWith(
                     date: currentDate,
                     timestamp: DateTime.now().toUtc(),
                   ),

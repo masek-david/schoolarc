@@ -3,10 +3,8 @@ import 'dart:developer';
 
 import 'package:riverpod/riverpod.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
-import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
@@ -14,8 +12,22 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-final examProvider =
-    NotifierProvider<ExamNotifier, Map<String, Exam>>(ExamNotifier.new);
+final examDataProvider =
+    NotifierProvider<ExamNotifier, Map<String, ExamData>>(ExamNotifier.new);
+
+final examProvider = Provider<Map<String, Exam>>(
+  (ref) {
+    final exams = ref.watch(examDataProvider);
+    final subjects = ref.watch(subjectsNonDeletedProvider);
+
+    return exams.map(
+      (key, value) => MapEntry(
+        key,
+        value.convert(subjects[value.subjectId]),
+      ),
+    );
+  },
+);
 
 // sorts by priorities (0-3), orders them
 final examSortedProvider = Provider<Map<int, List<Exam>>>(
@@ -121,19 +133,12 @@ final examDeletedProvider = Provider<List<Exam>>(
   },
 );
 
-class ExamNotifier extends Notifier<Map<String, Exam>> {
+class ExamNotifier extends Notifier<Map<String, ExamData>> {
   Map<String, Subject> subjects = {};
-  StreamSubscription<ExamEntityWithID>? listenFirebase;
+  StreamSubscription<ExamData>? listenFirebase;
 
   @override
-  Map<String, Exam> build() {
-    // listen to subjectsProvider changes
-    ref.listen(subjectsNonDeletedProvider, (_, next) {
-      subjects = next;
-      _reloadState();
-    });
-    subjects = ref.read(subjectsNonDeletedProvider);
-
+  Map<String, ExamData> build() {
     listenToFirebase();
     Future.microtask(() => _checkForDeleted());
 
@@ -142,18 +147,11 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
     return _dbState;
   }
 
-  void _reloadState() {
-    state = _dbState;
-  }
-
   // returns state saved in database
-  Map<String, Exam> get _dbState {
+  Map<String, ExamData> get _dbState {
     return examsDb.readDatabase().map(
       (key, value) {
-        return MapEntry(
-          key,
-          value.convert(key, subjects[value.subjectId]),
-        );
+        return MapEntry(key, value.toData(key));
       },
     );
   }
@@ -187,7 +185,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   void checkAllIfCompleted() {
-    Map<String, Exam> updated = {};
+    Map<String, ExamData> updated = {};
 
     state.forEach(
       (key, value) {
@@ -231,8 +229,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
   /// If [addToEnd] is true, order will be set to end of the list of its priority
   Future<void> create(
-    ExamEntity exam, {
-    String? overrideId,
+    ExamData exam, {
     bool syncWithFire = true,
     bool addToEnd = true,
   }) async {
@@ -246,15 +243,14 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       );
     }
 
-    final id = overrideId ?? uuid.v4();
-    await examsDb.put(id, exam);
+    final id = uuid.v4();
+    exam = exam.copyWith(id: id);
+    await examsDb.put(id, exam.toEntity());
 
-    state = {...state, id: exam.convert(id, subjects[exam.subjectId])};
+    state = {...state, id: exam};
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider).createExam(
-            exam.convert(id, subjects[exam.subjectId]),
-          );
+      await ref.read(firebaseServiceProvider).createExam(exam);
     }
 
     return;
@@ -263,8 +259,9 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   /// You have to assign timestamp manually, if no id, it will add it as now
   ///
   /// [checkOrder] is false when calling from reorder, because its not neccesary to check again
+  /// [checkOrder] is false when calling from checkFire, so it is synced
   Future<void> update(
-    Exam edited, {
+    ExamData edited, {
     bool syncWithFire = true,
     bool checkOrder = true,
   }) async {
@@ -272,21 +269,21 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       isCompleted: edited.date.isBefore(Date.today()),
     );
 
-    final old = state[edited.id]!;
-    if (old.priority.index != edited.priority.index &&
+    final old = state[edited.id];
+    if (old?.priority != edited.priority &&
         !edited.isCompleted &&
         !edited.isDeleted &&
         checkOrder) {
       edited = edited.copyWith(
         order: _getOrder(
           index: null,
-          priority: edited.priority.index,
+          priority: edited.priority,
           id: edited.id,
         ),
       );
     }
 
-    examsDb.put(edited.id, edited.convert());
+    examsDb.put(edited.id, edited.toEntity());
     if (syncWithFire) {
       ref.read(firebaseServiceProvider).updateExams([edited]);
     }
@@ -298,14 +295,14 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   ///
   /// timestamp updated automatically for the moved subject
   Future<void> reorder(
-    final Exam original,
+    final ExamData original,
     int newIndex,
     int newPriority,
   ) async {
     await update(
       original.copyWith(
         timestamp: DateTime.now(),
-        priority: TaskPriority(newPriority),
+        priority: newPriority,
         order: _getOrder(
           index: newIndex,
           priority: newPriority,
@@ -329,7 +326,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
           (element) =>
               !element.isDeleted &&
               !element.isCompleted &&
-              element.priority.index == priority &&
+              element.priority == priority &&
               element.id != id,
         )
         .toList();
@@ -353,16 +350,16 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   /// deletes this exam and creates new homework
-  void convert(Exam exam) {
+  void convert(ExamData exam) {
     _permanentDelete([exam]);
-    ref.read(hwProvider.notifier).create(exam.toHwEntity());
+    ref.read(hwDataProvider.notifier).create(exam.toHomework());
   }
 
-  void delete(Exam exam) {
+  void delete(ExamData exam) {
     update(exam.copyWith(timestamp: DateTime.now().toUtc(), isDeleted: true));
   }
 
-  void revertDelete(Exam exam) {
+  void revertDelete(ExamData exam) {
     update(
       exam.copyWith(
           timestamp: DateTime.now().toUtc(),
@@ -372,7 +369,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   /// `_permanentDelete` must be called from build(), because it doesnt update the state
-  Future<void> _permanentDelete(List<Exam> exams) async {
+  Future<void> _permanentDelete(List<ExamData> exams) async {
     if (exams.isEmpty) return;
     for (var element in exams) {
       examsDb.delete(element.id);
@@ -385,7 +382,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
 
   Future<void> _checkForDeleted() async {
     final now = DateTime.now();
-    List<Exam> examsToDelete = [];
+    List<ExamData> examsToDelete = [];
 
     for (var exam in state.values) {
       if (exam.isDeleted &&
@@ -397,7 +394,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
   }
 
   /// checks and updates/adds exam from firestore, overwrites the newest version
-  Future<void> checkFireExam(ExamEntityWithID fireExam) async {
+  Future<void> checkFireExam(ExamData fireExam) async {
     // print('checking exam from fire: ${fireExam.toString()}');
 
     final localExam = state.values.where(
@@ -411,12 +408,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       // print(
       //     '\u001b[1;92madding exam from fire: ${fireExam.toString()}');
 
-      await create(
-        fireExam,
-        overrideId: fireExam.id,
-        syncWithFire: false,
-        addToEnd: false,
-      );
+      await update(fireExam, syncWithFire: false, checkOrder: false);
       return;
     }
 
@@ -427,10 +419,7 @@ class ExamNotifier extends Notifier<Map<String, Exam>> {
       // print(
       //     '\u001b[1;93mediting exam from fire: ${fireExam.toString()}');
 
-      update(
-        fireExam.convert(fireExam.id, subjects[fireExam.subjectId]),
-        syncWithFire: false,
-      );
+      update(fireExam, syncWithFire: false, checkOrder: false);
     } else if (fireTime.millisecondsSinceEpoch <
         localTime.millisecondsSinceEpoch) {
       // print(

@@ -99,7 +99,7 @@ class HomeworksScreen extends ConsumerWidget {
                   ref.watch(useCloudSyncProvider) ? (_) => true : (_) => false,
               onRefresh: () async {
                 try {
-                  await ref.read(hwProvider.notifier).syncAll();
+                  await ref.read(hwDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
@@ -153,7 +153,9 @@ class HomeworksScreen extends ConsumerWidget {
                             // Multiple widgets use the same globalkey error
                             hw: hw,
                             onChangedCompletion: (value) {
-                              ref.read(hwProvider.notifier).complete(hw, value);
+                              ref
+                                  .read(hwDataProvider.notifier)
+                                  .complete(hw.toData(), value);
                             },
                             onDelete: () => deleteHw(context, ref, hw),
                             onEdit: () => editHw(context, hw),
@@ -182,8 +184,8 @@ class HomeworksScreen extends ConsumerWidget {
                           }
                         }
 
-                        ref.read(hwProvider.notifier).reorder(
-                              item.hw!,
+                        ref.read(hwDataProvider.notifier).reorder(
+                              item.hw!.toData(),
                               newOrder,
                               newPriority,
                             );
@@ -216,7 +218,9 @@ class HomeworksScreen extends ConsumerWidget {
               child: HwTile(
                 hw: hw,
                 onChangedCompletion: (value) {
-                  ref.read(hwProvider.notifier).complete(hw, value);
+                  ref
+                      .read(hwDataProvider.notifier)
+                      .complete(hw.toData(), value);
                 },
                 onDelete: () => deleteHw(context, ref, hw),
                 onEdit: () => editHw(context, hw),

@@ -67,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
       },
     ).length;
     final exams = ref.watch(examsDatesProvider);
-    final int upcomingExams = ref.watch(examProvider).values.where(
+    final int upcomingExams = ref.watch(examDataProvider).values.where(
       (element) {
         return !element.isDeleted && !element.isCompleted;
       },

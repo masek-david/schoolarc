@@ -85,22 +85,22 @@ class PagesWidget extends ConsumerWidget {
                 if (details.data.runtimeType == Homework) {
                   final hw = details.data as Homework;
                   if (!hw.date.isSameDay(date)) {
-                    ref.read(hwProvider.notifier).update(
-                          hw.copyWith(
-                            date: date,
-                            timestamp: DateTime.now().toUtc(),
-                          ),
+                    ref.read(hwDataProvider.notifier).update(
+                          hw.toData().copyWith(
+                                date: date,
+                                timestamp: DateTime.now().toUtc(),
+                              ),
                         );
                   }
                 }
                 if (details.data.runtimeType == Exam) {
                   final exam = details.data as Exam;
                   if (!exam.date.isSameDay(date)) {
-                    ref.read(examProvider.notifier).update(
-                          exam.copyWith(
-                            date: date,
-                            timestamp: DateTime.now().toUtc(),
-                          ),
+                    ref.read(examDataProvider.notifier).update(
+                          exam.toData().copyWith(
+                                date: date,
+                                timestamp: DateTime.now().toUtc(),
+                              ),
                         );
                   }
                 }

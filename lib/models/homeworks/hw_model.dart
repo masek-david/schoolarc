@@ -1,4 +1,5 @@
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -21,6 +22,7 @@ class Homework extends Task {
     this.isBeingAnimated = false,
   });
 
+  /// True when the checkbox animation is running
   bool isBeingAnimated;
 
   HomeworkEntity convert() {
@@ -37,24 +39,26 @@ class Homework extends Task {
     );
   }
 
+  HomeworkData toData() {
+    return HomeworkData(
+      isBeingAnimated: isBeingAnimated,
+      stateReaddingVersion: stateReaddingVersion,
+      id: id,
+      isCompleted: date.isBefore(Date.today()),
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
+      order: order,
+    );
+  }
+
   @override
   String toString() {
     return 'homework: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
-  }
-
-  Map<String, dynamic> toFireJson() {
-    return {
-      'n': text,
-      if (description != '') 'i': description,
-      if (subject != null) 's': subject?.id,
-      // TODO fire
-      'd': date.toDateTimeUTC().millisecondsSinceEpoch,
-      if (priority.index != 0) 'p': priority.index,
-      if (order != 0) 'o': order,
-      if (!isCompleted) 'c': isCompleted,
-      if (isDeleted) 'del': isDeleted,
-      't': timestamp.millisecondsSinceEpoch,
-    };
   }
 
   @override
