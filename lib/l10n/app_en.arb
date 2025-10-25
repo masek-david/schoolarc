@@ -21,7 +21,7 @@
       }
     }
   },
-  "upcomingHomework": "{count, plural, one{Upcoming homework} other{Upcoming homework}}",
+  "upcomingHomework": "{count, plural, one{Upcoming piece of homework} other{Upcoming pieces of homework}}",
   "@upcomingHomework": {
     "description": "Label for upcoming homework count",
     "placeholders": {

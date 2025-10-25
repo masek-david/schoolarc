@@ -99,8 +99,8 @@ class SettingsDatabase {
       defaultValue: 0,
     ),
     Setting.pageSwitchAnimationDuration: const SettingModel(
-      key: 'pageSwitchDuration',
-      defaultValue: 0.0,
+      key: 'pageAnimation',
+      defaultValue: 150.0,
     ),
     Setting.tomorrowNotificationEnabled: const SettingModel(
       defaultValue: true,

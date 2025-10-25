@@ -1,6 +1,5 @@
 # FIX
 i dont think notifications work
-in home screen, show info about today too, if it is already showing about tomorrow
 merge sorts into one
 
 

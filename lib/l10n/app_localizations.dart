@@ -122,7 +122,7 @@ abstract class AppLocalizations {
   /// Label for upcoming homework count
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Upcoming homework} other{Upcoming homework}}'**
+  /// **'{count, plural, one{Upcoming piece of homework} other{Upcoming pieces of homework}}'**
   String upcomingHomework(int count);
 
   /// Label for upcoming exams count
