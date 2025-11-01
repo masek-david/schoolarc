@@ -129,7 +129,7 @@ class MainWidget : GlanceAppWidget() {
     @Composable
     private fun GlanceContent(currentState: HomeWidgetGlanceState) {
         var allTasks: MutableMap<String, MutableList<Task>> = mutableMapOf()
-        val isDebug = true
+        val isDebug = false
         val context = LocalContext.current
 
         if (isDebug) {

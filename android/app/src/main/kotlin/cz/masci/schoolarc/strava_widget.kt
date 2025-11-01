@@ -79,7 +79,7 @@ class StravaWidget : GlanceAppWidget() {
     @Composable
     private fun GlanceContent(context: Context, currentState: HomeWidgetGlanceState) {
         var meals: MutableList<MealDay> = mutableListOf()
-        val isDebug = true
+        val isDebug = false
         if (isDebug) {
             meals = mutableListOf(
                 MealDay(
