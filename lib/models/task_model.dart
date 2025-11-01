@@ -3,9 +3,9 @@ import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -114,10 +114,11 @@ class Task {
 
   Map<String, dynamic> toWidgetJson() {
     return {
+      'isHomework': this is Homework,
       'id': id,
       'text': text,
       'subject': subject?.shortcut ?? '',
-      'deadline': date.formatWithText(),
+      'date': date.toPrimitiveInt(),
       'isCompleted': isCompleted,
       'priority': priority.index,
       'hasDescription': description != '',

@@ -1,7 +1,9 @@
 ## [2.2.0]() - 2025-
 ### Added
+- Reworked Android widgets
 
 ### Changed
+- Improved home screen
 
 ### Fixed
 - Fixed notifications - now will arrive up to a week after last open of the app

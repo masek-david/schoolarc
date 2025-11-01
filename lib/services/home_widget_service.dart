@@ -1,42 +1,108 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
-import 'package:schoolarc/database/hive/hive_init.dart';
-import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
+import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/services/firebase/firebase_options.dart';
-import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:schoolarc/utils/task_functions.dart';
+import 'package:schoolarc/widgets/create_new_dialog.dart';
 
-void updateHwWidget(List<Homework> hws) {
+/// Checks all past completed homework, updates them
+///
+/// Then saves widget data and updates the widget
+Future<void> updateMainWidget(WidgetRef ref) async {
   if (kIsWeb || !Platform.isAndroid) return;
 
-  List<dynamic> json = [];
+  await checkForCompletedHomework(ref);
+  await saveLocalizationStrings();
 
-  for (var element in hws) {
-    json.add(element.toWidgetJson());
+  Map<String, dynamic> json = {};
+  Map<Date, List<Task>> tasks = {};
+  final hws = ref.read(hwDatesProvider);
+  final exams = ref.read(examsDatesProvider);
+
+  final now = Date.today();
+  for (int i = 0; i < 14; i++) {
+    final date = now.addDays(i);
+    tasks.addAll({
+      date: [...hws[date] ?? [], ...exams[date] ?? []]
+    });
   }
 
-  HomeWidget.saveWidgetData('hw', jsonEncode(json));
-  HomeWidget.updateWidget(
-    androidName: 'HwWidgetReceiver',
-    qualifiedAndroidName: 'cz.masci.schoolarc.HwWidgetReceiver',
+  tasks.forEach(
+    (key, value) {
+      value.sort(
+        (a, b) {
+          if (a.runtimeType == b.runtimeType) {
+            return b.priority.index.compareTo(a.priority.index);
+          } else {
+            return a is Homework ? 1 : -1;
+          }
+        },
+      );
+    },
+  );
+
+  json = tasks.map(
+    (key, value) => MapEntry(
+      key.toPrimitiveInt().toString(),
+      value
+          .map(
+            (e) => e.toWidgetJson(),
+          )
+          .toList(),
+    ),
+  );
+
+  _saveAndUpdateMain(jsonEncode(json));
+}
+
+Future<void> _saveAndUpdateMain(String data) async {
+  final result = await HomeWidget.saveWidgetData('tasks', data);
+  log('Saving data to widget: ${result == true ? 'Success' : 'Error'}');
+  await HomeWidget.updateWidget(
+    androidName: 'MainWidgetReceiver',
+    qualifiedAndroidName: 'cz.masci.schoolarc.MainWidgetReceiver',
   );
 }
 
-void updateStravaWidget(Map<Date, List<Meal>> meals) {
+Future<void> saveLocalizationStrings() async {
+  final loc = getLocalization();
+  String format = settings.get(Setting.dateFormat);
+  String shortFormat =
+      supportedDateFormatsNoYear[supportedDateFormats.indexOf(format)];
+
+  await HomeWidget.saveWidgetData(
+    'loc',
+    jsonEncode({
+      'locale': getLocale().languageCode,
+      'format': format,
+      'shortFormat': shortFormat,
+      'today': loc.today,
+      'tomorrow': loc.tomorrow,
+      'noHomework': loc.noHomework,
+      'noExams': loc.noExams,
+      'noMealsFound': loc.noMealsFound,
+      'nothingPlanned': loc.nothingPlanned,
+    }),
+  );
+}
+
+void updateMealsWidget(Map<Date, List<Meal>> meals) {
   if (kIsWeb || !Platform.isAndroid) return;
   Map<String, dynamic> json = {};
   final today = Date.today();
@@ -47,7 +113,7 @@ void updateStravaWidget(Map<Date, List<Meal>> meals) {
       if (!key.isSameDay(today) ||
           TimeOfDay.fromDateTime(DateTime.now())
               .isBefore(settings.get(Setting.mealsShowTodayUntil))) {
-        json[key.formatWithText()] = value
+        json[key.toPrimitiveInt().toString()] = value
             .map(
               (e) => e.toJson(),
             )
@@ -62,48 +128,63 @@ void updateStravaWidget(Map<Date, List<Meal>> meals) {
   );
 }
 
-/// called from widget, when completing homework
 @pragma("vm:entry-point")
 FutureOr<void> backgroundCallback(Uri? data) async {
   if (data == null) return;
-
-  Workmanager().registerOneOffTask(
-    'widget',
-    'widget',
-    inputData: {'data': data.toString()},
-  );
+  if (data.host == 'complete') {
+    // Completing homework - load current data from widget storage - because we dont have Hive in this isolate
+    final json = await HomeWidget.getWidgetData('tasks');
+    final id = data.queryParameters['id'];
+    final completed = bool.parse(data.queryParameters['complete']!);
+    final List<dynamic> tasks = jsonDecode(json);
+    final index = tasks.indexWhere((element) => element['id'] == id);
+    // Update the completion and save the data to widget
+    tasks[index]['isCompleted'] = completed;
+    _saveAndUpdateMain(jsonEncode(tasks));
+    // Save the data to isolatedHive, so we can read it from any isolate
+    await IsolatedHive.initFlutter();
+    final box = await IsolatedHive.openBox('widgetCompletedTasks');
+    await box.put(id, completed);
+    await box.close();
+  }
 }
 
-Future<void> completeHwBackground(
-  Uri data,
-) async {
-  // TODO fix completing homeworks, at least disable it
-  return;
-  if (data.host == 'complete') {
-    String? id = data.queryParameters['db'];
-    bool? isCompleted = bool.tryParse(data.queryParameters['complete'] ?? '');
+Future<void> checkForCompletedHomework(WidgetRef ref) async {
+  final hws = ref.read(hwDataProvider);
+  await IsolatedHive.initFlutter();
+  final box = await IsolatedHive.openBox('widgetCompletedTasks');
 
-    if (id != null && isCompleted != null) {
-      final container = ProviderContainer();
+  final data = await box.toMap();
+  data.forEach(
+    (id, completed) async {
+      if (hws[id]?.isCompleted != completed) {
+        await ref.read(hwDataProvider.notifier).completeById(id, completed);
+      }
+    },
+  );
+  await box.deleteFromDisk();
+  await box.close();
+}
 
-      await Hive.initFlutter();
-      Hive.registerAdapters();
-      await Future.wait([
-        Hive.openBox(subjectBox),
-        Hive.openBox(hwBox),
-        Hive.openBox(examBox),
-      ]);
-
-      // WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform);
-      await container.read(hwDataProvider.notifier).completeById(id, isCompleted);
-
-      updateHwWidget(container.read(hwWidgetProvider));
-
-      await Hive.box(hwBox).flush();
-      await Hive.box(hwBox).close();
-      return;
+void handleWidgetClick(Uri uri, BuildContext context, WidgetRef ref) {
+  Navigator.popUntil(context, (route) => route.isFirst);
+  closeDrawer();
+  if (uri.host == 'create') {
+    pickAction(context);
+  } else if (uri.host == 'view') {
+    final id = uri.queryParameters['id'];
+    if (bool.parse(uri.queryParameters['isHomework']!)) {
+      final hw = ref.read(hwProvider)[id];
+      if (hw != null) {
+        editHw(context, hw);
+      }
+    } else {
+      final exam = ref.read(examProvider)[id];
+      if (exam != null) {
+        editExam(context, exam);
+      }
     }
+  } else if (uri.host == 'meals') {
+    Navigator.restorablePushNamed(context, '/meals');
   }
 }

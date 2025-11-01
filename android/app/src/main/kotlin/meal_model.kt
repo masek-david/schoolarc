@@ -1,5 +1,6 @@
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDate
 
 @Keep
 data class Meal(
@@ -9,6 +10,6 @@ data class Meal(
 )
 
 data class MealDay(
-    val date: String,
+    val date: LocalDate,
     val meals: List<Meal>
 )

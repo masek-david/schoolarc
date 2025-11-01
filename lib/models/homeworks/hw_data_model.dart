@@ -104,6 +104,7 @@ class HomeworkData extends TaskData {
       if (description != '') 'i': description,
       if (subjectId != null) 's': subjectId,
       // TODO fire
+      // 'd': date.toPrimitiveInt(),
       'd': date.toDateTimeUTC().millisecondsSinceEpoch,
       if (priority != 0) 'p': priority,
       if (order != 0) 'o': order,

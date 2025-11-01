@@ -1,19 +1,20 @@
 # FIX
 i dont think notifications work
+does the widget auto update?
 merge sorts into one
-
+meals and baka shows logged out instead of no internet
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
+- ✅ widgets
+    - ✅ add from widget
+    - ✅ cant complete homework from widget
+        - ✅ just save info about completed hw, dont spawn it using isolate?
+        - ✅ rework with isolatedHive??
 - ⬜ push info to the app from web + min required version
-- ⬜ widgets
-    - ⬜ add from widget
-    - ⬜ cant complete homework from widget
-        - ⬜ just save info about completed hw, dont spawn it using isolate?
-        - ⬜ rework with isolatedHive??
 - ⬜ forgot password for firebase + verify email
 - ⬜ tutorial
     - ✅ choose language

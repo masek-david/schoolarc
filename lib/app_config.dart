@@ -195,8 +195,9 @@ class AppConfig extends ConsumerWidget {
             child: child ?? const SizedBox.shrink(),
           ),
           onGenerateRoute: (settings) {
-            // we have to psuh a route, else it throws
+            // we have to push a route, else it throws
             // we also cant return mainapp, since it throws multiple widgets use the same key
+            // TODO notification doesnt work now
             if (settings.name == '/calendar') {
               navigatorKey.currentState?.popUntil((route) => route.isFirst);
               ref.read(showCalendarProvider.notifier).show();

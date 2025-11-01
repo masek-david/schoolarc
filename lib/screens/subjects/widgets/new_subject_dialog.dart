@@ -84,7 +84,7 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
             TextField(
               controller: shortcutController,
               textCapitalization: TextCapitalization.sentences,
-              maxLength: 5,
+              maxLength: 4,
               onSubmitted: (text) {
                 onSave();
                 Navigator.pop(context);

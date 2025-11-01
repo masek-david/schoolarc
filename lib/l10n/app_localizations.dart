@@ -437,6 +437,12 @@ abstract class AppLocalizations {
   /// **'Nothing planned for {whenText}'**
   String nothingPlannedFor(Object whenText);
 
+  /// No description provided for @nothingPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned'**
+  String get nothingPlanned;
+
   /// No description provided for @showMyName.
   ///
   /// In en, this message translates to:
@@ -886,6 +892,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No homework found'**
   String get noHomework;
+
+  /// No description provided for @noExams.
+  ///
+  /// In en, this message translates to:
+  /// **'No exams found'**
+  String get noExams;
 
   /// No description provided for @noRecentlyDeleted.
   ///

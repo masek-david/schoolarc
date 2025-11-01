@@ -89,7 +89,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
 
     lastFetched = null;
     final data = await stravaService.getMeals();
-    updateStravaWidget(data);
+    updateMealsWidget(data);
     lastFetched = DateTime.now();
     return data;
   }

@@ -133,6 +133,20 @@ final examDeletedProvider = Provider<List<Exam>>(
   },
 );
 
+final examWidgetProvider = Provider<List<Exam>>(
+  (ref) {
+    final exams = ref.watch(examProvider);
+    final list = <Exam>[];
+
+    for (final exam in exams.values) {
+      if (!exam.isDeleted && !exam.date.isBefore(Date.today())) {
+        list.add(exam);
+      }
+    }
+    return list;
+  },
+);
+
 class ExamNotifier extends Notifier<Map<String, ExamData>> {
   Map<String, Subject> subjects = {};
   StreamSubscription<ExamData>? listenFirebase;

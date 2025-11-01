@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
-import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
@@ -72,11 +72,10 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
-    updateHwWidget(ref.read(hwWidgetProvider));
+    updateMainWidget(ref);
     NotificationSender.scheduleUpcomingDayNotifications();
 
     if (nowActive) {
-      ref.read(hwDataProvider.notifier).androidReloadBox();
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           ref.read(examDataProvider.notifier).checkAllIfCompleted();
@@ -111,6 +110,18 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       onInactive: () => _onAppLeaveOrReturn(false),
     );
     _onAppLeaveOrReturn(true);
+
+    HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
+      if (event != null && navigatorKey.currentContext?.mounted == true) {
+        handleWidgetClick(event, navigatorKey.currentContext!, ref);
+      }
+    });
+
+    HomeWidget.widgetClicked.listen((event) {
+      if (event != null && navigatorKey.currentContext?.mounted == true) {
+        handleWidgetClick(event, navigatorKey.currentContext!, ref);
+      }
+    });
 
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();

@@ -1,12 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -123,13 +119,14 @@ final hwCompletedProvider = Provider<List<Homework>>(
 
 final hwWidgetProvider = Provider<List<Homework>>(
   (ref) {
-    final hws = ref.watch(hwSortedProvider);
+    final hws = ref.watch(hwProvider);
     final list = <Homework>[];
 
-    for (int i = 3; i >= 0; i--) {
-      list.addAll([...hws[i]!]);
+    for (final hw in hws.values) {
+      if (!hw.isDeleted && !hw.date.isBefore(Date.today())) {
+        list.add(hw);
+      }
     }
-
     return list;
   },
 );
@@ -191,10 +188,6 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     return _dbState;
   }
 
-  void _reloadState() {
-    state = _dbState;
-  }
-
   /// returns state saved in database
   Map<String, HomeworkData> get _dbState {
     return homeworksDb.readDatabase().map(
@@ -202,21 +195,6 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
         return MapEntry(key, value.toData(key));
       },
     );
-  }
-
-  // when reopening app, reload hive, to check for modified homework, only on android
-  // TODO this should load it from sharedpref
-  void androidReloadBox() async {
-    if (!kIsWeb && Platform.isAndroid) {
-      try {
-        await Hive.box(hwBox).close();
-      } on Object {
-        // it shouldnt matter
-      }
-      await Hive.openBox(hwBox);
-
-      _reloadState();
-    }
   }
 
   Future<void> listenToFirebase() async {
@@ -303,7 +281,8 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     final isNew = edited.timestamp.difference(DateTime.now()).abs() <
         const Duration(seconds: 5);
     final old = state[edited.id];
-    final bool playAnimation = old?.isCompleted == false && edited.isCompleted && isNew;
+    final bool playAnimation =
+        old?.isCompleted == false && edited.isCompleted && isNew;
 
     if (old?.priority != edited.priority &&
         !edited.isCompleted &&

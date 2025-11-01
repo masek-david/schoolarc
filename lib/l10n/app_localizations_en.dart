@@ -270,6 +270,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get nothingPlanned => 'Nothing planned';
+
+  @override
   String get showMyName => 'Show my name';
 
   @override
@@ -493,6 +496,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noHomework => 'No homework found';
+
+  @override
+  String get noExams => 'No exams found';
 
   @override
   String get noRecentlyDeleted => 'No recently deleted items found';

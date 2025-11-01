@@ -1,7 +1,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/glance_default_loading_layout"
-    android:previewImage="@drawable/hw"
+    android:previewImage="@drawable/main"
     android:minWidth="110dp"
     android:minHeight="110dp"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="10000" />
+    android:updatePeriodMillis="21600000" />

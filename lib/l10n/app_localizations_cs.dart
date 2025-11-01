@@ -278,6 +278,9 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
+  String get nothingPlanned => 'Nic není naplánováno';
+
+  @override
   String get showMyName => 'Zobrazit moje jméno';
 
   @override
@@ -501,6 +504,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get noHomework => 'Nebyly nalezeny žádné úkoly';
+
+  @override
+  String get noExams => 'Nebyly nalezeny žádné testy';
 
   @override
   String get noRecentlyDeleted => 'Nebyly nalezeny žádné nedávno smazané položky';
