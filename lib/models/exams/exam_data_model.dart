@@ -113,7 +113,7 @@ class ExamData extends TaskData {
       'n': text,
       if (description != '') 'i': description,
       if (subjectId != null) 's': subjectId,
-      // TODO fire
+      // TODO fire (can be updated after you are 100% sure every version can parse it)
       // 'd': date.toPrimitiveInt(),
       'd': date.toDateTimeUTC().millisecondsSinceEpoch,
       if (priority != 0) 'p': priority,

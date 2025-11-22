@@ -1,9 +1,12 @@
-## [2.2.0]() - 2025-
+## [2.2.0]() - 2025-11-22
 ### Added
 - Reworked Android widgets
 
 ### Changed
 - Improved home screen
+- Improved fonts
+- Improved ordering
+- Changed how dates are saved (should resolve any time zone issues)
 
 ### Fixed
 - Fixed notifications - now will arrive up to a week after last open of the app
@@ -16,7 +19,6 @@
 ### Added
 
 ### Changed
-
 
 ### Fixed
 - Improved dragging in calendar
