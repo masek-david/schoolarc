@@ -24,7 +24,9 @@
 - Improved dragging in calendar
 - Improved translations
 - Fixed dialog not closing when adding homework from Bakaláři
-- Fixed some paddings 
+- Fixed some paddings
+- Fixed tasks not showing in calendar after summer time change
+- Improved multiline task support
 
 ---
 

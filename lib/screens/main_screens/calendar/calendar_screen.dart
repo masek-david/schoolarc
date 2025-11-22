@@ -141,7 +141,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       setSelectedDay: (date) {
         if (!mounted) return;
         if (!isSameDay(date, _selectedDay.value)) {
-          _pageController.jumpToPage(getPageIndex(date));
+          // ideally remove this when? it might not work in other timezones
+          if (date.difference(_selectedDay.value.onlyDate()).abs() < const Duration(hours: 40)) {
+            _pageController.animateToPage(getPageIndex(date),
+                duration: Durations.medium1, curve: Curves.easeInOut);
+          } else {
+            _pageController.jumpToPage(getPageIndex(date));
+          }
         }
       },
     );
