@@ -1,8 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/textstyle_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 
 class SettingsScaffold extends StatelessWidget {
   const SettingsScaffold({
@@ -60,9 +59,10 @@ class SettingsScaffold extends StatelessWidget {
                       child: SizedBox(
                         width: double.infinity,
                         child: Text(
-                          style: context.txt.titleLarge!.copyWithNunito(
-                            weight: 700,
+                          style: googleSansFlex(
+                            weight: 600,
                             size: lerpDouble(22, 44, t),
+                            roundness: 100,
                           ),
                           title,
                         ),

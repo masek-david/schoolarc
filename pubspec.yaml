@@ -130,8 +130,6 @@ flutter:
         - asset: assets/fonts/RobotoSerif-VariableFont_GRAD,opsz,wdth,wght.ttf
         - asset: assets/fonts/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf
           style: italic
-    - family: Nunito
+    - family: Google Sans Flex
       fonts:
-        - asset: assets/fonts/Nunito-VariableFont_wght.ttf
-        - asset: assets/fonts/Nunito-Italic-VariableFont_wght.ttf
-          style: italic
+        - asset: assets\fonts\GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf
