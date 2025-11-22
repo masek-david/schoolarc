@@ -46,6 +46,7 @@ class _GroupButtonState extends State<GroupButton>
     _controller = AnimationController(
       vsync: this,
       duration: widget.animationDuration,
+      value: widget.selected ? 1 : 0,
     );
     _radiusAnimation = Tween<double>(begin: 8, end: 20).animate(
       CurvedAnimation(

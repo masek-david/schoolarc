@@ -45,8 +45,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Upcoming homework',
-      one: 'Upcoming homework',
+      other: 'Upcoming pieces of homework',
+      one: 'Upcoming piece of homework',
     );
     return '$_temp0';
   }
@@ -168,6 +168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendar => 'Calendar';
 
   @override
+  String get personal => 'Personal';
+
+  @override
   String exams(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -265,6 +268,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String nothingPlannedFor(Object whenText) {
     return 'Nothing planned for $whenText';
   }
+
+  @override
+  String get nothingPlanned => 'Nothing planned';
 
   @override
   String get showMyName => 'Show my name';
@@ -492,6 +498,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noHomework => 'No homework found';
 
   @override
+  String get noExams => 'No exams found';
+
+  @override
   String get noRecentlyDeleted => 'No recently deleted items found';
 
   @override
@@ -564,10 +573,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMealsFound => 'No meals found';
 
   @override
-  String get noMealsFor => 'No meals for';
+  String noMealsOn(Object date) {
+    return 'No meals $date';
+  }
 
   @override
-  String get mealsFor => 'Meals for';
+  String mealsOn(Object date) {
+    return 'Meals $date';
+  }
 
   @override
   String get lessons => 'Lessons';
@@ -672,6 +685,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upcomingDayNotificationsDescription => 'Receive notifications with homework and exams for the next day';
+
+  @override
+  String get upcomingDayNotificationsReceiveBeforeWeekend => 'Receive notifications before weekend';
+
+  @override
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle => 'If enabled, you will receive notifications even on Friday and Saturday';
+
+  @override
+  String onWeekday(String weekday) {
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        '1': 'Monday',
+        '2': 'Tuesday',
+        '3': 'Wednesday',
+        '4': 'Thursday',
+        '5': 'Friday',
+        '6': 'Saturday',
+        '7': 'Sunday',
+        'other': 'unknown',
+      },
+    );
+    return 'On $_temp0';
+  }
 
   @override
   String get arrivalTimeTitle => 'Arrival time';

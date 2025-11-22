@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -8,7 +9,7 @@ class BakaHomework extends Task {
   BakaHomework({
     required super.isCompleted,
     required super.id,
-    required super.deadline,
+    required super.date,
     required super.description,
     required super.priority,
     required super.subject,
@@ -19,7 +20,6 @@ class BakaHomework extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     super.stateReaddingVersion,
   });
 
@@ -31,7 +31,7 @@ class BakaHomework extends Task {
     return Homework(
       subject: subject,
       text: text,
-      deadline: deadline,
+      date: date,
       isCompleted: isCompleted,
       priority: priority,
       id: id,
@@ -39,15 +39,15 @@ class BakaHomework extends Task {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
+
 
   @override
   BakaHomework copyWith({
     bool? isCompleted,
     String? id,
-    DateTime? deadline,
+    Date? date,
     String? description,
     TaskPriority? priority,
     Object? subject = noChange,
@@ -55,17 +55,16 @@ class BakaHomework extends Task {
     String? fireId,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     int? stateReaddingVersion,
     bool? alreadyAdded,
     bool? alreadySeen,
     String? bakaId,
-    bool? isShared,
   }) {
     return BakaHomework(
       isCompleted: isCompleted ?? this.isCompleted,
       id: id ?? this.id,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       description: description ?? this.description,
       priority: priority ?? this.priority,
       subject: subject == noChange ? this.subject : subject as Subject?,
@@ -76,7 +75,6 @@ class BakaHomework extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }

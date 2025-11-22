@@ -1,26 +1,25 @@
 import 'dart:convert';
 
-import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/utils/globals.dart';
-
 
 class ImportExport {
   ImportExport(
       {required this.exams, required this.hws, required this.subjects});
 
   final List<Subject> subjects;
-  final List<ExamEntityWithID> exams;
-  final List<HomeworkEntityWithID> hws;
+  final List<ExamData> exams;
+  final List<HomeworkData> hws;
 }
 
 String export() {
   String json = '';
 
-  final subjects = subjectsDb.getDatabase();
-  final exams = examsDb.getDatabase();
-  final hws = homeworksDb.getDatabase();
+  final subjects = subjectsDb.readDatabase();
+  final exams = examsDb.readDatabase();
+  final hws = homeworksDb.readDatabase();
 
   json = jsonEncode(
     {
@@ -31,13 +30,13 @@ String export() {
           .toList(),
       'exams': exams
           .map(
-            (key, value) => MapEntry(key, value.toJson(key)),
+            (key, value) => MapEntry(key, value.toData(key).toJson()),
           )
           .values
           .toList(),
       'homework': hws
           .map(
-            (key, value) => MapEntry(key, value.toJson(key)),
+            (key, value) => MapEntry(key, value.toData(key).toJson()),
           )
           .values
           .toList()
@@ -49,25 +48,31 @@ String export() {
 
 ImportExport import({required String jsonString}) {
   final json = jsonDecode(jsonString);
-  final List<ExamEntityWithID> exams = [];
-  final List<HomeworkEntityWithID> hws = [];
+  final List<ExamData> exams = [];
+  final List<HomeworkData> hws = [];
   final List<Subject> subjects = [];
 
-  for (var element in (json['subjects'] as List)) {
-    subjects.add(Subject.fromJson(element));
-  }
-  subjects.sort((a, b) => a.order.compareTo(b.order));
+  final jsonSubjects = json['subjects'] as List?;
+  if (jsonSubjects != null) {
+    for (var element in jsonSubjects) {
+      subjects.add(Subject.fromJson(element));
+    }
+    subjects.sort((a, b) => a.order.compareTo(b.order));
+  } 
 
-  for (var element in (json['exams'] as List)) {
-    exams.add(ExamEntityWithID
-    .fromJson(element));
+  final jsonExams = json['exams'] as List?;
+  if (jsonExams != null) {
+    for (var element in jsonExams) {
+      exams.add(ExamData.fromJson(element));
+    }
+    exams.sort((a, b) => a.order.compareTo(b.order));
   }
-  exams.sort((a, b) => a.order.compareTo(b.order));
-
-  for (var element in (json['homework'] as List)) {
-    hws.add(HomeworkEntityWithID.fromJson(element));
+  final jsonHomework = json['homework'] as List?;
+  if (jsonHomework != null) {
+    for (var element in jsonHomework) {
+      hws.add(HomeworkData.fromJson(element));
+    }
+    hws.sort((a, b) => a.order.compareTo(b.order));
   }
-  hws.sort((a, b) => a.order.compareTo(b.order));
-
   return ImportExport(subjects: subjects, hws: hws, exams: exams);
 }

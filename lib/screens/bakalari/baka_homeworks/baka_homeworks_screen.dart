@@ -69,7 +69,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
           }
 
           data.sort(
-            (a, b) => a.deadline.compareTo(b.deadline),
+            (a, b) => a.date.compareTo(b.date),
           );
           data.sort((a, b) =>
               (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)));

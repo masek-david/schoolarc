@@ -174,6 +174,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get calendar => 'Kalendář';
 
   @override
+  String get personal => 'Osobní';
+
+  @override
   String exams(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -273,6 +276,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String nothingPlannedFor(Object whenText) {
     return 'Na $whenText není nic naplánováno';
   }
+
+  @override
+  String get nothingPlanned => 'Nic není naplánováno';
 
   @override
   String get showMyName => 'Zobrazit moje jméno';
@@ -500,6 +506,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noHomework => 'Nebyly nalezeny žádné úkoly';
 
   @override
+  String get noExams => 'Nebyly nalezeny žádné testy';
+
+  @override
   String get noRecentlyDeleted => 'Nebyly nalezeny žádné nedávno smazané položky';
 
   @override
@@ -572,10 +581,14 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noMealsFound => 'Nebyla nalezena žádná jídla';
 
   @override
-  String get noMealsFor => 'Žádná jídla na';
+  String noMealsOn(Object date) {
+    return '$date žádná jídla';
+  }
 
   @override
-  String get mealsFor => 'Jídla na';
+  String mealsOn(Object date) {
+    return 'Jídla $date';
+  }
 
   @override
   String get lessons => 'Hodiny';
@@ -680,6 +693,30 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get upcomingDayNotificationsDescription => 'Dostávejte oznámení o úkolech a testech na další den';
+
+  @override
+  String get upcomingDayNotificationsReceiveBeforeWeekend => 'Dostávejte oznámení před víkendem';
+
+  @override
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle => 'Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu';
+
+  @override
+  String onWeekday(String weekday) {
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        '1': 'V pondělí',
+        '2': 'V úterý',
+        '3': 'Ve středu',
+        '4': 'Ve čtvrtek',
+        '5': 'V pátek',
+        '6': 'V sobotu',
+        '7': 'V neděli',
+        'other': 'neznámé',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get arrivalTimeTitle => 'Čas doručení';

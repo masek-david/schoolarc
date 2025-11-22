@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
 class RescheduleDragTarget extends ConsumerWidget {
   const RescheduleDragTarget({
@@ -18,7 +18,7 @@ class RescheduleDragTarget extends ConsumerWidget {
       List<dynamic> rejectedData) builder;
   final void Function(DragTargetDetails<Object>)? onMove;
 
-  final DateTime currentDate;
+  final Date currentDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,10 +27,10 @@ class RescheduleDragTarget extends ConsumerWidget {
       onAcceptWithDetails: (details) async {
         if (details.data.runtimeType == Homework) {
           final hw = details.data as Homework;
-          if (!hw.deadline.isSameDay(currentDate)) {
-            ref.read(hwProvider.notifier).edit(
-                  hw.copyWith(
-                    deadline: currentDate.toLocal(),
+          if (!hw.date.isSameDay(currentDate)) {
+            ref.read(hwDataProvider.notifier).update(
+                  hw.toData().copyWith(
+                    date: currentDate,
                     timestamp: DateTime.now().toUtc(),
                   ),
                 );
@@ -38,10 +38,10 @@ class RescheduleDragTarget extends ConsumerWidget {
         }
         if (details.data.runtimeType == Exam) {
           final exam = details.data as Exam;
-          if (!exam.deadline.isSameDay(currentDate)) {
-            ref.read(examProvider.notifier).edit(
-                  exam.copyWith(
-                    deadline: currentDate.toLocal(),
+          if (!exam.date.isSameDay(currentDate)) {
+            ref.read(examDataProvider.notifier).update(
+                  exam.toData().copyWith(
+                    date: currentDate,
                     timestamp: DateTime.now().toUtc(),
                   ),
                 );

@@ -32,13 +32,13 @@ class RecentlyDeletedScreen extends ConsumerWidget {
         {
           final hw = item as Homework;
           itemName = hw.text;
-          onRevert = () => ref.read(hwProvider.notifier).revertDelete(hw);
+          onRevert = () => ref.read(hwDataProvider.notifier).revertDelete(hw.toData());
         }
       case const (Exam):
         {
           final exam = item as Exam;
           itemName = exam.text;
-          onRevert = () => ref.read(examProvider.notifier).revertDelete(exam);
+          onRevert = () => ref.read(examDataProvider.notifier).revertDelete(exam.toData());
         }
       case const (Subject):
         {

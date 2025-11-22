@@ -15,8 +15,6 @@ import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/licenses.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
-import 'package:schoolarc/utils/workmanager.dart';
-import 'package:workmanager/workmanager.dart';
 
 void main() async {
   FlutterError.onError = (details) async {
@@ -55,8 +53,6 @@ void main() async {
 
   if (!kIsWeb && Platform.isAndroid) {
     HomeWidget.registerInteractivityCallback(backgroundCallback);
-
-    Workmanager().initialize(myCallbackDispatcher);
   }
 
   addLicenses();

@@ -80,7 +80,7 @@ class TimeTableLesson {
                     ),
                     FilledButton(
                       onPressed: () async {
-                        await ref.read(subjectsProvider.notifier).saveNew(
+                        await ref.read(subjectsProvider.notifier).create(
                               subject!.convert(),
                             );
                         if (onSubjectAdded != null) {

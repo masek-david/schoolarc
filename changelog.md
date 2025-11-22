@@ -1,4 +1,21 @@
-## [2.1.7]() - 2025-10-14
+## [2.2.0]() - 2025-11-22
+### Added
+- Reworked Android widgets
+
+### Changed
+- Improved home screen
+- Improved fonts
+- Improved ordering
+- Changed how dates are saved (should resolve any time zone issues)
+
+### Fixed
+- Fixed notifications - now will arrive up to a week after last open of the app
+- Fixed meals not showing Doplněk
+- Fixed meals widgt not working 
+
+---
+
+## [2.1.7]() - 2025-10-
 ### Added
 
 ### Changed

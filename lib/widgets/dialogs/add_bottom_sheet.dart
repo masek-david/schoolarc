@@ -3,25 +3,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/task_model.dart';
+import 'package:schoolarc/models/task_data_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
-import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
@@ -34,7 +33,7 @@ class AddTaskBottomSheet extends ConsumerStatefulWidget {
 
   /// if [initialTaskId] is null, a empty task is created
   final String? initialTaskId;
-  final DateTime? initialDate;
+  final Date? initialDate;
 
   /// if true, when a subject is selected, the date will be set to first appearance of this subject in constant timetable
   final bool autoSetDate;
@@ -47,9 +46,9 @@ class AddTaskBottomSheet extends ConsumerStatefulWidget {
 class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     with RestorationMixin {
   late final initialTask = (widget.isHomework
-          ? ref.read(hwProvider)[widget.initialTaskId]
-          : ref.read(examProvider)[widget.initialTaskId]) ??
-      Task.empty().copyWith(deadline: widget.initialDate);
+          ? ref.read(hwDataProvider)[widget.initialTaskId]
+          : ref.read(examDataProvider)[widget.initialTaskId]) ??
+      TaskData.empty().copyWith(date: widget.initialDate);
   late final nameController = RestorableTextEditingController.fromValue(
     TextEditingValue(text: initialTask.text),
   );
@@ -57,10 +56,10 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     TextEditingValue(text: initialTask.description),
   );
   late RestorableStringN pickedSubjectId =
-      RestorableStringN(initialTask.subject?.id);
-  late RestorableDateTime pickedDate = RestorableDateTime(initialTask.deadline);
-  late RestorableInt pickedPriority = RestorableInt(initialTask.priority.index);
-  late RestorableBool share = RestorableBool(initialTask.isShared);
+      RestorableStringN(initialTask.subjectId);
+  late RestorableDate pickedDate = RestorableDate(initialTask.date);
+  late RestorableInt pickedPriority = RestorableInt(initialTask.priority);
+  late RestorableBool group = RestorableBool(false);
   late RestorableBool dateIsAutoSet = RestorableBool(false);
 
   late List<Subject> subjects = ref.read(subjectsSortedProvider);
@@ -73,26 +72,25 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
 
   void onSave() {
     final task = initialTask.copyWith(
-      subject: ref.read(subjectsProvider)[pickedSubjectId.value],
+      subjectId: pickedSubjectId.value,
       text: nameController.value.text,
       description: descriptionController.value.text,
-      deadline: pickedDate.value,
-      priority: TaskPriority(pickedPriority.value),
+      date: pickedDate.value,
+      priority: pickedPriority.value,
       timestamp: DateTime.now().toUtc(),
-      isShared: share.value,
     );
 
     if (widget.isHomework) {
       if (task.id == '') {
-        ref.read(hwProvider.notifier).saveNew(task.toHwEntity());
+        ref.read(hwDataProvider.notifier).create(task.toHw());
       } else {
-        ref.read(hwProvider.notifier).edit(task as Homework);
+        ref.read(hwDataProvider.notifier).update(task as HomeworkData);
       }
     } else {
       if (task.id == '') {
-        ref.read(examProvider.notifier).saveNew(task.toExamEntity());
+        ref.read(examDataProvider.notifier).create(task.toExam());
       } else {
-        ref.read(examProvider.notifier).edit(task as Exam);
+        ref.read(examDataProvider.notifier).update(task as ExamData);
       }
     }
   }
@@ -117,11 +115,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   }
 
   void pickDate({bool keyboard = false}) async {
+    final initial = pickedDate.value.toDateTimeLocal();
     DateTime? newDate;
     if (keyboard) {
       newDate = await showDialog<DateTime?>(
         context: context,
-        builder: (context) => KeyboardDatePicker(initialDate: pickedDate.value),
+        builder: (context) => KeyboardDatePicker(initialDate: initial),
       );
     } else {
       newDate = await showDatePicker(
@@ -130,7 +129,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
           Localizations.localeOf(context).languageCode,
           ref.watch(weekStartsOnMondayProvider) ? 'GB' : 'US',
         ),
-        initialDate: pickedDate.value,
+        initialDate: initial,
         firstDate: DateTime.utc(0),
         lastDate: DateTime.utc(3000),
       );
@@ -140,13 +139,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
 
     setState(() {
       dateIsAutoSet.value = false;
-      pickedDate.value = newDate!;
+      pickedDate.value = Date.fromDateTime(newDate!.toLocal());
     });
     return;
   }
 
   void pickSubject() async {
-    final newSubject = await showSelectSubject(context: context, subjects: subjects);
+    final newSubject =
+        await showSelectSubject(context: context, subjects: subjects);
 
     setSubject(newSubject);
   }
@@ -189,7 +189,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     registerForRestoration(pickedSubjectId, 'pickedSubject');
     registerForRestoration(pickedPriority, 'pickedPriority');
     registerForRestoration(dateIsAutoSet, 'dateIsAutoSet');
-    registerForRestoration(share, 'share');
+    registerForRestoration(group, 'share');
   }
 
   @override
@@ -252,17 +252,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     onSelected: setSubject,
                     keys: keysList,
                   ),
-                  if (share.value &&
-                      subjects
-                              .where((element) =>
-                                  element.id == pickedSubjectId.value)
-                              .firstOrNull
-                              ?.isShared ==
-                          false)
-                    ErrorTile(
-                      error: null,
-                      text: context.loc.subjectIsntShared,
-                    ),
                   const SizedBox(height: 10),
                   Autocomplete<Subject>(
                     fieldViewBuilder: (context, textEditingController,
@@ -346,7 +335,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                             ),
                           ),
                           Text(
-                            pickedDate.value.formatWithoutYear(),
+                            pickedDate.value.formatFromSettings(),
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -357,26 +346,21 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     children: [
                       ChoiceChip(
                         label: Text(context.loc.today),
-                        selected: pickedDate.value.isSameDay(DateTime.now()),
+                        selected: pickedDate.value.isSameDay(Date.today()),
                         onSelected: (value) {
-                          DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate.value =
-                                DateTime(now.year, now.month, now.day);
+                            pickedDate.value = Date.today();
                           });
                         },
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
                         label: Text(context.loc.tomorrow),
-                        selected: pickedDate.value.isSameDay(
-                            DateTime.now().add(const Duration(days: 1))),
+                        selected:
+                            pickedDate.value.isSameDay(Date.today().addDays(1)),
                         onSelected: (value) {
-                          DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate.value =
-                                DateTime(now.year, now.month, now.day)
-                                    .add(const Duration(days: 1));
+                            pickedDate.value = Date.today().addDays(1);
                           });
                         },
                       ),
@@ -384,14 +368,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       ChoiceChip(
                         label: Text(
                             '${context.loc.next} ${DateFormat.EEEE(getLocale().languageCode).format(DateTime.now()).toLowerCase()}'),
-                        selected: pickedDate.value.isSameDay(
-                            DateTime.now().add(const Duration(days: 7))),
+                        selected:
+                            pickedDate.value.isSameDay(Date.today().addDays(7)),
                         onSelected: (value) {
-                          DateTime now = DateTime.now();
                           setState(() {
-                            pickedDate.value =
-                                DateTime(now.year, now.month, now.day)
-                                    .add(const Duration(days: 7));
+                            pickedDate.value = Date.today().addDays(7);
                           });
                         },
                       ),

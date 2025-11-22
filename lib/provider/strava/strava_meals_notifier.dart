@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
+import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final stravaMealsAgeProvider = StreamProvider<Duration?>((ref) async* {
@@ -22,15 +24,15 @@ final stravaMealsAgeProvider = StreamProvider<Duration?>((ref) async* {
 });
 
 final stravaMealsProvider =
-    AsyncNotifierProvider<StravaMealsNotifier, Map<DateTime, List<Meal>>>(
+    AsyncNotifierProvider<StravaMealsNotifier, Map<Date, List<Meal>>>(
         StravaMealsNotifier.new);
 
-class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
+class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
   DateTime? lastFetched;
   bool isFetching = false;
 
   @override
-  FutureOr<Map<DateTime, List<Meal>>> build() async {
+  FutureOr<Map<Date, List<Meal>>> build() async {
     _setupListeners();
     try {
       final data = await _fetch();
@@ -66,7 +68,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
   }
 
   /// Gets only if logged in and using meals
-  Future<Map<DateTime, List<Meal>>> _fetch() async {
+  Future<Map<Date, List<Meal>>> _fetch() async {
     isFetching = true;
 
     final useMeals = ref.read(useMealsProvider);
@@ -87,6 +89,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<DateTime, List<Meal>>> {
 
     lastFetched = null;
     final data = await stravaService.getMeals();
+    updateMealsWidget(data);
     lastFetched = DateTime.now();
     return data;
   }

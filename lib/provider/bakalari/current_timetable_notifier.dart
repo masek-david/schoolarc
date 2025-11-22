@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
@@ -89,7 +90,7 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
     }
 
     lastFetched = null;
-    final data = await bakaService.getCurrentTimetable(DateTime.now());
+    final data = await bakaService.getCurrentTimetable(Date.today());
     lastFetched = DateTime.now();
     return data;
   }

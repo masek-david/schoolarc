@@ -1,3 +1,4 @@
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
@@ -5,7 +6,6 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
 class Member {
   Member(
@@ -43,12 +43,11 @@ class GroupTask extends Task {
     required super.isDeleted,
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.description,
     required super.order,
-    required super.isShared,
     required this.member,
   });
 
@@ -72,7 +71,9 @@ class GroupHomeworkData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        deadline: DateTime.fromMillisecondsSinceEpoch(json['d']),
+        // TODO group fire
+        date: Date.today(),
+        // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
         order: json['o'] ?? 0,
         isCompleted: json['c'] ?? true,
@@ -88,7 +89,9 @@ class GroupHomeworkData {
     return GroupHomework(
       subject: subject,
       text: hw.text,
-      deadline: hw.deadline,
+      // TODO group fire
+      // date: Date.fromDateTime(hw.date.toLocal()),
+      date: Date.today(),
       isCompleted: hw.isCompleted,
       priority: TaskPriority(hw.priority),
       id: id,
@@ -96,7 +99,6 @@ class GroupHomeworkData {
       timestamp: hw.timestamp,
       isDeleted: hw.isDeleted,
       order: hw.order,
-      isShared: hw.isShared,
       member: member,
     );
   }
@@ -106,7 +108,7 @@ class GroupHomework extends GroupTask {
   GroupHomework({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.id,
@@ -114,7 +116,6 @@ class GroupHomework extends GroupTask {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     required super.member,
   });
 
@@ -122,7 +123,7 @@ class GroupHomework extends GroupTask {
     return Homework(
       subject: subject,
       text: text,
-      deadline: deadline,
+      date: date,
       isCompleted: isCompleted,
       priority: priority,
       id: id,
@@ -130,7 +131,6 @@ class GroupHomework extends GroupTask {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }
@@ -152,7 +152,9 @@ class GroupExamData {
         text: json['n'],
         description: json['i'] ?? '',
         subjectId: json['s'],
-        date: DateTime.fromMillisecondsSinceEpoch(json['d']),
+        // TODO group fire
+        date: Date.today(),
+        // date: DateTime.fromMillisecondsSinceEpoch(json['d']),
         priority: json['p'] ?? 0,
         order: json['o'] ?? 0,
         isDeleted: json['del'] ?? false,
@@ -167,15 +169,14 @@ class GroupExamData {
     return GroupExam(
       subject: subject,
       text: exam.text,
-      deadline: exam.date,
-      isCompleted: exam.date.isBeforeToday(),
+      date: exam.date,
+      isCompleted: exam.date.isBefore(Date.today()),
       priority: TaskPriority(exam.priority),
       id: id,
       description: exam.description,
       timestamp: exam.timestamp,
       isDeleted: exam.isDeleted,
       order: exam.order,
-      isShared: exam.isShared,
       member: member,
     );
   }
@@ -185,7 +186,7 @@ class GroupExam extends GroupTask {
   GroupExam({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.isCompleted,
     required super.priority,
     required super.id,
@@ -193,7 +194,6 @@ class GroupExam extends GroupTask {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     required super.member,
   });
 
@@ -201,7 +201,7 @@ class GroupExam extends GroupTask {
     return Exam(
       subject: subject,
       text: text,
-      deadline: deadline,
+      date: date,
       priority: priority,
       id: id,
       isCompleted: isCompleted,
@@ -209,7 +209,6 @@ class GroupExam extends GroupTask {
       timestamp: timestamp,
       isDeleted: isDeleted,
       order: order,
-      isShared: isShared,
     );
   }
 }

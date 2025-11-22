@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -24,33 +25,30 @@ Subject exampleSubject(AppLocalizations loc) => Subject(
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 Homework exampleHw(AppLocalizations loc) => Homework(
       subject: exampleSubject(loc),
       text: loc.homework(1),
-      deadline: DateTime.now().add(const Duration(days: 1)),
+      date: Date.today().addDays(1),
       isCompleted: false,
-      priority: TaskPriority(0),
+      priority: const TaskPriority(0),
       id: '',
       description: '',
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 Exam exampleExam(AppLocalizations loc) => Exam(
       subject: exampleSubject(loc),
       text: loc.exams(1),
-      deadline: DateTime.now().add(const Duration(days: 1)),
+      date: Date.today().addDays(1),
       isCompleted: false,
-      priority: TaskPriority(0),
+      priority: const TaskPriority(0),
       id: '',
       description: '',
       timestamp: DateTime.now(),
       isDeleted: false,
       order: 0,
-      isShared: false,
     );
 
 class Tutorial extends StatefulWidget {

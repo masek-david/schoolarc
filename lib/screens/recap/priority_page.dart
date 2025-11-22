@@ -158,7 +158,7 @@ class _SubjectsPageState extends State<PriorityPage> {
                             meta: meta,
                             space: 12,
                             child: Text(
-                              TaskPriority(value.toInt()).name,
+                              TaskPriority(value.toInt()).name(context),
                               style: text.labelLarge!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
@@ -184,7 +184,7 @@ class _SubjectsPageState extends State<PriorityPage> {
                     style: text.bodyLarge,
                   ),
                   TextSpan(
-                    text: TaskPriority(mostPickedIndex).name,
+                    text: TaskPriority(mostPickedIndex).name(context),
                     style: text.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TaskPriority(mostPickedIndex).getColor(context),

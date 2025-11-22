@@ -1,20 +1,23 @@
 # FIX
-notifications are set only for this day
-in home screen, show info about today too, if it is already showing about tomorrow
-home screen meals shouldnt always enlarge
-errors messages for export/import
+timetable and meals show wrong date in homescreen
+when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field
+android meals widget updates, but shows old meals
+notifications dont use correct linebreaks
+
+merge sorts into one
+meals and baka shows logged out instead of no internet
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
+- ✅ widgets
+    - ✅ add from widget
+    - ✅ cant complete homework from widget
+        - ✅ just save info about completed hw, dont spawn it using isolate?
+        - ✅ rework with isolatedHive??
 - ⬜ push info to the app from web + min required version
-- ⬜ widgets
-    - ⬜ add from widget
-    - ⬜ cant complete homework from widget
-        - ⬜ just save info about completed hw, dont spawn it using isolate?
-        - ⬜ rework with isolatedHive??
 - ⬜ forgot password for firebase + verify email
 - ⬜ tutorial
     - ✅ choose language
@@ -45,8 +48,10 @@ errors messages for export/import
 - ⬜ icons - hws, exams, subjects
 - ⬜ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ⬜ ? use expressive progress
+- ⬜ ? display tasks in timetable
 
 ## OTHER
+- ✅ save only date for deadlines
 - ⬜ sync everything (hws, exams, subjects) properly
 - ⬜ add google sign in + sign in with apple
 - ⬜ ? refactor to use date instead of datetime
@@ -56,8 +61,8 @@ errors messages for export/import
     - ⬜ date
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
-- ⬜ save only date for deadlines
 - ⬜ translation - google sheets
+- ⬜ rework exceptions - string should be just shown in ui, not from service
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)

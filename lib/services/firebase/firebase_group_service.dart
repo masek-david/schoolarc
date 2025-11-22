@@ -5,7 +5,7 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 
-class FirebaseSharingService {
+class FirebaseGroupService {
   final _db = FirebaseDatabase.instance;
 
   Future<Group> getGroup() async {
@@ -16,15 +16,19 @@ class FirebaseSharingService {
     if (groupId == null) {
       throw ServiceException('You aren\'t a member of any group');
     }
-    final groupSnapshot = await db.ref('groups/$groupId').get();
-    if (!groupSnapshot.exists) {
-      leaveGroup();
-      throw ServiceException('This group doesn\'t exist');
-    }
+    // TODO this group doesnt exist how?
+    // final groupSnapshot = await db.ref('groups/$groupId').get();
+    // if (!groupSnapshot.exists) {
+    //   leaveGroup();
+    //   throw ServiceException('This group doesn\'t exist');
+    // }
 
-    final groupName = groupSnapshot.child('n').value as String? ?? '';
+    final groupNameSnapshot = await db.ref('groups/$groupId/n').get();
+    final groupName = groupNameSnapshot.value as String? ?? '';
+
+    final groupMembersSnapshot = await db.ref('groups/$groupId/u').get();
     final membersIds = {
-      for (var snap in groupSnapshot.child('u').children)
+      for (var snap in groupMembersSnapshot.children)
         snap.key!: snap.value as bool?
     };
 
@@ -39,8 +43,6 @@ class FirebaseSharingService {
       leaveGroup();
       throw ServiceException('You have been removed from the group');
     }
-
-    final now = DateTime.now().millisecondsSinceEpoch;
 
     final List<Future> futures = [];
 
@@ -67,58 +69,58 @@ class FirebaseSharingService {
       // if the user is waiting for approval or its you, dont fetch
       if (memberState != true || memberId == user) return;
 
-      // Subjects - dont need to save the member
-      futures.add(
-        db
-            .ref('users/$memberId/s')
-            .orderByChild('sh')
-            .equalTo(true)
-            .get()
-            .then((snapshot) {
-          for (var subject in snapshot.children) {
-            if (subject.key == null) continue;
-            final map = Map<String, dynamic>.from(subject.value as Map);
-            map['sh'] = null;
-            map.putIfAbsent('id', () => subject.key);
-            subjectsMap[subject.key!] = Subject.fromFireJson(map);
-          }
-        }),
-      );
+      // // Subjects - dont need to save the member
+      // futures.add(
+      //   db
+      //       .ref('users/$memberId/s')
+      //       .orderByChild('sh')
+      //       .equalTo(true)
+      //       .get()
+      //       .then((snapshot) {
+      //     for (var subject in snapshot.children) {
+      //       if (subject.key == null) continue;
+      //       final map = Map<String, dynamic>.from(subject.value as Map);
+      //       map['sh'] = null;
+      //       map.putIfAbsent('id', () => subject.key);
+      //       subjectsMap[subject.key!] = Subject.fromFireJson(map);
+      //     }
+      //   }),
+      // );
 
-      // Homework
-      futures.add(
-        db
-            .ref('users/$memberId/h')
-            .orderByChild('sh')
-            .startAt(now)
-            .get()
-            .then((snapshot) {
-          for (var hw in snapshot.children) {
-            final map = Map<String, dynamic>.from(hw.value as Map);
-            map['id'] = hw.key;
-            map['c'] = false;
-            map['memberId'] = memberId;
-            hws.add(GroupHomeworkData.fromJson(map));
-          }
-        }),
-      );
+      // // Homework
+      // futures.add(
+      //   db
+      //       .ref('users/$memberId/h')
+      //       .orderByChild('sh')
+      //       .startAt(now)
+      //       .get()
+      //       .then((snapshot) {
+      //     for (var hw in snapshot.children) {
+      //       final map = Map<String, dynamic>.from(hw.value as Map);
+      //       map['id'] = hw.key;
+      //       map['c'] = false;
+      //       map['memberId'] = memberId;
+      //       hws.add(GroupHomeworkData.fromJson(map));
+      //     }
+      //   }),
+      // );
 
-      // Exams
-      futures.add(
-        db
-            .ref('users/$memberId/e')
-            .orderByChild('sh')
-            .startAt(now)
-            .get()
-            .then((snapshot) {
-          for (var exam in snapshot.children) {
-            final map = Map<String, dynamic>.from(exam.value as Map);
-            map['id'] = exam.key;
-            map['memberId'] = memberId;
-            exams.add(GroupExamData.fromJson(map));
-          }
-        }),
-      );
+      // // Exams
+      // futures.add(
+      //   db
+      //       .ref('users/$memberId/e')
+      //       .orderByChild('sh')
+      //       .startAt(now)
+      //       .get()
+      //       .then((snapshot) {
+      //     for (var exam in snapshot.children) {
+      //       final map = Map<String, dynamic>.from(exam.value as Map);
+      //       map['id'] = exam.key;
+      //       map['memberId'] = memberId;
+      //       exams.add(GroupExamData.fromJson(map));
+      //     }
+      //   }),
+      // );
     });
 
     await Future.wait(futures);
@@ -176,10 +178,11 @@ class FirebaseSharingService {
       throw ServiceException('First leave the old group');
     }
 
-    final group = await _db.ref('groups/$groupId').get();
-    if (!group.exists) {
-      throw ServiceException('Could\'t find this group');
-    }
+    // TODO check that group exists
+    // final group = await _db.ref('groups/$groupId').get();
+    // if (!group.exists) {
+    //   throw ServiceException('Could\'t find this group');
+    // }
 
     final user = currentUserId;
     // set for approval in the group
@@ -232,7 +235,8 @@ class FirebaseSharingService {
 
   /// Call only if owner
   Future<void> approveJoin(String userId) async {
-    // just force it, firebase rules wouldnt let you if you arent owner/the value isnt already false
+    // no need to check if this user is owner,
+    // firebase rules wouldnt let you if you arent / the value isnt already false
     await _db.ref('groups/$currentUserId/u/$userId').set(true);
   }
 
@@ -240,19 +244,4 @@ class FirebaseSharingService {
   Future<void> removeFromGroup(String userId) async {
     await _db.ref('groups/$currentUserId/u/$userId').set(null);
   }
-
-  // /// Returns id of a group that contains user with [userId]
-  // Future<String?> _searchForGroup(String userId) async {
-  //   final groups = await FirebaseDatabase.instance.ref('groups').get();
-  //   for (var group in groups.children) {
-  //     print('checking group: ${group.key}');
-  //     for (var user in group.child('u').children) {
-  //       print('checking user: ${user.key} : ${user.value}');
-  //       if (user.key == userId && user.value == true) {
-  //         return group.key;
-  //       }
-  //     }
-  //   }
-  //   return null;
-  // }
 }

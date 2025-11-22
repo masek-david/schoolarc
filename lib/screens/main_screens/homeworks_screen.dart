@@ -99,7 +99,7 @@ class HomeworksScreen extends ConsumerWidget {
                   ref.watch(useCloudSyncProvider) ? (_) => true : (_) => false,
               onRefresh: () async {
                 try {
-                  await ref.read(hwProvider.notifier).syncAll();
+                  await ref.read(hwDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
@@ -137,7 +137,7 @@ class HomeworksScreen extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             child: TitleWithCount(
-                              text: priority.name,
+                              text: priority.name(context),
                               textColor: priority.getColor(context),
                             ),
                           );
@@ -153,7 +153,9 @@ class HomeworksScreen extends ConsumerWidget {
                             // Multiple widgets use the same globalkey error
                             hw: hw,
                             onChangedCompletion: (value) {
-                              ref.read(hwProvider.notifier).complete(hw, value);
+                              ref
+                                  .read(hwDataProvider.notifier)
+                                  .complete(hw.toData(), value);
                             },
                             onDelete: () => deleteHw(context, ref, hw),
                             onEdit: () => editHw(context, hw),
@@ -172,6 +174,7 @@ class HomeworksScreen extends ConsumerWidget {
                       isSameItem: (a, b) => a.isSameAs(b),
                       onReorder: (oldIndex, newIndex) {
                         final item = itemList.removeAt(oldIndex);
+                        if (item.hw == null) return;
 
                         final newPriority = itemList[newIndex - 1].getPriority;
                         int newOrder = 0;
@@ -181,14 +184,11 @@ class HomeworksScreen extends ConsumerWidget {
                           }
                         }
 
-                        if (item.hw != null) {
-                          ref.read(hwProvider.notifier).reorder(
-                                newOrder,
-                                newPriority,
-                                item.hw!,
-                                addTimestamp: true,
-                              );
-                        }
+                        ref.read(hwDataProvider.notifier).reorder(
+                              item.hw!.toData(),
+                              newOrder,
+                              newPriority,
+                            );
                       },
                     ),
             ),
@@ -218,7 +218,9 @@ class HomeworksScreen extends ConsumerWidget {
               child: HwTile(
                 hw: hw,
                 onChangedCompletion: (value) {
-                  ref.read(hwProvider.notifier).complete(hw, value);
+                  ref
+                      .read(hwDataProvider.notifier)
+                      .complete(hw.toData(), value);
                 },
                 onDelete: () => deleteHw(context, ref, hw),
                 onEdit: () => editHw(context, hw),

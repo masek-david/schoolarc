@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
-import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
@@ -50,10 +52,7 @@ class MainApp extends ConsumerStatefulWidget {
 }
 
 class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
-  late final _pageController =
-      PageController(initialPage: currentPageIndex.value);
   late final AppLifecycleListener appStateListener;
-  final Key _pageViewKey = GlobalKey();
 
   late RestorableInt currentPageIndex =
       RestorableInt(settings.get(Setting.initialAppPage));
@@ -75,13 +74,13 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
-    updateHwWidget(ref.read(hwWidgetProvider));
-    NotificationSender.scheduletomorrowNotification();
+    updateMainWidget(ref);
+    NotificationSender.scheduleUpcomingDayNotifications();
 
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
-          ref.read(examProvider.notifier).checkAllIfCompleted();
+          ref.read(examDataProvider.notifier).checkAllIfCompleted();
         },
       );
     }
@@ -93,33 +92,15 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   }
 
   void switchPage({required int newScreenIndex}) {
-    double pageDiff =
-        ((_pageController.page ?? 0) - newScreenIndex.toDouble()).abs();
-
-    late final pageSwitchAnimationDuration = Duration(
-      milliseconds:
-          (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt(),
-    );
-
-    if (pageSwitchAnimationDuration.inMilliseconds == 0 || pageDiff == 0.0) {
-      _pageController.jumpToPage(newScreenIndex);
-    } else {
-      _pageController.animateToPage(
-        newScreenIndex,
-        curve: Curves.easeInOut,
-        duration: pageSwitchAnimationDuration * pageDiff,
-      );
-    }
+    setState(() {
+      currentPageIndex.value = newScreenIndex;
+    });
 
     // try refreshing data for homescreen
     if (newScreenIndex == 0) {
       ref.read(currentTimetableProvider.notifier).refreshIfOld();
       ref.read(stravaMealsProvider.notifier).refreshIfOld();
     }
-
-    setState(() {
-      currentPageIndex.value = newScreenIndex;
-    });
   }
 
   @override
@@ -131,6 +112,20 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       onInactive: () => _onAppLeaveOrReturn(false),
     );
     _onAppLeaveOrReturn(true);
+
+    if (!kIsWeb && Platform.isAndroid || Platform.isIOS) {
+      HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
+        if (event != null && navigatorKey.currentContext?.mounted == true) {
+          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+        }
+      });
+
+      HomeWidget.widgetClicked.listen((event) {
+        if (event != null && navigatorKey.currentContext?.mounted == true) {
+          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+        }
+      });
+    }
 
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
@@ -211,7 +206,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   @override
   void dispose() {
     currentPageIndex.dispose();
-    _pageController.dispose();
     appStateListener.dispose();
     super.dispose();
   }
@@ -261,6 +255,15 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       _ => null,
     };
 
+    final Widget screen = switch (currentPageIndex.value) {
+      0 => const HomeScreen(),
+      1 => const CalendarScreen(),
+      2 => const HomeworksScreen(),
+      _ => const ExamsScreen(),
+    };
+    final miliseconds =
+        (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt();
+
     return Stack(
       children: [
         MyShortcuts(
@@ -286,16 +289,23 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                     ),
                   WideScreenBorders(
                     show: isWide,
-                    child: PageView(
-                      key: _pageViewKey,
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _pageController,
-                      children: const [
-                        HomeScreen(),
-                        CalendarScreen(),
-                        HomeworksScreen(),
-                        ExamsScreen(),
-                      ],
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: miliseconds),
+                      switchInCurve: Curves.easeOutSine,
+                      transitionBuilder: (child, animation) {
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  top: (animation.value - 1) * -50),
+                              child: child,
+                            );
+                          },
+                          child: child,
+                        );
+                      },
+                      child: screen,
                     ),
                   ),
                 ],

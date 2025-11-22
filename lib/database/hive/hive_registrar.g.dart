@@ -4,9 +4,11 @@
 
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_adapters.dart';
+import 'package:schoolarc/models/date/date.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(DateAdapter());
     registerAdapter(ExamEntityAdapter());
     registerAdapter(HomeworkEntityAdapter());
     registerAdapter(LessonTimesAdapter());
@@ -18,6 +20,7 @@ extension HiveRegistrar on HiveInterface {
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(DateAdapter());
     registerAdapter(ExamEntityAdapter());
     registerAdapter(HomeworkEntityAdapter());
     registerAdapter(LessonTimesAdapter());

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
+import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -31,8 +33,6 @@ class MealsScreen extends ConsumerWidget {
     )) {
       now = now.toUtc().add(const Duration(days: 1)).toLocal();
     }
-
-    final todayLocalDate = DateTime(now.year, now.month, now.day, 0, 0);
 
     int itemCount = data?.keys.length ?? 1;
     if (itemCount == 0) {
@@ -68,8 +68,7 @@ class MealsScreen extends ConsumerWidget {
               Center(child: Text(context.loc.noMealsFound));
             }
 
-            final date =
-                todayLocalDate.toUtc().add(Duration(days: index)).toLocal();
+            final date = Date.today().addDays(index);
 
             final mealsForToday = data?[date];
             final bool empty = mealsForToday == null;
@@ -88,8 +87,16 @@ class MealsScreen extends ConsumerWidget {
                           isLoading
                               ? context.loc.loading
                               : empty
-                                  ? '${context.loc.noMealsFor} ${date.dateText().toLowerCase()}'
-                                  : '${context.loc.mealsFor} ${date.dateText().toLowerCase()}',
+                                  ? context.loc
+                                      .noMealsOn(date
+                                          .formatWithWeekday(useOnFormat: true)
+                                          .unCapitalize())
+                                      .capitalize()
+                                  : context.loc
+                                      .mealsOn(date
+                                          .formatWithWeekday(useOnFormat: true)
+                                          .unCapitalize())
+                                      .capitalize(),
                           style: context.txt.bodyLarge,
                         )),
                     if (!empty)

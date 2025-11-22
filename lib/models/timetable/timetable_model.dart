@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 
 class TimeTable {
   List<LessonTimes> lessonTimes;
-  List<DateTime>? dates;
+  List<Date>? dates;
   late List<List<TimeTableLesson>> table;
 
   TimeTable({
@@ -24,6 +25,7 @@ class TimeTable {
     );
   }
 
+  /// Returns upcoming lessons for date and time
   Map<LessonTimes, TimeTableLesson> getUpcomingLessons(DateTime? date) {
     Map<LessonTimes, TimeTableLesson> upcomingLessons = {};
 
@@ -50,24 +52,21 @@ class TimeTable {
     return upcomingLessons;
   }
 
-  DateTime? nextDateForSubject(Subject subject) {
+  Date? nextDateForSubject(Subject subject) {
     if (lessonTimes.isEmpty) {
       return null;
     }
 
-    var now = DateTime.now();
-    // int weekday = now.weekday - 1;
-
-    var date = DateTime.utc(now.year, now.month, now.day);
+    Date date = Date.today();
 
     for (int i = date.weekday - 1; i < 100; i++) {
-      date = date.add(const Duration(days: 1));
+      date = date.addDays(1);
       var listOfSubjects = table[date.weekday - 1].where((element) {
         bool contains = element.subject?.id == subject.id;
         return contains;
       });
       if (listOfSubjects.isNotEmpty) {
-        return date.toLocal();
+        return date;
       }
     }
 

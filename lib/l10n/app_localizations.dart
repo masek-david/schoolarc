@@ -122,7 +122,7 @@ abstract class AppLocalizations {
   /// Label for upcoming homework count
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Upcoming homework} other{Upcoming homework}}'**
+  /// **'{count, plural, one{Upcoming piece of homework} other{Upcoming pieces of homework}}'**
   String upcomingHomework(int count);
 
   /// Label for upcoming exams count
@@ -341,6 +341,12 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendar;
 
+  /// No description provided for @personal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal'**
+  String get personal;
+
   /// No description provided for @exams.
   ///
   /// In en, this message translates to:
@@ -430,6 +436,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing planned for {whenText}'**
   String nothingPlannedFor(Object whenText);
+
+  /// No description provided for @nothingPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned'**
+  String get nothingPlanned;
 
   /// No description provided for @showMyName.
   ///
@@ -881,6 +893,12 @@ abstract class AppLocalizations {
   /// **'No homework found'**
   String get noHomework;
 
+  /// No description provided for @noExams.
+  ///
+  /// In en, this message translates to:
+  /// **'No exams found'**
+  String get noExams;
+
   /// No description provided for @noRecentlyDeleted.
   ///
   /// In en, this message translates to:
@@ -1025,17 +1043,17 @@ abstract class AppLocalizations {
   /// **'No meals found'**
   String get noMealsFound;
 
-  /// No description provided for @noMealsFor.
+  /// No description provided for @noMealsOn.
   ///
   /// In en, this message translates to:
-  /// **'No meals for'**
-  String get noMealsFor;
+  /// **'No meals {date}'**
+  String noMealsOn(Object date);
 
-  /// No description provided for @mealsFor.
+  /// No description provided for @mealsOn.
   ///
   /// In en, this message translates to:
-  /// **'Meals for'**
-  String get mealsFor;
+  /// **'Meals {date}'**
+  String mealsOn(Object date);
 
   /// No description provided for @lessons.
   ///
@@ -1240,6 +1258,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Receive notifications with homework and exams for the next day'**
   String get upcomingDayNotificationsDescription;
+
+  /// No description provided for @upcomingDayNotificationsReceiveBeforeWeekend.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications before weekend'**
+  String get upcomingDayNotificationsReceiveBeforeWeekend;
+
+  /// No description provided for @upcomingDayNotificationsReceiveBeforeWeekendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, you will receive notifications even on Friday and Saturday'**
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle;
+
+  /// No description provided for @onWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'On {weekday, select, 1{Monday} 2{Tuesday} 3{Wednesday} 4{Thursday} 5{Friday} 6{Saturday} 7{Sunday} other{unknown}}'**
+  String onWeekday(String weekday);
 
   /// No description provided for @arrivalTimeTitle.
   ///

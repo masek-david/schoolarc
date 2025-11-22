@@ -1,3 +1,5 @@
+import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -8,7 +10,7 @@ class Exam extends Task {
   Exam({
     required super.subject,
     required super.text,
-    required super.deadline,
+    required super.date,
     required super.priority,
     required super.id,
     required super.isCompleted,
@@ -16,20 +18,34 @@ class Exam extends Task {
     required super.timestamp,
     required super.isDeleted,
     required super.order,
-    required super.isShared,
     super.stateReaddingVersion,
   });
 
-  ExamEntity convert() {
+  ExamEntity toEntity() {
     return ExamEntity(
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      date: deadline,
+      date: date,
       priority: priority.index,
       description: description,
       timestamp: timestamp,
-      isShared: isShared,
+      order: order,
+    );
+  }
+
+  ExamData toData() {
+    return ExamData(
+      stateReaddingVersion: stateReaddingVersion,
+      id: id,
+      isCompleted: date.isBefore(Date.today()),
+      isDeleted: isDeleted,
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      priority: priority.index,
+      description: description,
+      timestamp: timestamp,
       order: order,
     );
   }
@@ -39,39 +55,24 @@ class Exam extends Task {
     return 'exam: $text, ${subject?.shortcut}, pri: ${priority.htmlIcon} order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
   }
 
-  Map<String, dynamic> toFireJson() {
-    return {
-      'n': text,
-      if (description != '') 'i': description,
-      if (subject != null) 's': subject?.id,
-      'd': deadline.millisecondsSinceEpoch,
-      if (priority.index != 0) 'p': priority.index,
-      if (order != 0) 'o': order,
-      if (isDeleted) 'del': isDeleted,
-      't': timestamp.millisecondsSinceEpoch,
-      if (isShared) 'sh': isShared,
-    };
-  }
-
   @override
   Exam copyWith({
     Object? subject = noChange,
     String? text,
-    DateTime? deadline,
+    Date? date,
     bool? isCompleted,
     TaskPriority? priority,
     String? id,
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
-    bool? isShared,
+    double? order,
     int? stateReaddingVersion,
   }) {
     return Exam(
       subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       id: id ?? this.id,
@@ -79,7 +80,6 @@ class Exam extends Task {
       timestamp: timestamp ?? this.timestamp,
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
     );
   }

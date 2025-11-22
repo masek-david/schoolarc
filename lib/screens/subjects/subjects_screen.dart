@@ -18,7 +18,7 @@ class SubjectsScreen extends ConsumerWidget {
   const SubjectsScreen({super.key});
 
   void deleteSubject(BuildContext context, WidgetRef ref, Subject subject) {
-    ref.read(subjectsProvider.notifier).deleteSubject(subject);
+    ref.read(subjectsProvider.notifier).delete(subject);
 
     showMessage(context, context.loc.deletedSubjectMessage(subject.name),
         actions: [
@@ -56,7 +56,6 @@ class SubjectsScreen extends ConsumerWidget {
           timestamp: DateTime.now(),
           isDeleted: false,
           order: 0,
-          isShared: false,
         ),
       ),
     );
@@ -130,9 +129,8 @@ class SubjectsScreen extends ConsumerWidget {
                     },
                     onReorder: (int oldIndex, int newIndex) {
                       ref.read(subjectsProvider.notifier).reorder(
-                            newIndex,
                             subjects[oldIndex],
-                            addTimestamp: true,
+                            newIndex,
                           );
                     },
                   ),

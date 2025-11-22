@@ -8,7 +8,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/shared/username_text.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
@@ -46,20 +46,18 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
   void onSave() async {
     Navigator.pop(context);
     if (widget.isHomework) {
-      await ref.read(hwProvider.notifier).saveNew(
-            widget.task.toHwEntity().copyWith(
+      await ref.read(hwDataProvider.notifier).update(
+            widget.task.toHwData().copyWith(
                   subjectId: pickedSubjectId,
                   priority: priority,
                 ),
-            overrideId: widget.task.id,
           );
     } else {
-      await ref.read(examProvider.notifier).saveNew(
-            widget.task.toExamEntity().copyWith(
+      await ref.read(examDataProvider.notifier).update(
+            widget.task.toExamData().copyWith(
                   subjectId: pickedSubjectId,
                   priority: priority,
                 ),
-            overrideId: widget.task.id,
           );
     }
     if (mounted) {
@@ -152,7 +150,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  widget.task.deadline.formatWithoutYear(),
+                  widget.task.date.formatFromSettings(),
                   style: const TextStyle(fontSize: 16),
                 ),
               ],

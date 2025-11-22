@@ -5,7 +5,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
     super.key,
-    this.pageIndex = 0,
+    required this.pageIndex,
     required this.onTap,
   });
 

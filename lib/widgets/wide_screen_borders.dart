@@ -31,7 +31,7 @@ class WideScreenBorders extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        color: Theme.of(context).colorScheme.surfaceContainer,
+        color: show ? Theme.of(context).colorScheme.surfaceContainer : null,
         padding: show
             ? EdgeInsets.only(top: top, bottom: bottom, right: bottom)
             : null,

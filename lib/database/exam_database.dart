@@ -6,22 +6,16 @@ class ExamDatabase {
   final _examBox = Hive.box(examBox);
 
   /// returns map of Exams with their dbIndexes
-  Map<String, ExamEntity> getDatabase() {
+  Map<String, ExamEntity> readDatabase() {
     return _examBox.toMap().cast<String, ExamEntity>();
   }
 
-  ExamEntity getExam(String id) {
+  ExamEntity read(String id) {
     return _examBox.get(id);
   }
 
-  /// adds new Exam
-  Future<void> addExam(String id, ExamEntity exam) async {
-    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
-  }
-
-  /// puts/replaces Exam at dbIndex with new one
-  Future<void> editExam(String id, ExamEntity exam) {
-    return _examBox.put(id, exam.copyWith(date: exam.date.toUtc()));
+  Future<void> put(String id, ExamEntity exam) async {
+    return _examBox.put(id, exam);
   }
 
   void delete(String id) {

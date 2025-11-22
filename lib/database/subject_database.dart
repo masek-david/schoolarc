@@ -6,21 +6,17 @@ import 'package:schoolarc/models/subjects/subject_model.dart';
 class SubjectDatabase {
   final _subjectBox = Hive.box(subjectBox);
 
-  Map<String, Subject> getDatabase() {
+  Map<String, Subject> readDatabase() {
     return _subjectBox.toMap().cast<String, SubjectEntity>().map(
           (key, value) => MapEntry(key, value.convert(key)),
         );
   }
 
-  Subject getSubject(String id) {
+  Subject read(String id) {
     return _subjectBox.get(id);
   }
 
-  Future<void> addSubject(String id, SubjectEntity subject) {
-    return _subjectBox.put(id, subject);
-  }
-
-  Future<void> saveEditedSubject(String id, SubjectEntity subject) {
+  Future<void> put(String id, SubjectEntity subject) {
     return _subjectBox.put(id, subject);
   }
 

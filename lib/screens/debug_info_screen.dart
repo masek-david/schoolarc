@@ -6,7 +6,7 @@ import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -17,9 +17,9 @@ class DbInfoScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final exams = examsDb.getDatabase();
-    final hws = homeworksDb.getDatabase();
-    final subjects = subjectsDb.getDatabase();
+    final exams = examsDb.readDatabase();
+    final hws = homeworksDb.readDatabase();
+    final subjects = subjectsDb.readDatabase();
 
     return Scaffold(
       appBar: AppBar(),
@@ -27,11 +27,13 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
-            const Text(bool.fromEnvironment('dart.tool.dart2wasm') ? 'Running in wasm' : 'Not running in wasm'),
+            const Text(bool.fromEnvironment('dart.tool.dart2wasm')
+                ? 'Running in wasm'
+                : 'Not running in wasm'),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
-                  HomeworksDatabase().deleteAllFromDisk();
+                  HomeworksDatabase().deleteBoxFromDisk();
                   SubjectDatabase().deleteAllFromDisk();
                   ExamDatabase().deleteAllFromDisk();
                   SettingsDatabase().deleteAllFromDisk();
@@ -97,7 +99,7 @@ class DbInfoScreen extends ConsumerWidget {
                 Expanded(
                   child: FilledButton(
                     onPressed: () async {
-                      late List<HomeworkEntityWithID>? fireHws;
+                      late List<HomeworkData>? fireHws;
                       try {
                         fireHws = await ref
                             .read(firebaseServiceProvider)
@@ -160,10 +162,6 @@ class DbInfoScreen extends ConsumerWidget {
                       width: 20,
                       child: item.isDeleted ? const Icon(Icons.delete) : null,
                     ),
-                    SizedBox(
-                      width: 20,
-                      child: item.isShared ? const Icon(Icons.share) : null,
-                    ),
                   ],
                 ),
               );
@@ -196,7 +194,7 @@ class DbInfoScreen extends ConsumerWidget {
                         children: [
                           Text(item.text),
                           Text(
-                            item.deadline.toString(),
+                            item.date.toString(),
                             style:
                                 TextStyle(color: getSubtleTextColor(context)),
                           ),
@@ -206,10 +204,6 @@ class DbInfoScreen extends ConsumerWidget {
                     SizedBox(
                       width: 20,
                       child: item.isDeleted ? const Icon(Icons.delete) : null,
-                    ),
-                    SizedBox(
-                      width: 20,
-                      child: item.isShared ? const Icon(Icons.share) : null,
                     ),
                     SizedBox(
                       width: 20,
@@ -259,9 +253,8 @@ class DbInfoScreen extends ConsumerWidget {
                         width: 20,
                         child: item.isDeleted ? const Icon(Icons.delete) : null,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
-                        child: item.isShared ? const Icon(Icons.share) : null,
                       ),
                     ],
                   ),

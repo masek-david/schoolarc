@@ -5,29 +5,24 @@ import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 
 class HomeworksDatabase {
   /// returns map of homeworks with their dbIndexes
-  Map<String, HomeworkEntity> getDatabase() {
+  Map<String, HomeworkEntity> readDatabase() {
     return Hive.box(hwBox).toMap().cast<String, HomeworkEntity>();
   }
 
-  HomeworkEntity getHomework(String key) {
+  HomeworkEntity read(String key) {
     return Hive.box(hwBox).get(key);
   }
 
-  /// adds new homework and returns dbIndex of the new homework
-  Future<void> addHw(String id, HomeworkEntity hw) async {
-    return Hive.box(hwBox).put(id, hw.copyWith(deadline: hw.deadline.toUtc()));
-  }
-
   /// puts/replaces homework at dbIndex with new one
-  Future<void> editHw(String id, HomeworkEntity hw) {
-    return Hive.box(hwBox).put(id, hw.copyWith(deadline: hw.deadline.toUtc()));
+  Future<void> put(String id, HomeworkEntity hw) {
+    return Hive.box(hwBox).put(id, hw);
   }
 
-  void deleteHw(String id) {
+  void delete(String id) {
     Hive.box(hwBox).delete(id);
   }
 
-  void deleteAllFromDisk() {
+  void deleteBoxFromDisk() {
     Hive.box(hwBox).deleteFromDisk();
   }
 }

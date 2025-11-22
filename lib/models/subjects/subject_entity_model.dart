@@ -10,7 +10,6 @@ class SubjectEntity extends HiveObject {
     required this.shortcut,
     required this.bakaId,
     required this.order,
-    this.isShared = false,
   });
 
   final String name;
@@ -18,8 +17,7 @@ class SubjectEntity extends HiveObject {
   final String? bakaId;
   final DateTime timestamp;
   final bool isDeleted;
-  final int order;
-  final bool isShared;
+  final double order;
 
   Subject convert(String id) {
     return Subject(
@@ -30,7 +28,6 @@ class SubjectEntity extends HiveObject {
       isDeleted: isDeleted == true,
       timestamp: timestamp,
       order: order,
-      isShared: isShared,
     );
   }
 
@@ -40,8 +37,7 @@ class SubjectEntity extends HiveObject {
     bool? isDeleted,
     Object? bakaId = noChange,
     DateTime? timestamp,
-    int? order,
-    bool? isShared,
+    double? order,
   }) {
     return SubjectEntity(
       name: name ?? this.name,
@@ -50,7 +46,6 @@ class SubjectEntity extends HiveObject {
       bakaId: bakaId == noChange ? this.bakaId : bakaId as String?,
       timestamp: timestamp ?? this.timestamp,
       order: order ?? this.order,
-      isShared: isShared ?? this.isShared,
     );
   }
 }

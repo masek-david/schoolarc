@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/textstyle_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 
 class SettingTile extends StatelessWidget {
   const SettingTile(
@@ -136,10 +136,16 @@ class SettingTile extends StatelessWidget {
   }
 
   Text buildText(BuildContext context) {
+    final color = titleColor ?? context.col.onSurface;
+
     return Text(
       title,
-      style: context.txt.bodyMedium!
-          .copyWithNunito(weight: 700, color: titleColor),
+      style: googleSansFlex(
+        size: 14,
+        weight: enabled ? 700 : 400,
+        color: color.withAlpha(enabled ? 255 : 80),
+        roundness: 100,
+      ),
     );
   }
 

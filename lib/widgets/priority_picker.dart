@@ -94,7 +94,7 @@ class _PriorityPickerState extends State<PriorityPicker>
                 },
                 flex: flex,
                 child: Text(
-                  priority.name,
+                  priority.name(context),
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: isSelected

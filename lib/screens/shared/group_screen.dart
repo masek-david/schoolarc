@@ -9,7 +9,7 @@ import 'package:schoolarc/screens/shared/join_group_dialog.dart';
 import 'package:schoolarc/screens/shared/members_screen.dart';
 import 'package:schoolarc/screens/shared/shared_add_bottom_sheet.dart';
 import 'package:schoolarc/screens/shared/username_text.dart';
-import 'package:schoolarc/services/firebase/firebase_sharing_service.dart';
+import 'package:schoolarc/services/firebase/firebase_group_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
@@ -25,7 +25,7 @@ class GroupScreen extends ConsumerStatefulWidget {
   ConsumerState<GroupScreen> createState() => _GroupScreenState();
 }
 
-final fireShareService = FirebaseSharingService();
+final fireShareService = FirebaseGroupService();
 
 class _GroupScreenState extends ConsumerState<GroupScreen> {
   Group? group;
@@ -80,7 +80,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           (a is GroupHomework ? 1 : 0).compareTo(b is GroupHomework ? 1 : 0);
       if (result != 0) return result;
 
-      return a.deadline.compareTo(b.deadline);
+      return a.date.compareTo(b.date);
     });
 
     return Scaffold(

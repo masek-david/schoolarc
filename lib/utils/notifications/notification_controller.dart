@@ -1,6 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
 class NotificationController {
   /// Use this method to detect when a new notification or a schedule is created
@@ -15,10 +14,6 @@ class NotificationController {
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
     // Your code goes here
-
-    if (receivedNotification.channelKey == 'tomorrow_channel') {
-      NotificationSender.scheduletomorrowNotification();
-    }
   }
 
   /// Use this method to detect if the user dismissed a notification

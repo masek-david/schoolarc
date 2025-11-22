@@ -7,18 +7,19 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
+import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/timetable_change.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class BakaService {
@@ -264,20 +265,20 @@ class BakaService {
   }
 
   /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTable> getCurrentTimetable(DateTime date) async {
+  Future<TimeTable> getCurrentTimetable(Date date) async {
     if (!isLoggedIn) {
       await refreshLogin();
     }
 
-    DateTime mondayDate = date.toUtc();
-    int weekday = date.toUtc().weekday;
+    Date mondayDate;
+    final weekday = date.weekday;
 
     if (weekday == 6) {
-      mondayDate = mondayDate.add(const Duration(days: 2));
+      mondayDate = date.addDays(2);
     } else if (weekday == 7) {
-      mondayDate = mondayDate.add(const Duration(days: 1));
+      mondayDate = date.addDays(1);
     } else {
-      mondayDate = mondayDate.add(Duration(days: 1 - weekday));
+      mondayDate = date.addDays(1 - weekday);
     }
 
     String schoolName = await this.schoolName;
@@ -286,7 +287,7 @@ class BakaService {
       host: "$schoolName.bakalari.cz",
       path: "/api/3/timetable/actual",
       queryParameters: {
-        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toLocal())
+        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal())
       },
     );
 
@@ -323,7 +324,8 @@ class BakaService {
         return lessonTime.toLessonTimes();
       },
     ).toList());
-    timeTable.dates = mondayDate.allDaysInThisWeek();
+    timeTable.dates =
+        mondayDate.allDaysInThisWeek(settings.get(Setting.weekStartsOnMonday));
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
@@ -406,7 +408,7 @@ class BakaService {
       throw Exception('If createIfMissing is true, ref can\'t be null');
     }
 
-    final db = subjectsDb.getDatabase();
+    final db = subjectsDb.readDatabase();
     db.removeWhere((key, value) => value.isDeleted);
 
     final subjects = db.map(
@@ -434,12 +436,11 @@ class BakaService {
         isDeleted: false,
         order: 0,
         timestamp: DateTime.now().toUtc(),
-        isShared: false,
       );
       if (createIfMissing) {
         newSubject = await ref!
             .read(subjectsProvider.notifier)
-            .saveNew(newSubject.convert());
+            .create(newSubject.convert());
       }
       bakaSubjectIdToSubject.addAll({bakaId: newSubject});
     }
@@ -512,14 +513,14 @@ class BakaService {
     var homeworksJson = parsedJson['Homeworks'] as List<dynamic>;
 
     List<BakaHomework> homeworks = [];
-    final subjects = subjectsDb.getDatabase();
+    final subjects = subjectsDb.readDatabase();
     subjects.removeWhere((key, value) => value.isDeleted);
 
     for (var homework in homeworksJson) {
       final String bakaId = homework['ID'];
       final String subjectBakaId = homework['Subject']['Id'];
       final String text = homework['Content'];
-      final DateTime deadline = DateTime.parse(homework['DateEnd']).toLocal();
+      final DateTime date = DateTime.parse(homework['DateEnd']).toLocal();
       final bool isCompleted = homework['Finished'];
 
       Subject? subject = subjects.entries
@@ -535,28 +536,25 @@ class BakaService {
         timestamp: DateTime.now(),
         isDeleted: false,
         order: 0,
-        isShared: false,
       );
 
       bool isSeen = bakaHwDb.isSeen(bakaId);
 
-      homeworks.add(
-        BakaHomework(
-            bakaId: bakaId,
-            alreadyAdded: bakaHwDb.isAdded(bakaId),
-            alreadySeen: isSeen,
-            subject: subject,
-            text: text,
-            deadline: deadline,
-            isCompleted: isCompleted,
-            priority: TaskPriority(0),
-            description: '',
-            id: bakaId,
-            isDeleted: false,
-            timestamp: DateTime.now().toUtc(),
-            order: 0,
-            isShared: false),
-      );
+      homeworks.add(BakaHomework(
+        bakaId: bakaId,
+        alreadyAdded: bakaHwDb.isAdded(bakaId),
+        alreadySeen: isSeen,
+        subject: subject,
+        text: text,
+        date: Date.fromDateTime(date.toLocal()),
+        isCompleted: isCompleted,
+        priority: const TaskPriority(0),
+        description: '',
+        id: bakaId,
+        isDeleted: false,
+        timestamp: DateTime.now().toUtc(),
+        order: 0,
+      ));
     }
 
     return homeworks;

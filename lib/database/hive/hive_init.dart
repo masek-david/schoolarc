@@ -18,6 +18,7 @@ Future<void> initHive() async {
   } catch (e) {
     // the adapters are already registered
   }
+  await Hive.openBox(examBox);
 
   await Future.wait([
     Hive.openBox(subjectBox),

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -132,9 +133,7 @@ class StravaService {
     await secureStorage.write(passwordKey, '');
   }
 
-  Future<Map<DateTime, List<Meal>>> getMeals() async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // return {};
+  Future<Map<Date, List<Meal>>> getMeals() async {
     final loggedIn = await login();
     if (!loggedIn) {
       return await getMealsNoLogin();
@@ -161,7 +160,7 @@ class StravaService {
       rethrow;
     }
 
-    Map<DateTime, List<Meal>> meals = {};
+    Map<Date, List<Meal>> meals = {};
 
     if (response.reasonPhrase != "OK") {
       throw ServiceException(response.reasonPhrase);
@@ -171,13 +170,12 @@ class StravaService {
 
     for (final table in parsedJson.values) {
       for (final mealJson in table) {
-        final date = DateFormat('dd.MM.yyyy').parse(mealJson['datum']);
+        final date = Date.fromDateTime(
+            DateFormat('dd.MM.yyyy').parse(mealJson['datum']));
 
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
-          name: mealJson['druh'] == 'D'
-              ? mealJson['delsiPopis']
-              : mealJson['nazev'],
+          name: mealJson['nazev'],
           selected: mealJson['pocet'] != 0,
         );
 
@@ -194,9 +192,8 @@ class StravaService {
     return meals;
   }
 
-  /// datetime in local at 0:00
-  Future<Map<DateTime, List<Meal>>> getMealsNoLogin() async {
-    Map<DateTime, List<Meal>> meals = {};
+  Future<Map<Date, List<Meal>>> getMealsNoLogin() async {
+    Map<Date, List<Meal>> meals = {};
     final loc = getLocalization();
 
     try {
@@ -243,10 +240,10 @@ class StravaService {
       var name = mealXml.findElements('nazev').first.innerText;
 
       if (mealXml.findElements('druh').first.innerText == 'D') {
-        name = mealXml.findElements('popis').first.innerText;
+        name = mealXml.findElements('nazev').first.innerText;
       }
 
-      final date = DateTime.parse(dateXml);
+      final date = Date.fromDateTime(DateTime.parse(dateXml));
 
       final meal = Meal(type: type, name: name);
 

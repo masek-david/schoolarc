@@ -21,7 +21,7 @@
       }
     }
   },
-  "upcomingHomework": "{count, plural, one{Upcoming homework} other{Upcoming homework}}",
+  "upcomingHomework": "{count, plural, one{Upcoming piece of homework} other{Upcoming pieces of homework}}",
   "@upcomingHomework": {
     "description": "Label for upcoming homework count",
     "placeholders": {
@@ -80,6 +80,7 @@
   "description": "Description",
   "home": "Home",
   "calendar": "Calendar",
+  "personal": "Personal",
   "exams": "{count, plural, one{Exam} other{Exams}}",
   "addNewExam": "Add new exam",
   "addNewExamFor": "Add new exam for",
@@ -95,6 +96,7 @@
   "homeworkFor": "{isEmpty, select, true{No homework} other{Homework}} {whenText}",
   "homeworkAbsence": "{isAbsent, select, true{No homework} other{Homework}}",
   "nothingPlannedFor": "Nothing planned for {whenText}",
+  "nothingPlanned": "Nothing planned",
   "showMyName": "Show my name",
   "showMyNameSubtitle": "If enabled and logged in to Bakaláři, you will be greeted with your name",
   "showBakalariTimetable": "Show Bakaláři timetable",
@@ -170,6 +172,7 @@
   "currentTimetable": "Current timetable",
   "noTimetable": "No timetable found",
   "noHomework": "No homework found",
+  "noExams": "No exams found",
   "noRecentlyDeleted": "No recently deleted items found",
   "timetable": "Timetable",
   "convertToHomework": "Convert to homework",
@@ -194,8 +197,8 @@
   "meals": "Meals",
   "mealsNotLoaded": "Meals couldn't be loaded",
   "noMealsFound": "No meals found",
-  "noMealsFor": "No meals for",
-  "mealsFor": "Meals for",
+  "noMealsOn": "No meals {date}",
+  "mealsOn": "Meals {date}",
   "lessons": "Lessons",
   "noLesson": "No lesson {whenText}",
   "addNewLessonTime": "Add new lesson time",
@@ -230,6 +233,9 @@
   "upcomingDayNotifications": "Upcoming day notifications",
   "notificationsNotAllowedMessage": "Notifications not allowed, click here to grant permission",
   "upcomingDayNotificationsDescription": "Receive notifications with homework and exams for the next day",
+  "upcomingDayNotificationsReceiveBeforeWeekend": "Receive notifications before weekend",
+  "upcomingDayNotificationsReceiveBeforeWeekendSubtitle": "If enabled, you will receive notifications even on Friday and Saturday",
+  "onWeekday": "On {weekday, select, 1{Monday} 2{Tuesday} 3{Wednesday} 4{Thursday} 5{Friday} 6{Saturday} 7{Sunday} other{unknown}}",
   "arrivalTimeTitle": "Arrival time",
   "arrivalTimeSubtitle": "Time when the notification will arrive",
   "sendNotificationNow": "Send upcoming day notification now",

@@ -8,12 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
@@ -57,190 +58,181 @@ Future<void> initNotifications() async {
 }
 
 class NotificationSender {
-  // find the correct date for the notification and schedule it
-  static void scheduletomorrowNotification({
-    bool scheduled = true,
-    Function(String text)? showSnackbar,
+  /// Schedules upcoming notification for first possible day.
+  /// Will send on settings time and not before weekend if setting set
+  /// In total, will schedule 7 notifications, including today.
+  ///
+  /// If [sendNow], the notification will appear immediately
+  ///
+  /// [firstUpcoming] will call after all notifications are scheduled with the date of the first notification
+  static Future<void> scheduleUpcomingDayNotifications({
+    bool sendNow = false,
+    void Function(Date date, TimeOfDay time)? firstUpcoming,
   }) async {
-    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
-      return;
+    if (!isCompatiblePlatform()) return;
+    if (!await areNotificationsAllowed(tomorrowChannel)) return;
+    if (!sendNow) {
+      AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
     }
     await initHive();
+    if (!settings.get(Setting.tomorrowNotificationEnabled)) return;
 
-    if (!await areNotificationsAllowed(tomorrowChannel)) {
-      return;
-    }
+    final TimeOfDay arriveTime = sendNow
+        ? TimeOfDay.now()
+        : settings.get(Setting.tomorrowNotificationTime);
+    final bool beforeWeekend =
+        settings.get(Setting.tomorrowNotificationBeforeWeekend);
+    final today = Date.today();
 
-    if (!settings.get(Setting.tomorrowNotificationEnabled)) {
-      AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
-      return;
-    }
-
-    DateTime? tomorrowDate;
-    // sets correct schedule time and date
-    if (scheduled) {
-      TimeOfDay notificationTimeOfDay =
-          settings.get(Setting.tomorrowNotificationTime);
-
-      DateTime now = DateTime.now();
-      DateTime notificationTime = DateTime(now.year, now.month, now.day,
-              notificationTimeOfDay.hour, notificationTimeOfDay.minute)
-          .toUtc();
-      DateTime nowUTC = DateTime.now().toUtc();
-      DateTime notificationDateTime = DateTime.utc(
-        nowUTC.year,
-        nowUTC.month,
-        nowUTC.day,
-        notificationTime.hour,
-        notificationTime.minute,
-      );
-
-      // if the notification is being set up after it would come today, it will be set to come tomorrow
-      if (notificationDateTime.isBefore(nowUTC)) {
-        notificationDateTime = notificationDateTime.add(const Duration(
-          days: 1,
-        ));
+    final List<Date> days = [];
+    if (sendNow) {
+      days.add(Date.today());
+    } else {
+      int offset = 0;
+      if (TimeOfDay.now().isBefore(arriveTime)) {
+        offset = 0;
+      } else {
+        offset = 1;
       }
-
-      tomorrowDate = notificationDateTime;
+      while (days.length < 8) {
+        final day = today.addDays(offset);
+        offset++;
+        if (!beforeWeekend && (day.weekday == 5 || day.weekday == 6)) continue;
+        days.add(day);
+      }
     }
 
-    _scheduleNotificationForDay(
-      arriveDateTime: tomorrowDate,
-      showSnackbar: showSnackbar,
+    final subjects = subjectsDb.readDatabase();
+    subjects.removeWhere((key, value) => value.isDeleted);
+    final hwsInDb = homeworksDb.readDatabase().map(
+      (key, value) {
+        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
+      },
     );
+    final examsInDb = examsDb.readDatabase().map(
+      (key, value) {
+        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
+      },
+    );
+    final exams = examsSortByDate(examsInDb);
+    final hws = hwsSortByDate(hwsInDb);
+
+    for (int i = 0; i < days.length; i++) {
+      final day = days[i];
+      final aboutDay = day.addDays(1);
+      final arrive = day.toDateTimeLocal().copyWith(
+            hour: arriveTime.hour,
+            minute: arriveTime.minute,
+          );
+
+      createNotification(
+        id: i,
+        arrive: sendNow ? null : arrive,
+        exams: exams[aboutDay] ?? [],
+        hws: hws[aboutDay] ?? [],
+        missed: hwsGetMissed(hwsInDb, missedBy: aboutDay),
+      );
+    }
+
+    if (firstUpcoming != null) {
+      firstUpcoming(days[0], arriveTime);
+    }
   }
 
-  // schedules notification with info about tomorrow (doesn't need to be provided) for provided date
-  static void _scheduleNotificationForDay({
-    Function(String text)? showSnackbar,
-    required DateTime? arriveDateTime,
+  static Future<void> createNotification({
+    required DateTime? arrive,
+    required List<Exam> exams,
+    required List<Homework> hws,
+    required List<Homework> missed,
+    required int id,
   }) async {
-    NotificationCalendar? arriveSchedule;
-    if (arriveDateTime != null) {
-      arriveSchedule =
-          NotificationCalendar.fromDate(date: arriveDateTime.toLocal());
-    }
-    arriveDateTime ??= DateTime.now().toUtc();
-
-    String notificationText;
-    String examsTextList = '';
-    String homeworksTextList = '';
-    String? missedHwTextList;
+    final lineBreak = Platform.isIOS ? '\n' : '<br>';
     final loc = getLocalization();
 
-    final dateUtc = arriveDateTime.add(const Duration(days: 1));
-    final tomorrowDate = DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
-
-    final subjects = subjectsDb.getDatabase();
-    subjects.removeWhere((key, value) => value.isDeleted);
-    final hwsInDb = homeworksDb.getDatabase().map(
-      (key, value) {
-        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
-      },
-    );
-    final examsInDb = examsDb.getDatabase().map(
-      (key, value) {
-        return MapEntry(key, value.convert(key, subjects[value.subjectId]));
-      },
-    );
-    List<Exam> examsForTomorrow =
-        examsSortByDate(examsInDb)[tomorrowDate] ?? [];
-    List<Homework> hwsFortomorrow = hwsSortByDate(hwsInDb)[tomorrowDate] ?? [];
-    List<Homework> missedHws = hwsGetMissed(hwsInDb);
-
-    final isIOS = Platform.isIOS;
-    final lineBreak = isIOS ? '\n' : '<br>';
-
-    // creates text for notification for exam
-    for (int i = 0; i < examsForTomorrow.length; i++) {
-      Exam exam = examsForTomorrow[i];
-      String? subject = exam.subject?.trimmedShortcut.sanitizeHtml();
-
-      String examText =
-          '${exam.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${exam.text.sanitizeHtml()}';
-
-      examsTextList += '$examText$lineBreak';
+    String body = '';
+    // MISSED
+    if (missed.isNotEmpty) {
+      body += '<b>${loc.missedHomeworkTitle}:</b>';
     }
-
-    // creates text about hw
-    hwsFortomorrow.sort((a, b) =>
-        (a.isCompleted == b.isCompleted ? 0 : (a.isCompleted ? 1 : -1)));
-    for (int i = 0; i < hwsFortomorrow.length; i++) {
-      Homework hw = hwsFortomorrow[i];
-      String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
-
-      String hwText =
-          '${hw.isCompleted ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
-
-      homeworksTextList += '$hwText$lineBreak';
+    for (var hw in missed) {
+      body += '${_getTaskText(hw)}$lineBreak';
     }
-
-    missedHws.sort((a, b) => a.deadline.compareTo(b.deadline));
-    for (int i = 0; i < missedHws.length; i++) {
-      Homework hw = missedHws[i];
-      String? subject = hw.subject?.trimmedShortcut.sanitizeHtml();
-
-      String missedHwText =
-          '${hw.isCompleted ? '\u2713<i>' : ''}${hw.priority.htmlIcon} ${subject != null ? '$subject:' : ''} ${hw.text.sanitizeHtml()}</i>';
-
-      missedHwTextList ??= '';
-      missedHwTextList += '$missedHwText$lineBreak';
+    if (missed.isNotEmpty) {
+      body += lineBreak;
     }
-
-    notificationText =
-        '${missedHwTextList != null ? '<b>${loc.missedHomework(2)}:</b>$lineBreak$missedHwTextList$lineBreak' : ''}${examsForTomorrow.isEmpty ? loc.examsFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.exams(2)}:</b>'}$lineBreak$examsTextList$lineBreak${hwsFortomorrow.isEmpty ? loc.homeworkFor('true', loc.tomorrow.toLowerCase()).capitalize() : '<b>${loc.homework(2)}:</b>'}$lineBreak$homeworksTextList';
+    // EXAMS
+    if (exams.isNotEmpty) {
+      body += '<b>${loc.exams(2)}:</b>';
+    }
+    for (var exam in exams) {
+      body += '${_getTaskText(exam)}$lineBreak';
+    }
+    if (exams.isNotEmpty) {
+      body += lineBreak;
+    }
+    // HOMEWORK
+    if (hws.isNotEmpty) {
+      body += '<b>${loc.homework(2)}:</b>';
+    }
+    for (var hw in hws) {
+      body += '${_getTaskText(hw)}$lineBreak';
+    }
+    if (hws.isNotEmpty) {
+      body += lineBreak;
+    }
 
     String summary = '';
 
-    if (missedHws.isNotEmpty) {
-      summary +=
-          '${missedHws.length} ${loc.missed(missedHws.length).toLowerCase()}';
+    if (missed.isNotEmpty) {
+      summary += '${missed.length} ${loc.missed(missed.length).toLowerCase()}';
     }
-    if (hwsFortomorrow.isNotEmpty) {
+    if (hws.isNotEmpty) {
       if (summary != '') {
         summary += ', ';
       }
-      summary +=
-          '${hwsFortomorrow.length} ${loc.homework(hwsFortomorrow.length).toLowerCase()}';
+      summary += '${hws.length} ${loc.homework(hws.length).toLowerCase()}';
     }
-    if (examsForTomorrow.isNotEmpty) {
-      if (!summary.endsWith(', ')) {
+    if (exams.isNotEmpty) {
+      if (!summary.endsWith(', ') && summary != '') {
         summary += ', ';
       }
-      summary +=
-          '${examsForTomorrow.length} ${loc.exams(examsForTomorrow.length).toLowerCase()}';
+      summary += '${exams.length} ${loc.exams(exams.length).toLowerCase()}';
     }
 
-    AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);
-    await AwesomeNotifications().createNotification(
-      schedule: arriveSchedule,
+    final schedule =
+        arrive != null ? NotificationCalendar.fromDate(date: arrive) : null;
+    final result = await AwesomeNotifications().createNotification(
+      schedule: schedule,
       content: NotificationContent(
         color: Colors.transparent,
-        id: 11,
+        id: id,
         badge: 0,
         channelKey: tomorrowChannel,
-        summary: summary,
         title: loc.tomorrow,
-        body: notificationText,
+        summary: summary,
+        body: body,
         autoDismissible: false,
         category: NotificationCategory.Reminder,
         notificationLayout: NotificationLayout.BigText,
       ),
     );
 
-    log('\u001b[1;42m\u001b[1;30mTomorrow notification scheduled for: ${arriveDateTime.toLocal().toString()}');
-
-    if (showSnackbar != null) {
-      showSnackbar(
-        loc.nextNotificationInfo(
-          arriveDateTime.isSameDay(DateTime.now().toUtc())
-              ? loc.today.toLowerCase()
-              : loc.tomorrow.toLowerCase(),
-          arriveDateTime.formatTime(),
-        ),
-      );
+    if (result) {
+      log('\u001b[1;42m\u001b[1;97mTomorrow notification scheduled for: ${arrive?.toLocal().toString()}');
+    } else {
+      log('error creating notification');
     }
+  }
+
+  /// Returns string for task to be put in notification body
+  static String _getTaskText(Task task) {
+    final subject = task.subject?.trimmedShortcut;
+
+    return '${task.priority.htmlIcon}${subject != null ? ' ${subject.sanitizeHtml()}:' : ''} ${task.text.sanitizeHtml()}';
+  }
+
+  static void cancelByChannelKey(String key) {
+    AwesomeNotifications().cancelNotificationsByChannelKey(key);
   }
 
   /// checks all permissions, for the channel if asked
@@ -267,13 +259,9 @@ class NotificationSender {
   /// returns true for android or ios
   static bool isCompatiblePlatform() {
     // platform cannot be checked on web
-    if (kIsWeb) {
-      return false;
-    }
-    if (Platform.isAndroid || Platform.isIOS) {
-      return true;
-    }
-    return false;
+    if (kIsWeb) return false;
+
+    return Platform.isAndroid || Platform.isIOS;
   }
 
   /// if notifications arent enabled the user is taken to settings/shown request to allow them

@@ -1,8 +1,11 @@
+import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
+import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -11,13 +14,12 @@ class Task {
   final String text;
   final String description;
   final Subject? subject;
-  final DateTime deadline;
+  final Date date;
   final TaskPriority priority;
-  final int order;
+  final double order;
   final bool isCompleted;
   final bool isDeleted;
   final DateTime timestamp;
-  final bool isShared;
 
   /// stateReaddingVersion changes when the task is re-added, so it doesnt trigger
   /// Multiple widgets use the same globalkey error in AnimatedReorderableListView
@@ -30,27 +32,25 @@ class Task {
     required this.isDeleted,
     required this.subject,
     required this.text,
-    required this.deadline,
+    required this.date,
     required this.isCompleted,
     required this.priority,
     required this.description,
     required this.order,
-    required this.isShared,
     this.stateReaddingVersion = 0,
   });
 
-  Task.empty({DateTime? deadline})
-      : deadline = deadline ?? DateTime.now(),
+  Task.empty({Date? deadline})
+      : date = deadline ?? Date.today(),
         text = '',
         isCompleted = false,
-        priority = TaskPriority(0),
+        priority = const TaskPriority(0),
         id = '',
         isDeleted = false,
         order = 0,
         description = '',
         subject = null,
         timestamp = DateTime.now().toUtc(),
-        isShared = false,
         stateReaddingVersion = 0;
 
   HomeworkEntity toHwEntity() {
@@ -58,13 +58,12 @@ class Task {
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      deadline: deadline,
+      date: date,
       isCompleted: isCompleted,
       priority: priority.index,
       description: description,
       timestamp: timestamp,
       order: order,
-      isShared: isShared,
     );
   }
 
@@ -73,21 +72,53 @@ class Task {
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,
-      date: deadline,
+      date: date,
       priority: priority.index,
       description: description,
       timestamp: timestamp,
       order: order,
-      isShared: isShared,
+    );
+  }
+
+  HomeworkData toHwData() {
+    return HomeworkData(
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+      stateReaddingVersion: stateReaddingVersion,
+    );
+  }
+
+  ExamData toExamData() {
+    return ExamData(
+      subjectId: subject?.id,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: priority.index,
+      id: id,
+      description: description,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      order: order,
+      stateReaddingVersion: stateReaddingVersion,
     );
   }
 
   Map<String, dynamic> toWidgetJson() {
     return {
+      'isHomework': this is Homework,
       'id': id,
       'text': text,
       'subject': subject?.shortcut ?? '',
-      'deadline': deadline.dateText(),
+      'date': date.toPrimitiveInt(),
       'isCompleted': isCompleted,
       'priority': priority.index,
       'hasDescription': description != '',
@@ -111,21 +142,20 @@ class Task {
   Task copyWith({
     Object? subject = noChange,
     String? text,
-    DateTime? deadline,
+    Date? date,
     bool? isCompleted,
     TaskPriority? priority,
     String? id,
     String? description,
     DateTime? timestamp,
     bool? isDeleted,
-    int? order,
+    double? order,
     int? stateReaddingVersion,
-    bool? isShared,
   }) {
     return Task(
       subject: subject == noChange ? this.subject : subject as Subject?,
       text: text ?? this.text,
-      deadline: deadline ?? this.deadline,
+      date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
       id: id ?? this.id,
@@ -134,7 +164,6 @@ class Task {
       isDeleted: isDeleted ?? this.isDeleted,
       order: order ?? this.order,
       stateReaddingVersion: stateReaddingVersion ?? this.stateReaddingVersion,
-      isShared: isShared ?? this.isShared,
     );
   }
 }

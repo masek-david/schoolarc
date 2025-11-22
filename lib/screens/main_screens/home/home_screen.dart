@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -14,8 +15,6 @@ import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart'
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/extensions/datetime_extension.dart';
-import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
@@ -63,32 +62,35 @@ class HomeScreen extends ConsumerWidget {
       (element) {
         return !element.isDeleted &&
             !element.isCompleted &&
-            !element.deadline.isBeforeToday();
+            !element.date.isBefore(Date.today());
       },
     ).length;
     final exams = ref.watch(examsDatesProvider);
-    final int upcomingExams = ref.watch(examProvider).values.where(
+    final int upcomingExams = ref.watch(examDataProvider).values.where(
       (element) {
         return !element.isDeleted && !element.isCompleted;
       },
     ).length;
 
-    var dateToShow = DateTime.now();
     final defaultTimeTable = timetableDb.timeTable;
-    var upcomingLessons = defaultTimeTable.getUpcomingLessons(dateToShow);
+    var upcomingLessons = defaultTimeTable.getUpcomingLessons(DateTime.now());
 
-    bool showtomorrow = isLessonsEmpty(upcomingLessons);
-    if (showtomorrow) {
-      dateToShow = DateTime.utc(dateToShow.toUtc().year,
-              dateToShow.toUtc().month, dateToShow.toUtc().day, 0, 0)
-          .add(const Duration(days: 1))
-          .toLocal();
+    final showTomorrow = isLessonsEmpty(upcomingLessons);
+    final dateToShow = showTomorrow ? Date.today().addDays(1) : Date.today();
+
+    final hwToday = hws[Date.today()] ?? [];
+    final examsToday = exams[Date.today()] ?? [];
+    final hwTomorrow = hws[Date.today().addDays(1)] ?? [];
+    final examsTomorrow = exams[Date.today().addDays(1)] ?? [];
+
+    // we need the time so we can show timetable for now or for tomorrow whole day
+    DateTime dateTimeToShow = DateTime.now();
+    if (showTomorrow) {
+      dateTimeToShow =
+          dateToShow.toDateTimeUTC().add(const Duration(days: 1)).toLocal();
     }
-    final dateToShowOnlyDate = dateToShow.onlyDate();
-    final hwToShow = hws[dateToShowOnlyDate] ?? [];
-    final examsToShow = exams[dateToShowOnlyDate] ?? [];
 
-    String whenText = showtomorrow
+    String whenText = showTomorrow
         ? context.loc.tomorrow.toLowerCase()
         : context.loc.today.toLowerCase();
 
@@ -137,7 +139,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           const MealsCard(),
                           TimetableCard(
-                            dateToShow: dateToShow,
+                            dateToShow: dateTimeToShow,
                             whenText: whenText,
                           ),
                         ],
@@ -150,7 +152,7 @@ class HomeScreen extends ConsumerWidget {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              dateToShow: dateToShow,
+                              dateToShow: dateTimeToShow,
                               whenText: whenText,
                             ),
                           if (missedHw.isNotEmpty)
@@ -173,59 +175,118 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          Card(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLowest,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: examsToShow.isEmpty && hwToShow.isEmpty
-                                  ? EmptyMessage(
-                                      message: context.loc
-                                          .nothingPlannedFor(whenText),
-                                      asset: 'assets/confetti.svg',
-                                    )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      spacing: 8,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            whenText.capitalize(),
-                                            style: context.txt.bodyLarge,
+                          if (!showTomorrow ||
+                              !(examsToday.isEmpty && hwToday.isEmpty))
+                            Card(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLowest,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: examsToday.isEmpty && hwToday.isEmpty
+                                    ? EmptyMessage(
+                                        message: context.loc.nothingPlannedFor(
+                                            context.loc.today.toLowerCase()),
+                                        asset: 'assets/confetti.svg',
+                                      )
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        spacing: 8,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              context.loc.today,
+                                              style: context.txt.bodyLarge,
+                                            ),
                                           ),
-                                        ),
-                                        ...examsToShow.map(
-                                          (e) => ExamTile(
-                                            exam: e,
-                                            showDeadline: false,
-                                            onDelete: () =>
-                                                deleteExam(context, ref, e),
-                                            onEdit: () => editExam(context, e),
-                                            onConvert: () =>
-                                                convertExam(context, ref, e),
+                                          ...examsToday.map(
+                                            (e) => ExamTile(
+                                              exam: e,
+                                              showDeadline: false,
+                                              onDelete: () =>
+                                                  deleteExam(context, ref, e),
+                                              onEdit: () =>
+                                                  editExam(context, e),
+                                              onConvert: () =>
+                                                  convertExam(context, ref, e),
+                                            ),
                                           ),
-                                        ),
-                                        ...hwToShow.map(
-                                          (hw) => HwTile(
-                                            hw: hw,
-                                            showDate: false,
-                                            onChangedCompletion: (value) =>
-                                                completeHw(
-                                                    context, ref, hw, value),
-                                            onDelete: () =>
-                                                deleteHw(context, ref, hw),
-                                            onEdit: () => editHw(context, hw),
-                                            onConvert: () =>
-                                                convertHw(context, ref, hw),
+                                          ...hwToday.map(
+                                            (hw) => HwTile(
+                                              hw: hw,
+                                              showDate: false,
+                                              onChangedCompletion: (value) =>
+                                                  completeHw(
+                                                      context, ref, hw, value),
+                                              onDelete: () =>
+                                                  deleteHw(context, ref, hw),
+                                              onEdit: () => editHw(context, hw),
+                                              onConvert: () =>
+                                                  convertHw(context, ref, hw),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                              ),
                             ),
-                          ),
+                          if (showTomorrow)
+                            Card(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLowest,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: examsTomorrow.isEmpty &&
+                                        hwTomorrow.isEmpty
+                                    ? EmptyMessage(
+                                        message: context.loc.nothingPlannedFor(
+                                            context.loc.tomorrow.toLowerCase()),
+                                        asset: 'assets/confetti.svg',
+                                      )
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        spacing: 8,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              context.loc.tomorrow,
+                                              style: context.txt.bodyLarge,
+                                            ),
+                                          ),
+                                          ...examsTomorrow.map(
+                                            (e) => ExamTile(
+                                              exam: e,
+                                              showDeadline: false,
+                                              onDelete: () =>
+                                                  deleteExam(context, ref, e),
+                                              onEdit: () =>
+                                                  editExam(context, e),
+                                              onConvert: () =>
+                                                  convertExam(context, ref, e),
+                                            ),
+                                          ),
+                                          ...hwTomorrow.map(
+                                            (hw) => HwTile(
+                                              hw: hw,
+                                              showDate: false,
+                                              onChangedCompletion: (value) =>
+                                                  completeHw(
+                                                      context, ref, hw, value),
+                                              onDelete: () =>
+                                                  deleteHw(context, ref, hw),
+                                              onEdit: () => editHw(context, hw),
+                                              onConvert: () =>
+                                                  convertHw(context, ref, hw),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ),
                           const ListBottomSpacer()
                         ],
                       ),

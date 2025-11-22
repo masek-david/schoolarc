@@ -13,7 +13,6 @@ import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
-import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class _AnimatedReorderableListItem {
   _AnimatedReorderableListItem({this.exam, this.priority}) {
@@ -70,21 +69,21 @@ class ExamsScreen extends ConsumerWidget {
       context: context,
       removeBottom: true,
       child: Scaffold(
-        floatingActionButton: WebRequestFocus(
-          onPressed: () async {
-            HapticFeedback.mediumImpact();
-            addNewExam(context);
-          },
-          child: FloatingActionButton(
-            tooltip: context.loc.addNewExam,
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              addNewExam(context);
-            },
-            enableFeedback: true,
-            child: const Icon(Icons.add),
-          ),
-        ),
+        // floatingActionButton: WebRequestFocus(
+        //   onPressed: () async {
+        //     HapticFeedback.mediumImpact();
+        //     addNewExam(context);
+        //   },
+        //   child: FloatingActionButton(
+        //     tooltip: context.loc.addNewExam,
+        //     onPressed: () async {
+        //       HapticFeedback.mediumImpact();
+        //       addNewExam(context);
+        //     },
+        //     enableFeedback: true,
+        //     child: const Icon(Icons.add),
+        //   ),
+        // ),
         body: Theme(
           data: Theme.of(context).copyWith(
             listTileTheme: ListTileTheme.of(context).copyWith(
@@ -99,7 +98,7 @@ class ExamsScreen extends ConsumerWidget {
                   ref.watch(useCloudSyncProvider) ? (_) => true : (_) => false,
               onRefresh: () async {
                 try {
-                  await ref.read(examProvider.notifier).syncAll();
+                  await ref.read(examDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
                     showMessage(context, e.toString(), isError: true);
@@ -136,7 +135,7 @@ class ExamsScreen extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             child: TitleWithCount(
-                              text: priority.name,
+                              text: priority.name(context),
                               textColor: priority.getColor(context),
                             ),
                           );
@@ -171,11 +170,10 @@ class ExamsScreen extends ConsumerWidget {
                         }
 
                         if (item.exam != null) {
-                          ref.read(examProvider.notifier).reorder(
+                          ref.read(examDataProvider.notifier).reorder(
+                                item.exam!.toData(),
                                 newOrder,
                                 newPriority,
-                                item.exam!,
-                                addTimestamp: true,
                               );
                         }
                       },

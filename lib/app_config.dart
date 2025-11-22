@@ -120,6 +120,12 @@ class AppConfig extends ConsumerWidget {
             sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                // Set the predictive back transitions for Android.
+                TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+              },
+            ),
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(year2023: false),
             inputDecorationTheme: InputDecorationTheme(
@@ -151,13 +157,12 @@ class AppConfig extends ConsumerWidget {
             sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
-            // pageTransitionsTheme: const PageTransitionsTheme(
-            //   builders: <TargetPlatform, PageTransitionsBuilder>{
-            //     // Set the predictive back transitions for Android.
-            //     TargetPlatform.android:
-            //         PredictiveBackPageTransitionsBuilder(),
-            //   },
-            // ),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                // Set the predictive back transitions for Android.
+                TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+              },
+            ),
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               contentPadding: const EdgeInsets.all(15),
@@ -190,8 +195,9 @@ class AppConfig extends ConsumerWidget {
             child: child ?? const SizedBox.shrink(),
           ),
           onGenerateRoute: (settings) {
-            // we have to psuh a route, else it throws
+            // we have to push a route, else it throws
             // we also cant return mainapp, since it throws multiple widgets use the same key
+            // TODO notification doesnt work now
             if (settings.name == '/calendar') {
               navigatorKey.currentState?.popUntil((route) => route.isFirst);
               ref.read(showCalendarProvider.notifier).show();

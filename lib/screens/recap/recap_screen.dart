@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/recap/count_page.dart';
@@ -25,12 +26,11 @@ bool isRecapDate() {
       );
 }
 
-bool isInThisYear(DateTime date) {
-  final now = DateTime.now();
-  return date.isAfter(DateTime(now.year - 1, 8, 31)) &&
-      date.isBefore(
-        DateTime(now.year, 7, 8),
-      );
+// works only if the school year started last year
+bool isInThisSchoolYear(Date date) {
+  final today = Date.today();
+  return date.isAfter(Date(today.year - 1, 8, 31)) &&
+      date.isBefore(Date(today.year, 7, 8));
 }
 
 class RecapScreen extends ConsumerStatefulWidget {
@@ -49,14 +49,14 @@ class _RecapScreenState extends ConsumerState<RecapScreen> {
         .watch(hwProvider)
         .values
         .where(
-          (element) => isInThisYear(element.deadline) && !element.isDeleted,
+          (element) => isInThisSchoolYear(element.date) && !element.isDeleted,
         )
         .toList();
     final exams = ref
         .watch(examProvider)
         .values
         .where(
-          (element) => isInThisYear(element.deadline) && !element.isDeleted,
+          (element) => isInThisSchoolYear(element.date) && !element.isDeleted,
         )
         .toList();
 

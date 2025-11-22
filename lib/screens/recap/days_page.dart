@@ -63,10 +63,10 @@ class _DaysPageState extends State<DaysPage> {
       (index) => 0,
     );
     for (var element in widget.hws) {
-      days[element.deadline.weekday - 1]++;
+      days[element.date.weekday - 1]++;
     }
     for (var element in widget.exams) {
-      days[element.deadline.weekday - 1]++;
+      days[element.date.weekday - 1]++;
     }
 
     int busiestDayIndex = 0;

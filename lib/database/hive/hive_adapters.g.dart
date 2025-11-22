@@ -93,24 +93,34 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
+    // Manual date migration code beginning
+    final date = fields[3];
+    Date finalDate;
+    if (date is DateTime) {
+      finalDate = Date.fromDateTime(date.toLocal());
+    } else {
+      finalDate = date as Date;
+    }
+    // Manual date migration code end
+
     return HomeworkEntity(
       text: fields[0] as String,
       description: fields[1] == null ? '' : fields[1] as String,
       subjectId: fields[2] as String?,
-      deadline: fields[3] as DateTime,
+      date: finalDate,
       priority: (fields[4] as num).toInt(),
-      order: (fields[5] as num).toInt(),
+      order: (fields[5] as num).toDouble(),
       isCompleted: fields[6] as bool,
       isDeleted: fields[7] as bool,
       timestamp: fields[8] as DateTime,
-      isShared: fields[9] == null ? false : fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HomeworkEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.text)
       ..writeByte(1)
@@ -118,7 +128,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       ..writeByte(2)
       ..write(obj.subjectId)
       ..writeByte(3)
-      ..write(obj.deadline)
+      ..write(obj.date)
       ..writeByte(4)
       ..write(obj.priority)
       ..writeByte(5)
@@ -128,9 +138,7 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
       ..writeByte(7)
       ..write(obj.isDeleted)
       ..writeByte(8)
-      ..write(obj.timestamp)
-      ..writeByte(9)
-      ..write(obj.isShared);
+      ..write(obj.timestamp);
   }
 
   @override
@@ -154,23 +162,33 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
+    // Manual date migration code beginning
+    final date = fields[2];
+    Date finalDate;
+    if (date is DateTime) {
+      finalDate = Date.fromDateTime(date.toLocal());
+    } else {
+      finalDate = date as Date;
+    }
+    // Manual date migration code end
+
     return ExamEntity(
       isDeleted: fields[6] as bool,
       subjectId: fields[0] as String?,
       text: fields[1] as String,
       description: fields[4] == null ? '' : fields[4] as String,
-      date: fields[2] as DateTime,
+      date: finalDate,
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,
-      order: (fields[7] as num).toInt(),
-      isShared: fields[8] == null ? false : fields[8] as bool,
+      order: (fields[7] as num).toDouble(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ExamEntity obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.subjectId)
       ..writeByte(1)
@@ -186,9 +204,7 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
       ..writeByte(6)
       ..write(obj.isDeleted)
       ..writeByte(7)
-      ..write(obj.order)
-      ..writeByte(8)
-      ..write(obj.isShared);
+      ..write(obj.order);
   }
 
   @override
@@ -218,15 +234,14 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
       name: fields[0] as String,
       shortcut: fields[1] as String,
       bakaId: fields[2] as String?,
-      order: (fields[5] as num).toInt(),
-      isShared: fields[6] == null ? false : fields[6] as bool,
+      order: (fields[5] as num).toDouble(),
     );
   }
 
   @override
   void write(BinaryWriter writer, SubjectEntity obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -238,9 +253,7 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
       ..writeByte(4)
       ..write(obj.isDeleted)
       ..writeByte(5)
-      ..write(obj.order)
-      ..writeByte(6)
-      ..write(obj.isShared);
+      ..write(obj.order);
   }
 
   @override

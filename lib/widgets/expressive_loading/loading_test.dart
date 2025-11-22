@@ -54,7 +54,7 @@ class _LoadingTestState extends State<LoadingTest> {
           // wavelength: 18.1,
           // size: 100,
         ),
-        // const CircularWavyLoadingIndicator(),
+        const CircularWavyLoadingIndicator(),
         // Text(value.toString()),
         // LoadingIconButton(icon: Icons.refresh, onTap: () {}, isLoading: true),
       ],

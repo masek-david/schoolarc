@@ -9,11 +9,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/models/exams/exam_entity_id_model.dart';
-import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/homeworks/homework_entity_id_model.dart';
-import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -21,6 +19,8 @@ import 'package:schoolarc/utils/globals.dart';
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
   return FirebaseService(ref: ref);
 });
+
+const printLogs = false;
 
 class FirebaseService {
   FirebaseService({required this.ref}) {
@@ -182,24 +182,24 @@ class FirebaseService {
   }
 
   // EXAMS
-  Stream<ExamEntityWithID> listenExams() {
+  Stream<ExamData> listenExams() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = exams.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamEntityWithID.fromFireJson(json);
+      return ExamData.fromFireJson(json);
     });
     final changed = exams.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return ExamEntityWithID.fromFireJson(json);
+      return ExamData.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteExams(List<Exam> examsToDelete) async {
+  Future<void> deleteExams(List<ExamData> examsToDelete) async {
     if (examsToDelete.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -211,12 +211,12 @@ class FirebaseService {
       await exams.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> editExams(List<Exam> examsToUpdate) async {
+  Future<void> updateExams(List<ExamData> examsToUpdate) async {
     if (examsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -229,12 +229,12 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> addExam(Exam exam) async {
+  Future<void> createExam(ExamData exam) async {
     if (auth.currentUser == null) return;
     try {
       await exams.child(exam.id).update(exam.toFireJson());
@@ -242,49 +242,49 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<List<ExamEntityWithID>?> getAllExams() async {
+  Future<List<ExamData>?> getAllExams() async {
     if (auth.currentUser == null) return null;
-    List<ExamEntityWithID> examsList = [];
+    List<ExamData> examsList = [];
     try {
       final snapshot = await exams.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        examsList.add(ExamEntityWithID.fromFireJson(json));
+        examsList.add(ExamData.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return examsList;
   }
 
   // HOMEWORKS
-  Stream<HomeworkEntityWithID> listenHomeworks() {
+  Stream<HomeworkData> listenHomeworks() {
     if (auth.currentUser == null) return const Stream.empty();
 
     final added = homeworks.onChildAdded.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkEntityWithID.fromFireJson(json);
+      return HomeworkData.fromFireJson(json);
     });
     final changed = homeworks.onChildChanged.map((event) {
       final json = Map<String, dynamic>.from(event.snapshot.value as Map);
       json.putIfAbsent('id', () => event.snapshot.key);
-      return HomeworkEntityWithID.fromFireJson(json);
+      return HomeworkData.fromFireJson(json);
     });
 
     return StreamGroup.merge([added, changed]);
   }
 
-  Future<void> deleteHomeworks(List<Homework> hwsToDelete) async {
+  Future<void> deleteHomeworks(List<HomeworkData> hwsToDelete) async {
     if (hwsToDelete.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -296,12 +296,12 @@ class FirebaseService {
       await homeworks.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> editHomeworks(List<Homework> hwsToUpdate) async {
+  Future<void> updateHw(List<HomeworkData> hwsToUpdate) async {
     if (hwsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -314,12 +314,12 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> addHomework(Homework homework) async {
+  Future<void> createHw(HomeworkData homework) async {
     if (auth.currentUser == null) return;
     try {
       await homeworks.child(homework.id).update(homework.toFireJson());
@@ -327,25 +327,25 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<List<HomeworkEntityWithID>?> getAllHomeworks() async {
+  Future<List<HomeworkData>?> getAllHomeworks() async {
     if (auth.currentUser == null) return null;
-    List<HomeworkEntityWithID> homeworksList = [];
+    List<HomeworkData> homeworksList = [];
     try {
       final snapshot = await homeworks.get();
       final jsonWhole = Map<String, dynamic>.from(snapshot.value as Map);
       jsonWhole.forEach((key, value) {
         final json = Map<String, dynamic>.from(value as Map);
         json.putIfAbsent('id', () => key);
-        homeworksList.add(HomeworkEntityWithID.fromFireJson(json));
+        homeworksList.add(HomeworkData.fromFireJson(json));
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return homeworksList;
@@ -381,12 +381,12 @@ class FirebaseService {
       await subjects.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> editSubjects(List<Subject> subjectsToUpdate) async {
+  Future<void> updateSubjects(List<Subject> subjectsToUpdate) async {
     if (subjectsToUpdate.isEmpty) return;
     if (auth.currentUser == null) return;
 
@@ -399,12 +399,12 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
 
-  Future<void> addSubject(Subject subject) async {
+  Future<void> createSubject(Subject subject) async {
     if (auth.currentUser == null) return;
     try {
       await subjects.child(subject.id).update(subject.toFireJson());
@@ -412,7 +412,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
     return;
   }
@@ -430,7 +430,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      log('$e\n$st');
+      if(printLogs) log('$e\n$st');
     }
 
     return subjectsList;
