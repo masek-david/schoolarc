@@ -60,7 +60,7 @@ class SettingsScaffold extends StatelessWidget {
                         width: double.infinity,
                         child: Text(
                           style: googleSansFlex(
-                            weight: 600,
+                            weight: 700,
                             size: lerpDouble(22, 44, t),
                             roundness: 100,
                           ),

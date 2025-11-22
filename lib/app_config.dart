@@ -120,12 +120,6 @@ class AppConfig extends ConsumerWidget {
             sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
-            pageTransitionsTheme: const PageTransitionsTheme(
-              builders: <TargetPlatform, PageTransitionsBuilder>{
-                // Set the predictive back transitions for Android.
-                TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-              },
-            ),
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(year2023: false),
             inputDecorationTheme: InputDecorationTheme(
@@ -157,12 +151,6 @@ class AppConfig extends ConsumerWidget {
             sliderTheme: const SliderThemeData(year2023: false),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             visualDensity: VisualDensity.standard,
-            pageTransitionsTheme: const PageTransitionsTheme(
-              builders: <TargetPlatform, PageTransitionsBuilder>{
-                // Set the predictive back transitions for Android.
-                TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-              },
-            ),
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               contentPadding: const EdgeInsets.all(15),

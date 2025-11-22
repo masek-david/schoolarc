@@ -16,6 +16,7 @@ import 'package:schoolarc/utils/shapes_list.dart';
 import 'package:schoolarc/widgets/subject_shortcut.dart';
 import 'package:schoolarc/widgets/tiles/animated_checkbox.dart';
 import 'package:schoolarc/widgets/tiles/tile_slidable.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class HwTile extends StatefulWidget {
   const HwTile({
@@ -208,6 +209,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         ),
                         const SizedBox(width: 8),
                         Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             // if (widget.hw.isShared)
                             //   Icon(
@@ -240,33 +242,6 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                               color: isMissed ? missedColor : null,
                               fontSize: 12,
                             ),
-                          if (widget.hw.description != '')
-                            Icon(
-                              Icons.notes,
-                              size: 16,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
-                        ],
-                      ),
-                      if (widget.hw.description != '' || widget.hw.isShared)
-                        const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          widget.hw.text,
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      if (widget.showDate)
-                        Text(
-                          widget.hw.deadline.dateText(),
-                          maxLines: 2,
-                          style: TextStyle(
-                            color: isMissed ? missedColor : null,
-                            fontSize: 12,
                           ),
                         const SizedBox(width: 4),
                         if (widget.showCompletion)

@@ -193,6 +193,28 @@ class SettingTile extends StatelessWidget {
                             heroTag != null
                                 ? Hero(
                                     tag: heroTag!,
+                                    flightShuttleBuilder: (flightContext,
+                                        animation,
+                                        flightDirection,
+                                        fromHeroContext,
+                                        toHeroContext) {
+                                      return AnimatedBuilder(
+                                        animation: animation,
+                                        builder: (context, _) {
+                                          return Material(
+                                            color: Colors.transparent,
+                                            child: Text(
+                                              title,
+                                              style: googleSansFlex(
+                                                size: 14 + animation.value * 30,
+                                                weight: enabled ? 700 : 400,
+                                                roundness: 100,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      );
+                                    },
                                     child: buildText(context),
                                   )
                                 : buildText(context),
