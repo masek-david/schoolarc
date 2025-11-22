@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -111,17 +113,19 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     );
     _onAppLeaveOrReturn(true);
 
-    HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
-      if (event != null && navigatorKey.currentContext?.mounted == true) {
-        handleWidgetClick(event, navigatorKey.currentContext!, ref);
-      }
-    });
+    if (!kIsWeb && Platform.isAndroid || Platform.isIOS) {
+      HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
+        if (event != null && navigatorKey.currentContext?.mounted == true) {
+          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+        }
+      });
 
-    HomeWidget.widgetClicked.listen((event) {
-      if (event != null && navigatorKey.currentContext?.mounted == true) {
-        handleWidgetClick(event, navigatorKey.currentContext!, ref);
-      }
-    });
+      HomeWidget.widgetClicked.listen((event) {
+        if (event != null && navigatorKey.currentContext?.mounted == true) {
+          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+        }
+      });
+    }
 
     if (settings.firstTimeOpeningApp) {
       firstTimeOpeningApp();
