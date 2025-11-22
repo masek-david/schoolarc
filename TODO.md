@@ -1,6 +1,9 @@
 # FIX
-i dont think notifications work
-does the widget auto update?
+timetable and meals show wrong date in homescreen
+when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field
+android meals widget updates, but shows old meals
+notifications dont use correct linebreaks
+
 merge sorts into one
 meals and baka shows logged out instead of no internet
 
