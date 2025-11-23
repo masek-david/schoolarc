@@ -1,11 +1,13 @@
-## [2.2.0]() - 2025-11-22
+## [2.2.0]() - 2025-
 ### Added
 - Reworked Android widgets
+- Added new refresh indicator
 
 ### Changed
 - Improved home screen
 - Improved fonts
 - Improved ordering
+- Improved timetable design
 - Changed how dates are saved (should resolve any time zone issues)
 
 ### Fixed

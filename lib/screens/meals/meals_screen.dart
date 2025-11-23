@@ -7,15 +7,15 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
-import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:schoolarc/widgets/tiles/meal_tile.dart';
 
 class MealsScreen extends ConsumerWidget {
   const MealsScreen({super.key});
 
-  void refresh(WidgetRef ref) {
-    ref.read(stravaMealsProvider.notifier).refresh();
+  Future<void> refresh(WidgetRef ref)async {
+    await ref.read(stravaMealsProvider.notifier).refresh();
   }
 
   @override
@@ -42,18 +42,15 @@ class MealsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.loc.meals),
-        actions: [
-          AgoText(stream: stravaMealsAgeProvider),
-          LoadingIconButton(
-            icon: Icons.refresh,
-            onTap: () => refresh(ref),
-            isLoading: isLoading,
-          ),
-        ],
+        actions: [Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AgoText(stream: stravaMealsAgeProvider),
+        )],
       ),
-      body: RefreshIndicator(
+      body: ExpressiveRefreshIndicator(
+
         onRefresh: () async {
-          refresh(ref);
+          await refresh(ref);
         },
         child: ListView.builder(
           itemCount: itemCount,

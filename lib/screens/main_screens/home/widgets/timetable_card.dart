@@ -10,21 +10,20 @@ import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/text_actions.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
-bool _isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
+bool _isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
   bool isEmpty = true;
-  lessons.forEach(
-    (lessonTimes, lesson) {
-      if (!lesson.isEmpty) {
-        isEmpty = false;
-      }
-    },
-  );
+  for (var value in lessons) {
+    if (!value.$2.isEmpty) {
+      isEmpty = false;
+    }
+  }
   return isEmpty;
 }
 
@@ -112,40 +111,52 @@ class TimetableCard extends ConsumerWidget {
           if (areThereUpcomingLessons)
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                const SizedBox(width: 12),
-                ...upcomingLessons.entries.map<Widget>(
-                  (entry) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            entry.key.startTime.format(context),
-                            style:
-                                TextStyle(color: getSubtleTextColor(context)),
+              child: Row(
+                spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const SizedBox(width: 12),
+                  ...List.generate(
+                    upcomingLessons.length,
+                    (index) {
+                      final entry = upcomingLessons[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              entry.$1.startTime.format(context),
+                              style: googleSansFlex(
+                                width: 50,
+                                color: getSubtleTextColor(context),
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 100,
-                          child: TimetableTile(
-                            isHighlighted: entry.key.isActive &&
-                                dateToShow.isSameDay(DateTime.now()),
-                            lesson: entry.value,
-                            columnWidth:
-                                settings.get(Setting.timeTableTileWidth),
-                            onTap: (lesson) =>
-                                lesson?.showLessonDialog(context, ref),
+                          SizedBox(
+                            height: 100,
+                            child: TimetableTile(
+                              isHighlighted: entry.$1.isActive &&
+                                  dateToShow.isSameDay(DateTime.now()),
+                              lesson: entry.$2,
+                              columnWidth:
+                                  settings.get(Setting.timeTableTileWidth),
+                              onTap: (lesson) =>
+                                  lesson?.showLessonDialog(context, ref),
+                              leftBottom: index == 0,
+                              leftTop: index == 0,
+                              rightBottom: index == upcomingLessons.length - 1,
+                              rightTop: index == upcomingLessons.length - 1,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(width: 12),
-              ]),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                ],
+              ),
             ),
           Padding(
             padding: const EdgeInsets.only(right: 12, bottom: 4),

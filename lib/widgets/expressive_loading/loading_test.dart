@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/widgets/expressive_loading/circular_wavy_progress_indicator.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/expressive_loading/linear_wavy_progress_indicator.dart';
 
 class LoadingTest extends StatefulWidget {
@@ -18,6 +19,8 @@ class _LoadingTestState extends State<LoadingTest> {
       mainAxisSize: MainAxisSize.min,
       spacing: 12,
       children: [
+        ExpressiveLoadingIndicator(progress: value),
+        const ExpressiveLoadingIndicator(),
         Slider(
           value: value,
           onChanged: (value) {

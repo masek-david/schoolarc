@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-
-// NOTE: this is really important, it will make overscroll look the same on both platforms
-class _ClampingScrollBehavior extends ScrollBehavior {
-  @override
-  ScrollPhysics getScrollPhysics(BuildContext context) =>
-      const ClampingScrollPhysics();
-}
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 
 class NonScrollableRefreshIndicator extends StatelessWidget {
   final Widget child;
@@ -21,19 +15,15 @@ class NonScrollableRefreshIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: ((_, constraints) {
-        return RefreshIndicator(
+        return ExpressiveRefreshIndicator(
           onRefresh: onRefresh,
-          child: ScrollConfiguration(
-            // Customize scroll behavior for both platforms
-            behavior: _ClampingScrollBehavior(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                    maxHeight: constraints.maxHeight),
-                child: child,
-              ),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                  maxHeight: constraints.maxHeight),
+              child: child,
             ),
           ),
         );

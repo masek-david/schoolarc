@@ -10,6 +10,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
@@ -93,9 +94,8 @@ class ExamsScreen extends ConsumerWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: RefreshIndicator(
-              notificationPredicate:
-                  ref.watch(useCloudSyncProvider) ? (_) => true : (_) => false,
+            child: ExpressiveRefreshIndicator(
+              enabled: ref.watch(useCloudSyncProvider) ? true : false,
               onRefresh: () async {
                 try {
                   await ref.read(examDataProvider.notifier).syncAll();

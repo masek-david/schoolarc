@@ -1,11 +1,11 @@
 # FIX
 check update for web
-timetable and meals show wrong date in homescreen
 when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field
 android meals widget updates, but shows old meals
 notifications dont use correct linebreaks
-merge sorts into one
 meals and baka shows logged out instead of no internet
+merge sorts into one
+use other m3e shapes (this one is missing cookie4)
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

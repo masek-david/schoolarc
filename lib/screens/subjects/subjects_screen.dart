@@ -12,6 +12,7 @@ import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class SubjectsScreen extends ConsumerWidget {
@@ -92,10 +93,8 @@ class SubjectsScreen extends ConsumerWidget {
               ? EmptyMessage(
                   message: context.loc.noSubjectsFoundMessage,
                 )
-              : RefreshIndicator(
-                  notificationPredicate: ref.watch(useCloudSyncProvider)
-                      ? (_) => true
-                      : (_) => false,
+              : ExpressiveRefreshIndicator(
+                  enabled: ref.watch(useCloudSyncProvider) ? true : false,
                   onRefresh: () => onRefresh(context, ref),
                   child: AnimatedReorderableListView(
                     onReorderStart: (index) => HapticFeedback.mediumImpact(),

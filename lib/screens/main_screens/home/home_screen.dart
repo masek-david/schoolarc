@@ -18,6 +18,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
@@ -42,15 +43,13 @@ class HomeScreen extends ConsumerWidget {
     return;
   }
 
-  bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
+  bool isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
     bool isEmpty = true;
-    lessons.forEach(
-      (lessonTimes, lesson) {
-        if (!lesson.isEmpty) {
+    for (var value in lessons) {
+        if (!value.$2.isEmpty) {
           isEmpty = false;
         }
-      },
-    );
+      }
     return isEmpty;
   }
 
@@ -84,11 +83,7 @@ class HomeScreen extends ConsumerWidget {
     final examsTomorrow = exams[Date.today().addDays(1)] ?? [];
 
     // we need the time so we can show timetable for now or for tomorrow whole day
-    DateTime dateTimeToShow = DateTime.now();
-    if (showTomorrow) {
-      dateTimeToShow =
-          dateToShow.toDateTimeUTC().add(const Duration(days: 1)).toLocal();
-    }
+    DateTime dateTimeToShow = dateToShow.toDateTimeUTC();
 
     String whenText = showTomorrow
         ? context.loc.tomorrow.toLowerCase()
@@ -101,7 +96,7 @@ class HomeScreen extends ConsumerWidget {
       removeBottom: true,
       child: Container(
         color: context.col.surface,
-        child: RefreshIndicator(
+        child: ExpressiveRefreshIndicator(
           onRefresh: () => refresh(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),

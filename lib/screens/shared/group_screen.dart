@@ -15,6 +15,7 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
@@ -268,7 +269,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: ExpressiveRefreshIndicator(
         onRefresh: refresh,
         child: group == null
             ? const SingleChildScrollView(
