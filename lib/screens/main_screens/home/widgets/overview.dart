@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/bakalari/username_notifier.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 
 class Overview extends ConsumerWidget {
-  const Overview({
-    super.key,
-    required this.hwNumberOfIncomplete,
-    required this.hwNumberOfMissed,
-    required this.examNumberOfIncomplete,
-  });
-
-  final int hwNumberOfIncomplete;
-  final int hwNumberOfMissed;
-  final int examNumberOfIncomplete;
+  const Overview({super.key});
 
   String get greetingTime {
     final hour = TimeOfDay.now().hour;
@@ -45,7 +39,19 @@ class Overview extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final showMissed = hwNumberOfMissed != 0;
+    final missedHw = ref.watch(hwMissedProvider).length;
+    final upcomingHw = ref.watch(hwDataProvider).values.where(
+      (element) {
+        return !element.isDeleted &&
+            !element.isCompleted &&
+            !element.date.isBefore(Date.today());
+      },
+    ).length;
+    final upcomingExams = ref.watch(examDataProvider).values.where(
+      (element) {
+        return !element.isDeleted && !element.isCompleted;
+      },
+    ).length;
 
     String? userName = ref.watch(usernameProvider);
     bool showUserName = ref.watch(greetUsernameProvider) && userName != null;
@@ -71,17 +77,17 @@ class Overview extends ConsumerWidget {
               text: '${context.loc.youHave} ',
               style: textTheme.bodyLarge,
               children: [
-                if (showMissed)
+                if (missedHw != 0)
                   TextSpan(
                     text:
-                        '$hwNumberOfMissed ${context.loc.missedHomework(hwNumberOfMissed).toLowerCase()}, ',
+                        '$missedHw ${context.loc.missedHomework(missedHw).toLowerCase()}, ',
                     style: TextStyle(
                       color: colorScheme.error,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 TextSpan(
-                  text: numberOrNo(hwNumberOfIncomplete, context),
+                  text: numberOrNo(upcomingHw, context),
                   style: TextStyle(
                     color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
@@ -89,10 +95,10 @@ class Overview extends ConsumerWidget {
                 ),
                 TextSpan(
                   text:
-                      ' ${context.loc.upcomingHomework(hwNumberOfIncomplete).toLowerCase()} ${context.loc.and} ',
+                      ' ${context.loc.upcomingHomework(upcomingHw).toLowerCase()} ${context.loc.and} ',
                 ),
                 TextSpan(
-                  text: numberOrNo(examNumberOfIncomplete, context),
+                  text: numberOrNo(upcomingExams, context),
                   style: TextStyle(
                     color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
@@ -100,7 +106,7 @@ class Overview extends ConsumerWidget {
                 ),
                 TextSpan(
                   text:
-                      ' ${context.loc.upcomingExams(examNumberOfIncomplete).toLowerCase()}',
+                      ' ${context.loc.upcomingExams(upcomingExams).toLowerCase()}',
                 ),
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/expressive_loading/circular_wavy_progress_indicator.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/expressive_loading/linear_wavy_progress_indicator.dart';
@@ -19,8 +20,19 @@ class _LoadingTestState extends State<LoadingTest> {
       mainAxisSize: MainAxisSize.min,
       spacing: 12,
       children: [
-        ExpressiveLoadingIndicator(progress: value),
-        const ExpressiveLoadingIndicator(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 10,
+          children: [
+            ExpressiveLoadingIndicator(progress: value),
+            const ExpressiveLoadingIndicator(),
+            LoadingIconButton(
+              icon: Icons.refresh,
+              onTap: () {},
+              isLoading: true,
+            ),
+          ],
+        ),
         Slider(
           value: value,
           onChanged: (value) {
@@ -30,36 +42,15 @@ class _LoadingTestState extends State<LoadingTest> {
           },
         ),
         LinearWavyProgressIndicator(value: value),
-        // CircularWavyProgressIndicator(
-        //   value: value,
-        //   // amplitude: 4,
-        //   // strokeWidth: 20,
-        //   // wavelength: 41.2,
-        //   size: 264,
-        // ),
-        // Container(
-        //   height: 50,
-        //   decoration: ShapeDecoration(
-        //     color: Colors.amber,
-        //     shape: ShapeBorder.lerp(
-        //       RoundedPolygonBorder(polygon: MaterialShapes.arch),
-        //       RoundedPolygonBorder(
-        //         polygon: MaterialShapes.cookie12,
-        //       ),
-        //       (value * 2) - 0.5,
-        //     )!,
-        //   ),
-        // ),
-        CircularWavyProgressIndicator(
-          value: value,
-          // amplitude: 4,
-          strokeWidth: 8,
-          // wavelength: 18.1,
-          // size: 100,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 10,
+          children: [
+            Text(value.toStringAsPrecision(3)),
+            CircularWavyProgressIndicator(value: value),
+            const CircularWavyLoadingIndicator(),
+          ],
         ),
-        const CircularWavyLoadingIndicator(),
-        // Text(value.toString()),
-        // LoadingIconButton(icon: Icons.refresh, onTap: () {}, isLoading: true),
       ],
     );
   }

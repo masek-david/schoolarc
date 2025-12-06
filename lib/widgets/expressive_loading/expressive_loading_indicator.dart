@@ -26,13 +26,13 @@ class ExpressiveLoadingIndicator extends StatefulWidget {
 
 class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     with TickerProviderStateMixin {
-  static final List<RoundedPolygon> shapes = [
+  static  final List<RoundedPolygon> shapes = [
     MaterialShapes.softBurst,
     MaterialShapes.cookie9,
     MaterialShapes.pentagon,
     MaterialShapes.pill,
     MaterialShapes.sunny,
-    MaterialShapes.clover4,
+    MaterialShapes.cookie4,
     MaterialShapes.oval,
   ];
 
@@ -91,6 +91,15 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     );
   }
 
+  void resetAnimation() {
+    _globalRotationController.reset();
+
+    shapeIndex = 0;
+    _morphController.reset();
+
+    morphTimer?.cancel();
+  }
+
   void startMorphAnimation() {
     shapeIndex++;
     _morphController.animateWith(_springSimulation);
@@ -101,6 +110,10 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     if (widget.progress == null) {
       if (!_globalRotationController.isAnimating) {
         startAnimation();
+      }
+    } else {
+      if (_globalRotationController.isAnimating) {
+        resetAnimation();
       }
     }
 

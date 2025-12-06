@@ -51,7 +51,7 @@ class TimetableView extends StatelessWidget {
         padding: const EdgeInsets.only(
           left: 8,
           right: 8,
-          bottom: 24,
+          bottom: 36,
         ),
         child: Column(
           spacing: 4,

@@ -46,10 +46,10 @@ class HomeScreen extends ConsumerWidget {
   bool isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
     bool isEmpty = true;
     for (var value in lessons) {
-        if (!value.$2.isEmpty) {
-          isEmpty = false;
-        }
+      if (!value.$2.isEmpty) {
+        isEmpty = false;
       }
+    }
     return isEmpty;
   }
 
@@ -57,33 +57,28 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
-    final int uncompletedHw = ref.watch(hwProvider).values.where(
-      (element) {
-        return !element.isDeleted &&
-            !element.isCompleted &&
-            !element.date.isBefore(Date.today());
-      },
-    ).length;
     final exams = ref.watch(examsDatesProvider);
-    final int upcomingExams = ref.watch(examDataProvider).values.where(
-      (element) {
-        return !element.isDeleted && !element.isCompleted;
-      },
-    ).length;
 
     final defaultTimeTable = timetableDb.timeTable;
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(DateTime.now());
-
-    final showTomorrow = isLessonsEmpty(upcomingLessons);
-    final dateToShow = showTomorrow ? Date.today().addDays(1) : Date.today();
 
     final hwToday = hws[Date.today()] ?? [];
     final examsToday = exams[Date.today()] ?? [];
     final hwTomorrow = hws[Date.today().addDays(1)] ?? [];
     final examsTomorrow = exams[Date.today().addDays(1)] ?? [];
 
+    // If tomorrow card is shown
+    final showTomorrow = isLessonsEmpty(upcomingLessons);
+    final dateToShow = showTomorrow ? Date.today().addDays(1) : Date.today();
+
+    final allTodayHwsAreCompleted = hwToday
+        .where((element) => !element.isCompleted || element.isBeingAnimated)
+        .isNotEmpty;
+    // if today card is shown
+    final showToday = !showTomorrow || allTodayHwsAreCompleted;
+
     // we need the time so we can show timetable for now or for tomorrow whole day
-    DateTime dateTimeToShow = dateToShow.toDateTimeUTC();
+    DateTime timetableDateTime = dateToShow.toDateTimeNowLocal();
 
     String whenText = showTomorrow
         ? context.loc.tomorrow.toLowerCase()
@@ -103,11 +98,7 @@ class HomeScreen extends ConsumerWidget {
             child: ListView(
               children: [
                 const SizedBox(height: 16),
-                Overview(
-                  hwNumberOfIncomplete: uncompletedHw,
-                  examNumberOfIncomplete: upcomingExams,
-                  hwNumberOfMissed: missedHw.length,
-                ),
+                const Overview(),
                 if (isRecapDate() && !hasSeenRecap())
                   RecapButton(
                     child: Padding(
@@ -134,7 +125,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           const MealsCard(),
                           TimetableCard(
-                            dateToShow: dateTimeToShow,
+                            dateToShow: timetableDateTime,
                             whenText: whenText,
                           ),
                         ],
@@ -147,7 +138,7 @@ class HomeScreen extends ConsumerWidget {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              dateToShow: dateTimeToShow,
+                              dateToShow: timetableDateTime,
                               whenText: whenText,
                             ),
                           if (missedHw.isNotEmpty)
@@ -170,8 +161,7 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          if (!showTomorrow ||
-                              !(examsToday.isEmpty && hwToday.isEmpty))
+                          if (showToday)
                             Card(
                               color: Theme.of(context)
                                   .colorScheme

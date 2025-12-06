@@ -1,11 +1,13 @@
 # FIX
-check update for web
-when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field
-android meals widget updates, but shows old meals
-notifications dont use correct linebreaks
+you cant complete from the widget [A]
+opening from widget doesnt work [A]
+android meals widget updates, but shows old meals [A]
+notifications dont use correct linebreaks [A]
+timetable pull to refresh isnt centered on big screen
 meals and baka shows logged out instead of no internet
+check update for web
+when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field [WEB]
 merge sorts into one
-use other m3e shapes (this one is missing cookie4)
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
