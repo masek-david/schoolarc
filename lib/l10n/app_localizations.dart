@@ -62,7 +62,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('cs'),
-    Locale('en')
+    Locale('en'),
   ];
 
   /// Greeting based on time of day: morning, afternoon, evening, night
@@ -593,17 +596,35 @@ abstract class AppLocalizations {
   /// **'Check your internet connection'**
   String get checkConnection;
 
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get offline;
+
+  /// No description provided for @timedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out'**
+  String get timedOut;
+
+  /// No description provided for @serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error'**
+  String get serverError;
+
   /// No description provided for @unexpectedError.
   ///
   /// In en, this message translates to:
   /// **'An unexpected error occurred'**
   String get unexpectedError;
 
-  /// No description provided for @fillOutAllInfo.
+  /// No description provided for @fillOutAllFields.
   ///
   /// In en, this message translates to:
-  /// **'Please fill out all information'**
-  String get fillOutAllInfo;
+  /// **'Please fill out all fields'**
+  String get fillOutAllFields;
 
   /// No description provided for @noCanteen.
   ///
@@ -778,6 +799,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Group'**
   String get group;
+
+  /// No description provided for @notMemberOfAnyGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'You aren\'t a member of any group'**
+  String get notMemberOfAnyGroup;
+
+  /// No description provided for @waitingForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for approval'**
+  String get waitingForApproval;
+
+  /// No description provided for @removedFromGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been removed from the group'**
+  String get removedFromGroup;
+
+  /// No description provided for @leaveOldGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'First leave the old group'**
+  String get leaveOldGroup;
+
+  /// No description provided for @cantLeaveYourGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t leave the group you created, you have to delete it'**
+  String get cantLeaveYourGroup;
+
+  /// No description provided for @cantChangeGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t change this group\'s name'**
+  String get cantChangeGroupName;
 
   /// No description provided for @subjectIsntShared.
   ///
@@ -1307,6 +1364,18 @@ abstract class AppLocalizations {
   /// **'Export'**
   String get export;
 
+  /// No description provided for @exportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported successfully'**
+  String get exportSuccess;
+
+  /// No description provided for @aborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Aborted'**
+  String get aborted;
+
   /// No description provided for @chooseSaveLocation.
   ///
   /// In en, this message translates to:
@@ -1323,7 +1392,11 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Do you want to import {subjectsCount} subject{subjectsCount, plural, =1{} other{s}}, {hwsCount} piece{hwsCount, plural, =1{} other{s}} of homework and {examsCount} exam{examsCount, plural, =1{} other{s}}?'**
-  String importConfirmationText(num subjectsCount, num hwsCount, num examsCount);
+  String importConfirmationText(
+    num subjectsCount,
+    num hwsCount,
+    num examsCount,
+  );
 
   /// No description provided for @importErrorMessage.
   ///
@@ -1985,6 +2058,12 @@ abstract class AppLocalizations {
   /// **'Can\'t log in. Try again.'**
   String get cantLogin;
 
+  /// No description provided for @couldntLogIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t log in.'**
+  String get couldntLogIn;
+
   /// No description provided for @deleteAllData.
   ///
   /// In en, this message translates to:
@@ -2106,7 +2185,8 @@ abstract class AppLocalizations {
   String get daysShort;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2115,25 +2195,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return AppLocalizationsCs();
-    case 'en': return AppLocalizationsEn();
+    case 'cs':
+      return AppLocalizationsCs();
+    case 'en':
+      return AppLocalizationsEn();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

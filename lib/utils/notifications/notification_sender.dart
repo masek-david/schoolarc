@@ -152,7 +152,7 @@ class NotificationSender {
     String body = '';
     // MISSED
     if (missed.isNotEmpty) {
-      body += '<b>${loc.missedHomeworkTitle}:</b>';
+      body += '<b>${loc.missedHomeworkTitle}:</b>$lineBreak';
     }
     for (var hw in missed) {
       body += '${_getTaskText(hw)}$lineBreak';
@@ -162,7 +162,7 @@ class NotificationSender {
     }
     // EXAMS
     if (exams.isNotEmpty) {
-      body += '<b>${loc.exams(2)}:</b>';
+      body += '<b>${loc.exams(2)}:</b>$lineBreak';
     }
     for (var exam in exams) {
       body += '${_getTaskText(exam)}$lineBreak';
@@ -172,7 +172,7 @@ class NotificationSender {
     }
     // HOMEWORK
     if (hws.isNotEmpty) {
-      body += '<b>${loc.homework(2)}:</b>';
+      body += '<b>${loc.homework(2)}:</b>$lineBreak';
     }
     for (var hw in hws) {
       body += '${_getTaskText(hw)}$lineBreak';

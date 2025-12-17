@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
@@ -29,12 +29,11 @@ class StravaService {
     required String username,
     required String password,
   }) async {
-    final loc = getLocalization();
     if (int.tryParse(canteenCode) == null) {
-      throw ServiceException(loc.invalidCanteenNumber);
+      throw ValidationException(.invalidCanteenNumber);
     }
     if (canteenCode.length != 4) {
-      throw ServiceException(loc.invalidCanteenNumberLength);
+      throw ValidationException(.invalidCanteenNumberLength);
     }
 
     await secureStorage.write(canteenCodeKey, canteenCode);
@@ -56,7 +55,7 @@ class StravaService {
     return await secureStorage.read(usernameKey);
   }
 
-  /// returns false if the user cant be logged in, true if success
+  /// returns false if the user cant be logged in, true if they can be logged in or at least the canteenId is set
   Future<bool> login() async {
     String username = '';
     String password = '';
@@ -65,42 +64,45 @@ class StravaService {
       username = await getUsername;
       password = await secureStorage.read(passwordKey);
     } on Exception {
-      throw ServiceException(
-        getLocalization().pleaseLogIn,
-        action: ExceptionActions.stravaLogin,
+      throw AuthException(
+        .couldntLogIn,
+        exceptionAction: ExceptionActions.stravaLogin,
       );
     }
 
-    final loc = getLocalization();
     if (canteenCode == '') {
-      throw ServiceException(loc.canteenNumberMissing,
-          action: ExceptionActions.stravaLogin);
+      throw AuthException(
+        .couldntLogIn,
+        exceptionAction: ExceptionActions.stravaLogin,
+      );
     }
 
-    if (username == '') {
-      return false;
-    }
-    if (password == '') {
+    if( username == '' || password == ''){
+      // The user can at least log in with canteenId
       return false;
     }
 
     Response response;
     try {
-      response = await http.post(
-        Uri.https('app.strava.cz', '/api/login'),
-        body: jsonEncode({
-          'cislo': canteenCode,
-          'enviroment': 'W',
-          'heslo': password,
-          'jmeno': username,
-          'lang': 'CZ',
-          'zustatPrihlasen': false,
-        }),
-      );
+      response = await http
+          .post(
+            Uri.https('app.strava.cz', '/api/login'),
+            body: jsonEncode({
+              'cislo': canteenCode,
+              'enviroment': 'W',
+              'heslo': password,
+              'jmeno': username,
+              'lang': 'CZ',
+              'zustatPrihlasen': false,
+            }),
+          )
+          .timeout(timeoutDuration);
     } on SocketException catch (_) {
-      throw ServiceException(getLocalization().checkConnection);
-    } on Object {
-      rethrow;
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
+    } catch (e) {
+      throw NetworkException(.serverError, originalError: e);
     }
 
     if (response.statusCode != 200) {
@@ -108,9 +110,9 @@ class StravaService {
       try {
         message = jsonDecode(response.body)['message'];
       } on Object {
-        message = response.reasonPhrase ?? '';
+        message = response.reasonPhrase ?? 'Error';
       }
-      throw ServiceException(message);
+      throw ApiException(message);
     }
 
     final parsedJson = json.decode(response.body);
@@ -141,29 +143,32 @@ class StravaService {
 
     Response response;
     try {
-      response = await http.post(
-        Uri.https('app.strava.cz', '/api/objednavky'),
-        body: jsonEncode({
-          'cislo': canteenCode,
-          'sid': _sid,
-          's5url': _s5url,
-          'lang': 'CZ',
-          'konto': 0,
-          'podminka': '',
-          'ignoreCert': _ignoreCert,
-        }),
-      );
-    } on SocketException {
-      final loc = getLocalization();
-      throw ServiceException(loc.checkConnection);
-    } on Object {
-      rethrow;
+      response = await http
+          .post(
+            Uri.https('app.strava.cz', '/api/objednavky'),
+            body: jsonEncode({
+              'cislo': canteenCode,
+              'sid': _sid,
+              's5url': _s5url,
+              'lang': 'CZ',
+              'konto': 0,
+              'podminka': '',
+              'ignoreCert': _ignoreCert,
+            }),
+          )
+          .timeout(timeoutDuration);
+    } on SocketException catch (_) {
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
+    } catch (e) {
+      throw NetworkException(.serverError, originalError: e);
     }
 
     Map<Date, List<Meal>> meals = {};
 
     if (response.reasonPhrase != "OK") {
-      throw ServiceException(response.reasonPhrase);
+      throw ApiException(response.reasonPhrase ?? 'Error');
     }
 
     final parsedJson = jsonDecode(response.body);
@@ -171,7 +176,8 @@ class StravaService {
     for (final table in parsedJson.values) {
       for (final mealJson in table) {
         final date = Date.fromDateTime(
-            DateFormat('dd.MM.yyyy').parse(mealJson['datum']));
+          DateFormat('dd.MM.yyyy').parse(mealJson['datum']),
+        );
 
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
@@ -183,7 +189,7 @@ class StravaService {
           meals[date]!.add(meal);
         } else {
           meals.addAll({
-            date: [meal]
+            date: [meal],
           });
         }
       }
@@ -194,17 +200,21 @@ class StravaService {
 
   Future<Map<Date, List<Meal>>> getMealsNoLogin() async {
     Map<Date, List<Meal>> meals = {};
-    final loc = getLocalization();
 
     try {
       canteenCode = await secureStorage.read(canteenCodeKey);
     } on Exception {
-      throw ServiceException(loc.logIn, action: ExceptionActions.stravaLogin);
+      throw AuthException(
+        .noCanteenId,
+        exceptionAction: ExceptionActions.stravaLogin,
+      );
     }
 
     if (canteenCode == '') {
-      throw ServiceException(loc.noCanteen,
-          action: ExceptionActions.stravaLogin);
+      throw AuthException(
+        .noCanteenId,
+        exceptionAction: ExceptionActions.stravaLogin,
+      );
     }
 
     final uri =
@@ -214,19 +224,26 @@ class StravaService {
     try {
       if (kIsWeb) {
         final encodedUri = Uri.encodeComponent(uri);
-        response = await http.get(Uri.parse(
-            'https://cors-proxy-one-olive.vercel.app/api/proxy?url=$encodedUri'));
+        response = await http
+            .get(
+              Uri.parse(
+                'https://cors-proxy-one-olive.vercel.app/api/proxy?url=$encodedUri',
+              ),
+            )
+            .timeout(timeoutDuration);
       } else {
-        response = await http.get(Uri.parse(uri));
+        response = await http.get(Uri.parse(uri)).timeout(timeoutDuration);
       }
-    } on SocketException {
-      throw ServiceException(loc.checkConnection);
-    } on Object {
-      rethrow;
+    } on SocketException catch (_) {
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
+    } catch (e) {
+      throw NetworkException(.serverError, originalError: e);
     }
 
     if (response.statusCode != 200) {
-      throw ServiceException(response.reasonPhrase);
+      throw ApiException(response.reasonPhrase ?? 'Error');
     }
 
     final decoded = decodeWindows1250(response.bodyBytes);
@@ -251,7 +268,7 @@ class StravaService {
         meals[date]!.add(meal);
       } else {
         meals.addAll({
-          date: [meal]
+          date: [meal],
         });
       }
     }

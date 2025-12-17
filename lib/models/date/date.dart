@@ -122,6 +122,13 @@ class Date implements Comparable<Date> {
     return DateTime.utc(year, month, day);
   }
 
+  /// Returns the date, but with time of now
+  DateTime toDateTimeNowLocal() {
+    final now = DateTime.now();
+    return DateTime(year, month, day, now.hour, now.minute, now.second,
+        now.millisecond, now.microsecond);
+  }
+
   String format(String format, String languageCode) {
     return DateFormat(format, languageCode).format(toDateTimeLocal());
   }

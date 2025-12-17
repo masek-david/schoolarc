@@ -233,23 +233,11 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
     final Widget? action = switch (currentPageIndex.value) {
       0 => IconButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return const HomeSettings();
-              },
-            );
-          },
+          onPressed: () => showHomeSettings(context),
           icon: const Icon(Icons.settings),
         ),
       1 => IconButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => const CalendarSettings(),
-            );
-          },
+          onPressed: () => showCalendarSettings(context),
           icon: const Icon(Icons.settings),
         ),
       _ => null,

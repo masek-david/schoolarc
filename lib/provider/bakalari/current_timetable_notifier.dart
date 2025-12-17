@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
@@ -24,7 +23,8 @@ final currentTimetableAgeProvider = StreamProvider<Duration?>((ref) async* {
 
 final currentTimetableProvider =
     AsyncNotifierProvider<CurrentTimetableNotifier, TimeTable>(
-        CurrentTimetableNotifier.new);
+      CurrentTimetableNotifier.new,
+    );
 
 class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   DateTime? lastFetched;
@@ -71,21 +71,22 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
     isFetching = true;
 
     final useBaka = ref.read(useBakaProvider);
-    final loc = getLocalization();
-
     if (!useBaka) {
-      throw ServiceException(loc.bakalariDisabled);
+      throw DisabledException(.bakalariDisabled);
     }
 
-    bool isLoggedIn = await ref.read(bakaLoginProvider.future);
+    bool isLoggedIn;
+    try {
+      isLoggedIn = await ref.read(bakaLoginProvider.future);
+    } on Exception {
+      isLoggedIn = false;
+    }
 
     if (!isLoggedIn) {
       isLoggedIn = await ref.read(bakaLoginProvider.notifier).refreshLogin();
       if (!isLoggedIn) {
-        throw ServiceException(
-          loc.loggedOut,
-          action: ExceptionActions.bakaLogin,
-        );
+        throw ref.read(bakaLoginProvider).error ??
+            AuthException(.loggedOut, exceptionAction: .bakaLogin);
       }
     }
 

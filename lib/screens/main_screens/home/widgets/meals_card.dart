@@ -38,7 +38,8 @@ class _MealsCardState extends ConsumerState<MealsCard> {
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
     final error = meals.error;
-    final data = meals.value;
+    // Dont show the data if there is error
+    final data = error == null ? meals.value : null;
 
     final isVisible = ref.watch(useMealsProvider);
     final showMealsUntil = ref.watch(mealsShowTodayUntilProvider);
@@ -91,24 +92,30 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 child: Text(
                                   empty
                                       ? context.loc
-                                          .noMealsOn(date
-                                              .formatWithWeekday(
-                                                  useOnFormat: true)
-                                              .unCapitalize())
-                                          .capitalize()
+                                            .noMealsOn(
+                                              date
+                                                  .formatWithWeekday(
+                                                    useOnFormat: true,
+                                                  )
+                                                  .unCapitalize(),
+                                            )
+                                            .capitalize()
                                       : context.loc
-                                          .mealsOn(date
-                                              .formatWithWeekday(
-                                                  useOnFormat: true)
-                                              .unCapitalize())
-                                          .capitalize(),
+                                            .mealsOn(
+                                              date
+                                                  .formatWithWeekday(
+                                                    useOnFormat: true,
+                                                  )
+                                                  .unCapitalize(),
+                                            )
+                                            .capitalize(),
                                   style: context.txt.bodyLarge,
                                 ),
                               ),
                             if (error != null)
                               Expanded(
                                 child: ErrorTile(
-                                  contentPadding: const EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                   error: error,
                                   text: context.loc.mealsNotLoaded,
                                 ),
@@ -124,7 +131,9 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                     .read(stravaMealsProvider.notifier)
                                     .refreshIfOld();
                                 Navigator.restorablePushNamed(
-                                    context, '/meals');
+                                  context,
+                                  '/meals',
+                                );
                               },
                               icon: const Icon(
                                 Icons.keyboard_arrow_right_rounded,
@@ -145,6 +154,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
             Stack(
               alignment: Alignment.center,
               children: [
+                const SizedBox(height: 8),
                 if (data != null)
                   if (data.keys.length > 1)
                     SmoothPageIndicator(
@@ -152,9 +162,9 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                       count: data.keys.length,
                       effect: ScrollingDotsEffect(
                         activeDotColor: Theme.of(context).colorScheme.tertiary,
-                        dotColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                        dotColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         maxVisibleDots: 7,
                         dotHeight: 4,
                         dotWidth: 16,

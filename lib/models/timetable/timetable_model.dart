@@ -26,8 +26,8 @@ class TimeTable {
   }
 
   /// Returns upcoming lessons for date and time
-  Map<LessonTimes, TimeTableLesson> getUpcomingLessons(DateTime? date) {
-    Map<LessonTimes, TimeTableLesson> upcomingLessons = {};
+  List<(LessonTimes, TimeTableLesson)> getUpcomingLessons(DateTime? date) {
+    List<(LessonTimes, TimeTableLesson)> upcomingLessons = [];
 
     date ??= DateTime.now();
     date = date.toLocal();
@@ -46,7 +46,7 @@ class TimeTable {
     for (var lessonIndex in upcomingLessonTimes.keys) {
       final lesson = table[date.weekday - 1][lessonIndex];
 
-      upcomingLessons.addAll({upcomingLessonTimes[lessonIndex]!: lesson});
+      upcomingLessons.add((upcomingLessonTimes[lessonIndex]!, lesson));
     }
 
     return upcomingLessons;

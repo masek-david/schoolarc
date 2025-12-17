@@ -117,7 +117,6 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             error: error,
             text: context.loc.errorLoggingIn,
             allowActions: false,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
         if (isLoading) const Center(child: CircularProgressIndicator()),
         const SizedBox(height: 12),

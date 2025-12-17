@@ -45,8 +45,6 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
             TextField(
               autofocus: true,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                border: const OutlineInputBorder(),
                 hintText: DateFormat('d M y').format(date),
               ),
               onChanged: (value) {
@@ -68,8 +66,9 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
               calendarBuilders: myCalendarBuilder(
                 onEdit: (exam) {},
                 currentDate: date,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHigh,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHigh,
               ),
               focusedDay: date,
               selectedDayPredicate: (day) {

@@ -31,7 +31,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
           onPressed: () async {
             final json = export();
 
-            await FilePicker.platform.saveFile(
+            final location = await FilePicker.platform.saveFile(
               dialogTitle: context.loc.chooseSaveLocation,
               type: FileType.custom,
               allowedExtensions: ['json'],
@@ -39,6 +39,14 @@ class ImportExportButtonsRow extends ConsumerWidget {
                   'export_${DateTime.now().toIso8601String().replaceAll(RegExp(r':'), '-')}.json',
               bytes: utf8.encode(json),
             );
+
+            if (context.mounted) {
+              if (location == null) {
+                showMessage(context, context.loc.aborted);
+              } else {
+                showMessage(context, context.loc.exportSuccess);
+              }
+            }
           },
         ),
         FilledButton.tonalIcon(
@@ -72,69 +80,71 @@ class ImportExportButtonsRow extends ConsumerWidget {
 
               if (context.mounted) {
                 showDialogAdaptive(
-                    context: context,
-                    title: Text(context.loc.import),
-                    dismissible: false,
-                    content: Text(
-                      context.loc.importConfirmationText(
-                          subjectsCount, hwsCount, examsCount),
+                  context: context,
+                  title: Text(context.loc.import),
+                  dismissible: false,
+                  content: Text(
+                    context.loc.importConfirmationText(
+                      subjectsCount,
+                      hwsCount,
+                      examsCount,
                     ),
-                    actions: [
-                      adaptiveDialogButton(
-                        context: context,
-                        child: Text(context.loc.cancel),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      adaptiveDialogButton(
-                        context: context,
-                        isDefaultAction: true,
-                        child: Text(context.loc.import),
-                        onPressed: () async {
-                          final GlobalKey<ProgressDialogState> dialogKey =
-                              GlobalKey();
+                  ),
+                  actions: [
+                    adaptiveDialogButton(
+                      context: context,
+                      child: Text(context.loc.cancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    adaptiveDialogButton(
+                      context: context,
+                      isDefaultAction: true,
+                      child: Text(context.loc.import),
+                      onPressed: () async {
+                        final GlobalKey<ProgressDialogState> dialogKey =
+                            GlobalKey();
 
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => ProgressDialog(
-                              key: dialogKey,
-                              goal: totalCount,
-                            ),
-                          );
-                          for (var element in imported.subjects) {
-                            await ref.read(subjectsProvider.notifier).create(
-                                  element.convert(),
-                                  overrideId: element.id,
-                                  syncWithFire: false,
-                                );
-                            dialogKey.currentState?.addProgress();
-                          }
-                          for (var element in imported.exams) {
-                            await ref.read(examDataProvider.notifier).update(
-                                  element,
-                                  syncWithFire: false,
-                                );
-                            dialogKey.currentState?.addProgress();
-                          }
-                          for (var element in imported.hws) {
-                            await ref.read(hwDataProvider.notifier).update(
-                                  element,
-                                  syncWithFire: false,
-                                );
-                            dialogKey.currentState?.addProgress();
-                          }
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                          if (ref.watch(useCloudSyncProvider)) {
-                            syncAllTasks(ref);
-                          }
-                        },
-                      ),
-                    ]);
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>
+                              ProgressDialog(key: dialogKey, goal: totalCount),
+                        );
+                        for (var element in imported.subjects) {
+                          await ref
+                              .read(subjectsProvider.notifier)
+                              .create(
+                                element.convert(),
+                                overrideId: element.id,
+                                syncWithFire: false,
+                              );
+                          dialogKey.currentState?.addProgress();
+                        }
+                        for (var element in imported.exams) {
+                          await ref
+                              .read(examDataProvider.notifier)
+                              .update(element, syncWithFire: false);
+                          dialogKey.currentState?.addProgress();
+                        }
+                        for (var element in imported.hws) {
+                          await ref
+                              .read(hwDataProvider.notifier)
+                              .update(element, syncWithFire: false);
+                          dialogKey.currentState?.addProgress();
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                        if (ref.watch(useCloudSyncProvider)) {
+                          syncAllTasks(ref);
+                        }
+                      },
+                    ),
+                  ],
+                );
               }
             } catch (e) {
               if (context.mounted) {

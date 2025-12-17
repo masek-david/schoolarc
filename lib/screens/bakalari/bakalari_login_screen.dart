@@ -156,7 +156,6 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             error: error,
             text: context.loc.errorLoggingIn,
             allowActions: false,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
         if (isLoading) const Center(child: CircularProgressIndicator()),
         if (!isLoggedIn) const SizedBox(height: 8),

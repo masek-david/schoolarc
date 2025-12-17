@@ -1,11 +1,9 @@
 # FIX
+timetable pull to refresh isnt centered on big screen
 check update for web
-timetable and meals show wrong date in homescreen
-when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field
-android meals widget updates, but shows old meals
-notifications dont use correct linebreaks
+when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field [WEB]
 merge sorts into one
-meals and baka shows logged out instead of no internet
+opening from widget doesnt work [A] ??
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -49,9 +47,11 @@ meals and baka shows logged out instead of no internet
 - ⬜ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ⬜ ? use expressive progress
 - ⬜ ? display tasks in timetable
+- ⬜ ? scroll calendar vertically on big screens
 
 ## OTHER
 - ✅ save only date for deadlines
+- ✅ rework exceptions - string should be just shown in ui, not from service
 - ⬜ sync everything (hws, exams, subjects) properly
 - ⬜ add google sign in + sign in with apple
 - ⬜ ? refactor to use date instead of datetime
@@ -62,7 +62,7 @@ meals and baka shows logged out instead of no internet
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
 - ⬜ translation - google sheets
-- ⬜ rework exceptions - string should be just shown in ui, not from service
+- ⬜ on new android, notification isnt bold - switch to flutter_local_notifications didnt work [A]
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)

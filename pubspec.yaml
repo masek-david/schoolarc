@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.2.0+32
+version: 2.2.0+34
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: '>=3.10.0 <4.0.0'
 
 dependency_overrides:
   # flutter_localizations needs 1.19 but awesome_notifications 0.10.1 (i need this for flutter 3.29.0) need 1.20
@@ -71,12 +71,13 @@ dependencies:
   flutter_svg: ^2.2.0
   m3_expressive_shapes:
     git:
-      url: https://github.com/kekland/m3_expressive_shapes
+      url: https://github.com/masek-david/m3_expressive_shapes
   url_launcher: ^6.3.2
   device_info_plus: ^12.1.0
   mesh_gradient: ^1.3.8
   material_color_utilities: ^0.13.0
   workmanager: ^0.9.0+3
+  custom_refresh_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:

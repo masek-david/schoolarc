@@ -1,10 +1,31 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 
-// NOTE: this is really important, it will make overscroll look the same on both platforms
-class _ClampingScrollBehavior extends ScrollBehavior {
+// Source - https://stackoverflow.com/a
+// Posted by Rémi Rousselet, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-06, License - CC BY-SA 4.0
+
+class _InvisibleBehavior extends ScrollBehavior {
   @override
-  ScrollPhysics getScrollPhysics(BuildContext context) =>
-      const ClampingScrollPhysics();
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+}
+
+ScrollBehavior _getDefaultScrollBehaviour() {
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.macOS:
+    case TargetPlatform.iOS:
+      return const CupertinoScrollBehavior();
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+    case TargetPlatform.android:
+    case TargetPlatform.fuchsia:
+      return const MaterialScrollBehavior();
+  }
 }
 
 class NonScrollableRefreshIndicator extends StatelessWidget {
@@ -21,18 +42,21 @@ class NonScrollableRefreshIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: ((_, constraints) {
-        return RefreshIndicator(
+        return ExpressiveRefreshIndicator(
           onRefresh: onRefresh,
           child: ScrollConfiguration(
-            // Customize scroll behavior for both platforms
-            behavior: _ClampingScrollBehavior(),
+            behavior: _InvisibleBehavior(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
+              child: ScrollConfiguration(
+                behavior: _getDefaultScrollBehaviour(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
                     minHeight: constraints.maxHeight,
-                    maxHeight: constraints.maxHeight),
-                child: child,
+                    maxHeight: constraints.maxHeight,
+                  ),
+                  child: child,
+                ),
               ),
             ),
           ),

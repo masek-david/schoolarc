@@ -9,6 +9,7 @@ import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 
@@ -32,9 +33,11 @@ class TimetableView extends StatelessWidget {
   final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)?
       onSubjectTapped;
 
+  static const dateColumnWidth = 40.0;
+
   @override
   Widget build(BuildContext context) {
-    if (timeTable == null) {
+    if (timeTable == null || timeTable!.lessonTimes.isEmpty) {
       return EmptyMessage(
         message: textWhenEmpty ?? context.loc.noTimetable,
       );
@@ -42,140 +45,151 @@ class TimetableView extends StatelessWidget {
 
     final table = timeTable!.table;
 
-    return timeTable!.lessonTimes.isEmpty
-        ? EmptyMessage(
-            message: textWhenEmpty ?? context.loc.noTimetable,
-          )
-        : SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 8,
-                right: 8,
-                bottom: 24,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(
-                  showWholeWeek ? table.length + 1 : table.length - 2 + 1,
-                  (rowIndex) {
-                    if (rowIndex == 0) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                          timeTable!.lessonTimes.length + 1,
-                          (columnIndex) {
-                            if (columnIndex == 0) {
-                              return SizedBox(
-                                  width: timeTable?.dates != null ? 60 : 0);
-                            }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 8,
+          right: 8,
+          bottom: 36,
+        ),
+        child: Column(
+          spacing: 4,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            showWholeWeek ? table.length + 1 : table.length - 2 + 1,
+            (rowIndex) {
+              if (rowIndex == 0) {
+                return Row(
+                  spacing: 4,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(
+                    timeTable!.lessonTimes.length + 1,
+                    (columnIndex) {
+                      if (columnIndex == 0) {
+                        return SizedBox(
+                            width: timeTable?.dates != null ? dateColumnWidth : 0);
+                      }
 
-                            int lessonIndex = columnIndex - 1;
-                            final lessonTimes =
-                                timeTable!.lessonTimes[lessonIndex];
+                      int lessonIndex = columnIndex - 1;
+                      final lessonTimes = timeTable!.lessonTimes[lessonIndex];
 
-                            return Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 250),
-                                width: columnWidth,
-                                child: InkWell(
-                                  onTap: onLessonTimesTapped == null
-                                      ? null
-                                      : () => onLessonTimesTapped!(
-                                          lessonTimes, lessonIndex),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        lessonTimes.name,
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        textAlign: TextAlign.center,
-                                        lessonTimes.toStringFormatted(context),
-                                      ),
-                                    ],
-                                  ),
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        width: columnWidth,
+                        child: InkWell(
+                          onTap: onLessonTimesTapped == null
+                              ? null
+                              : () => onLessonTimesTapped!(
+                                  lessonTimes, lessonIndex),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                textAlign: TextAlign.center,
+                                style: googleSansFlex(
+                                  width: 151,
+                                  size: 20,
+                                ),
+                                lessonTimes.name,
+                              ),
+                              Text(
+                                textAlign: TextAlign.center,
+                                lessonTimes.toStringFormatted(context),
+                                style: googleSansFlex(
+                                  width: 25,
                                 ),
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
                       );
-                    }
-                    int weekday = rowIndex - 1;
+                    },
+                  ),
+                );
+              }
+              int weekday = rowIndex - 1;
 
-                    if (!settings.get(Setting.weekStartsOnMonday)) {
-                      weekday--;
-                      if (weekday == -1) {
-                        weekday = 6;
+              if (!settings.get(Setting.weekStartsOnMonday)) {
+                weekday--;
+                if (weekday == -1) {
+                  weekday = 6;
+                }
+              }
+
+              return Expanded(
+                child: Row(
+                  spacing: 4,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List.generate(
+                    table[weekday].length + 1,
+                    (columnIndex) {
+                      final date = timeTable?.dates?[weekday];
+                      if (columnIndex == 0) {
+                        if (date == null) {
+                          return const SizedBox();
+                        }
+
+                        return SizedBox(
+                          width: dateColumnWidth,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                date
+                                    .format('EEE', getLocale().languageCode)
+                                    .capitalize(),
+                                style: googleSansFlex(width: 110, weight: 600),
+                              ),
+                              Text(
+                                date.formatFromSettings(),
+                                style: googleSansFlex(width: 65),
+                              ),
+                            ],
+                          ),
+                        );
                       }
-                    }
 
-                    return Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: List.generate(
-                          table[weekday].length + 1,
-                          (columnIndex) {
-                            final date = timeTable?.dates?[weekday];
-                            if (columnIndex == 0) {
-                              if (date == null) {
-                                return const SizedBox();
-                              }
+                      int lessonIndex = columnIndex - 1;
+                      final lesson = table[weekday][lessonIndex];
 
-                              return SizedBox(
-                                width: 60,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(date
-                                        .format('EEE', getLocale().languageCode)
-                                        .capitalize()),
-                                    Text(date.formatFromSettings()),
-                                  ],
-                                ),
-                              );
-                            }
+                      bool isHighlighted =
+                          timeTable!.lessonTimes[lessonIndex].isActive &&
+                              DateTime.now().weekday - 1 == weekday;
 
-                            int lessonIndex = columnIndex - 1;
-                            final lesson = table[weekday][lessonIndex];
+                      if (isHighlighted &&
+                          date != null &&
+                          !date.isSameDay(Date.today())) {
+                        isHighlighted = false;
+                      }
 
-                            bool isHighlighted =
-                                timeTable!.lessonTimes[lessonIndex].isActive &&
-                                    DateTime.now().weekday - 1 == weekday;
+                      final isLeft = lessonIndex == 0;
+                      final isRight = lessonIndex == table[0].length - 1;
+                      final isTop = weekday == 0;
+                      final isBottom = weekday == (showWholeWeek ? 6 : 4);
 
-                            if (isHighlighted &&
-                                date != null &&
-                                !date.isSameDay(Date.today())) {
-                              isHighlighted = false;
-                            }
-
-                            return TimetableTile(
-                              isHighlighted: isHighlighted,
-                              lesson: lesson,
-                              columnWidth: columnWidth,
-                              onTap: onSubjectTapped == null
-                                  ? null
-                                  : (_) => onSubjectTapped!(
-                                      weekday, lessonIndex, lesson),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
+                      return TimetableTile(
+                        leftBottom: isLeft && isBottom,
+                        leftTop: isLeft && isTop,
+                        rightBottom: isRight && isBottom,
+                        rightTop: isRight && isTop,
+                        isHighlighted: isHighlighted,
+                        lesson: lesson,
+                        columnWidth: columnWidth,
+                        onTap: onSubjectTapped == null
+                            ? null
+                            : (_) =>
+                                onSubjectTapped!(weekday, lessonIndex, lesson),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ),
-          );
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

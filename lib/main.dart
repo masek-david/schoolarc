@@ -10,6 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:schoolarc/app_config.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/services/firebase/firebase_options.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -61,6 +62,8 @@ void main() async {
     ProviderScope(
       child: const AppConfig(),
       retry: (retryCount, error) {
+        // Dont retry if offline
+        if (error is NetworkException && error.code == .offline) return null;
         if (retryCount > 3) return null;
         return Duration(seconds: retryCount * 2);
       },

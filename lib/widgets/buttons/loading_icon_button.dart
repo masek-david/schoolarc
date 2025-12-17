@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class LoadingIconButtonWithFuture extends StatefulWidget {
   const LoadingIconButtonWithFuture({
@@ -24,7 +26,11 @@ class _LoadingIconButtonWithFutureState
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (isLoading) const CircularProgressIndicator(),
+        if (isLoading)
+          ExpressiveLoadingIndicator(
+            color: context.col.secondaryContainer,
+            size: 40,
+          ),
         IconButton(
           onPressed: () {
             setState(() {
@@ -65,7 +71,11 @@ class LoadingIconButton extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (isLoading) const CircularProgressIndicator(),
+        if (isLoading)
+          ExpressiveLoadingIndicator(
+            color: context.col.secondaryContainer,
+            size: 40,
+          ),
         IconButton(
           onPressed: onTap,
           icon: Icon(icon),

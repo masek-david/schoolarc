@@ -33,6 +33,7 @@ final bakaService = BakaService();
 final logsService = LogsDatabase();
 final uuid = const Uuid();
 late PackageInfo packageInfo;
+final timeoutDuration = const Duration(seconds: 10);
 
 const noChange = Object();
 

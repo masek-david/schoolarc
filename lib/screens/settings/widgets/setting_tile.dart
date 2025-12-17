@@ -135,16 +135,19 @@ class SettingTile extends StatelessWidget {
     );
   }
 
-  Text buildText(BuildContext context) {
+  Widget buildText(BuildContext context) {
     final color = titleColor ?? context.col.onSurface;
 
-    return Text(
-      title,
-      style: googleSansFlex(
-        size: 14,
-        weight: enabled ? 700 : 400,
-        color: color.withAlpha(enabled ? 255 : 80),
-        roundness: 100,
+    return SizedBox(
+      width: double.infinity,
+      child: Text(
+        title,
+        style: googleSansFlex(
+          size: 14,
+          weight: enabled ? 700 : 400,
+          color: color.withAlpha(enabled ? 255 : 80),
+          roundness: 100,
+        ),
       ),
     );
   }
@@ -203,12 +206,15 @@ class SettingTile extends StatelessWidget {
                                         builder: (context, _) {
                                           return Material(
                                             color: Colors.transparent,
-                                            child: Text(
-                                              title,
-                                              style: googleSansFlex(
-                                                size: 14 + animation.value * 30,
-                                                weight: enabled ? 700 : 400,
-                                                roundness: 100,
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                title,
+                                                style: googleSansFlex(
+                                                  size: 14 + animation.value * 30,
+                                                  weight: enabled ? 700 : 400,
+                                                  roundness: 100,
+                                                ),
                                               ),
                                             ),
                                           );

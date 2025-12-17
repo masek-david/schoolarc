@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
@@ -25,7 +24,8 @@ final stravaMealsAgeProvider = StreamProvider<Duration?>((ref) async* {
 
 final stravaMealsProvider =
     AsyncNotifierProvider<StravaMealsNotifier, Map<Date, List<Meal>>>(
-        StravaMealsNotifier.new);
+      StravaMealsNotifier.new,
+    );
 
 class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
   DateTime? lastFetched;
@@ -72,19 +72,15 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
     isFetching = true;
 
     final useMeals = ref.read(useMealsProvider);
-    final loc = getLocalization();
-
     if (!useMeals) {
-      throw ServiceException(loc.mealsDisabled);
+      throw DisabledException(.mealsDisabled);
     }
 
     final isLoggedIn = await ref.read(stravaLoginProvider.future);
 
     if (!isLoggedIn) {
-      throw ServiceException(
-        loc.loggedOut,
-        action: ExceptionActions.stravaLogin,
-      );
+      throw ref.read(stravaLoginProvider).error ??
+          AuthException(.loggedOut, exceptionAction: .stravaLogin);
     }
 
     lastFetched = null;

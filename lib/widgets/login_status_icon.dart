@@ -25,7 +25,7 @@ class LoginStatusIcon extends ConsumerWidget {
         data: (value) => value
             ? const Icon(Icons.check_circle, color: Colors.green)
             : const LoggedOutIcon(),
-        error: (_, __) => const Icon(Icons.error, color: Colors.red),
+        error: (_, _) => const Icon(Icons.error, color: Colors.red),
         loading: () => const SizedBox(
           height: 28,
           width: 28,

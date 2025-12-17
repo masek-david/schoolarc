@@ -130,9 +130,8 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
           ),
           if (couldntMatchSubject)
             ErrorTile(
-              contentPadding: const EdgeInsets.all(0),
               text: 'Couldn\'t match the subject: ${widget.task.subject?.name}',
-              error: ServiceException('Please assing the subject manually'),
+              error: StringException('Please assing the subject manually'),
             ),
           PriorityPicker(
             selectedPriority: priority,

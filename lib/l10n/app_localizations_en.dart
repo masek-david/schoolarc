@@ -10,16 +10,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greetingByHour(String hour) {
-    String _temp0 = intl.Intl.selectLogic(
-      hour,
-      {
-        'morning': 'Good morning',
-        'afternoon': 'Good afternoon',
-        'evening': 'Good evening',
-        'night': 'Good night',
-        'other': 'Hello',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(hour, {
+      'morning': 'Good morning',
+      'afternoon': 'Good afternoon',
+      'evening': 'Good evening',
+      'night': 'Good night',
+      'other': 'Hello',
+    });
     return '$_temp0';
   }
 
@@ -195,25 +192,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String examsFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'No exams',
-        'other': 'Exams',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'No exams',
+      'other': 'Exams',
+    });
     return '$_temp0 $whenText';
   }
 
   @override
   String examAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isAbsent,
-      {
-        'true': 'No exams',
-        'other': 'Exams',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isAbsent, {
+      'true': 'No exams',
+      'other': 'Exams',
+    });
     return '$_temp0';
   }
 
@@ -242,25 +233,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeworkFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'No homework',
-        'other': 'Homework',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'No homework',
+      'other': 'Homework',
+    });
     return '$_temp0 $whenText';
   }
 
   @override
   String homeworkAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isAbsent,
-      {
-        'true': 'No homework',
-        'other': 'Homework',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isAbsent, {
+      'true': 'No homework',
+      'other': 'Homework',
+    });
     return '$_temp0';
   }
 
@@ -276,7 +261,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showMyName => 'Show my name';
 
   @override
-  String get showMyNameSubtitle => 'If enabled and logged in to Bakaláři, you will be greeted with your name';
+  String get showMyNameSubtitle =>
+      'If enabled and logged in to Bakaláři, you will be greeted with your name';
 
   @override
   String get showBakalariTimetable => 'Show Bakaláři timetable';
@@ -306,7 +292,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showArrowsSubtitle => 'Show arrows for switching between pages';
 
   @override
-  String get upcomingDayChannelDescription => 'Here you will find upcoming exams and homework';
+  String get upcomingDayChannelDescription =>
+      'Here you will find upcoming exams and homework';
 
   @override
   String get mainChannel => 'Main channel';
@@ -339,7 +326,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidCanteenNumber => 'Invalid canteen number';
 
   @override
-  String get invalidCanteenNumberLength => 'Invalid canteen number length, only allowed is 4';
+  String get invalidCanteenNumberLength =>
+      'Invalid canteen number length, only allowed is 4';
 
   @override
   String get canteenNumberMissing => 'Canteen number is missing';
@@ -348,10 +336,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkConnection => 'Check your internet connection';
 
   @override
+  String get offline => 'You are offline';
+
+  @override
+  String get timedOut => 'The request timed out';
+
+  @override
+  String get serverError => 'Server error';
+
+  @override
   String get unexpectedError => 'An unexpected error occurred';
 
   @override
-  String get fillOutAllInfo => 'Please fill out all information';
+  String get fillOutAllFields => 'Please fill out all fields';
 
   @override
   String get noCanteen => 'No canteen, please log in';
@@ -366,7 +363,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importedSubject => 'Imported subject';
 
   @override
-  String get tryImportingSubjectFromBakalari => 'Try importing subjects from Bakaláři screen before.';
+  String get tryImportingSubjectFromBakalari =>
+      'Try importing subjects from Bakaláři screen before.';
 
   @override
   String get change => 'Change';
@@ -441,6 +439,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get group => 'Group';
 
   @override
+  String get notMemberOfAnyGroup => 'You aren\'t a member of any group';
+
+  @override
+  String get waitingForApproval => 'Waiting for approval';
+
+  @override
+  String get removedFromGroup => 'You have been removed from the group';
+
+  @override
+  String get leaveOldGroup => 'First leave the old group';
+
+  @override
+  String get cantLeaveYourGroup =>
+      'You can\'t leave the group you created, you have to delete it';
+
+  @override
+  String get cantChangeGroupName => 'You can\'t change this group\'s name';
+
+  @override
   String get subjectIsntShared => 'The selected subject isn\'t shared';
 
   @override
@@ -465,7 +482,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rememberMeTitle => 'Remember me?';
 
   @override
-  String get rememberMeWarning => 'If you continue, you won\'t be able to view your current timetable and current homework.';
+  String get rememberMeWarning =>
+      'If you continue, you won\'t be able to view your current timetable and current homework.';
 
   @override
   String get continueAction => 'Continue';
@@ -477,7 +495,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importTimetableTitle => 'Import timetable and subjects?';
 
   @override
-  String get importTimetableWarning => 'Importing the timetable will replace your existing timetable. Existing subjects will be reused. Are you sure?';
+  String get importTimetableWarning =>
+      'Importing the timetable will replace your existing timetable. Existing subjects will be reused. Are you sure?';
 
   @override
   String get import => 'Import';
@@ -537,10 +556,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorRegistering => 'There was an issue registering you.';
 
   @override
-  String get errorChangingPassword => 'There was an issue changing the password.';
+  String get errorChangingPassword =>
+      'There was an issue changing the password.';
 
   @override
-  String get registeredSuccessfully => 'Registered successfully, everything has been synced';
+  String get registeredSuccessfully =>
+      'Registered successfully, everything has been synced';
 
   @override
   String get changePassword => 'Change password';
@@ -552,7 +573,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeatNewPassword => 'Repeat new password';
 
   @override
-  String get samePasswords => 'The new password can\'t be the same as the old password.';
+  String get samePasswords =>
+      'The new password can\'t be the same as the old password.';
 
   @override
   String get passwordChangedSuccessfully => 'Password changed successfully';
@@ -633,16 +655,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get styleMotion => 'Style & Motion';
 
   @override
-  String get styleMotionScreenSwitchAnimationTitle => 'Screen switching animation duration';
+  String get styleMotionScreenSwitchAnimationTitle =>
+      'Screen switching animation duration';
 
   @override
-  String get styleMotionScreenSwitchAnimationSubtitle => 'In milliseconds (0 disables animation)';
+  String get styleMotionScreenSwitchAnimationSubtitle =>
+      'In milliseconds (0 disables animation)';
 
   @override
   String get styleMotionShowBorderTitle => 'Show app border';
 
   @override
-  String get styleMotionShowBorderSubtitle => 'On big screen or in landscape, show borders in the app';
+  String get styleMotionShowBorderSubtitle =>
+      'On big screen or in landscape, show borders in the app';
 
   @override
   String get themePageTitle => 'Theme';
@@ -669,7 +694,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeUseDeviceColors => 'Use device colors';
 
   @override
-  String get themeSystemColorWarning => 'Currently using system color. If you want to use custom color, turn off Use device colors.';
+  String get themeSystemColorWarning =>
+      'Currently using system color. If you want to use custom color, turn off Use device colors.';
 
   @override
   String get themeAppColor => 'App color';
@@ -681,32 +707,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upcomingDayNotifications => 'Upcoming day notifications';
 
   @override
-  String get notificationsNotAllowedMessage => 'Notifications not allowed, click here to grant permission';
+  String get notificationsNotAllowedMessage =>
+      'Notifications not allowed, click here to grant permission';
 
   @override
-  String get upcomingDayNotificationsDescription => 'Receive notifications with homework and exams for the next day';
+  String get upcomingDayNotificationsDescription =>
+      'Receive notifications with homework and exams for the next day';
 
   @override
-  String get upcomingDayNotificationsReceiveBeforeWeekend => 'Receive notifications before weekend';
+  String get upcomingDayNotificationsReceiveBeforeWeekend =>
+      'Receive notifications before weekend';
 
   @override
-  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle => 'If enabled, you will receive notifications even on Friday and Saturday';
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
+      'If enabled, you will receive notifications even on Friday and Saturday';
 
   @override
   String onWeekday(String weekday) {
-    String _temp0 = intl.Intl.selectLogic(
-      weekday,
-      {
-        '1': 'Monday',
-        '2': 'Tuesday',
-        '3': 'Wednesday',
-        '4': 'Thursday',
-        '5': 'Friday',
-        '6': 'Saturday',
-        '7': 'Sunday',
-        'other': 'unknown',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(weekday, {
+      '1': 'Monday',
+      '2': 'Tuesday',
+      '3': 'Wednesday',
+      '4': 'Thursday',
+      '5': 'Friday',
+      '6': 'Saturday',
+      '7': 'Sunday',
+      'other': 'unknown',
+    });
     return 'On $_temp0';
   }
 
@@ -726,13 +753,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get export => 'Export';
 
   @override
+  String get exportSuccess => 'Exported successfully';
+
+  @override
+  String get aborted => 'Aborted';
+
+  @override
   String get chooseSaveLocation => 'Choose a location for save file:';
 
   @override
   String get pickSaveFile => 'Pick a save file:';
 
   @override
-  String importConfirmationText(num subjectsCount, num hwsCount, num examsCount) {
+  String importConfirmationText(
+    num subjectsCount,
+    num hwsCount,
+    num examsCount,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       subjectsCount,
       locale: localeName,
@@ -761,13 +798,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initialPageTitle => 'Initial page';
 
   @override
-  String get initialPageSubtitle => 'The page that will be displayed when opening the app';
+  String get initialPageSubtitle =>
+      'The page that will be displayed when opening the app';
 
   @override
   String get alreadyDeveloper => 'You are already the developer';
 
   @override
-  String get pressMoreTimesToBecomeDeveloper => 'Press 2 more times to become the developer';
+  String get pressMoreTimesToBecomeDeveloper =>
+      'Press 2 more times to become the developer';
 
   @override
   String get becameDeveloper => 'You are now the developer';
@@ -800,10 +839,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get developerMode => 'Developer mode';
 
   @override
-  String get useExperimentalHomeworkTileOverlay => 'Use experimental homework tile overlay';
+  String get useExperimentalHomeworkTileOverlay =>
+      'Use experimental homework tile overlay';
 
   @override
-  String get colorShowcaseTitle => 'This is how the app will look with these colors:';
+  String get colorShowcaseTitle =>
+      'This is how the app will look with these colors:';
 
   @override
   String get filledButton => 'Filled button';
@@ -818,7 +859,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get schoolCanteenId => 'School canteen ID';
 
   @override
-  String get schoolCanteenIdDescription => 'School canteen id is a 4-digit number you use to login to your Strava app.';
+  String get schoolCanteenIdDescription =>
+      'School canteen id is a 4-digit number you use to login to your Strava app.';
 
   @override
   String get allowStravaLogin => 'Allow logging in (experimental)';
@@ -850,7 +892,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subjects => 'Subjects';
 
   @override
-  String get noSubjectsFoundMessage => 'No subjects found. You can create new subjects by tapping the plus button.';
+  String get noSubjectsFoundMessage =>
+      'No subjects found. You can create new subjects by tapping the plus button.';
 
   @override
   String deletedSubjectMessage(Object name) {
@@ -933,7 +976,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekStartsOnMonday => 'Week starts on monday';
 
   @override
-  String get weekStartsOnMondaySubtitle => 'If enabled, first day of the week will be monday. Else, it will be Sunday.';
+  String get weekStartsOnMondaySubtitle =>
+      'If enabled, first day of the week will be monday. Else, it will be Sunday.';
 
   @override
   String get viewingOfflineTimetable => 'Viewing offline timetable';
@@ -942,7 +986,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recover => 'Recover';
 
   @override
-  String get recoverInfoContent => 'To recover something, tap on it and press recover. After 7 days, it will be deleted forever.';
+  String get recoverInfoContent =>
+      'To recover something, tap on it and press recover. After 7 days, it will be deleted forever.';
 
   @override
   String daysLeft(num count) {
@@ -992,10 +1037,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get grant => 'Grant';
 
   @override
-  String get notificationPermissionBody1 => 'If you want this app to send you notifications, you need to grant it permission.';
+  String get notificationPermissionBody1 =>
+      'If you want this app to send you notifications, you need to grant it permission.';
 
   @override
-  String get notificationPermissionBody2 => 'The Grant permission button will take you to app settings from where you can enable all notifications.';
+  String get notificationPermissionBody2 =>
+      'The Grant permission button will take you to app settings from where you can enable all notifications.';
 
   @override
   String get useExtensions => 'You can use these extensions:';
@@ -1013,7 +1060,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goToApp => 'Go to app';
 
   @override
-  String get tutorialIntro => 'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.';
+  String get tutorialIntro =>
+      'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.';
 
   @override
   String get welcome => 'Welcome';
@@ -1034,22 +1082,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialExamDelete => 'This deletes the exam';
 
   @override
-  String get tutorialPriorities => 'Every homework and exam also have their priority. That priority is displayed by its color. Try changing it:';
+  String get tutorialPriorities =>
+      'Every homework and exam also have their priority. That priority is displayed by its color. Try changing it:';
 
   @override
-  String get tutorialTryAssigningSubject => 'You can assign each homework or exam to one subject. Try changing it:';
+  String get tutorialTryAssigningSubject =>
+      'You can assign each homework or exam to one subject. Try changing it:';
 
   @override
-  String get tutorialCreateSubjectsLater => 'Create your subjects later in subjects screen inside the drawer.';
+  String get tutorialCreateSubjectsLater =>
+      'Create your subjects later in subjects screen inside the drawer.';
 
   @override
-  String get tutorialCompleteHomework => 'Great job! This completes the homework';
+  String get tutorialCompleteHomework =>
+      'Great job! This completes the homework';
 
   @override
-  String get tutorialSlideToDelete => 'You can also delete anything by sliding it to left and tapping delete.';
+  String get tutorialSlideToDelete =>
+      'You can also delete anything by sliding it to left and tapping delete.';
 
   @override
-  String get tutorialTapCheckbox => 'And by tapping the checkbox on the right, you complete the homework.';
+  String get tutorialTapCheckbox =>
+      'And by tapping the checkbox on the right, you complete the homework.';
 
   @override
   String get exampleSubjectName1 => 'Mathematics';
@@ -1076,7 +1130,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportBug => 'Report bug';
 
   @override
-  String get reportBugPolicy => 'By sending the report, you agree to share the included information for the purpose of fixing bugs.';
+  String get reportBugPolicy =>
+      'By sending the report, you agree to share the included information for the purpose of fixing bugs.';
 
   @override
   String get viewLicenses => 'View licenses';
@@ -1094,7 +1149,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteLog => 'Delete log?';
 
   @override
-  String get bugReportHint => 'Describe the bug: You can also attach a screenshot.';
+  String get bugReportHint =>
+      'Describe the bug: You can also attach a screenshot.';
 
   @override
   String get cantOpenMail => 'Couldn\'t open email app';
@@ -1103,13 +1159,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secureLogin => 'Login security';
 
   @override
-  String get secureLoginInfo => 'Your login is stored securely on this device. It\'s never shared, sent anywhere, or accessible by other apps.';
+  String get secureLoginInfo =>
+      'Your login is stored securely on this device. It\'s never shared, sent anywhere, or accessible by other apps.';
 
   @override
   String get cantDeleteData => 'Data wasn\'t deleted successfully. Try again.';
 
   @override
   String get cantLogin => 'Can\'t log in. Try again.';
+
+  @override
+  String get couldntLogIn => 'Couldn\'t log in.';
 
   @override
   String get deleteAllData => 'Delete all data';
@@ -1121,7 +1181,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAllDataTitle => 'Delete all data?';
 
   @override
-  String get deleteAllDataText => 'Deleting all data will clear your cloud backup and delete your account. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?';
+  String get deleteAllDataText =>
+      'Deleting all data will clear your cloud backup and delete your account. Local data will remain intact. This action is irreversible. Are you sure you want to delete all data?';
 
   @override
   String get getAllData => 'Download all data';
@@ -1147,13 +1208,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get privacyPolicy => '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
+  String get privacyPolicy =>
+      '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
 
   @override
   String get cloudSyncDisabled => 'Cloud sync is disabled';
 
   @override
-  String get cloudSyncDisabledWarning => 'When running Schoolarc as a web app, it is highly recommended to enable Cloud sync to prevent data loss.';
+  String get cloudSyncDisabledWarning =>
+      'When running Schoolarc as a web app, it is highly recommended to enable Cloud sync to prevent data loss.';
 
   @override
   String get enable => 'Enable';

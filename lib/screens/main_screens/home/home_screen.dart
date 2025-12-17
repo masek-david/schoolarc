@@ -18,6 +18,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
@@ -42,15 +43,13 @@ class HomeScreen extends ConsumerWidget {
     return;
   }
 
-  bool isLessonsEmpty(Map<LessonTimes, TimeTableLesson> lessons) {
+  bool isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
     bool isEmpty = true;
-    lessons.forEach(
-      (lessonTimes, lesson) {
-        if (!lesson.isEmpty) {
-          isEmpty = false;
-        }
-      },
-    );
+    for (var value in lessons) {
+      if (!value.$2.isEmpty) {
+        isEmpty = false;
+      }
+    }
     return isEmpty;
   }
 
@@ -58,37 +57,30 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hws = ref.watch(hwDatesProvider);
     final missedHw = ref.watch(hwMissedProvider);
-    final int uncompletedHw = ref.watch(hwProvider).values.where(
-      (element) {
-        return !element.isDeleted &&
-            !element.isCompleted &&
-            !element.date.isBefore(Date.today());
-      },
-    ).length;
     final exams = ref.watch(examsDatesProvider);
-    final int upcomingExams = ref.watch(examDataProvider).values.where(
-      (element) {
-        return !element.isDeleted && !element.isCompleted;
-      },
-    ).length;
 
     final defaultTimeTable = timetableDb.timeTable;
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(DateTime.now());
-
-    final showTomorrow = isLessonsEmpty(upcomingLessons);
-    final dateToShow = showTomorrow ? Date.today().addDays(1) : Date.today();
 
     final hwToday = hws[Date.today()] ?? [];
     final examsToday = exams[Date.today()] ?? [];
     final hwTomorrow = hws[Date.today().addDays(1)] ?? [];
     final examsTomorrow = exams[Date.today().addDays(1)] ?? [];
 
+    // If tomorrow card is shown
+    final showTomorrow = isLessonsEmpty(upcomingLessons);
+    final dateToShow = showTomorrow ? Date.today().addDays(1) : Date.today();
+
+    final allTodayHwsAreCompleted = hwToday
+        .where((element) => !element.isCompleted || element.isBeingAnimated)
+        .isNotEmpty;
+    // if today card is shown
+    final showToday = !showTomorrow || allTodayHwsAreCompleted;
+
     // we need the time so we can show timetable for now or for tomorrow whole day
-    DateTime dateTimeToShow = DateTime.now();
-    if (showTomorrow) {
-      dateTimeToShow =
-          dateToShow.toDateTimeUTC().add(const Duration(days: 1)).toLocal();
-    }
+    DateTime timetableDateTime = showTomorrow
+        ? dateToShow.toDateTimeLocal()
+        : dateToShow.toDateTimeNowLocal();
 
     String whenText = showTomorrow
         ? context.loc.tomorrow.toLowerCase()
@@ -101,18 +93,14 @@ class HomeScreen extends ConsumerWidget {
       removeBottom: true,
       child: Container(
         color: context.col.surface,
-        child: RefreshIndicator(
+        child: ExpressiveRefreshIndicator(
           onRefresh: () => refresh(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
               children: [
                 const SizedBox(height: 16),
-                Overview(
-                  hwNumberOfIncomplete: uncompletedHw,
-                  examNumberOfIncomplete: upcomingExams,
-                  hwNumberOfMissed: missedHw.length,
-                ),
+                const Overview(),
                 if (isRecapDate() && !hasSeenRecap())
                   RecapButton(
                     child: Padding(
@@ -135,15 +123,16 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     if (isWide)
                       Flexible(
-                          child: Column(
-                        children: [
-                          const MealsCard(),
-                          TimetableCard(
-                            dateToShow: dateTimeToShow,
-                            whenText: whenText,
-                          ),
-                        ],
-                      )),
+                        child: Column(
+                          children: [
+                            const MealsCard(),
+                            TimetableCard(
+                              dateToShow: timetableDateTime,
+                              whenText: whenText,
+                            ),
+                          ],
+                        ),
+                      ),
                     Flexible(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -152,14 +141,14 @@ class HomeScreen extends ConsumerWidget {
                           if (!isWide) const MealsCard(),
                           if (!isWide)
                             TimetableCard(
-                              dateToShow: dateTimeToShow,
+                              dateToShow: timetableDateTime,
                               whenText: whenText,
                             ),
                           if (missedHw.isNotEmpty)
                             Card(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLowest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerLowest,
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: HomeworkList(
@@ -175,18 +164,18 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          if (!showTomorrow ||
-                              !(examsToday.isEmpty && hwToday.isEmpty))
+                          if (showToday)
                             Card(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLowest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerLowest,
                               child: Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: examsToday.isEmpty && hwToday.isEmpty
                                     ? EmptyMessage(
                                         message: context.loc.nothingPlannedFor(
-                                            context.loc.today.toLowerCase()),
+                                          context.loc.today.toLowerCase(),
+                                        ),
                                         asset: 'assets/confetti.svg',
                                       )
                                     : Column(
@@ -219,7 +208,11 @@ class HomeScreen extends ConsumerWidget {
                                               showDate: false,
                                               onChangedCompletion: (value) =>
                                                   completeHw(
-                                                      context, ref, hw, value),
+                                                    context,
+                                                    ref,
+                                                    hw,
+                                                    value,
+                                                  ),
                                               onDelete: () =>
                                                   deleteHw(context, ref, hw),
                                               onEdit: () => editHw(context, hw),
@@ -233,16 +226,17 @@ class HomeScreen extends ConsumerWidget {
                             ),
                           if (showTomorrow)
                             Card(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLowest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerLowest,
                               child: Padding(
                                 padding: const EdgeInsets.all(8),
-                                child: examsTomorrow.isEmpty &&
-                                        hwTomorrow.isEmpty
+                                child:
+                                    examsTomorrow.isEmpty && hwTomorrow.isEmpty
                                     ? EmptyMessage(
                                         message: context.loc.nothingPlannedFor(
-                                            context.loc.tomorrow.toLowerCase()),
+                                          context.loc.tomorrow.toLowerCase(),
+                                        ),
                                         asset: 'assets/confetti.svg',
                                       )
                                     : Column(
@@ -275,7 +269,11 @@ class HomeScreen extends ConsumerWidget {
                                               showDate: false,
                                               onChangedCompletion: (value) =>
                                                   completeHw(
-                                                      context, ref, hw, value),
+                                                    context,
+                                                    ref,
+                                                    hw,
+                                                    value,
+                                                  ),
                                               onDelete: () =>
                                                   deleteHw(context, ref, hw),
                                               onEdit: () => editHw(context, hw),
@@ -287,7 +285,7 @@ class HomeScreen extends ConsumerWidget {
                                       ),
                               ),
                             ),
-                          const ListBottomSpacer()
+                          const ListBottomSpacer(),
                         ],
                       ),
                     ),
