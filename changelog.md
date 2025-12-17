@@ -8,6 +8,8 @@
 - Improved fonts
 - Improved ordering
 - Improved timetable design
+- Improved error messages
+- Added messages to exporting app data
 - Changed how dates are saved (should resolve any time zone issues)
 
 ### Fixed

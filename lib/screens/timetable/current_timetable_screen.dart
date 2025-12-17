@@ -23,8 +23,9 @@ class CurrentTimetableScreen extends ConsumerStatefulWidget {
 
 class _CurrentTimetableScreenState
     extends ConsumerState<CurrentTimetableScreen> {
-  late Future<TimeTable> timetableFuture =
-      bakaService.getCurrentTimetable(date);
+  late Future<TimeTable> timetableFuture = bakaService.getCurrentTimetable(
+    date,
+  );
   TimeTable? timetable;
   Date date = Date.today();
 
@@ -44,13 +45,16 @@ class _CurrentTimetableScreenState
     if (timetable == null) return;
     final subjects = ref.read(subjectsNonDeletedProvider);
     subjects.removeWhere((key, value) => value.bakaId == null);
-    final subjectsBakaId =
-        subjects.map((key, value) => MapEntry(value.bakaId!, value));
+    final subjectsBakaId = subjects.map(
+      (key, value) => MapEntry(value.bakaId!, value),
+    );
 
     for (var dayIndex = 0; dayIndex < timetable!.table.length; dayIndex++) {
-      for (var lessonIndex = 0;
-          lessonIndex < timetable!.table[dayIndex].length;
-          lessonIndex++) {
+      for (
+        var lessonIndex = 0;
+        lessonIndex < timetable!.table[dayIndex].length;
+        lessonIndex++
+      ) {
         final lesson = timetable!.table[dayIndex][lessonIndex];
         if (lesson.subject?.id == '') {
           timetable!.table[dayIndex][lessonIndex] = lesson.copyWith(
@@ -67,9 +71,7 @@ class _CurrentTimetableScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.loc.currentTimetable),
-      ),
+      appBar: AppBar(title: Text(context.loc.currentTimetable)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionBar(
         actions: [
@@ -93,7 +95,7 @@ class _CurrentTimetableScreenState
               date = date.addDays(7);
               refresh();
             },
-          )
+          ),
         ],
       ),
       body: NonScrollableRefreshIndicator(
@@ -106,15 +108,16 @@ class _CurrentTimetableScreenState
             if (snapshot.connectionState == ConnectionState.waiting) {
               timetable = null;
               return const Center(
-                child: SizedBox(
-                  height: 72,
-                  width: 72,
-                  child: ExpressiveLoadingIndicator(),
-                ),
+                child: ExpressiveLoadingIndicator(size: 72),
               );
             } else if (snapshot.hasError) {
               timetable = null;
-              return Center(child: ErrorTile(error: snapshot.error));
+              return Center(
+                child: ErrorTile(
+                  error: snapshot.error,
+                  padding: const EdgeInsetsGeometry.all(16),
+                ),
+              );
             } else if (!snapshot.hasData) {
               timetable = null;
               return EmptyMessage(message: context.loc.noTimetable);

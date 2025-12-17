@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
@@ -27,7 +26,8 @@ final bakaHomeworksAgeProvider = StreamProvider<Duration?>((ref) async* {
 
 final bakaHomeworksProvider =
     AsyncNotifierProvider<BakaHomeworksNotifier, List<BakaHomework>>(
-        BakaHomeworksNotifier.new);
+      BakaHomeworksNotifier.new,
+    );
 
 class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
   DateTime? lastFetched;
@@ -74,10 +74,9 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
     isFetching = true;
 
     final useBaka = ref.read(useBakaProvider);
-    final loc = getLocalization();
 
     if (!useBaka) {
-      throw ServiceException(loc.bakalariDisabled);
+      throw DisabledException(.bakalariDisabled);
     }
 
     bool isLoggedIn = await ref.read(bakaLoginProvider.future);
@@ -85,10 +84,8 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
     if (!isLoggedIn) {
       isLoggedIn = await ref.read(bakaLoginProvider.notifier).refreshLogin();
       if (!isLoggedIn) {
-        throw ServiceException(
-          loc.loggedOut,
-          action: ExceptionActions.bakaLogin,
-        );
+        throw ref.read(bakaLoginProvider).error ??
+            AuthException(.loggedOut, exceptionAction: .bakaLogin);
       }
     }
 
@@ -110,19 +107,25 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
   /// Saves the bakahw as homework/exam, updates state of everything
   Future<void> import(BakaHomework hw, bool isHomework) async {
     if (isHomework) {
-      await ref.read(hwDataProvider.notifier).create(hw
-          .toHwData()
-          .copyWith(timestamp: DateTime.now().toUtc(), isCompleted: false));
-    } else {
-      await ref.read(examDataProvider.notifier).create(
-            hw.toExamData().copyWith(timestamp: DateTime.now().toUtc()),
+      await ref
+          .read(hwDataProvider.notifier)
+          .create(
+            hw.toHwData().copyWith(
+              timestamp: DateTime.now().toUtc(),
+              isCompleted: false,
+            ),
           );
+    } else {
+      await ref
+          .read(examDataProvider.notifier)
+          .create(hw.toExamData().copyWith(timestamp: DateTime.now().toUtc()));
     }
 
     final currentState = state.value;
     if (currentState != null) {
-      final index =
-          currentState.indexWhere((element) => element.bakaId == hw.bakaId);
+      final index = currentState.indexWhere(
+        (element) => element.bakaId == hw.bakaId,
+      );
       if (index != -1) {
         final updatedList = List.of(currentState);
         updatedList[index] = hw.copyWith(alreadyAdded: true);

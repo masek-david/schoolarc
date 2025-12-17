@@ -71,6 +71,7 @@ class ExamsScreen extends ConsumerWidget {
       context: context,
       removeBottom: true,
       child: Scaffold(
+        // floatingActionButton: const NewTaskDialogButton(),
         floatingActionButton: WebRequestFocus(
           onPressed: () async {
             HapticFeedback.mediumImpact();

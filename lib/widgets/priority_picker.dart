@@ -66,8 +66,8 @@ class _PriorityPickerState extends State<PriorityPicker>
                 }
               }
               return GroupButton(
-                roundedLeft: index == 0,
-                roundedRight: index == 3,
+                roundedLeft: false,
+                roundedRight: false,
                 selectedColor: priority.getColor(context),
                 backgroundColor: priority.getSurfaceColor(context),
                 selected: isSelected,

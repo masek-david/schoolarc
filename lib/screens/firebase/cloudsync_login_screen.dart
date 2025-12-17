@@ -69,7 +69,6 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             error: error,
             text: context.loc.errorLoggingIn,
             allowActions: false,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
         ),

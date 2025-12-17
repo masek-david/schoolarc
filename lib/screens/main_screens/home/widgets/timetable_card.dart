@@ -97,7 +97,6 @@ class TimetableCard extends ConsumerWidget {
               curve: Curves.decelerate,
               child: error != null && showOnline
                   ? ErrorTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                       error: error,
                       text: context.loc.viewingOfflineTimetable,
                     )

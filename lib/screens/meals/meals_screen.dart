@@ -7,6 +7,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:schoolarc/widgets/tiles/meal_tile.dart';
@@ -14,7 +15,7 @@ import 'package:schoolarc/widgets/tiles/meal_tile.dart';
 class MealsScreen extends ConsumerWidget {
   const MealsScreen({super.key});
 
-  Future<void> refresh(WidgetRef ref)async {
+  Future<void> refresh(WidgetRef ref) async {
     await ref.read(stravaMealsProvider.notifier).refresh();
   }
 
@@ -42,70 +43,83 @@ class MealsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.loc.meals),
-        actions: [Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: AgoText(stream: stravaMealsAgeProvider),
-        )],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AgoText(stream: stravaMealsAgeProvider),
+          ),
+        ],
       ),
       body: ExpressiveRefreshIndicator(
-
         onRefresh: () async {
           await refresh(ref);
         },
-        child: ListView.builder(
-          itemCount: itemCount,
-          itemBuilder: (context, index) {
-            if (error != null) {
-              return ErrorTile(
-                error: error,
-                text: context.loc.mealsNotLoaded,
-              );
-            }
-            if (data?.isEmpty ?? false) {
-              Center(child: Text(context.loc.noMealsFound));
-            }
+        child: isLoading
+            ? const Center(child: ExpressiveLoadingIndicator(size: 72))
+            : ListView.builder(
+                itemCount: itemCount,
+                itemBuilder: (context, index) {
+                  if (error != null) {
+                    return ErrorTile(
+                      error: error,
+                      text: context.loc.mealsNotLoaded,
+                      padding: const EdgeInsetsGeometry.all(16),
+                    );
+                  }
+                  if (data?.isEmpty ?? false) {
+                    Center(child: Text(context.loc.noMealsFound));
+                  }
 
-            final date = Date.today().addDays(index);
+                  final date = Date.today().addDays(index);
 
-            final mealsForToday = data?[date];
-            final bool empty = mealsForToday == null;
+                  final mealsForToday = data?[date];
+                  final bool empty = mealsForToday == null;
 
-            return Card(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          isLoading
-                              ? context.loc.loading
-                              : empty
-                                  ? context.loc
-                                      .noMealsOn(date
-                                          .formatWithWeekday(useOnFormat: true)
-                                          .unCapitalize())
-                                      .capitalize()
-                                  : context.loc
-                                      .mealsOn(date
-                                          .formatWithWeekday(useOnFormat: true)
-                                          .unCapitalize())
-                                      .capitalize(),
-                          style: context.txt.bodyLarge,
-                        )),
-                    if (!empty)
-                      ...mealsForToday.map(
-                        (meal) => MealTile(meal: meal),
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                  ],
-                ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              empty
+                                  ? context.loc
+                                        .noMealsOn(
+                                          date
+                                              .formatWithWeekday(
+                                                useOnFormat: true,
+                                              )
+                                              .unCapitalize(),
+                                        )
+                                        .capitalize()
+                                  : context.loc
+                                        .mealsOn(
+                                          date
+                                              .formatWithWeekday(
+                                                useOnFormat: true,
+                                              )
+                                              .unCapitalize(),
+                                        )
+                                        .capitalize(),
+                              style: context.txt.bodyLarge,
+                            ),
+                          ),
+                          if (!empty)
+                            ...mealsForToday.map(
+                              (meal) => MealTile(meal: meal),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }

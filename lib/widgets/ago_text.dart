@@ -31,7 +31,7 @@ class AgoText extends ConsumerWidget {
         );
 
     if (duration == null) {
-      return const SizedBox(height: 24);
+      return const SizedBox();
     }
 
     final color = getSubtleTextColor(context);

@@ -26,7 +26,7 @@ class ExpressiveLoadingIndicator extends StatefulWidget {
 
 class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     with TickerProviderStateMixin {
-  static  final List<RoundedPolygon> shapes = [
+  static final List<RoundedPolygon> shapes = [
     MaterialShapes.softBurst,
     MaterialShapes.cookie9,
     MaterialShapes.pentagon,
@@ -53,7 +53,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     0.0,
     1.0,
     0,
-    snapToEnd: true,
+    // snapToEnd: true,
   );
 
   @override
@@ -125,6 +125,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
         late final double angle;
         late final ShapeBorder shape;
         if (widget.progress != null) {
+          // Loading animation for pull down refresh
           angle = -widget.progress! * pi * 2;
 
           shape = ShapeBorder.lerp(

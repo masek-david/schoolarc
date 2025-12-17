@@ -52,6 +52,7 @@ Locale getLocale() {
   Locale? locale;
   final localLocaleText = settings.get(Setting.localeLanguage) as String?;
 
+// TODO add device locale to selection - then set it to null ??
   if (localLocaleText != null) {
     locale = Locale(localLocaleText);
   } else if (!kIsWeb) {

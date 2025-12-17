@@ -107,31 +107,32 @@ class StravaWidget : GlanceAppWidget() {
                     )
                 ),
             )
-        }
-        val data = currentState.preferences
+        } else {
+            val data = currentState.preferences
 
-        val locJson = data.getString("loc", null)
+            val locJson = data.getString("loc", null)
 
-        if (locJson != null) {
-            val loc = Gson().fromJson<Map<String, String>>(
-                locJson, object : TypeToken<Map<String, String>>() {}.type
-            )
-            today = loc["today"] ?: today
-            tomorrow = loc["tomorrow"] ?: tomorrow
-            locale = loc["locale"] ?: locale
-            format = loc["format"] ?: format
-            shortFormat = loc["shortFormat"] ?: shortFormat
-            noMealsFound = loc["noMealsFound"] ?: noMealsFound
-        }
+            if (locJson != null) {
+                val loc = Gson().fromJson<Map<String, String>>(
+                    locJson, object : TypeToken<Map<String, String>>() {}.type
+                )
+                today = loc["today"] ?: today
+                tomorrow = loc["tomorrow"] ?: tomorrow
+                locale = loc["locale"] ?: locale
+                format = loc["format"] ?: format
+                shortFormat = loc["shortFormat"] ?: shortFormat
+                noMealsFound = loc["noMealsFound"] ?: noMealsFound
+            }
 
-        val json = data.getString("meals", null)
+            val json = data.getString("meals", null)
 
-        val type = object : TypeToken<Map<String, List<Meal>>>() {}.type
-        if (json != null) {
-            val map: Map<String, List<Meal>> = Gson().fromJson(json, type)
+            val type = object : TypeToken<Map<String, List<Meal>>>() {}.type
+            if (json != null) {
+                val map: Map<String, List<Meal>> = Gson().fromJson(json, type)
 
-            map.forEach { (key, value) ->
-                meals.add(MealDay(dateFromPrimitiveDate(key.toInt()), value))
+                map.forEach { (key, value) ->
+                    meals.add(MealDay(dateFromPrimitiveDate(key.toInt()), value))
+                }
             }
         }
 
@@ -153,46 +154,51 @@ class StravaWidget : GlanceAppWidget() {
         ) {
             LazyColumn {
                 items(meals) { mealDay ->
-                    Box(
-                        modifier = GlanceModifier.padding(horizontal = 8.dp).padding(top = 8.dp)
-                            .clickable(
-                                actionStartActivity<MainActivity>(
-                                    context, "schoolarc://meals".toUri()
+                    if (!mealDay.date.isBefore(LocalDate.now())) {
+                        Box(
+                            modifier = GlanceModifier.padding(horizontal = 8.dp).padding(top = 8.dp)
+                                .clickable(
+                                    actionStartActivity<MainActivity>(
+                                        context, "schoolarc://meals".toUri()
+                                    )
                                 )
-                            )
-                    ) {
-                        Column(
-                            modifier = GlanceModifier.padding(vertical = 8.dp, horizontal = 4.dp)
-                                .cornerRadius(16.dp).background(GlanceTheme.colors.surface)
                         ) {
-                            Text(
-                                formatDate(mealDay.date),
-                                modifier = GlanceModifier.fillMaxWidth(),
-                                style = TextStyle(
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                    color = GlanceTheme.colors.onPrimaryContainer
+                            Column(
+                                modifier = GlanceModifier.padding(
+                                    vertical = 8.dp,
+                                    horizontal = 4.dp
                                 )
-                            )
-                            mealDay.meals.forEach { meal ->
-                                Column(
-                                    modifier = GlanceModifier.background(
-                                        if (meal.selected) GlanceTheme.colors.tertiaryContainer else GlanceTheme.colors.surface
-                                    ).padding(horizontal = 8.dp, vertical = 4.dp)
-                                        .cornerRadius(12.dp).fillMaxWidth()
-                                ) {
-                                    Text(
-                                        meal.type, style = TextStyle(
-                                            fontWeight = FontWeight.Medium,
-                                            color = GlanceTheme.colors.onBackground
-                                        )
+                                    .cornerRadius(16.dp).background(GlanceTheme.colors.surface)
+                            ) {
+                                Text(
+                                    formatDate(mealDay.date),
+                                    modifier = GlanceModifier.fillMaxWidth(),
+                                    style = TextStyle(
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp,
+                                        color = GlanceTheme.colors.onPrimaryContainer
                                     )
-                                    Text(
-                                        meal.name, style = TextStyle(
-                                            color = GlanceTheme.colors.onBackground
+                                )
+                                mealDay.meals.forEach { meal ->
+                                    Column(
+                                        modifier = GlanceModifier.background(
+                                            if (meal.selected) GlanceTheme.colors.tertiaryContainer else GlanceTheme.colors.surface
+                                        ).padding(horizontal = 8.dp, vertical = 4.dp)
+                                            .cornerRadius(12.dp).fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            meal.type, style = TextStyle(
+                                                fontWeight = FontWeight.Medium,
+                                                color = GlanceTheme.colors.onBackground
+                                            )
                                         )
-                                    )
+                                        Text(
+                                            meal.name, style = TextStyle(
+                                                color = GlanceTheme.colors.onBackground
+                                            )
+                                        )
+                                    }
                                 }
                             }
                         }

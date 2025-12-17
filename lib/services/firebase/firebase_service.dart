@@ -50,10 +50,12 @@ class FirebaseService {
     if (!kIsWeb && Platform.isWindows) return;
 
     exams = FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/e');
-    homeworks =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/h');
-    subjects =
-        FirebaseDatabase.instance.ref('users/${auth.currentUser?.uid}/s');
+    homeworks = FirebaseDatabase.instance.ref(
+      'users/${auth.currentUser?.uid}/h',
+    );
+    subjects = FirebaseDatabase.instance.ref(
+      'users/${auth.currentUser?.uid}/s',
+    );
   }
 
   Future<void> logIn({required String email, required String password}) async {
@@ -62,15 +64,8 @@ class FirebaseService {
 
       refLocation();
     } on FirebaseAuthException catch (e) {
-      final loc = getLocalization();
-
-      if ((e).message == loc.internalError) {
-        throw ServiceException(loc.tryAgain);
-      }
-      throw ServiceException(e.message);
+      throw ApiException(e.message ?? 'Error');
     }
-
-    return;
   }
 
   Future<void> logOut() async {
@@ -94,7 +89,7 @@ class FirebaseService {
   Future<bool> changePassword(String oldPassword, String password) async {
     final loc = getLocalization();
     if (auth.currentUser == null) {
-      throw ServiceException(loc.noUserLoggedIn);
+      throw AuthException(.noUser);
     }
 
     try {
@@ -103,16 +98,19 @@ class FirebaseService {
         password: oldPassword,
       );
     } catch (error) {
-      throw ServiceException("${loc.cantLogin} $error");
+      throw ApiException("${loc.cantLogin} $error");
     }
 
     //Pass in the password to updatePassword.
-    auth.currentUser!.updatePassword(password).then((_) {
-      return true;
-    }).catchError((error) {
-      throw ServiceException("${loc.passwordCantBeChanged} $error");
-      // This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
-    });
+    auth.currentUser!
+        .updatePassword(password)
+        .then((_) {
+          return true;
+        })
+        .catchError((error) {
+          throw ApiException("${loc.passwordCantBeChanged} $error");
+          // This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+        });
     return false;
   }
 
@@ -124,7 +122,7 @@ class FirebaseService {
         password: password,
       );
     } catch (error) {
-      throw ServiceException("${loc.cantLogin} $error");
+      throw ApiException("${loc.cantLogin} $error");
     }
     try {
       await exams.remove();
@@ -132,7 +130,7 @@ class FirebaseService {
       await subjects.remove();
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (error) {
-      throw ServiceException("${loc.cantDeleteData} $error");
+      throw ApiException("${loc.cantDeleteData} $error");
     }
     return;
   }
@@ -151,7 +149,7 @@ class FirebaseService {
           "uid": auth.currentUser!.uid,
           "email": auth.currentUser!.email,
         },
-        "data": userData
+        "data": userData,
       };
       final exportJson = jsonEncode(exportData);
 
@@ -169,8 +167,9 @@ class FirebaseService {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return '';
 
-    final snapshot =
-        await FirebaseDatabase.instance.ref('users/${user.uid}/n').get();
+    final snapshot = await FirebaseDatabase.instance
+        .ref('users/${user.uid}/n')
+        .get();
     return snapshot.value as String;
   }
 
@@ -211,7 +210,7 @@ class FirebaseService {
       await exams.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -221,7 +220,7 @@ class FirebaseService {
     if (auth.currentUser == null) return;
 
     final updates = {
-      for (final element in examsToUpdate) element.id: element.toFireJson()
+      for (final element in examsToUpdate) element.id: element.toFireJson(),
     };
 
     try {
@@ -229,7 +228,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -242,7 +241,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(2);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -260,7 +259,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
 
     return examsList;
@@ -296,7 +295,7 @@ class FirebaseService {
       await homeworks.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -306,7 +305,7 @@ class FirebaseService {
     if (auth.currentUser == null) return;
 
     final updates = {
-      for (final element in hwsToUpdate) element.id: element.toFireJson()
+      for (final element in hwsToUpdate) element.id: element.toFireJson(),
     };
 
     try {
@@ -314,7 +313,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -327,7 +326,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(1);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -345,7 +344,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
 
     return homeworksList;
@@ -381,7 +380,7 @@ class FirebaseService {
       await subjects.update(updates);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -391,7 +390,7 @@ class FirebaseService {
     if (auth.currentUser == null) return;
 
     final updates = {
-      for (final element in subjectsToUpdate) element.id: element.toFireJson()
+      for (final element in subjectsToUpdate) element.id: element.toFireJson(),
     };
 
     try {
@@ -399,7 +398,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).modify(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -412,7 +411,7 @@ class FirebaseService {
       ref?.read(firebaseActivityProvider.notifier).add(0);
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
     return;
   }
@@ -430,7 +429,7 @@ class FirebaseService {
       });
     } catch (e, st) {
       logsService.save('$e\n$st');
-      if(printLogs) log('$e\n$st');
+      if (printLogs) log('$e\n$st');
     }
 
     return subjectsList;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,7 +9,6 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
@@ -57,7 +57,7 @@ class BakaService {
     _refreshToken = await _storageRefreshToken;
 
     if (schoolName == '' || _refreshToken == '') {
-      throw BakaLoginException();
+      throw AuthException(.couldntLogIn);
     }
 
     final url = Uri(
@@ -65,9 +65,7 @@ class BakaService {
       host: "$schoolName.bakalari.cz",
       path: "/api/login",
     );
-    const head = {
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
+    const head = {"Content-Type": "application/x-www-form-urlencoded"};
     final body =
         'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
@@ -82,7 +80,7 @@ class BakaService {
     required bool keepLoggedIn,
   }) async {
     if (school == '' || username == '' || password == '') {
-      throw ServiceException(getLocalization().fillOutAllInfo);
+      throw ValidationException(.emptyField);
     }
 
     final url = Uri(
@@ -98,7 +96,9 @@ class BakaService {
 
     if (keepLoggedIn) {
       await secureStorage.write(
-          SecureStorage.bakaRefreshTokenKey, _refreshToken!);
+        SecureStorage.bakaRefreshTokenKey,
+        _refreshToken!,
+      );
       await secureStorage.write(SecureStorage.bakaSchoolNameKey, school);
       await secureStorage.write(SecureStorage.bakaUsernameKey, username);
     } else {
@@ -121,45 +121,40 @@ class BakaService {
   /// and the state if it logs in succesfuly
   Future<void> _callLogin(Uri url, var head, var body) async {
     Response response;
-    final loc = getLocalization();
     try {
-      response = await http.post(
-        url,
-        headers: head,
-        body: body,
-      );
+      response = await http
+          .post(url, headers: head, body: body)
+          .timeout(timeoutDuration);
     } on SocketException catch (_) {
-      throw ServiceException(loc.checkConnection);
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
     } catch (e) {
-      throw ServiceException('${loc.unexpectedError}: $e');
+      throw NetworkException(.serverError, originalError: e);
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      throw ServiceException(utf8.decode(bytes));
+      throw ApiException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
-    final error = parsedJson['error_description'];
-    if (error != null) {
-      throw ServiceException(error);
-    }
 
     final accessToken = parsedJson["access_token"];
     final refreshToken = parsedJson["refresh_token"];
     final expiresInSeconds = parsedJson['expires_in'] as int;
 
     if (accessToken == null || refreshToken == null) {
-      throw ServiceException(parsedJson['error_description']);
+      throw ApiException(parsedJson['error_description']);
     }
 
     _accessToken = accessToken;
     _refreshToken = refreshToken;
     await secureStorage.write(SecureStorage.bakaRefreshTokenKey, refreshToken);
     tokenExpiration = DateTime.now().toUtc().add(
-          Duration(seconds: expiresInSeconds),
-        );
+      Duration(seconds: expiresInSeconds),
+    );
   }
 
   Future<String> getUsername() async {
@@ -199,40 +194,42 @@ class BakaService {
     );
 
     Response response;
-    final loc = getLocalization();
     try {
-      response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": " Bearer $_accessToken",
-        },
-      );
-    } on SocketException {
-      throw ServiceException(loc.checkConnection);
+      response = await http
+          .get(
+            url,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": " Bearer $_accessToken",
+            },
+          )
+          .timeout(timeoutDuration);
+    } on SocketException catch (_) {
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
     } catch (e) {
-      throw ServiceException('${loc.unexpectedError}: $e');
+      throw NetworkException(.serverError, originalError: e);
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      throw ServiceException(utf8.decode(bytes));
+      throw ApiException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
-
     if (parsedJson["Message"] != null) {
-      throw ServiceException(parsedJson["Message"]);
+      throw ApiException(parsedJson["Message"]);
     }
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
-    timetableDb.createTable(lessons.map(
-      (lessonTimes) {
+    timetableDb.createTable(
+      lessons.map((lessonTimes) {
         return lessonTimes.toLessonTimes();
-      },
-    ).toList());
+      }).toList(),
+    );
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
@@ -244,9 +241,11 @@ class BakaService {
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
       final dayJson = daysJson[weekday];
-      for (int lessonIndex = 0;
-          lessonIndex < dayJson['Atoms'].length;
-          lessonIndex++) {
+      for (
+        int lessonIndex = 0;
+        lessonIndex < dayJson['Atoms'].length;
+        lessonIndex++
+      ) {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
         String subjectIdBaka = subjectJson['SubjectId'];
@@ -255,9 +254,7 @@ class BakaService {
 
         timetableDb.newLessonAt(
           weekday,
-          lessons.indexWhere(
-            (lesson) => lesson.id == hourId,
-          ),
+          lessons.indexWhere((lesson) => lesson.id == hourId),
           subjectId,
         );
       }
@@ -287,45 +284,51 @@ class BakaService {
       host: "$schoolName.bakalari.cz",
       path: "/api/3/timetable/actual",
       queryParameters: {
-        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal())
+        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal()),
       },
     );
 
     Response response;
-    final loc = getLocalization();
     try {
-      response = await http.get(url, headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Bearer $_accessToken",
-      });
-    } on SocketException {
-      throw ServiceException(loc.checkConnection);
+      response = await http
+          .get(
+            url,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Bearer $_accessToken",
+            },
+          )
+          .timeout(timeoutDuration);
+    } on SocketException catch (_) {
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
     } catch (e) {
-      throw ServiceException('${loc.unexpectedError}: $e');
+      throw NetworkException(.serverError, originalError: e);
     }
 
     // when the url or school is incorrect, it needs to be decoded
     if (!response.body.startsWith('{')) {
       List<int> bytes = latin1.encode(response.body);
-      throw ServiceException(utf8.decode(bytes));
+      throw ApiException(utf8.decode(bytes));
     }
 
     final parsedJson = json.decode(response.body);
 
     if (parsedJson["Message"] != null) {
-      throw ServiceException(parsedJson["Message"]);
+      throw ApiException(parsedJson["Message"]);
     }
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
     TimeTable timeTable = TimeTable.withoutTable(
-        lessonTimes: lessons.map(
-      (lessonTime) {
+      lessonTimes: lessons.map((lessonTime) {
         return lessonTime.toLessonTimes();
-      },
-    ).toList());
-    timeTable.dates =
-        mondayDate.allDaysInThisWeek(settings.get(Setting.weekStartsOnMonday));
+      }).toList(),
+    );
+    timeTable.dates = mondayDate.allDaysInThisWeek(
+      settings.get(Setting.weekStartsOnMonday),
+    );
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
@@ -354,9 +357,11 @@ class BakaService {
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
       final dayJson = daysJson[weekday];
-      for (int lessonIndex = 0;
-          lessonIndex < dayJson['Atoms'].length;
-          lessonIndex++) {
+      for (
+        int lessonIndex = 0;
+        lessonIndex < dayJson['Atoms'].length;
+        lessonIndex++
+      ) {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
         String? subjectIdBaka = subjectJson['SubjectId'];
@@ -404,16 +409,15 @@ class BakaService {
     required bool createIfMissing,
     required WidgetRef? ref,
   }) async {
-    if (createIfMissing && ref == null) {
-      throw Exception('If createIfMissing is true, ref can\'t be null');
-    }
+    assert(
+      !(createIfMissing && ref == null),
+      'If createIfMissing is true, ref can\'t be null',
+    );
 
     final db = subjectsDb.readDatabase();
     db.removeWhere((key, value) => value.isDeleted);
 
-    final subjects = db.map(
-      (key, value) => MapEntry(value.bakaId, value),
-    );
+    final subjects = db.map((key, value) => MapEntry(value.bakaId, value));
     Map<String, Subject> bakaSubjectIdToSubject = {};
 
     for (var subjectJson in subjectsJson) {
@@ -469,12 +473,14 @@ class BakaService {
         minute: int.parse(endTimeSplitted[1]),
       );
 
-      lessons.add(LessonTimesBaka(
-        startTime: startTime,
-        endTime: endTime,
-        name: name,
-        id: id,
-      ));
+      lessons.add(
+        LessonTimesBaka(
+          startTime: startTime,
+          endTime: endTime,
+          name: name,
+          id: id,
+        ),
+      );
     }
 
     return lessons;
@@ -486,26 +492,29 @@ class BakaService {
     }
 
     String schoolName = await this.schoolName;
-    final url = Uri.https(
-      "$schoolName.bakalari.cz",
-      "/api/3/homeworks",
-      {
-        'to': DateFormat('yyyy-MM-dd')
-            .format(DateTime.now().add(const Duration(days: 365)))
-      },
-    );
+    final url = Uri.https("$schoolName.bakalari.cz", "/api/3/homeworks", {
+      'to': DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.now().add(const Duration(days: 365))),
+    });
 
     Response response;
-    final loc = getLocalization();
     try {
-      response = await http.get(url, headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Bearer $_accessToken",
-      });
-    } on SocketException {
-      throw ServiceException(loc.checkConnection);
+      response = await http
+          .get(
+            url,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Bearer $_accessToken",
+            },
+          )
+          .timeout(timeoutDuration);
+    } on SocketException catch (_) {
+      throw NetworkException(.offline);
+    } on TimeoutException catch (_) {
+      throw NetworkException(.timeout);
     } catch (e) {
-      throw ServiceException('${loc.unexpectedError}: $e');
+      throw NetworkException(.serverError, originalError: e);
     }
 
     final parsedJson = jsonDecode(response.body);
@@ -540,21 +549,23 @@ class BakaService {
 
       bool isSeen = bakaHwDb.isSeen(bakaId);
 
-      homeworks.add(BakaHomework(
-        bakaId: bakaId,
-        alreadyAdded: bakaHwDb.isAdded(bakaId),
-        alreadySeen: isSeen,
-        subject: subject,
-        text: text,
-        date: Date.fromDateTime(date.toLocal()),
-        isCompleted: isCompleted,
-        priority: const TaskPriority(0),
-        description: '',
-        id: bakaId,
-        isDeleted: false,
-        timestamp: DateTime.now().toUtc(),
-        order: 0,
-      ));
+      homeworks.add(
+        BakaHomework(
+          bakaId: bakaId,
+          alreadyAdded: bakaHwDb.isAdded(bakaId),
+          alreadySeen: isSeen,
+          subject: subject,
+          text: text,
+          date: Date.fromDateTime(date.toLocal()),
+          isCompleted: isCompleted,
+          priority: const TaskPriority(0),
+          description: '',
+          id: bakaId,
+          isDeleted: false,
+          timestamp: DateTime.now().toUtc(),
+          order: 0,
+        ),
+      );
     }
 
     return homeworks;

@@ -65,7 +65,10 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(controller: nameController),
+          TextField(
+            controller: nameController,
+            decoration: InputDecoration(hintText: loc.name),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

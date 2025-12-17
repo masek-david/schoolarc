@@ -23,10 +23,12 @@ class SubjectDialog extends ConsumerStatefulWidget {
 }
 
 class _SubjectDialogState extends ConsumerState<SubjectDialog> {
-  late final TextEditingController nameController =
-      TextEditingController(text: widget.initial.name);
-  late final TextEditingController shortcutController =
-      TextEditingController(text: widget.initial.shortcut);
+  late final TextEditingController nameController = TextEditingController(
+    text: widget.initial.name,
+  );
+  late final TextEditingController shortcutController = TextEditingController(
+    text: widget.initial.shortcut,
+  );
 
   void onSave() {
     final edited = widget.initial.copyWith(
@@ -74,11 +76,7 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                border: const OutlineInputBorder(),
-                labelText: loc.name,
-              ),
+              decoration: InputDecoration(labelText: loc.name),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -89,17 +87,11 @@ class _SubjectDialogState extends ConsumerState<SubjectDialog> {
                 onSave();
                 Navigator.pop(context);
               },
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(15),
-                border: const OutlineInputBorder(),
-                labelText: loc.shortcutMax5Chars,
-              ),
+              decoration: InputDecoration(labelText: loc.shortcutMax5Chars),
             ),
             if (widget.usedTimes != null)
-              Text(
-                loc.subjectUsedTimes(widget.usedTimes!),
-              ),
-            CancelSaveButton(onSave: onSave)
+              Text(loc.subjectUsedTimes(widget.usedTimes!)),
+            CancelSaveButton(onSave: onSave),
           ],
         ),
       ),

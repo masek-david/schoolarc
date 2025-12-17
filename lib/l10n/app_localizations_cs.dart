@@ -10,16 +10,13 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String greetingByHour(String hour) {
-    String _temp0 = intl.Intl.selectLogic(
-      hour,
-      {
-        'morning': 'Dobré ráno',
-        'afternoon': 'Dobré odpoledne',
-        'evening': 'Dobrý večer',
-        'night': 'Dobrou noc',
-        'other': 'Ahoj',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(hour, {
+      'morning': 'Dobré ráno',
+      'afternoon': 'Dobré odpoledne',
+      'evening': 'Dobrý večer',
+      'night': 'Dobrou noc',
+      'other': 'Ahoj',
+    });
     return '$_temp0';
   }
 
@@ -202,25 +199,19 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String examsFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': '$whenText žádné testy',
-        'other': 'Testy na $whenText',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': '$whenText žádné testy',
+      'other': 'Testy na $whenText',
+    });
     return '$_temp0';
   }
 
   @override
   String examAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isAbsent,
-      {
-        'true': 'Žádné testy',
-        'other': 'Testy',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isAbsent, {
+      'true': 'Žádné testy',
+      'other': 'Testy',
+    });
     return '$_temp0';
   }
 
@@ -250,25 +241,19 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String homeworkFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': '$whenText žádné úkoly',
-        'other': 'Úkoly na $whenText',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': '$whenText žádné úkoly',
+      'other': 'Úkoly na $whenText',
+    });
     return '$_temp0';
   }
 
   @override
   String homeworkAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isAbsent,
-      {
-        'true': 'Žádné úkoly',
-        'other': 'Úkoly',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isAbsent, {
+      'true': 'Žádné úkoly',
+      'other': 'Úkoly',
+    });
     return '$_temp0';
   }
 
@@ -284,7 +269,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get showMyName => 'Zobrazit moje jméno';
 
   @override
-  String get showMyNameSubtitle => 'Pokud je povoleno a jste přihlášeni do Bakalářů, budete uvítáni svým jménem';
+  String get showMyNameSubtitle =>
+      'Pokud je povoleno a jste přihlášeni do Bakalářů, budete uvítáni svým jménem';
 
   @override
   String get showBakalariTimetable => 'Zobrazit rozvrh z Bakalářů';
@@ -311,10 +297,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get showArrows => 'Zobrazit šipky';
 
   @override
-  String get showArrowsSubtitle => 'Zobrazit šipky pro přepínání mezi stránkami';
+  String get showArrowsSubtitle =>
+      'Zobrazit šipky pro přepínání mezi stránkami';
 
   @override
-  String get upcomingDayChannelDescription => 'Zde najdete nadcházející testy a úkoly';
+  String get upcomingDayChannelDescription =>
+      'Zde najdete nadcházející testy a úkoly';
 
   @override
   String get mainChannel => 'Hlavní kanál';
@@ -347,7 +335,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get invalidCanteenNumber => 'Neplatné číslo jídelny';
 
   @override
-  String get invalidCanteenNumberLength => 'Neplatná délka čísla jídelny, povoleny jsou pouze 4 číslice';
+  String get invalidCanteenNumberLength =>
+      'Neplatná délka čísla jídelny, povoleny jsou pouze 4 číslice';
 
   @override
   String get canteenNumberMissing => 'Chybí číslo jídelny';
@@ -356,10 +345,19 @@ class AppLocalizationsCs extends AppLocalizations {
   String get checkConnection => 'Zkontrolujte připojení k internetu';
 
   @override
+  String get offline => 'Jste offline';
+
+  @override
+  String get timedOut => 'Požadavek vypršel';
+
+  @override
+  String get serverError => 'Chyba serveru';
+
+  @override
   String get unexpectedError => 'Došlo k neočekávané chybě';
 
   @override
-  String get fillOutAllInfo => 'Vyplňte prosím všechny informace';
+  String get fillOutAllFields => 'Vyplňte prosím všechny pole';
 
   @override
   String get noCanteen => 'Žádná jídelna, prosím přihlaste se';
@@ -374,7 +372,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get importedSubject => 'Importován předmět';
 
   @override
-  String get tryImportingSubjectFromBakalari => 'Nejdříve zkuste importovat předměty z obrazovky Bakalářů';
+  String get tryImportingSubjectFromBakalari =>
+      'Nejdříve zkuste importovat předměty z obrazovky Bakalářů';
 
   @override
   String get change => 'Změna';
@@ -440,13 +439,33 @@ class AppLocalizationsCs extends AppLocalizations {
   String get newNickname => 'Nová přezdívka';
 
   @override
-  String get nicknameInfo => 'Přezdívka je veřejně viditelná ostatním uživatelům';
+  String get nicknameInfo =>
+      'Přezdívka je veřejně viditelná ostatním uživatelům';
 
   @override
   String get nickname => 'Přezdívka';
 
   @override
   String get group => 'Skupina';
+
+  @override
+  String get notMemberOfAnyGroup => 'Nejste členem žádné skupiny';
+
+  @override
+  String get waitingForApproval => 'Čeká na schválení';
+
+  @override
+  String get removedFromGroup => 'Byli jste odebráni ze skupiny';
+
+  @override
+  String get leaveOldGroup => 'Nejprve opusťte starou skupinu';
+
+  @override
+  String get cantLeaveYourGroup =>
+      'Nemůžete opustit skupinu, kterou jste vytvořili, musíte ji smazat';
+
+  @override
+  String get cantChangeGroupName => 'Nemůžete změnit název této skupiny';
 
   @override
   String get subjectIsntShared => 'Zvolený předmět není sdílen';
@@ -473,7 +492,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get rememberMeTitle => 'Zapamatovat si mě?';
 
   @override
-  String get rememberMeWarning => 'Pokud budete pokračovat, nebude možné zobrazit aktuální rozvrh a aktuální úkoly.';
+  String get rememberMeWarning =>
+      'Pokud budete pokračovat, nebude možné zobrazit aktuální rozvrh a aktuální úkoly.';
 
   @override
   String get continueAction => 'Pokračovat';
@@ -485,7 +505,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get importTimetableTitle => 'Importovat rozvrh a předměty?';
 
   @override
-  String get importTimetableWarning => 'Importování rozvrhu přepíše váš současný rozvrh. Existující předměty budou využity znovu. Chcete pokračovat?';
+  String get importTimetableWarning =>
+      'Importování rozvrhu přepíše váš současný rozvrh. Existující předměty budou využity znovu. Chcete pokračovat?';
 
   @override
   String get import => 'Importovat';
@@ -509,7 +530,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noExams => 'Nebyly nalezeny žádné testy';
 
   @override
-  String get noRecentlyDeleted => 'Nebyly nalezeny žádné nedávno smazané položky';
+  String get noRecentlyDeleted =>
+      'Nebyly nalezeny žádné nedávno smazané položky';
 
   @override
   String get timetable => 'Rozvrh';
@@ -548,7 +570,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get errorChangingPassword => 'Při změně hesla došlo k chybě.';
 
   @override
-  String get registeredSuccessfully => 'Byli jste úspěšně registrováni, vše je synchronizováno';
+  String get registeredSuccessfully =>
+      'Byli jste úspěšně registrováni, vše je synchronizováno';
 
   @override
   String get changePassword => 'Změnit heslo';
@@ -614,7 +637,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get deleteAllLogs => 'Smazat všechny záznamy?';
 
   @override
-  String get noLogsFound => 'Nebyly nalezeny žádné záznamy. Vše beží v pořádku!';
+  String get noLogsFound =>
+      'Nebyly nalezeny žádné záznamy. Vše beží v pořádku!';
 
   @override
   String get shortcuts => 'Klávesové zkratky';
@@ -644,13 +668,15 @@ class AppLocalizationsCs extends AppLocalizations {
   String get styleMotionScreenSwitchAnimationTitle => 'Doba přechodu obrazovky';
 
   @override
-  String get styleMotionScreenSwitchAnimationSubtitle => 'V milisekundách (0 vypne animaci)';
+  String get styleMotionScreenSwitchAnimationSubtitle =>
+      'V milisekundách (0 vypne animaci)';
 
   @override
   String get styleMotionShowBorderTitle => 'Zobrazit okraj aplikace';
 
   @override
-  String get styleMotionShowBorderSubtitle => 'Na velké obrazovce, nebo když je aplikace na šířku, zobrazí okraje v aplikaci';
+  String get styleMotionShowBorderSubtitle =>
+      'Na velké obrazovce, nebo když je aplikace na šířku, zobrazí okraje v aplikaci';
 
   @override
   String get themePageTitle => 'Motiv';
@@ -677,7 +703,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get themeUseDeviceColors => 'Použít barvy zařízení';
 
   @override
-  String get themeSystemColorWarning => 'Momentálně používáte systémovou barvu. Pokud chcete vybrat vlastní barvu, vypněte Použít barvy zařízení.';
+  String get themeSystemColorWarning =>
+      'Momentálně používáte systémovou barvu. Pokud chcete vybrat vlastní barvu, vypněte Použít barvy zařízení.';
 
   @override
   String get themeAppColor => 'Barva aplikace';
@@ -689,32 +716,33 @@ class AppLocalizationsCs extends AppLocalizations {
   String get upcomingDayNotifications => 'Oznámení o dalším dni';
 
   @override
-  String get notificationsNotAllowedMessage => 'Oznámení nejsou povolena, klikněte zde pro udělení oprávnění';
+  String get notificationsNotAllowedMessage =>
+      'Oznámení nejsou povolena, klikněte zde pro udělení oprávnění';
 
   @override
-  String get upcomingDayNotificationsDescription => 'Dostávejte oznámení o úkolech a testech na další den';
+  String get upcomingDayNotificationsDescription =>
+      'Dostávejte oznámení o úkolech a testech na další den';
 
   @override
-  String get upcomingDayNotificationsReceiveBeforeWeekend => 'Dostávejte oznámení před víkendem';
+  String get upcomingDayNotificationsReceiveBeforeWeekend =>
+      'Dostávejte oznámení před víkendem';
 
   @override
-  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle => 'Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu';
+  String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
+      'Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu';
 
   @override
   String onWeekday(String weekday) {
-    String _temp0 = intl.Intl.selectLogic(
-      weekday,
-      {
-        '1': 'V pondělí',
-        '2': 'V úterý',
-        '3': 'Ve středu',
-        '4': 'Ve čtvrtek',
-        '5': 'V pátek',
-        '6': 'V sobotu',
-        '7': 'V neděli',
-        'other': 'neznámé',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(weekday, {
+      '1': 'V pondělí',
+      '2': 'V úterý',
+      '3': 'Ve středu',
+      '4': 'Ve čtvrtek',
+      '5': 'V pátek',
+      '6': 'V sobotu',
+      '7': 'V neděli',
+      'other': 'neznámé',
+    });
     return '$_temp0';
   }
 
@@ -734,13 +762,23 @@ class AppLocalizationsCs extends AppLocalizations {
   String get export => 'Exportovat';
 
   @override
+  String get exportSuccess => 'Úspěšně exportováno';
+
+  @override
+  String get aborted => 'Přerušeno';
+
+  @override
   String get chooseSaveLocation => 'Vybertre umístění pro uložení souboru:';
 
   @override
   String get pickSaveFile => 'Vyberte soubor:';
 
   @override
-  String importConfirmationText(num subjectsCount, num hwsCount, num examsCount) {
+  String importConfirmationText(
+    num subjectsCount,
+    num hwsCount,
+    num examsCount,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       subjectsCount,
       locale: localeName,
@@ -775,13 +813,15 @@ class AppLocalizationsCs extends AppLocalizations {
   String get initialPageTitle => 'Výchozí stránka';
 
   @override
-  String get initialPageSubtitle => 'Výchozí stránka bude zobrazena při otevření aplikace';
+  String get initialPageSubtitle =>
+      'Výchozí stránka bude zobrazena při otevření aplikace';
 
   @override
   String get alreadyDeveloper => 'Již jste vývojář';
 
   @override
-  String get pressMoreTimesToBecomeDeveloper => 'Po dvou dalších kliknutích se z vás stane vývojář';
+  String get pressMoreTimesToBecomeDeveloper =>
+      'Po dvou dalších kliknutích se z vás stane vývojář';
 
   @override
   String get becameDeveloper => 'Stali jste se vývojářem';
@@ -814,10 +854,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get developerMode => 'Režim vývojáře';
 
   @override
-  String get useExperimentalHomeworkTileOverlay => 'Používat experimentální překrývané okno úkolu';
+  String get useExperimentalHomeworkTileOverlay =>
+      'Používat experimentální překrývané okno úkolu';
 
   @override
-  String get colorShowcaseTitle => 'Takto bude aplikace vypadat s těmito barvami:';
+  String get colorShowcaseTitle =>
+      'Takto bude aplikace vypadat s těmito barvami:';
 
   @override
   String get filledButton => 'Tlačítko';
@@ -832,7 +874,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get schoolCanteenId => 'ID školní jídelny';
 
   @override
-  String get schoolCanteenIdDescription => 'ID školní jídelny je 4místné číslo, které používáte k přihlášení do aplikace Strava.';
+  String get schoolCanteenIdDescription =>
+      'ID školní jídelny je 4místné číslo, které používáte k přihlášení do aplikace Strava.';
 
   @override
   String get allowStravaLogin => 'Povolit přihlášení (experimentální)';
@@ -864,7 +907,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get subjects => 'Předměty';
 
   @override
-  String get noSubjectsFoundMessage => 'Nebyly nalezeny žádné předměty. Nové předměty můžete vytvořit kliknutím na tlačítko plus.';
+  String get noSubjectsFoundMessage =>
+      'Nebyly nalezeny žádné předměty. Nové předměty můžete vytvořit kliknutím na tlačítko plus.';
 
   @override
   String deletedSubjectMessage(Object name) {
@@ -932,7 +976,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get timeFormat => 'Používat 24 hodinový formát času';
 
   @override
-  String get timeFormatSubtitle => 'Některé jazyky podporují pouze 24 hodinový formát';
+  String get timeFormatSubtitle =>
+      'Některé jazyky podporují pouze 24 hodinový formát';
 
   @override
   String get timeFormat12 => '12 hodinový';
@@ -947,7 +992,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get weekStartsOnMonday => 'Týden začíná v pondělí';
 
   @override
-  String get weekStartsOnMondaySubtitle => 'Pokud zapnuto, první den týdne bude pondělí. Jinak to bude neděle.';
+  String get weekStartsOnMondaySubtitle =>
+      'Pokud zapnuto, první den týdne bude pondělí. Jinak to bude neděle.';
 
   @override
   String get viewingOfflineTimetable => 'Zobrazen trvalý rozvrh';
@@ -956,7 +1002,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get recover => 'Obnovit';
 
   @override
-  String get recoverInfoContent => 'Pro obnovení stiskněte a vyberte obnovit. Po 7 dnech dojde k trvalému smazání.';
+  String get recoverInfoContent =>
+      'Pro obnovení stiskněte a vyberte obnovit. Po 7 dnech dojde k trvalému smazání.';
 
   @override
   String daysLeft(num count) {
@@ -977,7 +1024,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get useDateFormat => 'Formát: den měsíc rok';
 
   @override
-  String get asDividerUse => '(jako oddělovací znak použijte \"mezeru\" / , . -)';
+  String get asDividerUse =>
+      '(jako oddělovací znak použijte \"mezeru\" / , . -)';
 
   @override
   String missed(num count) {
@@ -1009,28 +1057,33 @@ class AppLocalizationsCs extends AppLocalizations {
   String get grant => 'Povolit';
 
   @override
-  String get notificationPermissionBody1 => 'Pokud chcete, aby vám tato aplikace zasílala oznámení, musíte jí to povolit.';
+  String get notificationPermissionBody1 =>
+      'Pokud chcete, aby vám tato aplikace zasílala oznámení, musíte jí to povolit.';
 
   @override
-  String get notificationPermissionBody2 => 'Tlačítko Povolit vás přesměruje do nastavení aplikace, kde můžete oznámení povolit.';
+  String get notificationPermissionBody2 =>
+      'Tlačítko Povolit vás přesměruje do nastavení aplikace, kde můžete oznámení povolit.';
 
   @override
   String get useExtensions => 'Můžete využít tato rozšíření:';
 
   @override
-  String get bakalariSubtitle => 'Umožní importovat předměty a zobrazit aktuální rozvrh';
+  String get bakalariSubtitle =>
+      'Umožní importovat předměty a zobrazit aktuální rozvrh';
 
   @override
   String get stravaCzSubtitle => 'Dokáže zobrazit jídla ve vaší jídelně';
 
   @override
-  String get cloudSyncSubtitle => 'Zálohuje a synchronizuje data mezi zařízeními';
+  String get cloudSyncSubtitle =>
+      'Zálohuje a synchronizuje data mezi zařízeními';
 
   @override
   String get goToApp => 'Přejít do aplikace';
 
   @override
-  String get tutorialIntro => 'Děkuji za stažení aplikace Schoolarc. Toto je tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
+  String get tutorialIntro =>
+      'Děkuji za stažení aplikace Schoolarc. Toto je tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
 
   @override
   String get welcome => 'Vítejte';
@@ -1051,22 +1104,27 @@ class AppLocalizationsCs extends AppLocalizations {
   String get tutorialExamDelete => 'Tímto smažete test';
 
   @override
-  String get tutorialPriorities => 'Každý úkol a test má svou prioritu. Ta je vyjádřena barvou. Zkuste prioritu změnit:';
+  String get tutorialPriorities =>
+      'Každý úkol a test má svou prioritu. Ta je vyjádřena barvou. Zkuste prioritu změnit:';
 
   @override
-  String get tutorialTryAssigningSubject => 'Každý úkol nebo test můžete přiřadit k jednomu předmětu. Zkuste předmět změnit:';
+  String get tutorialTryAssigningSubject =>
+      'Každý úkol nebo test můžete přiřadit k jednomu předmětu. Zkuste předmět změnit:';
 
   @override
-  String get tutorialCreateSubjectsLater => 'Své předměty si později vytvoříte v obrazovce předmětů v navigační nabídce.';
+  String get tutorialCreateSubjectsLater =>
+      'Své předměty si později vytvoříte v obrazovce předmětů v navigační nabídce.';
 
   @override
   String get tutorialCompleteHomework => 'Skvělá práce! Tímto dokončíte úkol';
 
   @override
-  String get tutorialSlideToDelete => 'Přejetím doleva a klepnutím na smazat můžete cokoliv smazat.';
+  String get tutorialSlideToDelete =>
+      'Přejetím doleva a klepnutím na smazat můžete cokoliv smazat.';
 
   @override
-  String get tutorialTapCheckbox => 'A klepnutím na zaškrtávací políčko vpravo dokončíte úkol.';
+  String get tutorialTapCheckbox =>
+      'A klepnutím na zaškrtávací políčko vpravo dokončíte úkol.';
 
   @override
   String get exampleSubjectName1 => 'Matematika';
@@ -1093,7 +1151,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get reportBug => 'Nahlásit chybu';
 
   @override
-  String get reportBugPolicy => 'Odesláním zprávy souhlasíte se sdílením uvedených informací výhradně za účelem opravy chyb.';
+  String get reportBugPolicy =>
+      'Odesláním zprávy souhlasíte se sdílením uvedených informací výhradně za účelem opravy chyb.';
 
   @override
   String get viewLicenses => 'Zobrazit licence';
@@ -1111,7 +1170,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get deleteLog => 'Smazat záznam?';
 
   @override
-  String get bugReportHint => 'Popište chybu: Také můžete přiložit snímek obrazovky.';
+  String get bugReportHint =>
+      'Popište chybu: Také můžete přiložit snímek obrazovky.';
 
   @override
   String get cantOpenMail => 'Nepodařilo se otevřít email aplikaci';
@@ -1120,13 +1180,17 @@ class AppLocalizationsCs extends AppLocalizations {
   String get secureLogin => 'Bezpečnost přihlášení';
 
   @override
-  String get secureLoginInfo => 'Údaje o přihlášení jsou bezpečně uschovány v tomto zařízení. Nikdy nejsou sdíleny, kamkoliv odeslány nebo dostupné jiným aplikacím.';
+  String get secureLoginInfo =>
+      'Údaje o přihlášení jsou bezpečně uschovány v tomto zařízení. Nikdy nejsou sdíleny, kamkoliv odeslány nebo dostupné jiným aplikacím.';
 
   @override
   String get cantDeleteData => 'Data nebyla úspěšně smazána. Zkuste to znovu.';
 
   @override
   String get cantLogin => 'Přihlášení se nepodařilo. Zkuste to znovu.';
+
+  @override
+  String get couldntLogIn => 'Přihlášení se nezdařilo';
 
   @override
   String get deleteAllData => 'Smazat všechna data';
@@ -1138,7 +1202,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get deleteAllDataTitle => 'Smazat všechna data?';
 
   @override
-  String get deleteAllDataText => 'Smazání všech dat smaže vaší synchronizovanou zálohu a váš účet. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
+  String get deleteAllDataText =>
+      'Smazání všech dat smaže vaší synchronizovanou zálohu a váš účet. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
 
   @override
   String get getAllData => 'Stáhnout všechna data';
@@ -1165,13 +1230,15 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String get privacyPolicy => '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
+  String get privacyPolicy =>
+      '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
 
   @override
   String get cloudSyncDisabled => 'Synchronizace je vypnutá';
 
   @override
-  String get cloudSyncDisabledWarning => 'Při používání webové aplikace je doporučeno zapnout synchronizaci, aby nedošlo ke ztrátě dat.';
+  String get cloudSyncDisabledWarning =>
+      'Při používání webové aplikace je doporučeno zapnout synchronizaci, aby nedošlo ke ztrátě dat.';
 
   @override
   String get enable => 'Zapnout';

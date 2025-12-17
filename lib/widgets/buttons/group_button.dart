@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const myCurve = Cubic(.46, -0.51, .37, -0.51);
+const _myCurve = Cubic(.46, -0.51, .37, -0.51);
 
 class GroupButton extends StatefulWidget {
   const GroupButton({
@@ -48,10 +48,10 @@ class _GroupButtonState extends State<GroupButton>
       duration: widget.animationDuration,
       value: widget.selected ? 1 : 0,
     );
-    _radiusAnimation = Tween<double>(begin: 8, end: 20).animate(
+    _radiusAnimation = Tween<double>(begin: 10, end: 20).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: myCurve,
+        curve: _myCurve,
       ),
     );
   }
@@ -78,8 +78,8 @@ class _GroupButtonState extends State<GroupButton>
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        widget.selected ? widget.selectedColor : widget.backgroundColor;
+    // final color =
+    //     widget.selected ? widget.selectedColor : widget.backgroundColor;
 
     return Flexible(
       flex: 1000 + (widget.flex * 100).round(),
@@ -93,29 +93,28 @@ class _GroupButtonState extends State<GroupButton>
                 widget.roundedRight ? 20 : _radiusAnimation.value),
           );
 
-          return Container(
-            decoration: BoxDecoration(color: color, borderRadius: border),
-            child: ClipRRect(
-              borderRadius: border,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  splashFactory: InkSparkle.splashFactory,
-                  onTapDown: (details) {
-                    if (!widget.selected) {
-                      widget.onTapDown();
-                      _controller.animateTo(0.35);
-                    }
-                  },
-                  onTapCancel: () {
-                    if (!widget.selected) {
-                      widget.onTapCancel();
-                      _controller.animateBack(0);
-                    }
-                  },
-                  onTap: widget.onSelected,
-                  child: child,
-                ),
+          final color = Color.lerp(
+              widget.backgroundColor, widget.selectedColor, _controller.value.clamp(0, 1));
+
+          return GestureDetector(
+            onTapDown: (details) {
+              if (!widget.selected) {
+                widget.onTapDown();
+                _controller.animateTo(0.35);
+              }
+            },
+            onTapCancel: () {
+              if (!widget.selected) {
+                widget.onTapCancel();
+                _controller.animateBack(0);
+              }
+            },
+            onTap: widget.onSelected,
+            child: Container(
+              decoration: BoxDecoration(color: color, borderRadius: border),
+              child: ClipRRect(
+                borderRadius: border,
+                child: child,
               ),
             ),
           );

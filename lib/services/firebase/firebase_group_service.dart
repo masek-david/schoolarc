@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -14,7 +13,7 @@ class FirebaseGroupService {
 
     final groupId = await getGroupId();
     if (groupId == null) {
-      throw ServiceException('You aren\'t a member of any group');
+      throw GroupException(.notMemberOfAnyGroup);
     }
     // TODO this group doesnt exist how?
     // final groupSnapshot = await db.ref('groups/$groupId').get();
@@ -29,19 +28,19 @@ class FirebaseGroupService {
     final groupMembersSnapshot = await db.ref('groups/$groupId/u').get();
     final membersIds = {
       for (var snap in groupMembersSnapshot.children)
-        snap.key!: snap.value as bool?
+        snap.key!: snap.value as bool?,
     };
 
     // add the group owner to users
     membersIds[groupId] = true;
     // check if you have permission
     if (membersIds[user] == false) {
-      throw ServiceException('Waiting for approval');
+      throw GroupException(.waitingForApproval);
     }
     // check if you have been removed
     if (membersIds[user] == null) {
       leaveGroup();
-      throw ServiceException('You have been removed from the group');
+      throw GroupException(.removedFromGroup);
     }
 
     final List<Future> futures = [];
@@ -55,8 +54,8 @@ class FirebaseGroupService {
 
     membersIds.forEach((memberId, memberState) {
       // members
-      futures.add(db.ref('users/$memberId/n').get().then(
-        (snapshot) {
+      futures.add(
+        db.ref('users/$memberId/n').get().then((snapshot) {
           members[memberId] = Member(
             memberId,
             snapshot.value as String? ?? '',
@@ -64,8 +63,8 @@ class FirebaseGroupService {
             isYou: memberId == user,
             isOwner: memberId == groupId,
           );
-        },
-      ));
+        }),
+      );
       // if the user is waiting for approval or its you, dont fetch
       if (memberState != true || memberId == user) return;
 
@@ -131,9 +130,7 @@ class FirebaseGroupService {
       final member = members[exam.memberId];
       // just to be safe
       if (member != null) {
-        tasks.add(
-          exam.convert(subjectsMap[exam.exam.subjectId], member),
-        );
+        tasks.add(exam.convert(subjectsMap[exam.exam.subjectId], member));
       }
     }
 
@@ -141,9 +138,7 @@ class FirebaseGroupService {
       final member = members[hw.memberId];
       // just to be safe
       if (member != null) {
-        tasks.add(
-          hw.convert(subjectsMap[hw.hw.subjectId], member),
-        );
+        tasks.add(hw.convert(subjectsMap[hw.hw.subjectId], member));
       }
     }
 
@@ -158,10 +153,8 @@ class FirebaseGroupService {
   /// Throws logged out message if current user is null
   String get currentUserId {
     final user = FirebaseAuth.instance.currentUser;
-    final loc = getLocalization();
-
     if (user == null) {
-      throw ServiceException(loc.loggedOut);
+      throw AuthException(.loggedOut);
     }
     return user.uid;
   }
@@ -175,7 +168,7 @@ class FirebaseGroupService {
   Future<void> joinGroup(String groupId) async {
     final currentGroup = await getGroupId();
     if (currentGroup != null) {
-      throw ServiceException('First leave the old group');
+      throw GroupException(.leaveOldGroup);
     }
 
     // TODO check that group exists
@@ -194,12 +187,11 @@ class FirebaseGroupService {
   Future<void> leaveGroup() async {
     final currentGroup = await getGroupId();
     if (currentGroup == null) {
-      throw ServiceException('You aren\'t member of any group');
+      throw GroupException(.notMemberOfAnyGroup);
     }
     final user = currentUserId;
     if (currentGroup == user) {
-      throw ServiceException(
-          'You can\'t leave the group you created, you have to delete it');
+      throw GroupException(.cantLeaveYourGroup);
     }
 
     await _db.ref('groups/$currentGroup/u/$user').set(null);
@@ -210,7 +202,7 @@ class FirebaseGroupService {
   Future<void> createGroup({required String name}) async {
     final currentGroup = await getGroupId();
     if (currentGroup != null) {
-      throw ServiceException('First leave the old group');
+      throw GroupException(.leaveOldGroup);
     }
     final user = currentUserId;
     await _db.ref('groups/$user/n').set(name);
@@ -222,7 +214,7 @@ class FirebaseGroupService {
     final currentGroup = await getGroupId();
     final user = currentUserId;
     if (currentGroup != user) {
-      throw ServiceException('You can\'t change this group\'s name');
+      throw GroupException(.cantChangeName);
     }
     // todo check that the group exists
     await _db.ref('groups/$user/n').set(name);

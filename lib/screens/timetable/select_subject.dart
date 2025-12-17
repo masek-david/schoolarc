@@ -68,9 +68,8 @@ class SelectSubjectDialog extends StatelessWidget {
                 autofocus: true,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (value) => onFieldSubmitted(),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: loc.searchForSubject
                 ),
               );
             },

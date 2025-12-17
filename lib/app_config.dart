@@ -125,7 +125,7 @@ class AppConfig extends ConsumerWidget {
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               contentPadding: const EdgeInsets.all(15),
-              fillColor: light.surfaceContainerLow,
+              fillColor: light.surfaceContainer,
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
                 borderRadius: BorderRadius.circular(8),
@@ -154,7 +154,7 @@ class AppConfig extends ConsumerWidget {
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               contentPadding: const EdgeInsets.all(15),
-              fillColor: dark.surfaceContainerLow,
+              fillColor: dark.surfaceContainer,
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
                 borderRadius: BorderRadius.circular(8),
