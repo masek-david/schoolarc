@@ -13,8 +13,12 @@ import 'package:schoolarc/widgets/tiles/error_tile.dart';
 class BakaHomeworksScreen extends ConsumerWidget {
   const BakaHomeworksScreen({super.key});
 
-  void import(BuildContext context, BakaHomework hw, bool isHomework,
-      WidgetRef ref) async {
+  void import(
+    BuildContext context,
+    BakaHomework hw,
+    bool isHomework,
+    WidgetRef ref,
+  ) async {
     await ref.read(bakaHomeworksProvider.notifier).import(hw, isHomework);
 
     if (context.mounted) {
@@ -68,18 +72,22 @@ class BakaHomeworksScreen extends ConsumerWidget {
             );
           }
 
+          // TODO sort
           data.sort(
             (a, b) => a.date.compareTo(b.date),
           );
-          data.sort((a, b) =>
-              (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)));
+          data.sort(
+            (a, b) =>
+                (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)),
+          );
 
           return ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
               final hw = data[index];
               final isFirstNew = !hw.alreadySeen && index == 0;
-              final isLastNew = index == data.length - 1 ||
+              final isLastNew =
+                  index == data.length - 1 ||
                   !hw.alreadySeen &&
                       data.elementAtOrNull(index + 1)?.alreadySeen == true;
 
@@ -120,7 +128,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
                                 style: context.txt.titleMedium,
                               ),
                             ),
-                            tile
+                            tile,
                           ],
                         )
                       : tile,

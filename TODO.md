@@ -1,9 +1,10 @@
 # FIX
-timetable pull to refresh isnt centered on big screen
 check update for web
 when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field [WEB]
 merge sorts into one
-opening from widget doesnt work [A] ??
+dont use circular progress indicator
+success/error animation for animatedshape
+homescreen agotext under the cards?
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -18,9 +19,9 @@ opening from widget doesnt work [A] ??
 - ⬜ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email
 - ⬜ tutorial
-    - ✅ choose language
     - ✅ offer import from bakalari
     - ⬜ offer import from json
+    - ⬜ ask: new user? view tutorial? import data from json?
 - ⬜ plus - 5 usd, limit to 100 users?
 - ⬜ add to tutorial
     - ⬜ app theme
@@ -82,7 +83,7 @@ opening from widget doesnt work [A] ??
 
 ## notifications:
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
-- ⬜ turn off notifications for weekend
+- ✅ turn off notifications for weekend
 - ⬜ switch to local_notifications (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
 

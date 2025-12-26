@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
-import 'package:schoolarc/provider/locale_notifier.dart';
-import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
-import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -79,32 +75,6 @@ class TutorialWelcome extends ConsumerWidget {
                 context.loc.tutorialIntro,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.left,
-              ),
-            ),
-            AnimatedItem(
-              builder: (isShown) => SettingTile(
-                isFirst: true,
-                isLast: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 64),
-                title: context.loc.language,
-                trailing: DropDownAction(
-                  value: ref.watch(localeProvider).languageCode,
-                  onChanged: (value) {
-                    ref.read(localeProvider.notifier).set(value as String);
-                  },
-                  items: supportedLocales
-                      .map(
-                        (key, value) => MapEntry(
-                          key,
-                          DropdownMenuItem<String>(
-                            value: key.languageCode,
-                            child: Text(value),
-                          ),
-                        ),
-                      )
-                      .values
-                      .toList(),
-                ),
               ),
             ),
           ],

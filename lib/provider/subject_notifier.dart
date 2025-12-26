@@ -12,7 +12,8 @@ import 'package:schoolarc/utils/globals.dart';
 
 final subjectsProvider =
     NotifierProvider<SubjectNotifier, Map<String, Subject>>(
-        SubjectNotifier.new);
+      SubjectNotifier.new,
+    );
 
 final subjectsSortedProvider = Provider<List<Subject>>((ref) {
   final subjects = ref.watch(subjectsProvider);
@@ -92,14 +93,19 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref.read(firebaseServiceProvider).listenSubjects().listen(
-        (event) async {
-      ref.read(firebaseActivityProvider.notifier).read(0);
+    listenFirebase = ref
+        .read(firebaseServiceProvider)
+        .listenSubjects()
+        .listen(
+          (event) async {
+            ref.read(firebaseActivityProvider.notifier).read(0);
 
-      await checkFireSubject(event);
-    }, onError: (error) {
-      log('error listening to firebase subjects: ${error.toString()}');
-    });
+            await checkFireSubject(event);
+          },
+          onError: (error) {
+            log('error listening to firebase subjects: ${error.toString()}');
+          },
+        );
   }
 
   Future<void> syncAll() async {
@@ -116,7 +122,8 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       final fireSubject = fireSubjects
           ?.where((element) => element.id == subject.id)
           .firstOrNull;
-      bool needsSync = fireSubject == null ||
+      bool needsSync =
+          fireSubject == null ||
           fireSubject.timestamp.isBefore(subject.timestamp);
 
       if (needsSync) {
@@ -144,7 +151,9 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     state = {...state, id: subject.convert(id)};
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider).createSubject(
+      await ref
+          .read(firebaseServiceProvider)
+          .createSubject(
             subject.convert(id),
           );
     }
@@ -210,9 +219,11 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     if (isLast) {
       order = (list.lastOrNull?.order.ceilToDouble() ?? 0) + 1;
     } else {
-      final indexBefore =
-          index == 0 ? 0.0 : list.elementAtOrNull(index - 1)?.order ?? 0;
-      final indexAfter = list.elementAtOrNull(index)?.order ??
+      final indexBefore = index == 0
+          ? 0.0
+          : list.elementAtOrNull(index - 1)?.order ?? 0;
+      final indexAfter =
+          list.elementAtOrNull(index)?.order ??
           list.lastOrNull?.order.ceilToDouble() ??
           0 + 1;
 
@@ -222,10 +233,12 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   }
 
   void delete(Subject subject, {bool nowIsDeleted = true}) {
-    update(subject.copyWith(
-      isDeleted: nowIsDeleted,
-      timestamp: DateTime.now().toUtc(),
-    ));
+    update(
+      subject.copyWith(
+        isDeleted: nowIsDeleted,
+        timestamp: DateTime.now().toUtc(),
+      ),
+    );
   }
 
   void revertDelete(Subject subject) {
@@ -297,9 +310,9 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
-      ref
-          .read(firebaseServiceProvider)
-          .updateSubjects([localSubject.copyWith(id: fireSubject.id)]);
+      ref.read(firebaseServiceProvider).updateSubjects([
+        localSubject.copyWith(id: fireSubject.id),
+      ]);
     } else {
       // print('same date');
     }

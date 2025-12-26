@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -119,7 +118,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 children: [
                   TableCalendar(
                     // selected day je ten zvyraznenej a oznacenej, focused day je ten pro ktery se posune view v kalendari
-                    locale: getLocale().languageCode,
+                    locale: context.locale.languageCode,
                     daysOfWeekHeight: 20,
                     firstDay: DateTime(0),
                     lastDay: DateTime(5000),

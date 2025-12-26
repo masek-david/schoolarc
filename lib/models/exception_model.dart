@@ -1,5 +1,3 @@
-
-
 enum NetworkErrorCodes { offline, timeout, serverError }
 
 class NetworkException implements Exception {
@@ -9,9 +7,14 @@ class NetworkException implements Exception {
   Object? originalError;
 }
 
-enum AuthErrorCodes { couldntLogIn, loggedOut, noCanteenId, noUser }
+enum AuthErrorCodes {
+  // Use when the user isnt logged in -> should entry their login info
+  loggedOut,
+  noCanteenId,
+  noUser,
+}
 
-enum ExceptionActions { bakaLogin, stravaLogin }
+enum ExceptionActions { bakaLogin, stravaLogin, cloudsyncLogin }
 
 class AuthException implements Exception {
   AuthException(this.code, {this.exceptionAction});
@@ -55,9 +58,12 @@ class DisabledException implements Exception {
   final DisabledErrorCodes code;
 }
 
-class ApiException implements Exception {
-  ApiException(this.apiError);
+enum ApiErrorCodes { cantLogIn, passwordCantBeChanged , cantDeleteData}
 
+class ApiException implements Exception {
+  ApiException(this.apiError, {this.code});
+
+  final ApiErrorCodes? code;
   final String apiError;
 }
 

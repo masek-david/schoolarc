@@ -95,7 +95,7 @@ class ExamTile extends StatelessWidget {
                             const SizedBox(width: 8),
                             if (showDeadline)
                               Text(
-                                exam.date.formatWithText(),
+                                exam.date.formatWithText(context),
                                 maxLines: 2,
                                 style: const TextStyle(fontSize: 12),
                               ),

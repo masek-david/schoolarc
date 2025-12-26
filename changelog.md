@@ -11,11 +11,13 @@
 - Improved error messages
 - Added messages to exporting app data
 - Changed how dates are saved (should resolve any time zone issues)
+- The app now follows system language and formatting
 
 ### Fixed
 - Fixed notifications - now will arrive up to a week after last open of the app
 - Fixed meals not showing Doplněk
 - Fixed meals widgt not working 
+- Fixed color of status bar on Android
 
 ---
 

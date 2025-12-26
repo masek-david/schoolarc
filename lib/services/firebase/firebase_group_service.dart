@@ -154,7 +154,7 @@ class FirebaseGroupService {
   String get currentUserId {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      throw AuthException(.loggedOut);
+      throw AuthException(.loggedOut, exceptionAction: .cloudsyncLogin);
     }
     return user.uid;
   }

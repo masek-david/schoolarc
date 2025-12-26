@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/screens/main_screens/calendar/my_calendar_builder.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -59,7 +58,7 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
             Text(context.loc.useDateFormat),
             Text(context.loc.asDividerUse),
             TableCalendar(
-              locale: getLocale().languageCode,
+              locale: context.locale.languageCode,
               daysOfWeekHeight: 20,
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               startingDayOfWeek: StartingDayOfWeek.monday,

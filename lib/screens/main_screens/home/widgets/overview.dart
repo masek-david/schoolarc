@@ -62,7 +62,7 @@ class Overview extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative()}' : ''}',
+            '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative(context)}' : ''}',
             style: robotoSerif(
               size: 36,
               color: colorScheme.onPrimaryContainer,

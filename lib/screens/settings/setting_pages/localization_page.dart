@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/provider/locale_notifier.dart';
+import 'package:schoolarc/provider/language_code_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
@@ -16,12 +16,33 @@ class LocalizationPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final date = DateTime(2025, 1, 31, 20, 45);
+    final date = DateTime.now();
     final loc = context.loc;
     final use24HourFormat = ref.watch(use24HourFormatProvider);
-    final language = ref.watch(localeProvider).languageCode;
+    final language = ref.watch(languageCodeProvider);
     final dateFormat = ref.watch(dateFormatProvider);
     final weekStartsOnMonday = ref.watch(weekStartsOnMondayProvider);
+
+    final dropDownItems = supportedLocales
+        .map(
+          (key, value) => MapEntry(
+            key,
+            DropdownMenuItem<String?>(
+              value: key.languageCode,
+              child: Text(value),
+            ),
+          ),
+        )
+        .values
+        .toList();
+
+    dropDownItems.insert(
+      0,
+      DropdownMenuItem<String?>(
+        value: null,
+        child: Text(context.loc.deviceLanguage),
+      ),
+    );
 
     return SettingsScaffold(
       heroTag: 'localizations',
@@ -30,39 +51,34 @@ class LocalizationPage extends ConsumerWidget {
         SettingTile(
           isFirst: true,
           title: loc.language,
+          subtitle: supportedLocales[Localizations.localeOf(context)],
           trailing: DropDownAction(
             value: language,
             onChanged: (value) {
-              ref.read(localeProvider.notifier).set(value as String);
+              ref.read(languageCodeProvider.notifier).set(value);
             },
-            items: supportedLocales
-                .map(
-                  (key, value) => MapEntry(
-                    key,
-                    DropdownMenuItem<String>(
-                      value: key.languageCode,
-                      child: Text(value),
-                    ),
-                  ),
-                )
-                .values
-                .toList(),
+            items: dropDownItems,
           ),
         ),
         SettingTile(
           title: loc.dateFormat,
-          subtitle: '${loc.today}: ${Date.today().formatFromSettings()}',
+          subtitle: '${loc.today}: ${Date.today().formatFromSettings(context)}',
           trailing: DropDownAction(
             value: dateFormat,
             onChanged: (value) {
-              ref.read(dateFormatProvider.notifier).set(value as String);
+              ref.read(dateFormatProvider.notifier).set(value);
             },
             items: supportedDateFormats
                 .map(
                   (value) => DropdownMenuItem<String>(
                     value: value,
                     child: Text(
-                      DateFormat(value, getLocale().languageCode).format(date),
+                      value == null
+                          ? context.loc.languageDefault
+                          : DateFormat(
+                              value,
+                              context.locale.languageCode,
+                            ).format(date),
                     ),
                   ),
                 )
@@ -70,12 +86,15 @@ class LocalizationPage extends ConsumerWidget {
           ),
         ),
         // show setting for 24 hour format only if it is supported
-        if (DateFormat.jm(language).format(date).contains('PM'))
+        if (DateFormat.jm(
+          context.locale.languageCode,
+        ).format(DateTime(2017, 9, 7, 17, 30)).contains('PM'))
           SettingTile.withSwitch(
-            title: loc.timeFormat,
+            title: loc.h24timeFormat,
             value: use24HourFormat,
-            subtitle: '''
-${loc.timeFormatSubtitle}
+            subtitle:
+                '''
+${loc.h24timeFormatSubtitle}
 ${loc.now}: ${TimeOfDay.now().format(context)}''',
             onChanged: (value) =>
                 ref.read(use24HourFormatProvider.notifier).set(value),

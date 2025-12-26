@@ -13,8 +13,9 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-final hwDataProvider =
-    NotifierProvider<HwNotifier, Map<String, HomeworkData>>(HwNotifier.new);
+final hwDataProvider = NotifierProvider<HwNotifier, Map<String, HomeworkData>>(
+  HwNotifier.new,
+);
 
 final hwProvider = Provider<Map<String, Homework>>(
   (ref) {
@@ -90,6 +91,7 @@ Map<Date, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
   );
 
   hwDateMap.forEach((key, value) {
+    // TODO sort
     value.sort((a, b) => a.id.compareTo(b.id));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
@@ -200,19 +202,24 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref.read(firebaseServiceProvider).listenHomeworks().listen(
-        (event) async {
-      ref.read(firebaseActivityProvider.notifier).read(1);
+    listenFirebase = ref
+        .read(firebaseServiceProvider)
+        .listenHomeworks()
+        .listen(
+          (event) async {
+            ref.read(firebaseActivityProvider.notifier).read(1);
 
-      // how would this happen, right?
-      // if (!Hive.box(hwBox).isOpen) {
-      //   await Hive.openBox(hwBox);
-      // }
+            // how would this happen, right?
+            // if (!Hive.box(hwBox).isOpen) {
+            //   await Hive.openBox(hwBox);
+            // }
 
-      await checkFireHomework(event);
-    }, onError: (error) {
-      log('error listening to firebase hws: ${error.toString()}');
-    });
+            await checkFireHomework(event);
+          },
+          onError: (error) {
+            log('error listening to firebase hws: ${error.toString()}');
+          },
+        );
   }
 
   /// checks all online and offline, starts listening to firebase
@@ -228,7 +235,8 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
 
     state.forEach(
       (id, hw) {
-        bool isSynced = fireHws
+        bool isSynced =
+            fireHws
                 ?.where(
                   (element) => element.id == id,
                 )
@@ -278,7 +286,8 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     bool syncWithFire = true,
     bool checkOrder = true,
   }) async {
-    final isNew = edited.timestamp.difference(DateTime.now()).abs() <
+    final isNew =
+        edited.timestamp.difference(DateTime.now()).abs() <
         const Duration(seconds: 5);
     final old = state[edited.id];
     final bool playAnimation =
@@ -368,9 +377,11 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     if (isLast) {
       order = (list.lastOrNull?.order.ceilToDouble() ?? 0) + 1;
     } else {
-      final indexBefore =
-          index == 0 ? 0.0 : list.elementAtOrNull(index - 1)?.order ?? 0;
-      final indexAfter = list.elementAtOrNull(index)?.order ??
+      final indexBefore = index == 0
+          ? 0.0
+          : list.elementAtOrNull(index - 1)?.order ?? 0;
+      final indexAfter =
+          list.elementAtOrNull(index)?.order ??
           list.lastOrNull?.order.ceilToDouble() ??
           0 + 1;
 
@@ -409,9 +420,10 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
   void revertDelete(HomeworkData hw) {
     update(
       hw.copyWith(
-          timestamp: DateTime.now().toUtc(),
-          isDeleted: false,
-          stateReaddingVersion: hw.stateReaddingVersion + 1),
+        timestamp: DateTime.now().toUtc(),
+        isDeleted: false,
+        stateReaddingVersion: hw.stateReaddingVersion + 1,
+      ),
     );
   }
 
@@ -468,9 +480,9 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
-      ref
-          .read(firebaseServiceProvider)
-          .updateHw([localHw.copyWith(id: fireHw.id)]);
+      ref.read(firebaseServiceProvider).updateHw([
+        localHw.copyWith(id: fireHw.id),
+      ]);
     }
     return;
   }

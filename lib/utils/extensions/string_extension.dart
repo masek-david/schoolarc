@@ -1,4 +1,5 @@
-import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 extension DiacriticsAwareString on String {
   static const diacritics =
@@ -6,10 +7,12 @@ extension DiacriticsAwareString on String {
   static const nonDiacritics =
       'AAAAAAaaaaaaOOOOOOOooooooEEEEEeeeeeeCCccDDdIIIIiiiiLlUUUUUuuuuuNNnnRrSsTtYYyyZz';
 
-  String get withoutDiacriticalMarks => splitMapJoin('',
-      onNonMatch: (char) => char.isNotEmpty && diacritics.contains(char)
-          ? nonDiacritics[diacritics.indexOf(char)]
-          : char);
+  String get withoutDiacriticalMarks => splitMapJoin(
+    '',
+    onNonMatch: (char) => char.isNotEmpty && diacritics.contains(char)
+        ? nonDiacritics[diacritics.indexOf(char)]
+        : char,
+  );
 
   String sanitizeHtml() {
     return replaceAll('&', '&amp;')
@@ -20,8 +23,10 @@ extension DiacriticsAwareString on String {
   }
 
   String camelToSentence() {
-    return replaceAllMapped(RegExp(r'^([a-z])|[A-Z]'),
-        (Match m) => m[1] == null ? " ${m[0]}" : m[1]!.toUpperCase());
+    return replaceAllMapped(
+      RegExp(r'^([a-z])|[A-Z]'),
+      (Match m) => m[1] == null ? " ${m[0]}" : m[1]!.toUpperCase(),
+    );
   }
 
   String capitalize() {
@@ -32,8 +37,8 @@ extension DiacriticsAwareString on String {
     return this[0].toLowerCase() + substring(1);
   }
 
-  String toVocative() {
-    if (getLocale().languageCode != 'cs') return this;
+  String toVocative(BuildContext context) {
+    if (context.locale.languageCode != 'cs') return this;
 
     final name = trim();
 

@@ -193,7 +193,7 @@ class PagesWidget extends ConsumerWidget {
                           child: showOverlay
                               ? Center(
                                   child: Text(
-                                    '${context.loc.changeDateTo} ${date.formatFromSettings()}',
+                                    '${context.loc.changeDateTo} ${date.formatFromSettings(context)}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge

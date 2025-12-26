@@ -65,14 +65,14 @@ class StravaService {
       password = await secureStorage.read(passwordKey);
     } on Exception {
       throw AuthException(
-        .couldntLogIn,
+        .loggedOut,
         exceptionAction: ExceptionActions.stravaLogin,
       );
     }
 
     if (canteenCode == '') {
       throw AuthException(
-        .couldntLogIn,
+        .loggedOut,
         exceptionAction: ExceptionActions.stravaLogin,
       );
     }

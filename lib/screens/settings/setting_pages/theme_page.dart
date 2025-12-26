@@ -31,7 +31,7 @@ class ThemePage extends ConsumerWidget {
           trailing: DropDownAction(
             value: themeMode,
             onChanged: (value) {
-              ref.read(themeModeProvider.notifier).set(value as bool?);
+              ref.read(themeModeProvider.notifier).set(value);
             },
             items: [
               DropdownMenuItem(value: null, child: Text(loc.themeFollowSystem)),

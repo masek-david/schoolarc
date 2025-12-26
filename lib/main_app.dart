@@ -54,8 +54,9 @@ class MainApp extends ConsumerStatefulWidget {
 class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   late final AppLifecycleListener appStateListener;
 
-  late RestorableInt currentPageIndex =
-      RestorableInt(settings.get(Setting.initialAppPage));
+  late RestorableInt currentPageIndex = RestorableInt(
+    settings.get(Setting.initialAppPage),
+  );
 
   bool showingTutorial = false;
   bool firstTimeOpening = false;
@@ -75,7 +76,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
     updateMainWidget(ref);
-    NotificationSender.scheduleUpcomingDayNotifications();
+    NotificationSender.scheduleUpcomingDayNotifications(context);
 
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -100,6 +101,21 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (newScreenIndex == 0) {
       ref.read(currentTimetableProvider.notifier).refreshIfOld();
       ref.read(stravaMealsProvider.notifier).refreshIfOld();
+    }
+  }
+
+  Locale? _lastLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final locale = context.locale;
+
+    // update widgets localization strings
+    if (_lastLocale != locale) {
+      _lastLocale = locale;
+      saveLocalizationStrings(context);
     }
   }
 
@@ -233,13 +249,13 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
     final Widget? action = switch (currentPageIndex.value) {
       0 => IconButton(
-          onPressed: () => showHomeSettings(context),
-          icon: const Icon(Icons.settings),
-        ),
+        onPressed: () => showHomeSettings(context),
+        icon: const Icon(Icons.settings),
+      ),
       1 => IconButton(
-          onPressed: () => showCalendarSettings(context),
-          icon: const Icon(Icons.settings),
-        ),
+        onPressed: () => showCalendarSettings(context),
+        icon: const Icon(Icons.settings),
+      ),
       _ => null,
     };
 
@@ -261,7 +277,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                 ? AppBar(
                     actions: [if (action != null) action],
                     systemOverlayStyle: const SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
                       systemNavigationBarColor: Colors.transparent,
                     ),
                   )
@@ -286,7 +301,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                           builder: (context, child) {
                             return Padding(
                               padding: EdgeInsets.only(
-                                  top: (animation.value - 1) * -50),
+                                top: (animation.value - 1) * -50,
+                              ),
                               child: child,
                             );
                           },

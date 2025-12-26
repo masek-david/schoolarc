@@ -36,7 +36,7 @@ final debugShowPerformanceOverlayProvider =
 
 final weekStartsOnMondayProvider =
     settingProvider<bool>(Setting.weekStartsOnMonday);
-final dateFormatProvider = settingProvider<String>(Setting.dateFormat);
+final dateFormatProvider = settingProvider<String?>(Setting.dateFormat);
 
 NotifierProvider<SettingNotifier<T>, T> settingProvider<T>(Setting setting) {
   return NotifierProvider<SettingNotifier<T>, T>(

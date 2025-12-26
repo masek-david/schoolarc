@@ -236,7 +236,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         const SizedBox(width: 5),
                         if (widget.showDate)
                           Text(
-                            widget.hw.date.formatWithText(),
+                            widget.hw.date.formatWithText(context),
                             maxLines: 2,
                             style: TextStyle(
                               color: isMissed ? missedColor : null,

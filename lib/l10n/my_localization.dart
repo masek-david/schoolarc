@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:schoolarc/database/settings_database.dart';
+import 'package:flutter/material.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -12,6 +11,7 @@ final supportedLocales = {
 };
 
 const supportedDateFormats = [
+  null,
   'd. M. yyyy',
   'dd.MM.yyyy',
   'dd/MM/yyyy',
@@ -28,6 +28,7 @@ const supportedDateFormats = [
 ];
 
 const supportedDateFormatsNoYear = [
+  null,
   'd. M.',
   'dd.MM.',
   'dd/MM',
@@ -43,18 +44,18 @@ const supportedDateFormatsNoYear = [
   'MM-dd',
 ];
 
-AppLocalizations getLocalization() {
-  return lookupAppLocalizations(getLocale());
+
+AppLocalizations getLocalizationWithoutContext() {
+  return lookupAppLocalizations(_getLocale());
 }
 
-/// returns current locale, if it isnt set, it uses devices locale, if it isnt supported, it returns 'en' locale
-Locale getLocale() {
+/// returns current supported locale, if it isnt set, it uses devices locale, if it isnt supported, it returns 'en' locale
+Locale _getLocale() {
   Locale? locale;
-  final localLocaleText = settings.get(Setting.localeLanguage) as String?;
+  final localLanguageCode = settings.get(.languageCode) as String?;
 
-// TODO add device locale to selection - then set it to null ??
-  if (localLocaleText != null) {
-    locale = Locale(localLocaleText);
+  if (localLanguageCode != null) {
+    locale = Locale(localLanguageCode);
   } else if (!kIsWeb) {
     final platform = Platform.localeName.split('_');
     locale = Locale(platform[0]);

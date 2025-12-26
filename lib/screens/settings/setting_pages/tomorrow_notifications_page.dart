@@ -30,8 +30,9 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   }
 
   void getNotificationAllowed() async {
-    bool value =
-        await NotificationSender.areNotificationsAllowed('tomorrow_channel');
+    bool value = await NotificationSender.areNotificationsAllowed(
+      'tomorrow_channel',
+    );
 
     if (mounted) {
       setState(() {
@@ -60,7 +61,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
           areNotificationsAllowed = true;
         });
       }
-    } else{
+    } else {
       NotificationSender.cancelByChannelKey(tomorrowChannel);
     }
   }
@@ -72,11 +73,14 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         NotificationSender.scheduleUpcomingDayNotifications(
+          context,
           firstUpcoming: (date, time) {
             showMessage(
               context,
               loc.nextNotificationInfo(
-                date.formatWithWeekday(useOnFormat: true).unCapitalize(),
+                date
+                    .formatWithWeekday(context, useOnFormat: true)
+                    .unCapitalize(),
                 time.format(context),
               ),
             );
@@ -99,8 +103,9 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
                 child: InkWell(
                   onTap: () {
                     NotificationSender.getPermission(
-                            context, 'tomorrow_channel')
-                        .then(
+                      context,
+                      'tomorrow_channel',
+                    ).then(
                       (value) async {
                         setState(() {
                           areNotificationsAllowed = value;
@@ -159,7 +164,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             SettingTile(
               title: 'Debug new scheduling',
               onTap: (context) {
-                NotificationSender.scheduleUpcomingDayNotifications();
+                NotificationSender.scheduleUpcomingDayNotifications(context);
               },
             ),
           SettingTile(
@@ -168,8 +173,9 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             enabled: areNotificationsAllowed == true,
             onTap: (context) =>
                 NotificationSender.scheduleUpcomingDayNotifications(
-              sendNow: true,
-            ),
+                  context,
+                  sendNow: true,
+                ),
           ),
         ],
       ),

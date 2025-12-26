@@ -57,7 +57,7 @@ class BakaService {
     _refreshToken = await _storageRefreshToken;
 
     if (schoolName == '' || _refreshToken == '') {
-      throw AuthException(.couldntLogIn);
+      throw AuthException(.loggedOut, exceptionAction: .bakaLogin);
     }
 
     final url = Uri(

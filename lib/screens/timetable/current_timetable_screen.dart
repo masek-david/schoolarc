@@ -125,9 +125,11 @@ class _CurrentTimetableScreenState
 
             timetable ??= snapshot.data!;
 
-            return Column(
-              children: [
-                Expanded(
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: SizedBox(
+                  width: double.infinity,
                   child: TimetableView(
                     textWhenEmpty: context.loc.noTimetable,
                     timeTable: timetable,
@@ -143,8 +145,7 @@ class _CurrentTimetableScreenState
                     },
                   ),
                 ),
-                const SizedBox(height: 60),
-              ],
+              ),
             );
           },
         ),

@@ -19,7 +19,7 @@ class _LogScreenState extends State<LogScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.log.date.format(),
+          widget.log.date.format(context),
         ),
         actions: [
           IconButton(

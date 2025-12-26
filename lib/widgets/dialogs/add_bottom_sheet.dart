@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
@@ -45,7 +44,8 @@ class AddTaskBottomSheet extends ConsumerStatefulWidget {
 
 class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     with RestorationMixin {
-  late final initialTask = (widget.isHomework
+  late final initialTask =
+      (widget.isHomework
           ? ref.read(hwDataProvider)[widget.initialTaskId]
           : ref.read(examDataProvider)[widget.initialTaskId]) ??
       TaskData.empty().copyWith(date: widget.initialDate);
@@ -55,8 +55,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   late final descriptionController = RestorableTextEditingController.fromValue(
     TextEditingValue(text: initialTask.description),
   );
-  late RestorableStringN pickedSubjectId =
-      RestorableStringN(initialTask.subjectId);
+  late RestorableStringN pickedSubjectId = RestorableStringN(
+    initialTask.subjectId,
+  );
   late RestorableDate pickedDate = RestorableDate(initialTask.date);
   late RestorableInt pickedPriority = RestorableInt(initialTask.priority);
   late RestorableBool group = RestorableBool(false);
@@ -109,8 +110,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     });
     if (subject != null) {
       Scrollable.ensureVisible(
-          keysList[subjects.indexOf(subject)].currentContext!,
-          duration: const Duration(milliseconds: 500));
+        keysList[subjects.indexOf(subject)].currentContext!,
+        duration: const Duration(milliseconds: 500),
+      );
     }
   }
 
@@ -145,8 +147,10 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   }
 
   void pickSubject() async {
-    final newSubject =
-        await showSelectSubject(context: context, subjects: subjects);
+    final newSubject = await showSelectSubject(
+      context: context,
+      subjects: subjects,
+    );
 
     setSubject(newSubject);
   }
@@ -158,8 +162,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
       if (pickedSubjectId.value != null) {
         Scrollable.ensureVisible(
           keysList[subjects.indexWhere(
-            (element) => pickedSubjectId.value == element.id,
-          )]
+                (element) => pickedSubjectId.value == element.id,
+              )]
               .currentContext!,
           duration: const Duration(milliseconds: 500),
         );
@@ -254,31 +258,36 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   ),
                   const SizedBox(height: 10),
                   Autocomplete<Subject>(
-                    fieldViewBuilder: (context, textEditingController,
-                        focusNode, onFieldSubmitted) {
-                      return TextField(
-                        controller: nameController.value,
-                        focusNode: focusNode,
-                        autofocus: true,
-                        maxLines: null,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (value) {
-                          onFieldSubmitted();
-                          if (nameController.value.text.isNotEmpty) {
-                            Navigator.pop(context);
-                            onSave();
-                          }
+                    fieldViewBuilder:
+                        (
+                          context,
+                          textEditingController,
+                          focusNode,
+                          onFieldSubmitted,
+                        ) {
+                          return TextField(
+                            controller: nameController.value,
+                            focusNode: focusNode,
+                            autofocus: true,
+                            maxLines: null,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (value) {
+                              onFieldSubmitted();
+                              if (nameController.value.text.isNotEmpty) {
+                                Navigator.pop(context);
+                                onSave();
+                              }
+                            },
+                            onChanged: (value) {
+                              textEditingController.text = value;
+                            },
+                            onEditingComplete: () {},
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(15),
+                              border: OutlineInputBorder(),
+                            ),
+                          );
                         },
-                        onChanged: (value) {
-                          textEditingController.text = value;
-                        },
-                        onEditingComplete: () {},
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.all(15),
-                          border: OutlineInputBorder(),
-                        ),
-                      );
-                    },
                     onSelected: (subject) {
                       nameController.value.text = '';
                       setSubject(subject);
@@ -323,7 +332,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     onTap: pickDate,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 4),
+                        vertical: 16,
+                        horizontal: 4,
+                      ),
                       child: Row(
                         children: [
                           Expanded(
@@ -335,7 +346,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                             ),
                           ),
                           Text(
-                            pickedDate.value.formatFromSettings(),
+                            pickedDate.value.formatFromSettings(context),
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -356,8 +367,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       const SizedBox(width: 8),
                       ChoiceChip(
                         label: Text(context.loc.tomorrow),
-                        selected:
-                            pickedDate.value.isSameDay(Date.today().addDays(1)),
+                        selected: pickedDate.value.isSameDay(
+                          Date.today().addDays(1),
+                        ),
                         onSelected: (value) {
                           setState(() {
                             pickedDate.value = Date.today().addDays(1);
@@ -367,9 +379,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                       const SizedBox(width: 8),
                       ChoiceChip(
                         label: Text(
-                            '${context.loc.next} ${DateFormat.EEEE(getLocale().languageCode).format(DateTime.now()).toLowerCase()}'),
-                        selected:
-                            pickedDate.value.isSameDay(Date.today().addDays(7)),
+                          '${context.loc.next} ${DateFormat.EEEE(context.locale.languageCode).format(DateTime.now()).toLowerCase()}',
+                        ),
+                        selected: pickedDate.value.isSameDay(
+                          Date.today().addDays(7),
+                        ),
                         onSelected: (value) {
                           setState(() {
                             pickedDate.value = Date.today().addDays(7);

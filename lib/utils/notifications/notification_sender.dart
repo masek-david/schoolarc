@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
@@ -23,7 +24,7 @@ const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
 
 Future<void> initNotifications() async {
-  final loc = getLocalization();
+  final loc = getLocalizationWithoutContext();
 
   await AwesomeNotifications().initialize(
     'resource://drawable/notification_icon',
@@ -65,10 +66,12 @@ class NotificationSender {
   /// If [sendNow], the notification will appear immediately
   ///
   /// [firstUpcoming] will call after all notifications are scheduled with the date of the first notification
-  static Future<void> scheduleUpcomingDayNotifications({
+  static Future<void> scheduleUpcomingDayNotifications(
+    BuildContext context, {
     bool sendNow = false,
     void Function(Date date, TimeOfDay time)? firstUpcoming,
   }) async {
+    final loc = context.loc;
     if (!isCompatiblePlatform()) return;
     if (!await areNotificationsAllowed(tomorrowChannel)) return;
     if (!sendNow) {
@@ -80,8 +83,9 @@ class NotificationSender {
     final TimeOfDay arriveTime = sendNow
         ? TimeOfDay.now()
         : settings.get(Setting.tomorrowNotificationTime);
-    final bool beforeWeekend =
-        settings.get(Setting.tomorrowNotificationBeforeWeekend);
+    final bool beforeWeekend = settings.get(
+      Setting.tomorrowNotificationBeforeWeekend,
+    );
     final today = Date.today();
 
     final List<Date> days = [];
@@ -121,11 +125,12 @@ class NotificationSender {
       final day = days[i];
       final aboutDay = day.addDays(1);
       final arrive = day.toDateTimeLocal().copyWith(
-            hour: arriveTime.hour,
-            minute: arriveTime.minute,
-          );
+        hour: arriveTime.hour,
+        minute: arriveTime.minute,
+      );
 
       createNotification(
+        loc: loc,
         id: i,
         arrive: sendNow ? null : arrive,
         exams: exams[aboutDay] ?? [],
@@ -140,6 +145,7 @@ class NotificationSender {
   }
 
   static Future<void> createNotification({
+    required AppLocalizations loc,
     required DateTime? arrive,
     required List<Exam> exams,
     required List<Homework> hws,
@@ -147,7 +153,6 @@ class NotificationSender {
     required int id,
   }) async {
     final lineBreak = Platform.isIOS ? '\n' : '<br>';
-    final loc = getLocalization();
 
     String body = '';
     // MISSED
@@ -199,8 +204,9 @@ class NotificationSender {
       summary += '${exams.length} ${loc.exams(exams.length).toLowerCase()}';
     }
 
-    final schedule =
-        arrive != null ? NotificationCalendar.fromDate(date: arrive) : null;
+    final schedule = arrive != null
+        ? NotificationCalendar.fromDate(date: arrive)
+        : null;
     final result = await AwesomeNotifications().createNotification(
       schedule: schedule,
       content: NotificationContent(
@@ -218,7 +224,9 @@ class NotificationSender {
     );
 
     if (result) {
-      log('\u001b[1;42m\u001b[1;97mTomorrow notification scheduled for: ${arrive?.toLocal().toString()}');
+      log(
+        '\u001b[1;42m\u001b[1;97mTomorrow notification scheduled for: ${arrive?.toLocal().toString()}',
+      );
     } else {
       log('error creating notification');
     }
@@ -245,8 +253,9 @@ class NotificationSender {
     }
     List<NotificationPermission> permission = [];
     try {
-      permission =
-          await AwesomeNotifications().checkPermissionList(channelKey: channel);
+      permission = await AwesomeNotifications().checkPermissionList(
+        channelKey: channel,
+      );
     } on PlatformException {
       return false;
     }
@@ -304,8 +313,8 @@ class NotificationSender {
               onPressed: () async {
                 await AwesomeNotifications()
                     .requestPermissionToSendNotifications(
-                  channelKey: channel,
-                );
+                      channelKey: channel,
+                    );
                 bool allowed = await areNotificationsAllowed(channel);
                 if (context.mounted) {
                   Navigator.pop(context, allowed);

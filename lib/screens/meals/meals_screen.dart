@@ -93,6 +93,7 @@ class MealsScreen extends ConsumerWidget {
                                         .noMealsOn(
                                           date
                                               .formatWithWeekday(
+                                                context,
                                                 useOnFormat: true,
                                               )
                                               .unCapitalize(),
@@ -102,6 +103,7 @@ class MealsScreen extends ConsumerWidget {
                                         .mealsOn(
                                           date
                                               .formatWithWeekday(
+                                                context,
                                                 useOnFormat: true,
                                               )
                                               .unCapitalize(),

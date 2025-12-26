@@ -1698,17 +1698,29 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
-  /// No description provided for @timeFormat.
+  /// No description provided for @languageDefault.
   ///
   /// In en, this message translates to:
-  /// **'Use 24-hour time format'**
-  String get timeFormat;
+  /// **'Language default'**
+  String get languageDefault;
 
-  /// No description provided for @timeFormatSubtitle.
+  /// No description provided for @deviceLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Device language'**
+  String get deviceLanguage;
+
+  /// No description provided for @h24timeFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Force 24-hour time format'**
+  String get h24timeFormat;
+
+  /// No description provided for @h24timeFormatSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Some languages support only 24-hour format'**
-  String get timeFormatSubtitle;
+  String get h24timeFormatSubtitle;
 
   /// No description provided for @timeFormat12.
   ///
@@ -1737,7 +1749,7 @@ abstract class AppLocalizations {
   /// No description provided for @weekStartsOnMondaySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'If enabled, first day of the week will be monday. Else, it will be Sunday.'**
+  /// **'If enabled, first day of the week will be monday. Otherwise it will be Sunday.'**
   String get weekStartsOnMondaySubtitle;
 
   /// No description provided for @viewingOfflineTimetable.

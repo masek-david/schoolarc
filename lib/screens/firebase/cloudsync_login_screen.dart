@@ -20,9 +20,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
   const CloudSyncLoginScreen({super.key});
 
   Future<void> pushScreen(BuildContext context, Widget screen) {
-    return Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => screen,
-    ));
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => screen,
+      ),
+    );
   }
 
   @override
@@ -83,8 +85,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                         fields: [
                           LoginField(
                             name: context.loc.email,
-                            initialValue:
-                                ref.read(firebaseServiceProvider).userEmail,
+                            initialValue: ref
+                                .read(firebaseServiceProvider)
+                                .userEmail,
                             autofillHints: [AutofillHints.email],
                           ),
                           LoginField(
@@ -187,8 +190,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           final key = GlobalKey<ProgressDialogState>();
 
                           if (fields[2] != fields[3]) {
-                            showMessage(context, context.loc.notSamePassword,
-                                isError: true);
+                            showMessage(
+                              context,
+                              context.loc.notSamePassword,
+                              isError: true,
+                            );
                             return;
                           }
 
@@ -205,9 +211,10 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           await ref
                               .read(firebaseLoginProvider.notifier)
                               .register(
-                                  email: fields[0],
-                                  password: fields[2],
-                                  nickname: fields[1]);
+                                email: fields[0],
+                                password: fields[2],
+                                nickname: fields[1],
+                              );
 
                           if (ref.read(firebaseLoginProvider).value != true) {
                             if (context.mounted) {
@@ -241,7 +248,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             Navigator.pop(context);
                             Navigator.pop(context);
                             showMessage(
-                                context, context.loc.registeredSuccessfully);
+                              context,
+                              context.loc.registeredSuccessfully,
+                            );
                           }
                         },
                       ),
@@ -257,9 +266,10 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               Expanded(
                 child: NicknameText(
                   user: Member(
-                      ref.read(firebaseServiceProvider).auth.currentUser?.uid ??
-                          '',
-                      nickname.value ?? ''),
+                    ref.read(firebaseServiceProvider).auth.currentUser?.uid ??
+                        '',
+                    nickname.value ?? '',
+                  ),
                   radius: 18,
                 ),
               ),
@@ -281,15 +291,20 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                     .saveNickname(fields[0]);
                               } on Object catch (e) {
                                 if (context.mounted) {
-                                  showMessage(context, e.toString(),
-                                      isError: true);
+                                  showMessage(
+                                    context,
+                                    e.toString(),
+                                    isError: true,
+                                  );
                                 }
                                 return;
                               }
 
                               if (context.mounted) {
                                 showMessage(
-                                    context, context.loc.nicknameChanged);
+                                  context,
+                                  context.loc.nicknameChanged,
+                                );
                                 Navigator.pop(context);
                               }
                             },
@@ -328,8 +343,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                         ],
                         onSubmit: (fields) async {
                           if (fields[1] != fields[2]) {
-                            showMessage(context, context.loc.notSamePassword,
-                                isError: true);
+                            showMessage(
+                              context,
+                              context.loc.notSamePassword,
+                              isError: true,
+                            );
                             return;
                           }
 
@@ -345,7 +363,10 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           try {
                             await ref
                                 .read(firebaseServiceProvider)
-                                .changePassword(fields[0], fields[1]);
+                                .changePassword(
+                                  oldPassword: fields[0],
+                                  password: fields[1],
+                                );
                           } on Object catch (e) {
                             if (context.mounted) {
                               showMessage(
@@ -358,8 +379,10 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           }
 
                           if (context.mounted) {
-                            showMessage(context,
-                                context.loc.passwordChangedSuccessfully);
+                            showMessage(
+                              context,
+                              context.loc.passwordChangedSuccessfully,
+                            );
                             Navigator.pop(context);
                           }
                         },
@@ -394,8 +417,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                   .logOut();
                             } on Object catch (e) {
                               if (context.mounted) {
-                                showMessage(context, e.toString(),
-                                    isError: true);
+                                showMessage(
+                                  context,
+                                  e.toString(),
+                                  isError: true,
+                                );
                               }
                               return;
                             }
@@ -416,7 +442,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             onPressed: useCloudSync
                 ? () async {
                     try {
-                      await ref.read(firebaseServiceProvider).getAllData();
+                      await ref
+                          .read(firebaseServiceProvider)
+                          .getAllData(context);
                     } on Object catch (e) {
                       if (context.mounted) {
                         showMessage(context, e.toString(), isError: true);
@@ -477,11 +505,14 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                   try {
                                     await ref
                                         .read(firebaseServiceProvider)
-                                        .deleteAllData(fields[0]);
+                                        .deleteAllData(password: fields[0]);
                                   } on Object catch (e) {
                                     if (context.mounted) {
-                                      showMessage(context, e.toString(),
-                                          isError: true);
+                                      showMessage(
+                                        context,
+                                        e.toString(),
+                                        isError: true,
+                                      );
                                     }
                                     return;
                                   }
@@ -492,7 +523,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
 
                                   if (context.mounted) {
                                     showMessage(
-                                        context, context.loc.deletedAllData);
+                                      context,
+                                      context.loc.deletedAllData,
+                                    );
                                   }
                                 },
                               ),

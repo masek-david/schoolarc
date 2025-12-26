@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 
 /// To define a new setting, create a field in [Setting] enum
 /// and then create [SettingModel] in [SettingsDatabase] [_settings]
@@ -16,7 +15,7 @@ enum Setting {
   themeColorValue,
   themeDynamicSchemeVariantInt,
   themeUseOled,
-  localeLanguage,
+  languageCode,
   use24HourFormat,
   dateFormat,
   weekStartsOnMonday,
@@ -77,18 +76,18 @@ class SettingsDatabase {
       key: 'themeUseOled',
       defaultValue: false,
     ),
-    Setting.localeLanguage: const SettingModel(
-      key: 'localeLanguage',
-      // format: 'cs' or 'en'
+    Setting.languageCode: const SettingModel(
+      key: 'languageCode',
+      // format: 'cs' or 'en', null is for device default
       defaultValue: null,
     ),
     Setting.use24HourFormat: const SettingModel(
       key: '24HourFormat',
       defaultValue: false,
     ),
-    Setting.dateFormat: SettingModel(
-      key: 'dateFormat',
-      defaultValue: supportedDateFormats[0],
+    Setting.dateFormat: const SettingModel(
+      key: 'dateFormat1',
+      defaultValue: null,
     ),
     Setting.weekStartsOnMonday: const SettingModel(
       key: 'startOnMonday',

@@ -149,7 +149,7 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  widget.task.date.formatFromSettings(),
+                  widget.task.date.formatFromSettings(context),
                   style: const TextStyle(fontSize: 16),
                 ),
               ],

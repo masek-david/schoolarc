@@ -22,8 +22,9 @@ import 'package:table_calendar/table_calendar.dart';
 /// this provider switches on and off when /calendar route is pushed
 ///
 /// that will switch current page, pop everything and show tomorrow date in calendar
-final showCalendarProvider =
-    NotifierProvider<ShowCalendar, bool>(ShowCalendar.new);
+final showCalendarProvider = NotifierProvider<ShowCalendar, bool>(
+  ShowCalendar.new,
+);
 
 class ShowCalendar extends Notifier<bool> {
   @override
@@ -54,11 +55,14 @@ class CalendarScreen extends ConsumerStatefulWidget {
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen>
     with RestorationMixin {
-  late final RestorableDateTime _focusedDay = RestorableDateTime(showtomorrow
-      ? DateTime.now().toUtc().add(const Duration(days: 1)).toLocal()
-      : DateTime.now());
-  late final RestorableDateTime _selectedDay =
-      RestorableDateTime(_focusedDay.value);
+  late final RestorableDateTime _focusedDay = RestorableDateTime(
+    showtomorrow
+        ? DateTime.now().toUtc().add(const Duration(days: 1)).toLocal()
+        : DateTime.now(),
+  );
+  late final RestorableDateTime _selectedDay = RestorableDateTime(
+    _focusedDay.value,
+  );
 
   // how many pages you can scroll to negative
   static const int negativePageCount = 1000000;
@@ -70,8 +74,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
   );
 
   final _resizeController = ResizableController();
-  List<double> initialRatios =
-      List<double>.from(settings.get(Setting.calendarResizableContainerRatio));
+  List<double> initialRatios = List<double>.from(
+    settings.get(Setting.calendarResizableContainerRatio),
+  );
 
   // for shorcuts
   final _focus = FocusNode();
@@ -146,6 +151,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       },
     );
   }
+
   Widget buildPages(
     Map<Date, List<Homework>> hws,
     Map<Date, List<Exam>> exams,
@@ -207,12 +213,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       child: Actions(
         actions: {
           NewHomeworkIntent: CallbackAction(
-            onInvoke: (intent) => addNewHw(context,
-                initialDate: Date.fromDateTime(_selectedDay.value.toLocal())),
+            onInvoke: (intent) => addNewHw(
+              context,
+              initialDate: Date.fromDateTime(_selectedDay.value.toLocal()),
+            ),
           ),
           NewExamIntent: CallbackAction(
-            onInvoke: (intent) => addNewExam(context,
-                initialDate: Date.fromDateTime(_selectedDay.value.toLocal())),
+            onInvoke: (intent) => addNewExam(
+              context,
+              initialDate: Date.fromDateTime(_selectedDay.value.toLocal()),
+            ),
           ),
         },
         child: Focus(
@@ -228,19 +238,25 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                   WebRequestFocus(
                     onPressed: () async {
                       HapticFeedback.mediumImpact();
-                      addNewExam(context,
-                          initialDate:
-                              Date.fromDateTime(_selectedDay.value.toLocal()));
+                      addNewExam(
+                        context,
+                        initialDate: Date.fromDateTime(
+                          _selectedDay.value.toLocal(),
+                        ),
+                      );
                     },
                     child: FloatingActionButton.extended(
                       tooltip:
-                          '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText().toLowerCase()}',
+                          '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
                       heroTag: 'exam_btn',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
-                        addNewExam(context,
-                            initialDate: Date.fromDateTime(
-                                _selectedDay.value.toLocal()));
+                        addNewExam(
+                          context,
+                          initialDate: Date.fromDateTime(
+                            _selectedDay.value.toLocal(),
+                          ),
+                        );
                       },
                       icon: const Icon(Icons.add),
                       label: Text(context.loc.exams(1)),
@@ -250,19 +266,25 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                   WebRequestFocus(
                     onPressed: () async {
                       HapticFeedback.mediumImpact();
-                      addNewHw(context,
-                          initialDate:
-                              Date.fromDateTime(_selectedDay.value.toLocal()));
+                      addNewHw(
+                        context,
+                        initialDate: Date.fromDateTime(
+                          _selectedDay.value.toLocal(),
+                        ),
+                      );
                     },
                     child: FloatingActionButton.extended(
                       tooltip:
-                          '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText().toLowerCase()}',
+                          '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
                       heroTag: 'homework_btn',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
-                        addNewHw(context,
-                            initialDate: Date.fromDateTime(
-                                _selectedDay.value.toLocal()));
+                        addNewHw(
+                          context,
+                          initialDate: Date.fromDateTime(
+                            _selectedDay.value.toLocal(),
+                          ),
+                        );
                       },
                       icon: const Icon(Icons.add),
                       label: Text(context.loc.homework(1)),
@@ -274,47 +296,55 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                   ? Container(
                       // this is what is shown behind the resizable container divider
                       color: Theme.of(context).colorScheme.surfaceContainer,
-                      child: LayoutBuilder(builder: (context, constraints) {
-                        // if the screen was big, but now is small, it wouldnt fit, so i check it here and reset it if needed
-                        for (var element in initialRatios) {
-                          if (element * constraints.maxWidth < 300) {
-                            initialRatios = [0.5, 0.5];
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // if the screen was big, but now is small, it wouldnt fit, so i check it here and reset it if needed
+                          for (var element in initialRatios) {
+                            if (element * constraints.maxWidth < 300) {
+                              initialRatios = [0.5, 0.5];
+                            }
                           }
-                        }
 
-                        return ResizableContainer(
-                          controller: _resizeController,
-                          direction: Axis.horizontal,
-                          children: [
-                            ResizableChild(
-                              size: ResizableSize.ratio(initialRatios[0],
-                                  min: 300),
-                              // size: const ResizableSize.expand(min: 300),
-                              divider: const ResizableDivider(
-                                thickness: 4,
-                                length: ResizableSize.pixels(60),
-                                padding: 12,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: buildCalendar(isWide, hws, exams),
-                              ),
-                            ),
-                            ResizableChild(
-                              // size: const ResizableSize.expand(min: 300),
-                              size: ResizableSize.ratio(initialRatios[1],
-                                  min: 300),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Theme.of(context).colorScheme.surface,
+                          return ResizableContainer(
+                            controller: _resizeController,
+                            direction: Axis.horizontal,
+                            children: [
+                              ResizableChild(
+                                size: ResizableSize.ratio(
+                                  initialRatios[0],
+                                  min: 300,
                                 ),
-                                child: buildPages(hws, exams, missedHws),
+                                // size: const ResizableSize.expand(min: 300),
+                                divider: const ResizableDivider(
+                                  thickness: 4,
+                                  length: ResizableSize.pixels(60),
+                                  padding: 12,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: buildCalendar(isWide, hws, exams),
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      }),
+                              ResizableChild(
+                                // size: const ResizableSize.expand(min: 300),
+                                size: ResizableSize.ratio(
+                                  initialRatios[1],
+                                  min: 300,
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                  ),
+                                  child: buildPages(hws, exams, missedHws),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     )
                   : Column(
                       children: [

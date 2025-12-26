@@ -17,6 +17,8 @@ import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/create_new_dialog.dart';
@@ -28,7 +30,6 @@ Future<void> updateMainWidget(WidgetRef ref) async {
   if (kIsWeb || !Platform.isAndroid) return;
 
   await checkForCompletedHomework(ref);
-  await saveLocalizationStrings();
 
   Map<String, dynamic> json = {};
   Map<Date, List<Task>> tasks = {};
@@ -39,7 +40,7 @@ Future<void> updateMainWidget(WidgetRef ref) async {
   for (int i = 0; i < 14; i++) {
     final date = now.addDays(i);
     tasks.addAll({
-      date: [...hws[date] ?? [], ...exams[date] ?? []]
+      date: [...hws[date] ?? [], ...exams[date] ?? []],
     });
   }
 
@@ -80,18 +81,15 @@ Future<void> _saveAndUpdateMain(String data) async {
   );
 }
 
-Future<void> saveLocalizationStrings() async {
-  final loc = getLocalization();
-  String format = settings.get(Setting.dateFormat);
-  String shortFormat =
-      supportedDateFormatsNoYear[supportedDateFormats.indexOf(format)];
+Future<void> saveLocalizationStrings(BuildContext context) async {
+  final loc = getLocalizationWithoutContext();
 
   await HomeWidget.saveWidgetData(
     'loc',
     jsonEncode({
-      'locale': getLocale().languageCode,
-      'format': format,
-      'shortFormat': shortFormat,
+      'locale': context.locale.languageCode,
+      'format': getFormatPattern(context, false),
+      'shortFormat': getFormatPattern(context, true),
       'today': loc.today,
       'tomorrow': loc.tomorrow,
       'noHomework': loc.noHomework,
@@ -111,8 +109,9 @@ void updateMealsWidget(Map<Date, List<Meal>> meals) {
     (key, value) {
       // if it is after meal time, dont include meal for today
       if (!key.isSameDay(today) ||
-          TimeOfDay.fromDateTime(DateTime.now())
-              .isBefore(settings.get(Setting.mealsShowTodayUntil))) {
+          TimeOfDay.fromDateTime(
+            DateTime.now(),
+          ).isBefore(settings.get(Setting.mealsShowTodayUntil))) {
         json[key.toPrimitiveInt().toString()] = value
             .map(
               (e) => e.toJson(),
@@ -158,6 +157,7 @@ FutureOr<void> backgroundCallback(Uri? data) async {
   }
 }
 
+// checks hws that were completed from the widget, and notifies the notifier 
 Future<void> checkForCompletedHomework(WidgetRef ref) async {
   final hws = ref.read(hwDataProvider);
   await IsolatedHive.initFlutter();

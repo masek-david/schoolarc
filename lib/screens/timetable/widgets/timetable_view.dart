@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
@@ -138,12 +137,12 @@ class TimetableView extends StatelessWidget {
                             children: [
                               Text(
                                 date
-                                    .format('EEE', getLocale().languageCode)
+                                    .format('EEE', context.locale.languageCode)
                                     .capitalize(),
                                 style: googleSansFlex(width: 110, weight: 600),
                               ),
                               Text(
-                                date.formatFromSettings(),
+                                date.formatFromSettings(context),
                                 style: googleSansFlex(width: 65),
                               ),
                             ],

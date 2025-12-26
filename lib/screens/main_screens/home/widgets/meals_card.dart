@@ -95,6 +95,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                             .noMealsOn(
                                               date
                                                   .formatWithWeekday(
+                                                    context,
                                                     useOnFormat: true,
                                                   )
                                                   .unCapitalize(),
@@ -104,6 +105,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                             .mealsOn(
                                               date
                                                   .formatWithWeekday(
+                                                    context,
                                                     useOnFormat: true,
                                                   )
                                                   .unCapitalize(),
@@ -161,7 +163,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                       controller: _pageController,
                       count: data.keys.length,
                       effect: ScrollingDotsEffect(
-                        activeDotColor: Theme.of(context).colorScheme.tertiary,
+                        activeDotColor: Theme.of(context).colorScheme.primary,
                         dotColor: Theme.of(
                           context,
                         ).colorScheme.surfaceContainerHighest,

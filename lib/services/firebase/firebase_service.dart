@@ -7,13 +7,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
@@ -86,8 +87,10 @@ class FirebaseService {
     return;
   }
 
-  Future<bool> changePassword(String oldPassword, String password) async {
-    final loc = getLocalization();
+  Future<bool> changePassword({
+    required String oldPassword,
+    required String password,
+  }) async {
     if (auth.currentUser == null) {
       throw AuthException(.noUser);
     }
@@ -98,7 +101,7 @@ class FirebaseService {
         password: oldPassword,
       );
     } catch (error) {
-      throw ApiException("${loc.cantLogin} $error");
+      throw ApiException("$error", code: .cantLogIn);
     }
 
     //Pass in the password to updatePassword.
@@ -108,21 +111,20 @@ class FirebaseService {
           return true;
         })
         .catchError((error) {
-          throw ApiException("${loc.passwordCantBeChanged} $error");
+          throw ApiException('$error', code: .passwordCantBeChanged);
           // This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
         });
     return false;
   }
 
-  Future<void> deleteAllData(String password) async {
-    final loc = getLocalization();
+  Future<void> deleteAllData({required String password}) async {
     try {
       await auth.signInWithEmailAndPassword(
         email: auth.currentUser!.email ?? '',
         password: password,
       );
     } catch (error) {
-      throw ApiException("${loc.cantLogin} $error");
+      throw ApiException("$error", code: .cantLogIn);
     }
     try {
       await exams.remove();
@@ -130,14 +132,15 @@ class FirebaseService {
       await subjects.remove();
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (error) {
-      throw ApiException("${loc.cantDeleteData} $error");
+      throw ApiException("$error", code: .cantDeleteData);
     }
     return;
   }
 
-  Future<void> getAllData() async {
+  Future<void> getAllData(BuildContext context) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final ref = FirebaseDatabase.instance.ref('users/$uid');
+    final loc = context.loc;
 
     final snapshot = await ref.get();
     if (snapshot.exists) {
@@ -154,7 +157,7 @@ class FirebaseService {
       final exportJson = jsonEncode(exportData);
 
       await FilePicker.platform.saveFile(
-        dialogTitle: getLocalization().chooseSaveLocation,
+        dialogTitle: loc.chooseSaveLocation,
         type: FileType.custom,
         allowedExtensions: ['json'],
         fileName: 'schoolarc_cloud_data_export.json',

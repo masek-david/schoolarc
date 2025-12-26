@@ -94,7 +94,7 @@ class _NewTaskDialogButtonState extends ConsumerState<NewTaskDialogButton> {
                               context.loc.deadline,
                               style: context.txt.titleMedium,
                             ),
-                            Text(date.formatFromSettings())
+                            Text(date.formatFromSettings(context))
                           ],
                         ),
                       )

@@ -10,13 +10,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greetingByHour(String hour) {
-    String _temp0 = intl.Intl.selectLogic(hour, {
-      'morning': 'Good morning',
-      'afternoon': 'Good afternoon',
-      'evening': 'Good evening',
-      'night': 'Good night',
-      'other': 'Hello',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      hour,
+      {
+        'morning': 'Good morning',
+        'afternoon': 'Good afternoon',
+        'evening': 'Good evening',
+        'night': 'Good night',
+        'other': 'Hello',
+      },
+    );
     return '$_temp0';
   }
 
@@ -192,19 +195,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String examsFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No exams',
-      'other': 'Exams',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': 'No exams',
+        'other': 'Exams',
+      },
+    );
     return '$_temp0 $whenText';
   }
 
   @override
   String examAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(isAbsent, {
-      'true': 'No exams',
-      'other': 'Exams',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isAbsent,
+      {
+        'true': 'No exams',
+        'other': 'Exams',
+      },
+    );
     return '$_temp0';
   }
 
@@ -233,19 +242,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeworkFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No homework',
-      'other': 'Homework',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': 'No homework',
+        'other': 'Homework',
+      },
+    );
     return '$_temp0 $whenText';
   }
 
   @override
   String homeworkAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(isAbsent, {
-      'true': 'No homework',
-      'other': 'Homework',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isAbsent,
+      {
+        'true': 'No homework',
+        'other': 'Homework',
+      },
+    );
     return '$_temp0';
   }
 
@@ -724,16 +739,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String onWeekday(String weekday) {
-    String _temp0 = intl.Intl.selectLogic(weekday, {
-      '1': 'Monday',
-      '2': 'Tuesday',
-      '3': 'Wednesday',
-      '4': 'Thursday',
-      '5': 'Friday',
-      '6': 'Saturday',
-      '7': 'Sunday',
-      'other': 'unknown',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        '1': 'Monday',
+        '2': 'Tuesday',
+        '3': 'Wednesday',
+        '4': 'Thursday',
+        '5': 'Friday',
+        '6': 'Saturday',
+        '7': 'Sunday',
+        'other': 'unknown',
+      },
+    );
     return 'On $_temp0';
   }
 
@@ -958,10 +976,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get timeFormat => 'Use 24-hour time format';
+  String get languageDefault => 'Language default';
 
   @override
-  String get timeFormatSubtitle => 'Some languages support only 24-hour format';
+  String get deviceLanguage => 'Device language';
+
+  @override
+  String get h24timeFormat => 'Force 24-hour time format';
+
+  @override
+  String get h24timeFormatSubtitle =>
+      'Some languages support only 24-hour format';
 
   @override
   String get timeFormat12 => '12-hour';
@@ -977,7 +1002,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weekStartsOnMondaySubtitle =>
-      'If enabled, first day of the week will be monday. Else, it will be Sunday.';
+      'If enabled, first day of the week will be monday. Otherwise it will be Sunday.';
 
   @override
   String get viewingOfflineTimetable => 'Viewing offline timetable';

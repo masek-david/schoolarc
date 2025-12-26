@@ -51,9 +51,6 @@ class ErrorTile extends StatelessWidget {
           case .noUser:
             icon = Icons.person_off_outlined;
             errorText = loc.noUserLoggedIn;
-          case .couldntLogIn:
-            icon = Icons.person_off_outlined;
-            errorText = loc.couldntLogIn;
           case .loggedOut:
             icon = Icons.person_off_outlined;
             errorText = loc.loggedOut;
@@ -152,6 +149,17 @@ class ErrorTile extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.restorablePushNamed(context, '/bakalari');
+              },
+              child: Text(context.loc.login),
+            ),
+          if (allowActions && action == ExceptionActions.cloudsyncLogin)
+            FilledButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(col.errorContainer),
+                foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
+              ),
+              onPressed: () {
+                Navigator.restorablePushNamed(context, '/cloudsync');
               },
               child: Text(context.loc.login),
             ),

@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/l10n/my_localization.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 extension BetterDateTime on DateTime {
@@ -15,18 +16,18 @@ extension BetterDateTime on DateTime {
   }
 
   /// Returns String of Time using saved date format and using apps language
-  String formatTime() {
+  String formatTime(BuildContext context) {
     final date = toLocal();
     if (settings.get(Setting.use24HourFormat)) {
       return DateFormat.Hm().format(date);
     }
-    return DateFormat.jm(getLocale().languageCode).format(date);
+    return DateFormat.jm(context.locale.languageCode).format(date);
   }
 
   /// formats using saved dateformat and using apps language
-  String format() {
+  String format(BuildContext context) {
     return DateFormat(
-            settings.get(Setting.dateFormat), getLocale().languageCode)
+            settings.get(Setting.dateFormat), context.locale.languageCode)
         .format(this);
   }
 }

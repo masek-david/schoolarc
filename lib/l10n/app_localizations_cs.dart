@@ -10,13 +10,16 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String greetingByHour(String hour) {
-    String _temp0 = intl.Intl.selectLogic(hour, {
-      'morning': 'Dobré ráno',
-      'afternoon': 'Dobré odpoledne',
-      'evening': 'Dobrý večer',
-      'night': 'Dobrou noc',
-      'other': 'Ahoj',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      hour,
+      {
+        'morning': 'Dobré ráno',
+        'afternoon': 'Dobré odpoledne',
+        'evening': 'Dobrý večer',
+        'night': 'Dobrou noc',
+        'other': 'Ahoj',
+      },
+    );
     return '$_temp0';
   }
 
@@ -199,19 +202,25 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String examsFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': '$whenText žádné testy',
-      'other': 'Testy na $whenText',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': '$whenText žádné testy',
+        'other': 'Testy na $whenText',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String examAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(isAbsent, {
-      'true': 'Žádné testy',
-      'other': 'Testy',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isAbsent,
+      {
+        'true': 'Žádné testy',
+        'other': 'Testy',
+      },
+    );
     return '$_temp0';
   }
 
@@ -241,19 +250,25 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String homeworkFor(String isEmpty, Object whenText) {
-    String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': '$whenText žádné úkoly',
-      'other': 'Úkoly na $whenText',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': '$whenText žádné úkoly',
+        'other': 'Úkoly na $whenText',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String homeworkAbsence(String isAbsent) {
-    String _temp0 = intl.Intl.selectLogic(isAbsent, {
-      'true': 'Žádné úkoly',
-      'other': 'Úkoly',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      isAbsent,
+      {
+        'true': 'Žádné úkoly',
+        'other': 'Úkoly',
+      },
+    );
     return '$_temp0';
   }
 
@@ -733,16 +748,19 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String onWeekday(String weekday) {
-    String _temp0 = intl.Intl.selectLogic(weekday, {
-      '1': 'V pondělí',
-      '2': 'V úterý',
-      '3': 'Ve středu',
-      '4': 'Ve čtvrtek',
-      '5': 'V pátek',
-      '6': 'V sobotu',
-      '7': 'V neděli',
-      'other': 'neznámé',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        '1': 'V pondělí',
+        '2': 'V úterý',
+        '3': 'Ve středu',
+        '4': 'Ve čtvrtek',
+        '5': 'V pátek',
+        '6': 'V sobotu',
+        '7': 'V neděli',
+        'other': 'neznámé',
+      },
+    );
     return '$_temp0';
   }
 
@@ -973,10 +991,16 @@ class AppLocalizationsCs extends AppLocalizations {
   String get language => 'Jazyk';
 
   @override
-  String get timeFormat => 'Používat 24 hodinový formát času';
+  String get languageDefault => 'Jazyk';
 
   @override
-  String get timeFormatSubtitle =>
+  String get deviceLanguage => 'Jazyk zařízení';
+
+  @override
+  String get h24timeFormat => 'Vynutit 24 hodinový formát času';
+
+  @override
+  String get h24timeFormatSubtitle =>
       'Některé jazyky podporují pouze 24 hodinový formát';
 
   @override

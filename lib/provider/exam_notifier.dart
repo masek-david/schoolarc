@@ -12,8 +12,9 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-final examDataProvider =
-    NotifierProvider<ExamNotifier, Map<String, ExamData>>(ExamNotifier.new);
+final examDataProvider = NotifierProvider<ExamNotifier, Map<String, ExamData>>(
+  ExamNotifier.new,
+);
 
 final examProvider = Provider<Map<String, Exam>>(
   (ref) {
@@ -89,6 +90,7 @@ Map<Date, List<Exam>> examsSortByDate(Map<String, Exam> original) {
   );
 
   examsDateMap.forEach((key, value) {
+    // TODO sort
     value.sort((a, b) => a.id.compareTo(b.id));
     value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
   });
@@ -173,14 +175,19 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase =
-        ref.read(firebaseServiceProvider).listenExams().listen((event) async {
-      ref.read(firebaseActivityProvider.notifier).read(2);
+    listenFirebase = ref
+        .read(firebaseServiceProvider)
+        .listenExams()
+        .listen(
+          (event) async {
+            ref.read(firebaseActivityProvider.notifier).read(2);
 
-      await checkFireExam(event);
-    }, onError: (error) {
-      log('error listening to firebase exams: ${error.toString()}');
-    });
+            await checkFireExam(event);
+          },
+          onError: (error) {
+            log('error listening to firebase exams: ${error.toString()}');
+          },
+        );
   }
 
   /// at midnight update state with exams for yesterday being completed
@@ -227,7 +234,8 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
 
     state.forEach(
       (key, value) {
-        bool isSynced = fireExams
+        bool isSynced =
+            fireExams
                 ?.where(
                   (element) => element.id == value.id,
                 )
@@ -352,9 +360,11 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
     if (isLast) {
       order = (list.lastOrNull?.order.ceilToDouble() ?? 0) + 1;
     } else {
-      final indexBefore =
-          index == 0 ? 0.0 : list.elementAtOrNull(index - 1)?.order ?? 0;
-      final indexAfter = list.elementAtOrNull(index)?.order ??
+      final indexBefore = index == 0
+          ? 0.0
+          : list.elementAtOrNull(index - 1)?.order ?? 0;
+      final indexAfter =
+          list.elementAtOrNull(index)?.order ??
           list.lastOrNull?.order.ceilToDouble() ??
           0 + 1;
 
@@ -376,9 +386,10 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
   void revertDelete(ExamData exam) {
     update(
       exam.copyWith(
-          timestamp: DateTime.now().toUtc(),
-          isDeleted: false,
-          stateReaddingVersion: exam.stateReaddingVersion + 1),
+        timestamp: DateTime.now().toUtc(),
+        isDeleted: false,
+        stateReaddingVersion: exam.stateReaddingVersion + 1,
+      ),
     );
   }
 
@@ -439,9 +450,9 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
       // print(
       //     '\u001b[1;93mediting exam from hive: ${fireExam.toString()}');
 
-      ref
-          .read(firebaseServiceProvider)
-          .updateExams([localExam.copyWith(id: fireExam.id)]);
+      ref.read(firebaseServiceProvider).updateExams([
+        localExam.copyWith(id: fireExam.id),
+      ]);
     }
     return;
   }
