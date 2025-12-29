@@ -107,11 +107,12 @@ void showErrorMessage(BuildContext context, Object error, {String? message}) {
             info.icon,
             color: info.foregroundColor,
           ),
-          Text(
-            '${message != null ? '$message: ' : ''}${info.text}',
-            style: TextStyle(color: info.foregroundColor),
+          Expanded(
+            child: Text(
+              '${message != null ? '$message: ' : ''}${info.text}',
+              style: TextStyle(color: info.foregroundColor),
+            ),
           ),
-          const Spacer(),
           ...actions,
         ],
       ),
@@ -147,7 +148,6 @@ void showMessage(
           Expanded(
             child: Text(message, maxLines: 5),
           ),
-          const Spacer(),
           ...actions,
           if (showLoading)
             MyExpressiveLoadingIndicator(

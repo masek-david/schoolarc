@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -22,7 +21,6 @@ import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
-import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
@@ -120,31 +118,6 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: () {
-                    showMessage(context, 'Loading...', isPersistent: true, showLoading: true);
-                  },
-                  child: const Text('Persistent'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    showErrorMessage(context, Object);
-                  },
-                  child: const Text('TEST'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    showErrorMessage(context, NetworkException(.offline));
-                  },
-                  child: const Text('Offline'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    showErrorMessage(context, AuthException(.loggedOut, exceptionAction: .bakaLogin));
-                  },
-                  child: const Text('Logged out'),
-                ),
-                ErrorTile(error: AuthException(.loggedOut)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
