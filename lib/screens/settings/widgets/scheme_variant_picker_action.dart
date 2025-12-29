@@ -56,93 +56,89 @@ class _SchemeVariantPickerActionState
                 child: SizedBox(
                   width: 60,
                   height: 60,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(1000),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          vibrate.medium();
-                          ref
-                              .read(themeDynamicSchemeVariantProvider.notifier)
-                              .set(index);
-                          keys[index].currentState?.ensureTooltipVisible();
-                        },
-                        child: Stack(
-                          children: [
-                            Column(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(100),
+                                  topRight: Radius.circular(100),
+                                ),
+                                color: isDark
+                                    ? scheme.primary
+                                    : scheme.primaryContainer,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
                               children: [
                                 Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 0,
-                                        color: isDark
-                                            ? scheme.primary
-                                            : scheme.primaryContainer,
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(100),
                                       ),
                                       color: isDark
-                                          ? scheme.primary
-                                          : scheme.primaryContainer,
+                                          ? scheme.secondary
+                                          : scheme.secondaryContainer,
                                     ),
                                   ),
                                 ),
                                 Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              width: 0,
-                                              color: isDark
-                                                  ? scheme.secondary
-                                                  : scheme.secondaryContainer,
-                                            ),
-                                            color: isDark
-                                                ? scheme.secondary
-                                                : scheme.secondaryContainer,
-                                          ),
-                                        ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomRight: Radius.circular(100),
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              width: 0,
-                                              color: isDark
-                                                  ? scheme.tertiary
-                                                  : scheme.tertiaryContainer,
-                                            ),
-                                            color: isDark
-                                                ? scheme.tertiary
-                                                : scheme.tertiaryContainer,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      color: isDark
+                                          ? scheme.tertiary
+                                          : scheme.tertiaryContainer,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            if (isHighlighted)
-                              Center(
-                                child: Icon(
-                                  Icons.check,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onInverseSurface,
-                                      blurRadius: 10,
-                                    )
-                                  ],
-                                ),
-                              ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(1000),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            vibrate.medium();
+                            ref
+                                .read(
+                                  themeDynamicSchemeVariantProvider.notifier,
+                                )
+                                .set(index);
+                            keys[index].currentState?.ensureTooltipVisible();
+                          },
+                          onTapDown: (details) {
+                            keys[index].currentState?.ensureTooltipVisible();
+                          },
                         ),
                       ),
-                    ),
+                      if (isHighlighted)
+                        Center(
+                          child: Icon(
+                            Icons.check,
+                            shadows: <Shadow>[
+                              Shadow(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onInverseSurface,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               );

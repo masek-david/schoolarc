@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/initial_app_page.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -24,7 +25,6 @@ class StyleMotionPage extends ConsumerWidget {
           newLineAction: const InitialAppPage(),
         ),
         SettingTile(
-          isLast: true,
           title: context.loc.styleMotionScreenSwitchAnimationTitle,
           subtitle: context.loc.styleMotionScreenSwitchAnimationSubtitle,
           leading: const Icon(Icons.timelapse),
@@ -38,6 +38,14 @@ class StyleMotionPage extends ConsumerWidget {
               settings.save(Setting.pageSwitchAnimationDuration, value);
             },
           ),
+        ),
+        SettingTile.withSwitch(
+          value: ref.watch(themeExpressiveHaptics),
+          onChanged: ref.read(themeExpressiveHaptics.notifier).set,
+          isLast: true,
+          title: context.loc.expressiveHaptics,
+          subtitle: context.loc.expressiveHapticsSub,
+          leading: const Icon(Icons.vibration_rounded),
         ),
       ],
     );

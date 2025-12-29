@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -107,8 +108,11 @@ class ImportExportButtonsRow extends ConsumerWidget {
                         showDialog(
                           context: context,
                           barrierDismissible: false,
-                          builder: (context) =>
-                              ProgressDialog(key: dialogKey, goal: totalCount),
+                          builder: (context) => ProgressDialog(
+                            key: dialogKey,
+                            goal: totalCount,
+                            useHaptics: ref.read(themeExpressiveHaptics),
+                          ),
                         );
                         for (var element in imported.subjects) {
                           await ref
@@ -148,7 +152,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
               }
             } catch (e) {
               if (context.mounted) {
-                showMessage(context, e.toString(), isError: true);
+                showErrorMessage(context,e);
               }
             }
           },

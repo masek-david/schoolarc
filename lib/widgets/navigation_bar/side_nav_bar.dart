@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class SideNavBar extends StatelessWidget {
   const SideNavBar({
@@ -19,6 +20,7 @@ class SideNavBar extends StatelessWidget {
     return NavigationRail(
       selectedIndex: pageIndex,
       onDestinationSelected: (index) {
+        vibrate.light();
         onTap(newScreenIndex: index);
       },
       labelType: NavigationRailLabelType.all,

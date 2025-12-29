@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_nickname_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/login_input_screen.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -72,7 +74,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-          loading: () => Center(child: MyExpressiveLoadingIndicator.big()),
+          loading: () => Center(
+            child: MyExpressiveLoadingIndicator.big(
+              useHaptics: ref.read(themeExpressiveHaptics),
+            ),
+          ),
         ),
         if (!loggedIn)
           OutlinedButton(
@@ -103,6 +109,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             context: context,
                             barrierDismissible: false,
                             builder: (context) => ProgressDialog(
+                              useHaptics: ref.read(themeExpressiveHaptics),
                               key: key,
                               initialText: context.loc.loggingIn,
                               showProgressNumber: false,
@@ -116,13 +123,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           if (ref.read(firebaseLoginProvider).value != true) {
                             if (context.mounted) {
                               Navigator.pop(context);
-                              showMessage(
+                              showErrorMessage(
                                 context,
-                                ref
-                                    .read(firebaseLoginProvider)
-                                    .error
-                                    .toString(),
-                                isError: true,
+                                ref.read(firebaseLoginProvider).error ?? Object,
                               );
                               return;
                             }
@@ -137,11 +140,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           } on Object catch (e) {
                             if (context.mounted) {
                               Navigator.pop(context);
-                              showMessage(
-                                context,
-                                e.toString(),
-                                isError: true,
-                              );
+                              showErrorMessage(context, e);
                             }
                             return;
                           }
@@ -190,10 +189,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           final key = GlobalKey<ProgressDialogState>();
 
                           if (fields[2] != fields[3]) {
-                            showMessage(
+                            showErrorMessage(
                               context,
-                              context.loc.notSamePassword,
-                              isError: true,
+                              AuthException(.repeatedPasswordNotSame),
                             );
                             return;
                           }
@@ -202,6 +200,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             context: context,
                             barrierDismissible: false,
                             builder: (context) => ProgressDialog(
+                              useHaptics: ref.read(themeExpressiveHaptics),
                               key: key,
                               initialText: context.loc.loggingIn,
                               showProgressNumber: false,
@@ -219,13 +218,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           if (ref.read(firebaseLoginProvider).value != true) {
                             if (context.mounted) {
                               Navigator.pop(context);
-                              showMessage(
+                              showErrorMessage(
                                 context,
-                                ref
-                                    .read(firebaseLoginProvider)
-                                    .error
-                                    .toString(),
-                                isError: true,
+                                ref.read(firebaseLoginProvider).error ?? Object,
                               );
                               return;
                             }
@@ -239,7 +234,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           } on Object catch (e) {
                             if (context.mounted) {
                               Navigator.pop(context);
-                              showMessage(context, e.toString(), isError: true);
+                              showErrorMessage(context, e);
                             }
                             return;
                           }
@@ -262,10 +257,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         if (loggedIn)
           Row(
             children: [
-              if (nickname.isLoading) const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: MyExpressiveLoadingIndicator(size: 24),
-              ),
+              if (nickname.isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: MyExpressiveLoadingIndicator(size: 24),
+                ),
               Expanded(
                 child: NicknameText(
                   user: Member(
@@ -294,11 +290,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                     .saveNickname(fields[0]);
                               } on Object catch (e) {
                                 if (context.mounted) {
-                                  showMessage(
-                                    context,
-                                    e.toString(),
-                                    isError: true,
-                                  );
+                                  showErrorMessage(context, e);
                                 }
                                 return;
                               }
@@ -346,19 +338,17 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                         ],
                         onSubmit: (fields) async {
                           if (fields[1] != fields[2]) {
-                            showMessage(
+                            showErrorMessage(
                               context,
-                              context.loc.notSamePassword,
-                              isError: true,
+                              AuthException(.repeatedPasswordNotSame),
                             );
                             return;
                           }
 
                           if (fields[0] == fields[1]) {
-                            showMessage(
+                            showErrorMessage(
                               context,
-                              context.loc.samePasswords,
-                              isError: true,
+                              AuthException(.newOldPasswordSame),
                             );
                             return;
                           }
@@ -372,10 +362,11 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                 );
                           } on Object catch (e) {
                             if (context.mounted) {
-                              showMessage(
+                              showErrorMessage(context, e);
+                              showErrorMessage(
                                 context,
-                                '${context.loc.errorChangingPassword}\n$e',
-                                isError: true,
+                                e,
+                                message: context.loc.errorChangingPassword,
                               );
                             }
                             return;
@@ -420,11 +411,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                   .logOut();
                             } on Object catch (e) {
                               if (context.mounted) {
-                                showMessage(
-                                  context,
-                                  e.toString(),
-                                  isError: true,
-                                );
+                                showErrorMessage(context, e);
                               }
                               return;
                             }
@@ -450,7 +437,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           .getAllData(context);
                     } on Object catch (e) {
                       if (context.mounted) {
-                        showMessage(context, e.toString(), isError: true);
+                        showErrorMessage(context,e);
                       }
                       return;
                     }
@@ -511,11 +498,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                         .deleteAllData(password: fields[0]);
                                   } on Object catch (e) {
                                     if (context.mounted) {
-                                      showMessage(
-                                        context,
-                                        e.toString(),
-                                        isError: true,
-                                      );
+                                      showErrorMessage(context,e);
                                     }
                                     return;
                                   }

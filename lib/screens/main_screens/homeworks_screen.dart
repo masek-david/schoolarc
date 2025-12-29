@@ -102,7 +102,7 @@ class HomeworksScreen extends ConsumerWidget {
                   await ref.read(hwDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
-                    showMessage(context, e.toString(), isError: true);
+                    showErrorMessage(context,e);
                   }
                   return;
                 }

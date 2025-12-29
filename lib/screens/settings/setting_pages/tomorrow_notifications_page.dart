@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -160,13 +159,6 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
               });
             },
           ),
-          if (kDebugMode)
-            SettingTile(
-              title: 'Debug new scheduling',
-              onTap: (context) {
-                NotificationSender.scheduleUpcomingDayNotifications(context);
-              },
-            ),
           SettingTile(
             isLast: true,
             title: loc.sendNotificationNow,

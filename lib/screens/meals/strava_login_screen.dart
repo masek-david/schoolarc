@@ -114,7 +114,12 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 : const LoggedOutIcon(),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
-        Center(child: MyExpressiveLoadingIndicator.big(shown: isLoading)),
+        Center(
+          child: MyExpressiveLoadingIndicator.big(
+            shown: isLoading,
+            useHaptics: ref.read(themeExpressiveHaptics),
+          ),
+        ),
         if (error != null && !isLoading)
           ErrorTile(
             error: error,

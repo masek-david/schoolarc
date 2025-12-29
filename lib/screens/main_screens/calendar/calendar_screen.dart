@@ -19,28 +19,6 @@ import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-/// this provider switches on and off when /calendar route is pushed
-///
-/// that will switch current page, pop everything and show tomorrow date in calendar
-final showCalendarProvider = NotifierProvider<ShowCalendar, bool>(
-  ShowCalendar.new,
-);
-
-class ShowCalendar extends Notifier<bool> {
-  @override
-  build() {
-    return false;
-  }
-
-  void show() {
-    state = true;
-  }
-
-  void hide() {
-    state = false;
-  }
-}
-
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
@@ -190,18 +168,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     final exams = ref.watch(examsDatesProvider);
 
     final isWide = MediaQuery.of(context).size.width > 750;
-    if (ref.watch(showCalendarProvider)) {
-      setState(() {
-        _focusedDay.value = DateTime.now().add(const Duration(days: 1));
-        _selectedDay.value = _focusedDay.value;
-      });
-      WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) {
-          _pageController.jumpToPage(getPageIndex(_focusedDay.value));
-          ref.read(showCalendarProvider.notifier).hide();
-        },
-      );
-    }
 
     return Shortcuts(
       shortcuts: {

@@ -1232,6 +1232,18 @@ abstract class AppLocalizations {
   /// **'On big screen or in landscape, show borders in the app'**
   String get styleMotionShowBorderSubtitle;
 
+  /// No description provided for @expressiveHaptics.
+  ///
+  /// In en, this message translates to:
+  /// **'Expressive haptics'**
+  String get expressiveHaptics;
+
+  /// No description provided for @expressiveHapticsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Some UI elements vibrate with animations'**
+  String get expressiveHapticsSub;
+
   /// No description provided for @themePageTitle.
   ///
   /// In en, this message translates to:

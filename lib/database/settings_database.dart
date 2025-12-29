@@ -104,7 +104,7 @@ class SettingsDatabase {
     ),
     Setting.useExpressiveHaptics: const SettingModel(
       key: 'expressiveHaptics',
-      defaultValue: true,
+      defaultValue: false,
     ),
     Setting.tomorrowNotificationEnabled: const SettingModel(
       defaultValue: true,

@@ -27,31 +27,33 @@ class HomeworkList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (text != null) TextActions(text: text!, greydOut: hwList.isEmpty),
-        ...List.generate(
-          hwList.length,
-          (index) {
-            Homework hw = hwList[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: HwTile(
-                // must be here
-                key: ValueKey('hwTile ${hw.id}'),
-                hw: hw,
-                draggable: draggable,
-                showDate: showDates,
-                onChangedCompletion: (value) => onChangedCompletion(hw, value),
-                onDelete: () => onDelete(hw),
-                onEdit: () => onEdit(hw),
-                onConvert: () => onConvert(hw),
-              ),
-            );
-          },
-        ),
-      ],
+    return ClipRect(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (text != null) TextActions(text: text!, greydOut: hwList.isEmpty),
+          ...List.generate(
+            hwList.length,
+            (index) {
+              Homework hw = hwList[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: HwTile(
+                  // must be here
+                  key: ValueKey('hwTile ${hw.id}'),
+                  hw: hw,
+                  draggable: draggable,
+                  showDate: showDates,
+                  onChangedCompletion: (value) => onChangedCompletion(hw, value),
+                  onDelete: () => onDelete(hw),
+                  onEdit: () => onEdit(hw),
+                  onConvert: () => onConvert(hw),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

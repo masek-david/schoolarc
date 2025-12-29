@@ -228,6 +228,8 @@
   "styleMotionScreenSwitchAnimationSubtitle": "In milliseconds (0 disables animation)",
   "styleMotionShowBorderTitle": "Show app border",
   "styleMotionShowBorderSubtitle": "On big screen or in landscape, show borders in the app",
+  "expressiveHaptics": "Expressive haptics",
+  "expressiveHapticsSub": "Some UI elements vibrate with animations",
   "themePageTitle": "Theme",
   "themeBrightness": "Brightness",
   "themeFollowSystem": "Follow system",

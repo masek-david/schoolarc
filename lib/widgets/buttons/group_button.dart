@@ -112,6 +112,7 @@ class _GroupButtonState extends State<GroupButton>
             onTap: widget.onSelected,
             child: Container(
               decoration: BoxDecoration(color: color, borderRadius: border),
+              // unnecessary cliprrect
               child: ClipRRect(
                 borderRadius: border,
                 child: child,

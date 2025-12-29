@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/widgets/floating_action_bar.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
@@ -107,7 +108,11 @@ class _CurrentTimetableScreenState
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               timetable = null;
-              return Center(child: MyExpressiveLoadingIndicator.big());
+              return Center(
+                child: MyExpressiveLoadingIndicator.big(
+                  useHaptics: ref.read(themeExpressiveHaptics),
+                ),
+              );
             } else if (snapshot.hasError) {
               timetable = null;
               return Center(

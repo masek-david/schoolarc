@@ -19,6 +19,7 @@ import 'package:schoolarc/services/strava_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/vibrate.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:uuid/uuid.dart';
 
 var navigatorKey = GlobalKey<NavigatorState>();
@@ -73,54 +74,88 @@ Future<void> syncAllTasks(WidgetRef ref) async {
   return;
 }
 
+void showErrorMessage(BuildContext context, Object error, {String? message}) {
+  if (!context.mounted) return;
+  final col = context.col;
+  final info = ErrorInfoUI.fromError(
+    context,
+    error,
+    unseriousBackground: col.onSurface,
+    unseriousForeground: col.surface,
+    seriousBackground: col.error,
+    seriousForeground: col.onError,
+  );
+
+  final actions = resolveErrorAction(context, info);
+
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.vertical(top: Radius.circular(12)),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: actions.isEmpty ? 16 : 8,
+      ),
+      duration: const Duration(seconds: 10),
+      backgroundColor: info.backgroundColor,
+      content: Row(
+        spacing: 8,
+        children: [
+          Icon(
+            info.icon,
+            color: info.foregroundColor,
+          ),
+          Text(
+            '${message != null ? '$message: ' : ''}${info.text}',
+            style: TextStyle(color: info.foregroundColor),
+          ),
+          const Spacer(),
+          ...actions,
+        ],
+      ),
+    ),
+  );
+}
+
 void showMessage(
   BuildContext context,
   String message, {
   Duration? duration,
-  bool isError = false,
-  bool isContinuos = false,
-  List<Widget>? actions,
+  bool isPersistent = false,
+  bool showLoading = false,
+  List<Widget> actions = const [],
 }) {
-  if (context.mounted) {
-    if (isError) {
-      duration ??= const Duration(seconds: 10);
-    } else {
-      duration ??= const Duration(seconds: 3);
-    }
-    if (isContinuos) {
-      duration = const Duration(days: 100);
-    }
+  if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: duration,
-        backgroundColor: isError
-            ? Theme.of(context).colorScheme.errorContainer
-            : null,
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                message,
-                maxLines: 5,
-                style: TextStyle(
-                  color: isError
-                      ? Theme.of(context).colorScheme.onErrorContainer
-                      : null,
-                ),
-              ),
-            ),
-            if (actions != null) ...actions,
-            if (isContinuos)
-              MyExpressiveLoadingIndicator(
-                size: 28,
-                color: context.col.onPrimary,
-              ),
-          ],
-        ),
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.vertical(top: Radius.circular(12)),
       ),
-    );
-  }
+      padding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: actions.isEmpty ? 16 : 8,
+      ),
+      duration: duration ?? const Duration(seconds: 3),
+      persist: isPersistent,
+      content: Row(
+        spacing: 8,
+        children: [
+          Expanded(
+            child: Text(message, maxLines: 5),
+          ),
+          const Spacer(),
+          ...actions,
+          if (showLoading)
+            MyExpressiveLoadingIndicator(
+              size: 28,
+              color: context.col.onPrimary,
+            ),
+        ],
+      ),
+    ),
+  );
 }

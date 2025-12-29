@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -13,9 +14,15 @@ class StravaLoginNotifier extends AsyncNotifier<bool> {
   FutureOr<bool> build() async {
     if (ref.read(useMealsProvider)) {
       try {
-        final result = await stravaService.login();
-        return result;
-      } on Object {
+        await stravaService.logIn();
+        return true;
+      } catch (e) {
+        if (e is NetworkException && e.code == .offline) {
+          rethrow;
+        }
+        if (e is AuthException && e.code == .loggedOut) {
+          return stravaService.hasCanteenIdSet();
+        }
         return false;
       }
     } else {
@@ -26,7 +33,7 @@ class StravaLoginNotifier extends AsyncNotifier<bool> {
   Future<bool> refreshLogin() async {
     state = const AsyncValue.loading();
     try {
-      await stravaService.login();
+      await stravaService.logIn();
     } catch (e, stack) {
       state = AsyncError(e, stack);
       return false;

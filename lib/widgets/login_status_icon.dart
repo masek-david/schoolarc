@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class LoginStatusIcon extends ConsumerWidget {
   const LoginStatusIcon({
@@ -27,7 +28,11 @@ class LoginStatusIcon extends ConsumerWidget {
       data: (value) => value
           ? const Icon(Icons.check_circle, color: Colors.green)
           : const LoggedOutIcon(),
-      error: (_, _) => const Icon(Icons.error, color: Colors.red),
+      error: (e, _) {
+        final info = ErrorInfoUI.fromError(context, e, seriousForeground: Colors.red);
+        
+        return Icon(info.icon, color: info.foregroundColor);
+      },
       loading: () => const SizedBox(
         height: 28,
         width: 28,

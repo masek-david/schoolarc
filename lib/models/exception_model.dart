@@ -12,6 +12,8 @@ enum AuthErrorCodes {
   loggedOut,
   noCanteenId,
   noUser,
+  repeatedPasswordNotSame,
+  newOldPasswordSame,
 }
 
 enum ExceptionActions { bakaLogin, stravaLogin, cloudsyncLogin }
@@ -58,7 +60,7 @@ class DisabledException implements Exception {
   final DisabledErrorCodes code;
 }
 
-enum ApiErrorCodes { cantLogIn, passwordCantBeChanged , cantDeleteData}
+enum ApiErrorCodes { cantLogIn, passwordCantBeChanged, cantDeleteData }
 
 class ApiException implements Exception {
   ApiException(this.apiError, {this.code});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 
 class CancelSaveButton extends StatelessWidget {
   const CancelSaveButton({
@@ -31,7 +30,6 @@ class CancelSaveButton extends StatelessWidget {
         if (middle != null) middle!,
         FilledButton(
           onPressed: () {
-            vibrate.heavy();
             onSave();
             Navigator.maybePop(context);
           },

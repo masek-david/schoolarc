@@ -694,6 +694,13 @@ class AppLocalizationsCs extends AppLocalizations {
       'Na velké obrazovce, nebo když je aplikace na šířku, zobrazí okraje v aplikaci';
 
   @override
+  String get expressiveHaptics => 'Expresivní vibrace';
+
+  @override
+  String get expressiveHapticsSub =>
+      'Některé elemetny uživatelského prostředí vibrují s animacemi';
+
+  @override
   String get themePageTitle => 'Motiv';
 
   @override

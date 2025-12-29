@@ -155,7 +155,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
       showMessage(
         context,
         context.loc.newHomeworkFound(count),
-        duration: const Duration(days: 100),
+        isPersistent: true,
         actions: [
           FilledButton(
             onPressed: () {

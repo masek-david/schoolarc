@@ -10,11 +10,13 @@ class ProgressDialog extends StatefulWidget {
     this.goal = 0,
     this.showProgressNumber = true,
     this.initialText,
+    this.useHaptics = false,
   });
 
   final int goal;
   final bool showProgressNumber;
   final String? initialText;
+  final bool useHaptics;
 
   @override
   State<ProgressDialog> createState() => ProgressDialogState();
@@ -54,7 +56,9 @@ class ProgressDialogState extends State<ProgressDialog> {
           alignment: Alignment.center,
           children: [
             widget.goal == 0
-                ? MyExpressiveLoadingIndicator.big()
+                ? MyExpressiveLoadingIndicator.big(
+                    useHaptics: widget.useHaptics,
+                  )
                 : CircularWavyProgressIndicator(
                     value: _progress / widget.goal,
                     size: 140,

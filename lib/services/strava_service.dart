@@ -42,7 +42,7 @@ class StravaService {
     await SecureStorage.write(passwordKey, password);
 
     if (password != '' && username != '') {
-      await login();
+      await logIn();
     }
 
     return;
@@ -56,8 +56,11 @@ class StravaService {
     return await SecureStorage.read(usernameKey);
   }
 
-  /// returns false if the user cant be logged in, true if they can be logged in or at least the canteenId is set
-  Future<bool> login() async {
+  /// Logs in the user with their canteenId, username and password.
+  ///
+  /// Throws [AuthException] with [AuthErrorCodes.loggedOut] if the user cant be logged in,
+  /// this means they could still get meals with just the canteenId
+  Future<void> logIn() async {
     String username = '';
     String password = '';
     try {
@@ -71,16 +74,11 @@ class StravaService {
       );
     }
 
-    if (canteenCode == '') {
+    if (canteenCode == '' || username == '' || password == '') {
       throw AuthException(
         .loggedOut,
         exceptionAction: ExceptionActions.stravaLogin,
       );
-    }
-
-    if (username == '' || password == '') {
-      // The user can at least log in with canteenId
-      return false;
     }
 
     Response response;
@@ -121,8 +119,6 @@ class StravaService {
     _sid = parsedJson['sid'];
     _s5url = parsedJson['s5url'];
     _ignoreCert = parsedJson['ignoreCert'];
-
-    return true;
   }
 
   Future<void> logOut() async {
@@ -136,10 +132,27 @@ class StravaService {
     await SecureStorage.delete(passwordKey);
   }
 
+  Future<bool> hasCanteenIdSet() async {
+    try {
+      final id = await SecureStorage.read(canteenCodeKey);
+      return id != '';
+    } on Object {
+      return false;
+    }
+  }
+
   Future<Map<Date, List<Meal>>> getMeals() async {
-    final loggedIn = await login();
+    bool loggedIn = _sid != null;
     if (!loggedIn) {
-      return await getMealsNoLogin();
+      try {
+        await logIn();
+        loggedIn = true;
+      } catch (e) {
+        await _getMealsNoLogin();
+      }
+    }
+    if (!loggedIn) {
+      return await _getMealsNoLogin();
     }
 
     Response response;
@@ -199,7 +212,7 @@ class StravaService {
     return meals;
   }
 
-  Future<Map<Date, List<Meal>>> getMealsNoLogin() async {
+  Future<Map<Date, List<Meal>>> _getMealsNoLogin() async {
     Map<Date, List<Meal>> meals = {};
 
     try {

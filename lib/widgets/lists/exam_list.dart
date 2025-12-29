@@ -26,51 +26,51 @@ class ExamList extends ConsumerWidget {
   final bool showDates;
 
   Widget buildTile(BuildContext context, WidgetRef ref, Exam exam) {
-    return ClipRect(
-      child: ExamTile(
-        exam: exam,
-        showDeadline: showDates,
-        onDelete: () => onDelete(exam),
-        onEdit: () => onEdit(exam),
-        onConvert: () => onConvert(exam),
-      ),
+    return ExamTile(
+      exam: exam,
+      showDeadline: showDates,
+      onDelete: () => onDelete(exam),
+      onEdit: () => onEdit(exam),
+      onConvert: () => onConvert(exam),
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextActions(text: text, greydOut: examList.isEmpty),
-        ...List.generate(
-          examList.length,
-          (index) {
-            Exam exam = examList[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: draggable
-                  ? LayoutBuilder(
-                      builder: (context, constraints) {
-                        return LongPressDraggable(
-                          data: exam,
-                          onDragStarted: vibrate.medium,
-                          feedback: SizedBox(
-                            width: constraints.maxWidth,
-                            child: Opacity(
-                              opacity: 0.6,
-                              child: buildTile(context, ref, exam),
+    return ClipRect(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextActions(text: text, greydOut: examList.isEmpty),
+          ...List.generate(
+            examList.length,
+            (index) {
+              Exam exam = examList[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: draggable
+                    ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          return LongPressDraggable(
+                            data: exam,
+                            onDragStarted: vibrate.medium,
+                            feedback: SizedBox(
+                              width: constraints.maxWidth,
+                              child: Opacity(
+                                opacity: 0.6,
+                                child: buildTile(context, ref, exam),
+                              ),
                             ),
-                          ),
-                          child: buildTile(context, ref, exam),
-                        );
-                      },
-                    )
-                  : buildTile(context, ref, exam),
-            );
-          },
-        ),
-      ],
+                            child: buildTile(context, ref, exam),
+                          );
+                        },
+                      )
+                    : buildTile(context, ref, exam),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

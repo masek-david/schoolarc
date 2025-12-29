@@ -56,7 +56,7 @@ class Vibrate {
 
   void heavy() {
     _vibrate(
-      pattern: [50, 120],
+      pattern: [50, 100],
       intensities: [255, 8],
     );
   }
@@ -85,29 +85,21 @@ class Vibrate {
   void complete(bool nowComplete) {
     if (nowComplete) {
       _vibrate(
-        pattern: [20, 20, 20, 500, 300, 20, 20],
-        intensities: [255, 120, 0, 5, 0, 255, 120],
+        pattern: [40, 40, 20, 500, 300, 40, 40],
+        intensities: [255, 40, 0, 5, 0, 255, 40],
       );
     } else {
       _vibrate(
-        pattern: [20, 120],
+        pattern: [40, 100],
         intensities: [255, 5],
       );
     }
   }
 
   void switchUI(bool nowOn) {
-    // TODO remake
-    if (nowOn) {
-      _vibrate(
-        pattern: [40, 20, 5],
-        intensities: [10, 0, 100],
-      );
-    } else {
-      _vibrate(
-        pattern: [5, 20, 40],
-        intensities: [100, 0, 10],
-      );
-    }
+    _vibrate(
+      pattern: [100, 20, 5],
+      intensities: [20, 0, 255],
+    );
   }
 }

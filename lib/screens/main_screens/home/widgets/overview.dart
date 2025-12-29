@@ -65,7 +65,7 @@ class Overview extends ConsumerWidget {
             '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative(context)}' : ''}',
             style: robotoSerif(
               size: 36,
-              color: colorScheme.onPrimaryContainer,
+              color: colorScheme.primary,
               width: 50,
               weight: 700,
               grade: -50,
@@ -89,7 +89,7 @@ class Overview extends ConsumerWidget {
                 TextSpan(
                   text: numberOrNo(upcomingHw, context),
                   style: TextStyle(
-                    color: colorScheme.onPrimaryContainer,
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -100,7 +100,7 @@ class Overview extends ConsumerWidget {
                 TextSpan(
                   text: numberOrNo(upcomingExams, context),
                   style: TextStyle(
-                    color: colorScheme.onPrimaryContainer,
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

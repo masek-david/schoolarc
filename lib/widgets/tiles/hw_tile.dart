@@ -151,138 +151,137 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
         ? Theme.of(context).colorScheme.surfaceContainerLowest
         : Theme.of(context).colorScheme.surfaceContainerLow;
 
-    return ClipRRect(
-      child: TileSlidable(
-        isHomework: true,
-        slidableController: widget.slidableController,
-        onDelete: widget.onDelete,
-        onConvert: widget.onConvert,
-        borderRadius: borderRadius,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            border: isMissed && widget.showBorderIfMissed
-                ? Border.all(
-                    color: missedColor!,
-                    width: 2,
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(borderRadius),
-            color: backgroundColor,
-          ),
-          child: WebRequestFocusBuilder(
-            builder: (showKeyboard) {
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  onTap: () {
-                    showKeyboard();
-                    widget.onEdit();
-                  },
-                  child: Opacity(
-                    opacity: opacity,
-                    child: Padding(
-                      padding: const EdgeInsets.all(padding),
-                      // main row
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          if (settings.get(Setting.debugMode))
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(widget.hw.stateReaddingVersion.toString()),
-                                Text(widget.hw.order.toString()),
-                                if (widget.hw.isBeingAnimated)
-                                  const Icon(
-                                    Icons.animation,
-                                    size: 15,
-                                  ),
-                              ],
-                            ),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                borderRadius - padding,
-                              ),
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer,
-                            ),
-                            child: SubjectShortcut(subject: widget.hw.subject),
-                          ),
-                          const SizedBox(width: 8),
+    return TileSlidable(
+      isHomework: true,
+      slidableController: widget.slidableController,
+      onDelete: widget.onDelete,
+      onConvert: widget.onConvert,
+      borderRadius: borderRadius,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          border: isMissed && widget.showBorderIfMissed
+              ? Border.all(
+                  color: missedColor!,
+                  width: 2,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: backgroundColor,
+        ),
+        child: WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(borderRadius),
+                onTap: () {
+                  showKeyboard();
+                  vibrate.medium();
+                  widget.onEdit();
+                },
+                child: Opacity(
+                  opacity: opacity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(padding),
+                    // main row
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        if (settings.get(Setting.debugMode))
                           Column(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // if (widget.hw.isShared)
-                              //   Icon(
-                              //     Icons.share,
-                              //     size: 16,
-                              //     color: Theme.of(context)
-                              //         .colorScheme
-                              //         .onSurfaceVariant,
-                              //   ),
-                              if (widget.hw.description != '')
-                                Icon(
-                                  Icons.notes,
-                                  size: 16,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                              Text(widget.hw.stateReaddingVersion.toString()),
+                              Text(widget.hw.order.toString()),
+                              if (widget.hw.isBeingAnimated)
+                                const Icon(
+                                  Icons.animation,
+                                  size: 15,
                                 ),
                             ],
                           ),
-                          // if (widget.hw.description != '' || widget.hw.isShared)
-                          if (widget.hw.description != '')
-                            const SizedBox(width: 8),
-                          Expanded(child: Text(widget.hw.text, maxLines: 2)),
-                          const SizedBox(width: 5),
-                          if (widget.showDate)
-                            Text(
-                              widget.hw.date.formatWithText(context),
-                              maxLines: 2,
-                              style: TextStyle(
-                                color: isMissed ? missedColor : null,
-                                fontSize: 12,
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              borderRadius - padding,
+                            ),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.secondaryContainer,
+                          ),
+                          child: SubjectShortcut(subject: widget.hw.subject),
+                        ),
+                        const SizedBox(width: 8),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // if (widget.hw.isShared)
+                            //   Icon(
+                            //     Icons.share,
+                            //     size: 16,
+                            //     color: Theme.of(context)
+                            //         .colorScheme
+                            //         .onSurfaceVariant,
+                            //   ),
+                            if (widget.hw.description != '')
+                              Icon(
+                                Icons.notes,
+                                size: 16,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
+                          ],
+                        ),
+                        // if (widget.hw.description != '' || widget.hw.isShared)
+                        if (widget.hw.description != '')
+                          const SizedBox(width: 8),
+                        Expanded(child: Text(widget.hw.text, maxLines: 2)),
+                        const SizedBox(width: 5),
+                        if (widget.showDate)
+                          Text(
+                            widget.hw.date.formatWithText(context),
+                            maxLines: 2,
+                            style: TextStyle(
+                              color: isMissed ? missedColor : null,
+                              fontSize: 12,
                             ),
-                          const SizedBox(width: 4),
-                          if (widget.showCompletion)
-                            AnimatedBuilder(
-                              animation: _rotationController,
-                              builder: (context, child) {
-                                return AnimatedCheckbox(
-                                  value: widget.hw.isCompleted,
-                                  priority: widget.hw.priority,
-                                  shape: shape,
-                                  onChanged: widget.onChangedCompletion == null
-                                      ? (value) {}
-                                      : (value) {
-                                          vibrate.complete(value);
-                                          if (widget.onChangedCompletion !=
-                                              null) {
-                                            widget.onChangedCompletion!(value);
-                                          }
-                                          animate(value);
-                                        },
-                                  rotation: _rotationController.value,
-                                  scale: _scaleController.value,
-                                );
-                              },
-                            ),
-                        ],
-                      ),
+                          ),
+                        const SizedBox(width: 4),
+                        if (widget.showCompletion)
+                          AnimatedBuilder(
+                            animation: _rotationController,
+                            builder: (context, child) {
+                              return AnimatedCheckbox(
+                                value: widget.hw.isCompleted,
+                                priority: widget.hw.priority,
+                                shape: shape,
+                                onChanged: widget.onChangedCompletion == null
+                                    ? (value) {}
+                                    : (value) {
+                                        vibrate.complete(value);
+                                        if (widget.onChangedCompletion !=
+                                            null) {
+                                          widget.onChangedCompletion!(value);
+                                        }
+                                        animate(value);
+                                      },
+                                rotation: _rotationController.value,
+                                scale: _scaleController.value,
+                              );
+                            },
+                          ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

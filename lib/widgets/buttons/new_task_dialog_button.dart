@@ -65,7 +65,7 @@ class _NewTaskDialogButtonState extends ConsumerState<NewTaskDialogButton> {
                           pickedSubjectId = subject?.id;
                         }),
                       ),
-                      // TODO translate
+                      // todo translate
                       const TextField(
                         autofocus: true,
                         decoration: InputDecoration(

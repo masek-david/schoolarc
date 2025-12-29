@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_hw_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -50,7 +51,11 @@ class BakaHomeworksScreen extends ConsumerWidget {
       body: Builder(
         builder: (context) {
           if (isLoading) {
-            return Center(child: MyExpressiveLoadingIndicator.big());
+            return Center(
+              child: MyExpressiveLoadingIndicator.big(
+                useHaptics: ref.read(themeExpressiveHaptics),
+              ),
+            );
           }
           if (error != null) {
             return ErrorTile(
@@ -70,13 +75,10 @@ class BakaHomeworksScreen extends ConsumerWidget {
             );
           }
 
-          // TODO sort
           data.sort(
-            (a, b) => a.date.compareTo(b.date),
-          );
-          data.sort(
-            (a, b) =>
-                (a.alreadySeen == b.alreadySeen ? 0 : (a.alreadySeen ? 1 : -1)),
+            (a, b) => a.alreadySeen != b.alreadySeen
+                ? (a.alreadySeen ? 1 : -1)
+                : a.date.compareTo(b.date),
           );
 
           return ListView.builder(

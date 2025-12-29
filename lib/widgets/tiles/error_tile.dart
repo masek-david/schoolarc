@@ -2,6 +2,184 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
+class ErrorInfoUI {
+  final String text;
+  final IconData icon;
+  final ExceptionActions? action;
+  final Color foregroundColor;
+  final Color backgroundColor;
+
+  ErrorInfoUI({
+    required this.text,
+    required this.icon,
+    this.action,
+    required this.foregroundColor,
+    required this.backgroundColor,
+  });
+  static ErrorInfoUI fromNull(BuildContext context) {
+    return ErrorInfoUI(
+      text: context.loc.error,
+      icon: Icons.error_outline_rounded,
+      foregroundColor: context.col.error,
+      backgroundColor: context.col.onError,
+    );
+  }
+
+  // Factory method to create ErrorInfo from an error
+  static ErrorInfoUI fromError(
+    BuildContext context,
+    Object error, {
+    Color? seriousForeground,
+    Color? unseriousForeground,
+    Color? seriousBackground,
+    Color? unseriousBackground,
+  }) {
+    final col = context.col;
+    final loc = context.loc;
+
+    var foreground = seriousForeground ?? col.onErrorContainer;
+    var background = seriousBackground ?? col.errorContainer;
+    var text = '';
+    var icon = Icons.error_outline_rounded;
+    ExceptionActions? action;
+
+    switch (error) {
+      case NetworkException(:var code, :var originalError):
+        switch (code) {
+          case .offline:
+            text = loc.offline;
+            foreground = unseriousForeground ?? col.onSurface;
+            background = unseriousBackground ?? col.surface;
+            icon = Icons.cloud_off_rounded;
+          case .timeout:
+            text = loc.timedOut;
+            icon = Icons.timer_off_outlined;
+          case .serverError:
+            text = loc.serverError;
+        }
+        if (originalError != null) {
+          text = originalError.toString();
+        }
+
+      case AuthException(:var code, :var exceptionAction):
+        action = exceptionAction;
+        switch (code) {
+          case .noUser:
+            icon = Icons.person_off_outlined;
+            text = loc.noUserLoggedIn;
+          case .loggedOut:
+            icon = Icons.person_off_outlined;
+            text = loc.loggedOut;
+          case .noCanteenId:
+            text = loc.noCanteen;
+          case .newOldPasswordSame:
+            text = loc.samePasswords;
+          case .repeatedPasswordNotSame:
+            text = loc.notSamePassword;
+        }
+
+      case ValidationException(:var code):
+        switch (code) {
+          case .emptyField:
+            text = loc.fillOutAllFields;
+          case .invalidCanteenNumber:
+            text = loc.invalidCanteenNumber;
+          case .invalidCanteenNumberLength:
+            text = loc.invalidCanteenNumberLength;
+        }
+
+      case GroupException(:var code):
+        switch (code) {
+          case .cantChangeName:
+            icon = Icons.not_interested;
+            text = loc.cantChangeGroupName;
+          case .cantLeaveYourGroup:
+            icon = Icons.group_off_outlined;
+            text = loc.cantLeaveYourGroup;
+          case .leaveOldGroup:
+            foreground = unseriousForeground ?? col.onSurface;
+            background = unseriousBackground ?? col.surface;
+            icon = Icons.group_off_outlined;
+            text = loc.leaveOldGroup;
+          case .notMemberOfAnyGroup:
+            icon = Icons.group_off_outlined;
+            text = loc.notMemberOfAnyGroup;
+          case .removedFromGroup:
+            icon = Icons.group_off_outlined;
+            text = loc.removedFromGroup;
+          case .waitingForApproval:
+            foreground = unseriousForeground ?? col.onSurface;
+            background = unseriousBackground ?? col.surface;
+            icon = Icons.timer_outlined;
+            text = loc.waitingForApproval;
+        }
+
+      case DisabledException(:var code):
+        foreground = unseriousForeground ?? col.onSurface;
+        background = unseriousBackground ?? col.surface;
+        switch (code) {
+          case .bakalariDisabled:
+            text = loc.bakalariDisabled;
+          case .mealsDisabled:
+            text = loc.mealsDisabled;
+        }
+
+      case ApiException(:var apiError):
+        text = apiError;
+
+      default:
+        text = error.toString();
+    }
+
+    return ErrorInfoUI(
+      text: text,
+      icon: icon,
+      action: action,
+      foregroundColor: foreground,
+      backgroundColor: background,
+    );
+  }
+}
+
+List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
+  final col = context.col;
+  return [
+    if (info.action == ExceptionActions.stravaLogin)
+      FilledButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
+          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
+        ),
+        onPressed: () {
+          Navigator.restorablePushNamed(context, '/strava');
+        },
+        child: Text(context.loc.login),
+      ),
+    if (info.action == ExceptionActions.bakaLogin)
+      FilledButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
+          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
+        ),
+        onPressed: () {
+          Navigator.restorablePushNamed(context, '/bakalari');
+        },
+        child: Text(context.loc.login),
+      ),
+    if (info.action == ExceptionActions.cloudsyncLogin)
+      FilledButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
+          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
+        ),
+        onPressed: () {
+          Navigator.restorablePushNamed(context, '/cloudsync');
+        },
+        child: Text(context.loc.login),
+      ),
+  ];
+}
+
 class ErrorTile extends StatelessWidget {
   const ErrorTile({
     super.key,
@@ -20,100 +198,16 @@ class ErrorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final col = context.col;
-    final loc = context.loc;
-
-    var color = context.col.error;
-    var errorText = '';
-    var icon = Icons.error_outline_rounded;
-    ExceptionActions? action;
-
-    switch (error) {
-      case NetworkException(:var code, :var originalError):
-        switch (code) {
-          case .offline:
-            errorText = loc.offline;
-            color = col.onSurface;
-            icon = Icons.cloud_off_rounded;
-          case .timeout:
-            errorText = loc.timedOut;
-            icon = Icons.timer_off_outlined;
-          case .serverError:
-            errorText = loc.serverError;
-        }
-        if (originalError != null) {
-          errorText = originalError.toString();
-        }
-
-      case AuthException(:var code, :var exceptionAction):
-        action = exceptionAction;
-        switch (code) {
-          case .noUser:
-            icon = Icons.person_off_outlined;
-            errorText = loc.noUserLoggedIn;
-          case .loggedOut:
-            icon = Icons.person_off_outlined;
-            errorText = loc.loggedOut;
-          case .noCanteenId:
-            errorText = loc.noCanteen;
-        }
-
-      case ValidationException(:var code):
-        switch (code) {
-          case .emptyField:
-            errorText = loc.fillOutAllFields;
-          case .invalidCanteenNumber:
-            errorText = loc.invalidCanteenNumber;
-          case .invalidCanteenNumberLength:
-            errorText = loc.invalidCanteenNumberLength;
-        }
-
-      case GroupException(:var code):
-        switch (code) {
-          case .cantChangeName:
-            icon = Icons.not_interested;
-            errorText = loc.cantChangeGroupName;
-          case .cantLeaveYourGroup:
-            icon = Icons.group_off_outlined;
-            errorText = loc.cantLeaveYourGroup;
-          case .leaveOldGroup:
-            color = col.onSurface;
-            icon = Icons.group_off_outlined;
-            errorText = loc.leaveOldGroup;
-          case .notMemberOfAnyGroup:
-            icon = Icons.group_off_outlined;
-            errorText = loc.notMemberOfAnyGroup;
-          case .removedFromGroup:
-            icon = Icons.group_off_outlined;
-            errorText = loc.removedFromGroup;
-          case .waitingForApproval:
-            color = col.onSurface;
-            icon = Icons.timer_outlined;
-            errorText = loc.waitingForApproval;
-        }
-
-      case DisabledException(:var code):
-        color = col.onSurface;
-        switch (code) {
-          case .bakalariDisabled:
-            errorText = loc.bakalariDisabled;
-          case .mealsDisabled:
-            errorText = loc.mealsDisabled;
-        }
-
-      case ApiException(:var apiError):
-        errorText = apiError;
-
-      default:
-        errorText = error.toString();
-    }
+    final info = error != null
+        ? ErrorInfoUI.fromError(context, error!)
+        : ErrorInfoUI.fromNull(context);
 
     return Padding(
       padding: padding,
       child: Row(
         spacing: 12,
         children: [
-          Icon(icon, color: color),
+          Icon(info.icon, color: info.foregroundColor),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -123,46 +217,21 @@ class ErrorTile extends StatelessWidget {
                   Text(
                     text ?? '',
                     softWrap: true,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: info.foregroundColor,
+                    ),
                   ),
                 if (error != null)
-                  Text(errorText, maxLines: 3, style: TextStyle(color: color)),
+                  Text(
+                    info.text,
+                    maxLines: 3,
+                    style: TextStyle(color: info.foregroundColor),
+                  ),
               ],
             ),
           ),
-          if (allowActions && action == ExceptionActions.stravaLogin)
-            FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-                foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-              ),
-              onPressed: () {
-                Navigator.restorablePushNamed(context, '/strava');
-              },
-              child: Text(context.loc.login),
-            ),
-          if (allowActions && action == ExceptionActions.bakaLogin)
-            FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-                foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-              ),
-              onPressed: () {
-                Navigator.restorablePushNamed(context, '/bakalari');
-              },
-              child: Text(context.loc.login),
-            ),
-          if (allowActions && action == ExceptionActions.cloudsyncLogin)
-            FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-                foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-              ),
-              onPressed: () {
-                Navigator.restorablePushNamed(context, '/cloudsync');
-              },
-              child: Text(context.loc.login),
-            ),
+          if (allowActions) ...resolveErrorAction(context, info),
           if (actions != null) ...actions!,
         ],
       ),

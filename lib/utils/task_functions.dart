@@ -15,8 +15,9 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
   arguments as Map;
 
   final initialDateInt = arguments['date'] as int?;
-  final initialDate =
-      initialDateInt != null ? Date.fromPrimitiveInt(initialDateInt) : null;
+  final initialDate = initialDateInt != null
+      ? Date.fromPrimitiveInt(initialDateInt)
+      : null;
 
   return ModalBottomSheetRoute(
     builder: (context) => AddTaskBottomSheet(
@@ -29,21 +30,28 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
   );
 }
 
-// TODO it doesnt return future
-Future<void> addNewHw(BuildContext context, {Date? initialDate}) async {
-  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': initialDate?.toPrimitiveInt(),
-    'id': null,
-    'isHomework': true,
-  });
+void addNewHw(BuildContext context, {Date? initialDate}) {
+  Navigator.restorablePush(
+    context,
+    bottomSheetRoute,
+    arguments: {
+      'date': initialDate?.toPrimitiveInt(),
+      'id': null,
+      'isHomework': true,
+    },
+  );
 }
 
-void editHw(BuildContext context, Homework hw) async {
-  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': hw.date.toPrimitiveInt(),
-    'id': hw.id,
-    'isHomework': true,
-  });
+void editHw(BuildContext context, Homework hw) {
+  Navigator.restorablePush(
+    context,
+    bottomSheetRoute,
+    arguments: {
+      'date': hw.date.toPrimitiveInt(),
+      'id': hw.id,
+      'isHomework': true,
+    },
+  );
 }
 
 void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
@@ -71,20 +79,28 @@ void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
   );
 }
 
-Future<void> addNewExam(BuildContext context, {Date? initialDate}) async {
-  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': initialDate?.toPrimitiveInt(),
-    'id': null,
-    'isHomework': false,
-  });
+void addNewExam(BuildContext context, {Date? initialDate}) {
+  Navigator.restorablePush(
+    context,
+    bottomSheetRoute,
+    arguments: {
+      'date': initialDate?.toPrimitiveInt(),
+      'id': null,
+      'isHomework': false,
+    },
+  );
 }
 
-void editExam(BuildContext context, Exam exam) async {
-  Navigator.restorablePush(context, bottomSheetRoute, arguments: {
-    'date': exam.date.toPrimitiveInt(),
-    'id': exam.id,
-    'isHomework': false,
-  });
+void editExam(BuildContext context, Exam exam) {
+  Navigator.restorablePush(
+    context,
+    bottomSheetRoute,
+    arguments: {
+      'date': exam.date.toPrimitiveInt(),
+      'id': exam.id,
+      'isHomework': false,
+    },
+  );
 }
 
 void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
@@ -94,12 +110,16 @@ void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
 void deleteExam(BuildContext context, WidgetRef ref, Exam exam) {
   ref.read(examDataProvider.notifier).delete(exam.toData());
 
-  showMessage(context, '${context.loc.deletedExam} \'${exam.text}\'', actions: [
-    SnackBarAction(
-      label: context.loc.undo,
-      onPressed: () {
-        ref.read(examDataProvider.notifier).revertDelete(exam.toData());
-      },
-    ),
-  ]);
+  showMessage(
+    context,
+    '${context.loc.deletedExam} \'${exam.text}\'',
+    actions: [
+      SnackBarAction(
+        label: context.loc.undo,
+        onPressed: () {
+          ref.read(examDataProvider.notifier).revertDelete(exam.toData());
+        },
+      ),
+    ],
+  );
 }

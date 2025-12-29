@@ -3,20 +3,23 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String? encodeQueryParameters(Map<String, String> params) {
   return params.entries
-      .map((MapEntry<String, String> e) =>
-          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .map(
+        (MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+      )
       .join('&');
 }
 
 Future<void> sendBugReport(BuildContext context, {String? bug}) async {
   try {
-    bug ??= context.loc.bugReportHint; 
+    bug ??= context.loc.bugReportHint;
     final deviceInfo = DeviceInfoPlugin();
 
     String version = '';
@@ -49,7 +52,8 @@ Future<void> sendBugReport(BuildContext context, {String? bug}) async {
       version = linux.prettyName;
     }
 
-    final body = '$bug\n\n\n\n'
+    final body =
+        '$bug\n\n\n\n'
         'Schoolarc: ${packageInfo.version}+${packageInfo.buildNumber}\n'
         '$version \n'
         'RAM: $ram';
@@ -57,17 +61,19 @@ Future<void> sendBugReport(BuildContext context, {String? bug}) async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: 'mol.david498@gmail.com',
-      query: encodeQueryParameters(
-          <String, String>{'subject': 'Bug report', 'body': body}),
+      query: encodeQueryParameters(<String, String>{
+        'subject': 'Bug report',
+        'body': body,
+      }),
     );
 
     final value = await launchUrl(emailLaunchUri);
     if (!value && context.mounted) {
-      showMessage(context, context.loc.cantOpenMail, isError: true);
+      showErrorMessage(context, StringException(context.loc.cantOpenMail));
     }
-  } on Object catch (error) {
+  } catch (e) {
     if (context.mounted) {
-      showMessage(context, error.toString(), isError: true);
+      showErrorMessage(context, e);
     }
   }
 }

@@ -242,15 +242,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   Widget build(BuildContext context) {
     final isWide = context.isWide;
 
-    if (ref.watch(showCalendarProvider)) {
-      switchPage(newScreenIndex: 1);
-      WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) {
-          ref.read(showCalendarProvider.notifier).hide();
-        },
-      );
-    }
-
     final Widget? action = switch (currentPageIndex.value) {
       0 => IconButton(
         onPressed: () => showHomeSettings(context),

@@ -30,7 +30,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   String? subtitle;
   bool shapeShown = true;
 
-  void importTimetable() {
+  void askToImportTimetable() {
     if (!mounted) return;
     showDialogAdaptive(
       context: context,
@@ -51,7 +51,8 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) => const ProgressDialog(
+              builder: (context) => ProgressDialog(
+                useHaptics: ref.read(themeExpressiveHaptics),
                 showProgressNumber: false,
               ),
             );
@@ -61,12 +62,15 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             } catch (e) {
               vibrate.error();
               if (mounted) {
-                showMessage(context, e.toString(), isError: true);
+                showErrorMessage(context, e);
+                Navigator.pop(context);
               }
+              return;
             }
             if (mounted) {
               vibrate.success();
               Navigator.pop(context);
+              showMessage(context, context.loc.success);
             }
           },
           child: Text(context.loc.import),
@@ -155,7 +159,10 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
         Center(
-          child: MyExpressiveLoadingIndicator.big(shown: isLoading),
+          child: MyExpressiveLoadingIndicator.big(
+            shown: isLoading,
+            useHaptics: ref.read(themeExpressiveHaptics),
+          ),
         ),
         if (error != null && !isLoading)
           ErrorTile(
@@ -273,7 +280,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
 
                     if (result) {
                       vibrate.success();
-                      importTimetable();
+                      askToImportTimetable();
                     } else {
                       vibrate.error();
                     }
@@ -301,7 +308,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
         if (isLoggedIn) const Divider(),
         if (isLoggedIn)
           FilledButton.tonal(
-            onPressed: !isLoading ? importTimetable : null,
+            onPressed: !isLoading ? askToImportTimetable : null,
             child: Text(context.loc.importTimetable),
           ),
       ],

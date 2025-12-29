@@ -14,7 +14,6 @@ import 'package:schoolarc/screens/changelog_screen.dart';
 import 'package:schoolarc/screens/debug_info_screen.dart';
 import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';
-import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
 import 'package:schoolarc/screens/meals/strava_login_screen.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
@@ -188,29 +187,9 @@ class AppConfig extends ConsumerWidget {
               ),
               themeMode: themeMode,
               home: const MainApp(),
-              builder:(context, child) => TimeFormat(
-                      child: child ?? const SizedBox.shrink(),
-                    ),
-              onGenerateRoute: (settings) {
-                // we have to push a route, else it throws
-                // we also cant return mainapp, since it throws multiple widgets use the same key
-                // TODO notification doesnt work now
-                if (settings.name == '/calendar') {
-                  navigatorKey.currentState?.popUntil((route) => route.isFirst);
-                  ref.read(showCalendarProvider.notifier).show();
-                  closeDrawer();
-
-                  return MaterialPageRoute(
-                    builder: (context) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.pop(context);
-                      });
-                      return const Scaffold(); // Blank page briefly shown
-                    },
-                  );
-                }
-                return null;
-              },
+              builder: (context, child) => TimeFormat(
+                child: child ?? const SizedBox.shrink(),
+              ),
               routes: {
                 '/settings': (context) => const SettingsScreen(),
                 '/subjects': (context) => const SubjectsScreen(),

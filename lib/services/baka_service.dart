@@ -51,7 +51,7 @@ class BakaService {
   }
 
   /// tries to log in from memory using saved refresh token
-  Future<void> refreshLogin() async {
+  Future<bool> refreshLogin() async {
     String schoolName = '';
     schoolName = await this.schoolName;
     _refreshToken = await _storageRefreshToken;
@@ -70,7 +70,7 @@ class BakaService {
         'client_id=ANDR&grant_type=refresh_token&refresh_token=$_refreshToken';
 
     await _callLogin(url, head, body);
-    return;
+    return true;
   }
 
   Future<void> firstLogin({
@@ -278,10 +278,10 @@ class BakaService {
       mondayDate = date.addDays(1 - weekday);
     }
 
-    String schoolName = await this.schoolName;
+    final schoolName = await this.schoolName;
     final url = Uri(
       scheme: 'https',
-      host: "$schoolName.bakalari.cz",
+      host: "${schoolName.trim()}.bakalari.cz",
       path: "/api/3/timetable/actual",
       queryParameters: {
         'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal()),

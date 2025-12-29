@@ -685,6 +685,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'On big screen or in landscape, show borders in the app';
 
   @override
+  String get expressiveHaptics => 'Expressive haptics';
+
+  @override
+  String get expressiveHapticsSub => 'Some UI elements vibrate with animations';
+
+  @override
   String get themePageTitle => 'Theme';
 
   @override

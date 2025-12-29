@@ -21,7 +21,7 @@ class MembersScreen extends StatelessWidget {
     );
     final isOwner =
         members.where((element) => element.isOwner).firstOrNull?.id ==
-            fireShareService.currentUserId;
+        fireShareService.currentUserId;
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +33,8 @@ class MembersScreen extends StatelessWidget {
               itemCount: members.length,
               itemBuilder: (context, index) {
                 final user = members[index];
-                final firstWaiting = (user.waitingForApproval &&
+                final firstWaiting =
+                    (user.waitingForApproval &&
                     (index == 0 || !members[index - 1].waitingForApproval));
 
                 final tile = Padding(
@@ -62,8 +63,7 @@ class MembersScreen extends StatelessWidget {
                                   }
                                 } catch (e) {
                                   if (context.mounted) {
-                                    showMessage(context, e.toString(),
-                                        isError: true);
+                                    showErrorMessage(context, e);
                                   }
                                 }
                               },
@@ -95,8 +95,7 @@ class MembersScreen extends StatelessWidget {
                                           }
                                         } catch (e) {
                                           if (context.mounted) {
-                                            showMessage(context, e.toString(),
-                                                isError: true);
+                                            showErrorMessage(context, e);
                                           }
                                         }
                                       },
@@ -106,7 +105,7 @@ class MembersScreen extends StatelessWidget {
                               },
                             ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 );

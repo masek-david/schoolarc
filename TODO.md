@@ -2,10 +2,7 @@
 merge sorts into one
 homescreen agotext under the cards?
 expressive filledbutton
-add animations to all animationControllers
 fix tutorial entry animation
-remove cliprrect
-expressiveHaptics setting
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -64,7 +61,7 @@ expressiveHaptics setting
     - ⬜ auto set date to next appearance
 - ⬜ strava stop saving the password 
 - ⬜ translation - google sheets
-- ⬜ on new android, notification isnt bold - switch to flutter_local_notifications didnt work [A]
+- ⬜ add animations to all animationControllers (to use curves)
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)

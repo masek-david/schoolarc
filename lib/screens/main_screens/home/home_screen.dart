@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -21,6 +22,7 @@ import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
+import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
@@ -37,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
       ]);
     } on Object catch (e) {
       if (context.mounted) {
-        showMessage(context, e.toString(), isError: true);
+        showErrorMessage(context, e);
       }
     }
     return;
@@ -118,6 +120,31 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: () {
+                    showMessage(context, 'Loading...', isPersistent: true, showLoading: true);
+                  },
+                  child: const Text('Persistent'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    showErrorMessage(context, Object);
+                  },
+                  child: const Text('TEST'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    showErrorMessage(context, NetworkException(.offline));
+                  },
+                  child: const Text('Offline'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    showErrorMessage(context, AuthException(.loggedOut, exceptionAction: .bakaLogin));
+                  },
+                  child: const Text('Logged out'),
+                ),
+                ErrorTile(error: AuthException(.loggedOut)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -178,49 +205,57 @@ class HomeScreen extends ConsumerWidget {
                                         ),
                                         asset: 'assets/confetti.svg',
                                       )
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        spacing: 8,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              context.loc.today,
-                                              style: context.txt.bodyLarge,
+                                    : ClipRect(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          spacing: 8,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Text(
+                                                context.loc.today,
+                                                style: context.txt.bodyLarge,
+                                              ),
                                             ),
-                                          ),
-                                          ...examsToday.map(
-                                            (e) => ExamTile(
-                                              exam: e,
-                                              showDeadline: false,
-                                              onDelete: () =>
-                                                  deleteExam(context, ref, e),
-                                              onEdit: () =>
-                                                  editExam(context, e),
-                                              onConvert: () =>
-                                                  convertExam(context, ref, e),
+                                            ...examsToday.map(
+                                              (e) => ExamTile(
+                                                exam: e,
+                                                showDeadline: false,
+                                                onDelete: () =>
+                                                    deleteExam(context, ref, e),
+                                                onEdit: () =>
+                                                    editExam(context, e),
+                                                onConvert: () => convertExam(
+                                                  context,
+                                                  ref,
+                                                  e,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          ...hwToday.map(
-                                            (hw) => HwTile(
-                                              hw: hw,
-                                              showDate: false,
-                                              onChangedCompletion: (value) =>
-                                                  completeHw(
-                                                    context,
-                                                    ref,
-                                                    hw,
-                                                    value,
-                                                  ),
-                                              onDelete: () =>
-                                                  deleteHw(context, ref, hw),
-                                              onEdit: () => editHw(context, hw),
-                                              onConvert: () =>
-                                                  convertHw(context, ref, hw),
+                                            ...hwToday.map(
+                                              (hw) => HwTile(
+                                                hw: hw,
+                                                showDate: false,
+                                                onChangedCompletion: (value) =>
+                                                    completeHw(
+                                                      context,
+                                                      ref,
+                                                      hw,
+                                                      value,
+                                                    ),
+                                                onDelete: () =>
+                                                    deleteHw(context, ref, hw),
+                                                onEdit: () =>
+                                                    editHw(context, hw),
+                                                onConvert: () =>
+                                                    convertHw(context, ref, hw),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                               ),
                             ),
@@ -239,49 +274,57 @@ class HomeScreen extends ConsumerWidget {
                                         ),
                                         asset: 'assets/confetti.svg',
                                       )
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        spacing: 8,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              context.loc.tomorrow,
-                                              style: context.txt.bodyLarge,
+                                    : ClipRect(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          spacing: 8,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Text(
+                                                context.loc.tomorrow,
+                                                style: context.txt.bodyLarge,
+                                              ),
                                             ),
-                                          ),
-                                          ...examsTomorrow.map(
-                                            (e) => ExamTile(
-                                              exam: e,
-                                              showDeadline: false,
-                                              onDelete: () =>
-                                                  deleteExam(context, ref, e),
-                                              onEdit: () =>
-                                                  editExam(context, e),
-                                              onConvert: () =>
-                                                  convertExam(context, ref, e),
+                                            ...examsTomorrow.map(
+                                              (e) => ExamTile(
+                                                exam: e,
+                                                showDeadline: false,
+                                                onDelete: () =>
+                                                    deleteExam(context, ref, e),
+                                                onEdit: () =>
+                                                    editExam(context, e),
+                                                onConvert: () => convertExam(
+                                                  context,
+                                                  ref,
+                                                  e,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          ...hwTomorrow.map(
-                                            (hw) => HwTile(
-                                              hw: hw,
-                                              showDate: false,
-                                              onChangedCompletion: (value) =>
-                                                  completeHw(
-                                                    context,
-                                                    ref,
-                                                    hw,
-                                                    value,
-                                                  ),
-                                              onDelete: () =>
-                                                  deleteHw(context, ref, hw),
-                                              onEdit: () => editHw(context, hw),
-                                              onConvert: () =>
-                                                  convertHw(context, ref, hw),
+                                            ...hwTomorrow.map(
+                                              (hw) => HwTile(
+                                                hw: hw,
+                                                showDate: false,
+                                                onChangedCompletion: (value) =>
+                                                    completeHw(
+                                                      context,
+                                                      ref,
+                                                      hw,
+                                                      value,
+                                                    ),
+                                                onDelete: () =>
+                                                    deleteHw(context, ref, hw),
+                                                onEdit: () =>
+                                                    editHw(context, hw),
+                                                onConvert: () =>
+                                                    convertHw(context, ref, hw),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                               ),
                             ),

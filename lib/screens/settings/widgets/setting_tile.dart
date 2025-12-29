@@ -152,9 +152,9 @@ class SettingTile extends StatelessWidget {
   }
 
   Widget buildText(BuildContext context) {
-    final color = titleColor ?? (highlighted
-        ? context.col.onPrimaryContainer
-        : context.col.onSurface);
+    final color =
+        titleColor ??
+        (highlighted ? context.col.onPrimaryContainer : context.col.onSurface);
 
     return SizedBox(
       width: double.infinity,
@@ -170,6 +170,17 @@ class SettingTile extends StatelessWidget {
     );
   }
 
+  BorderRadiusGeometry getBorder() {
+    return highlighted
+        ? BorderRadiusGeometry.circular(1000)
+        : BorderRadius.vertical(
+            top: isFirst ? const Radius.circular(20) : const Radius.circular(4),
+            bottom: isLast
+                ? const Radius.circular(20)
+                : const Radius.circular(4),
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -177,104 +188,94 @@ class SettingTile extends StatelessWidget {
         top: isFirst || highlighted ? 8 : 1,
         bottom: isLast || highlighted ? 8 : 1,
       ),
-      child: ClipRRect(
-        borderRadius: highlighted
-            ? BorderRadiusGeometry.circular(1000)
-            : BorderRadius.vertical(
-                top: isFirst
-                    ? const Radius.circular(20)
-                    : const Radius.circular(4),
-                bottom: isLast
-                    ? const Radius.circular(20)
-                    : const Radius.circular(4),
-              ),
-        child: Material(
-          color: highlighted
-              ? context.col.primaryContainer
-              : context.col.surfaceContainerLowest,
-          child: InkWell(
-            splashFactory: InkSparkle.splashFactory,
-            onTap: enabled && onTap != null
-                ? () {
-                    if (hapticFeedback) {
-                      vibrate.light();
-                    }
-                    onTap!(context);
+      child: Material(
+        borderRadius: getBorder(),
+        clipBehavior: Clip.antiAlias,
+        color: highlighted
+            ? context.col.primaryContainer
+            : context.col.surfaceContainerLowest,
+        child: InkWell(
+          splashFactory: InkSparkle.splashFactory,
+          onTap: enabled && onTap != null
+              ? () {
+                  if (hapticFeedback) {
+                    vibrate.light();
                   }
-                : null,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Column(
-                children: [
-                  Row(
-                    spacing: 16,
-                    children: [
-                      if (leading != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: leading!,
-                        ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            heroTag != null
-                                ? Hero(
-                                    tag: heroTag!,
-                                    flightShuttleBuilder:
-                                        (
-                                          flightContext,
-                                          animation,
-                                          flightDirection,
-                                          fromHeroContext,
-                                          toHeroContext,
-                                        ) {
-                                          return AnimatedBuilder(
-                                            animation: animation,
-                                            builder: (context, _) {
-                                              return Material(
-                                                color: Colors.transparent,
-                                                child: SizedBox(
-                                                  width: double.infinity,
-                                                  child: Text(
-                                                    title,
-                                                    style: googleSansFlex(
-                                                      size:
-                                                          14 +
-                                                          animation.value * 30,
-                                                      weight: enabled
-                                                          ? 700
-                                                          : 400,
-                                                      roundness: 100,
-                                                    ),
+                  onTap!(context);
+                }
+              : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              children: [
+                Row(
+                  spacing: 16,
+                  children: [
+                    if (leading != null)
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: leading!,
+                      ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          heroTag != null
+                              ? Hero(
+                                  tag: heroTag!,
+                                  flightShuttleBuilder:
+                                      (
+                                        flightContext,
+                                        animation,
+                                        flightDirection,
+                                        fromHeroContext,
+                                        toHeroContext,
+                                      ) {
+                                        return AnimatedBuilder(
+                                          animation: animation,
+                                          builder: (context, _) {
+                                            return Material(
+                                              color: Colors.transparent,
+                                              child: SizedBox(
+                                                width: double.infinity,
+                                                child: Text(
+                                                  title,
+                                                  style: googleSansFlex(
+                                                    size:
+                                                        14 +
+                                                        animation.value * 30,
+                                                    weight: enabled
+                                                        ? 700
+                                                        : 400,
+                                                    roundness: 100,
                                                   ),
                                                 ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                    child: buildText(context),
-                                  )
-                                : buildText(context),
-                            if (subtitle != null) Text(subtitle!),
-                          ],
-                        ),
-                      ),
-                      if (trailing != null) trailing!,
-                    ],
-                  ),
-                  if (newLineAction != null) ...[
-                    const SizedBox(height: 12),
-                    AbsorbPointer(
-                      absorbing: enabled == false,
-                      child: Opacity(
-                        opacity: enabled ? 1 : 0.3,
-                        child: newLineAction!,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                  child: buildText(context),
+                                )
+                              : buildText(context),
+                          if (subtitle != null) Text(subtitle!),
+                        ],
                       ),
                     ),
+                    if (trailing != null) trailing!,
                   ],
+                ),
+                if (newLineAction != null) ...[
+                  const SizedBox(height: 12),
+                  AbsorbPointer(
+                    absorbing: enabled == false,
+                    child: Opacity(
+                      opacity: enabled ? 1 : 0.3,
+                      child: newLineAction!,
+                    ),
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
         ),

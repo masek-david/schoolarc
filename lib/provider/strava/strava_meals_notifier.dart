@@ -35,7 +35,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
   FutureOr<Map<Date, List<Meal>>> build() async {
     _setupListeners();
     try {
-      final data = await _fetch();
+      final data = await _fetch(canRefreshLogin: false);
       return data;
     } finally {
       isFetching = false;
@@ -45,21 +45,21 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
   /// listen to login and usemeals
   void _setupListeners() {
     ref.listen<bool>(useMealsProvider, (previous, next) {
-      refresh();
+      refresh(canRefreshLogin: false);
     });
 
     ref.listen<AsyncValue<bool>>(stravaLoginProvider, (previous, next) {
-      next.whenData((value) => refresh());
+      next.whenData((value) => refresh(canRefreshLogin: false));
     });
   }
 
   /// Doesnt refresh if it is already fetching
-  Future<void> refresh() async {
+  Future<void> refresh({bool canRefreshLogin = true}) async {
     if (isFetching) return;
 
     state = const AsyncLoading();
     try {
-      final data = await _fetch();
+      final data = await _fetch(canRefreshLogin: canRefreshLogin);
       state = AsyncData(data);
     } catch (e, s) {
       state = AsyncError(e, s);
@@ -68,7 +68,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
   }
 
   /// Gets only if logged in and using meals
-  Future<Map<Date, List<Meal>>> _fetch() async {
+  Future<Map<Date, List<Meal>>> _fetch({bool canRefreshLogin = true}) async {
     isFetching = true;
 
     final useMeals = ref.read(useMealsProvider);
@@ -76,8 +76,16 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
       throw DisabledException(.mealsDisabled);
     }
 
-    final isLoggedIn = await ref.read(stravaLoginProvider.future);
+    bool isLoggedIn;
+    try {
+      isLoggedIn = await ref.read(stravaLoginProvider.future);
+    } on Exception {
+      isLoggedIn = false;
+    }
 
+    if (!isLoggedIn && canRefreshLogin) {
+      isLoggedIn = await ref.read(stravaLoginProvider.notifier).refreshLogin();
+    }
     if (!isLoggedIn) {
       throw ref.read(stravaLoginProvider).error ??
           AuthException(.loggedOut, exceptionAction: .stravaLogin);

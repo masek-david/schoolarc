@@ -37,7 +37,7 @@ class SubjectsScreen extends ConsumerWidget {
       return await ref.read(subjectsProvider.notifier).syncAll();
     } on Object catch (e) {
       if (context.mounted) {
-        showMessage(context, e.toString(), isError: true);
+        showErrorMessage(context,e);
       }
       return;
     }

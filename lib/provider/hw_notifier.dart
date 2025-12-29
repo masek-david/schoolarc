@@ -91,9 +91,11 @@ Map<Date, List<Homework>> hwsSortByDate(Map<String, Homework> original) {
   );
 
   hwDateMap.forEach((key, value) {
-    // TODO sort
-    value.sort((a, b) => a.id.compareTo(b.id));
-    value.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+    value.sort(
+      (a, b) => b.priority.index.compareTo(a.priority.index) != 0
+          ? b.priority.index.compareTo(a.priority.index)
+          : a.id.compareTo(b.id),
+    );
   });
 
   return hwDateMap;

@@ -47,13 +47,13 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
         },
         onError: (e) {
           if (mounted) {
-            showMessage(context, e.toString(), isError: true);
+            showErrorMessage(context, e);
           }
         },
       );
     } catch (e) {
       if (mounted) {
-        showMessage(context, e.toString(), isError: true);
+        showErrorMessage(context, e);
       }
     }
     return;
@@ -129,7 +129,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              showMessage(context, e.toString(), isError: true);
+                              showErrorMessage(context, e);
                             }
                           }
                         },
@@ -162,11 +162,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                showMessage(
-                                  context,
-                                  e.toString(),
-                                  isError: true,
-                                );
+                                showErrorMessage(context, e);
                               }
                             }
                           },
@@ -206,7 +202,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              showMessage(context, e.toString(), isError: true);
+                              showErrorMessage(context, e);
                             }
                           }
                         },
@@ -230,7 +226,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              showMessage(context, e.toString(), isError: true);
+                              showErrorMessage(context, e);
                             }
                           }
                         },
@@ -264,11 +260,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                showMessage(
-                                  context,
-                                  e.toString(),
-                                  isError: true,
-                                );
+                                showErrorMessage(context, e);
                               }
                             }
                           },

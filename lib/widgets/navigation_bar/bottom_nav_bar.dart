@@ -16,7 +16,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected: (index) {
-        vibrate.medium();
+        vibrate.light();
         onTap(newScreenIndex: index);
       },
       selectedIndex: pageIndex,

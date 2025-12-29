@@ -28,7 +28,7 @@ class MyExpressiveLoadingIndicator extends StatefulWidget {
 
   factory MyExpressiveLoadingIndicator.big({
     bool shown = true,
-    bool useHaptics = true,
+    bool useHaptics = false,
   }) {
     return MyExpressiveLoadingIndicator(
       size: 72,

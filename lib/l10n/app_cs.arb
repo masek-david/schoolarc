@@ -228,6 +228,8 @@
   "styleMotionScreenSwitchAnimationSubtitle": "V milisekundách (0 vypne animaci)",
   "styleMotionShowBorderTitle": "Zobrazit okraj aplikace",
   "styleMotionShowBorderSubtitle": "Na velké obrazovce, nebo když je aplikace na šířku, zobrazí okraje v aplikaci",
+  "expressiveHaptics": "Expresivní vibrace",
+  "expressiveHapticsSub": "Některé elemetny uživatelského prostředí vibrují s animacemi",
   "themePageTitle": "Motiv",
   "themeBrightness": "Jas",
   "themeFollowSystem": "Podle systému",
