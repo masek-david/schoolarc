@@ -82,6 +82,13 @@ class Vibrate {
     );
   }
 
+  void refresh() {
+    _vibrate(
+      pattern: [10, 100, 15, 100, 100],
+      intensities: [150, 0, 100, 0, 10],
+    );
+  }
+
   void complete(bool nowComplete) {
     if (nowComplete) {
       _vibrate(

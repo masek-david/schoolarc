@@ -1,6 +1,7 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class ExpressiveRefreshIndicator extends StatelessWidget {
@@ -18,7 +19,15 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomMaterialIndicator(
-      onRefresh: onRefresh,
+      onRefresh: () async {
+        vibrate.refresh();
+        await onRefresh();
+      },
+      onStateChanged: (change) {
+        if(change.newState.isArmed){
+          vibrate.medium();
+        }
+      },
       notificationPredicate: enabled
           ? CustomRefreshIndicator.defaultScrollNotificationPredicate
           : (_) => false,
