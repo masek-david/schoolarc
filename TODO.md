@@ -1,8 +1,7 @@
 # FIX
-merge sorts into one
 homescreen agotext under the cards?
 expressive filledbutton
-fix tutorial entry animation
+fix tutorial end animation
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

@@ -232,11 +232,13 @@ class NotificationSender {
     }
   }
 
-  /// Returns string for task to be put in notification body
+  /// Returns string for task to be put in the notification body
   static String _getTaskText(Task task) {
     final subject = task.subject?.trimmedShortcut;
 
-    return '${task.priority.htmlIcon}${subject != null ? ' ${subject.sanitizeHtml()}:' : ''} ${task.text.sanitizeHtml()}';
+    final completed = task is Homework && task.isCompleted;
+
+    return '${completed ? '\u2713<i>' : ''}${task.priority.htmlIcon}${subject != null ? ' ${subject.sanitizeHtml()}:' : ''} ${task.text.sanitizeHtml()}</i>';
   }
 
   static void cancelByChannelKey(String key) {
