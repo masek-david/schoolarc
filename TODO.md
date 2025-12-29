@@ -1,10 +1,11 @@
 # FIX
-check update for web
-when editing on pwa at least lose focus if keyboard isnt visible? so its enough to click into the field [WEB]
 merge sorts into one
-dont use circular progress indicator
-success/error animation for animatedshape
 homescreen agotext under the cards?
+expressive filledbutton
+add animations to all animationControllers
+fix tutorial entry animation
+remove cliprrect
+expressiveHaptics setting
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

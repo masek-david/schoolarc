@@ -97,6 +97,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   }
 
   void setSubject(Subject? subject) {
+    vibrate.medium();
     setState(() {
       pickedSubjectId.value = subject?.id;
       dateIsAutoSet.value = false;
@@ -313,9 +314,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     height: 40,
                     child: PriorityPicker(
                       selectedPriority: pickedPriority.value,
-                      onSelected: (value) => setState(() {
-                        pickedPriority.value = value;
-                      }),
+                      onSelected: (value) {
+                        vibrate.medium();
+                        setState(() {
+                          pickedPriority.value = value;
+                        });
+                      },
                     ),
                   ),
                   // SettingTile.withCheckbox(
@@ -359,6 +363,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                         label: Text(context.loc.today),
                         selected: pickedDate.value.isSameDay(Date.today()),
                         onSelected: (value) {
+                          vibrate.medium();
                           setState(() {
                             pickedDate.value = Date.today();
                           });
@@ -371,6 +376,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                           Date.today().addDays(1),
                         ),
                         onSelected: (value) {
+                          vibrate.medium();
                           setState(() {
                             pickedDate.value = Date.today().addDays(1);
                           });
@@ -385,6 +391,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                           Date.today().addDays(7),
                         ),
                         onSelected: (value) {
+                          vibrate.medium();
                           setState(() {
                             pickedDate.value = Date.today().addDays(7);
                           });

@@ -73,8 +73,7 @@ class TimetableCard extends ConsumerWidget {
               greydOut: !areThereUpcomingLessons,
               actions: [
                 LoadingIconButton(
-                  icon: Icons.refresh,
-                  onTap: () => refresh(ref),
+                  onPressed: () => refresh(ref),
                   isLoading: isLoading,
                 ),
                 IconButton(

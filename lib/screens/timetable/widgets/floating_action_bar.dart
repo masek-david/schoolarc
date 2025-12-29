@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class FloatingActionBarAction {
   const FloatingActionBarAction({required this.icon, required this.onTap});
@@ -63,7 +63,7 @@ class _ExpressiveIconButtonState extends State<ExpressiveIconButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        vibrate.medium();
         widget.onTap();
       },
       onTapDown: (details) {

@@ -1,6 +1,5 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -61,30 +60,31 @@ class HomeworksScreen extends ConsumerWidget {
     for (int i = 3; i >= 0; i--) {
       itemList.add(_AnimatedReorderableListItem(priority: i));
       itemList.addAll(
-          hwByPriority[i]!.map((e) => _AnimatedReorderableListItem(hw: e)));
+        hwByPriority[i]!.map((e) => _AnimatedReorderableListItem(hw: e)),
+      );
     }
     itemList.add(_AnimatedReorderableListItem(priority: -1));
-    final nonDraggableItems =
-        itemList.where((element) => element.hw == null).toList();
+    final nonDraggableItems = itemList
+        .where((element) => element.hw == null)
+        .toList();
 
     return MediaQuery.removePadding(
       context: context,
       removeBottom: true,
       child: Scaffold(
-        floatingActionButton: WebRequestFocus(
-          onPressed: () async {
-            HapticFeedback.mediumImpact();
-            addNewHw(context);
-          },
-          child: FloatingActionButton(
-            tooltip: context.loc.addNewHomework,
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              addNewHw(context);
-            },
-            enableFeedback: true,
-            child: const Icon(Icons.add),
-          ),
+        floatingActionButton: WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return FloatingActionButton(
+              tooltip: context.loc.addNewHomework,
+              onPressed: () async {
+                showKeyboard();
+                vibrate.medium();
+                addNewHw(context);
+              },
+              enableFeedback: true,
+              child: const Icon(Icons.add),
+            );
+          }
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -108,10 +108,12 @@ class HomeworksScreen extends ConsumerWidget {
                 }
               },
               child: itemList.length == 5
-                  ? ListView(children: [
-                      const Snappable(child: AnimatedShape()),
-                      _buildCompletedList(context, ref, completedHws),
-                    ])
+                  ? ListView(
+                      children: [
+                        const Snappable(child: AnimatedShape()),
+                        _buildCompletedList(context, ref, completedHws),
+                      ],
+                    )
                   : AnimatedReorderableListView(
                       items: itemList,
                       buildDefaultDragHandles: false,
@@ -120,14 +122,17 @@ class HomeworksScreen extends ConsumerWidget {
                         _AnimatedReorderableListItem(priority: -1),
                       ],
                       nonDraggableItems: nonDraggableItems,
-                      onReorderStart: (p0) => HapticFeedback.mediumImpact(),
+                      onReorderStart: (p0) => vibrate.medium(),
                       itemBuilder: (context, index) {
                         final item = itemList[index];
 
                         if (item.priority != null) {
                           if (item.priority! == -1) {
                             return _buildCompletedList(
-                                context, ref, completedHws);
+                              context,
+                              ref,
+                              completedHws,
+                            );
                           }
 
                           final priority = TaskPriority(item.priority!);
@@ -135,7 +140,9 @@ class HomeworksScreen extends ConsumerWidget {
                           return Padding(
                             key: ValueKey('hw title: ${item.priority!}'),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: TitleWithCount(
                               text: priority.name(context),
                               textColor: priority.getColor(context),
@@ -147,7 +154,8 @@ class HomeworksScreen extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           key: ValueKey(
-                              'hw: ${hw.id} ${hw.stateReaddingVersion}'),
+                            'hw: ${hw.id} ${hw.stateReaddingVersion}',
+                          ),
                           child: HwTile(
                             // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
                             // Multiple widgets use the same globalkey error
@@ -184,7 +192,9 @@ class HomeworksScreen extends ConsumerWidget {
                           }
                         }
 
-                        ref.read(hwDataProvider.notifier).reorder(
+                        ref
+                            .read(hwDataProvider.notifier)
+                            .reorder(
                               item.hw!.toData(),
                               newOrder,
                               newPriority,
@@ -199,7 +209,10 @@ class HomeworksScreen extends ConsumerWidget {
   }
 
   Widget _buildCompletedList(
-      BuildContext context, WidgetRef ref, List<Homework> completedHws) {
+    BuildContext context,
+    WidgetRef ref,
+    List<Homework> completedHws,
+  ) {
     return Padding(
       key: const ValueKey('hw completed title'),
       padding: const EdgeInsets.only(bottom: 70),

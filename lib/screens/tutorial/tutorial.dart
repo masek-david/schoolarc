@@ -18,38 +18,38 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 Subject exampleSubject(AppLocalizations loc) => Subject(
-      name: loc.exampleSubjectName1,
-      shortcut: loc.exampleSubjectShort1,
-      id: '',
-      bakaId: '',
-      timestamp: DateTime.now(),
-      isDeleted: false,
-      order: 0,
-    );
+  name: loc.exampleSubjectName1,
+  shortcut: loc.exampleSubjectShort1,
+  id: '',
+  bakaId: '',
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
 Homework exampleHw(AppLocalizations loc) => Homework(
-      subject: exampleSubject(loc),
-      text: loc.homework(1),
-      date: Date.today().addDays(1),
-      isCompleted: false,
-      priority: const TaskPriority(0),
-      id: '',
-      description: '',
-      timestamp: DateTime.now(),
-      isDeleted: false,
-      order: 0,
-    );
+  subject: exampleSubject(loc),
+  text: loc.homework(1),
+  date: Date.today().addDays(1),
+  isCompleted: false,
+  priority: const TaskPriority(0),
+  id: '',
+  description: '',
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
 Exam exampleExam(AppLocalizations loc) => Exam(
-      subject: exampleSubject(loc),
-      text: loc.exams(1),
-      date: Date.today().addDays(1),
-      isCompleted: false,
-      priority: const TaskPriority(0),
-      id: '',
-      description: '',
-      timestamp: DateTime.now(),
-      isDeleted: false,
-      order: 0,
-    );
+  subject: exampleSubject(loc),
+  text: loc.exams(1),
+  date: Date.today().addDays(1),
+  isCompleted: false,
+  priority: const TaskPriority(0),
+  id: '',
+  description: '',
+  timestamp: DateTime.now(),
+  isDeleted: false,
+  order: 0,
+);
 
 class Tutorial extends StatefulWidget {
   const Tutorial({super.key, required this.onEnd, required this.firstTime});
@@ -97,16 +97,29 @@ class _TutorialState extends State<Tutorial> {
                 if (!widget.firstTime) {
                   widget.onEnd();
                 } else {
-                  _controller.animateToPage(5,
-                      duration: Durations.long4, curve: Curves.decelerate);
+                  _controller.animateToPage(
+                    5,
+                    duration: Durations.long4,
+                    curve: Curves.decelerate,
+                  );
                 }
               },
-              child: Text(!widget.firstTime
-                  ? context.loc.skip
-                  : showSkip
-                      ? context.loc.skip
-                      : context.loc.alreadyUsedApp),
+              child: Text(
+                !widget.firstTime
+                    ? context.loc.skip
+                    : showSkip
+                    ? context.loc.skip
+                    : context.loc.alreadyUsedApp,
+              ),
             ),
+            actions: kDebugMode
+                ? [
+                    TextButton(
+                      onPressed: widget.onEnd,
+                      child: const Text('Close (debug)'),
+                    ),
+                  ]
+                : null,
             backgroundColor: Colors.transparent,
           ),
           floatingActionButtonLocation:
@@ -116,7 +129,9 @@ class _TutorialState extends State<Tutorial> {
             children: [
               IconButton(
                 onPressed: () => _controller.previousPage(
-                    duration: Durations.medium3, curve: Curves.easeInOut),
+                  duration: Durations.medium3,
+                  curve: Curves.easeInOut,
+                ),
                 icon: const Icon(
                   Icons.keyboard_arrow_left_rounded,
                 ),
@@ -128,14 +143,17 @@ class _TutorialState extends State<Tutorial> {
                     : null,
                 effect: WormEffect(
                   activeDotColor: Theme.of(context).colorScheme.primary,
-                  dotColor:
-                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  dotColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                 ),
                 count: pages.length,
               ),
               IconButton(
                 onPressed: () => _controller.nextPage(
-                    duration: Durations.medium3, curve: Curves.easeInOut),
+                  duration: Durations.medium3,
+                  curve: Curves.easeInOut,
+                ),
                 icon: const Icon(
                   Icons.keyboard_arrow_right_rounded,
                 ),

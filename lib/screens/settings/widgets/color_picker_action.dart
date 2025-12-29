@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class ColorPickerAction extends StatelessWidget {
   const ColorPickerAction({
@@ -67,6 +68,7 @@ class ColorPickerAction extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
+                        vibrate.medium();
                         onChanged(color);
                       },
                       child: isHighlighted ? const Icon(Icons.check) : null,

@@ -95,12 +95,16 @@ class _FloatingTabBarState extends State<FloatingTabBar> {
               ).toList(),
             ),
           ),
-          WebRequestFocus(
-            onPressed: () => widget.onFabTap(widget.controller.index),
-            child: FloatingActionButton(
-              child: const Icon(Icons.add_rounded),
-              onPressed: () => widget.onFabTap(widget.controller.index),
-            ),
+          WebRequestFocusBuilder(
+            builder: (showKeyboard) {
+              return FloatingActionButton(
+                child: const Icon(Icons.add_rounded),
+                onPressed: () {
+                  showKeyboard();
+                  widget.onFabTap(widget.controller.index);
+                },
+              );
+            }
           ),
         ],
       ),

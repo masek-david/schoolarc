@@ -4,13 +4,13 @@ import 'dart:math';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/shapes_list.dart';
 
 class AnimatedShape extends ConsumerStatefulWidget {
@@ -36,9 +36,9 @@ class AnimatedShape extends ConsumerStatefulWidget {
     this.excludeShapes = true,
     this.secondsBeforeShapeChange,
     required ColorScheme scheme,
-  })  : firstColor = scheme.errorContainer,
-        secondColor = scheme.error,
-        textColor = scheme.onErrorContainer;
+  }) : firstColor = scheme.errorContainer,
+       secondColor = scheme.error,
+       textColor = scheme.onErrorContainer;
 
   AnimatedShape.success({
     super.key,
@@ -50,15 +50,15 @@ class AnimatedShape extends ConsumerStatefulWidget {
     this.secondsBeforeShapeChange,
     required Color primary,
     required bool isDark,
-  })  : firstColor = isDark
-            ? const Color.fromARGB(255, 0, 107, 30).harmonizeWith(primary)
-            : const Color.fromARGB(255, 174, 255, 168).harmonizeWith(primary),
-        secondColor = isDark
-            ? const Color.fromARGB(255, 193, 255, 225).harmonizeWith(primary)
-            : const Color.fromARGB(255, 0, 255, 51).harmonizeWith(primary),
-        textColor = isDark
-            ? const Color.fromARGB(255, 220, 255, 210).harmonizeWith(primary)
-            : const Color.fromARGB(255, 0, 54, 3).harmonizeWith(primary);
+  }) : firstColor = isDark
+           ? const Color.fromARGB(255, 0, 107, 30).harmonizeWith(primary)
+           : const Color.fromARGB(255, 174, 255, 168).harmonizeWith(primary),
+       secondColor = isDark
+           ? const Color.fromARGB(255, 193, 255, 225).harmonizeWith(primary)
+           : const Color.fromARGB(255, 0, 255, 51).harmonizeWith(primary),
+       textColor = isDark
+           ? const Color.fromARGB(255, 220, 255, 210).harmonizeWith(primary)
+           : const Color.fromARGB(255, 0, 54, 3).harmonizeWith(primary);
 
   final double size;
   final Color? firstColor;
@@ -88,11 +88,16 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
 
   /// Updates every frame
   late final _rotationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: widget.secondsForOneRotation.abs()));
+    vsync: this,
+    duration: Duration(seconds: widget.secondsForOneRotation.abs()),
+  );
 
   late final shapeController = AnimationController(
-      vsync: this, lowerBound: -10, upperBound: 10, value: 0);
+    vsync: this,
+    lowerBound: -10,
+    upperBound: 10,
+    value: 0,
+  );
 
   late final shapes = widget.excludeShapes ? textShapes : MaterialShapes.values;
   late ShapeBorder from = RoundedPolygonBorder(polygon: shapes[14]);
@@ -191,12 +196,13 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
       child: GestureDetector(
         onTapCancel: widget.reactive
             ? () {
+                vibrate.light();
                 animateTo(0);
               }
             : null,
         onTapDown: widget.reactive
             ? (details) {
-                HapticFeedback.lightImpact();
+                vibrate.medium();
                 if (animating) {
                   from = _currentShape;
                   nextShapeIndex = getRandom(nextShapeIndex);
@@ -208,7 +214,7 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
             : null,
         onTap: widget.reactive
             ? () {
-                HapticFeedback.lightImpact();
+                vibrate.release();
                 changeShape();
               }
             : null,
@@ -230,7 +236,8 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
                     curve: Curves.decelerate,
                     turns: turns,
                     child: Transform.rotate(
-                      angle: pi *
+                      angle:
+                          pi *
                           2 *
                           _rotationController.value *
                           (widget.secondsForOneRotation.isNegative ? -1 : 1),
@@ -281,17 +288,18 @@ class _AnimatedShapeState extends ConsumerState<AnimatedShape>
                         child: Text(
                           text,
                           maxLines: 2,
-                          style: robotoSerif(
-                                  size: 22,
-                                  width: 50,
-                                  grade: -50,
-                                  weight: 500,
-                                  color: textColor)
-                              .copyWith(
-                            shadows: [
-                              Shadow(color: firstColor, blurRadius: 10)
-                            ],
-                          ),
+                          style:
+                              robotoSerif(
+                                size: 22,
+                                width: 50,
+                                grade: -50,
+                                weight: 500,
+                                color: textColor,
+                              ).copyWith(
+                                shadows: [
+                                  Shadow(color: firstColor, blurRadius: 10),
+                                ],
+                              ),
                         ),
                       ),
                     ),

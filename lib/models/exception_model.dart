@@ -8,7 +8,7 @@ class NetworkException implements Exception {
 }
 
 enum AuthErrorCodes {
-  // Use when the user isnt logged in -> should entry their login info
+  /// Use when the user isnt logged in -> should entry their login info
   loggedOut,
   noCanteenId,
   noUser,

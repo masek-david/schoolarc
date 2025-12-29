@@ -34,6 +34,7 @@ class StyleMotionPage extends ConsumerWidget {
             min: 0,
             max: 500,
             onChanged: (value) {
+              vibrate.selection();
               settings.save(Setting.pageSwitchAnimationDuration, value);
             },
           ),

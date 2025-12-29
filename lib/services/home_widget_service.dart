@@ -82,6 +82,7 @@ Future<void> _saveAndUpdateMain(String data) async {
 }
 
 Future<void> saveLocalizationStrings(BuildContext context) async {
+  if (kIsWeb || !Platform.isAndroid) return;
   final loc = getLocalizationWithoutContext();
 
   await HomeWidget.saveWidgetData(
@@ -157,7 +158,7 @@ FutureOr<void> backgroundCallback(Uri? data) async {
   }
 }
 
-// checks hws that were completed from the widget, and notifies the notifier 
+// checks hws that were completed from the widget, and notifies the notifier
 Future<void> checkForCompletedHomework(WidgetRef ref) async {
   final hws = ref.read(hwDataProvider);
   await IsolatedHive.initFlutter();

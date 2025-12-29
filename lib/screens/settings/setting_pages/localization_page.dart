@@ -8,8 +8,10 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/drop_down_action.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class LocalizationPage extends ConsumerWidget {
   const LocalizationPage({super.key});
@@ -55,6 +57,8 @@ class LocalizationPage extends ConsumerWidget {
           trailing: DropDownAction(
             value: language,
             onChanged: (value) {
+              vibrate.light();
+              saveLocalizationStrings(context);
               ref.read(languageCodeProvider.notifier).set(value);
             },
             items: dropDownItems,
@@ -66,6 +70,7 @@ class LocalizationPage extends ConsumerWidget {
           trailing: DropDownAction(
             value: dateFormat,
             onChanged: (value) {
+              vibrate.light();
               ref.read(dateFormatProvider.notifier).set(value);
             },
             items: supportedDateFormats

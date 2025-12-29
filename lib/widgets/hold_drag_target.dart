@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 /// A drag target that triggers [heldAction] if a draggable is held over it for a certain duration.
 ///
@@ -37,7 +37,7 @@ class _HoldDragTargetState extends State<HoldDragTarget> {
     timer = Timer(
       const Duration(milliseconds: 1000),
       () {
-        HapticFeedback.lightImpact();
+        vibrate.medium();
         widget.heldAction();
         setTimer();
       },

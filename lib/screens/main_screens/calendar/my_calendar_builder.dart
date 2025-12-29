@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/reschedule_drag_target.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 CalendarBuilders<Object?> myCalendarBuilder({
@@ -22,7 +23,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
         currentDate: Date.fromDateTime(day.toLocal()),
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
-            HapticFeedback.selectionClick();
+            vibrate.selection();
           }
 
           return AnimatedContainer(
@@ -58,7 +59,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
         currentDate: Date.fromDateTime(day.toLocal()),
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
-            HapticFeedback.selectionClick();
+            vibrate.selection();
           }
 
           return AnimatedContainer(
@@ -91,7 +92,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
         currentDate: Date.fromDateTime(day.toLocal()),
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
-            HapticFeedback.selectionClick();
+            vibrate.selection();
           }
 
           return AnimatedContainer(
@@ -121,7 +122,7 @@ CalendarBuilders<Object?> myCalendarBuilder({
         currentDate: Date.fromDateTime(day.toLocal()),
         builder: (context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
-            HapticFeedback.selectionClick();
+            vibrate.selection();
           }
 
           return AnimatedContainer(
@@ -199,25 +200,32 @@ CalendarBuilders<Object?> myCalendarBuilder({
                 (index) {
                   Exam exam = exams[index];
 
-                  return GestureDetector(
-                    onTap: () => onEdit(exam),
-                    child: LongPressDraggable(
-                      data: exam,
-                      onDragStarted: () => HapticFeedback.mediumImpact(),
-                      feedbackOffset: const Offset(0, -80),
-                      dragAnchorStrategy: (draggable, context, position) {
-                        return const Offset(50, 60);
-                      },
-                      childWhenDragging: Opacity(
-                        opacity: 0.3,
-                        child: _buildExamTile(exam, context, theme),
-                      ),
-                      feedback: SizedBox(
-                        width: 100,
-                        child: _buildExamTile(exam, context, theme),
-                      ),
-                      child: _buildExamTile(exam, context, theme),
-                    ),
+                  return WebRequestFocusBuilder(
+                    builder: (showKeyboard) {
+                      return GestureDetector(
+                        onTap: () {
+                          showKeyboard();
+                          onEdit(exam);
+                        },
+                        child: LongPressDraggable(
+                          data: exam,
+                          onDragStarted: () => vibrate.medium(),
+                          feedbackOffset: const Offset(0, -80),
+                          dragAnchorStrategy: (draggable, context, position) {
+                            return const Offset(50, 60);
+                          },
+                          childWhenDragging: Opacity(
+                            opacity: 0.3,
+                            child: _buildExamTile(exam, context, theme),
+                          ),
+                          feedback: SizedBox(
+                            width: 100,
+                            child: _buildExamTile(exam, context, theme),
+                          ),
+                          child: _buildExamTile(exam, context, theme),
+                        ),
+                      );
+                    }
                   );
                 },
               ),

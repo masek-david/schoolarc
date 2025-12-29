@@ -107,9 +107,7 @@ class _CurrentTimetableScreenState
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               timetable = null;
-              return const Center(
-                child: ExpressiveLoadingIndicator(size: 72),
-              );
+              return Center(child: MyExpressiveLoadingIndicator.big());
             } else if (snapshot.hasError) {
               timetable = null;
               return Center(

@@ -9,6 +9,7 @@ import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -50,6 +51,8 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
     }
   }
 
+  double value = 0;
+
   @override
   void initState() {
     super.initState();
@@ -86,7 +89,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 context: context,
                 child: Text(context.loc.close),
                 onPressed: () => Navigator.pop(context),
-              )
+              ),
             ],
           ),
           icon: const Icon(Icons.info_outline),
@@ -100,7 +103,6 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
           title: context.loc.useStravaCz,
           contentPadding: const EdgeInsets.symmetric(horizontal: 4),
         ),
-        const Divider(),
         if (error == null && !isLoading)
           SettingTile(
             isLast: true,
@@ -112,13 +114,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 : const LoggedOutIcon(),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
-        if (error != null)
+        Center(child: MyExpressiveLoadingIndicator.big(shown: isLoading)),
+        if (error != null && !isLoading)
           ErrorTile(
             error: error,
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-        if (isLoading) const Center(child: CircularProgressIndicator()),
         const SizedBox(height: 12),
         if (loggedIn == false)
           Row(
@@ -142,7 +144,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         context: context,
                         child: Text(loc.close),
                         onPressed: () => Navigator.pop(context),
-                      )
+                      ),
                     ],
                   );
                 },
@@ -214,11 +216,23 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                           username: allowLogin ? _usernameController.text : '',
                           password: allowLogin ? _passwordController.text : '',
                         )
-                        .then((value) => getInfoFromStorage());
+                        .then((value) {
+                          if (value) {
+                            vibrate.success();
+                          } else {
+                            vibrate.error();
+                          }
+
+                          return getInfoFromStorage();
+                        });
                   }
                 : null,
             child: Text(loc.logIn),
           ),
+        // FilledButtonExpressive(
+        //   onPressed: () {},
+        //   child: Text(loc.logIn),
+        // ),
         if (loggedIn == true)
           OutlinedButton(
             onPressed: useMeals
@@ -226,7 +240,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                     _canteenController.clear();
                     _passwordController.clear();
                     _usernameController.clear();
-                    ref.read(stravaLoginProvider.notifier).logOut();
+                    ref
+                        .read(stravaLoginProvider.notifier)
+                        .logOut()
+                        .then(
+                          (value) =>
+                              value ? vibrate.success() : vibrate.error(),
+                        );
                   }
                 : null,
             child: Text(loc.logOut),

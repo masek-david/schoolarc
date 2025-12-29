@@ -8,7 +8,6 @@ import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/logs_database.dart';
-import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/database/timetable_database.dart';
@@ -18,6 +17,8 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/baka_service.dart';
 import 'package:schoolarc/services/strava_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/vibrate.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:uuid/uuid.dart';
 
 var navigatorKey = GlobalKey<NavigatorState>();
@@ -25,14 +26,14 @@ final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
 final settings = SettingsDatabase();
-final secureStorage = SecureStorage();
 final timetableDb = TimeTableDatabase();
 final bakaHwDb = BakaHomeworksDatabase();
 final stravaService = StravaService();
 final bakaService = BakaService();
 final logsService = LogsDatabase();
 final uuid = const Uuid();
-late PackageInfo packageInfo;
+late final Vibrate vibrate;
+late final PackageInfo packageInfo;
 final timeoutDuration = const Duration(seconds: 10);
 
 const noChange = Object();
@@ -94,8 +95,9 @@ void showMessage(
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: duration,
-        backgroundColor:
-            isError ? Theme.of(context).colorScheme.errorContainer : null,
+        backgroundColor: isError
+            ? Theme.of(context).colorScheme.errorContainer
+            : null,
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -112,8 +114,9 @@ void showMessage(
             ),
             if (actions != null) ...actions,
             if (isContinuos)
-              CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primaryContainer,
+              MyExpressiveLoadingIndicator(
+                size: 28,
+                color: context.col.onPrimary,
               ),
           ],
         ),

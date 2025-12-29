@@ -39,15 +39,18 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
 
   Future<void> refresh() async {
     try {
-      await fireShareService.getGroup().then((value) {
-        setState(() {
-          group = value;
-        });
-      }, onError: (e) {
-        if (mounted) {
-          showMessage(context, e.toString(), isError: true);
-        }
-      });
+      await fireShareService.getGroup().then(
+        (value) {
+          setState(() {
+            group = value;
+          });
+        },
+        onError: (e) {
+          if (mounted) {
+            showMessage(context, e.toString(), isError: true);
+          }
+        },
+      );
     } catch (e) {
       if (mounted) {
         showMessage(context, e.toString(), isError: true);
@@ -77,8 +80,9 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
       int result = a.member.id.compareTo(b.member.id);
       if (result != 0) return result;
 
-      result =
-          (a is GroupHomework ? 1 : 0).compareTo(b is GroupHomework ? 1 : 0);
+      result = (a is GroupHomework ? 1 : 0).compareTo(
+        b is GroupHomework ? 1 : 0,
+      );
       if (result != 0) return result;
 
       return a.date.compareTo(b.date);
@@ -89,10 +93,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
         title: Text(group?.groupName ?? context.loc.loading),
         actions: [
           if (needsRefreshButton())
-            LoadingIconButtonWithFuture(
-              onTap: refresh,
-              icon: Icons.refresh,
-            ),
+            LoadingIconButtonWithFuture(onPressed: refresh),
           PopupMenuButton(
             itemBuilder: (context) {
               return [
@@ -121,8 +122,10 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                           try {
                             await fireShareService.joinGroup(id);
                             if (context.mounted) {
-                              showMessage(context,
-                                  'Wait for the group owner to approve');
+                              showMessage(
+                                context,
+                                'Wait for the group owner to approve',
+                              );
                             }
                           } catch (e) {
                             if (context.mounted) {
@@ -159,8 +162,11 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                showMessage(context, e.toString(),
-                                    isError: true);
+                                showMessage(
+                                  context,
+                                  e.toString(),
+                                  isError: true,
+                                );
                               }
                             }
                           },
@@ -173,10 +179,14 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                   child: const Text('Invite to group'),
                   onTap: () async {
                     await Clipboard.setData(
-                        ClipboardData(text: group?.groupId ?? ''));
+                      ClipboardData(text: group?.groupId ?? ''),
+                    );
                     if (context.mounted) {
-                      showMessage(context, 'Share the copied code with friends',
-                          duration: const Duration(seconds: 10));
+                      showMessage(
+                        context,
+                        'Share the copied code with friends',
+                        duration: const Duration(seconds: 10),
+                      );
                     }
                   },
                 ),
@@ -254,8 +264,11 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                showMessage(context, e.toString(),
-                                    isError: true);
+                                showMessage(
+                                  context,
+                                  e.toString(),
+                                  isError: true,
+                                );
                               }
                             }
                           },
@@ -287,7 +300,9 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                   if (task is GroupHomework) {
                     tile = Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       child: HwTile(
                         hw: task.toHomework(),
                         onChangedCompletion: null,
@@ -301,7 +316,9 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                     task as GroupExam;
                     tile = Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       child: ExamTile(
                         exam: task.toExam(),
                         onDelete: null,
@@ -318,7 +335,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                           padding: const EdgeInsets.fromLTRB(12, 16, 12, 4),
                           child: NicknameText(user: member),
                         ),
-                        tile
+                        tile,
                       ],
                     );
                   }

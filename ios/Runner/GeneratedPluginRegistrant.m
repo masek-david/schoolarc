@@ -78,6 +78,12 @@
 @import url_launcher_ios;
 #endif
 
+#if __has_include(<vibration/VibrationPlugin.h>)
+#import <vibration/VibrationPlugin.h>
+#else
+@import vibration;
+#endif
+
 #if __has_include(<workmanager_apple/WorkmanagerPlugin.h>)
 #import <workmanager_apple/WorkmanagerPlugin.h>
 #else
@@ -99,6 +105,7 @@
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
+  [VibrationPlugin registerWithRegistrar:[registry registrarForPlugin:@"VibrationPlugin"]];
   [WorkmanagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"WorkmanagerPlugin"]];
 }
 

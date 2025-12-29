@@ -162,6 +162,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       return isSameDay(widget.selectedDay, day);
                     },
                     onDaySelected: (selectedDayNew, focusedDayNew) {
+                      vibrate.light();
                       widget.setSelectedDay(selectedDayNew);
                     },
                     onHeaderTapped: (focusedDay) {

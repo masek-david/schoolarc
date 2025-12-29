@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:m3_expressive_shapes/m3_expressive_shapes.dart';
 import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class PriorityPickerExpressive extends StatefulWidget {
   const PriorityPickerExpressive({
@@ -34,7 +34,7 @@ class _PriorityPickerExpressiveState extends State<PriorityPickerExpressive>
   ];
 
   void selectPriority(int newPriority) {
-    HapticFeedback.mediumImpact();
+    vibrate.medium();
     widget.onSelected(newPriority);
   }
 

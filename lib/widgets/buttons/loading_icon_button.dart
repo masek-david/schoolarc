@@ -5,11 +5,11 @@ import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicato
 class LoadingIconButtonWithFuture extends StatefulWidget {
   const LoadingIconButtonWithFuture({
     super.key,
-    required this.icon,
-    required this.onTap,
+    this.icon = Icons.refresh,
+    required this.onPressed,
   });
 
-  final Future<void> Function() onTap;
+  final Future<void> Function() onPressed;
   final IconData icon;
 
   @override
@@ -23,33 +23,24 @@ class _LoadingIconButtonWithFutureState
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        if (isLoading)
-          ExpressiveLoadingIndicator(
-            color: context.col.secondaryContainer,
-            size: 40,
-          ),
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isLoading = true;
-            });
+    return LoadingIconButton(
+      icon: widget.icon,
+      onPressed: () {
+        setState(() {
+          isLoading = true;
+        });
 
-            widget.onTap().then(
-              (value) {
-                if (mounted) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                }
-              },
-            );
+        widget.onPressed().then(
+          (value) {
+            if (mounted) {
+              setState(() {
+                isLoading = false;
+              });
+            }
           },
-          icon: Icon(widget.icon),
-        ),
-      ],
+        );
+      },
+      isLoading: isLoading,
     );
   }
 }
@@ -57,12 +48,12 @@ class _LoadingIconButtonWithFutureState
 class LoadingIconButton extends StatelessWidget {
   const LoadingIconButton({
     super.key,
-    required this.icon,
-    required this.onTap,
+    this.icon = Icons.refresh,
+    required this.onPressed,
     required this.isLoading,
   });
 
-  final void Function() onTap;
+  final void Function() onPressed;
   final IconData icon;
   final bool isLoading;
 
@@ -72,12 +63,12 @@ class LoadingIconButton extends StatelessWidget {
       alignment: AlignmentDirectional.center,
       children: [
         if (isLoading)
-          ExpressiveLoadingIndicator(
+          MyExpressiveLoadingIndicator(
             color: context.col.secondaryContainer,
             size: 40,
           ),
         IconButton(
-          onPressed: onTap,
+          onPressed: onPressed,
           icon: Icon(icon),
         ),
       ],

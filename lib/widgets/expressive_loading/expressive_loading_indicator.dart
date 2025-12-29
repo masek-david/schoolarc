@@ -6,25 +6,44 @@ import 'package:flutter/physics.dart';
 import 'package:m3_expressive_shapes/m3_expressive_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
-class ExpressiveLoadingIndicator extends StatefulWidget {
-  const ExpressiveLoadingIndicator({
+class MyExpressiveLoadingIndicator extends StatefulWidget {
+  const MyExpressiveLoadingIndicator({
     super.key,
     this.progress,
     this.size = 48,
     this.color,
+    this.shown = true,
+    this.padding = 0,
+    this.useHaptics = false,
   });
 
   final double? progress;
   final double size;
   final Color? color;
+  final bool shown;
+  final bool useHaptics;
+  final double padding;
+
+  factory MyExpressiveLoadingIndicator.big({
+    bool shown = true,
+    bool useHaptics = true,
+  }) {
+    return MyExpressiveLoadingIndicator(
+      size: 72,
+      padding: 16,
+      shown: shown,
+      useHaptics: useHaptics,
+    );
+  }
 
   @override
-  State<ExpressiveLoadingIndicator> createState() =>
-      _ExpressiveLoadingIndicatorState();
+  State<MyExpressiveLoadingIndicator> createState() =>
+      _MyExpressiveLoadingIndicatorState();
 }
 
-class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
+class _MyExpressiveLoadingIndicatorState extends State<MyExpressiveLoadingIndicator>
     with TickerProviderStateMixin {
   static final List<RoundedPolygon> shapes = [
     MaterialShapes.softBurst,
@@ -38,6 +57,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
 
   late final AnimationController _globalRotationController;
   late final AnimationController _morphController;
+  late final AnimationController _appearController;
   int shapeIndex = 0;
   Timer? morphTimer;
 
@@ -64,6 +84,11 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     );
 
     _morphController = AnimationController(vsync: this);
+    _appearController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _appearController.animateTo(1, curve: Curves.decelerate);
 
     if (widget.progress == null) {
       startAnimation();
@@ -76,6 +101,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     morphTimer?.cancel();
     _globalRotationController.dispose();
     _morphController.dispose();
+    _appearController.dispose();
 
     super.dispose();
   }
@@ -87,7 +113,12 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
 
     morphTimer = Timer.periodic(
       const Duration(milliseconds: _morphIntervalMs),
-      (timer) => startMorphAnimation(),
+      (timer) {
+        if (widget.useHaptics) {
+          vibrate.medium();
+        }
+        startMorphAnimation();
+      },
     );
   }
 
@@ -108,7 +139,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
   @override
   Widget build(BuildContext context) {
     if (widget.progress == null) {
-      if (!_globalRotationController.isAnimating) {
+      if (!_globalRotationController.isAnimating && widget.shown) {
         startAnimation();
       }
     } else {
@@ -117,9 +148,25 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
       }
     }
 
+    if (widget.shown) {
+      if (_appearController.value == 0 ||
+          _appearController.status == .reverse) {
+        _appearController.animateTo(1, curve: Curves.decelerate);
+      }
+    } else {
+      if (_appearController.value == 1 ||
+          _appearController.status == .forward) {
+        _appearController.animateBack(0, curve: Curves.decelerate).then(
+          (value) {
+            resetAnimation();
+          },
+        );
+      }
+    }
+
     return AnimatedBuilder(
       animation: Listenable.merge(
-        [_globalRotationController, _morphController],
+        [_globalRotationController, _morphController, _appearController],
       ),
       builder: (context, _) {
         late final double angle;
@@ -134,28 +181,36 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
             widget.progress!,
           )!;
         } else {
-          angle = _globalRotationController.value * pi * 2 +
+          angle =
+              _globalRotationController.value * pi * 2 +
               (shapeIndex + _morphController.value) * _morphRotation;
 
           shape = ShapeBorder.lerp(
             RoundedPolygonBorder(polygon: shapes[shapeIndex % shapes.length]),
             RoundedPolygonBorder(
-                polygon: shapes[(shapeIndex + 1) % shapes.length]),
+              polygon: shapes[(shapeIndex + 1) % shapes.length],
+            ),
             _morphController.value,
           )!;
         }
         final scale = 1 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
 
-        return Transform.rotate(
-          angle: angle,
+        return SizedBox(
+          height: (widget.size + widget.padding * 2) * _appearController.value,
           child: Transform.scale(
-            scale: scale,
-            child: Container(
-              width: widget.size,
-              height: widget.size,
-              decoration: ShapeDecoration(
-                color: widget.color ?? context.col.primary,
-                shape: shape,
+            scale: _appearController.value + 0.1,
+            child: Transform.rotate(
+              angle: angle,
+              child: Transform.scale(
+                scale: scale,
+                child: Container(
+                  width: widget.size,
+                  height: widget.size,
+                  decoration: ShapeDecoration(
+                    color: widget.color ?? context.col.primary,
+                    shape: shape,
+                  ),
+                ),
               ),
             ),
           ),

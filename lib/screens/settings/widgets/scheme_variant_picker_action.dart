@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class SchemeVariantPickerAction extends ConsumerStatefulWidget {
   const SchemeVariantPickerAction({super.key});
@@ -61,6 +62,7 @@ class _SchemeVariantPickerActionState
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
+                          vibrate.medium();
                           ref
                               .read(themeDynamicSchemeVariantProvider.notifier)
                               .set(index);

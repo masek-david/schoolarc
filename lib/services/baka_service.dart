@@ -39,15 +39,15 @@ class BakaService {
   }
 
   Future<String> get username async {
-    return secureStorage.read(SecureStorage.bakaUsernameKey);
+    return SecureStorage.read(SecureStorage.bakaUsernameKey);
   }
 
   Future<String> get schoolName async {
-    return secureStorage.read(SecureStorage.bakaSchoolNameKey);
+    return SecureStorage.read(SecureStorage.bakaSchoolNameKey);
   }
 
   Future<String> get _storageRefreshToken async {
-    return secureStorage.read(SecureStorage.bakaRefreshTokenKey);
+    return SecureStorage.read(SecureStorage.bakaRefreshTokenKey);
   }
 
   /// tries to log in from memory using saved refresh token
@@ -95,12 +95,12 @@ class BakaService {
     await _callLogin(url, head, body);
 
     if (keepLoggedIn) {
-      await secureStorage.write(
+      await SecureStorage.write(
         SecureStorage.bakaRefreshTokenKey,
         _refreshToken!,
       );
-      await secureStorage.write(SecureStorage.bakaSchoolNameKey, school);
-      await secureStorage.write(SecureStorage.bakaUsernameKey, username);
+      await SecureStorage.write(SecureStorage.bakaSchoolNameKey, school);
+      await SecureStorage.write(SecureStorage.bakaUsernameKey, username);
     } else {
       // it has to be overwriten if the user chooses
       logOut();
@@ -112,9 +112,9 @@ class BakaService {
     _refreshToken = null;
     tokenExpiration = null;
 
-    await secureStorage.write(SecureStorage.bakaRefreshTokenKey, '');
-    await secureStorage.write(SecureStorage.bakaSchoolNameKey, '');
-    await secureStorage.write(SecureStorage.bakaUsernameKey, '');
+    await SecureStorage.delete(SecureStorage.bakaRefreshTokenKey);
+    await SecureStorage.delete(SecureStorage.bakaSchoolNameKey);
+    await SecureStorage.delete(SecureStorage.bakaUsernameKey);
   }
 
   /// logs in, returns errors and sets this._refreshToken, this._accessToken
@@ -151,7 +151,7 @@ class BakaService {
 
     _accessToken = accessToken;
     _refreshToken = refreshToken;
-    await secureStorage.write(SecureStorage.bakaRefreshTokenKey, refreshToken);
+    await SecureStorage.write(SecureStorage.bakaRefreshTokenKey, refreshToken);
     tokenExpiration = DateTime.now().toUtc().add(
       Duration(seconds: expiresInSeconds),
     );

@@ -188,9 +188,9 @@ class AppConfig extends ConsumerWidget {
               ),
               themeMode: themeMode,
               home: const MainApp(),
-              builder: (context, child) => TimeFormat(
-                child: child ?? const SizedBox.shrink(),
-              ),
+              builder:(context, child) => TimeFormat(
+                      child: child ?? const SizedBox.shrink(),
+                    ),
               onGenerateRoute: (settings) {
                 // we have to push a route, else it throws
                 // we also cant return mainapp, since it throws multiple widgets use the same key

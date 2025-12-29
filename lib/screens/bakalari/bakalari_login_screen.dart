@@ -9,6 +9,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -27,6 +28,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
   late bool keepLoggedIn = settings.get(Setting.bakaKeepLoggedIn);
   bool obscureText = true;
   String? subtitle;
+  bool shapeShown = true;
 
   void importTimetable() {
     if (!mounted) return;
@@ -57,11 +59,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             try {
               await bakaService.importTimeTable(ref);
             } catch (e) {
+              vibrate.error();
               if (mounted) {
                 showMessage(context, e.toString(), isError: true);
               }
             }
             if (mounted) {
+              vibrate.success();
               Navigator.pop(context);
             }
           },
@@ -125,7 +129,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                 context: context,
                 child: Text(context.loc.close),
                 onPressed: () => Navigator.pop(context),
-              )
+              ),
             ],
           ),
           icon: const Icon(Icons.info_outline),
@@ -139,7 +143,6 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
           title: context.loc.useBakalari,
           contentPadding: const EdgeInsets.symmetric(horizontal: 4),
         ),
-        const Divider(),
         if (error == null && !isLoading)
           SettingTile(
             isLast: true,
@@ -151,13 +154,15 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                 : const LoggedOutIcon(),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
-        if (error != null)
+        Center(
+          child: MyExpressiveLoadingIndicator.big(shown: isLoading),
+        ),
+        if (error != null && !isLoading)
           ErrorTile(
             error: error,
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-        if (isLoading) const Center(child: CircularProgressIndicator()),
         if (!isLoggedIn) const SizedBox(height: 8),
         if (!isLoggedIn)
           TextField(
@@ -256,16 +261,21 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
           FilledButton(
             onPressed: !baka.isLoading && useBaka
                 ? () async {
-                    final result =
-                        await ref.read(bakaLoginProvider.notifier).firstLogin(
-                              school: _schoolController.text,
-                              username: _usernameController.text,
-                              password: _passwordController.text,
-                              keepLoggedIn: keepLoggedIn,
-                            );
+                    vibrate.medium();
+                    final result = await ref
+                        .read(bakaLoginProvider.notifier)
+                        .firstLogin(
+                          school: _schoolController.text,
+                          username: _usernameController.text,
+                          password: _passwordController.text,
+                          keepLoggedIn: keepLoggedIn,
+                        );
 
                     if (result) {
+                      vibrate.success();
                       importTimetable();
+                    } else {
+                      vibrate.error();
                     }
                   }
                 : null,
@@ -276,7 +286,15 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             onPressed: baka.isLoading
                 ? null
                 : () async {
-                    ref.read(bakaLoginProvider.notifier).logOut();
+                    final result = await ref
+                        .read(bakaLoginProvider.notifier)
+                        .logOut();
+
+                    if (result) {
+                      vibrate.success();
+                    } else {
+                      vibrate.error();
+                    }
                   },
             child: Text(context.loc.logOut),
           ),

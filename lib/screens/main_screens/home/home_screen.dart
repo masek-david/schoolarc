@@ -118,26 +118,6 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(height: 24),
-                // FilledButton(
-                //   onPressed: () => HapticFeedback.heavyImpact(),
-                //   child: const Text('heavyImpact'),
-                // ),
-                // FilledButton(
-                //   onPressed: () => HapticFeedback.lightImpact(),
-                //   child: const Text('lightImpact'),
-                // ),
-                // FilledButton(
-                //   onPressed: () => HapticFeedback.mediumImpact(),
-                //   child: const Text('mediumImpact'),
-                // ),
-                // FilledButton(
-                //   onPressed: () => HapticFeedback.selectionClick(),
-                //   child: const Text('selectionClick'),
-                // ),
-                // FilledButton(
-                //   onPressed: () => HapticFeedback.vibrate(),
-                //   child: const Text('vibrate'),
-                // ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

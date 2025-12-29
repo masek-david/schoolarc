@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/floating_tab_bar.dart';
 
@@ -33,7 +33,7 @@ class _PersonalScreenState extends State<PersonalScreen>
           child: FloatingTabBar(
             controller: tabController,
             onFabTap: (page) async {
-              HapticFeedback.mediumImpact();
+              vibrate.medium();
               if (page == 0) {
                 return addNewHw(context);
               } else {

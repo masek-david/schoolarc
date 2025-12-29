@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/expressive_loading/circular_wavy_progress_indicator.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class ProgressDialog extends StatefulWidget {
   const ProgressDialog({
@@ -45,18 +47,20 @@ class ProgressDialogState extends State<ProgressDialog> {
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('pop(debug)'),
-                )
+                ),
               ]
             : null,
         content: Stack(
           alignment: Alignment.center,
           children: [
-            CircularProgressIndicator(
-              value: widget.goal != 0 ? _progress / widget.goal : null,
-              constraints: const BoxConstraints(minWidth: 140, minHeight: 140),
-              strokeWidth: 14,
-            ),
-            if (widget.showProgressNumber) Text('$_progress / ${widget.goal}')
+            widget.goal == 0
+                ? MyExpressiveLoadingIndicator.big()
+                : CircularWavyProgressIndicator(
+                    value: _progress / widget.goal,
+                    size: 140,
+                    strokeWidth: 14,
+                  ),
+            if (widget.showProgressNumber) Text('$_progress / ${widget.goal}'),
           ],
         ),
       ),

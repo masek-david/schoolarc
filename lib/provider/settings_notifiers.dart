@@ -28,6 +28,7 @@ final themeModeProvider = settingProvider<bool?>(Setting.themeMode);
 final themeUseDeviceColorProvider =
     settingProvider<bool>(Setting.themeUseDeviceColor);
 final themeUseOledProvider = settingProvider<bool>(Setting.themeUseOled);
+final themeExpressiveHaptics = settingProvider<bool>(Setting.useExpressiveHaptics);
 
 final debugShowFireOverlayProvider =
     settingProvider<bool>(Setting.debugShowFireOverlay);

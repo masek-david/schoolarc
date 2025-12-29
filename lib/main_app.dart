@@ -127,9 +127,13 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       onResume: () => _onAppLeaveOrReturn(true),
       onInactive: () => _onAppLeaveOrReturn(false),
     );
-    _onAppLeaveOrReturn(true);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        _onAppLeaveOrReturn(true);
+      },
+    );
 
-    if (!kIsWeb && Platform.isAndroid || Platform.isIOS) {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
         if (event != null && navigatorKey.currentContext?.mounted == true) {
           handleWidgetClick(event, navigatorKey.currentContext!, ref);

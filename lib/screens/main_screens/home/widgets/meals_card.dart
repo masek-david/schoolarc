@@ -123,8 +123,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 ),
                               ),
                             LoadingIconButton(
-                              icon: Icons.refresh,
-                              onTap: refresh,
+                              onPressed: refresh,
                               isLoading: isLoading,
                             ),
                             IconButton(

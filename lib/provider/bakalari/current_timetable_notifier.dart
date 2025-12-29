@@ -34,7 +34,7 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   FutureOr<TimeTable> build() async {
     _setupListeners();
     try {
-      final data = await _fetch();
+      final data = await _fetch(canRefreshLogin: false);
       return data;
     } finally {
       isFetching = false;
@@ -44,21 +44,23 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   /// listen to login and useBaka
   void _setupListeners() {
     ref.listen<bool>(useBakaProvider, (previous, next) {
-      refresh();
+      refresh(canRefreshLogin: false);
     });
 
     ref.listen<AsyncValue<bool>>(bakaLoginProvider, (previous, next) {
-      next.whenData((value) => refresh());
+      next.whenData((value) {
+        return refresh(canRefreshLogin: false);
+      });
     });
   }
 
   /// Doesnt refresh if it is already fetching
-  Future<void> refresh() async {
+  Future<void> refresh({bool canRefreshLogin = true}) async {
     if (isFetching) return;
 
     state = const AsyncLoading();
     try {
-      final data = await _fetch();
+      final data = await _fetch(canRefreshLogin: canRefreshLogin);
       state = AsyncData(data);
     } catch (e, s) {
       state = AsyncError(e, s);
@@ -67,7 +69,7 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   }
 
   /// Gets only if logged in and using baka
-  Future<TimeTable> _fetch() async {
+  Future<TimeTable> _fetch({bool canRefreshLogin = true}) async {
     isFetching = true;
 
     final useBaka = ref.read(useBakaProvider);
@@ -82,12 +84,12 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
       isLoggedIn = false;
     }
 
-    if (!isLoggedIn) {
+    if (!isLoggedIn && canRefreshLogin) {
       isLoggedIn = await ref.read(bakaLoginProvider.notifier).refreshLogin();
-      if (!isLoggedIn) {
-        throw ref.read(bakaLoginProvider).error ??
-            AuthException(.loggedOut, exceptionAction: .bakaLogin);
-      }
+    }
+    if (!isLoggedIn) {
+      throw ref.read(bakaLoginProvider).error ??
+          AuthException(.loggedOut, exceptionAction: .bakaLogin);
     }
 
     lastFetched = null;

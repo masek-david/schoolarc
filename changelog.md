@@ -6,17 +6,18 @@
 ### Changed
 - Improved home screen
 - Improved fonts
-- Improved ordering
-- Improved timetable design
+- Improved ordering of tasks
+- Changed how dates are saved (should resolve any timezone issues)
+- Improved timetable UI
 - Improved error messages
 - Added messages to exporting app data
-- Changed how dates are saved (should resolve any time zone issues)
 - The app now follows system language and formatting
+- Finally resolved keyboard opening on web on ios
 
 ### Fixed
-- Fixed notifications - now will arrive up to a week after last open of the app
+- Fixed notifications - now will arrive up to a week after the app had been opened
 - Fixed meals not showing Doplněk
-- Fixed meals widgt not working 
+- Fixed meals widget not working
 - Fixed color of status bar on Android
 
 ---

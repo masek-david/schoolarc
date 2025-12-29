@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class LoginStatusIcon extends ConsumerWidget {
-  const LoginStatusIcon(
-      {required this.provider, required this.showProvider, super.key});
+  const LoginStatusIcon({
+    required this.provider,
+    required this.showProvider,
+    super.key,
+  });
 
   final AsyncNotifierProvider<AsyncNotifier<bool>, bool> provider;
   final NotifierProvider<Notifier<bool>, bool> showProvider;
@@ -19,17 +23,17 @@ class LoginStatusIcon extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return Transform.scale(
-      scale: 1,
-      child: state.when(
-        data: (value) => value
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : const LoggedOutIcon(),
-        error: (_, _) => const Icon(Icons.error, color: Colors.red),
-        loading: () => const SizedBox(
-          height: 28,
-          width: 28,
-          child: CircularProgressIndicator(strokeWidth: 3),
+    return state.when(
+      data: (value) => value
+          ? const Icon(Icons.check_circle, color: Colors.green)
+          : const LoggedOutIcon(),
+      error: (_, _) => const Icon(Icons.error, color: Colors.red),
+      loading: () => const SizedBox(
+        height: 28,
+        width: 28,
+        child: Padding(
+          padding: EdgeInsets.all(4),
+          child: MyExpressiveLoadingIndicator(size: 20),
         ),
       ),
     );
@@ -60,7 +64,7 @@ class LoggedOutIcon extends StatelessWidget {
             fontWeight: FontWeight.w600,
             fontFamily: Icons.logout.fontFamily,
           ),
-        )
+        ),
       ],
     );
   }

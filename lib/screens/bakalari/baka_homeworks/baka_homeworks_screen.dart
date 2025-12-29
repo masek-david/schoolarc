@@ -8,6 +8,7 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerWidget {
@@ -42,17 +43,14 @@ class BakaHomeworksScreen extends ConsumerWidget {
           AgoText(stream: bakaHomeworksAgeProvider),
           LoadingIconButton(
             isLoading: isLoading,
-            onTap: ref.read(bakaHomeworksProvider.notifier).refresh,
-            icon: Icons.refresh,
+            onPressed: ref.read(bakaHomeworksProvider.notifier).refresh,
           ),
         ],
       ),
       body: Builder(
         builder: (context) {
           if (isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: MyExpressiveLoadingIndicator.big());
           }
           if (error != null) {
             return ErrorTile(

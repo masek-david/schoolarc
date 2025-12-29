@@ -1,6 +1,5 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -61,31 +60,32 @@ class ExamsScreen extends ConsumerWidget {
     for (int i = 3; i >= 0; i--) {
       itemList.add(_AnimatedReorderableListItem(priority: i));
       itemList.addAll(
-          examByPriority[i]!.map((e) => _AnimatedReorderableListItem(exam: e)));
+        examByPriority[i]!.map((e) => _AnimatedReorderableListItem(exam: e)),
+      );
     }
     itemList.add(_AnimatedReorderableListItem(priority: -1));
-    final nonDraggableItems =
-        itemList.where((element) => element.exam == null).toList();
+    final nonDraggableItems = itemList
+        .where((element) => element.exam == null)
+        .toList();
 
     return MediaQuery.removePadding(
       context: context,
       removeBottom: true,
       child: Scaffold(
         // floatingActionButton: const NewTaskDialogButton(),
-        floatingActionButton: WebRequestFocus(
-          onPressed: () async {
-            HapticFeedback.mediumImpact();
-            addNewExam(context);
-          },
-          child: FloatingActionButton(
-            tooltip: context.loc.addNewExam,
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              addNewExam(context);
-            },
-            enableFeedback: true,
-            child: const Icon(Icons.add),
-          ),
+        floatingActionButton: WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return FloatingActionButton(
+              tooltip: context.loc.addNewExam,
+              onPressed: () async {
+                showKeyboard();
+                vibrate.medium();
+                addNewExam(context);
+              },
+              enableFeedback: true,
+              child: const Icon(Icons.add),
+            );
+          }
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -109,10 +109,12 @@ class ExamsScreen extends ConsumerWidget {
                 }
               },
               child: itemList.length == 5
-                  ? ListView(children: [
-                      const Snappable(child: AnimatedShape()),
-                      _buildCompletedList(context, ref, completedExams)
-                    ])
+                  ? ListView(
+                      children: [
+                        const Snappable(child: AnimatedShape()),
+                        _buildCompletedList(context, ref, completedExams),
+                      ],
+                    )
                   : AnimatedReorderableListView(
                       items: itemList,
                       buildDefaultDragHandles: false,
@@ -121,21 +123,26 @@ class ExamsScreen extends ConsumerWidget {
                         _AnimatedReorderableListItem(priority: -1),
                       ],
                       nonDraggableItems: nonDraggableItems,
-                      onReorderStart: (p0) => HapticFeedback.mediumImpact(),
+                      onReorderStart: (p0) => vibrate.medium(),
                       itemBuilder: (context, index) {
                         final item = itemList[index];
 
                         if (item.priority != null) {
                           if (item.priority! == -1) {
                             return _buildCompletedList(
-                                context, ref, completedExams);
+                              context,
+                              ref,
+                              completedExams,
+                            );
                           }
 
                           final priority = TaskPriority(item.priority!);
                           return Padding(
                             key: ValueKey('exam title: ${item.priority!}'),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: TitleWithCount(
                               text: priority.name(context),
                               textColor: priority.getColor(context),
@@ -148,7 +155,8 @@ class ExamsScreen extends ConsumerWidget {
                           // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
                           // Multiple widgets use the same globalkey error
                           key: ValueKey(
-                              'exam: ${exam.id} ${exam.stateReaddingVersion}'),
+                            'exam: ${exam.id} ${exam.stateReaddingVersion}',
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: ExamTile(
                             exam: exam,
@@ -172,7 +180,9 @@ class ExamsScreen extends ConsumerWidget {
                         }
 
                         if (item.exam != null) {
-                          ref.read(examDataProvider.notifier).reorder(
+                          ref
+                              .read(examDataProvider.notifier)
+                              .reorder(
                                 item.exam!.toData(),
                                 newOrder,
                                 newPriority,
@@ -188,7 +198,10 @@ class ExamsScreen extends ConsumerWidget {
   }
 
   Widget _buildCompletedList(
-      BuildContext context, WidgetRef ref, List<Exam> completedExams) {
+    BuildContext context,
+    WidgetRef ref,
+    List<Exam> completedExams,
+  ) {
     return Padding(
       key: const ValueKey('exam completed title'),
       padding: const EdgeInsets.only(bottom: 70),

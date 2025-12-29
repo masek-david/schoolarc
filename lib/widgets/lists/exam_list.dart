@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/text_actions.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 
@@ -54,7 +54,7 @@ class ExamList extends ConsumerWidget {
                       builder: (context, constraints) {
                         return LongPressDraggable(
                           data: exam,
-                          onDragStarted: () => HapticFeedback.mediumImpact(),
+                          onDragStarted: vibrate.medium,
                           feedback: SizedBox(
                             width: constraints.maxWidth,
                             child: Opacity(

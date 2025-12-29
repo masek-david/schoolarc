@@ -2,25 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Used to bypass keyboard restriction on web, mainly on ios
-class WebRequestFocus extends StatefulWidget {
-  const WebRequestFocus({
-    super.key,
-    required this.child,
-    required this.onPressed,
-    this.offset = false,
-  });
+class WebRequestFocusBuilder extends StatefulWidget {
+  const WebRequestFocusBuilder({super.key, required this.builder});
 
-  final Widget child;
-  final Future<void> Function() onPressed;
-
-  /// offset for checkbox
-  final bool offset;
+  /// showKeyboard requests focus and opens keyboard, but there
+  /// needs to be a new textfield to pass the focus on
+  ///
+  /// showKeyboard has effect only on web
+  final Widget Function(void Function() showKeyboard) builder;
 
   @override
-  State<WebRequestFocus> createState() => _WebRequestFocusState();
+  State<WebRequestFocusBuilder> createState() => _WebRequestFocusBuilderState();
 }
 
-class _WebRequestFocusState extends State<WebRequestFocus> {
+class _WebRequestFocusBuilderState extends State<WebRequestFocusBuilder> {
   final FocusNode _focusNode = FocusNode();
 
   @override
@@ -29,28 +24,35 @@ class _WebRequestFocusState extends State<WebRequestFocus> {
     super.dispose();
   }
 
+  void rejectFocus() {
+    if (_focusNode.hasFocus) {
+      _focusNode.canRequestFocus = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!kIsWeb) {
-      return widget.child;
+      return widget.builder(
+        () {},
+      );
     }
 
     return Stack(
       children: [
-        widget.child,
-        Positioned.fill(
-          right: widget.offset ? 50 : 0,
-          child: Opacity(
-            opacity: 0,
-            child: TextField(
-              focusNode: _focusNode,
-              stylusHandwritingEnabled: false,
-              enableInteractiveSelection: false,
-              onTap: () async {
-                await widget.onPressed();
-                _focusNode.unfocus();
-              },
-            ),
+        widget.builder(
+          () {
+            _focusNode.removeListener(rejectFocus);
+            _focusNode.canRequestFocus = true;
+            _focusNode.requestFocus();
+            _focusNode.addListener(rejectFocus);
+          },
+        ),
+        SizedBox.shrink(
+          child: TextField(
+            focusNode: _focusNode,
+            stylusHandwritingEnabled: false,
+            enableInteractiveSelection: false,
           ),
         ),
       ],

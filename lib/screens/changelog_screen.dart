@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class ChangelogScreen extends StatelessWidget {
   const ChangelogScreen({super.key});
@@ -15,7 +16,7 @@ class ChangelogScreen extends StatelessWidget {
         future: rootBundle.loadString('changelog.md'),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const CircularProgressIndicator();
+            return MyExpressiveLoadingIndicator.big();
           }
 
           return Markdown(data: snapshot.data!);

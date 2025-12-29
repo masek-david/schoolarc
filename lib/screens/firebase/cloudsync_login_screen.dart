@@ -13,6 +13,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -55,7 +56,6 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           title: context.loc.useCloudSync,
           contentPadding: const EdgeInsets.symmetric(horizontal: 4),
         ),
-        const Divider(),
         state.when(
           data: (data) => SettingTile(
             isLast: true,
@@ -72,7 +72,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(child: MyExpressiveLoadingIndicator.big()),
         ),
         if (!loggedIn)
           OutlinedButton(
@@ -262,7 +262,10 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         if (loggedIn)
           Row(
             children: [
-              if (nickname.isLoading) const CircularProgressIndicator(),
+              if (nickname.isLoading) const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: MyExpressiveLoadingIndicator(size: 24),
+              ),
               Expanded(
                 child: NicknameText(
                   user: Member(

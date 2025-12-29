@@ -21,6 +21,7 @@ enum Setting {
   weekStartsOnMonday,
   initialAppPage,
   pageSwitchAnimationDuration,
+  useExpressiveHaptics,
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
   tomorrowNotificationBeforeWeekend,
@@ -100,6 +101,10 @@ class SettingsDatabase {
     Setting.pageSwitchAnimationDuration: const SettingModel(
       key: 'pageAnimation',
       defaultValue: 150.0,
+    ),
+    Setting.useExpressiveHaptics: const SettingModel(
+      key: 'expressiveHaptics',
+      defaultValue: true,
     ),
     Setting.tomorrowNotificationEnabled: const SettingModel(
       defaultValue: true,

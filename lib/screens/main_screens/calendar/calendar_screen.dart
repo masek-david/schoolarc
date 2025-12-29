@@ -231,66 +231,50 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
             context: context,
             removeBottom: true,
             child: Scaffold(
-              floatingActionButton: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  WebRequestFocus(
-                    onPressed: () async {
-                      HapticFeedback.mediumImpact();
-                      addNewExam(
-                        context,
-                        initialDate: Date.fromDateTime(
-                          _selectedDay.value.toLocal(),
-                        ),
-                      );
-                    },
-                    child: FloatingActionButton.extended(
-                      tooltip:
-                          '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
-                      heroTag: 'exam_btn',
-                      onPressed: () {
-                        HapticFeedback.mediumImpact();
-                        addNewExam(
-                          context,
-                          initialDate: Date.fromDateTime(
-                            _selectedDay.value.toLocal(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: Text(context.loc.exams(1)),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  WebRequestFocus(
-                    onPressed: () async {
-                      HapticFeedback.mediumImpact();
-                      addNewHw(
-                        context,
-                        initialDate: Date.fromDateTime(
-                          _selectedDay.value.toLocal(),
-                        ),
-                      );
-                    },
-                    child: FloatingActionButton.extended(
-                      tooltip:
-                          '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
-                      heroTag: 'homework_btn',
-                      onPressed: () {
-                        HapticFeedback.mediumImpact();
-                        addNewHw(
-                          context,
-                          initialDate: Date.fromDateTime(
-                            _selectedDay.value.toLocal(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: Text(context.loc.homework(1)),
-                    ),
-                  ),
-                ],
+              floatingActionButton: WebRequestFocusBuilder(
+                builder: (showKeyboard) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FloatingActionButton.extended(
+                        tooltip:
+                            '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
+                        heroTag: 'exam_btn',
+                        onPressed: () {
+                          showKeyboard();
+                          vibrate.medium();
+                          addNewExam(
+                            context,
+                            initialDate: Date.fromDateTime(
+                              _selectedDay.value.toLocal(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.loc.exams(1)),
+                      ),
+                      const SizedBox(height: 10),
+                      FloatingActionButton.extended(
+                        tooltip:
+                            '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
+                        heroTag: 'homework_btn',
+                        onPressed: () {
+                          showKeyboard();
+                          vibrate.medium();
+                          addNewHw(
+                            context,
+                            initialDate: Date.fromDateTime(
+                              _selectedDay.value.toLocal(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.loc.homework(1)),
+                      ),
+                    ],
+                  );
+                },
               ),
               body: isWide
                   ? Container(

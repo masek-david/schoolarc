@@ -30,14 +30,16 @@ class SubjectPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        WebRequestFocus(
-          onPressed: () async {
-            searchSubject(context);
-          },
-          child: IconButton(
-            onPressed: () => searchSubject(context),
-            icon: const Icon(Icons.search),
-          ),
+        WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return IconButton(
+              onPressed: () {
+                showKeyboard();
+                searchSubject(context);
+              },
+              icon: const Icon(Icons.search),
+            );
+          }
         ),
         Expanded(
           child: SingleChildScrollView(

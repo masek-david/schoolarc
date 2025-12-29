@@ -1,7 +1,7 @@
+
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -44,7 +44,7 @@ class SubjectsScreen extends ConsumerWidget {
   }
 
   Future<void> add(BuildContext context) async {
-    HapticFeedback.mediumImpact();
+    vibrate.medium();
     showDialog(
       context: context,
       builder: (context) => SubjectDialog(
@@ -78,13 +78,17 @@ class SubjectsScreen extends ConsumerWidget {
             ),
         ],
       ),
-      floatingActionButton: WebRequestFocus(
-        onPressed: () => add(context),
-        child: FloatingActionButton(
-          tooltip: context.loc.addNewSubject,
-          onPressed: () => add(context),
-          child: const Icon(Icons.add),
-        ),
+      floatingActionButton: WebRequestFocusBuilder(
+        builder: (showKeyboard) {
+          return FloatingActionButton(
+            tooltip: context.loc.addNewSubject,
+            onPressed: () {
+              showKeyboard();
+              add(context);
+            },
+            child: const Icon(Icons.add),
+          );
+        }
       ),
       body: SlidableAutoCloseBehavior(
         child: Padding(
@@ -97,7 +101,7 @@ class SubjectsScreen extends ConsumerWidget {
                   enabled: ref.watch(useCloudSyncProvider) ? true : false,
                   onRefresh: () => onRefresh(context, ref),
                   child: AnimatedReorderableListView(
-                    onReorderStart: (index) => HapticFeedback.mediumImpact(),
+                    onReorderStart: (index) => vibrate.medium(),
                     items: subjects,
                     isSameItem: (a, b) => a.id == b.id,
                     padding: const EdgeInsets.only(bottom: 100),

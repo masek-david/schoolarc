@@ -16,6 +16,7 @@ import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/licenses.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
+import 'package:schoolarc/utils/vibrate.dart';
 
 void main() async {
   FlutterError.onError = (details) async {
@@ -29,8 +30,9 @@ void main() async {
     logsService.save(text);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
-    logsService
-        .save('platform dispatcher: ${error.toString()}\n${stack.toString()}');
+    logsService.save(
+      'platform dispatcher: ${error.toString()}\n${stack.toString()}',
+    );
     return true;
   };
 
@@ -39,18 +41,23 @@ void main() async {
   await initializeDateFormatting();
 
   // gets rid of android bottom colored bar
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.dark,
-  ));
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-      overlays: [SystemUiOverlay.top]);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+    overlays: [SystemUiOverlay.top],
+  );
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   packageInfo = await PackageInfo.fromPlatform();
+  vibrate = await Vibrate.create();
 
   if (!kIsWeb && Platform.isAndroid) {
     HomeWidget.registerInteractivityCallback(backgroundCallback);

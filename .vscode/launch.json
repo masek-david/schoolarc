@@ -50,7 +50,18 @@
             "flutterMode": "debug",
             "args": [
                 // "--no-web-experimental-hot-reload",
-                "--web-hostname=192.168.100.107",
+                // "--web-hostname=192.168.100.107",
+                "--web-port=8080"
+            ]
+        },
+        {
+            "name": "Schoolarc web 8080 release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                // "--no-web-experimental-hot-reload",
+                // "--web-hostname=192.168.100.107",
                 "--web-port=8080"
             ]
         }

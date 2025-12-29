@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class SettingTile extends StatelessWidget {
-  const SettingTile(
-      {super.key,
-      required this.title,
-      this.subtitle,
-      this.leading,
-      this.trailing,
-      this.newLineAction,
-      this.onTap,
-      this.highlighted = false,
-      this.enabled = true,
-      this.contentPadding,
-      this.isLast = false,
-      this.isFirst = false,
-      this.heroTag,
-      this.titleColor});
+  const SettingTile({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    this.newLineAction,
+    this.onTap,
+    this.highlighted = false,
+    this.enabled = true,
+    this.contentPadding,
+    this.isLast = false,
+    this.isFirst = false,
+    this.heroTag,
+    this.titleColor,
+    this.hapticFeedback = true,
+  });
 
   final String title;
   final String? subtitle;
@@ -32,6 +35,7 @@ class SettingTile extends StatelessWidget {
   final bool isFirst;
   final String? heroTag;
   final Color? titleColor;
+  final bool hapticFeedback;
 
   static SettingTile withSwitch({
     required String title,
@@ -47,6 +51,11 @@ class SettingTile extends StatelessWidget {
     bool isLast = false,
     Key? key,
   }) {
+    void change(bool newValue) {
+      onChanged(newValue);
+      vibrate.switchUI(newValue);
+    }
+
     return SettingTile(
       title: title,
       subtitle: subtitle,
@@ -54,12 +63,15 @@ class SettingTile extends StatelessWidget {
       highlighted: highlighted,
       contentPadding: contentPadding,
       leading: leading,
-      onTap: (context) => onChanged(!value),
-      trailing:
-          Switch(value: value, onChanged: enabled == false ? null : onChanged),
+      onTap: (context) => change(!value),
+      trailing: Switch(
+        value: value,
+        onChanged: enabled == false ? null : change,
+      ),
       isFirst: isFirst,
       isLast: isLast,
       key: key,
+      hapticFeedback: false,
     );
   }
 
@@ -86,10 +98,12 @@ class SettingTile extends StatelessWidget {
       leading: leading,
       onTap: (context) => onChanged(!value),
       trailing: Checkbox(
-          value: value,
-          tristate: false,
-          onChanged:
-              enabled == false ? null : (value) => onChanged(value as bool)),
+        value: value,
+        tristate: false,
+        onChanged: enabled == false
+            ? null
+            : (value) => onChanged(value as bool),
+      ),
       isFirst: isFirst,
       isLast: isLast,
       key: key,
@@ -124,19 +138,23 @@ class SettingTile extends StatelessWidget {
           onChanged(value);
         }
       },
-      trailing: Builder(builder: (context) {
-        return Text(
-          time.format(context),
-          style: const TextStyle(fontSize: 16),
-        );
-      }),
+      trailing: Builder(
+        builder: (context) {
+          return Text(
+            time.format(context),
+            style: const TextStyle(fontSize: 16),
+          );
+        },
+      ),
       isFirst: isFirst,
       isLast: isLast,
     );
   }
 
   Widget buildText(BuildContext context) {
-    final color = titleColor ?? context.col.onSurface;
+    final color = titleColor ?? (highlighted
+        ? context.col.onPrimaryContainer
+        : context.col.onSurface);
 
     return SizedBox(
       width: double.infinity,
@@ -176,7 +194,14 @@ class SettingTile extends StatelessWidget {
               : context.col.surfaceContainerLowest,
           child: InkWell(
             splashFactory: InkSparkle.splashFactory,
-            onTap: enabled && onTap != null ? () => onTap!(context) : null,
+            onTap: enabled && onTap != null
+                ? () {
+                    if (hapticFeedback) {
+                      vibrate.light();
+                    }
+                    onTap!(context);
+                  }
+                : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
@@ -196,31 +221,38 @@ class SettingTile extends StatelessWidget {
                             heroTag != null
                                 ? Hero(
                                     tag: heroTag!,
-                                    flightShuttleBuilder: (flightContext,
-                                        animation,
-                                        flightDirection,
-                                        fromHeroContext,
-                                        toHeroContext) {
-                                      return AnimatedBuilder(
-                                        animation: animation,
-                                        builder: (context, _) {
-                                          return Material(
-                                            color: Colors.transparent,
-                                            child: SizedBox(
-                                              width: double.infinity,
-                                              child: Text(
-                                                title,
-                                                style: googleSansFlex(
-                                                  size: 14 + animation.value * 30,
-                                                  weight: enabled ? 700 : 400,
-                                                  roundness: 100,
+                                    flightShuttleBuilder:
+                                        (
+                                          flightContext,
+                                          animation,
+                                          flightDirection,
+                                          fromHeroContext,
+                                          toHeroContext,
+                                        ) {
+                                          return AnimatedBuilder(
+                                            animation: animation,
+                                            builder: (context, _) {
+                                              return Material(
+                                                color: Colors.transparent,
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  child: Text(
+                                                    title,
+                                                    style: googleSansFlex(
+                                                      size:
+                                                          14 +
+                                                          animation.value * 30,
+                                                      weight: enabled
+                                                          ? 700
+                                                          : 400,
+                                                      roundness: 100,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
+                                              );
+                                            },
                                           );
-                                        }
-                                      );
-                                    },
+                                        },
                                     child: buildText(context),
                                   )
                                 : buildText(context),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
@@ -16,7 +16,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected: (index) {
-        HapticFeedback.lightImpact();
+        vibrate.medium();
         onTap(newScreenIndex: index);
       },
       selectedIndex: pageIndex,

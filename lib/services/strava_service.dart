@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
@@ -36,9 +37,9 @@ class StravaService {
       throw ValidationException(.invalidCanteenNumberLength);
     }
 
-    await secureStorage.write(canteenCodeKey, canteenCode);
-    await secureStorage.write(usernameKey, username);
-    await secureStorage.write(passwordKey, password);
+    await SecureStorage.write(canteenCodeKey, canteenCode);
+    await SecureStorage.write(usernameKey, username);
+    await SecureStorage.write(passwordKey, password);
 
     if (password != '' && username != '') {
       await login();
@@ -48,11 +49,11 @@ class StravaService {
   }
 
   Future<String> get getCanteenCode async {
-    return await secureStorage.read(canteenCodeKey);
+    return await SecureStorage.read(canteenCodeKey);
   }
 
   Future<String> get getUsername async {
-    return await secureStorage.read(usernameKey);
+    return await SecureStorage.read(usernameKey);
   }
 
   /// returns false if the user cant be logged in, true if they can be logged in or at least the canteenId is set
@@ -62,7 +63,7 @@ class StravaService {
     try {
       canteenCode = await getCanteenCode;
       username = await getUsername;
-      password = await secureStorage.read(passwordKey);
+      password = await SecureStorage.read(passwordKey);
     } on Exception {
       throw AuthException(
         .loggedOut,
@@ -77,7 +78,7 @@ class StravaService {
       );
     }
 
-    if( username == '' || password == ''){
+    if (username == '' || password == '') {
       // The user can at least log in with canteenId
       return false;
     }
@@ -130,9 +131,9 @@ class StravaService {
     _ignoreCert = null;
     canteenCode = null;
 
-    await secureStorage.write(canteenCodeKey, '');
-    await secureStorage.write(usernameKey, '');
-    await secureStorage.write(passwordKey, '');
+    await SecureStorage.delete(canteenCodeKey);
+    await SecureStorage.delete(usernameKey);
+    await SecureStorage.delete(passwordKey);
   }
 
   Future<Map<Date, List<Meal>>> getMeals() async {
@@ -202,7 +203,7 @@ class StravaService {
     Map<Date, List<Meal>> meals = {};
 
     try {
-      canteenCode = await secureStorage.read(canteenCodeKey);
+      canteenCode = await SecureStorage.read(canteenCodeKey);
     } on Exception {
       throw AuthException(
         .noCanteenId,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class TileSlidable extends StatelessWidget {
   const TileSlidable({
@@ -42,17 +42,19 @@ class TileSlidable extends StatelessWidget {
                   children: [
                     SlidableAction(
                       onPressed: (context) {
-                        HapticFeedback.lightImpact();
+                        vibrate.medium();
                         onConvert!();
                       },
                       icon: Icons.swap_vertical_circle_outlined,
                       label: isHomework
                           ? context.loc.toExam
                           : context.loc.toHomework,
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onTertiaryContainer,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.tertiaryContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onTertiaryContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.tertiaryContainer,
                       borderRadius: BorderRadius.circular(borderRadius),
                       flex: 10,
                     ),
@@ -66,14 +68,16 @@ class TileSlidable extends StatelessWidget {
                   children: [
                     SlidableAction(
                       onPressed: (context) {
-                        HapticFeedback.lightImpact();
+                        vibrate.medium();
                         onDelete!();
                       },
                       icon: Icons.delete,
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onErrorContainer,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.errorContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onErrorContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.errorContainer,
                       borderRadius: BorderRadius.circular(borderRadius),
                       flex: 10,
                     ),

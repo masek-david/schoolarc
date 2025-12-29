@@ -71,8 +71,8 @@ class NotificationSender {
     bool sendNow = false,
     void Function(Date date, TimeOfDay time)? firstUpcoming,
   }) async {
-    final loc = context.loc;
     if (!isCompatiblePlatform()) return;
+    final loc = context.loc;
     if (!await areNotificationsAllowed(tomorrowChannel)) return;
     if (!sendNow) {
       AwesomeNotifications().cancelSchedulesByChannelKey(tomorrowChannel);

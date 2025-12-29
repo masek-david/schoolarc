@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
+import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/database/hw_database.dart';
+import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
@@ -27,9 +30,11 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
-            const Text(bool.fromEnvironment('dart.tool.dart2wasm')
-                ? 'Running in wasm'
-                : 'Not running in wasm'),
+            const Text(
+              bool.fromEnvironment('dart.tool.dart2wasm')
+                  ? 'Running in wasm'
+                  : 'Not running in wasm',
+            ),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
@@ -39,21 +44,69 @@ class DbInfoScreen extends ConsumerWidget {
                   SettingsDatabase().deleteAllFromDisk();
                   BakaHomeworksDatabase().deleteAllFromDisk();
                 },
-                label: const Text('delete from disk'),
+                label: const Text('Delete all boxes from disk'),
                 icon: const Icon(Icons.bug_report),
               ),
-            if (kDebugMode) const SizedBox(height: 8),
+            if (kDebugMode)
+              FilledButton.tonalIcon(
+                onPressed: () async {
+                  SettingsDatabase().deleteAllFromDisk();
+                  await Hive.openBox(settingsBox);
+                  await bakaService.logOut();
+                  await stravaService.logOut();
+                  await ref.read(firebaseServiceProvider).logOut();
+                  SecureStorage.deleteAllFromDisk();
+                },
+                label: const Text('Reset all settings (run app as new)'),
+                icon: const Icon(Icons.bug_report),
+              ),
             if (kDebugMode)
               FilledButton.tonalIcon(
                 onPressed: () {
                   bakaService.logOut();
                   stravaService.logOut();
                   ref.read(firebaseServiceProvider).logOut();
-                  secureStorage.deleteAllFromDisk();
+                  SecureStorage.deleteAllFromDisk();
                 },
-                label: const Text('sign out everywhere'),
+                label: const Text('Sign out everywhere'),
                 icon: const Icon(Icons.bug_report),
               ),
+            const Divider(),
+            Text(
+              vibrate.hasVibrator ? 'Has vibrator' : 'Doesn\'t have vibrator',
+            ),
+            Wrap(
+              children: [
+                FilledButton.tonal(
+                  onPressed: vibrate.light,
+                  child: const Text('Light'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.medium,
+                  child: const Text('Medium'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.heavy,
+                  child: const Text('Heavy'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.success,
+                  child: const Text('Success'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.warning,
+                  child: const Text('Warning'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.error,
+                  child: const Text('Error'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.rigid,
+                  child: const Text('Rigid'),
+                ),
+              ],
+            ),
             if (kDebugMode) const Divider(),
             const Text('SECURE STORAGE'),
             Row(
@@ -63,8 +116,10 @@ class DbInfoScreen extends ConsumerWidget {
                   child: FilledButton(
                     onPressed: () async {
                       try {
-                        await secureStorage.write('test',
-                            'this was the saved value at time: ${DateTime.now()}');
+                        await SecureStorage.write(
+                          'test',
+                          'this was the saved value at time: ${DateTime.now()}',
+                        );
                       } catch (e) {
                         if (context.mounted) {
                           showMessage(context, e.toString());
@@ -81,7 +136,7 @@ class DbInfoScreen extends ConsumerWidget {
                 Expanded(
                   child: FilledButton(
                     onPressed: () async {
-                      final text = await secureStorage.read('test');
+                      final text = await SecureStorage.read('test');
                       if (context.mounted) {
                         showMessage(context, text);
                       }
@@ -111,19 +166,20 @@ class DbInfoScreen extends ConsumerWidget {
                       }
                       if (context.mounted) {
                         showDialogAdaptive(
-                            context: context,
-                            content: SingleChildScrollView(
-                              child: Text(fireHws.toString()),
+                          context: context,
+                          content: SingleChildScrollView(
+                            child: Text(fireHws.toString()),
+                          ),
+                          actions: [
+                            adaptiveDialogButton(
+                              context: context,
+                              child: const Text('Close'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            actions: [
-                              adaptiveDialogButton(
-                                context: context,
-                                child: const Text('Close'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              )
-                            ]);
+                          ],
+                        );
                       }
                     },
                     child: const Text('test firebase'),
@@ -195,8 +251,9 @@ class DbInfoScreen extends ConsumerWidget {
                           Text(item.text),
                           Text(
                             item.date.toString(),
-                            style:
-                                TextStyle(color: getSubtleTextColor(context)),
+                            style: TextStyle(
+                              color: getSubtleTextColor(context),
+                            ),
                           ),
                         ],
                       ),
@@ -243,8 +300,9 @@ class DbInfoScreen extends ConsumerWidget {
                             Text(item.text),
                             Text(
                               item.date.toString(),
-                              style:
-                                  TextStyle(color: getSubtleTextColor(context)),
+                              style: TextStyle(
+                                color: getSubtleTextColor(context),
+                              ),
                             ),
                           ],
                         ),
