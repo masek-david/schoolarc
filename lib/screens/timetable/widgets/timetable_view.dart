@@ -140,10 +140,12 @@ class TimetableView extends StatelessWidget {
                                     .format('EEE', context.locale.languageCode)
                                     .capitalize(),
                                 style: googleSansFlex(width: 110, weight: 600),
+                                textAlign: .center,
                               ),
                               Text(
                                 date.formatFromSettings(context),
                                 style: googleSansFlex(width: 65),
+                                textAlign: .center,
                               ),
                             ],
                           ),

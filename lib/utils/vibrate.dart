@@ -77,15 +77,8 @@ class Vibrate {
 
   void release() {
     _vibrate(
-      pattern: [250],
-      intensities: [5],
-    );
-  }
-
-  void refresh() {
-    _vibrate(
-      pattern: [10, 100, 15, 100, 100],
-      intensities: [150, 0, 100, 0, 10],
+      pattern: [150, 150],
+      intensities: [10, 5],
     );
   }
 
@@ -106,7 +99,7 @@ class Vibrate {
   void switchUI(bool nowOn) {
     _vibrate(
       pattern: [100, 20, 5],
-      intensities: [20, 0, 255],
+      intensities: [10, 0, 255],
     );
   }
 }

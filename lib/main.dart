@@ -71,6 +71,7 @@ void main() async {
       retry: (retryCount, error) {
         // Dont retry if offline
         if (error is NetworkException && error.code == .offline) return null;
+        // Dont retry if the user isnt even logged in
         if (error is AuthException && error.code == .loggedOut) return null;
         if (retryCount > 3) return null;
         return Duration(seconds: retryCount * 2);

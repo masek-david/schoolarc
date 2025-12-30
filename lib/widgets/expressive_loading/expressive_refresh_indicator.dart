@@ -20,7 +20,7 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomMaterialIndicator(
       onRefresh: () async {
-        vibrate.refresh();
+        vibrate.release();
         await onRefresh();
       },
       onStateChanged: (change) {

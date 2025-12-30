@@ -12,21 +12,18 @@ final stravaLoginProvider = AsyncNotifierProvider<StravaLoginNotifier, bool>(
 class StravaLoginNotifier extends AsyncNotifier<bool> {
   @override
   FutureOr<bool> build() async {
-    if (ref.read(useMealsProvider)) {
-      try {
-        await stravaService.logIn();
-        return true;
-      } catch (e) {
-        if (e is NetworkException && e.code == .offline) {
-          rethrow;
-        }
-        if (e is AuthException && e.code == .loggedOut) {
-          return stravaService.hasCanteenIdSet();
-        }
-        return false;
-      }
-    } else {
+    if (!ref.read(useMealsProvider)) {
       return false;
+    }
+    try {
+      await stravaService.logIn();
+      return true;
+    } catch (e) {
+      // If the user just isnt logged in with password, they can still be logged in with canteenId
+      if (e is AuthException && e.code == .loggedOut) {
+        return stravaService.hasCanteenIdSet();
+      }
+      rethrow;
     }
   }
 

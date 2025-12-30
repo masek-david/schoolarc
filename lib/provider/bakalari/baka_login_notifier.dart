@@ -14,19 +14,19 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
 
   @override
   Future<bool> build() async {
-    if (ref.read(useBakaProvider)) {
-      try {
-        final result = await bakaService.refreshLogin();
-        _tokenExpirationTime();
-        return result;
-      } catch (e) {
-        if (e is NetworkException && e.code == .offline) {
-          rethrow;
-        }
+    if (!ref.read(useBakaProvider)) {
+      return false;
+    }
+    try {
+      final result = await bakaService.refreshLogin();
+      _tokenExpirationTime();
+      return result;
+    } catch (e) {
+      // If the user is logged out, set state to false, else rethrow
+      if (e is AuthException && e.code == .loggedOut) {
         return false;
       }
-    } else {
-      return false;
+      rethrow;
     }
   }
 

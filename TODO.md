@@ -2,6 +2,8 @@
 homescreen agotext under the cards?
 expressive filledbutton
 fix tutorial end animation
+rethrow all exceptions
+check firebase service too many reads???
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
