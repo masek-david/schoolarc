@@ -1,4 +1,3 @@
-
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +20,18 @@ class SubjectsScreen extends ConsumerWidget {
   void deleteSubject(BuildContext context, WidgetRef ref, Subject subject) {
     ref.read(subjectsProvider.notifier).delete(subject);
 
-    showMessage(context, context.loc.deletedSubjectMessage(subject.name),
-        actions: [
-          SnackBarAction(
-            label: context.loc.undo,
-            onPressed: () {
-              ref.read(subjectsProvider.notifier).revertDelete(subject);
-            },
-          ),
-        ]);
+    showMessage(
+      context,
+      context.loc.deletedSubjectMessage(subject.name),
+      actions: [
+        SnackBarAction(
+          label: context.loc.undo,
+          onPressed: () {
+            ref.read(subjectsProvider.notifier).revertDelete(subject);
+          },
+        ),
+      ],
+    );
   }
 
   Future<void> onRefresh(BuildContext context, WidgetRef ref) async {
@@ -37,29 +39,10 @@ class SubjectsScreen extends ConsumerWidget {
       return await ref.read(subjectsProvider.notifier).syncAll();
     } on Object catch (e) {
       if (context.mounted) {
-        showErrorMessage(context,e);
+        showErrorMessage(context, e);
       }
       return;
     }
-  }
-
-  Future<void> add(BuildContext context) async {
-    vibrate.medium();
-    showDialog(
-      context: context,
-      builder: (context) => SubjectDialog(
-        isEditing: false,
-        initial: Subject(
-          name: '',
-          shortcut: '',
-          id: '',
-          bakaId: null,
-          timestamp: DateTime.now(),
-          isDeleted: false,
-          order: 0,
-        ),
-      ),
-    );
   }
 
   @override
@@ -84,11 +67,12 @@ class SubjectsScreen extends ConsumerWidget {
             tooltip: context.loc.addNewSubject,
             onPressed: () {
               showKeyboard();
-              add(context);
+              vibrate.medium();
+              addNewSubject(context);
             },
-            child: const Icon(Icons.add),
+            child: const Icon(Icons.add_rounded),
           );
-        }
+        },
       ),
       body: SlidableAutoCloseBehavior(
         child: Padding(
@@ -117,21 +101,16 @@ class SubjectsScreen extends ConsumerWidget {
                             final map = ref.read(subjectsUsedTimesProvider);
                             final usedTimes = map[subject.id];
 
-                            showDialog(
-                              context: context,
-                              builder: (context) => SubjectDialog(
-                                isEditing: true,
-                                initial: subject,
-                                usedTimes: usedTimes,
-                              ),
-                            );
+                            editSubject(context, subject, usedTimes: usedTimes);
                           },
                           onDelete: () => deleteSubject(context, ref, subject),
                         ),
                       );
                     },
                     onReorder: (int oldIndex, int newIndex) {
-                      ref.read(subjectsProvider.notifier).reorder(
+                      ref
+                          .read(subjectsProvider.notifier)
+                          .reorder(
                             subjects[oldIndex],
                             newIndex,
                           );

@@ -37,6 +37,9 @@ class SettingTile extends StatelessWidget {
   final Color? titleColor;
   final bool hapticFeedback;
 
+  final animationDuration = const Duration(milliseconds: 200);
+  final animationCurve = Curves.decelerate;
+
   static SettingTile withSwitch({
     required String title,
     required bool value,
@@ -49,6 +52,7 @@ class SettingTile extends StatelessWidget {
     EdgeInsetsGeometry? contentPadding,
     bool isFirst = false,
     bool isLast = false,
+    Widget? newLineAction,
     Key? key,
   }) {
     void change(bool newValue) {
@@ -68,6 +72,7 @@ class SettingTile extends StatelessWidget {
         value: value,
         onChanged: enabled == false ? null : change,
       ),
+      newLineAction: newLineAction,
       isFirst: isFirst,
       isLast: isLast,
       key: key,
@@ -204,79 +209,88 @@ class SettingTile extends StatelessWidget {
                   onTap!(context);
                 }
               : null,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: [
-                Row(
-                  spacing: 16,
-                  children: [
-                    if (leading != null)
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: leading!,
-                      ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          heroTag != null
-                              ? Hero(
-                                  tag: heroTag!,
-                                  flightShuttleBuilder:
-                                      (
-                                        flightContext,
-                                        animation,
-                                        flightDirection,
-                                        fromHeroContext,
-                                        toHeroContext,
-                                      ) {
-                                        return AnimatedBuilder(
-                                          animation: animation,
-                                          builder: (context, _) {
-                                            return Material(
-                                              color: Colors.transparent,
-                                              child: SizedBox(
-                                                width: double.infinity,
-                                                child: Text(
-                                                  title,
-                                                  style: googleSansFlex(
-                                                    size:
-                                                        14 +
-                                                        animation.value * 30,
-                                                    weight: enabled
-                                                        ? 700
-                                                        : 400,
-                                                    roundness: 100,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                  child: buildText(context),
-                                )
-                              : buildText(context),
-                          if (subtitle != null) Text(subtitle!),
-                        ],
-                      ),
-                    ),
-                    if (trailing != null) trailing!,
-                  ],
-                ),
-                if (newLineAction != null) ...[
-                  const SizedBox(height: 12),
-                  AbsorbPointer(
-                    absorbing: enabled == false,
-                    child: Opacity(
-                      opacity: enabled ? 1 : 0.3,
-                      child: newLineAction!,
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  AnimatedSize(
+                    curve: animationCurve,
+                    duration: animationDuration,
+                    child: SizedBox(
+                      width: leading == null ? 16 : 56,
+                      child: leading,
                     ),
                   ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        heroTag != null
+                            ? Hero(
+                                tag: heroTag!,
+                                flightShuttleBuilder:
+                                    (
+                                      flightContext,
+                                      animation,
+                                      flightDirection,
+                                      fromHeroContext,
+                                      toHeroContext,
+                                    ) {
+                                      return AnimatedBuilder(
+                                        animation: animation,
+                                        builder: (context, _) {
+                                          return Material(
+                                            color: Colors.transparent,
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                title,
+                                                style: googleSansFlex(
+                                                  size:
+                                                      14 + animation.value * 30,
+                                                  weight: enabled ? 700 : 400,
+                                                  roundness: 100,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                child: buildText(context),
+                              )
+                            : buildText(context),
+                        if (subtitle != null) Text(subtitle!),
+                      ],
+                    ),
+                  ),
+                  if (trailing != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: trailing!,
+                    ),
+                  const SizedBox(width: 16),
                 ],
-              ],
-            ),
+              ),
+              AnimatedSize(
+                duration: animationDuration,
+                curve: animationCurve,
+                child: SizedBox(
+                  height: newLineAction == null ? 16 : null,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: AbsorbPointer(
+                      absorbing: enabled == false,
+                      child: Opacity(
+                        opacity: enabled ? 1 : 0.3,
+                        child: newLineAction,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

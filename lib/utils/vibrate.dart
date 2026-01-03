@@ -82,6 +82,20 @@ class Vibrate {
     );
   }
 
+  void releaseLong() {
+    _vibrate(
+      pattern: [20, 500, 500],
+      intensities: [200, 10, 5],
+    );
+  }
+
+  void confetti() {
+    _vibrate(
+      pattern: [4, 80, 3, 60, 4, 60, 3, 80, 4, 60],
+      intensities: [200, 0, 250, 0, 200, 0, 200, 0, 250, 0],
+    );
+  }
+
   void complete(bool nowComplete) {
     if (nowComplete) {
       _vibrate(

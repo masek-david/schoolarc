@@ -14,7 +14,6 @@ import 'package:schoolarc/screens/tutorial/pages/tutorial_interactions.dart';
 import 'package:schoolarc/screens/tutorial/pages/tutorial_priorities.dart';
 import 'package:schoolarc/screens/tutorial/pages/tutorial_subjects.dart';
 import 'package:schoolarc/screens/tutorial/pages/tutorial_welcome.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 Subject exampleSubject(AppLocalizations loc) => Subject(
@@ -63,10 +62,13 @@ class Tutorial extends StatefulWidget {
 
 class _TutorialState extends State<Tutorial> {
   final _controller = PageController();
-  bool showSkip = false;
+  bool isWelcomePage = false;
 
   late final pages = [
-    const TutorialWelcome(),
+    TutorialWelcome(
+      skipTutorial: () => _controller.jumpToPage(5),
+      startTutorial: scroll,
+    ),
     const TutorialBasics(),
     const TutorialPriorities(),
     const TutorialSubjects(),
@@ -74,6 +76,20 @@ class _TutorialState extends State<Tutorial> {
     const TutorialExtensions(),
     TutorialEnd(onEnd: widget.onEnd),
   ];
+
+  void scroll({bool forward = true}) {
+    if (forward) {
+      _controller.nextPage(
+        duration: Durations.medium3,
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _controller.previousPage(
+        duration: Durations.medium3,
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -92,26 +108,14 @@ class _TutorialState extends State<Tutorial> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             centerTitle: false,
-            title: TextButton(
-              onPressed: () {
-                if (!widget.firstTime) {
-                  widget.onEnd();
-                } else {
-                  _controller.animateToPage(
-                    5,
-                    duration: Durations.long4,
-                    curve: Curves.decelerate,
-                  );
-                }
-              },
-              child: Text(
-                !widget.firstTime
-                    ? context.loc.skip
-                    : showSkip
-                    ? context.loc.skip
-                    : context.loc.alreadyUsedApp,
-              ),
-            ),
+            title: isWelcomePage
+                ? null
+                : TextButton(
+                    onPressed: () {
+                      _controller.jumpToPage(5);
+                    },
+                    child: const Text('Skip tutorial'),
+                  ),
             actions: kDebugMode
                 ? [
                     TextButton(
@@ -124,42 +128,39 @@ class _TutorialState extends State<Tutorial> {
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () => _controller.previousPage(
-                  duration: Durations.medium3,
-                  curve: Curves.easeInOut,
+          floatingActionButtonAnimator: .scaling,
+          floatingActionButton: isWelcomePage
+              ? null
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () => scroll(forward: false),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_left_rounded,
+                      ),
+                    ),
+                    SmoothPageIndicator(
+                      controller: _controller,
+                      onDotClicked: kDebugMode
+                          ? (index) => _controller.jumpToPage(index)
+                          : null,
+                      effect: WormEffect(
+                        activeDotColor: Theme.of(context).colorScheme.primary,
+                        dotColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                      ),
+                      count: pages.length,
+                    ),
+                    IconButton(
+                      onPressed: scroll,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_right_rounded,
+                      ),
+                    ),
+                  ],
                 ),
-                icon: const Icon(
-                  Icons.keyboard_arrow_left_rounded,
-                ),
-              ),
-              SmoothPageIndicator(
-                controller: _controller,
-                onDotClicked: kDebugMode
-                    ? (index) => _controller.jumpToPage(index)
-                    : null,
-                effect: WormEffect(
-                  activeDotColor: Theme.of(context).colorScheme.primary,
-                  dotColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
-                count: pages.length,
-              ),
-              IconButton(
-                onPressed: () => _controller.nextPage(
-                  duration: Durations.medium3,
-                  curve: Curves.easeInOut,
-                ),
-                icon: const Icon(
-                  Icons.keyboard_arrow_right_rounded,
-                ),
-              ),
-            ],
-          ),
           body: Column(
             children: [
               Expanded(
@@ -167,7 +168,7 @@ class _TutorialState extends State<Tutorial> {
                   controller: _controller,
                   onPageChanged: (value) {
                     setState(() {
-                      showSkip = value != 0;
+                      isWelcomePage = value == 0;
                     });
                   },
                   itemCount: pages.length,

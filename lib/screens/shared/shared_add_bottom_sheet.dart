@@ -38,26 +38,29 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
   String? pickedSubjectId;
   bool couldntMatchSubject = false;
 
-  late List<GlobalKey> keys = List<GlobalKey>.generate(
-    widget.subjects.length,
-    (index) => GlobalKey(),
-  );
+  late Map<String, GlobalKey> subjectChipsKeys = {
+    for (final subject in widget.subjects) subject.id: GlobalKey(),
+  };
 
   void onSave() async {
     Navigator.pop(context);
     if (widget.isHomework) {
-      await ref.read(hwDataProvider.notifier).update(
+      await ref
+          .read(hwDataProvider.notifier)
+          .update(
             widget.task.toHwData().copyWith(
-                  subjectId: pickedSubjectId,
-                  priority: priority,
-                ),
+              subjectId: pickedSubjectId,
+              priority: priority,
+            ),
           );
     } else {
-      await ref.read(examDataProvider.notifier).update(
+      await ref
+          .read(examDataProvider.notifier)
+          .update(
             widget.task.toExamData().copyWith(
-                  subjectId: pickedSubjectId,
-                  priority: priority,
-                ),
+              subjectId: pickedSubjectId,
+              priority: priority,
+            ),
           );
     }
     if (mounted) {
@@ -80,27 +83,31 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
       } else {
         pickedSubjectId = widget.subjects
             .where(
-                (element) => element.containsText(subject.name.split(' ')[0]))
+              (element) => element.containsText(subject.name.split(' ')[0]),
+            )
             .firstOrNull
             ?.id;
       }
       if (pickedSubjectId != null) {
-        WidgetsBinding.instance
-            .addPostFrameCallback((timeStamp) => ensureVisible());
+        WidgetsBinding.instance.addPostFrameCallback(
+          (timeStamp) => _subjectChipEnsureVisible(pickedSubjectId),
+        );
       } else {
         couldntMatchSubject = true;
       }
     }
   }
 
-  void ensureVisible() {
-    if (pickedSubjectId == null) return;
-    Scrollable.ensureVisible(
-        keys[widget.subjects.indexWhere(
-          (element) => element.id == pickedSubjectId,
-        )]
-            .currentContext!,
-        duration: const Duration(milliseconds: 500));
+  void _subjectChipEnsureVisible(String? subjectId) {
+    if (subjectId != null) {
+      final chipContext = subjectChipsKeys[subjectId]?.currentContext;
+      if (chipContext != null) {
+        Scrollable.ensureVisible(
+          chipContext,
+          duration: const Duration(milliseconds: 500),
+        );
+      }
+    }
   }
 
   @override
@@ -118,14 +125,14 @@ class _SharedAddBottomSheetState extends ConsumerState<SharedAddBottomSheet> {
           ),
           if (widget.task.description != '') Text(widget.task.description),
           SubjectPicker(
-            keys: keys,
+            chipKeys: subjectChipsKeys,
             subjects: widget.subjects,
             pickedSubjectId: pickedSubjectId,
             onSelected: (subject) {
               setState(() {
                 pickedSubjectId = subject?.id;
               });
-              ensureVisible();
+              _subjectChipEnsureVisible(pickedSubjectId);
             },
           ),
           if (couldntMatchSubject)

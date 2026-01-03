@@ -973,6 +973,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewTutorial => 'View tutorial';
 
   @override
+  String get dontViewTutorial => 'Don\'t view tutorial';
+
+  @override
   String get localization => 'Localization';
 
   @override
@@ -1092,7 +1095,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorialIntro =>
-      'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.';
+      'Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.';
 
   @override
   String get welcome => 'Welcome';

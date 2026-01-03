@@ -59,7 +59,9 @@ class _TutorialInteractionsState extends State<TutorialInteractions>
                 setState(() {
                   completed = value;
                 });
-                showMessage(context, context.loc.tutorialCompleteHomework);
+                if (value) {
+                  showMessage(context, context.loc.tutorialCompleteHomework);
+                }
               }
             },
             onDelete: () {
@@ -72,9 +74,11 @@ class _TutorialInteractionsState extends State<TutorialInteractions>
             onEdit: () {},
           ),
         ),
-        AnimatedItem.spacer(height: 32),
         AnimatedItem(
-          builder: (isShown) => Text(context.loc.tutorialSlideToDelete),
+          builder: (isShown) => Padding(
+            padding: const EdgeInsets.only(top: 32),
+            child: Text(context.loc.tutorialSlideToDelete),
+          ),
         ),
         AnimatedItem.spacer(height: 32),
         AnimatedItem(

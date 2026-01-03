@@ -217,7 +217,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             ),
                           );
                         },
-                        icon: const Icon(Icons.add),
+                        icon: const Icon(Icons.add_rounded),
                         label: Text(context.loc.exams(1)),
                       ),
                       const SizedBox(height: 10),
@@ -235,7 +235,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                             ),
                           );
                         },
-                        icon: const Icon(Icons.add),
+                        icon: const Icon(Icons.add_rounded),
                         label: Text(context.loc.homework(1)),
                       ),
                     ],

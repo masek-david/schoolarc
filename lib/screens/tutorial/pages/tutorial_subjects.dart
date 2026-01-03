@@ -67,9 +67,11 @@ class _TutorialSubjectsState extends State<TutorialSubjects> {
             onConvert: null,
           ),
         ),
-        AnimatedItem.spacer(height: 32),
         AnimatedItem(
-          builder: (isShown) => Text(context.loc.tutorialTryAssigningSubject),
+          builder: (isShown) => Padding(
+            padding: const EdgeInsets.only(top: 32),
+            child: Text(context.loc.tutorialTryAssigningSubject),
+          ),
         ),
         AnimatedItem(
           builder: (isShown) => SizedBox(

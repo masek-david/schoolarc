@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 
-class TutorialWelcome extends ConsumerWidget {
-  const TutorialWelcome({super.key});
+class TutorialWelcome extends StatelessWidget {
+  const TutorialWelcome({super.key, required this.startTutorial, required this.skipTutorial,});
+
+  final void Function() startTutorial;
+  final void Function() skipTutorial;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Stack(
@@ -47,12 +50,12 @@ class TutorialWelcome extends ConsumerWidget {
           ),
         ),
         AnimatedPage(
-          padding: const EdgeInsetsGeometry.all(32),
+          spacing: 2,
           children: [
             AnimatedItem(
               transition: false,
               builder: (isShown) => Padding(
-                padding: const EdgeInsets.only(top: 90, bottom: 30),
+                padding: const EdgeInsets.only(top: 120, bottom: 20),
                 child: AnimatedDefaultTextStyle(
                   duration: Durations.extralong4,
                   curve: Curves.decelerate,
@@ -71,10 +74,29 @@ class TutorialWelcome extends ConsumerWidget {
               ),
             ),
             AnimatedItem(
-              builder: (isShown) => Text(
-                context.loc.tutorialIntro,
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.left,
+              builder: (isShown) => Padding(
+                padding: const EdgeInsets.only(bottom: 60),
+                child: Text(
+                  context.loc.tutorialIntro,
+                  style: googleSansFlex(size: 16, width: 120, weight: 500),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            AnimatedItem(
+              builder: (isShown) => SettingTile(
+                title: context.loc.viewTutorial,
+                isFirst: true,
+                onTap: (context) => startTutorial(),
+                trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+              ),
+            ),
+            AnimatedItem(
+              builder: (isShown) => SettingTile(
+                title: context.loc.dontViewTutorial,
+                onTap: (context) => skipTutorial(),
+                trailing: const Icon(Icons.close_rounded),
+                isLast: true,
               ),
             ),
           ],

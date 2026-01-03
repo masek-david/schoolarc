@@ -40,9 +40,7 @@ class _LogScreenState extends State<LogScreen> {
                 fontSize++;
               });
             },
-            icon: const Icon(
-              Icons.add,
-            ),
+            icon: const Icon(Icons.add_rounded),
           ),
         ],
       ),

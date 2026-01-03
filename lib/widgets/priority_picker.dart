@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/group_button.dart';
 
 class PriorityPicker extends StatefulWidget {
@@ -76,12 +77,15 @@ class _PriorityPickerState extends State<PriorityPicker>
                   setState(() {
                     priorityForAnimation = index;
                   });
-                  _controller.animateTo(1);
+                  _controller.animateTo(1).then((value) {
+                    vibrate.rigid();
+                  },);
                 },
                 onTapCancel: () {
                   _controller.animateBack(0);
                 },
                 onSelected: () {
+                  vibrate.medium();
                   widget.onSelected(index);
                   setState(() {
                     priorityForAnimation = index;

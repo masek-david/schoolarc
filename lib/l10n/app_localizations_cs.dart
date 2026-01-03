@@ -989,6 +989,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get viewTutorial => 'Zobrazit tutoriál';
 
   @override
+  String get dontViewTutorial => 'Nezobrazovat tutoriál';
+
+  @override
   String get localization => 'Lokalizace';
 
   @override
@@ -1114,7 +1117,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get tutorialIntro =>
-      'Děkuji za stažení aplikace Schoolarc. Toto je tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
+      'Děkuji za stažení aplikace Schoolarc. Jestli jste tu poprvé, můžete si projít tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
 
   @override
   String get welcome => 'Vítejte';

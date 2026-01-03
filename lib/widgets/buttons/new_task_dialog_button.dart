@@ -103,7 +103,7 @@ class _NewTaskDialogButtonState extends ConsumerState<NewTaskDialogButton> {
                 ),
                 secondChild: Center(
                   child: Icon(
-                    Icons.add,
+                    Icons.add_rounded,
                     color: context.col.onPrimaryContainer,
                   ),
                 ),

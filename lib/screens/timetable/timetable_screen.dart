@@ -81,7 +81,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
             },
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add_rounded),
       ),
       body: TimetableView(
         timeTable: timeTable,

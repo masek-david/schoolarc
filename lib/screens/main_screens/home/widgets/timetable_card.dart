@@ -42,7 +42,7 @@ class TimetableCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showOnline = ref.watch(useBakaProvider);
+    final useBaka = ref.watch(useBakaProvider);
 
     final current = ref.watch(currentTimetableProvider);
     final isLoading = current.isLoading;
@@ -51,7 +51,7 @@ class TimetableCard extends ConsumerWidget {
 
     final defaultTimetable = timetableDb.timeTable;
     TimeTable timetable = defaultTimetable;
-    if (showOnline && data != null && error == null) {
+    if (useBaka && data != null && error == null) {
       timetable = data;
     }
 
@@ -63,14 +63,15 @@ class TimetableCard extends ConsumerWidget {
       text: areThereUpcomingLessons
           ? '${context.loc.lessons} $whenText'
           : context.loc.noLesson(whenText).capitalize(),
-      error: error,
+      error: useBaka ? error : null,
       greydOut: !areThereUpcomingLessons,
       errorText: context.loc.viewingOfflineTimetable,
       actions: [
-        LoadingIconButton(
-          onPressed: () => refresh(ref),
-          isLoading: isLoading,
-        ),
+        if (useBaka)
+          LoadingIconButton(
+            onPressed: () => refresh(ref),
+            isLoading: isLoading,
+          ),
         IconButton(
           onPressed: () {
             ref.read(currentTimetableProvider.notifier).refreshIfOld();

@@ -82,7 +82,7 @@ class HomeworksScreen extends ConsumerWidget {
                 addNewHw(context);
               },
               enableFeedback: true,
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add_rounded),
             );
           }
         ),

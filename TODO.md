@@ -2,7 +2,7 @@
 expressive filledbutton
 fix tutorial end animation
 check firebase service too many reads???
-confetti
+translate
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

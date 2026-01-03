@@ -1692,6 +1692,12 @@ abstract class AppLocalizations {
   /// **'View tutorial'**
   String get viewTutorial;
 
+  /// No description provided for @dontViewTutorial.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t view tutorial'**
+  String get dontViewTutorial;
+
   /// No description provided for @localization.
   ///
   /// In en, this message translates to:
@@ -1887,7 +1893,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialIntro.
   ///
   /// In en, this message translates to:
-  /// **'Thank you for downloading Schoolarc. This is a tutorial that will explain the basics of the app. It will always be available to view later.'**
+  /// **'Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.'**
   String get tutorialIntro;
 
   /// No description provided for @welcome.

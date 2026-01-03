@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class TutorialEnd extends StatefulWidget {
   const TutorialEnd({super.key, required this.onEnd});
@@ -68,7 +69,12 @@ class _TutorialEndState extends State<TutorialEnd>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     FilledButton(
-                      onPressed: animate,
+                      onPressed: () {
+                        if (!controller.isAnimating) {
+                          animate();
+                          vibrate.releaseLong();
+                        }
+                      },
                       child: Text(context.loc.goToApp),
                     ),
                   ],

@@ -32,6 +32,30 @@ class TutorialExtensions extends ConsumerWidget {
               const SizedBox(height: 28),
               _ExtensionButton(
                 isFirst: true,
+                isLast: useCloudSync,
+                title: context.loc.cloudSync,
+                subtitle: context.loc.cloudSyncSubtitle,
+                value: useCloudSync,
+                onChanged: (value) {
+                  ref
+                      .read(useCloudSyncProvider.notifier)
+                      .set(value, context, ref);
+                },
+                leading: useCloudSync
+                    ? LoginStatusIcon(
+                        provider: firebaseLoginProvider,
+                        showProvider: useCloudSyncProvider,
+                      )
+                    : null,
+                button: FilledButton(
+                  onPressed: () {
+                    Navigator.restorablePushNamed(context, '/cloudsync');
+                  },
+                  child: Text(context.loc.login),
+                ),
+              ),
+              _ExtensionButton(
+                isFirst: useCloudSync,
                 isLast: useBaka,
                 value: useBaka,
                 title: context.loc.bakalari,
@@ -39,10 +63,12 @@ class TutorialExtensions extends ConsumerWidget {
                 onChanged: (value) {
                   ref.read(useBakaProvider.notifier).set(value);
                 },
-                leading: LoginStatusIcon(
-                  provider: bakaLoginProvider,
-                  showProvider: useBakaProvider,
-                ),
+                leading: useBaka
+                    ? LoginStatusIcon(
+                        provider: bakaLoginProvider,
+                        showProvider: useBakaProvider,
+                      )
+                    : null,
                 button: FilledButton(
                   onPressed: () {
                     Navigator.restorablePushNamed(context, '/bakalari');
@@ -52,42 +78,22 @@ class TutorialExtensions extends ConsumerWidget {
               ),
               _ExtensionButton(
                 isFirst: useBaka,
-                isLast: useMeals,
+                isLast: true,
                 title: context.loc.stravaCz,
                 subtitle: context.loc.stravaCzSubtitle,
                 value: useMeals,
                 onChanged: (value) {
                   ref.read(useMealsProvider.notifier).set(value);
                 },
-                leading: LoginStatusIcon(
-                  provider: stravaLoginProvider,
-                  showProvider: useMealsProvider,
-                ),
+                leading: useMeals
+                    ? LoginStatusIcon(
+                        provider: stravaLoginProvider,
+                        showProvider: useMealsProvider,
+                      )
+                    : null,
                 button: FilledButton(
                   onPressed: () {
                     Navigator.restorablePushNamed(context, '/strava');
-                  },
-                  child: Text(context.loc.login),
-                ),
-              ),
-              _ExtensionButton(
-                isFirst: useMeals,
-                isLast: true,
-                title: context.loc.cloudSync,
-                subtitle: context.loc.cloudSyncSubtitle,
-                value: useCloudSync,
-                onChanged: (value) {
-                  ref
-                      .read(useCloudSyncProvider.notifier)
-                      .set(value, context, ref);
-                },
-                leading: LoginStatusIcon(
-                  provider: firebaseLoginProvider,
-                  showProvider: useCloudSyncProvider,
-                ),
-                button: FilledButton(
-                  onPressed: () {
-                    Navigator.restorablePushNamed(context, '/cloudsync');
                   },
                   child: Text(context.loc.login),
                 ),
@@ -125,25 +131,15 @@ class _ExtensionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SettingTile.withSwitch(
-          isFirst: isFirst,
-          isLast: isLast,
-          title: title,
-          leading: leading,
-          subtitle: subtitle,
-          value: value,
-          onChanged: onChanged,
-        ),
-        AnimatedSize(
-          duration: Durations.medium1,
-          child: SizedBox(
-            height: value ? null : 0,
-            child: button,
-          ),
-        ),
-      ],
+    return SettingTile.withSwitch(
+      isFirst: isFirst,
+      isLast: isLast,
+      title: title,
+      leading: leading,
+      subtitle: subtitle,
+      value: value,
+      onChanged: onChanged,
+      newLineAction: value ? button : null,
     );
   }
 }

@@ -121,7 +121,7 @@ class Overview extends ConsumerWidget {
                 text: numberOrNo(upcomingHw, context),
                 style: getStyle(
                   context,
-                  color: col.primary,
+                  color: col.tertiary,
                   bold: true,
                   number: true,
                 ),
@@ -135,7 +135,7 @@ class Overview extends ConsumerWidget {
                 text: numberOrNo(upcomingExams, context),
                 style: getStyle(
                   context,
-                  color: col.primary,
+                  color: col.tertiary,
                   number: true,
                   bold: true,
                 ),

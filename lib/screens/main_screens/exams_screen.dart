@@ -83,7 +83,7 @@ class ExamsScreen extends ConsumerWidget {
                 addNewExam(context);
               },
               enableFeedback: true,
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add_rounded),
             );
           }
         ),

@@ -3,6 +3,7 @@
 - Reworked Android widgets
 - Added new refresh indicator
 - Improved home screen UI and UX
+- Subjects can now be created when creating homework or an exam
 
 ### Changed
 - Improved fonts

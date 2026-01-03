@@ -48,9 +48,11 @@ class _TutorialPrioritiesState extends State<TutorialPriorities> {
             onConvert: null,
           ),
         ),
-        AnimatedItem.spacer(height: 32),
         AnimatedItem(
-          builder: (isShown) => Text(context.loc.tutorialPriorities),
+          builder: (isShown) => Padding(
+            padding: const EdgeInsets.only(top: 32),
+            child: Text(context.loc.tutorialPriorities),
+          ),
         ),
         AnimatedItem.spacer(height: 16),
         AnimatedItem(

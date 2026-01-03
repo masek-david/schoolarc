@@ -78,9 +78,6 @@ class _GroupButtonState extends State<GroupButton>
 
   @override
   Widget build(BuildContext context) {
-    // final color =
-    //     widget.selected ? widget.selectedColor : widget.backgroundColor;
-
     return Flexible(
       flex: 1000 + (widget.flex * 100).round(),
       child: AnimatedBuilder(
@@ -111,12 +108,10 @@ class _GroupButtonState extends State<GroupButton>
             },
             onTap: widget.onSelected,
             child: Container(
+              height: 40,
               decoration: BoxDecoration(color: color, borderRadius: border),
-              // unnecessary cliprrect
-              child: ClipRRect(
-                borderRadius: border,
-                child: child,
-              ),
+              clipBehavior: Clip.antiAlias,
+              child: child,
             ),
           );
         },

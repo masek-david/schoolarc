@@ -26,8 +26,8 @@ class BakaHwTile extends StatelessWidget {
             );
           },
           icon: hw.alreadyAdded
-              ? const Icon(Icons.check_circle_outline)
-              : const Icon(Icons.add_circle_outline),
+              ? const Icon(Icons.check_circle_outline_rounded)
+              : const Icon(Icons.add_circle_outline_rounded),
         ),
         Expanded(
           child: HwTile(

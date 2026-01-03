@@ -63,13 +63,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   late RestorableBool group = RestorableBool(false);
   late RestorableBool dateIsAutoSet = RestorableBool(false);
 
-  late List<Subject> subjects = ref.read(subjectsSortedProvider);
   final _timetable = timetableDb.timeTable;
 
-  late List<GlobalKey> keysList = List<GlobalKey>.generate(
-    subjects.length,
-    (index) => GlobalKey(),
-  );
+  /// These are used to make subject chips visible
+  /// The map is id of subject to its globalkey
+  Map<String, GlobalKey> subjectChipsKeys = {};
 
   void onSave() {
     vibrate.heavy();
@@ -110,11 +108,18 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
         }
       }
     });
-    if (subject != null) {
-      Scrollable.ensureVisible(
-        keysList[subjects.indexOf(subject)].currentContext!,
-        duration: const Duration(milliseconds: 500),
-      );
+    _subjectChipEnsureVisible(subject?.id);
+  }
+
+  void _subjectChipEnsureVisible(String? subjectId) {
+    if (subjectId != null) {
+      final chipContext = subjectChipsKeys[subjectId]?.currentContext;
+      if (chipContext != null) {
+        Scrollable.ensureVisible(
+          chipContext,
+          duration: const Duration(milliseconds: 500),
+        );
+      }
     }
   }
 
@@ -148,7 +153,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
     return;
   }
 
-  void pickSubject() async {
+  void pickSubject(List<Subject> subjects) async {
     final newSubject = await showSelectSubject(
       context: context,
       subjects: subjects,
@@ -161,15 +166,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (pickedSubjectId.value != null) {
-        Scrollable.ensureVisible(
-          keysList[subjects.indexWhere(
-                (element) => pickedSubjectId.value == element.id,
-              )]
-              .currentContext!,
-          duration: const Duration(milliseconds: 500),
-        );
-      }
+      _subjectChipEnsureVisible(pickedSubjectId.value);
     });
   }
 
@@ -200,6 +197,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    late List<Subject> subjects = ref.watch(subjectsSortedProvider);
+
+    for (final subject in subjects) {
+      subjectChipsKeys.putIfAbsent(subject.id, () => GlobalKey());
+    }
+
     return Shortcuts(
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit1):
@@ -234,7 +237,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
             onInvoke: (intent) => pickDate(keyboard: true),
           ),
           PickSubjectIntent: CallbackAction(
-            onInvoke: (intent) => pickSubject(),
+            onInvoke: (intent) => pickSubject(subjects),
           ),
         },
         child: Container(
@@ -259,7 +262,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   subjects: subjects,
                   pickedSubjectId: pickedSubjectId.value,
                   onSelected: setSubject,
-                  keys: keysList,
+                  chipKeys: subjectChipsKeys,
                 ),
                 const SizedBox(height: 10),
                 Autocomplete<Subject>(
@@ -287,10 +290,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                             textEditingController.text = value;
                           },
                           onEditingComplete: () {},
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.all(15),
-                            border: OutlineInputBorder(),
-                          ),
                         );
                       },
                   onSelected: (subject) {
@@ -312,19 +311,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                     );
                   },
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  // listview need height, which is ensured by the sizedbox
-                  height: 40,
-                  child: PriorityPicker(
-                    selectedPriority: pickedPriority.value,
-                    onSelected: (value) {
-                      vibrate.medium();
-                      setState(() {
-                        pickedPriority.value = value;
-                      });
-                    },
-                  ),
+                const SizedBox(height: 4),
+                PriorityPicker(
+                  selectedPriority: pickedPriority.value,
+                  onSelected: (value) {
+                    setState(() {
+                      pickedPriority.value = value;
+                    });
+                  },
                 ),
                 // SettingTile.withCheckbox(
                 //   contentPadding: const EdgeInsets.all(0),
@@ -334,8 +328,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                 //     share.value = value;
                 //   }),
                 // ),
-                const Divider(),
-        
+                const SizedBox(height: 8),
                 InkWell(
                   onTap: pickDate,
                   child: Padding(
@@ -408,8 +401,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                   controller: descriptionController.value,
                   maxLines: null,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(15),
-                    border: const OutlineInputBorder(),
                     hintText: context.loc.description,
                   ),
                 ),

@@ -5,8 +5,41 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 
-class SubjectDialog extends ConsumerStatefulWidget {
-  const SubjectDialog({
+Future<void> editSubject(
+  BuildContext context,
+  Subject subject, {
+  int? usedTimes,
+}) async {
+  showDialog(
+    context: context,
+    builder: (context) => NewSubjectDialog(
+      usedTimes: usedTimes,
+      isEditing: true,
+      initial: subject,
+    ),
+  );
+}
+
+Future<void> addNewSubject(BuildContext context) async {
+  showDialog(
+    context: context,
+    builder: (context) => NewSubjectDialog(
+      isEditing: false,
+      initial: Subject(
+        name: '',
+        shortcut: '',
+        id: '',
+        bakaId: null,
+        timestamp: DateTime.now(),
+        isDeleted: false,
+        order: 0,
+      ),
+    ),
+  );
+}
+
+class NewSubjectDialog extends ConsumerStatefulWidget {
+  const NewSubjectDialog({
     super.key,
     required this.isEditing,
     required this.initial,
@@ -19,10 +52,10 @@ class SubjectDialog extends ConsumerStatefulWidget {
   final Subject initial;
 
   @override
-  ConsumerState<SubjectDialog> createState() => _SubjectDialogState();
+  ConsumerState<NewSubjectDialog> createState() => _SubjectDialogState();
 }
 
-class _SubjectDialogState extends ConsumerState<SubjectDialog> {
+class _SubjectDialogState extends ConsumerState<NewSubjectDialog> {
   late final TextEditingController nameController = TextEditingController(
     text: widget.initial.name,
   );
