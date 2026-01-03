@@ -26,7 +26,9 @@ class AgoText extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Duration? duration;
-    ref.watch(stream).whenData(
+    ref
+        .watch(stream)
+        .whenData(
           (value) => duration = value,
         );
 

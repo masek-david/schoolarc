@@ -1,9 +1,8 @@
 # FIX
-homescreen agotext under the cards?
 expressive filledbutton
 fix tutorial end animation
-rethrow all exceptions
 check firebase service too many reads???
+confetti
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -22,7 +21,7 @@ check firebase service too many reads???
     - ⬜ offer import from json
     - ⬜ ask: new user? view tutorial? import data from json?
 - ⬜ plus - 5 usd, limit to 100 users?
-- ⬜ add to tutorial
+- ⬜ add to tutoriale
     - ⬜ app theme
     - ⬜ ? widgets
     - ⬜ notifications
@@ -48,6 +47,7 @@ check firebase service too many reads???
 - ⬜ ? use expressive progress
 - ⬜ ? display tasks in timetable
 - ⬜ ? scroll calendar vertically on big screens
+- ⬜ ? homescreen cards horizontal pull to refresh
 
 ## OTHER
 - ✅ save only date for deadlines

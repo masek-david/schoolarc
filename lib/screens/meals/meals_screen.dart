@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
+import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
@@ -56,16 +57,19 @@ class MealsScreen extends ConsumerWidget {
         },
         child: isLoading
             ? const Center(child: MyExpressiveLoadingIndicator(size: 72))
+            : error != null
+            ? ListView(
+                children: [
+                  ErrorTile(
+                    error: error,
+                    text: context.loc.mealsNotLoaded,
+                    padding: const EdgeInsetsGeometry.all(16),
+                  ),
+                ],
+              )
             : ListView.builder(
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
-                  if (error != null) {
-                    return ErrorTile(
-                      error: error,
-                      text: context.loc.mealsNotLoaded,
-                      padding: const EdgeInsetsGeometry.all(16),
-                    );
-                  }
                   if (data?.isEmpty ?? false) {
                     Center(child: Text(context.loc.noMealsFound));
                   }
@@ -75,49 +79,41 @@ class MealsScreen extends ConsumerWidget {
                   final mealsForToday = data?[date];
                   final bool empty = mealsForToday == null;
 
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              empty
-                                  ? context.loc
-                                        .noMealsOn(
-                                          date
-                                              .formatWithWeekday(
-                                                context,
-                                                useOnFormat: true,
-                                              )
-                                              .unCapitalize(),
-                                        )
-                                        .capitalize()
-                                  : context.loc
-                                        .mealsOn(
-                                          date
-                                              .formatWithWeekday(
-                                                context,
-                                                useOnFormat: true,
-                                              )
-                                              .unCapitalize(),
-                                        )
-                                        .capitalize(),
-                              style: context.txt.bodyLarge,
+                  return Padding(
+                    padding: const .fromLTRB(8, 0, 8, 8),
+                    child: CardWithTitle(
+                      highContainer: true,
+                      text: empty
+                          ? context.loc
+                                .noMealsOn(
+                                  date
+                                      .formatWithWeekday(
+                                        context,
+                                        useOnFormat: true,
+                                      )
+                                      .unCapitalize(),
+                                )
+                                .capitalize()
+                          : context.loc
+                                .mealsOn(
+                                  date
+                                      .formatWithWeekday(
+                                        context,
+                                        useOnFormat: true,
+                                      )
+                                      .unCapitalize(),
+                                )
+                                .capitalize(),
+                      childPadding: const .fromLTRB(8, 0, 8, 8),
+                      child: empty
+                          ? null
+                          : Column(
+                              children: mealsForToday
+                                  .map(
+                                    (meal) => MealTile(meal: meal),
+                                  )
+                                  .toList(),
                             ),
-                          ),
-                          if (!empty)
-                            ...mealsForToday.map(
-                              (meal) => MealTile(meal: meal),
-                            ),
-                        ],
-                      ),
                     ),
                   );
                 },

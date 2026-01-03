@@ -315,7 +315,7 @@
   "localization": "Lokalizace",
   "localizationSubtitle": "Přizpůsobte jazyk a formát dat",
   "language": "Jazyk",
-  "languageDefault": "Jazyk",
+  "languageDefault": "Výchozí jazyka",
   "deviceLanguage": "Jazyk zařízení",
   "h24timeFormat": "Vynutit 24 hodinový formát času",
   "h24timeFormatSubtitle": "Některé jazyky podporují pouze 24 hodinový formát",

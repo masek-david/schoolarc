@@ -1,10 +1,10 @@
-## [2.2.0]() - 2025-
+## [2.2.0]() - 2026-
 ### Added
 - Reworked Android widgets
 - Added new refresh indicator
+- Improved home screen UI and UX
 
 ### Changed
-- Improved home screen
 - Improved fonts
 - Improved ordering of tasks
 - Changed how dates are saved (should resolve any timezone issues)

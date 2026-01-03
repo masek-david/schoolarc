@@ -34,10 +34,28 @@ class Overview extends ConsumerWidget {
     return number.toString();
   }
 
+  TextStyle getStyle(
+    BuildContext context, {
+    bool bold = false,
+    bool number = false,
+    Color? color,
+  }) {
+    return googleSansFlex(
+      size: number ? 20 : 16,
+      color: color,
+      weight: number
+          ? 800
+          : bold
+          ? 500
+          : 300,
+      roundness: number ? 100 : 0,
+      width: 80,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final col = Theme.of(context).colorScheme;
 
     final missedHw = ref.watch(hwMissedProvider).length;
     final upcomingHw = ref.watch(hwDataProvider).values.where(
@@ -56,63 +74,81 @@ class Overview extends ConsumerWidget {
     String? userName = ref.watch(usernameProvider);
     bool showUserName = ref.watch(greetUsernameProvider) && userName != null;
 
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative(context)}' : ''}',
-            style: robotoSerif(
-              size: 36,
-              color: colorScheme.primary,
-              width: 50,
-              weight: 700,
-              grade: -50,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${context.loc.greetingByHour(greetingTime)}${showUserName ? ', ${userName.toVocative(context)}' : ''}',
+          style: robotoSerif(
+            size: 36,
+            color: col.primary,
+            width: 50,
+            weight: 700,
+            grade: -50,
           ),
-          const SizedBox(height: 12),
-          RichText(
-            text: TextSpan(
-              text: '${context.loc.youHave} ',
-              style: textTheme.bodyLarge,
-              children: [
-                if (missedHw != 0)
-                  TextSpan(
-                    text:
-                        '$missedHw ${context.loc.missedHomework(missedHw).toLowerCase()}, ',
-                    style: TextStyle(
-                      color: colorScheme.error,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+        ),
+        RichText(
+          text: TextSpan(
+            text: '${context.loc.youHave} ',
+            style: getStyle(context),
+            children: [
+              if (missedHw != 0)
                 TextSpan(
-                  text: numberOrNo(upcomingHw, context),
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                  text: '$missedHw',
+                  style: getStyle(
+                    context,
+                    bold: true,
+                    number: true,
+                    color: col.error,
                   ),
                 ),
+              if (missedHw != 0)
                 TextSpan(
                   text:
-                      ' ${context.loc.upcomingHomework(upcomingHw).toLowerCase()} ${context.loc.and} ',
-                ),
-                TextSpan(
-                  text: numberOrNo(upcomingExams, context),
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                      ' ${context.loc.missedHomework(missedHw).toLowerCase()}',
+                  style: getStyle(
+                    context,
+                    bold: true,
+                    color: col.error,
                   ),
                 ),
+              if (missedHw != 0)
                 TextSpan(
-                  text:
-                      ' ${context.loc.upcomingExams(upcomingExams).toLowerCase()}',
+                  text: ', ',
+                  style: getStyle(context),
                 ),
-              ],
-            ),
+              TextSpan(
+                text: numberOrNo(upcomingHw, context),
+                style: getStyle(
+                  context,
+                  color: col.primary,
+                  bold: true,
+                  number: true,
+                ),
+              ),
+              TextSpan(
+                text:
+                    ' ${context.loc.upcomingHomework(upcomingHw).toLowerCase()} ${context.loc.and} ',
+                style: getStyle(context),
+              ),
+              TextSpan(
+                text: numberOrNo(upcomingExams, context),
+                style: getStyle(
+                  context,
+                  color: col.primary,
+                  number: true,
+                  bold: true,
+                ),
+              ),
+              TextSpan(
+                text:
+                    ' ${context.loc.upcomingExams(upcomingExams).toLowerCase()}',
+                style: getStyle(context),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

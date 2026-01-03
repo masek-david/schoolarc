@@ -83,6 +83,8 @@ class BakaService {
       throw ValidationException(.emptyField);
     }
 
+    school = school.trim();
+
     final url = Uri(
       scheme: 'https',
       host: "$school.bakalari.cz",
@@ -281,7 +283,7 @@ class BakaService {
     final schoolName = await this.schoolName;
     final url = Uri(
       scheme: 'https',
-      host: "${schoolName.trim()}.bakalari.cz",
+      host: "$schoolName.bakalari.cz",
       path: "/api/3/timetable/actual",
       queryParameters: {
         'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal()),

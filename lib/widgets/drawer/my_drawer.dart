@@ -22,10 +22,12 @@ class MyDrawer extends ConsumerWidget {
   final void Function() startTutorial;
 
   void showSnackbar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(text),
-      duration: const Duration(seconds: 10),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 10),
+      ),
+    );
   }
 
   @override
@@ -54,8 +56,8 @@ class MyDrawer extends ConsumerWidget {
                           colorMapper: LogoColorMapper(
                             isDark:
                                 Theme.of(context).brightness == Brightness.dark,
-                            primaryFixedDimColor:
-                                context.col.primaryFixedDim.toARGB32(),
+                            primaryFixedDimColor: context.col.primaryFixedDim
+                                .toARGB32(),
                             secondaryColor: context.col.secondary.toARGB32(),
                           ),
                         ),
@@ -93,7 +95,9 @@ class MyDrawer extends ConsumerWidget {
                       onTap: () {
                         ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
                         Navigator.restorablePushNamed(
-                            context, '/bakalari-homeworks');
+                          context,
+                          '/bakalari-homeworks',
+                        );
                       },
                     ),
                     const Divider(indent: 28, endIndent: 28),
@@ -123,7 +127,8 @@ class MyDrawer extends ConsumerWidget {
                         onChanged: (value) {
                           ref
                               .read(
-                                  debugShowPerformanceOverlayProvider.notifier)
+                                debugShowPerformanceOverlayProvider.notifier,
+                              )
                               .set(value);
                         },
                       ),
@@ -161,22 +166,7 @@ class MyDrawer extends ConsumerWidget {
             if (isRecapDate())
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: RecapButton(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${loc.viewYearStats} 🎉',
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                child: RecapButton.small(context),
               ),
             MyDrawerButton(
               text: loc.viewTutorial,

@@ -9,6 +9,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
+import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart';
@@ -19,7 +20,6 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
-import 'package:schoolarc/widgets/lists/homework_list.dart';
 import 'package:schoolarc/widgets/lists/list_bottom_spacer.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
@@ -99,31 +99,23 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
               children: [
-                const SizedBox(height: 16),
-                const Overview(),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(8, 0, 8, 24),
+                  child: Overview(),
+                ),
                 if (isRecapDate() && !hasSeenRecap())
-                  RecapButton(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${context.loc.anotherYearBehind} 🎉',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          Text(context.loc.viewYearStats),
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: RecapButton.full(context),
                   ),
-                const SizedBox(height: 24),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
                   children: [
                     if (isWide)
                       Flexible(
                         child: Column(
+                          spacing: 10,
                           children: [
                             const MealsCard(),
                             TimetableCard(
@@ -136,6 +128,7 @@ class HomeScreen extends ConsumerWidget {
                     Flexible(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
+                        spacing: 10,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (!isWide) const MealsCard(),
@@ -145,161 +138,142 @@ class HomeScreen extends ConsumerWidget {
                               whenText: whenText,
                             ),
                           if (missedHw.isNotEmpty)
-                            Card(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerLowest,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: HomeworkList(
-                                  hwList: missedHw,
-                                  onChangedCompletion: (hw, value) =>
-                                      completeHw(context, ref, hw, value),
-                                  onDelete: (hw) => deleteHw(context, ref, hw),
-                                  onConvert: (hw) =>
-                                      convertHw(context, ref, hw),
-                                  onEdit: (hw) => editHw(context, hw),
-                                  showDates: true,
-                                  text: context.loc.missedHomeworkTitle,
-                                ),
+                            CardWithTitle(
+                              text: context.loc.missedHomeworkTitle,
+                              child: Column(
+                                spacing: 8,
+                                children: missedHw
+                                    .map(
+                                      (hw) => HwTile(
+                                        hw: hw,
+                                        showDate: false,
+                                        onChangedCompletion: (value) =>
+                                            completeHw(
+                                              context,
+                                              ref,
+                                              hw,
+                                              value,
+                                            ),
+                                        onDelete: () =>
+                                            deleteHw(context, ref, hw),
+                                        onEdit: () => editHw(context, hw),
+                                        onConvert: () =>
+                                            convertHw(context, ref, hw),
+                                      ),
+                                    )
+                                    .toList(),
                               ),
+                              // child: HomeworkList(
+                              //   hwList: missedHw,
+                              //   onChangedCompletion: (hw, value) =>
+                              //       completeHw(context, ref, hw, value),
+                              //   onDelete: (hw) => deleteHw(context, ref, hw),
+                              //   onConvert: (hw) =>
+                              //       convertHw(context, ref, hw),
+                              //   onEdit: (hw) => editHw(context, hw),
+                              //   showDates: true,
+                              //   text: context.loc.missedHomeworkTitle,
+                              // ),
                             ),
                           if (showToday)
-                            Card(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerLowest,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: examsToday.isEmpty && hwToday.isEmpty
-                                    ? EmptyMessage(
-                                        message: context.loc.nothingPlannedFor(
-                                          context.loc.today.toLowerCase(),
-                                        ),
-                                        asset: 'assets/confetti.svg',
-                                      )
-                                    : ClipRect(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          spacing: 8,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(
-                                                8.0,
-                                              ),
-                                              child: Text(
-                                                context.loc.today,
-                                                style: context.txt.bodyLarge,
-                                              ),
+                            CardWithTitle(
+                              text: examsToday.isEmpty && hwToday.isEmpty
+                                  ? null
+                                  : context.loc.today,
+                              child: examsToday.isEmpty && hwToday.isEmpty
+                                  ? EmptyMessage(
+                                      message: context.loc.nothingPlannedFor(
+                                        context.loc.today.toLowerCase(),
+                                      ),
+                                      asset: 'assets/confetti.svg',
+                                    )
+                                  : Column(
+                                      spacing: 8,
+                                      children: [
+                                        ...examsToday.map(
+                                          (e) => ExamTile(
+                                            exam: e,
+                                            showDeadline: false,
+                                            onDelete: () =>
+                                                deleteExam(context, ref, e),
+                                            onEdit: () => editExam(context, e),
+                                            onConvert: () => convertExam(
+                                              context,
+                                              ref,
+                                              e,
                                             ),
-                                            ...examsToday.map(
-                                              (e) => ExamTile(
-                                                exam: e,
-                                                showDeadline: false,
-                                                onDelete: () =>
-                                                    deleteExam(context, ref, e),
-                                                onEdit: () =>
-                                                    editExam(context, e),
-                                                onConvert: () => convertExam(
+                                          ),
+                                        ),
+                                        ...hwToday.map(
+                                          (hw) => HwTile(
+                                            hw: hw,
+                                            showDate: false,
+                                            onChangedCompletion: (value) =>
+                                                completeHw(
                                                   context,
                                                   ref,
-                                                  e,
+                                                  hw,
+                                                  value,
                                                 ),
-                                              ),
-                                            ),
-                                            ...hwToday.map(
-                                              (hw) => HwTile(
-                                                hw: hw,
-                                                showDate: false,
-                                                onChangedCompletion: (value) =>
-                                                    completeHw(
-                                                      context,
-                                                      ref,
-                                                      hw,
-                                                      value,
-                                                    ),
-                                                onDelete: () =>
-                                                    deleteHw(context, ref, hw),
-                                                onEdit: () =>
-                                                    editHw(context, hw),
-                                                onConvert: () =>
-                                                    convertHw(context, ref, hw),
-                                              ),
-                                            ),
-                                          ],
+                                            onDelete: () =>
+                                                deleteHw(context, ref, hw),
+                                            onEdit: () => editHw(context, hw),
+                                            onConvert: () =>
+                                                convertHw(context, ref, hw),
+                                          ),
                                         ),
-                                      ),
-                              ),
+                                      ],
+                                    ),
                             ),
                           if (showTomorrow)
-                            Card(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerLowest,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child:
-                                    examsTomorrow.isEmpty && hwTomorrow.isEmpty
-                                    ? EmptyMessage(
-                                        message: context.loc.nothingPlannedFor(
-                                          context.loc.tomorrow.toLowerCase(),
-                                        ),
-                                        asset: 'assets/confetti.svg',
-                                      )
-                                    : ClipRect(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          spacing: 8,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(
-                                                8.0,
-                                              ),
-                                              child: Text(
-                                                context.loc.tomorrow,
-                                                style: context.txt.bodyLarge,
-                                              ),
+                            CardWithTitle(
+                              text: examsTomorrow.isEmpty && hwTomorrow.isEmpty
+                                  ? null
+                                  : context.loc.tomorrow,
+                              child: examsTomorrow.isEmpty && hwTomorrow.isEmpty
+                                  ? EmptyMessage(
+                                      message: context.loc.nothingPlannedFor(
+                                        context.loc.tomorrow.toLowerCase(),
+                                      ),
+                                      asset: 'assets/confetti.svg',
+                                    )
+                                  : Column(
+                                      spacing: 8,
+                                      children: [
+                                        ...examsTomorrow.map(
+                                          (e) => ExamTile(
+                                            exam: e,
+                                            showDeadline: false,
+                                            onDelete: () =>
+                                                deleteExam(context, ref, e),
+                                            onEdit: () => editExam(context, e),
+                                            onConvert: () => convertExam(
+                                              context,
+                                              ref,
+                                              e,
                                             ),
-                                            ...examsTomorrow.map(
-                                              (e) => ExamTile(
-                                                exam: e,
-                                                showDeadline: false,
-                                                onDelete: () =>
-                                                    deleteExam(context, ref, e),
-                                                onEdit: () =>
-                                                    editExam(context, e),
-                                                onConvert: () => convertExam(
+                                          ),
+                                        ),
+                                        ...hwTomorrow.map(
+                                          (hw) => HwTile(
+                                            hw: hw,
+                                            showDate: false,
+                                            onChangedCompletion: (value) =>
+                                                completeHw(
                                                   context,
                                                   ref,
-                                                  e,
+                                                  hw,
+                                                  value,
                                                 ),
-                                              ),
-                                            ),
-                                            ...hwTomorrow.map(
-                                              (hw) => HwTile(
-                                                hw: hw,
-                                                showDate: false,
-                                                onChangedCompletion: (value) =>
-                                                    completeHw(
-                                                      context,
-                                                      ref,
-                                                      hw,
-                                                      value,
-                                                    ),
-                                                onDelete: () =>
-                                                    deleteHw(context, ref, hw),
-                                                onEdit: () =>
-                                                    editHw(context, hw),
-                                                onConvert: () =>
-                                                    convertHw(context, ref, hw),
-                                              ),
-                                            ),
-                                          ],
+                                            onDelete: () =>
+                                                deleteHw(context, ref, hw),
+                                            onEdit: () => editHw(context, hw),
+                                            onConvert: () =>
+                                                convertHw(context, ref, hw),
+                                          ),
                                         ),
-                                      ),
-                              ),
+                                      ],
+                                    ),
                             ),
                           const ListBottomSpacer(),
                         ],

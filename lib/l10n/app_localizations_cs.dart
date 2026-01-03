@@ -998,7 +998,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get language => 'Jazyk';
 
   @override
-  String get languageDefault => 'Jazyk';
+  String get languageDefault => 'Výchozí jazyka';
 
   @override
   String get deviceLanguage => 'Jazyk zařízení';

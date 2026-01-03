@@ -6,6 +6,7 @@ import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
@@ -14,8 +15,6 @@ import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
-import 'package:schoolarc/widgets/text_actions.dart';
-import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 bool _isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
   bool isEmpty = true;
@@ -59,108 +58,89 @@ class TimetableCard extends ConsumerWidget {
     final upcomingLessons = timetable.getUpcomingLessons(dateToShow);
     bool areThereUpcomingLessons = !_isLessonsEmpty(upcomingLessons);
 
-    return Card(
-      color: Theme.of(context).colorScheme.surfaceContainerLowest,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: TextActions(
-              text: areThereUpcomingLessons
-                  ? '${context.loc.lessons} $whenText'
-                  : context.loc.noLesson(whenText).capitalize(),
-              greydOut: !areThereUpcomingLessons,
-              actions: [
-                LoadingIconButton(
-                  onPressed: () => refresh(ref),
-                  isLoading: isLoading,
-                ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(currentTimetableProvider.notifier).refreshIfOld();
-                    Navigator.restorablePushNamed(
-                        context, '/timetable-current');
-                  },
-                  icon: const Icon(
-                    Icons.keyboard_arrow_right_rounded,
-                  ),
-                ),
-              ],
-            ),
+    return CardWithTitle(
+      childPadding: const .only(bottom: 8),
+      text: areThereUpcomingLessons
+          ? '${context.loc.lessons} $whenText'
+          : context.loc.noLesson(whenText).capitalize(),
+      error: error,
+      greydOut: !areThereUpcomingLessons,
+      errorText: context.loc.viewingOfflineTimetable,
+      actions: [
+        LoadingIconButton(
+          onPressed: () => refresh(ref),
+          isLoading: isLoading,
+        ),
+        IconButton(
+          onPressed: () {
+            ref.read(currentTimetableProvider.notifier).refreshIfOld();
+            Navigator.restorablePushNamed(
+              context,
+              '/timetable-current',
+            );
+          },
+          icon: const Icon(
+            Icons.keyboard_arrow_right_rounded,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: AnimatedSize(
-              duration: Durations.medium1,
-              curve: Curves.decelerate,
-              child: error != null && showOnline
-                  ? ErrorTile(
-                      error: error,
-                      text: context.loc.viewingOfflineTimetable,
-                    )
-                  : const SizedBox(
-                      height: 0,
-                      width: double.infinity,
-                    ),
-            ),
-          ),
-          if (areThereUpcomingLessons) const SizedBox(height: 8),
-          if (areThereUpcomingLessons)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 4,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const SizedBox(width: 12),
-                  ...List.generate(
-                    upcomingLessons.length,
-                    (index) {
-                      final entry = upcomingLessons[index];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(
-                              entry.$1.startTime.format(context),
-                              style: googleSansFlex(
-                                width: 50,
-                                color: getSubtleTextColor(context),
-                              ),
-                            ),
+        ),
+      ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            spacing: 4,
+            children: [
+              ...List.generate(
+                upcomingLessons.length + 1,
+                (index) {
+                  if (index == upcomingLessons.length) {
+                    return Padding(
+                      padding: const .only(top: 16),
+                      child: AgoText(stream: currentTimetableAgeProvider),
+                    );
+                  }
+
+                  final entry = upcomingLessons[index];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          entry.$1.startTime.format(context),
+                          style: googleSansFlex(
+                            width: 50,
+                            color: getSubtleTextColor(context),
                           ),
-                          SizedBox(
-                            height: 100,
-                            child: TimetableTile(
-                              isHighlighted: entry.$1.isActive &&
-                                  dateToShow.isSameDay(DateTime.now()),
-                              lesson: entry.$2,
-                              columnWidth:
-                                  settings.get(Setting.timeTableTileWidth),
-                              onTap: (lesson) =>
-                                  lesson?.showLessonDialog(context, ref),
-                              leftBottom: index == 0,
-                              leftTop: index == 0,
-                              rightBottom: index == upcomingLessons.length - 1,
-                              rightTop: index == upcomingLessons.length - 1,
-                            ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                        child: TimetableTile(
+                          isHighlighted:
+                              entry.$1.isActive &&
+                              dateToShow.isSameDay(DateTime.now()),
+                          lesson: entry.$2,
+                          columnWidth: settings.get(
+                            Setting.timeTableTileWidth,
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                ],
+                          onTap: (lesson) =>
+                              lesson?.showLessonDialog(context, ref),
+                          leftBottom: index == 0,
+                          leftTop: index == 0,
+                          rightBottom: index == upcomingLessons.length - 1,
+                          rightTop: index == upcomingLessons.length - 1,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12, bottom: 4),
-            child: AgoText(stream: currentTimetableAgeProvider),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

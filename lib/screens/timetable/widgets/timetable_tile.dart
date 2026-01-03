@@ -79,44 +79,46 @@ class TimetableTile extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (lesson?.subject?.id == '')
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        height: 5,
-                        width: 5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.blue.harmonizeWith(tileColor),
-                        ),
-                      ),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    lesson?.subject?.id == ''
+                        ? Container(
+                            height: 5,
+                            width: 5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.blue.harmonizeWith(tileColor),
+                            ),
+                          )
+                        : const SizedBox.square(dimension: 5),
+                  ],
+                ),
                 if (lesson?.subject?.isFromBakalari == true &&
                     settings.get(Setting.debugMode))
                   Text('baka: ${lesson?.subject?.bakaId}'),
-                const Spacer(),
+                const Spacer(flex: 10),
                 if (lesson?.change?.type == ChangeType.canceled)
                   Text(
                     lesson?.change?.shortcut ?? '',
                     style: googleSansFlex(width: 120),
                   ),
-                if (lesson?.subject != null)
-                  Text(
-                    lesson?.subject?.shortcut ?? '',
-                    style: googleSansFlex(
-                      size: 20,
-                      weight: 700,
-                      width: 130,
-                      roundness: 100,
-                      color: change != null
-                          ? Theme.of(context).colorScheme.onErrorContainer
-                          : null,
-                    ),
+                Text(
+                  lesson?.subject?.shortcut ?? '',
+                  style: googleSansFlex(
+                    size: 20,
+                    weight: 700,
+                    width: 130,
+                    roundness: 100,
+                    color: change != null
+                        ? Theme.of(context).colorScheme.onErrorContainer
+                        : null,
                   ),
-                const Spacer(),
-                if (lesson?.teacher != null)
+                ),
+                (lesson?.teacher != null || lesson?.room != null)
+                    ? const Spacer(flex: 10)
+                    : const Spacer(flex: 16),
+                if (lesson?.teacher != null || lesson?.room != null)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

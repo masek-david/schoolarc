@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 
 class EmptyMessage extends StatelessWidget {
   const EmptyMessage({
@@ -20,7 +21,6 @@ class EmptyMessage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          spacing: 16,
           children: [
             SvgPicture.asset(
               asset,
@@ -32,6 +32,7 @@ class EmptyMessage extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
+              style: googleSansFlex(width: 131, weight: 600),
             ),
           ],
         ),
