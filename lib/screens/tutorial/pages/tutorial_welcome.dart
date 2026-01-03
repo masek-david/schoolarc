@@ -6,7 +6,11 @@ import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 
 class TutorialWelcome extends StatelessWidget {
-  const TutorialWelcome({super.key, required this.startTutorial, required this.skipTutorial,});
+  const TutorialWelcome({
+    super.key,
+    required this.startTutorial,
+    required this.skipTutorial,
+  });
 
   final void Function() startTutorial;
   final void Function() skipTutorial;
@@ -22,14 +26,17 @@ class TutorialWelcome extends StatelessWidget {
           top: -30,
           width: 350,
           height: 350,
-          child: Opacity(
-            opacity: isDark ? 0.3 : 0.8,
-            child: const AnimatedShape(
-              text: '',
-              excludeShapes: false,
-              secondsBeforeShapeChange: 3,
-              reactive: false,
-              secondsForOneRotation: -50,
+          child: AnimatedShape(
+            text: '',
+            excludeShapes: false,
+            secondsBeforeShapeChange: 3,
+            reactive: false,
+            secondsForOneRotation: -50,
+            firstColor: context.col.primaryContainer.withAlpha(
+              isDark ? 77 : 204,
+            ),
+            secondColor: context.col.secondaryContainer.withAlpha(
+              isDark ? 77 : 204,
             ),
           ),
         ),
@@ -38,14 +45,17 @@ class TutorialWelcome extends StatelessWidget {
           bottom: -300,
           width: 700,
           height: 700,
-          child: Opacity(
-            opacity: isDark ? 0.6 : 1,
-            child: const AnimatedShape(
-              text: '',
-              excludeShapes: false,
-              secondsBeforeShapeChange: 5,
-              reactive: false,
-              secondsForOneRotation: 80,
+          child: AnimatedShape(
+            text: '',
+            excludeShapes: false,
+            secondsBeforeShapeChange: 5,
+            reactive: false,
+            secondsForOneRotation: 80,
+            firstColor: context.col.primaryContainer.withAlpha(
+              isDark ? 153 : 255,
+            ),
+            secondColor: context.col.tertiaryContainer.withAlpha(
+              isDark ? 153 : 255,
             ),
           ),
         ),

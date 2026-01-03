@@ -1,8 +1,6 @@
 # FIX
 expressive filledbutton
-fix tutorial end animation
 check firebase service too many reads???
-translate
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -15,15 +13,16 @@ translate
         - ✅ just save info about completed hw, dont spawn it using isolate?
         - ✅ rework with isolatedHive??
 - ⬜ push info to the app from web + min required version
-- ⬜ forgot password for firebase + verify email
+- ⬜ forgot password for firebase + verify email ‼️
+- ⬜ login just with mail, no password???‼️
+- ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ tutorial
     - ✅ offer import from bakalari
     - ⬜ offer import from json
     - ⬜ ask: new user? view tutorial? import data from json?
 - ⬜ plus - 5 usd, limit to 100 users?
-- ⬜ add to tutoriale
-    - ⬜ app theme
-    - ⬜ ? widgets
+- ⬜ add to tutorial
+    - ⬜ android widgets
     - ⬜ notifications
     - ⬜ plus
 
@@ -31,38 +30,41 @@ translate
 
 ## UI
 - ✅ settings use bigger headlines and scroll them
+- ✅ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ⬜ in calendar tasks are hidden again a little bit
-- ⬜ ipad - zmenit padding pro barevny okraje aplikace (otevreni klavesnice zpusobi jitter)
+- ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
-- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jank when switching pages
+- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
-    - ⬜ prevent from accidental scroll closing 
+    - ⬜ prevent from accidental scroll closing
     - ⬜ fix the scrolling
     - ⬜ animation FAB morph to the sheet?
     - ⬜ does everything need to be shown ??
 - ⬜ on weekend, show info about upcoming week
-- ⬜ icons - hws, exams, subjects
-- ⬜ check scrolling in timetable (dont overscroll, dont show pull tabs)
-- ⬜ ? use expressive progress
-- ⬜ ? display tasks in timetable
+- ⬜ custom icons - hws, exams, subjects
 - ⬜ ? scroll calendar vertically on big screens
+- ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh
 
 ## OTHER
 - ✅ save only date for deadlines
 - ✅ rework exceptions - string should be just shown in ui, not from service
-- ⬜ sync everything (hws, exams, subjects) properly
-- ⬜ add google sign in + sign in with apple
-- ⬜ ? refactor to use date instead of datetime
+- ✅ refactor to use date instead of datetime
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
-- ⬜ strava stop saving the password 
-- ⬜ translation - google sheets
+- ⬜ strava.cz stop saving the password 
 - ⬜ add animations to all animationControllers (to use curves)
+- ⬜ translation - google sheets
+
+## NOTIFICATIONS:
+- ✅ turn off notifications for weekend
+- ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
+- ⬜ switch to local_notifications (awesome_notifications has some old code)
+- ⬜ meals notifications (before meal?, remind to pick a week before?)
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)
@@ -80,14 +82,9 @@ translate
     - ⬜ update privacy policy
 - ⬜ qr group invite?
 
-## notifications:
-- ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
-- ✅ turn off notifications for weekend
-- ⬜ switch to local_notifications (awesome_notifications has some old code)
-- ⬜ meals notifications (before meal?, remind to pick a week before?)
-
-## year recap
+## YEAR RECAP
 - ⬜ translate
+- ⬜ improve UI - go wild - custom design - MD3E or something else?
 - ⬜ in background move this years hws and exams tiles
 - ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
 
@@ -96,14 +93,14 @@ translate
 - ⬜ widgets
 
 # MAYBE
-- ⬜ refactor baka_service - add separate file for http requests
-- ⬜ make everything react to touch (shrink) 
+- ⬜ ? refactor baka_service - add separate file for http requests
+- ⬜ ? make everything react to touch (shrink) 
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
-- ⬜ ? remake subject, hw, exam notifiers - too much reading database, recursive edit() calls, ...
 - ⬜ ? merge duplicate subjects (is it really needed?)
+- ⬜ ? add google sign in + sign in with apple
     
 
 

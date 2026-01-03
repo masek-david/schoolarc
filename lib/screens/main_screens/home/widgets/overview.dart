@@ -41,7 +41,7 @@ class Overview extends ConsumerWidget {
     Color? color,
   }) {
     return googleSansFlex(
-      size: number ? 20 : 16,
+      size: number ? 18 : 16,
       color: color,
       weight: number
           ? 800
