@@ -39,46 +39,42 @@ class CardWithTitle extends StatelessWidget {
                 ? context.col.surfaceContainerLow
                 : context.col.surfaceContainerLowest,
           ),
-          child: Stack(
-            alignment: .bottomRight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: error == null
-                            ? text == null
-                                  ? const SizedBox.shrink()
-                                  : Padding(
-                                      padding: const EdgeInsetsGeometry.all(16),
-                                      child: Text(
-                                        text!,
-                                        style: googleSansFlex(
-                                          size: 16,
-                                          weight: 500,
-                                          color: greydOut
-                                              ? getSubtleTextColor(context)
-                                              : null,
-                                        ),
-                                      ),
-                                    )
-                            : ErrorTile(
-                                error: error,
-                                text: errorText,
-                                padding: const .all(12),
-                              ),
-                      ),
-                      ...actions,
-                    ],
+                  Expanded(
+                    child: error == null
+                        ? text == null
+                              ? const SizedBox.shrink()
+                              : Padding(
+                                  padding: const EdgeInsetsGeometry.all(16),
+                                  child: Text(
+                                    text!,
+                                    style: googleSansFlex(
+                                      size: 16,
+                                      weight: 500,
+                                      color: greydOut
+                                          ? getSubtleTextColor(context)
+                                          : null,
+                                    ),
+                                  ),
+                                )
+                        : ErrorTile(
+                            error: error,
+                            text: errorText,
+                            padding: const .all(12),
+                          ),
                   ),
-                  if (child != null)
-                    Padding(
-                      padding: childPadding,
-                      child: child,
-                    ),
+                  ...actions,
                 ],
               ),
+              if (child != null)
+                Padding(
+                  padding: childPadding,
+                  child: child,
+                ),
             ],
           ),
         ),

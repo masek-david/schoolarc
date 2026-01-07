@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exception_model.dart';
@@ -311,6 +312,15 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               ),
             ],
           ),
+        if (kDebugMode)
+          OutlinedButton(
+            onPressed: useCloudSync
+                ? () async {
+                    await ref.read(firebaseServiceProvider).verify();
+                  }
+                : null,
+            child: const Text('Verify email'),
+          ),
         if (loggedIn)
           OutlinedButton(
             onPressed: useCloudSync
@@ -437,7 +447,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                           .getAllData(context);
                     } on Object catch (e) {
                       if (context.mounted) {
-                        showErrorMessage(context,e);
+                        showErrorMessage(context, e);
                       }
                       return;
                     }
@@ -498,7 +508,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                                         .deleteAllData(password: fields[0]);
                                   } on Object catch (e) {
                                     if (context.mounted) {
-                                      showErrorMessage(context,e);
+                                      showErrorMessage(context, e);
                                     }
                                     return;
                                   }

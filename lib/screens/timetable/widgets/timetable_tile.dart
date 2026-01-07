@@ -29,15 +29,28 @@ class TimetableTile extends StatelessWidget {
   final bool rightBottom;
   final void Function(TimeTableLesson? lesson)? onTap;
 
+  BorderRadiusGeometry getBorderRadius({double subtract = 0}) {
+    return BorderRadius.only(
+      bottomLeft: Radius.circular(leftBottom ? 16 - subtract : 4 - subtract),
+      bottomRight: Radius.circular(rightBottom ? 16 - subtract : 4 - subtract),
+      topLeft: Radius.circular(leftTop ? 16 - subtract : 4 - subtract),
+      topRight: Radius.circular(rightTop ? 16 - subtract : 4 - subtract),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.col;
-    Color tileColor = isHighlighted
+    final change = lesson?.change;
+    Color backgroundCol = isHighlighted
         ? colorScheme.tertiaryContainer
         : colorScheme.surfaceContainer;
-    final change = lesson?.change;
+    Color foregroundCol = isHighlighted
+        ? colorScheme.onTertiaryContainer
+        : colorScheme.onSurface;
     if (change != null) {
-      tileColor = Theme.of(context).colorScheme.errorContainer;
+      backgroundCol = context.col.errorContainer;
+      foregroundCol = context.col.onErrorContainer;
     }
 
     return AnimatedContainer(
@@ -46,26 +59,15 @@ class TimetableTile extends StatelessWidget {
       height: double.infinity,
       decoration: BoxDecoration(
         border: lesson?.subject == null
-            ? Border.all(
-                color: tileColor,
-                width: 2,
-              )
+            ? Border.all(color: backgroundCol, width: 2)
             : null,
-        color: lesson?.subject == null ? null : tileColor,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(leftBottom ? 16 : 4),
-          bottomRight: Radius.circular(rightBottom ? 16 : 4),
-          topLeft: Radius.circular(leftTop ? 16 : 4),
-          topRight: Radius.circular(rightTop ? 16 : 4),
-        ),
+        color: lesson?.subject == null ? null : backgroundCol,
+        borderRadius: getBorderRadius(),
       ),
       child: Material(
         clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(leftBottom ? 16 : 4),
-          bottomRight: Radius.circular(rightBottom ? 16 : 4),
-          topLeft: Radius.circular(leftTop ? 16 : 4),
-          topRight: Radius.circular(rightTop ? 16 : 4),
+        borderRadius: getBorderRadius(
+          subtract: lesson?.subject == null ? 2 : 0,
         ),
         color: Colors.transparent,
         child: InkWell(
@@ -88,7 +90,7 @@ class TimetableTile extends StatelessWidget {
                             width: 5,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.blue.harmonizeWith(tileColor),
+                              color: Colors.blue.harmonizeWith(backgroundCol),
                             ),
                           )
                         : const SizedBox.square(dimension: 5),
@@ -101,7 +103,7 @@ class TimetableTile extends StatelessWidget {
                 if (lesson?.change?.type == ChangeType.canceled)
                   Text(
                     lesson?.change?.shortcut ?? '',
-                    style: googleSansFlex(width: 120),
+                    style: googleSansFlex(width: 120, color: foregroundCol),
                   ),
                 Text(
                   lesson?.subject?.shortcut ?? '',
@@ -110,9 +112,7 @@ class TimetableTile extends StatelessWidget {
                     weight: 700,
                     width: 130,
                     roundness: 100,
-                    color: change != null
-                        ? Theme.of(context).colorScheme.onErrorContainer
-                        : null,
+                    color: foregroundCol,
                   ),
                 ),
                 (lesson?.teacher != null || lesson?.room != null)
@@ -124,11 +124,19 @@ class TimetableTile extends StatelessWidget {
                     children: [
                       Text(
                         lesson?.teacher?.shortcut ?? '',
-                        style: googleSansFlex(width: 50, size: 16),
+                        style: googleSansFlex(
+                          width: 50,
+                          size: 16,
+                          color: foregroundCol,
+                        ),
                       ),
                       Text(
                         lesson?.room ?? '',
-                        style: googleSansFlex(width: 50, size: 16),
+                        style: googleSansFlex(
+                          width: 50,
+                          size: 16,
+                          color: foregroundCol,
+                        ),
                       ),
                     ],
                   ),

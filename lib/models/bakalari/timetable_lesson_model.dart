@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/timetable_change.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -17,10 +18,10 @@ class TimeTableLesson {
   });
 
   TimeTableLesson.empty()
-      : subject = null,
-        change = null,
-        room = null,
-        teacher = null;
+    : subject = null,
+      change = null,
+      room = null,
+      teacher = null;
 
   final Subject? subject;
   final BakaChange? change;
@@ -45,8 +46,11 @@ class TimeTableLesson {
     );
   }
 
-  void showLessonDialog(BuildContext context, WidgetRef ref,
-      {void Function()? onSubjectAdded}) {
+  void showLessonDialog(
+    BuildContext context,
+    WidgetRef ref, {
+    void Function()? onSubjectAdded,
+  }) {
     String? title = subject?.name;
 
     title ??= context.loc.emptyLesson;
@@ -61,7 +65,7 @@ class TimeTableLesson {
           children: [
             if (subject?.id == '')
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(4, 0, 0, 16),
                 child: Row(
                   spacing: 12,
                   children: [
@@ -80,13 +84,19 @@ class TimeTableLesson {
                     ),
                     FilledButton(
                       onPressed: () async {
-                        await ref.read(subjectsProvider.notifier).create(
+                        await ref
+                            .read(subjectsProvider.notifier)
+                            .create(
                               subject!.convert(),
                             );
+                        ref
+                            .read(currentTimetableProvider.notifier)
+                            .reassignSubjects();
                         if (onSubjectAdded != null) {
                           onSubjectAdded();
                         }
                         if (context.mounted) {
+                          Navigator.pop(context);
                           showMessage(context, context.loc.importedSubject);
                         }
                       },

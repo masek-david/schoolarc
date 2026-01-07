@@ -6,6 +6,7 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final currentTimetableAgeProvider = StreamProvider<Duration?>((ref) async* {
@@ -103,6 +104,38 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
         DateTime.now().difference(lastFetched!) > const Duration(minutes: 30)) {
       return refresh();
     }
-    return;
+  }
+
+  /// Reloads and reassigns all subjects for all lessons
+  /// - use when subjects change and the subjects in the timetable should be updated
+  /// todo: should listen to subjects provider??
+  void reassignSubjects() {
+    final timetable = state.value;
+    if (timetable == null) return;
+
+    final subjects = ref.read(subjectsNonDeletedProvider);
+    subjects.removeWhere((key, value) => value.bakaId == null);
+    final subjectsBakaId = subjects.map(
+      (key, value) => MapEntry(value.bakaId!, value),
+    );
+
+    for (var dayIndex = 0; dayIndex < timetable.table.length; dayIndex++) {
+      for (
+        var lessonIndex = 0;
+        lessonIndex < timetable.table[dayIndex].length;
+        lessonIndex++
+      ) {
+        final lesson = timetable.table[dayIndex][lessonIndex];
+        if (lesson.subject?.id == '') {
+          final correctSubject = subjectsBakaId[lesson.subject?.bakaId];
+          if (correctSubject != null) {
+            timetable.table[dayIndex][lessonIndex] = lesson.copyWith(
+              subject: correctSubject,
+            );
+          }
+        }
+      }
+    }
+    state = AsyncData(timetable);
   }
 }

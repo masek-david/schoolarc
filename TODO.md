@@ -46,6 +46,7 @@ check firebase service too many reads???
 - ⬜ ? scroll calendar vertically on big screens
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh
+- ⬜ ? move homescreen and calendar settings to settings
 
 ## OTHER
 - ✅ save only date for deadlines
@@ -56,7 +57,7 @@ check firebase service too many reads???
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
-- ⬜ strava.cz stop saving the password 
+- ⬜ strava.cz stop saving the password
 - ⬜ add animations to all animationControllers (to use curves)
 - ⬜ translation - google sheets
 

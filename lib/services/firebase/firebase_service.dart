@@ -87,6 +87,11 @@ class FirebaseService {
     return;
   }
 
+  Future<void> verify() async {
+    await auth.currentUser?.sendEmailVerification();
+    return;
+  }
+
   Future<bool> changePassword({
     required String oldPassword,
     required String password,

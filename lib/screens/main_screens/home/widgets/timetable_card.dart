@@ -124,9 +124,7 @@ class TimetableCard extends ConsumerWidget {
                               entry.$1.isActive &&
                               dateToShow.isSameDay(DateTime.now()),
                           lesson: entry.$2,
-                          columnWidth: settings.get(
-                            Setting.timeTableTileWidth,
-                          ),
+                          columnWidth: settings.get(Setting.timeTableTileWidth),
                           onTap: (lesson) =>
                               lesson?.showLessonDialog(context, ref),
                           leftBottom: index == 0,

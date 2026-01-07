@@ -81,6 +81,9 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
+          ref.read(currentTimetableProvider.notifier).refreshIfOld();
+          ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
+          ref.read(stravaMealsProvider.notifier).refreshIfOld();
           ref.read(examDataProvider.notifier).checkAllIfCompleted();
         },
       );
@@ -129,7 +132,9 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     );
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        _onAppLeaveOrReturn(true);
+        updateMainWidget(ref);
+        NotificationSender.scheduleUpcomingDayNotifications(context);
+        ref.read(examDataProvider.notifier).checkAllIfCompleted();
       },
     );
 

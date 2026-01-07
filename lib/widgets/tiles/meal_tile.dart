@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/meal_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 
 class MealTile extends StatelessWidget {
@@ -18,7 +19,7 @@ class MealTile extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: meal.selected == true
-            ? Theme.of(context).colorScheme.tertiaryContainer
+            ? context.col.tertiaryContainer
             : null,
         borderRadius: BorderRadius.circular(16),
       ),
@@ -34,11 +35,19 @@ class MealTile extends StatelessWidget {
               weight: 600,
               roundness: 100,
               width: 40,
+              color: meal.selected == true
+                  ? context.col.onTertiaryContainer
+                  : null,
             ),
           ),
           Text(
             meal.name,
-            style: googleSansFlex(size: 14),
+            style: googleSansFlex(
+              size: 14,
+              color: meal.selected == true
+                  ? context.col.onTertiaryContainer
+                  : null,
+            ),
           ),
         ],
       ),
