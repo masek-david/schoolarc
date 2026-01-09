@@ -526,7 +526,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentTimetable => 'Current timetable';
 
   @override
-  String get noTimetable => 'No timetable found';
+  String get noTimetableMessage =>
+      'You don\'t have any timetable. You can create time of lessons by tapping the plus button.';
 
   @override
   String get noHomework => 'No homework found';
@@ -624,7 +625,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String noLesson(Object whenText) {
-    return 'No lesson $whenText';
+    return 'No lessons $whenText';
   }
 
   @override
@@ -916,8 +917,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subjects => 'Subjects';
 
   @override
-  String get noSubjectsFoundMessage =>
-      'No subjects found. You can create new subjects by tapping the plus button.';
+  String get noSubjectsMessage =>
+      'You don\'t have any subjects. You can create new subjects by tapping the plus button.';
 
   @override
   String deletedSubjectMessage(Object name) {

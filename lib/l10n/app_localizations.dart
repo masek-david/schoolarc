@@ -938,11 +938,11 @@ abstract class AppLocalizations {
   /// **'Current timetable'**
   String get currentTimetable;
 
-  /// No description provided for @noTimetable.
+  /// No description provided for @noTimetableMessage.
   ///
   /// In en, this message translates to:
-  /// **'No timetable found'**
-  String get noTimetable;
+  /// **'You don\'t have any timetable. You can create time of lessons by tapping the plus button.'**
+  String get noTimetableMessage;
 
   /// No description provided for @noHomework.
   ///
@@ -1121,7 +1121,7 @@ abstract class AppLocalizations {
   /// No description provided for @noLesson.
   ///
   /// In en, this message translates to:
-  /// **'No lesson {whenText}'**
+  /// **'No lessons {whenText}'**
   String noLesson(Object whenText);
 
   /// No description provided for @addNewLessonTime.
@@ -1584,11 +1584,11 @@ abstract class AppLocalizations {
   /// **'Subjects'**
   String get subjects;
 
-  /// No description provided for @noSubjectsFoundMessage.
+  /// No description provided for @noSubjectsMessage.
   ///
   /// In en, this message translates to:
-  /// **'No subjects found. You can create new subjects by tapping the plus button.'**
-  String get noSubjectsFoundMessage;
+  /// **'You don\'t have any subjects. You can create new subjects by tapping the plus button.'**
+  String get noSubjectsMessage;
 
   /// No description provided for @deletedSubjectMessage.
   ///

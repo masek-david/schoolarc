@@ -85,6 +85,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
       ),
       body: TimetableView(
         timeTable: timeTable,
+        textWhenEmpty: context.loc.noTimetableMessage,
         showWholeWeek: showWholeWeek,
         columnWidth: columnWidth,
         onLessonTimesTapped: (lessonTimes, lessonIndex) {

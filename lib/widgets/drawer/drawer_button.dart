@@ -6,11 +6,13 @@ class MyDrawerButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onTap,
+    this.showBadge = false,
   });
 
   final String text;
   final Icon icon;
   final void Function() onTap;
+  final bool showBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,16 @@ class MyDrawerButton extends StatelessWidget {
               const SizedBox(width: 4),
               icon,
               const SizedBox(width: 12),
-              Text(text),
+              Expanded(child: Text(text)),
+              if (showBadge)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(1000),
+                    color: Colors.red,
+                  ),
+                  height: 8,
+                  width: 8,
+                ),
             ],
           ),
         ),

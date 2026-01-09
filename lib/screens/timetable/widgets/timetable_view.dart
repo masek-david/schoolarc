@@ -20,26 +20,24 @@ class TimetableView extends StatelessWidget {
     required this.columnWidth,
     required this.onLessonTimesTapped,
     required this.onSubjectTapped,
-    this.textWhenEmpty,
+    required this.textWhenEmpty,
   });
 
   final TimeTable? timeTable;
   final bool showWholeWeek;
   final double columnWidth;
-  final String? textWhenEmpty;
+  final String textWhenEmpty;
   final void Function(LessonTimes lessonTimes, int lessonIndex)?
-      onLessonTimesTapped;
+  onLessonTimesTapped;
   final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)?
-      onSubjectTapped;
+  onSubjectTapped;
 
   static const dateColumnWidth = 40.0;
 
   @override
   Widget build(BuildContext context) {
     if (timeTable == null || timeTable!.lessonTimes.isEmpty) {
-      return EmptyMessage(
-        message: textWhenEmpty ?? context.loc.noTimetable,
-      );
+      return EmptyMessage(message: textWhenEmpty);
     }
 
     final table = timeTable!.table;
@@ -67,7 +65,8 @@ class TimetableView extends StatelessWidget {
                     (columnIndex) {
                       if (columnIndex == 0) {
                         return SizedBox(
-                            width: timeTable?.dates != null ? dateColumnWidth : 0);
+                          width: timeTable?.dates != null ? dateColumnWidth : 0,
+                        );
                       }
 
                       int lessonIndex = columnIndex - 1;
@@ -80,7 +79,9 @@ class TimetableView extends StatelessWidget {
                           onTap: onLessonTimesTapped == null
                               ? null
                               : () => onLessonTimesTapped!(
-                                  lessonTimes, lessonIndex),
+                                  lessonTimes,
+                                  lessonIndex,
+                                ),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +158,7 @@ class TimetableView extends StatelessWidget {
 
                       bool isHighlighted =
                           timeTable!.lessonTimes[lessonIndex].isActive &&
-                              DateTime.now().weekday - 1 == weekday;
+                          DateTime.now().weekday - 1 == weekday;
 
                       if (isHighlighted &&
                           date != null &&
@@ -180,8 +181,11 @@ class TimetableView extends StatelessWidget {
                         columnWidth: columnWidth,
                         onTap: onSubjectTapped == null
                             ? null
-                            : (_) =>
-                                onSubjectTapped!(weekday, lessonIndex, lesson),
+                            : (_) => onSubjectTapped!(
+                                weekday,
+                                lessonIndex,
+                                lesson,
+                              ),
                       );
                     },
                   ),

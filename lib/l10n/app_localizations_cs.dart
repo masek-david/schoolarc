@@ -536,7 +536,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get currentTimetable => 'Aktuální rozvrh';
 
   @override
-  String get noTimetable => 'Nebyl nalezen žádný rozvrh';
+  String get noTimetableMessage =>
+      'Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus';
 
   @override
   String get noHomework => 'Nebyly nalezeny žádné úkoly';
@@ -932,8 +933,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get subjects => 'Předměty';
 
   @override
-  String get noSubjectsFoundMessage =>
-      'Nebyly nalezeny žádné předměty. Nové předměty můžete vytvořit kliknutím na tlačítko plus.';
+  String get noSubjectsMessage =>
+      'Nemáte žádné předměty. Nové předměty můžete vytvořit kliknutím na tlačítko plus.';
 
   @override
   String deletedSubjectMessage(Object name) {

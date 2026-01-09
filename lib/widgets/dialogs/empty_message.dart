@@ -32,7 +32,7 @@ class EmptyMessage extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: googleSansFlex(width: 131, weight: 600),
+              style: googleSansFlex(width: 111, weight: 500, size: 16),
             ),
           ],
         ),

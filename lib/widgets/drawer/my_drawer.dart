@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -70,6 +71,7 @@ class MyDrawer extends ConsumerWidget {
                     MyDrawerButton(
                       text: loc.subjects,
                       icon: const Icon(Icons.school_outlined),
+                      showBadge: ref.watch(subjectsNonDeletedProvider).isEmpty,
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/subjects');
                       },
@@ -77,6 +79,7 @@ class MyDrawer extends ConsumerWidget {
                     MyDrawerButton(
                       text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_outlined),
+                      showBadge: timetableDb.timeTable.lessonTimes.isEmpty,
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/timetable');
                       },

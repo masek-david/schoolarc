@@ -79,8 +79,8 @@ class SubjectsScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: subjects.isEmpty
               ? EmptyMessage(
-                  message: context.loc.noSubjectsFoundMessage,
-                )
+                message: context.loc.noSubjectsMessage,
+              )
               : ExpressiveRefreshIndicator(
                   enabled: ref.watch(useCloudSyncProvider) ? true : false,
                   onRefresh: () => onRefresh(context, ref),

@@ -85,16 +85,15 @@ class TimetableCard extends ConsumerWidget {
           ),
         ),
       ],
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            spacing: 4,
-            children: [
-              ...List.generate(
-                upcomingLessons.length + 1,
-                (index) {
+      child: !areThereUpcomingLessons
+          ? null
+          : SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: .horizontal,
+                itemCount: upcomingLessons.length + 1,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemBuilder: (context, index) {
                   if (index == upcomingLessons.length) {
                     return Padding(
                       padding: const .only(top: 16),
@@ -103,44 +102,48 @@ class TimetableCard extends ConsumerWidget {
                   }
 
                   final entry = upcomingLessons[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          entry.$1.startTime.format(context),
-                          style: googleSansFlex(
-                            width: 50,
-                            color: getSubtleTextColor(context),
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          child: Text(
+                            entry.$1.startTime.format(context),
+                            style: googleSansFlex(
+                              width: 50,
+                              color: getSubtleTextColor(context),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        child: TimetableTile(
-                          isHighlighted:
-                              entry.$1.isActive &&
-                              dateToShow.isSameDay(DateTime.now()),
-                          lesson: entry.$2,
-                          columnWidth: settings.get(Setting.timeTableTileWidth),
-                          onTap: (lesson) =>
-                              lesson?.showLessonDialog(context, ref),
-                          leftBottom: index == 0,
-                          leftTop: index == 0,
-                          rightBottom: index == upcomingLessons.length - 1,
-                          rightTop: index == upcomingLessons.length - 1,
+                        SizedBox(
+                          height: 100,
+                          child: TimetableTile(
+                            isHighlighted:
+                                entry.$1.isActive &&
+                                dateToShow.isSameDay(DateTime.now()),
+                            lesson: entry.$2,
+                            columnWidth: settings.get(
+                              Setting.timeTableTileWidth,
+                            ),
+                            onTap: (lesson) =>
+                                lesson?.showLessonDialog(context, ref),
+                            leftBottom: index == 0,
+                            leftTop: index == 0,
+                            rightBottom: index == upcomingLessons.length - 1,
+                            rightTop: index == upcomingLessons.length - 1,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

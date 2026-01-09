@@ -167,7 +167,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
           ),
           if (data != null && data.keys.length > 1)
             Padding(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(8),
               child: SmoothPageIndicator(
                 controller: _pageController,
                 count: data.keys.length,

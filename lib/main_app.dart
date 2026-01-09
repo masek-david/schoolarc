@@ -13,6 +13,7 @@ import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
+import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
@@ -279,6 +280,17 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                     systemOverlayStyle: const SystemUiOverlayStyle(
                       systemNavigationBarColor: Colors.transparent,
                     ),
+                    leading:
+                        (ref.watch(subjectsNonDeletedProvider).isEmpty ||
+                            timetableDb.timeTable.lessonTimes.isEmpty)
+                        ? const Align(
+                            alignment: .center,
+                            child: Badge(
+                              backgroundColor: Colors.red,
+                              child: DrawerButton(),
+                            ),
+                          )
+                        : null,
                   )
                 : null,
             body: SlidableAutoCloseBehavior(

@@ -95,7 +95,8 @@ class TutorialWelcome extends StatelessWidget {
             ),
             AnimatedItem(
               builder: (isShown) => SettingTile(
-                title: context.loc.viewTutorial,
+                title: 'New user',
+                subtitle: 'View tutorial',
                 isFirst: true,
                 onTap: (context) => startTutorial(),
                 trailing: const Icon(Icons.keyboard_arrow_right_rounded),
@@ -103,9 +104,10 @@ class TutorialWelcome extends StatelessWidget {
             ),
             AnimatedItem(
               builder: (isShown) => SettingTile(
-                title: context.loc.dontViewTutorial,
+                title: 'Returning user',
+                subtitle: 'Restore data',
                 onTap: (context) => skipTutorial(),
-                trailing: const Icon(Icons.close_rounded),
+                trailing: const Icon(Icons.login_rounded),
                 isLast: true,
               ),
             ),

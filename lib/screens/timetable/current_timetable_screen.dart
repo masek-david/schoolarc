@@ -123,7 +123,7 @@ class _CurrentTimetableScreenState
               );
             } else if (!snapshot.hasData) {
               timetable = null;
-              return EmptyMessage(message: context.loc.noTimetable);
+              return EmptyMessage(message: context.loc.noTimetableMessage);
             }
 
             timetable ??= snapshot.data!;
@@ -134,7 +134,7 @@ class _CurrentTimetableScreenState
                 child: SizedBox(
                   width: double.infinity,
                   child: TimetableView(
-                    textWhenEmpty: context.loc.noTimetable,
+                    textWhenEmpty: context.loc.noTimetableMessage,
                     timeTable: timetable,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
                     columnWidth: settings.get(Setting.timeTableTileWidth),

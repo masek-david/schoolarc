@@ -2,6 +2,11 @@
 expressive filledbutton
 check firebase service too many reads???
 
+timetable reassign subjects move to timetable classs
+firebase auth verify mail / google sign in
+move settings
+create offline timetable provider
+
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
