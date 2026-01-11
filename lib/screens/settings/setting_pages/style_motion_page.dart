@@ -40,8 +40,8 @@ class StyleMotionPage extends ConsumerWidget {
           ),
         ),
         SettingTile.withSwitch(
-          value: ref.watch(themeExpressiveHaptics),
-          onChanged: ref.read(themeExpressiveHaptics.notifier).set,
+          value: ref.watch(themeExpressiveHapticsProvider),
+          onChanged: ref.read(themeExpressiveHapticsProvider.notifier).set,
           isLast: true,
           title: context.loc.expressiveHaptics,
           subtitle: context.loc.expressiveHapticsSub,

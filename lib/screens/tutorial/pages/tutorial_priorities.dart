@@ -50,11 +50,10 @@ class _TutorialPrioritiesState extends State<TutorialPriorities> {
         ),
         AnimatedItem(
           builder: (isShown) => Padding(
-            padding: const EdgeInsets.only(top: 32),
+            padding: const EdgeInsets.only(top: 32, bottom: 16),
             child: Text(context.loc.tutorialPriorities),
           ),
         ),
-        AnimatedItem.spacer(height: 16),
         AnimatedItem(
           builder: (isShown) => PriorityPicker(
             selectedPriority: priority,

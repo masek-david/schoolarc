@@ -5,6 +5,7 @@ import 'package:schoolarc/utils/globals.dart';
 
 final useMealsProvider = settingProvider<bool>(Setting.useMeals);
 final useBakaProvider = settingProvider<bool>(Setting.useBakalari);
+final useCloudSyncProvider = settingProvider<bool>(Setting.useCloudSync);
 
 final debugModeProvider = settingProvider<bool>(Setting.debugMode);
 
@@ -28,7 +29,7 @@ final themeModeProvider = settingProvider<bool?>(Setting.themeMode);
 final themeUseDeviceColorProvider =
     settingProvider<bool>(Setting.themeUseDeviceColor);
 final themeUseOledProvider = settingProvider<bool>(Setting.themeUseOled);
-final themeExpressiveHaptics = settingProvider<bool>(Setting.useExpressiveHaptics);
+final themeExpressiveHapticsProvider = settingProvider<bool>(Setting.useExpressiveHaptics);
 
 final debugShowFireOverlayProvider =
     settingProvider<bool>(Setting.debugShowFireOverlay);

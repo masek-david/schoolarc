@@ -110,7 +110,7 @@ class _CurrentTimetableScreenState
               timetable = null;
               return Center(
                 child: MyExpressiveLoadingIndicator.big(
-                  useHaptics: ref.read(themeExpressiveHaptics),
+                  useHaptics: ref.read(themeExpressiveHapticsProvider),
                 ),
               );
             } else if (snapshot.hasError) {

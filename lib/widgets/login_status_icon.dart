@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -27,11 +26,15 @@ class LoginStatusIcon extends ConsumerWidget {
     return state.when(
       data: (value) => value
           ? const Icon(Icons.check_circle, color: Colors.green)
-          : const LoggedOutIcon(),
+          : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
       error: (e, _) {
-        final info = ErrorInfoUI.fromError(context, e, seriousForeground: Colors.red);
-        
-        return Icon(info.icon, color: info.foregroundColor);
+        final info = ErrorInfoUI.fromError(
+          context,
+          e,
+          seriousForeground: Colors.red,
+        );
+
+        return FilledIcon(info.icon, color: info.foregroundColor);
       },
       loading: () => const SizedBox(
         height: 28,
@@ -45,8 +48,15 @@ class LoginStatusIcon extends ConsumerWidget {
   }
 }
 
-class LoggedOutIcon extends StatelessWidget {
-  const LoggedOutIcon({super.key});
+class FilledIcon extends StatelessWidget {
+  const FilledIcon(
+    this.icon, {
+    super.key,
+    required this.color,
+  });
+
+  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +65,17 @@ class LoggedOutIcon extends StatelessWidget {
       children: [
         Icon(
           Icons.circle,
-          color: Theme.brightnessOf(context) == Brightness.dark
-              ? Colors.yellow
-              : Colors.yellow.darken(0.2),
+          color: color,
         ),
         // to set the weight of the icon
         Text(
-          String.fromCharCode(Icons.logout.codePoint),
+          String.fromCharCode(icon.codePoint),
           style: TextStyle(
             inherit: false,
             color: context.col.surface,
-            fontSize: 14.0,
+            fontSize: 15.0,
             fontWeight: FontWeight.w600,
-            fontFamily: Icons.logout.fontFamily,
+            fontFamily: icon.fontFamily,
           ),
         ),
       ],

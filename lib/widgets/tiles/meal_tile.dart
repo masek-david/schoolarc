@@ -42,8 +42,7 @@ class MealTile extends StatelessWidget {
           ),
           Text(
             meal.name,
-            style: googleSansFlex(
-              size: 14,
+            style: context.txt.bodyMedium!.copyWith(
               color: meal.selected == true
                   ? context.col.onTertiaryContainer
                   : null,

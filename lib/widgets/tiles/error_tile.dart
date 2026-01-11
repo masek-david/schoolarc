@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/fonts.dart';
 
 class ErrorInfoUI {
   final String text;
@@ -218,19 +217,16 @@ class ErrorTile extends StatelessWidget {
                   Text(
                     text ?? '',
                     softWrap: true,
-                    style: googleSansFlex(
-                      weight: 700,
-                      roundness: 100,
-                      size: 14,
+                    style: context.txt.titleSmall!.copyWith(
                       color: info.foregroundColor,
+                      fontWeight: .w700,
                     ),
                   ),
                 if (error != null)
                   Text(
                     info.text,
                     maxLines: 3,
-                    style: googleSansFlex(
-                      size: 12,
+                    style: context.txt.labelMedium!.copyWith(
                       color: info.foregroundColor,
                     ),
                   ),

@@ -83,6 +83,7 @@ class MealsScreen extends ConsumerWidget {
                     padding: const .fromLTRB(8, 0, 8, 8),
                     child: CardWithTitle(
                       highContainer: true,
+                      greydOut: empty,
                       text: empty
                           ? context.loc
                                 .noMealsOn(

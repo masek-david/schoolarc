@@ -37,19 +37,21 @@ TextStyle googleSansFlex({
   double? width,
   double? weight,
   double? grade,
-  bool? opticalSize,
+  bool opticalSize = false,
   double? slant,
   double? roundness,
+  double? letterSpacing,
 }) {
   return TextStyle(
     fontFamily: 'Google Sans Flex',
     fontSize: size,
+    letterSpacing: letterSpacing,
     color: color,
     fontVariations: [
       if (width != null) FontVariation('wdth', width),
       if (weight != null) FontVariation('wght', weight),
       if (grade != null) FontVariation('GRAD', grade),
-      if (opticalSize != null) FontVariation('opsz', opticalSize ? 1.0 : 0.0),
+      if (opticalSize) const FontVariation('opsz', 0.0),
       if (slant != null) FontVariation('slnt', slant),
       if (roundness != null) FontVariation('ROND', roundness),
     ],

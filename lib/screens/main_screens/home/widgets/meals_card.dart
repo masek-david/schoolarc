@@ -7,7 +7,6 @@ import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
-import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -37,7 +36,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
   @override
   Widget build(BuildContext context) {
     final isVisible = ref.watch(useMealsProvider);
-    if(!isVisible) return const SizedBox.shrink();
+    if (!isVisible) return const SizedBox.shrink();
 
     final meals = ref.watch(stravaMealsProvider);
     final isLoading = meals.isLoading;
@@ -74,10 +73,10 @@ class _MealsCardState extends ConsumerState<MealsCard> {
             itemCount: pagesCount,
             itemBuilder: (context, index) {
               final date = firstDay.addDays(index);
-    
+
               final mealsForToday = data?[date];
               final bool empty = mealsForToday == null;
-    
+
               String text = '';
               if (isLoading) {
                 text = context.loc.loading;
@@ -106,7 +105,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                       .capitalize();
                 }
               }
-    
+
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,9 +118,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                                 padding: const EdgeInsetsGeometry.all(16),
                                 child: Text(
                                   text,
-                                  style: googleSansFlex(
-                                    size: 16,
-                                    weight: 500,
+                                  style: context.txt.titleMedium!.copyWith(
                                     color: empty
                                         ? getSubtleTextColor(context)
                                         : null,
@@ -140,9 +137,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                       ),
                       IconButton(
                         onPressed: () {
-                          ref
-                              .read(stravaMealsProvider.notifier)
-                              .refreshIfOld();
+                          ref.read(stravaMealsProvider.notifier).refreshIfOld();
                           Navigator.restorablePushNamed(
                             context,
                             '/meals',

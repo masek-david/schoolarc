@@ -6,6 +6,8 @@ timetable reassign subjects move to timetable classs
 firebase auth verify mail / google sign in
 move settings
 create offline timetable provider
+translate
+
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

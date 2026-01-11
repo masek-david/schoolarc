@@ -30,6 +30,12 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
+            FilledButton(
+              onPressed: () {
+                settings.save(.onboardingProgress, 0);
+              },
+              child: const Text('Launch welcome screen on next open'),
+            ),
             const Text(
               bool.fromEnvironment('dart.tool.dart2wasm')
                   ? 'Running in wasm'

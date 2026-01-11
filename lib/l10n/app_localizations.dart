@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exit;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -1382,6 +1388,12 @@ abstract class AppLocalizations {
   /// **'Exported successfully'**
   String get exportSuccess;
 
+  /// No description provided for @importSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported successfully'**
+  String get importSuccess;
+
   /// No description provided for @aborted.
   ///
   /// In en, this message translates to:
@@ -1698,6 +1710,12 @@ abstract class AppLocalizations {
   /// **'Don\'t view tutorial'**
   String get dontViewTutorial;
 
+  /// No description provided for @tutorialCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial completed'**
+  String get tutorialCompleted;
+
   /// No description provided for @localization.
   ///
   /// In en, this message translates to:
@@ -1890,17 +1908,83 @@ abstract class AppLocalizations {
   /// **'Go to app'**
   String get goToApp;
 
-  /// No description provided for @tutorialIntro.
-  ///
-  /// In en, this message translates to:
-  /// **'Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.'**
-  String get tutorialIntro;
-
   /// No description provided for @welcome.
   ///
   /// In en, this message translates to:
   /// **'Welcome'**
   String get welcome;
+
+  /// No description provided for @onboardingWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.'**
+  String get onboardingWelcome;
+
+  /// No description provided for @setupComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup completed'**
+  String get setupComplete;
+
+  /// No description provided for @continueToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to app'**
+  String get continueToApp;
+
+  /// No description provided for @restoreData.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore data'**
+  String get restoreData;
+
+  /// No description provided for @restoreDataChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you want to restore your data?'**
+  String get restoreDataChoiceTitle;
+
+  /// No description provided for @importBackupFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import backup file'**
+  String get importBackupFile;
+
+  /// No description provided for @importBackupFileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Export .json from your old device and import here'**
+  String get importBackupFileSub;
+
+  /// No description provided for @skipRestoringQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip restoring?'**
+  String get skipRestoringQ;
+
+  /// No description provided for @skipRestoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip restoring'**
+  String get skipRestoring;
+
+  /// No description provided for @skipRestoringSub.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be able to restore your data even if you skip here. However, skipping restoring data can cause some conflicts.'**
+  String get skipRestoringSub;
+
+  /// No description provided for @newUser.
+  ///
+  /// In en, this message translates to:
+  /// **'New user'**
+  String get newUser;
+
+  /// No description provided for @returningUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning user'**
+  String get returningUser;
 
   /// No description provided for @skip.
   ///
@@ -2151,8 +2235,14 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:
-  /// **'# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase'**
+  /// **'# Privacy Policy\nEffective Date: 11. January 2026\nBy using Schoolarc, you agree to this Privacy Policy. This Privacy Policy may be updated.\nSchoolarc is offline first, however it includes some online features.\nThe developer is not responsible for any data loss caused by device failure, app removal, software bugs, or unauthorized access.\n## Cloud Sync\n### What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\nYour data is not used for advertising or marketing.\n### Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all your data to be deleted\nBoth can be done directly in the app.\n### Third-party services\nCloud Sync data is stored on servers located in the European Union (Belgium) using Google Cloud Firebase.'**
   String get privacyPolicy;
+
+  /// No description provided for @privacyPolicyAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to our Privacy Policy (click to view)'**
+  String get privacyPolicyAgree;
 
   /// No description provided for @cloudSyncDisabled.
   ///

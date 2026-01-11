@@ -6,8 +6,8 @@ import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_nickname_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/login_input_screen.dart';
+import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/shared/username_text.dart';
@@ -21,7 +21,9 @@ import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class CloudSyncLoginScreen extends ConsumerWidget {
-  const CloudSyncLoginScreen({super.key});
+  const CloudSyncLoginScreen({super.key, this.onDataSyncSuccess});
+
+  final void Function()? onDataSyncSuccess;
 
   Future<void> pushScreen(BuildContext context, Widget screen) {
     return Navigator.of(context).push(
@@ -44,7 +46,12 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       title: context.loc.cloudSync,
       actions: [
         IconButton(
-          onPressed: () => showConsentDialog(context, ref),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PrivacyPolicy(),
+            ),
+          ),
           icon: const Icon(Icons.info_outline),
         ),
       ],
@@ -55,7 +62,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           highlighted: true,
           value: useCloudSync,
           onChanged: (value) =>
-              ref.read(useCloudSyncProvider.notifier).set(value, context, ref),
+              ref.read(useCloudSyncProvider.notifier).set(value),
           title: context.loc.useCloudSync,
           contentPadding: const EdgeInsets.symmetric(horizontal: 4),
         ),
@@ -67,7 +74,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             subtitle: ref.read(firebaseServiceProvider).userEmail,
             leading: data
                 ? const Icon(Icons.check_circle, color: Colors.green)
-                : const LoggedOutIcon(),
+                : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
           error: (error, stackTrace) => ErrorTile(
@@ -77,7 +84,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           ),
           loading: () => Center(
             child: MyExpressiveLoadingIndicator.big(
-              useHaptics: ref.read(themeExpressiveHaptics),
+              useHaptics: ref.read(themeExpressiveHapticsProvider),
             ),
           ),
         ),
@@ -110,7 +117,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             context: context,
                             barrierDismissible: false,
                             builder: (context) => ProgressDialog(
-                              useHaptics: ref.read(themeExpressiveHaptics),
+                              useHaptics: ref.read(
+                                themeExpressiveHapticsProvider,
+                              ),
                               key: key,
                               initialText: context.loc.loggingIn,
                               showProgressNumber: false,
@@ -150,6 +159,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             Navigator.pop(context);
                             Navigator.pop(context);
                             showMessage(context, context.loc.loggedInSynced);
+                            if (onDataSyncSuccess != null) {
+                              onDataSyncSuccess!();
+                            }
                           }
                         },
                       ),
@@ -201,7 +213,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                             context: context,
                             barrierDismissible: false,
                             builder: (context) => ProgressDialog(
-                              useHaptics: ref.read(themeExpressiveHaptics),
+                              useHaptics: ref.read(
+                                themeExpressiveHapticsProvider,
+                              ),
                               key: key,
                               initialText: context.loc.loggingIn,
                               showProgressNumber: false,
@@ -313,6 +327,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             ],
           ),
         if (kDebugMode)
+          // TODO
           OutlinedButton(
             onPressed: useCloudSync
                 ? () async {

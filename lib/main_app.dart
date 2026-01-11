@@ -20,7 +20,7 @@ import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
-import 'package:schoolarc/screens/tutorial/tutorial.dart';
+import 'package:schoolarc/screens/onboarding/onboarding.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -59,18 +59,17 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     settings.get(Setting.initialAppPage),
   );
 
-  bool showingTutorial = false;
-  bool firstTimeOpening = false;
+  bool showingOnboarding = false;
 
-  void startTutorial() {
+  void startOnboarding() {
     setState(() {
-      showingTutorial = true;
+      showingOnboarding = true;
     });
   }
 
-  void endTutorial() {
+  void endOnboarding() {
     setState(() {
-      showingTutorial = false;
+      showingOnboarding = false;
     });
   }
 
@@ -89,11 +88,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
         },
       );
     }
-  }
-
-  void firstTimeOpeningApp() {
-    firstTimeOpening = true;
-    showingTutorial = true;
   }
 
   void switchPage({required int newScreenIndex}) {
@@ -153,8 +147,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       });
     }
 
-    if (settings.firstTimeOpeningApp) {
-      firstTimeOpeningApp();
+    if (settings.firstTimeOpeningApp && settings.get(.onboardingProgress) != null) {
+      showingOnboarding = true;
     } else {
       if (kIsWeb &&
           !settings.get(Setting.stopPwaCloudSyncWarning) &&
@@ -286,6 +280,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                         ? const Align(
                             alignment: .center,
                             child: Badge(
+                              alignment: Alignment(0.6, -0.6),
                               backgroundColor: Colors.red,
                               child: DrawerButton(),
                             ),
@@ -327,9 +322,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                 ],
               ),
             ),
-            drawer: MyDrawer(
-              startTutorial: startTutorial,
-            ),
+            drawer: const MyDrawer(),
             bottomNavigationBar: isWide
                 ? null
                 : BottomNavBar(
@@ -338,11 +331,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                   ),
           ),
         ),
-        if (showingTutorial)
-          Tutorial(
-            onEnd: endTutorial,
-            firstTime: firstTimeOpening,
-          ),
+        if (showingOnboarding) Onboarding(closeOnboarding: endOnboarding),
         if (ref.watch(debugShowFireOverlayProvider))
           const Positioned(
             top: 0,

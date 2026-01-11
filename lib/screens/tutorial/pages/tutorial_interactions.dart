@@ -76,11 +76,10 @@ class _TutorialInteractionsState extends State<TutorialInteractions>
         ),
         AnimatedItem(
           builder: (isShown) => Padding(
-            padding: const EdgeInsets.only(top: 32),
+            padding: const EdgeInsets.only(top: 32, bottom: 32),
             child: Text(context.loc.tutorialSlideToDelete),
           ),
         ),
-        AnimatedItem.spacer(height: 32),
         AnimatedItem(
           builder: (isShown) => deleted
               ? Text(context.loc.tutorialTapCheckbox)

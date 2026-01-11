@@ -6,18 +6,6 @@ class AnimatedItem {
     this.transition = true,
   });
 
-  factory AnimatedItem.spacer({
-    double? height,
-    double? width,
-  }) {
-    return AnimatedItem(
-      builder: (_) => SizedBox(
-        width: width,
-        height: height,
-      ),
-    );
-  }
-
   final Widget Function(bool isShown) builder;
   final bool transition;
 }
@@ -27,7 +15,7 @@ class AnimatedPage extends StatefulWidget {
     super.key,
     required this.children,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
-    this.spacing = 8,
+    this.spacing = 0,
   });
 
   final List<AnimatedItem> children;
@@ -39,8 +27,8 @@ class AnimatedPage extends StatefulWidget {
 }
 
 class _AnimatedPageState extends State<AnimatedPage> {
-  final duration = const Duration(milliseconds: 500);
-  final itemDelay = const Duration(milliseconds: 500);
+  final duration = const Duration(milliseconds: 800);
+  final itemDelay = const Duration(milliseconds: 200);
   late final padding = widget.padding;
 
   int showing = -1;
@@ -48,10 +36,10 @@ class _AnimatedPageState extends State<AnimatedPage> {
   @override
   void initState() {
     super.initState();
-    show();
+    _show();
   }
 
-  void show() async {
+  void _show() async {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         setState(() {
@@ -84,16 +72,9 @@ class _AnimatedPageState extends State<AnimatedPage> {
               padding: EdgeInsets.only(bottom: widget.spacing),
               child: AnimatedOpacity(
                 duration: duration,
-                curve: Curves.decelerate,
+                curve: Curves.easeInOut,
                 opacity: isShown ? 1 : 0,
-                child: AnimatedSize(
-                  duration: duration,
-                  curve: Curves.decelerate,
-                  child: SizedBox(
-                    height: isShown ? null : 0,
-                    child: item.builder(isShown),
-                  ),
-                ),
+                child: item.builder(isShown),
               ),
             );
           }

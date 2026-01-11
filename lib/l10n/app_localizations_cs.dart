@@ -123,6 +123,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get cancel => 'Zrušit';
 
   @override
+  String get exit => 'Odejít';
+
+  @override
   String get save => 'Uložit';
 
   @override
@@ -791,6 +794,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get exportSuccess => 'Úspěšně exportováno';
 
   @override
+  String get importSuccess => 'Úspěšně importováno';
+
+  @override
   String get aborted => 'Přerušeno';
 
   @override
@@ -993,6 +999,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get dontViewTutorial => 'Nezobrazovat tutoriál';
 
   @override
+  String get tutorialCompleted => 'Tutoriál dokončen';
+
+  @override
   String get localization => 'Lokalizace';
 
   @override
@@ -1117,11 +1126,46 @@ class AppLocalizationsCs extends AppLocalizations {
   String get goToApp => 'Přejít do aplikace';
 
   @override
-  String get tutorialIntro =>
+  String get welcome => 'Vítejte';
+
+  @override
+  String get onboardingWelcome =>
       'Děkuji za stažení aplikace Schoolarc. Jestli jste tu poprvé, můžete si projít tutoriál, který vám vysvětlí základy. Vždy si ho můžete zobrazit později.';
 
   @override
-  String get welcome => 'Vítejte';
+  String get setupComplete => 'Nastavení dokončeno';
+
+  @override
+  String get continueToApp => 'Pokračujte do aplikace';
+
+  @override
+  String get restoreData => 'Obnovit data';
+
+  @override
+  String get restoreDataChoiceTitle => 'Jak chcete obnovit data?';
+
+  @override
+  String get importBackupFile => 'Importovat soubor zálohy';
+
+  @override
+  String get importBackupFileSub =>
+      'Exportujte .json z vašeho starého zařízení a importujte ho zde';
+
+  @override
+  String get skipRestoringQ => 'Přeskočit obnovení?';
+
+  @override
+  String get skipRestoring => 'Přeskočit obnovení';
+
+  @override
+  String get skipRestoringSub =>
+      'Budete mít možnost obnovit data, i když to zde přeskočíte. Může to ale způsobit konflikty.';
+
+  @override
+  String get newUser => 'Nový uživatel';
+
+  @override
+  String get returningUser => 'Vracející se uživatel';
 
   @override
   String get skip => 'Přeskočit';
@@ -1266,7 +1310,11 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get privacyPolicy =>
-      '# Zásady ochrany osobních údajů\n\nDatum účinnosti: 20. 7. 2025\n\nPro použití synchronizace musíte souhlasit s těmito zásadami ochrany osobních údajů.\n\n## Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům\n\n## Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci\n\n## Třetí strany\nVaše data jsou bezpečně uložena pomocí Google Cloud Firebase';
+      '# Zásady ochrany osobních údajů\nDatum účinnosti: 11. Ledna 2026\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci.\n\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n';
+
+  @override
+  String get privacyPolicyAgree =>
+      'Pokračováním souhlasíte se Zásadami ochrany osobních údajů (klikněte pro zobrazení)';
 
   @override
   String get cloudSyncDisabled => 'Synchronizace je vypnutá';

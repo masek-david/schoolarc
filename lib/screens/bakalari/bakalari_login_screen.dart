@@ -14,7 +14,12 @@ import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaLoginScreen extends ConsumerStatefulWidget {
-  const BakaLoginScreen({super.key});
+  const BakaLoginScreen({
+    super.key,
+    this.askToImportTimetableOnLogin = false,
+  });
+
+  final bool askToImportTimetableOnLogin;
 
   @override
   ConsumerState<BakaLoginScreen> createState() => _BakalariScreenState();
@@ -52,7 +57,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               context: context,
               barrierDismissible: false,
               builder: (context) => ProgressDialog(
-                useHaptics: ref.read(themeExpressiveHaptics),
+                useHaptics: ref.read(themeExpressiveHapticsProvider),
                 showProgressNumber: false,
               ),
             );
@@ -155,13 +160,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             subtitle: subtitle,
             leading: isLoggedIn
                 ? const Icon(Icons.check_circle, color: Colors.green)
-                : const LoggedOutIcon(),
+                : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
         Center(
           child: MyExpressiveLoadingIndicator.big(
             shown: isLoading,
-            useHaptics: ref.read(themeExpressiveHaptics),
+            useHaptics: ref.read(themeExpressiveHapticsProvider),
           ),
         ),
         if (error != null && !isLoading)
@@ -280,7 +285,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
 
                     if (result) {
                       vibrate.success();
-                      askToImportTimetable();
+                      if (widget.askToImportTimetableOnLogin) {
+                        askToImportTimetable();
+                      }
                     } else {
                       vibrate.error();
                     }

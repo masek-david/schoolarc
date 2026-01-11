@@ -20,7 +20,7 @@ class TutorialBasics extends StatelessWidget {
         AnimatedItem(
           builder: (isShown) => Text(
             loc.tutorialHomeworkTitle,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: context.txt.titleMedium,
           ),
         ),
         AnimatedItem(
@@ -37,7 +37,7 @@ class TutorialBasics extends StatelessWidget {
         AnimatedItem(
           builder: (isShown) => Text(
             loc.tutorialExamTitle,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: context.txt.titleMedium,
           ),
         ),
         AnimatedItem(

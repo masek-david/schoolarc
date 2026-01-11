@@ -4,9 +4,10 @@
 - Added new refresh indicator
 - Improved home screen UI and UX
 - Subjects can now be created when creating homework or an exam
+- Improved fonts
+- Improved onboarding and tutorial experience
 
 ### Changed
-- Improved fonts
 - Improved ordering of tasks
 - Changed how dates are saved (should resolve any timezone issues)
 - Improved timetable UI

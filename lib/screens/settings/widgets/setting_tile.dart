@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -53,6 +55,7 @@ class SettingTile extends StatelessWidget {
     bool isFirst = false,
     bool isLast = false,
     Widget? newLineAction,
+    String? heroTag,
     Key? key,
   }) {
     void change(bool newValue) {
@@ -76,6 +79,7 @@ class SettingTile extends StatelessWidget {
       isFirst: isFirst,
       isLast: isLast,
       key: key,
+      heroTag: heroTag,
       hapticFeedback: false,
     );
   }
@@ -165,11 +169,9 @@ class SettingTile extends StatelessWidget {
       width: double.infinity,
       child: Text(
         title,
-        style: googleSansFlex(
-          size: 14,
-          weight: enabled ? 700 : 400,
+        style: context.txt.titleSmall!.copyWith(
+          fontWeight: enabled ? .w700 : .w400,
           color: color.withAlpha(enabled ? 255 : 80),
-          roundness: 100,
         ),
       ),
     );
@@ -237,25 +239,43 @@ class SettingTile extends StatelessWidget {
                                       fromHeroContext,
                                       toHeroContext,
                                     ) {
-                                      return AnimatedBuilder(
-                                        animation: animation,
-                                        builder: (context, _) {
-                                          return Material(
-                                            color: Colors.transparent,
-                                            child: SizedBox(
+                                      return Material(
+                                        color: Colors.transparent,
+                                        child: AnimatedBuilder(
+                                          animation: animation,
+                                          builder: (context, _) {
+                                            return SizedBox(
                                               width: double.infinity,
                                               child: Text(
                                                 title,
+                                                // morph between textStyle of [SettingTile] (based on titleSmall) and displayMedium of [SettingsScaffold]
                                                 style: googleSansFlex(
-                                                  size:
-                                                      14 + animation.value * 30,
-                                                  weight: enabled ? 700 : 400,
+                                                  size: lerpDouble(
+                                                    14,
+                                                    45,
+                                                    animation.value,
+                                                  )!,
+                                                  weight: lerpDouble(
+                                                    enabled ? 700 : 400,
+                                                    700,
+                                                    animation.value,
+                                                  )!,
+                                                  width: lerpDouble(
+                                                    100,
+                                                    131,
+                                                    animation.value,
+                                                  )!,
+                                                  letterSpacing: lerpDouble(
+                                                    0,
+                                                    -1.5,
+                                                    animation.value,
+                                                  )!,
                                                   roundness: 100,
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        },
+                                            );
+                                          },
+                                        ),
                                       );
                                     },
                                 child: buildText(context),

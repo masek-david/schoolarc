@@ -29,7 +29,9 @@ import 'package:schoolarc/screens/shared/group_screen.dart';
 import 'package:schoolarc/screens/subjects/subjects_screen.dart';
 import 'package:schoolarc/screens/timetable/current_timetable_screen.dart';
 import 'package:schoolarc/screens/timetable/timetable_screen.dart';
+import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
+import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/theme_generate.dart';
 import 'package:schoolarc/widgets/config/time_format.dart';
@@ -49,6 +51,60 @@ class AppConfig extends ConsumerWidget {
       case false:
         return ThemeMode.light;
     }
+  }
+
+  TextTheme getTextTheme() {
+    return TextTheme(
+      displayLarge: googleSansFlex(
+        size: 57,
+        roundness: 100,
+        weight: 800,
+        width: 131,
+        letterSpacing: -2,
+      ),
+      displayMedium: googleSansFlex(
+        size: 45,
+        roundness: 100,
+        weight: 700,
+        width: 131,
+        letterSpacing: -1.5,
+      ),
+      displaySmall: googleSansFlex(
+        size: 36,
+        roundness: 100,
+        weight: 600,
+        width: 131,
+        letterSpacing: -1,
+      ),
+      headlineLarge: googleSansFlex(size: 32, roundness: 100, weight: 600),
+      headlineMedium: googleSansFlex(size: 28, roundness: 100, weight: 550),
+      headlineSmall: googleSansFlex(size: 24, roundness: 100, weight: 500),
+      titleLarge: googleSansFlex(size: 22, roundness: 100, weight: 400),
+      titleMedium: googleSansFlex(size: 16, roundness: 100, weight: 500),
+      titleSmall: googleSansFlex(size: 14, roundness: 100, weight: 450),
+      bodyLarge: const TextStyle(fontSize: 16),
+      bodyMedium: const TextStyle(fontSize: 14),
+      bodySmall: const TextStyle(fontSize: 12),
+      labelLarge: googleSansFlex(
+        size: 14,
+        roundness: 100,
+        weight: 500,
+        width: 71,
+        letterSpacing: 0.5
+      ),
+      labelMedium: googleSansFlex(
+        size: 12,
+        roundness: 100,
+        weight: 500,
+        width: 81,
+      ),
+      labelSmall: googleSansFlex(
+        size: 11,
+        roundness: 100,
+        weight: 400,
+        width: 91,
+      ),
+    );
   }
 
   @override
@@ -122,6 +178,7 @@ class AppConfig extends ConsumerWidget {
                   ref.watch(debugModeProvider) &&
                   ref.watch(debugShowPerformanceOverlayProvider),
               theme: ThemeData(
+                textTheme: getTextTheme(),
                 colorScheme: light,
                 sliderTheme: const SliderThemeData(year2023: false),
                 materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -154,6 +211,7 @@ class AppConfig extends ConsumerWidget {
                 ),
               ),
               darkTheme: ThemeData(
+                textTheme: getTextTheme(),
                 colorScheme: dark,
                 sliderTheme: const SliderThemeData(year2023: false),
                 materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -214,6 +272,7 @@ class AppConfig extends ConsumerWidget {
                 '/settings/shortcuts': (context) => const ShortcutsPage(),
                 '/about': (context) => const AboutApp(),
                 '/changelog': (context) => const ChangelogScreen(),
+                '/tutorial': (context) => const Tutorial(),
               },
             );
           },

@@ -19,7 +19,7 @@ class ChangelogScreen extends ConsumerWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return MyExpressiveLoadingIndicator.big(
-              useHaptics: ref.read(themeExpressiveHaptics),
+              useHaptics: ref.read(themeExpressiveHapticsProvider),
             );
           }
 

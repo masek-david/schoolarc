@@ -90,11 +90,11 @@ class HomeworkData extends TaskData {
       text: json['text'],
       date: Date.fromDateTime(DateTime.parse(json['date']).toLocal()),
       priority: json['priority'],
-      description: json['description'],
+      description: json['description'] ?? '',
       order: order,
       isDeleted: json['isDeleted'],
       isCompleted: json['isCompleted'],
-      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
+      timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
     );
   }
 

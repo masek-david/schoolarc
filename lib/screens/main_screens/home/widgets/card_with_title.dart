@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -52,9 +51,7 @@ class CardWithTitle extends StatelessWidget {
                                   padding: const EdgeInsetsGeometry.all(16),
                                   child: Text(
                                     text!,
-                                    style: googleSansFlex(
-                                      size: 16,
-                                      weight: 500,
+                                    style: context.txt.titleMedium!.copyWith(
                                       color: greydOut
                                           ? getSubtleTextColor(context)
                                           : null,

@@ -40,31 +40,39 @@ class SettingsScaffold extends StatelessWidget {
               actions: actions,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
-                  final t = (constraints.maxHeight -
+                  final t =
+                      (constraints.maxHeight -
                           MediaQuery.paddingOf(context).top -
                           kToolbarHeight) /
                       (200 - kToolbarHeight);
 
                   // Interpolate padding between expanded and collapsed
-                  final leftPadding =
-                      lerpDouble(16, 72, 1 - t)!.clamp(0, double.infinity);
+                  final leftPadding = lerpDouble(
+                    16,
+                    72,
+                    1 - t,
+                  )!.clamp(0, double.infinity);
 
                   return FlexibleSpaceBar(
                     titlePadding: EdgeInsets.only(
-                        left: leftPadding.toDouble(),
-                        bottom: lerpDouble(14, 0, t)!),
+                      left: leftPadding.toDouble(),
+                      bottom: lerpDouble(14, 0, t)!,
+                    ),
                     expandedTitleScale: 1,
                     title: Hero(
                       tag: heroTag,
                       child: SizedBox(
                         width: double.infinity,
                         child: Text(
+                          title,
+                          // lerps between titleLarge (AppBar default) and displayMedium
                           style: googleSansFlex(
-                            weight: 700,
-                            size: lerpDouble(22, 44, t),
+                            weight: lerpDouble(400, 700, t),
+                            size: lerpDouble(22, 45, t),
+                            width: lerpDouble(100, 131, t),
+                            letterSpacing: lerpDouble(0, -1.5, t),
                             roundness: 100,
                           ),
-                          title,
                         ),
                       ),
                     ),

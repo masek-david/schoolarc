@@ -5,7 +5,6 @@ import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
-import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
@@ -37,9 +36,7 @@ class TutorialExtensions extends ConsumerWidget {
                 subtitle: context.loc.cloudSyncSubtitle,
                 value: useCloudSync,
                 onChanged: (value) {
-                  ref
-                      .read(useCloudSyncProvider.notifier)
-                      .set(value, context, ref);
+                  ref.read(useCloudSyncProvider.notifier).set(value);
                 },
                 leading: useCloudSync
                     ? LoginStatusIcon(

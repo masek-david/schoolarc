@@ -77,7 +77,7 @@ class Subject {
       bakaId: json['bakaId'],
       order: order,
       isDeleted: json['isDeleted'],
-      timestamp: DateTime.tryParse(json['timestamp']) ?? DateTime.now(),
+      timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
     );
   }
 

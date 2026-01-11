@@ -9,7 +9,6 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/import_export.dart';
@@ -17,39 +16,48 @@ import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
 class ImportExportButtonsRow extends ConsumerWidget {
-  const ImportExportButtonsRow({super.key});
+  const ImportExportButtonsRow({
+    super.key,
+    this.showExport = true,
+    this.onDataSyncSuccess,
+  });
+
+  final bool showExport;
+  final void Function()? onDataSyncSuccess;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: showExport ? .end : .center,
       spacing: 8,
       mainAxisSize: MainAxisSize.max,
       children: [
-        FilledButton.tonalIcon(
-          label: Text(context.loc.export),
-          icon: const Icon(Icons.file_upload_outlined),
-          onPressed: () async {
-            final json = export();
+        if (showExport)
+          FilledButton.tonalIcon(
+            label: Text(context.loc.export),
+            icon: const Icon(Icons.file_upload_outlined),
+            onPressed: () async {
+              final json = export();
 
-            final location = await FilePicker.platform.saveFile(
-              dialogTitle: context.loc.chooseSaveLocation,
-              type: FileType.custom,
-              allowedExtensions: ['json'],
-              fileName:
-                  'export_${DateTime.now().toIso8601String().replaceAll(RegExp(r':'), '-')}.json',
-              bytes: utf8.encode(json),
-            );
+              final location = await FilePicker.platform.saveFile(
+                dialogTitle: context.loc.chooseSaveLocation,
+                type: FileType.custom,
+                allowedExtensions: ['json'],
+                fileName:
+                    'export_${DateTime.now().toIso8601String().replaceAll(RegExp(r':'), '-')}.json',
+                bytes: utf8.encode(json),
+              );
 
-            if (context.mounted) {
-              if (location == null) {
-                showMessage(context, context.loc.aborted);
-              } else {
-                showMessage(context, context.loc.exportSuccess);
+              if (context.mounted) {
+                if (location == null) {
+                  showMessage(context, context.loc.aborted);
+                } else {
+                  showMessage(context, context.loc.exportSuccess);
+                  vibrate.success();
+                }
               }
-            }
-          },
-        ),
+            },
+          ),
         FilledButton.tonalIcon(
           label: Text(context.loc.import),
           icon: const Icon(Icons.file_download_outlined),
@@ -111,7 +119,9 @@ class ImportExportButtonsRow extends ConsumerWidget {
                           builder: (context) => ProgressDialog(
                             key: dialogKey,
                             goal: totalCount,
-                            useHaptics: ref.read(themeExpressiveHaptics),
+                            useHaptics: ref.read(
+                              themeExpressiveHapticsProvider,
+                            ),
                           ),
                         );
                         for (var element in imported.subjects) {
@@ -138,12 +148,15 @@ class ImportExportButtonsRow extends ConsumerWidget {
                         }
                         if (context.mounted) {
                           Navigator.pop(context);
-                        }
-                        if (context.mounted) {
                           Navigator.pop(context);
+                          showMessage(context, context.loc.importSuccess);
+                          vibrate.success();
                         }
                         if (ref.watch(useCloudSyncProvider)) {
                           syncAllTasks(ref);
+                        }
+                        if (onDataSyncSuccess != null) {
+                          onDataSyncSuccess!();
                         }
                       },
                     ),
@@ -152,7 +165,8 @@ class ImportExportButtonsRow extends ConsumerWidget {
               }
             } catch (e) {
               if (context.mounted) {
-                showErrorMessage(context,e);
+                showErrorMessage(context, e);
+                vibrate.error();
               }
             }
           },

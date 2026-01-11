@@ -41,12 +41,14 @@ enum Setting {
   useMeals,
   allowStravaLogin,
   useBakalari,
-  useFirebase,
+  useCloudSync,
   debugMode,
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
   recapShownForYear,
-  cloudSyncConsent,
+
+  /// the index of the page that was last displayed, null if no page was displayed
+  onboardingProgress,
 }
 
 class SettingModel {
@@ -182,7 +184,7 @@ class SettingsDatabase {
       defaultValue: true,
       key: 'homeShowBaka',
     ),
-    Setting.useFirebase: const SettingModel(
+    Setting.useCloudSync: const SettingModel(
       defaultValue: kIsWeb,
       key: 'useFirebase',
     ),
@@ -202,9 +204,9 @@ class SettingsDatabase {
       defaultValue: 0,
       key: 'recapShownForYear',
     ),
-    Setting.cloudSyncConsent: const SettingModel(
-      defaultValue: false,
-      key: 'cloudSyncConsent',
+    Setting.onboardingProgress: const SettingModel(
+      defaultValue: 0,
+      key: 'onboardingProgress',
     ),
   };
   final _settingsBox = Hive.box(settingsBox);
@@ -245,7 +247,7 @@ class SettingsDatabase {
     }
   }
 
-  void deleteAllFromDisk(){
+  void deleteAllFromDisk() {
     _settingsBox.deleteFromDisk();
   }
 }

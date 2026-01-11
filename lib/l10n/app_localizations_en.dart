@@ -117,6 +117,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get exit => 'Exit';
+
+  @override
   String get save => 'Save';
 
   @override
@@ -781,6 +784,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportSuccess => 'Exported successfully';
 
   @override
+  String get importSuccess => 'Imported successfully';
+
+  @override
   String get aborted => 'Aborted';
 
   @override
@@ -977,6 +983,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dontViewTutorial => 'Don\'t view tutorial';
 
   @override
+  String get tutorialCompleted => 'Tutorial completed';
+
+  @override
   String get localization => 'Localization';
 
   @override
@@ -1095,11 +1104,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goToApp => 'Go to app';
 
   @override
-  String get tutorialIntro =>
+  String get welcome => 'Welcome';
+
+  @override
+  String get onboardingWelcome =>
       'Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.';
 
   @override
-  String get welcome => 'Welcome';
+  String get setupComplete => 'Setup completed';
+
+  @override
+  String get continueToApp => 'Continue to app';
+
+  @override
+  String get restoreData => 'Restore data';
+
+  @override
+  String get restoreDataChoiceTitle => 'How do you want to restore your data?';
+
+  @override
+  String get importBackupFile => 'Import backup file';
+
+  @override
+  String get importBackupFileSub =>
+      'Export .json from your old device and import here';
+
+  @override
+  String get skipRestoringQ => 'Skip restoring?';
+
+  @override
+  String get skipRestoring => 'Skip restoring';
+
+  @override
+  String get skipRestoringSub =>
+      'You will be able to restore your data even if you skip here. However, skipping restoring data can cause some conflicts.';
+
+  @override
+  String get newUser => 'New user';
+
+  @override
+  String get returningUser => 'Returning user';
 
   @override
   String get skip => 'Skip';
@@ -1244,7 +1288,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicy =>
-      '# Privacy policy\n\nEffective Date: 20.7.2025\n\nTo use Cloud sync, you have to agree to this privacy policy.\n ## What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\n\nYour data is not used for advertising or marketing\n\n## Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all data to be deleted\n\nBoth can be done directly in the app\n\n## Third Parties\nYour data is securely stored using Google Cloud Firebase';
+      '# Privacy Policy\nEffective Date: 11. January 2026\nBy using Schoolarc, you agree to this Privacy Policy. This Privacy Policy may be updated.\nSchoolarc is offline first, however it includes some online features.\nThe developer is not responsible for any data loss caused by device failure, app removal, software bugs, or unauthorized access.\n## Cloud Sync\n### What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\nYour data is not used for advertising or marketing.\n### Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all your data to be deleted\nBoth can be done directly in the app.\n### Third-party services\nCloud Sync data is stored on servers located in the European Union (Belgium) using Google Cloud Firebase.';
+
+  @override
+  String get privacyPolicyAgree =>
+      'By continuing, you agree to our Privacy Policy (click to view)';
 
   @override
   String get cloudSyncDisabled => 'Cloud sync is disabled';

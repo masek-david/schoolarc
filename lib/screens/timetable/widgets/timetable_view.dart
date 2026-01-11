@@ -97,9 +97,7 @@ class TimetableView extends StatelessWidget {
                               Text(
                                 textAlign: TextAlign.center,
                                 lessonTimes.toStringFormatted(context),
-                                style: googleSansFlex(
-                                  width: 25,
-                                ),
+                                style: googleSansFlex(width: 25),
                               ),
                             ],
                           ),

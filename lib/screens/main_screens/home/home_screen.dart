@@ -7,8 +7,8 @@ import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
-import 'package:schoolarc/provider/use_cloudsync_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
@@ -99,9 +99,9 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(8, 0, 8, 24),
-                  child: Overview(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(8, isWide ? 24 : 0, 8, 24),
+                  child: const Overview(),
                 ),
                 if (isRecapDate() && !hasSeenRecap())
                   Padding(

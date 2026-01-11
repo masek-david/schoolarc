@@ -15,12 +15,7 @@ import 'package:schoolarc/widgets/drawer/drawer_button.dart';
 import 'package:schoolarc/widgets/drawer/search_bar.dart';
 
 class MyDrawer extends ConsumerWidget {
-  const MyDrawer({
-    super.key,
-    required this.startTutorial,
-  });
-
-  final void Function() startTutorial;
+  const MyDrawer({super.key});
 
   void showSnackbar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -65,7 +60,7 @@ class MyDrawer extends ConsumerWidget {
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(left: 20, bottom: 16, right: 20),
+                      padding: EdgeInsets.only(left: 20, bottom: 8, right: 20),
                       child: MySearchBar(),
                     ),
                     MyDrawerButton(
@@ -174,7 +169,9 @@ class MyDrawer extends ConsumerWidget {
             MyDrawerButton(
               text: loc.viewTutorial,
               icon: const Icon(Icons.school),
-              onTap: startTutorial,
+              onTap: () {
+                Navigator.restorablePushNamed(context, '/tutorial');
+              },
             ),
             MyDrawerButton(
               text: loc.settings,
