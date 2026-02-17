@@ -90,7 +90,7 @@ class AppConfig extends ConsumerWidget {
         roundness: 100,
         weight: 500,
         width: 71,
-        letterSpacing: 0.5
+        letterSpacing: 0.5,
       ),
       labelMedium: googleSansFlex(
         size: 12,

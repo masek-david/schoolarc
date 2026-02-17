@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class FilledButtonExpressive extends StatefulWidget {
@@ -24,7 +23,7 @@ class _FilledButtonExpressiveState extends State<FilledButtonExpressive>
   late var radiusAnimation =
       Tween<double>(
         begin: 20,
-        end: 8,
+        end: 4,
       ).animate(
         CurvedAnimation(
           parent: _controller,
@@ -91,7 +90,7 @@ class _FilledButtonExpressiveState extends State<FilledButtonExpressive>
         //   onTap: widget.onPressed,
         //   focusColor: Colors.transparent,
         //   splashColor: Colors.transparent,
-
+        //
         //   // splashColor: context.col.tertiary,
         //   child: Container(
         //     decoration: BoxDecoration(
@@ -175,10 +174,8 @@ class _FilledButtonExpressiveState extends State<FilledButtonExpressive>
                 padding: const EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: DefaultTextStyle(
-                  style: googleSansFlex(
+                  style: context.txt.labelLarge!.copyWith(
                     color: context.col.onPrimary,
-                    weight: 700,
-                    roundness: 100,
                   ),
                   child: widget.child,
                 ),

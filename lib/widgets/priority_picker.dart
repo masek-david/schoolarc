@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/group_button.dart';
 
@@ -77,9 +78,11 @@ class _PriorityPickerState extends State<PriorityPicker>
                   setState(() {
                     priorityForAnimation = index;
                   });
-                  _controller.animateTo(1).then((value) {
-                    vibrate.rigid();
-                  },);
+                  _controller.animateTo(1).then(
+                    (value) {
+                      vibrate.rigid();
+                    },
+                  );
                 },
                 onTapCancel: () {
                   _controller.animateBack(0);
@@ -92,15 +95,14 @@ class _PriorityPickerState extends State<PriorityPicker>
                   });
                   if (index != widget.selectedPriority) {
                     _controller.forward().then(
-                          (value) => _controller.reverse(),
-                        );
+                      (value) => _controller.reverse(),
+                    );
                   }
                 },
                 flex: flex,
                 child: Text(
                   priority.name(context),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
+                  style: context.txt.labelLarge!.copyWith(
                     color: isSelected
                         ? priority.getOnColor(context)
                         : priority.getOnSurfaceColor(context),

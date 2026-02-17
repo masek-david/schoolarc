@@ -365,12 +365,25 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
       final indexBefore = index == 0
           ? 0.0
           : list.elementAtOrNull(index - 1)?.order ?? 0;
+      final itemAfter = list.elementAtOrNull(index);
       final indexAfter =
-          list.elementAtOrNull(index)?.order ??
-          list.lastOrNull?.order.ceilToDouble() ??
-          0 + 1;
+          itemAfter?.order ?? list.lastOrNull?.order.ceilToDouble() ?? 0 + 1;
 
-      order = getMiddleIndex(indexBefore, indexAfter);
+      // if the task after is 0.0 (could happen, old data used to be this way)
+      // update that task to some higher value
+      if (indexAfter == 0.0 && itemAfter != null) {
+        final indexAfterAfter =
+            list.elementAtOrNull(index + 1)?.order ??
+            list.lastOrNull?.order.ceilToDouble() ??
+            0 + 1;
+
+        final newIndexAfter = getMiddleIndex(indexAfter, indexAfterAfter);
+        update(itemAfter.copyWith(order: newIndexAfter), checkOrder: false);
+
+        order = getMiddleIndex(indexBefore, newIndexAfter);
+      } else {
+        order = getMiddleIndex(indexBefore, indexAfter);
+      }
     }
     return order;
   }

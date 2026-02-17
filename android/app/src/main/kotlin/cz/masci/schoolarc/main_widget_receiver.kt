@@ -1,6 +1,6 @@
 package cz.masci.schoolarc
 
-import HomeWidgetGlanceWidgetReceiver
+import es.antonborri.home_widget.HomeWidgetGlanceWidgetReceiver
 
 class MainWidgetReceiver : HomeWidgetGlanceWidgetReceiver<MainWidget>() {
     override val glanceAppWidget = MainWidget()

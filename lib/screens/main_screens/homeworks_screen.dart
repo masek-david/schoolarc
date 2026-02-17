@@ -84,7 +84,7 @@ class HomeworksScreen extends ConsumerWidget {
               enableFeedback: true,
               child: const Icon(Icons.add_rounded),
             );
-          }
+          },
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -102,7 +102,7 @@ class HomeworksScreen extends ConsumerWidget {
                   await ref.read(hwDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
-                    showErrorMessage(context,e);
+                    showErrorMessage(context, e);
                   }
                   return;
                 }

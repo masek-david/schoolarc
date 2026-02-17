@@ -44,7 +44,7 @@ class Homework extends Task {
       isBeingAnimated: isBeingAnimated,
       stateReaddingVersion: stateReaddingVersion,
       id: id,
-      isCompleted: date.isBefore(Date.today()),
+      isCompleted: isCompleted,
       isDeleted: isDeleted,
       subjectId: subject?.id,
       text: text,

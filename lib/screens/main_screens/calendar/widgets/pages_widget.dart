@@ -127,7 +127,6 @@ class PagesWidget extends ConsumerWidget {
                                   dense: true,
                                   title: TitleWithCount(
                                     text: context.loc.missedHomeworkTitle,
-                                    bold: false,
                                     textColor: scheme.error,
                                     countContainerColor:
                                         context.col.errorContainer,

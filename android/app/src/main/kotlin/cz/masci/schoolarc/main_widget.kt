@@ -1,7 +1,7 @@
 package cz.masci.schoolarc
 
-import HomeWidgetGlanceState
-import HomeWidgetGlanceStateDefinition
+import es.antonborri.home_widget.HomeWidgetGlanceState
+import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import Task
 import android.content.Context
 import androidx.compose.runtime.Composable

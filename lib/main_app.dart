@@ -270,7 +270,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             key: _scaffoldKey,
             appBar: !isWide
                 ? AppBar(
-                    actions: [if (action != null) action],
+                    actions: [?action],
                     systemOverlayStyle: const SystemUiOverlayStyle(
                       systemNavigationBarColor: Colors.transparent,
                     ),

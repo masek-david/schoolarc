@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class TitleWithCount extends StatelessWidget {
   const TitleWithCount({
@@ -6,7 +7,6 @@ class TitleWithCount extends StatelessWidget {
     required this.text,
     this.textColor,
     this.count,
-    this.bold = true,
     this.countContainerColor,
   });
 
@@ -14,7 +14,6 @@ class TitleWithCount extends StatelessWidget {
   final Color? textColor;
   final Color? countContainerColor;
   final int? count;
-  final bool bold;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +22,9 @@ class TitleWithCount extends StatelessWidget {
       children: [
         Text(
           text,
-          style: TextStyle(
+          style: context.txt.labelLarge!.copyWith(
             color: textColor,
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            fontSize: bold ? 14 : 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
         // indicator of number of hw

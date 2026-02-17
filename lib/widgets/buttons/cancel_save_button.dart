@@ -27,7 +27,7 @@ class CancelSaveButton extends StatelessWidget {
           },
           child: Text(context.loc.cancel),
         ),
-        if (middle != null) middle!,
+        ?middle,
         FilledButton(
           onPressed: () {
             onSave();

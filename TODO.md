@@ -1,13 +1,13 @@
 # FIX
-expressive filledbutton
 check firebase service too many reads???
+recheck mealscard animation
 
-timetable reassign subjects move to timetable classs
+timetable reassign subjects hides all other subjects
+timetable reassign subjects move to timetable class
 firebase auth verify mail / google sign in
-move settings
-create offline timetable provider
-translate
+android notification bar black
 
+expressive filledbutton
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -32,6 +32,8 @@ translate
     - ⬜ android widgets
     - ⬜ notifications
     - ⬜ plus
+- ⬜ move settings from screens to settings
+- ⬜ create offline timetable provider
 
 # FEATURES
 
