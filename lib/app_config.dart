@@ -192,7 +192,7 @@ class AppConfig extends ConsumerWidget {
                   fillColor: light.surfaceContainer,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 filledButtonTheme: FilledButtonThemeData(
@@ -222,7 +222,7 @@ class AppConfig extends ConsumerWidget {
                   fillColor: dark.surfaceContainer,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 filledButtonTheme: FilledButtonThemeData(

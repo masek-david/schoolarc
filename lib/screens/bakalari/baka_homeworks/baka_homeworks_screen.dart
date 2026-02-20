@@ -27,6 +27,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
       Navigator.pop(context);
       final loc = context.loc;
       showMessage(context, isHomework ? loc.addedHomework : loc.addedExam);
+      vibrate.success();
     }
   }
 

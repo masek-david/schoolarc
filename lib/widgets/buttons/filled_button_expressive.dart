@@ -3,14 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
+enum ButtonSized { extraSmall, small, medium, large, extraLarge }
+
 class FilledButtonExpressive extends StatefulWidget {
   const FilledButtonExpressive({
     super.key,
+    this.isSquare = false,
     required this.onPressed,
     required this.child,
   });
 
   final void Function() onPressed;
+  final bool isSquare;
   final Widget child;
 
   @override
@@ -23,7 +27,7 @@ class _FilledButtonExpressiveState extends State<FilledButtonExpressive>
   late var radiusAnimation =
       Tween<double>(
         begin: 20,
-        end: 4,
+        end: 8,
       ).animate(
         CurvedAnimation(
           parent: _controller,

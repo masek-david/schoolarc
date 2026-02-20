@@ -8,12 +8,10 @@ class SideNavBar extends StatelessWidget {
     super.key,
     required this.pageIndex,
     required this.onTap,
-    this.action,
   });
 
   final int pageIndex;
   final void Function({required int newScreenIndex}) onTap;
-  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +26,7 @@ class SideNavBar extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       leading: const DrawerButton(onPressed: openDrawer),
       trailingAtBottom: true,
-      trailing: Padding(
-          padding: const EdgeInsets.only(bottom: 14),
-          child: action ?? const SizedBox(height: 48)),
+      trailing: const SizedBox(height: 62),
       destinations: [
         NavigationRailDestination(
           icon: const Icon(Icons.home_outlined),

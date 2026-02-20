@@ -30,7 +30,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
     return Row(
       mainAxisAlignment: showExport ? .end : .center,
       spacing: 8,
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (showExport)
           FilledButton.tonalIcon(

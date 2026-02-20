@@ -1,13 +1,13 @@
 # FIX
 check firebase service too many reads???
-recheck mealscard animation
+update/start listening to firebase on app reopen ???
 
 timetable reassign subjects hides all other subjects
 timetable reassign subjects move to timetable class
-firebase auth verify mail / google sign in
-android notification bar black
 
-expressive filledbutton
+## Android
+android top bar icons and text black
+vibration in tutorial and onboarding
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -19,21 +19,22 @@ expressive filledbutton
     - ✅ cant complete homework from widget
         - ✅ just save info about completed hw, dont spawn it using isolate?
         - ✅ rework with isolatedHive??
+- ✅ tutorial
+    - ✅ offer import from bakalari
+    - ✅ offer import from json
+    - ✅ ask: new user? view tutorial? import data from json?
+- ✅ move settings from screens to settings
 - ⬜ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email ‼️
-- ⬜ login just with mail, no password???‼️
+- ⬜ firebase login mail verification / google sign in‼️
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
-- ⬜ tutorial
-    - ✅ offer import from bakalari
-    - ⬜ offer import from json
-    - ⬜ ask: new user? view tutorial? import data from json?
 - ⬜ plus - 5 usd, limit to 100 users?
 - ⬜ add to tutorial
     - ⬜ android widgets
     - ⬜ notifications
     - ⬜ plus
-- ⬜ move settings from screens to settings
 - ⬜ create offline timetable provider
+- ⬜ screenshots, readme
 
 # FEATURES
 
@@ -46,12 +47,13 @@ expressive filledbutton
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
-    - ⬜ prevent from accidental scroll closing
+    - ⬜ prevent from accidental scroll closing ‼️
     - ⬜ fix the scrolling
     - ⬜ animation FAB morph to the sheet?
     - ⬜ does everything need to be shown ??
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
+- ⬜ expressive filledbutton
 - ⬜ ? scroll calendar vertically on big screens
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh
@@ -72,6 +74,7 @@ expressive filledbutton
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
+- ⬜ when user makes changes to app data and the notification is still shown, update it
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
 - ⬜ switch to local_notifications (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)

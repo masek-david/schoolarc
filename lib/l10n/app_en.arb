@@ -243,6 +243,7 @@
   "themeAppColor": "App color",
   "themeSchemeVariant": "Scheme variant",
   "upcomingDayNotifications": "Upcoming day notifications",
+  "receiveUpcomingDayNotifications": "Receive notifications about upcoming day?",
   "notificationsNotAllowedMessage": "Notifications not allowed, click here to grant permission",
   "upcomingDayNotificationsDescription": "Receive notifications with homework and exams for the next day",
   "upcomingDayNotificationsReceiveBeforeWeekend": "Receive notifications before weekend",

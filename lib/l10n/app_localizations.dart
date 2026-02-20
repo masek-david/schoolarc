@@ -1322,6 +1322,12 @@ abstract class AppLocalizations {
   /// **'Upcoming day notifications'**
   String get upcomingDayNotifications;
 
+  /// No description provided for @receiveUpcomingDayNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications about upcoming day?'**
+  String get receiveUpcomingDayNotifications;
+
   /// No description provided for @notificationsNotAllowedMessage.
   ///
   /// In en, this message translates to:

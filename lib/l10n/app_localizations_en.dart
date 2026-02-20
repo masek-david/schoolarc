@@ -732,6 +732,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upcomingDayNotifications => 'Upcoming day notifications';
 
   @override
+  String get receiveUpcomingDayNotifications =>
+      'Receive notifications about upcoming day?';
+
+  @override
   String get notificationsNotAllowedMessage =>
       'Notifications not allowed, click here to grant permission';
 

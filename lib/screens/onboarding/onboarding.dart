@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_end.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_extensions.dart';
+import 'package:schoolarc/screens/onboarding/onboarding_notifications.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_restore_data.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_welcome.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
@@ -11,7 +12,7 @@ class Onboarding extends StatefulWidget {
   const Onboarding({super.key, required this.closeOnboarding});
 
   /// We cant use navigator.pop(), as the onboarding is displayed
-  /// as an overlay (so it can have the animation)
+  /// as an overlay (so it can have the exit animation)
   final void Function() closeOnboarding;
 
   @override
@@ -20,6 +21,7 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   int pageIndex = settings.get(.onboardingProgress) ?? 0;
+  static const pageCount = 5;
   bool transparent = false;
   bool isNewUser = true;
 
@@ -31,7 +33,7 @@ class _OnboardingState extends State<Onboarding> {
 
   void next({int by = 1}) {
     final newPageIndex = pageIndex + by;
-    if (newPageIndex >= 0 && newPageIndex <= 3) {
+    if (newPageIndex >= 0 && newPageIndex <= pageCount - 1) {
       setState(() {
         pageIndex = newPageIndex;
       });
@@ -57,6 +59,7 @@ class _OnboardingState extends State<Onboarding> {
       ),
       1 => OnboardingRestoredata(next: next),
       2 => OnboardingExtensions(next: next, isNewUser: isNewUser),
+      3 => OnboardingNotifications(next: next),
       _ => OnboardingEnd(
         onEnd: () {
           settings.save(.onboardingProgress, null);

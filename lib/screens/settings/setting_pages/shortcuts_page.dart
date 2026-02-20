@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
+import 'package:schoolarc/screens/settings/widgets/setting_text_divider.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
@@ -34,13 +35,7 @@ class ShortcutsPage extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8),
-          child: Text(
-            context.loc.shortcutWhenCreating,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ),
+        SettingTextDivider(text: context.loc.shortcutWhenCreating),
         SettingTile(
           isFirst: true,
           title: context.loc.searchForSubject,

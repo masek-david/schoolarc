@@ -18,7 +18,7 @@ class AboutApp extends StatelessWidget {
       title: context.loc.aboutApp,
       children: [
         Padding(
-          padding: const EdgeInsets.all(48),
+          padding: const EdgeInsets.all(32),
           child: SvgPicture.asset(
             'assets/schoolarc_logo.svg',
             height: 100,
@@ -33,6 +33,7 @@ class AboutApp extends StatelessWidget {
         const Center(
           child: PackageInfoWidget(),
         ),
+        const SizedBox(height: 32),
         SettingTile(
           isFirst: true,
           title: context.loc.viewAppChangelog,

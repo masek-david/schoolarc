@@ -121,7 +121,7 @@ class SettingsScreen extends ConsumerWidget {
         SettingTile(
           isLast: !(debugMode || kDebugMode),
           title: context.loc.appDataLabel,
-          newLineAction: const ImportExportButtonsRow(),
+          trailing: const ImportExportButtonsRow(),
         ),
         if (debugMode || kDebugMode)
           SettingTile.withSwitch(

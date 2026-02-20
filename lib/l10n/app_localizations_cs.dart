@@ -730,7 +730,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get themeSystemColorWarning =>
-      'Momentálně používáte systémovou barvu. Pokud chcete vybrat vlastní barvu, vypněte Použít barvy zařízení.';
+      'Momentálně používáte barvu systému. Pokud chcete vybrat vlastní barvu, vypněte Použít barvy zařízení.';
 
   @override
   String get themeAppColor => 'Barva aplikace';
@@ -740,6 +740,10 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get upcomingDayNotifications => 'Oznámení o dalším dni';
+
+  @override
+  String get receiveUpcomingDayNotifications =>
+      'Dostávat notifikace o dalším dni?';
 
   @override
   String get notificationsNotAllowedMessage =>

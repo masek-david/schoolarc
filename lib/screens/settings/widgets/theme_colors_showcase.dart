@@ -11,8 +11,12 @@ class ThemeColorsShowcase extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxWidth / 3 - 16;
-        
+
         return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(20),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -43,7 +47,7 @@ class ThemeColorsShowcase extends StatelessWidget {
             ),
           ),
         );
-      }
+      },
     );
   }
 }

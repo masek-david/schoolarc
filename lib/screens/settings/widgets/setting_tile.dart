@@ -192,8 +192,7 @@ class SettingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: isFirst || highlighted ? 8 : 1,
-        bottom: isLast || highlighted ? 8 : 1,
+        bottom: isLast || highlighted ? 16 : 2,
       ),
       child: Material(
         borderRadius: getBorder(),

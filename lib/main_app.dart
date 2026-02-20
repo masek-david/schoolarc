@@ -15,10 +15,8 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
-import 'package:schoolarc/screens/main_screens/calendar/calendar_settings.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
-import 'package:schoolarc/screens/main_screens/home/home_settings.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/onboarding/onboarding.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
@@ -147,7 +145,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       });
     }
 
-    if (settings.firstTimeOpeningApp && settings.get(.onboardingProgress) != null) {
+    if (settings.firstTimeOpeningApp || settings.get(.onboardingProgress) != null) {
       showingOnboarding = true;
     } else {
       if (kIsWeb &&
@@ -242,18 +240,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   Widget build(BuildContext context) {
     final isWide = context.isWide;
 
-    final Widget? action = switch (currentPageIndex.value) {
-      0 => IconButton(
-        onPressed: () => showHomeSettings(context),
-        icon: const Icon(Icons.settings),
-      ),
-      1 => IconButton(
-        onPressed: () => showCalendarSettings(context),
-        icon: const Icon(Icons.settings),
-      ),
-      _ => null,
-    };
-
     final Widget screen = switch (currentPageIndex.value) {
       0 => const HomeScreen(),
       1 => const CalendarScreen(),
@@ -270,7 +256,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             key: _scaffoldKey,
             appBar: !isWide
                 ? AppBar(
-                    actions: [?action],
                     systemOverlayStyle: const SystemUiOverlayStyle(
                       systemNavigationBarColor: Colors.transparent,
                     ),
@@ -295,7 +280,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                     SideNavBar(
                       onTap: switchPage,
                       pageIndex: currentPageIndex.value,
-                      action: action,
                     ),
                   WideScreenBorders(
                     show: isWide,

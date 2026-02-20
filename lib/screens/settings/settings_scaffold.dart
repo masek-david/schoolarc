@@ -19,6 +19,8 @@ class SettingsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final expandedHeight = 200.0;
+
     return Scaffold(
       body: NestedScrollView(
         body: Padding(
@@ -35,7 +37,7 @@ class SettingsScaffold extends StatelessWidget {
           return [
             SliverAppBar(
               collapsedHeight: kToolbarHeight,
-              expandedHeight: 200,
+              expandedHeight: expandedHeight,
               pinned: true,
               actions: actions,
               flexibleSpace: LayoutBuilder(
@@ -44,7 +46,7 @@ class SettingsScaffold extends StatelessWidget {
                       (constraints.maxHeight -
                           MediaQuery.paddingOf(context).top -
                           kToolbarHeight) /
-                      (200 - kToolbarHeight);
+                      (expandedHeight - kToolbarHeight);
 
                   // Interpolate padding between expanded and collapsed
                   final leftPadding = lerpDouble(
@@ -56,7 +58,7 @@ class SettingsScaffold extends StatelessWidget {
                   return FlexibleSpaceBar(
                     titlePadding: EdgeInsets.only(
                       left: leftPadding.toDouble(),
-                      bottom: lerpDouble(14, 0, t)!,
+                      bottom: 14
                     ),
                     expandedTitleScale: 1,
                     title: Hero(
