@@ -44,7 +44,8 @@
   "@zero": {
     "description": "Represents the absence of number, or something like: 'No errors found', but in other languages can be '0 errors found'"
   },
-  "no": "žádný",
+  "no": "Ne",
+  "yes": "Ano",
   "@no": {
     "description": "Represents the absence of number, or something like: 'No errors found'"
   },
@@ -248,6 +249,7 @@
   "upcomingDayNotificationsDescription": "Dostávejte oznámení o úkolech a testech na další den",
   "upcomingDayNotificationsReceiveBeforeWeekend": "Dostávejte oznámení před víkendem",
   "upcomingDayNotificationsReceiveBeforeWeekendSubtitle": "Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu",
+  "addWidgetToHomescreen": "Přidat widget na domovskou obrazovku?",
   "onWeekday": "{weekday, select, 1{V pondělí} 2{V úterý} 3{Ve středu} 4{Ve čtvrtek} 5{V pátek} 6{V sobotu} 7{V neděli} other{neznámé}}",
   "arrivalTimeTitle": "Čas doručení",
   "arrivalTimeSubtitle": "Čas, kdy dostanete oznámení",

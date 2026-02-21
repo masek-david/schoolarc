@@ -22,11 +22,9 @@ class OnboardingEnd extends StatefulWidget {
 class _OnboardingEndState extends State<OnboardingEnd>
     with TickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> revealAnimation;
   late final Animation<double> innerGradient;
   late final Animation<double> outerGradient;
   late final Animation<double> opacityAnimation;
-  late final Animation<double> scaleAnimation;
   late final Animation<double> morphAnimation;
 
   @override

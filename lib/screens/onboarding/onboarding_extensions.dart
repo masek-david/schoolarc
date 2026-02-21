@@ -136,7 +136,7 @@ class OnboardingExtensions extends ConsumerWidget {
           AnimatedItem(
             builder: (isShown) {
               return Padding(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 8),
                 child: FilledButton(
                   onPressed: () => next(),
                   child: Text(context.loc.continueAction),

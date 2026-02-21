@@ -14,10 +14,17 @@ App to help students manage their homeworks and exams, simply in one app.
     - View current timetable with changes
     - View current homeworks
 - Strava.cz integration - view meals
-- Support Material You theming
+- Material You theme
 - Support for big screens
 
 ## Screenshots
+
+<img src="screenshots/mobile/home_dark.png"  width="200">
+<img src="screenshots/desktop/home_dark.png"  width="630">
+<img src="screenshots/mobile/calendar_dark.png"  width="200">
+<img src="screenshots/desktop/calendar_dark.png"  width="630">
+
+
 
 TODO
 
@@ -36,6 +43,9 @@ Schoolarc can run on most platforms, however, some functions don't work on some 
  ✅ working       ❌ not working     ❔not tested
 
 ## How to run locally
+
+Note: This is only for development, you can download and install here. TODO
+
 First, install [flutter sdk](https://docs.flutter.dev/install). Copy the repository and inside the console run
 ```
 flutter pub get 
@@ -47,7 +57,7 @@ You can also build with (replace \<target> with desired platform)
 flutter build <target>
 ```
 
-for android, i recommend
+For android, i recommend
 ```
 flutter build apk --flavor prod --target-platform=android-arm64
 ```

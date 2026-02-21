@@ -75,7 +75,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get zero => '0';
 
   @override
-  String get no => 'žádný';
+  String get no => 'Ne';
+
+  @override
+  String get yes => 'Ano';
 
   @override
   String get high => 'Vysoká';
@@ -760,6 +763,9 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
       'Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu';
+
+  @override
+  String get addWidgetToHomescreen => 'Přidat widget na domovskou obrazovku?';
 
   @override
   String onWeekday(String weekday) {

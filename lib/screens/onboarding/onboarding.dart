@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/screens/onboarding/onboarding_android_widget.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_end.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_extensions.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_notifications.dart';
@@ -7,6 +10,7 @@ import 'package:schoolarc/screens/onboarding/onboarding_restore_data.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_welcome.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key, required this.closeOnboarding});
@@ -21,9 +25,15 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   int pageIndex = settings.get(.onboardingProgress) ?? 0;
-  static const pageCount = 5;
   bool transparent = false;
   bool isNewUser = true;
+
+  @override
+  void initState() {
+    settings.save(.onboardingProgress, 0);
+
+    super.initState();
+  }
 
   void makeTransparent() {
     setState(() {
@@ -33,7 +43,7 @@ class _OnboardingState extends State<Onboarding> {
 
   void next({int by = 1}) {
     final newPageIndex = pageIndex + by;
-    if (newPageIndex >= 0 && newPageIndex <= pageCount - 1) {
+    if (newPageIndex >= 0 && newPageIndex <= pages.length - 1) {
       setState(() {
         pageIndex = newPageIndex;
       });
@@ -41,34 +51,35 @@ class _OnboardingState extends State<Onboarding> {
     }
   }
 
+  late final pages = [
+    OnboardingWelcome(
+      newUser: () {
+        next(by: 2);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Tutorial()),
+        );
+      },
+      returningUser: () {
+        isNewUser = false;
+        next();
+      },
+    ),
+    OnboardingRestoredata(next: next),
+    OnboardingExtensions(next: next, isNewUser: isNewUser),
+    if(NotificationSender.isCompatiblePlatform()) OnboardingNotifications(next: next),
+    if(!kIsWeb && Platform.isAndroid) OnboardingAndroidWidget(next: next),
+    OnboardingEnd(
+      onEnd: () {
+        settings.save(.onboardingProgress, null);
+        widget.closeOnboarding();
+      },
+      makeTransparent: makeTransparent,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final page = switch (pageIndex) {
-      0 => OnboardingWelcome(
-        newUser: () {
-          next(by: 2);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Tutorial()),
-          );
-        },
-        returningUser: () {
-          isNewUser = false;
-          next();
-        },
-      ),
-      1 => OnboardingRestoredata(next: next),
-      2 => OnboardingExtensions(next: next, isNewUser: isNewUser),
-      3 => OnboardingNotifications(next: next),
-      _ => OnboardingEnd(
-        onEnd: () {
-          settings.save(.onboardingProgress, null);
-          widget.closeOnboarding();
-        },
-        makeTransparent: makeTransparent,
-      ),
-    };
-
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -95,6 +106,7 @@ class _OnboardingState extends State<Onboarding> {
                 ]
               : null,
           backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
         ),
         body: Column(
           children: [
@@ -103,7 +115,7 @@ class _OnboardingState extends State<Onboarding> {
                 switchInCurve: Curves.decelerate,
                 switchOutCurve: Curves.decelerate,
                 duration: const Duration(milliseconds: 800),
-                child: page,
+                child: pages[pageIndex],
               ),
             ),
           ],

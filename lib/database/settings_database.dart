@@ -205,7 +205,7 @@ class SettingsDatabase {
       key: 'recapShownForYear',
     ),
     Setting.onboardingProgress: const SettingModel(
-      defaultValue: 0,
+      defaultValue: null,
       key: 'onboardingProgress',
     ),
   };

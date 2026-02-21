@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/subjects/subject_entity_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 
@@ -7,9 +8,13 @@ class SubjectDatabase {
   final _subjectBox = Hive.box(subjectBox);
 
   Map<String, Subject> readDatabase() {
+    if (MockData.useMock) {
+      return MockData.subjects;
+    }
+
     return _subjectBox.toMap().cast<String, SubjectEntity>().map(
-          (key, value) => MapEntry(key, value.convert(key)),
-        );
+      (key, value) => MapEntry(key, value.convert(key)),
+    );
   }
 
   Subject read(String id) {

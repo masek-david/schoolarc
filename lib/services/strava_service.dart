@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
@@ -142,6 +143,10 @@ class StravaService {
   }
 
   Future<Map<Date, List<Meal>>> getMeals() async {
+    if(MockData.useMock){
+      return MockData.meals;
+    }
+    
     bool loggedIn = _sid != null;
     if (!loggedIn) {
       try {

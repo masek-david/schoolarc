@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
@@ -267,6 +268,10 @@ class BakaService {
   Future<TimeTable> getCurrentTimetable(Date date) async {
     if (!isLoggedIn) {
       await refreshLogin();
+    }
+
+    if(MockData.useMock){
+      return MockData.currentTimetable;
     }
 
     Date mondayDate;

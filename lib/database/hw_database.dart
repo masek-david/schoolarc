@@ -1,11 +1,16 @@
 import 'package:hive_ce/hive.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 
 class HomeworksDatabase {
   /// returns map of homeworks with their dbIndexes
   Map<String, HomeworkEntity> readDatabase() {
+    if (MockData.useMock) {
+      return MockData.hws;
+    }
+
     return Hive.box(hwBox).toMap().cast<String, HomeworkEntity>();
   }
 

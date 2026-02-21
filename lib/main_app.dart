@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_widget/home_widget.dart';
@@ -145,7 +144,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       });
     }
 
-    if (settings.firstTimeOpeningApp || settings.get(.onboardingProgress) != null) {
+    if (settings.firstTimeOpeningApp ||
+        settings.get(.onboardingProgress) != null) {
       showingOnboarding = true;
     } else {
       if (kIsWeb &&
@@ -256,9 +256,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             key: _scaffoldKey,
             appBar: !isWide
                 ? AppBar(
-                    systemOverlayStyle: const SystemUiOverlayStyle(
-                      systemNavigationBarColor: Colors.transparent,
-                    ),
                     leading:
                         (ref.watch(subjectsNonDeletedProvider).isEmpty ||
                             timetableDb.timeTable.lessonTimes.isEmpty)

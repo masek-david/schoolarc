@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 
 class ExamDatabase {
@@ -7,6 +8,10 @@ class ExamDatabase {
 
   /// returns map of Exams with their dbIndexes
   Map<String, ExamEntity> readDatabase() {
+    if (MockData.useMock) {
+      return MockData.exams;
+    }
+
     return _examBox.toMap().cast<String, ExamEntity>();
   }
 

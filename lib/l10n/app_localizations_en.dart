@@ -69,7 +69,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zero => 'no';
 
   @override
-  String get no => 'no';
+  String get no => 'No';
+
+  @override
+  String get yes => 'Yes';
 
   @override
   String get high => 'High';
@@ -750,6 +753,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
       'If enabled, you will receive notifications even on Friday and Saturday';
+
+  @override
+  String get addWidgetToHomescreen => 'Add widget to home screen?';
 
   @override
   String onWeekday(String weekday) {

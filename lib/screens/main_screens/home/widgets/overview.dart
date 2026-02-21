@@ -90,7 +90,7 @@ class Overview extends ConsumerWidget {
         RichText(
           text: TextSpan(
             text: '${context.loc.youHave} ',
-            style: getStyle(context),
+            style: getStyle(context, color: col.onSurface),
             children: [
               if (missedHw != 0)
                 TextSpan(
@@ -112,11 +112,7 @@ class Overview extends ConsumerWidget {
                     color: col.error,
                   ),
                 ),
-              if (missedHw != 0)
-                TextSpan(
-                  text: ', ',
-                  style: getStyle(context),
-                ),
+              if (missedHw != 0) const TextSpan(text: ', '),
               TextSpan(
                 text: numberOrNo(upcomingHw, context),
                 style: getStyle(
@@ -129,7 +125,6 @@ class Overview extends ConsumerWidget {
               TextSpan(
                 text:
                     ' ${context.loc.upcomingHomework(upcomingHw).toLowerCase()} ${context.loc.and} ',
-                style: getStyle(context),
               ),
               TextSpan(
                 text: numberOrNo(upcomingExams, context),
@@ -143,7 +138,6 @@ class Overview extends ConsumerWidget {
               TextSpan(
                 text:
                     ' ${context.loc.upcomingExams(upcomingExams).toLowerCase()}',
-                style: getStyle(context),
               ),
             ],
           ),

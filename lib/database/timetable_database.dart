@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entity_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
@@ -23,6 +24,10 @@ class TimeTableDatabase {
   }
 
   TimeTable get timeTable {
+    if(MockData.useMock){
+      return MockData.timetable;
+    }
+    
     var subjects = subjectsDb.readDatabase();
 
     return _table.convert(subjects);

@@ -126,7 +126,6 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-        const SizedBox(height: 12),
         if (loggedIn == false)
           Row(
             children: [
@@ -157,6 +156,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ),
             ],
           ),
+        const SizedBox(height: 16),
         (!loggedIn && (ref.watch(debugModeProvider) || kDebugMode))
             ? SettingTile.withSwitch(
                 isLast: true,
@@ -206,10 +206,10 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
-        const SizedBox(height: 8),
         if (loggedIn == false)
           FilledButton(
             onPressed: useMeals
@@ -234,10 +234,6 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 : null,
             child: Text(loc.logIn),
           ),
-        // FilledButtonExpressive(
-        //   onPressed: () {},
-        //   child: Text(loc.logIn),
-        // ),
         if (loggedIn == true)
           OutlinedButton(
             onPressed: useMeals

@@ -2,12 +2,16 @@
 check firebase service too many reads???
 update/start listening to firebase on app reopen ???
 
+check all settingtile spacings
+
 timetable reassign subjects hides all other subjects
 timetable reassign subjects move to timetable class
 
+ios calendar still refresh pulls
+
 ## Android
-android top bar icons and text black
 vibration in tutorial and onboarding
+vibration in draggable
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -24,15 +28,16 @@ vibration in tutorial and onboarding
     - ✅ offer import from json
     - ✅ ask: new user? view tutorial? import data from json?
 - ✅ move settings from screens to settings
+- ✅ add to onboarding
+    - ✅ notifications
+    - ✅ add some images???
+    - ✅ android widgets
 - ⬜ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email ‼️
 - ⬜ firebase login mail verification / google sign in‼️
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users?
-- ⬜ add to tutorial
-    - ⬜ android widgets
-    - ⬜ notifications
-    - ⬜ plus
+    - ⬜ add to onboarding
 - ⬜ create offline timetable provider
 - ⬜ screenshots, readme
 
@@ -41,10 +46,10 @@ vibration in tutorial and onboarding
 ## UI
 - ✅ settings use bigger headlines and scroll them
 - ✅ check scrolling in timetable (dont overscroll, dont show pull tabs)
-- ⬜ in calendar tasks are hidden again a little bit
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
-- ⬜ improve performance in hw and exam screens (might require custom animated reorderable list)
+- ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
+- ⬜ scroll calendar vertically on big screens
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing ‼️
@@ -53,11 +58,9 @@ vibration in tutorial and onboarding
     - ⬜ does everything need to be shown ??
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
-- ⬜ expressive filledbutton
-- ⬜ ? scroll calendar vertically on big screens
+- ⬜ expressive buttons
 - ⬜ ? display tasks in timetable
-- ⬜ ? homescreen cards horizontal pull to refresh
-- ⬜ ? move homescreen and calendar settings to settings
+- ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 
 ## OTHER
 - ✅ save only date for deadlines
@@ -69,7 +72,6 @@ vibration in tutorial and onboarding
     - ⬜ date
     - ⬜ auto set date to next appearance
 - ⬜ strava.cz stop saving the password
-- ⬜ add animations to all animationControllers (to use curves)
 - ⬜ translation - google sheets
 
 ## NOTIFICATIONS:
@@ -107,14 +109,13 @@ vibration in tutorial and onboarding
 
 # MAYBE
 - ⬜ ? refactor baka_service - add separate file for http requests
-- ⬜ ? make everything react to touch (shrink) 
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
 - ⬜ ? merge duplicate subjects (is it really needed?)
-- ⬜ ? add google sign in + sign in with apple
-    
+
+
 
 
 # DONE

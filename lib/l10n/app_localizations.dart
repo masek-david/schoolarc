@@ -149,8 +149,14 @@ abstract class AppLocalizations {
   /// Represents the absence of number, or something like: 'No errors found'
   ///
   /// In en, this message translates to:
-  /// **'no'**
+  /// **'No'**
   String get no;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
 
   /// No description provided for @high.
   ///
@@ -1351,6 +1357,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If enabled, you will receive notifications even on Friday and Saturday'**
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle;
+
+  /// No description provided for @addWidgetToHomescreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Add widget to home screen?'**
+  String get addWidgetToHomescreen;
 
   /// No description provided for @onWeekday.
   ///

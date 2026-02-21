@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_page.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
-class OnboardingNotifications extends StatelessWidget {
-  const OnboardingNotifications({super.key, required this.next});
+class OnboardingAndroidWidget extends StatelessWidget {
+  const OnboardingAndroidWidget({super.key, required this.next});
 
   final void Function() next;
 
@@ -20,7 +20,7 @@ class OnboardingNotifications extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(8, 64, 8, 16),
                 child: Text(
-                  context.loc.receiveUpcomingDayNotifications,
+                  context.loc.addWidgetToHomescreen,
                   style: context.txt.headlineMedium,
                 ),
               );
@@ -34,7 +34,7 @@ class OnboardingNotifications extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(28),
                     child: Image.asset(
-                      'assets/images/android_notification_${context.isDark ? 'dark' : 'light'}.png',
+                      'assets/images/android_widgets_${context.isDark ? 'dark' : 'light'}.png',
                       height: 450,
                     ),
                   ),
@@ -46,15 +46,16 @@ class OnboardingNotifications extends StatelessWidget {
             builder: (isShown) {
               return SettingTile(
                 isFirst: true,
-                title: context.loc.continueAction,
+                title: context.loc.yes,
                 leading: const Icon(Icons.check_rounded),
                 onTap: (context) async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TomorrowNotificationsPage(),
-                    ),
+                  // TODO test
+                  HomeWidget.requestPinWidget(
+                    androidName: 'MainWidgetReceiver',
+                    qualifiedAndroidName:
+                        'cz.masci.schoolarc.MainWidgetReceiver',
                   );
+
                   next();
                 },
               );
