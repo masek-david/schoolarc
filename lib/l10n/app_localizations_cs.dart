@@ -1352,7 +1352,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get alreadyUsedApp => 'Už jste aplikaci používali?';
 
   @override
-  String get sorry => 'Sorry';
+  String get sorry => 'Omlouvám se';
 
   @override
   String get versionNotSupported =>
