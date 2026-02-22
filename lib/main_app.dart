@@ -13,11 +13,13 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
+import 'package:schoolarc/screens/app_info_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/onboarding/onboarding.dart';
+import 'package:schoolarc/services/firebase/app_info_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -236,18 +238,41 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     registerForRestoration(currentPageIndex, 'currentPage');
   }
 
+  final screens = [
+    const HomeScreen(),
+    const CalendarScreen(),
+    const HomeworksScreen(),
+    const ExamsScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isWide = context.isWide;
-
-    final Widget screen = switch (currentPageIndex.value) {
-      0 => const HomeScreen(),
-      1 => const CalendarScreen(),
-      2 => const HomeworksScreen(),
-      _ => const ExamsScreen(),
-    };
     final miliseconds =
         (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt();
+
+    ref.listen(
+      appInfoProvider,
+      (previous, next) {
+        final message = next.value?.message;
+
+        if (message != null && message != settings.get(.lastSeenMessage)) {
+          settings.save(.lastSeenMessage, message);
+
+          showDialogAdaptive(
+            context: context,
+            content: Text(next.value!.message!),
+            actions: [
+              adaptiveDialogButton(
+                context: context,
+                child: Text(context.loc.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          );
+        }
+      },
+    );
 
     return Stack(
       children: [
@@ -297,7 +322,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                           child: child,
                         );
                       },
-                      child: screen,
+                      child: screens[currentPageIndex.value],
                     ),
                   ),
                 ],
@@ -313,6 +338,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
           ),
         ),
         if (showingOnboarding) Onboarding(closeOnboarding: endOnboarding),
+        if (ref.watch(needsUpdateProvider)) const AppInfoScreen(),
         if (ref.watch(debugShowFireOverlayProvider))
           const Positioned(
             top: 0,

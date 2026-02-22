@@ -46,17 +46,14 @@ class OnboardingAndroidWidget extends StatelessWidget {
             builder: (isShown) {
               return SettingTile(
                 isFirst: true,
-                title: context.loc.yes,
-                leading: const Icon(Icons.check_rounded),
-                onTap: (context) async {
-                  // TODO test
+                title: context.loc.addMainWidget,
+                leading: const Icon(Icons.add_box_outlined),
+                onTap: (context) {
                   HomeWidget.requestPinWidget(
                     androidName: 'MainWidgetReceiver',
                     qualifiedAndroidName:
                         'cz.masci.schoolarc.MainWidgetReceiver',
                   );
-
-                  next();
                 },
               );
             },
@@ -64,13 +61,24 @@ class OnboardingAndroidWidget extends StatelessWidget {
           AnimatedItem(
             builder: (isShown) {
               return SettingTile(
-                titleColor: context.col.surfaceContainerHighest,
+                title: context.loc.addMealsWidget,
+                leading: const Icon(Icons.add_box_outlined),
+                onTap: (context) {
+                  HomeWidget.requestPinWidget(
+                    androidName: 'StravaWidgetReceiver',
+                    qualifiedAndroidName:
+                        'cz.masci.schoolarc.StravaWidgetReceiver',
+                  );
+                },
+              );
+            },
+          ),
+          AnimatedItem(
+            builder: (isShown) {
+              return SettingTile(
                 isLast: true,
-                title: context.loc.cancel,
-                leading: Icon(
-                  Icons.cancel_rounded,
-                  color: context.col.surfaceContainerHighest,
-                ),
+                title: context.loc.continueAction,
+                leading: const Icon(Icons.arrow_forward_ios_rounded),
                 onTap: (context) {
                   next();
                 },

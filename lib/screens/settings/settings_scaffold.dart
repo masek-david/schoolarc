@@ -19,7 +19,7 @@ class SettingsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expandedHeight = 200.0;
+    final expandedHeight = 240.0;
 
     return Scaffold(
       body: NestedScrollView(

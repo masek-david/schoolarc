@@ -11,7 +11,6 @@
 .svn/
 .firebase
 untranslated.json
-pubspec.lock
 firebase.json
 .firebaserc
 /lib/firebase_options.dart

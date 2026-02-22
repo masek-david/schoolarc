@@ -1,4 +1,5 @@
 ## [2.2.0]() - 2026-
+<!-- build 41 -->
 ### Added
 - Reworked Android widgets
 - Added new refresh indicator

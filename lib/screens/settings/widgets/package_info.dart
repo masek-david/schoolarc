@@ -15,7 +15,7 @@ class PackageInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int tapped = 0;
-    return InkWell(
+    return GestureDetector(
       onTap: enableTap
           ? () {
               tapped++;

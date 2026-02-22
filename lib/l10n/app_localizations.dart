@@ -1364,6 +1364,18 @@ abstract class AppLocalizations {
   /// **'Add widget to home screen?'**
   String get addWidgetToHomescreen;
 
+  /// No description provided for @addMainWidget.
+  ///
+  /// In en, this message translates to:
+  /// **'Add main widget'**
+  String get addMainWidget;
+
+  /// No description provided for @addMealsWidget.
+  ///
+  /// In en, this message translates to:
+  /// **'Add meals widget'**
+  String get addMealsWidget;
+
   /// No description provided for @onWeekday.
   ///
   /// In en, this message translates to:
@@ -2297,6 +2309,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Already used the app?'**
   String get alreadyUsedApp;
+
+  /// No description provided for @sorry.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry'**
+  String get sorry;
+
+  /// No description provided for @versionNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of Schoolarc is not supported anymore.'**
+  String get versionNotSupported;
+
+  /// No description provided for @pleaseUpdateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update the app.'**
+  String get pleaseUpdateApp;
 
   /// No description provided for @secondShort.
   ///

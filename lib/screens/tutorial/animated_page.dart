@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class AnimatedItem {
   AnimatedItem({
@@ -51,6 +52,7 @@ class _AnimatedPageState extends State<AnimatedPage> {
       await Future.delayed(itemDelay);
       if (mounted) {
         setState(() {
+          vibrate.light();
           showing = i;
         });
       }

@@ -52,7 +52,9 @@ class OnboardingNotifications extends StatelessWidget {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const TomorrowNotificationsPage(),
+                      builder: (context) => const TomorrowNotificationsPage(
+                        showMessageOnPop: false,
+                      ),
                     ),
                   );
                   next();

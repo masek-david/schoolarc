@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 class OnboardingEnd extends StatefulWidget {
   const OnboardingEnd({
@@ -72,6 +73,9 @@ class _OnboardingEndState extends State<OnboardingEnd>
     if (_controller.isAnimating) {
       return;
     }
+
+    vibrate.heavy();
+    vibrate.releaseLong();
 
     widget.makeTransparent();
     _controller.animateTo(1).then(

@@ -768,6 +768,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get addWidgetToHomescreen => 'Přidat widget na domovskou obrazovku?';
 
   @override
+  String get addMainWidget => 'Add main widget';
+
+  @override
+  String get addMealsWidget => 'Add meals widget';
+
+  @override
   String onWeekday(String weekday) {
     String _temp0 = intl.Intl.selectLogic(
       weekday,
@@ -1344,6 +1350,16 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get alreadyUsedApp => 'Už jste aplikaci používali?';
+
+  @override
+  String get sorry => 'Sorry';
+
+  @override
+  String get versionNotSupported =>
+      'This version of Schoolarc is not supported anymore.';
+
+  @override
+  String get pleaseUpdateApp => 'Please update the app.';
 
   @override
   String get secondShort => ' sek';

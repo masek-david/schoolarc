@@ -88,6 +88,7 @@ class _TutorialSubjectsState extends State<TutorialSubjects> {
                     label: Text(current.name),
                     selected: current.name == sub.name,
                     onSelected: (value) {
+                      vibrate.medium();
                       setState(() {
                         sub = current;
                       });

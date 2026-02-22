@@ -67,8 +67,9 @@ class _OnboardingState extends State<Onboarding> {
     ),
     OnboardingRestoredata(next: next),
     OnboardingExtensions(next: next, isNewUser: isNewUser),
-    if(NotificationSender.isCompatiblePlatform()) OnboardingNotifications(next: next),
-    if(!kIsWeb && Platform.isAndroid) OnboardingAndroidWidget(next: next),
+    if (NotificationSender.isCompatiblePlatform())
+      OnboardingNotifications(next: next),
+    if (!kIsWeb && Platform.isAndroid) OnboardingAndroidWidget(next: next),
     OnboardingEnd(
       onEnd: () {
         settings.save(.onboardingProgress, null);
@@ -105,6 +106,7 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                 ]
               : null,
+          scrolledUnderElevation: 0,
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),

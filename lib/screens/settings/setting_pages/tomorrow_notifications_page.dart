@@ -9,7 +9,9 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 
 class TomorrowNotificationsPage extends StatefulWidget {
-  const TomorrowNotificationsPage({super.key});
+  const TomorrowNotificationsPage({super.key, this.showMessageOnPop = true});
+
+  final bool showMessageOnPop;
 
   @override
   State<TomorrowNotificationsPage> createState() =>
@@ -70,7 +72,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
     final loc = context.loc;
 
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: widget.showMessageOnPop ? (didPop, result) {
         NotificationSender.scheduleUpcomingDayNotifications(
           context,
           firstUpcoming: (date, time) {
@@ -85,7 +87,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             );
           },
         );
-      },
+      } : null,
       child: SettingsScaffold(
         heroTag: 'notifications',
         title: loc.upcomingDayNotifications,

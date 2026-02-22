@@ -49,6 +49,8 @@ enum Setting {
 
   /// the index of the page that was last displayed, null if no page was displayed
   onboardingProgress,
+  requiredBuild,
+  lastSeenMessage,
 }
 
 class SettingModel {
@@ -207,6 +209,14 @@ class SettingsDatabase {
     Setting.onboardingProgress: const SettingModel(
       defaultValue: null,
       key: 'onboardingProgress',
+    ),
+    Setting.requiredBuild: const SettingModel(
+      defaultValue: null,
+      key: 'requiredBuild',
+    ),
+    Setting.lastSeenMessage: const SettingModel(
+      defaultValue: null,
+      key: 'lastSeenMessage',
     ),
   };
   final _settingsBox = Hive.box(settingsBox);

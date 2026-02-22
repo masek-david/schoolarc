@@ -9,10 +9,6 @@ timetable reassign subjects move to timetable class
 
 ios calendar still refresh pulls
 
-## Android
-vibration in tutorial and onboarding
-vibration in draggable
-
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
@@ -33,13 +29,12 @@ vibration in draggable
     - ✅ add some images???
     - ✅ android widgets
 - ✅ screenshots, readme
-- ⬜ push info to the app from web + min required version
+- ✅ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email ‼️
 - ⬜ firebase login mail verification / google sign in‼️
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users?
     - ⬜ add to onboarding
-- ⬜ create offline timetable provider
 
 # FEATURES
 
@@ -71,6 +66,7 @@ vibration in draggable
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
+- ⬜ create offline timetable provider
 - ⬜ strava.cz stop saving the password
 - ⬜ translation - google sheets
 
