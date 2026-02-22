@@ -35,8 +35,8 @@ class AppInfoNotifier extends AsyncNotifier<AppInfo> {
     return AppInfo(
       requiredBuild: requiredBuild,
       currentBuild: data.child('currentBuild').value as int,
-      message: data.child('message').value as String,
-      messageForOldVersion: data.child('messageForOldVersion').value as String,
+      message: data.child('message').value as String?,
+      messageForOldVersion: data.child('messageForOldVersion').value as String?,
     );
   }
 }
