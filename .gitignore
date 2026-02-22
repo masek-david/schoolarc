@@ -12,6 +12,7 @@
 .firebase
 untranslated.json
 pubspec.lock
+firebase.json
 /lib/firebase_options.dart
 
 # As packages are no longer pinned, we use a lockfile for testing locally.

@@ -104,6 +104,10 @@ flutter build apk --flavor prod --target-platform=android-arm64
 ```
 as it is compatible with most devices and has the smallest sizes
 
+### Firebase initialization
+
+Configure [flutterfire](https://firebase.flutter.dev/docs/overview), run flutterfire configure and follow the instructions.
+
 <!-- On windows, sometimes the windows is stuck on white or black - 
 in that case, you can resize the windows using powertoys zones
  and rerun the project -->
