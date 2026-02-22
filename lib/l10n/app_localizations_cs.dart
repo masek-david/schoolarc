@@ -768,10 +768,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get addWidgetToHomescreen => 'Přidat widget na domovskou obrazovku?';
 
   @override
-  String get addMainWidget => 'Add main widget';
+  String get addMainWidget => 'Přidat hlavní widget';
 
   @override
-  String get addMealsWidget => 'Add meals widget';
+  String get addMealsWidget => 'Přidat widget s jídly';
 
   @override
   String onWeekday(String weekday) {
@@ -1356,10 +1356,10 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get versionNotSupported =>
-      'This version of Schoolarc is not supported anymore.';
+      'Tato verze aplikace Schoolarc už není podporována.';
 
   @override
-  String get pleaseUpdateApp => 'Please update the app.';
+  String get pleaseUpdateApp => 'Prosím aktualizujte aplikaci.';
 
   @override
   String get secondShort => ' sek';
