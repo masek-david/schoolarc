@@ -32,6 +32,7 @@ vibration in draggable
     - ✅ notifications
     - ✅ add some images???
     - ✅ android widgets
+- ✅ screenshots, readme
 - ⬜ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email ‼️
 - ⬜ firebase login mail verification / google sign in‼️
@@ -39,7 +40,6 @@ vibration in draggable
 - ⬜ plus - 5 usd, limit to 100 users?
     - ⬜ add to onboarding
 - ⬜ create offline timetable provider
-- ⬜ screenshots, readme
 
 # FEATURES
 

@@ -1,44 +1,85 @@
-# Schoolarc
+<h1 align="center">Schoolarc</h1>
 
-App to help students manage their homeworks and exams, simply in one app.
+<h4 align="center">
+    App to help students manage their homeworks and exams, simply in one app.
+</h4>
+
+<div align="center">
+    <img src="screenshots/banner.png" width="500" style="border-radius:12px">
+</div>
 
 ## Features
 
 - Save homework and exams
     - Priorities (🔴🟠🟢🔵)
     - Assign subjects
-- Save subjects
-- Save timetable
-- Bakaláři integration
+- Calendar view
+- Save and view timetable
+- Bakaláři integration (Czech school system)
     - Import timetable, subjects
     - View current timetable with changes
-    - View current homeworks
-- Strava.cz integration - view meals
+    - View and import current homeworks
+- Strava.cz integration (Czech canteen system)
 - Material You theme
-- Support for big screens
-
+- Responsive design
+  
 ## Screenshots
 
-<img src="screenshots/mobile/home_dark.png"  width="200">
-<img src="screenshots/desktop/home_dark.png"  width="630">
-<img src="screenshots/mobile/calendar_dark.png"  width="200">
-<img src="screenshots/desktop/calendar_dark.png"  width="630">
+<details open>
+    <summary>Dark mode screenshots</summary>
+        <div align="center">
+            <img src="screenshots/mobile/home_dark.png" width="250" style="border-radius:36px">
+            <img src="screenshots/mobile/calendar_dark.png" width="250" style="border-radius:36px">
+            <img src="screenshots/mobile/create_dark.png" width="250" style="border-radius:36px">
+            <img src="screenshots/mobile/timetable_dark.png" width="250" style="border-radius:36px">
+            <img src="screenshots/mobile/meals_dark.png" width="250" style="border-radius:36px">
+        </div>
+</details>
 
+<details>
+    <summary>Light mode screenshots</summary>
+    <div align="center">
+        <img src="screenshots/mobile/home_light.png" width="250" style="border-radius:36px">
+        <img src="screenshots/mobile/calendar_light.png" width="250" style="border-radius:36px">
+        <img src="screenshots/mobile/create_light.png" width="250" style="border-radius:36px">
+        <img src="screenshots/mobile/timetable_light.png" width="250" style="border-radius:36px">
+        <img src="screenshots/mobile/meals_light.png" width="250" style="border-radius:36px">
+    </div>
+</details>
 
+<details>
+    <summary>Dark mode desktop screenshots</summary>
+    <div align="center">
+        <img src="screenshots/desktop/home_dark.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/calendar_dark.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/create_dark.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/timetable_dark.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/meals_dark.png" width="500" style="border-radius:8px">
+    </div>
+</details>
 
-TODO
+<details>
+    <summary>Light mode desktop screenshots</summary>
+    <div align="center">
+        <img src="screenshots/desktop/home_light.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/calendar_light.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/create_light.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/timetable_light.png" width="500" style="border-radius:8px">
+        <img src="screenshots/desktop/meals_light.png" width="500" style="border-radius:8px">
+    </div>
+</details>
 
 ## Platforms
-Schoolarc can run on most platforms, however, some functions don't work on some operating systems.
+Schoolarc can run on most platforms, however, it is optimized and tested mainly for use on Android and iOS. Some functions don't even work on other operating systems and on web data loss can occur.
 
-|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications| Homescreen Widget |
-|---------|:---------------------:|:--------:|:---------:|:------------:|:-----------------:|
-| Android |           ✅         |    ✅    |    ✅    |      ✅      |         ✅       | 
-| iOS     |           ✅         |    ✅    |    ✅    |      ✅      |         ❌       | 
-| Web     |           ✅         |    ✅    |    ✅    |      ❌      |         ❌       | 
-| Windows |           ❌         |    ✅    |    ✅    |      ❌      |         ❌       | 
-| macOS   |           ❔         |    ❔    |    ❔    |      ❔      |         ❔       | 
-| Linux   |           ❔         |    ❔    |    ❔    |      ❔      |         ❔       | 
+|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications | Homescreen Widget |
+| ------- | :-------------------: | :------: | :-------: | :-----------: | :---------------: |
+| Android |           ✅           |    ✅     |     ✅     |       ✅       |         ✅         |
+| iOS     |           ✅           |    ✅     |     ✅     |       ✅       |         ❌         |
+| Web     |           ✅           |    ✅     |     ✅     |       ❌       |         ❌         |
+| Windows |           ❌           |    ✅     |     ✅     |       ❌       |         ❌         |
+| macOS   |           ❔           |    ❔     |     ❔     |       ❔       |         ❔         |
+| Linux   |           ❔           |    ❔     |     ❔     |       ❔       |         ❔         |
 
  ✅ working       ❌ not working     ❔not tested
 
@@ -62,3 +103,7 @@ For android, i recommend
 flutter build apk --flavor prod --target-platform=android-arm64
 ```
 as it is compatible with most devices and has the smallest sizes
+
+<!-- On windows, sometimes the windows is stuck on white or black - 
+in that case, you can resize the windows using powertoys zones
+ and rerun the project -->
