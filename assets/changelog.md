@@ -1,5 +1,5 @@
-## [2.2.0]() - 2026-
-<!-- build 41 -->
+## [2.2.0]() - 2026-__-__
+<!-- build __ -->
 ### Added
 - Reworked Android widgets
 - Added new refresh indicator
@@ -11,7 +11,7 @@
 ### Changed
 - Improved ordering of tasks
 - Changed how dates are saved (should resolve any timezone issues)
-- Improved timetable UI
+- Improved timetable UI and UX
 - Improved error messages
 - Added messages to exporting app data
 - The app now follows system language and formatting
@@ -23,6 +23,7 @@
 - Fixed meals not showing Doplněk
 - Fixed meals widget not working
 - Fixed color of status bar on Android
+- Many other bug fixes
 
 ---
 

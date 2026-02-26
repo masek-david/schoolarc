@@ -1,132 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/widgets/floating_action_bar.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/lists/non_scrollable_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
-class CurrentTimetableScreen extends ConsumerStatefulWidget {
-  const CurrentTimetableScreen({super.key});
+class ActualTimetableScreen extends ConsumerStatefulWidget {
+  const ActualTimetableScreen({super.key});
 
   @override
-  ConsumerState<CurrentTimetableScreen> createState() =>
-      _CurrentTimetableScreenState();
+  ConsumerState<ActualTimetableScreen> createState() =>
+      _ActualTimetableScreenState();
 }
 
-class _CurrentTimetableScreenState
-    extends ConsumerState<CurrentTimetableScreen> {
-  late Future<TimeTable> timetableFuture = bakaService.getCurrentTimetable(
-    date,
-  );
-  TimeTable? timetable;
-  Date date = Date.today();
-
-  Future<void> refresh() async {
-    setState(() {
-      timetableFuture = bakaService.getCurrentTimetable(date);
-    });
-
-    try {
-      await timetableFuture;
-    } catch (_) {}
-
-    return;
-  }
-
-  void reassignSubjects() {
-    if (timetable == null) return;
-    final subjects = ref.read(subjectsNonDeletedProvider);
-    subjects.removeWhere((key, value) => value.bakaId == null);
-    final subjectsBakaId = subjects.map(
-      (key, value) => MapEntry(value.bakaId!, value),
-    );
-
-    for (var dayIndex = 0; dayIndex < timetable!.table.length; dayIndex++) {
-      for (
-        var lessonIndex = 0;
-        lessonIndex < timetable!.table[dayIndex].length;
-        lessonIndex++
-      ) {
-        final lesson = timetable!.table[dayIndex][lessonIndex];
-        if (lesson.subject?.id == '') {
-          timetable!.table[dayIndex][lessonIndex] = lesson.copyWith(
-            subject: subjectsBakaId[lesson.subject?.bakaId],
-          );
-        }
-      }
-    }
-    setState(() {
-      timetable = timetable;
-    });
-  }
+class _ActualTimetableScreenState
+    extends ConsumerState<ActualTimetableScreen> {
+  int week = getCurrentTimetableWeekIndex();
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(actualTimetableProvider(week));
+    final error = provider.error;
+    final timetable = provider.value;
+
     return Scaffold(
-      appBar: AppBar(title: Text(context.loc.currentTimetable)),
+      appBar: AppBar(
+        title: Text(context.loc.actualTimetable),
+        actions: [
+          AgoText(stream: actualTimetableAgeProvider(week)),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionBar(
         actions: [
           FloatingActionBarAction(
             icon: Icons.arrow_back,
             onTap: () {
-              date = date.subtractDays(7);
-              refresh();
+              setState(() {
+                week -= 1;
+              });
             },
           ),
           FloatingActionBarAction(
             icon: Icons.home,
             onTap: () {
-              date = Date.today();
-              refresh();
+              setState(() {
+                week = getCurrentTimetableWeekIndex();
+              });
             },
           ),
           FloatingActionBarAction(
             icon: Icons.arrow_forward,
             onTap: () {
-              date = date.addDays(7);
-              refresh();
+              setState(() {
+                week += 1;
+              });
             },
           ),
         ],
       ),
       body: NonScrollableRefreshIndicator(
         onRefresh: () async {
-          await refresh();
+          ref.read(actualTimetableDataProvider(week).notifier).refresh();
         },
-        child: FutureBuilder(
-          future: timetableFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              timetable = null;
+        child: Builder(
+          builder: (context) {
+            if (provider.isLoading) {
               return Center(
                 child: MyExpressiveLoadingIndicator.big(
                   useHaptics: ref.read(themeExpressiveHapticsProvider),
                 ),
               );
-            } else if (snapshot.hasError) {
-              timetable = null;
+            }
+            if (error != null) {
               return Center(
                 child: ErrorTile(
-                  error: snapshot.error,
+                  error: error,
                   padding: const EdgeInsetsGeometry.all(16),
                 ),
               );
-            } else if (!snapshot.hasData) {
-              timetable = null;
+            }
+            if (timetable == null) {
               return EmptyMessage(message: context.loc.noTimetableMessage);
             }
-
-            timetable ??= snapshot.data!;
 
             return SafeArea(
               child: Padding(
@@ -143,7 +107,6 @@ class _CurrentTimetableScreenState
                       lesson.showLessonDialog(
                         context,
                         ref,
-                        onSubjectAdded: reassignSubjects,
                       );
                     },
                   ),

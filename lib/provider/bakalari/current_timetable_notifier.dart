@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
+import 'package:schoolarc/models/bakalari/baka_timetable_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
@@ -9,8 +10,11 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-final currentTimetableAgeProvider = StreamProvider<Duration?>((ref) async* {
-  final notifier = ref.watch(currentTimetableProvider.notifier);
+final actualTimetableAgeProvider = StreamProvider.family<Duration?, int>((
+  ref,
+  week,
+) async* {
+  final notifier = ref.watch(actualTimetableDataProvider(week).notifier);
   while (true) {
     final lastFetched = notifier.lastFetched;
     if (lastFetched != null) {
@@ -22,17 +26,35 @@ final currentTimetableAgeProvider = StreamProvider<Duration?>((ref) async* {
   }
 });
 
-final currentTimetableProvider =
-    AsyncNotifierProvider<CurrentTimetableNotifier, TimeTable>(
-      CurrentTimetableNotifier.new,
+/// The Timetable with assigned subjects for weekSinceEpoch
+final actualTimetableProvider = FutureProvider.family<Timetable, int>(
+  (ref, week) async {
+    if (MockData.useMock) {
+      return MockData.actualTimetable;
+    }
+
+    final data = await ref.watch(actualTimetableDataProvider(week).future);
+    final subjects = ref.watch(subjectsNonDeletedProvider);
+
+    return data.toTimetable(subjects.values.toList());
+  },
+);
+
+/// Actual BakaTimetable for weekSinceEpoch
+final actualTimetableDataProvider =
+    AsyncNotifierProvider.family<ActualTimetableNotifier, BakaTimetable, int>(
+      ActualTimetableNotifier.new,
     );
 
-class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
+class ActualTimetableNotifier extends AsyncNotifier<BakaTimetable> {
   DateTime? lastFetched;
   bool isFetching = false;
+  final int week;
+
+  ActualTimetableNotifier(this.week);
 
   @override
-  FutureOr<TimeTable> build() async {
+  FutureOr<BakaTimetable> build() async {
     _setupListeners();
     try {
       final data = await _fetch(canRefreshLogin: false);
@@ -70,7 +92,7 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
   }
 
   /// Gets only if logged in and using baka
-  Future<TimeTable> _fetch({bool canRefreshLogin = true}) async {
+  Future<BakaTimetable> _fetch({bool canRefreshLogin = true}) async {
     isFetching = true;
 
     final useBaka = ref.read(useBakaProvider);
@@ -94,7 +116,7 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
     }
 
     lastFetched = null;
-    final data = await bakaService.getCurrentTimetable(Date.today());
+    final data = await bakaService.getActualTimetable(week);
     lastFetched = DateTime.now();
     return data;
   }
@@ -104,38 +126,5 @@ class CurrentTimetableNotifier extends AsyncNotifier<TimeTable> {
         DateTime.now().difference(lastFetched!) > const Duration(minutes: 30)) {
       return refresh();
     }
-  }
-
-  /// Reloads and reassigns all subjects for all lessons
-  /// - use when subjects change and the subjects in the timetable should be updated
-  /// todo: should listen to subjects provider??
-  void reassignSubjects() {
-    final timetable = state.value;
-    if (timetable == null) return;
-
-    final subjects = ref.read(subjectsNonDeletedProvider);
-    subjects.removeWhere((key, value) => value.bakaId == null);
-    final subjectsBakaId = subjects.map(
-      (key, value) => MapEntry(value.bakaId!, value),
-    );
-
-    for (var dayIndex = 0; dayIndex < timetable.table.length; dayIndex++) {
-      for (
-        var lessonIndex = 0;
-        lessonIndex < timetable.table[dayIndex].length;
-        lessonIndex++
-      ) {
-        final lesson = timetable.table[dayIndex][lessonIndex];
-        if (lesson.subject?.id == '') {
-          final correctSubject = subjectsBakaId[lesson.subject?.bakaId];
-          if (correctSubject != null) {
-            timetable.table[dayIndex][lessonIndex] = lesson.copyWith(
-              subject: correctSubject,
-            );
-          }
-        }
-      }
-    }
-    state = AsyncData(timetable);
   }
 }

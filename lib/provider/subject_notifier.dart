@@ -169,15 +169,6 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     bool syncWithFire = true,
     bool checkOrder = true,
   }) async {
-    if (!edited.isDeleted && checkOrder) {
-      edited = edited.copyWith(
-        order: _getOrder(
-          index: null,
-          id: edited.id,
-        ),
-      );
-    }
-
     subjectsDb.put(edited.id, edited.convert());
     state = {...state, edited.id: edited};
 

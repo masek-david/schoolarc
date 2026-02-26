@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -23,13 +23,13 @@ class TimetableView extends StatelessWidget {
     required this.textWhenEmpty,
   });
 
-  final TimeTable? timeTable;
+  final Timetable? timeTable;
   final bool showWholeWeek;
   final double columnWidth;
   final String textWhenEmpty;
   final void Function(LessonTimes lessonTimes, int lessonIndex)?
   onLessonTimesTapped;
-  final void Function(int weekday, int lessonIndex, TimeTableLesson lesson)?
+  final void Function(int weekday, int lessonIndex, TimetableEntry lesson)?
   onSubjectTapped;
 
   static const dateColumnWidth = 40.0;
@@ -143,7 +143,7 @@ class TimetableView extends StatelessWidget {
                               ),
                               Text(
                                 date.formatFromSettings(context),
-                                style: googleSansFlex(width: 65),
+                                style: googleSansFlex(width: 45, size: 18),
                                 textAlign: .center,
                               ),
                             ],

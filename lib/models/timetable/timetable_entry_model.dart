@@ -2,22 +2,22 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change.dart';
+import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
+import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-class TimeTableLesson {
-  TimeTableLesson({
+class TimetableEntry {
+  TimetableEntry({
     this.subject,
     this.change,
     this.teacher,
     this.room,
   });
 
-  TimeTableLesson.empty()
+  TimetableEntry.empty()
     : subject = null,
       change = null,
       room = null,
@@ -32,13 +32,13 @@ class TimeTableLesson {
     return subject == null && change == null;
   }
 
-  TimeTableLesson copyWith({
+  TimetableEntry copyWith({
     Object? subject = noChange,
     Object? change = noChange,
     Object? teacher = noChange,
     Object? room = noChange,
   }) {
-    return TimeTableLesson(
+    return TimetableEntry(
       subject: subject == noChange ? this.subject : subject as Subject?,
       change: change == noChange ? this.change : change as BakaChange?,
       teacher: teacher == noChange ? this.teacher : teacher as Teacher?,
@@ -49,7 +49,7 @@ class TimeTableLesson {
   void showLessonDialog(
     BuildContext context,
     WidgetRef ref, {
-    void Function()? onSubjectAdded,
+    LessonTimes? lessonTimes,
   }) {
     String? title = subject?.name;
 
@@ -63,6 +63,11 @@ class TimeTableLesson {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (lessonTimes != null)
+              Text(
+                lessonTimes.toStringFormatted(context),
+                style: context.txt.labelLarge,
+              ),
             if (subject?.id == '')
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 0, 16),
@@ -86,15 +91,7 @@ class TimeTableLesson {
                       onPressed: () async {
                         await ref
                             .read(subjectsProvider.notifier)
-                            .create(
-                              subject!.convert(),
-                            );
-                        ref
-                            .read(currentTimetableProvider.notifier)
-                            .reassignSubjects();
-                        if (onSubjectAdded != null) {
-                          onSubjectAdded();
-                        }
+                            .create(subject!.convert());
                         if (context.mounted) {
                           Navigator.pop(context);
                           showMessage(context, context.loc.importedSubject);

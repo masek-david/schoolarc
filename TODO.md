@@ -1,11 +1,7 @@
 # FIX
-check firebase service too many reads???
 update/start listening to firebase on app reopen ???
 
 check all settingtile spacings
-
-timetable reassign subjects hides all other subjects
-timetable reassign subjects move to timetable class
 
 ios calendar still refresh pulls
 
@@ -29,6 +25,7 @@ ios calendar still refresh pulls
     - ✅ add some images???
     - ✅ android widgets
 - ✅ screenshots, readme
+- ✅ actual timetable notifier
 - ✅ push info to the app from web + min required version
 - ⬜ forgot password for firebase + verify email ‼️
 - ⬜ firebase login mail verification / google sign in‼️

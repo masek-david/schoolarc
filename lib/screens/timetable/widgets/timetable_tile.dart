@@ -1,8 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/bakalari/timetable_change.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -20,14 +20,14 @@ class TimetableTile extends StatelessWidget {
     this.rightBottom = false,
   });
 
-  final TimeTableLesson? lesson;
+  final TimetableEntry? lesson;
   final double columnWidth;
   final bool isHighlighted;
   final bool leftTop;
   final bool rightTop;
   final bool leftBottom;
   final bool rightBottom;
-  final void Function(TimeTableLesson? lesson)? onTap;
+  final void Function(TimetableEntry? lesson)? onTap;
 
   BorderRadiusGeometry getBorderRadius({double subtract = 0}) {
     return BorderRadius.only(

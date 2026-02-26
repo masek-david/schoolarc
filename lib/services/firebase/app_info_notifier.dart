@@ -65,9 +65,7 @@ class NeedsUpdateNotifier extends Notifier<bool> {
     final requiredBuild = settings.get(.requiredBuild);
     if (requiredBuild == null) return false;
 
-    // final localBuild = 38;
     final localBuild = int.parse(packageInfo.buildNumber);
-    print(localBuild < requiredBuild ? 'needs' : 'doesnt need');
 
     return localBuild < requiredBuild;
   }

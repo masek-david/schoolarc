@@ -23,7 +23,7 @@ class TimeTableDatabase {
     }
   }
 
-  TimeTable get timeTable {
+  Timetable get timeTable {
     if(MockData.useMock){
       return MockData.timetable;
     }

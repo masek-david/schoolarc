@@ -504,7 +504,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rememberMeWarning =>
-      'If you continue, you won\'t be able to view your current timetable and current homework.';
+      'If you continue, you won\'t be able to view your actual timetable and current homework.';
 
   @override
   String get continueAction => 'Continue';
@@ -529,7 +529,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeDateTo => 'Change date to';
 
   @override
-  String get currentTimetable => 'Current timetable';
+  String get actualTimetable => 'Actual timetable';
 
   @override
   String get noTimetableMessage =>
@@ -1108,7 +1108,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get useExtensions => 'You can use these extensions:';
 
   @override
-  String get bakalariSubtitle => 'Import subjects and view current timetable';
+  String get bakalariSubtitle => 'Import subjects and view actual timetable';
 
   @override
   String get stravaCzSubtitle => 'View meals in your canteen';

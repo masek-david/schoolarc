@@ -27,7 +27,7 @@ import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_
 import 'package:schoolarc/screens/settings/settings_screen.dart';
 import 'package:schoolarc/screens/shared/group_screen.dart';
 import 'package:schoolarc/screens/subjects/subjects_screen.dart';
-import 'package:schoolarc/screens/timetable/current_timetable_screen.dart';
+import 'package:schoolarc/screens/timetable/actual_timetable_screen.dart';
 import 'package:schoolarc/screens/timetable/timetable_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
@@ -252,8 +252,8 @@ class AppConfig extends ConsumerWidget {
                 '/settings': (context) => const SettingsScreen(),
                 '/subjects': (context) => const SubjectsScreen(),
                 '/timetable': (context) => const TimetableScreen(),
-                '/timetable-current': (context) =>
-                    const CurrentTimetableScreen(),
+                '/timetable-actual': (context) =>
+                    const ActualTimetableScreen(),
                 '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
                 '/deleted': (context) => const RecentlyDeletedScreen(),
                 '/database': (context) => const DbInfoScreen(),

@@ -80,7 +80,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
-          ref.read(currentTimetableProvider.notifier).refreshIfOld();
+          ref.read(actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier).refreshIfOld();
           ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
           ref.read(stravaMealsProvider.notifier).refreshIfOld();
           ref.read(examDataProvider.notifier).checkAllIfCompleted();
@@ -96,7 +96,11 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
     // try refreshing data for homescreen
     if (newScreenIndex == 0) {
-      ref.read(currentTimetableProvider.notifier).refreshIfOld();
+      ref
+          .read(
+            actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier,
+          )
+          .refreshIfOld();
       ref.read(stravaMealsProvider.notifier).refreshIfOld();
     }
   }

@@ -17,6 +17,7 @@ import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/baka_service.dart';
 import 'package:schoolarc/services/strava_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/vibrate.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -36,8 +37,20 @@ final uuid = const Uuid();
 late final Vibrate vibrate;
 late final PackageInfo packageInfo;
 final timeoutDuration = const Duration(seconds: 10);
+const millisecondsInDay = 86400000;
+
 
 const noChange = Object();
+
+/// Returns the week number of the week that should be shown in the current timetable - for Saturday and Sunday show next week
+int getCurrentTimetableWeekIndex() {
+  final now = DateTime.now();
+  var week = now.weekSinceEpoch;
+  if (now.weekday >= 6) {
+    week += 1;
+  }
+  return week;
+}
 
 /// returns true for web, windows, macos and linux
 bool needsRefreshButton() {

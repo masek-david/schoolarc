@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class TimeTableEntity extends HiveObject {
@@ -21,13 +21,13 @@ class TimeTableEntity extends HiveObject {
         );
   }
 
-  TimeTable convert(Map<String, Subject> subjects) {
+  Timetable convert(Map<String, Subject> subjects) {
     var convertedTable = table.map(
       (day) {
         return day.map(
           (subjectIndex) {
             final subject = subjects[subjectIndex];
-            return TimeTableLesson(
+            return TimetableEntry(
               subject: subject,
               change: null,
             );
@@ -36,7 +36,7 @@ class TimeTableEntity extends HiveObject {
       },
     ).toList();
 
-    return TimeTable(
+    return Timetable(
       lessonTimes: lessonTimes,
       table: convertedTable,
     );

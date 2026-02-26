@@ -16,6 +16,7 @@ class ErrorInfoUI {
     required this.foregroundColor,
     required this.backgroundColor,
   });
+
   static ErrorInfoUI fromNull(BuildContext context) {
     return ErrorInfoUI(
       text: context.loc.error,

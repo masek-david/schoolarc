@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 
-class LessonTimesBaka {
+class BakaLessonTimes {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   final String name;
   final int id;
 
-  LessonTimesBaka({
+  BakaLessonTimes({
     required this.startTime,
     required this.endTime,
     required this.name,

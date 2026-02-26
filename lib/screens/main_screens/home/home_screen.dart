@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -32,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
       await Future.wait([
         ref.read(bakaHomeworksProvider.notifier).refresh(),
         ref.read(stravaMealsProvider.notifier).refresh(),
-        ref.read(currentTimetableProvider.notifier).refresh(),
+        ref.read(actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier).refresh(),
         if (ref.read(useCloudSyncProvider)) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
@@ -43,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
     return;
   }
 
-  bool isLessonsEmpty(List<(LessonTimes, TimeTableLesson)> lessons) {
+  bool isLessonsEmpty(List<(LessonTimes, TimetableEntry)> lessons) {
     bool isEmpty = true;
     for (var value in lessons) {
       if (!value.$2.isEmpty) {
@@ -163,17 +163,6 @@ class HomeScreen extends ConsumerWidget {
                                     )
                                     .toList(),
                               ),
-                              // child: HomeworkList(
-                              //   hwList: missedHw,
-                              //   onChangedCompletion: (hw, value) =>
-                              //       completeHw(context, ref, hw, value),
-                              //   onDelete: (hw) => deleteHw(context, ref, hw),
-                              //   onConvert: (hw) =>
-                              //       convertHw(context, ref, hw),
-                              //   onEdit: (hw) => editHw(context, hw),
-                              //   showDates: true,
-                              //   text: context.loc.missedHomeworkTitle,
-                              // ),
                             ),
                           if (showToday)
                             CardWithTitle(

@@ -27,7 +27,16 @@ extension BetterDateTime on DateTime {
   /// formats using saved dateformat and using apps language
   String format(BuildContext context) {
     return DateFormat(
-            settings.get(Setting.dateFormat), context.locale.languageCode)
-        .format(this);
+      settings.get(Setting.dateFormat),
+      context.locale.languageCode,
+    ).format(this);
+  }
+
+  /// Returns the number of the week this datetime is part of
+  int get weekSinceEpoch {
+    // substract 4 days, because 1.1.1970 was a thursday
+    return ((millisecondsSinceEpoch - 4 * millisecondsInDay) /
+            (7 * millisecondsInDay))
+        .floor();
   }
 }

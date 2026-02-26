@@ -9,17 +9,17 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
-import 'package:schoolarc/models/bakalari/lesson_time_baka.dart';
+import 'package:schoolarc/models/bakalari/baka_lesson_times.dart';
+import 'package:schoolarc/models/bakalari/baka_subject_model.dart';
+import 'package:schoolarc/models/bakalari/baka_timetable_entry_model.dart';
+import 'package:schoolarc/models/bakalari/baka_timetable_model.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -264,26 +264,18 @@ class BakaService {
     }
   }
 
-  /// gets the current timetable for provided date, saturday and sunday are for next week
-  Future<TimeTable> getCurrentTimetable(Date date) async {
+  /// gets the actual timetable for provided week
+  Future<BakaTimetable> getActualTimetable(int week) async {
     if (!isLoggedIn) {
       await refreshLogin();
     }
 
-    if(MockData.useMock){
-      return MockData.currentTimetable;
-    }
-
-    Date mondayDate;
-    final weekday = date.weekday;
-
-    if (weekday == 6) {
-      mondayDate = date.addDays(2);
-    } else if (weekday == 7) {
-      mondayDate = date.addDays(1);
-    } else {
-      mondayDate = date.addDays(1 - weekday);
-    }
+    final date = Date.fromDateTime(
+      DateTime.fromMillisecondsSinceEpoch(
+        // + 7 days so its 100 % in the middle of the week in every timezone
+        week * 7 * millisecondsInDay + 5 * millisecondsInDay,
+      ),
+    );
 
     final schoolName = await this.schoolName;
     final url = Uri(
@@ -291,7 +283,7 @@ class BakaService {
       host: "$schoolName.bakalari.cz",
       path: "/api/3/timetable/actual",
       queryParameters: {
-        'date': DateFormat('yyyy-MM-dd').format(mondayDate.toDateTimeLocal()),
+        'date': DateFormat('yyyy-MM-dd').format(date.toDateTimeLocal()),
       },
     );
 
@@ -328,22 +320,39 @@ class BakaService {
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
     final lessons = _getLessons(lessonsJson);
-    TimeTable timeTable = TimeTable.withoutTable(
-      lessonTimes: lessons.map((lessonTime) {
-        return lessonTime.toLessonTimes();
-      }).toList(),
-    );
-    timeTable.dates = mondayDate.allDaysInThisWeek(
+
+    final lessonTimes = lessons
+        .map(
+          (lessonTime) => lessonTime.toLessonTimes(),
+        )
+        .toList();
+    final dates = date.allDaysInThisWeek(
       settings.get(Setting.weekStartsOnMonday),
     );
-
-    var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
-    final bakaIdToSubjectIndex = await _bakaSubjectIdToSubject(
-      subjectsJson,
-      createIfMissing: false,
-      ref: null,
+    final table = List.generate(
+      7,
+      (_) => List.generate(
+        lessonTimes.length,
+        (_) => BakaTimetableEntry.empty(),
+      ),
     );
+    
+    // SUBJECTS
+    var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
+    final subjects = <String, BakaSubject>{};
+    for (var subjectJson in subjectsJson) {
+      String bakaId = subjectJson['Id'];
+      String shortcut = subjectJson['Abbrev'];
+      String name = subjectJson['Name'];
 
+      subjects[bakaId] = BakaSubject(
+        id: bakaId,
+        name: name,
+        shortcut: shortcut,
+      );
+    }
+
+    // TEACHERS
     final teachersJson = parsedJson['Teachers'] as List<dynamic>;
     Map<String, Teacher> teachersMap = {};
     for (final teacherJson in teachersJson) {
@@ -355,6 +364,7 @@ class BakaService {
       teachersMap.addAll({teacherJson['Id']: teacher});
     }
 
+    // ROOMS
     final roomsJson = parsedJson['Rooms'] as List<dynamic>;
     Map<String, String> roomsMap = {};
     for (final roomJson in roomsJson) {
@@ -371,10 +381,9 @@ class BakaService {
       ) {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
-        String? subjectIdBaka = subjectJson['SubjectId'];
+        String? bakaSubjectId = subjectJson['SubjectId'];
         String? teacherId = subjectJson['TeacherId'];
         String? roomId = subjectJson['RoomId'];
-        final subject = bakaIdToSubjectIndex[subjectIdBaka];
         int hourId = subjectJson['HourId'];
         final changeJson = subjectJson['Change'];
 
@@ -391,10 +400,10 @@ class BakaService {
         final teacher = teachersMap[teacherId];
         final room = roomsMap[roomId];
 
-        timeTable.table[weekday][lessons.indexWhere(
+        table[weekday][lessons.indexWhere(
           (lesson) => lesson.id == hourId,
-        )] = TimeTableLesson(
-          subject: subject,
+        )] = BakaTimetableEntry(
+          bakaSubject: subjects[bakaSubjectId],
           change: change,
           teacher: teacher,
           room: room,
@@ -402,7 +411,11 @@ class BakaService {
       }
     }
 
-    return timeTable;
+    return BakaTimetable(
+      lessonTimes: lessonTimes,
+      dates: dates,
+      table: table,
+    );
   }
 
   /// To each bakalari subject ID maps a local subject, based on the saved bakaId
@@ -459,8 +472,8 @@ class BakaService {
     return bakaSubjectIdToSubject;
   }
 
-  List<LessonTimesBaka> _getLessons(List<dynamic> lessonsJson) {
-    List<LessonTimesBaka> lessons = [];
+  List<BakaLessonTimes> _getLessons(List<dynamic> lessonsJson) {
+    List<BakaLessonTimes> lessons = [];
     for (var lessonJson in lessonsJson) {
       final int id = lessonJson['Id'];
       final String name = lessonJson['Caption'];
@@ -481,7 +494,7 @@ class BakaService {
       );
 
       lessons.add(
-        LessonTimesBaka(
+        BakaLessonTimes(
           startTime: startTime,
           endTime: endTime,
           name: name,

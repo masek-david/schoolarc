@@ -174,7 +174,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get description => 'Popis';
 
   @override
-  String get home => 'Domů';
+  String get home => 'Domov';
 
   @override
   String get calendar => 'Kalendář';
@@ -539,7 +539,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get changeDateTo => 'Změnit datum na';
 
   @override
-  String get currentTimetable => 'Aktuální rozvrh';
+  String get actualTimetable => 'Aktuální rozvrh';
 
   @override
   String get noTimetableMessage =>

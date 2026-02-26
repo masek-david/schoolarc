@@ -327,7 +327,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             ],
           ),
         if (kDebugMode)
-          // TODO
+          // TODO firebase verify email
           OutlinedButton(
             onPressed: useCloudSync
                 ? () async {

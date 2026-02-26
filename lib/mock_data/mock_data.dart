@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
+import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class MockData {
@@ -405,7 +405,7 @@ class MockData {
     ),
   };
 
-  static final currentTimetable = TimeTable(
+  static final actualTimetable = Timetable(
     dates: List.generate(
       5,
       (index) => _today.addDays(index),
@@ -445,64 +445,64 @@ class MockData {
     table: [
       // Monday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['1'],
           room: '102',
           change: BakaChange(type: .substitution, description: ''),
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: null,
           room: null,
           change: BakaChange(type: .removed, description: 'Cancelled'),
           teacher: null,
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // Tuesday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['9'],
           room: 'Gym',
           change: BakaChange(type: .added, description: 'Substitute teacher'),
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['9'],
           room: 'Gym',
           change: BakaChange(type: .added, description: 'Substitute teacher'),
@@ -511,98 +511,98 @@ class MockData {
       ],
       // Wednesday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           change: BakaChange(type: .added, description: ''),
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // Thursday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['3'],
           room: '104',
           change: BakaChange(type: .added, description: 'Group work'),
           teacher: Teacher(name: 'Mrs. White', shortcut: 'W'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimeTableLesson.empty(),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
+        TimetableEntry.empty(),
       ],
       // Friday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           change: BakaChange(type: .removed, description: 'Teacher absent'),
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // saturday
-      List.filled(6, TimeTableLesson.empty()),
+      List.filled(6, TimetableEntry.empty()),
       // sunday
-      List.filled(6, TimeTableLesson.empty()),
+      List.filled(6, TimetableEntry.empty()),
     ],
   );
   
-  static final timetable = TimeTable(
+  static final timetable = Timetable(
     dates: List.generate(
       5,
       (index) => _today.addDays(index),
@@ -642,61 +642,61 @@ class MockData {
     table: [
       // Monday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: null,
           room: null,
           teacher: null,
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // Tuesday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['9'],
           room: 'Gym',
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['9'],
           room: 'Gym',
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
@@ -704,91 +704,91 @@ class MockData {
       ],
       // Wednesday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // Thursday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['3'],
           room: '104',
           teacher: Teacher(name: 'Mrs. White', shortcut: 'W'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimeTableLesson.empty(),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
+        TimetableEntry.empty(),
       ],
       // Friday
       [
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimeTableLesson(
+        TimetableEntry(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimeTableLesson.empty(),
+        TimetableEntry.empty(),
       ],
       // saturday
-      List.filled(6, TimeTableLesson.empty()),
+      List.filled(6, TimetableEntry.empty()),
       // sunday
-      List.filled(6, TimeTableLesson.empty()),
+      List.filled(6, TimetableEntry.empty()),
     ],
   );
 

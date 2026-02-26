@@ -15,7 +15,6 @@ class ChangelogScreen extends ConsumerWidget {
         title: const Text('Changelog'),
       ),
       body: FutureBuilder(
-        // TODO test
         future: rootBundle.loadString('assets/changelog.md'),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

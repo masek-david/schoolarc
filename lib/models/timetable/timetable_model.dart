@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/models/bakalari/timetable_lesson_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 
-class TimeTable {
+class Timetable {
   List<LessonTimes> lessonTimes;
   List<Date>? dates;
-  late List<List<TimeTableLesson>> table;
+  late List<List<TimetableEntry>> table;
 
-  TimeTable({
+  Timetable({
     required this.lessonTimes,
     required this.table,
     this.dates,
   });
 
-  /// creates [TimeTable] with lessonTimes, but empty table, so it can be added later
-  TimeTable.withoutTable({
+  /// creates [Timetable] with lessonTimes, but empty table, so it can be added later
+  Timetable.withoutTable({
     required this.lessonTimes,
   }) {
     table = List.generate(
       7,
-      (_) => List.generate(lessonTimes.length, (_) => TimeTableLesson.empty()),
+      (_) => List.generate(lessonTimes.length, (_) => TimetableEntry.empty()),
     );
   }
 
   /// Returns upcoming lessons for date and time
-  List<(LessonTimes, TimeTableLesson)> getUpcomingLessons(DateTime? date) {
-    List<(LessonTimes, TimeTableLesson)> upcomingLessons = [];
+  List<(LessonTimes, TimetableEntry)> getUpcomingLessons(DateTime? date) {
+    List<(LessonTimes, TimetableEntry)> upcomingLessons = [];
 
     date ??= DateTime.now();
     date = date.toLocal();
@@ -37,8 +37,10 @@ class TimeTable {
     for (int i = 0; i < lessonTimes.length; i++) {
       final lesson = lessonTimes[i];
 
-      if (TimeOfDay(hour: date.hour, minute: date.minute)
-          .isBefore(lesson.endTime)) {
+      if (TimeOfDay(
+        hour: date.hour,
+        minute: date.minute,
+      ).isBefore(lesson.endTime)) {
         upcomingLessonTimes.addAll({i: lesson});
       }
     }

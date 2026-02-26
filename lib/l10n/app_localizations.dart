@@ -899,7 +899,7 @@ abstract class AppLocalizations {
   /// No description provided for @rememberMeWarning.
   ///
   /// In en, this message translates to:
-  /// **'If you continue, you won\'t be able to view your current timetable and current homework.'**
+  /// **'If you continue, you won\'t be able to view your actual timetable and current homework.'**
   String get rememberMeWarning;
 
   /// No description provided for @continueAction.
@@ -944,11 +944,11 @@ abstract class AppLocalizations {
   /// **'Change date to'**
   String get changeDateTo;
 
-  /// No description provided for @currentTimetable.
+  /// No description provided for @actualTimetable.
   ///
   /// In en, this message translates to:
-  /// **'Current timetable'**
-  String get currentTimetable;
+  /// **'Actual timetable'**
+  String get actualTimetable;
 
   /// No description provided for @noTimetableMessage.
   ///
@@ -1917,7 +1917,7 @@ abstract class AppLocalizations {
   /// No description provided for @bakalariSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Import subjects and view current timetable'**
+  /// **'Import subjects and view actual timetable'**
   String get bakalariSubtitle;
 
   /// No description provided for @stravaCzSubtitle.
