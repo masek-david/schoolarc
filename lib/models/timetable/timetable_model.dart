@@ -5,9 +5,9 @@ import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 
 class Timetable {
-  List<LessonTimes> lessonTimes;
-  List<Date>? dates;
-  late List<List<TimetableEntry>> table;
+  final List<LessonTimes> lessonTimes;
+  final List<Date>? dates;
+  late final List<List<TimetableEntry>> table;
 
   Timetable({
     required this.lessonTimes,
@@ -16,13 +16,14 @@ class Timetable {
   });
 
   /// creates [Timetable] with lessonTimes, but empty table, so it can be added later
-  Timetable.withoutTable({
-    required this.lessonTimes,
+  factory Timetable.withoutTable({
+    required List<LessonTimes> lessonTimes,
   }) {
-    table = List.generate(
+    final table = List.generate(
       7,
       (_) => List.generate(lessonTimes.length, (_) => TimetableEntry.empty()),
     );
+    return Timetable(lessonTimes: lessonTimes, table: table);
   }
 
   /// Returns upcoming lessons for date and time

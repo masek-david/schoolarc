@@ -27,10 +27,10 @@ ios calendar still refresh pulls
 - ✅ screenshots, readme
 - ✅ actual timetable notifier
 - ✅ push info to the app from web + min required version
-- ⬜ forgot password for firebase + verify email ‼️
-- ⬜ firebase login mail verification / google sign in‼️
+- ⬜ firebase verify email + forgot password for firebase ‼️
+- ⬜ google sign in ???
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
-- ⬜ plus - 5 usd, limit to 100 users?
+- ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?
     - ⬜ add to onboarding
 
 # FEATURES

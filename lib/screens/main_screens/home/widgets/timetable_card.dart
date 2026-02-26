@@ -78,7 +78,7 @@ class TimetableCard extends ConsumerWidget {
             ref.read(actualTimetableDataProvider(week).notifier).refreshIfOld();
             Navigator.restorablePushNamed(
               context,
-              '/timetable-current',
+              '/timetable-actual',
             );
           },
           icon: const Icon(
