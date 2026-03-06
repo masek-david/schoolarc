@@ -20,7 +20,8 @@ class SettingTile extends StatelessWidget {
     this.isLast = false,
     this.isFirst = false,
     this.heroTag,
-    this.titleColor,
+    this.foregroundColor,
+    this.backgroundColor,
     this.hapticFeedback = true,
   });
 
@@ -36,7 +37,8 @@ class SettingTile extends StatelessWidget {
   final bool isLast;
   final bool isFirst;
   final String? heroTag;
-  final Color? titleColor;
+  final Color? foregroundColor;
+  final Color? backgroundColor;
   final bool hapticFeedback;
 
   final animationDuration = const Duration(milliseconds: 200);
@@ -162,7 +164,7 @@ class SettingTile extends StatelessWidget {
 
   Widget buildText(BuildContext context) {
     final color =
-        titleColor ??
+        foregroundColor ??
         (highlighted ? context.col.onPrimaryContainer : context.col.onSurface);
 
     return SizedBox(
@@ -197,9 +199,11 @@ class SettingTile extends StatelessWidget {
       child: Material(
         borderRadius: getBorder(),
         clipBehavior: Clip.antiAlias,
-        color: highlighted
-            ? context.col.primaryContainer
-            : context.col.surfaceContainerLowest,
+        color:
+            backgroundColor ??
+            (highlighted
+                ? context.col.primaryContainer
+                : context.col.surfaceContainerLowest),
         child: InkWell(
           splashFactory: InkSparkle.splashFactory,
           onTap: enabled && onTap != null
@@ -280,7 +284,13 @@ class SettingTile extends StatelessWidget {
                                 child: buildText(context),
                               )
                             : buildText(context),
-                        if (subtitle != null) Text(subtitle!),
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            style: context.txt.bodyMedium!.copyWith(
+                              color: foregroundColor,
+                            ),
+                          ),
                       ],
                     ),
                   ),

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
@@ -96,7 +96,9 @@ class HomeworksScreen extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ExpressiveRefreshIndicator(
-              enabled: ref.watch(useCloudSyncProvider) ? true : false,
+              enabled: ref.watch(firebaseLoginProvider).value == null
+                  ? false
+                  : true,
               onRefresh: () async {
                 try {
                   await ref.read(hwDataProvider.notifier).syncAll();

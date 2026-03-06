@@ -15,6 +15,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/baka_service.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/strava_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
@@ -32,6 +33,7 @@ final timetableDb = TimeTableDatabase();
 final bakaHwDb = BakaHomeworksDatabase();
 final stravaService = StravaService();
 final bakaService = BakaService();
+final fireService = FirebaseService();
 final logsService = LogsDatabase();
 final uuid = const Uuid();
 late final Vibrate vibrate;
@@ -163,7 +165,7 @@ void showMessage(
           ),
           ...actions,
           if (showLoading)
-            MyExpressiveLoadingIndicator(
+            ExpressiveLoadingIndicator(
               size: 28,
               color: context.col.onPrimary,
             ),

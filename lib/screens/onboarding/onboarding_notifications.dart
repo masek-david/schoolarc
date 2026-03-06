@@ -65,7 +65,7 @@ class OnboardingNotifications extends StatelessWidget {
           AnimatedItem(
             builder: (isShown) {
               return SettingTile(
-                titleColor: context.col.surfaceContainerHighest,
+                foregroundColor: context.col.surfaceContainerHighest,
                 isLast: true,
                 title: context.loc.cancel,
                 leading: Icon(

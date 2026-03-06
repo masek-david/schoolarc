@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
@@ -54,7 +54,7 @@ class SubjectsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.loc.subjects),
         actions: [
-          if (kIsWeb && ref.watch(useCloudSyncProvider))
+          if (kIsWeb && ref.watch(firebaseLoginProvider).value != null)
             IconButton(
               onPressed: () => onRefresh(context, ref),
               icon: const Icon(Icons.refresh_outlined),
@@ -79,10 +79,12 @@ class SubjectsScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: subjects.isEmpty
               ? EmptyMessage(
-                message: context.loc.noSubjectsMessage,
-              )
+                  message: context.loc.noSubjectsMessage,
+                )
               : ExpressiveRefreshIndicator(
-                  enabled: ref.watch(useCloudSyncProvider) ? true : false,
+                  enabled: ref.watch(firebaseLoginProvider).value == null
+                      ? false
+                      : true,
                   onRefresh: () => onRefresh(context, ref),
                   child: AnimatedReorderableListView(
                     onReorderStart: (index) => vibrate.medium(),

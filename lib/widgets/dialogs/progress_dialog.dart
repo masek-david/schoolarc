@@ -56,7 +56,7 @@ class ProgressDialogState extends State<ProgressDialog> {
           alignment: Alignment.center,
           children: [
             widget.goal == 0
-                ? MyExpressiveLoadingIndicator.big(
+                ? ExpressiveLoadingIndicator.big(
                     useHaptics: widget.useHaptics,
                   )
                 : CircularWavyProgressIndicator(

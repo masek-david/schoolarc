@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/screens/shared/group_screen.dart';
-import 'package:schoolarc/screens/shared/username_text.dart';
+import 'package:schoolarc/screens/shared/nickname_text.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';

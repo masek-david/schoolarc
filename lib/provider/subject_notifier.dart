@@ -7,7 +7,6 @@ import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final subjectsProvider =
@@ -93,24 +92,21 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref
-        .read(firebaseServiceProvider)
-        .listenSubjects()
-        .listen(
-          (event) async {
-            ref.read(firebaseActivityProvider.notifier).read(0);
+    listenFirebase = fireService.listenSubjects().listen(
+      (event) async {
+        ref.read(firebaseActivityProvider.notifier).read(0);
 
-            await checkFireSubject(event);
-          },
-          onError: (error) {
-            log('error listening to firebase subjects: ${error.toString()}');
-          },
-        );
+        await checkFireSubject(event);
+      },
+      onError: (error) {
+        log('error listening to firebase subjects: ${error.toString()}');
+      },
+    );
   }
 
   Future<void> syncAll() async {
     await listenToFirebase();
-    final fireSubjects = await ref.read(firebaseServiceProvider).getSubjects();
+    final fireSubjects = await fireService.getSubjects();
 
     fireSubjects?.forEach(
       (element) async {
@@ -151,11 +147,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     state = {...state, id: subject.convert(id)};
 
     if (syncWithFire) {
-      await ref
-          .read(firebaseServiceProvider)
-          .createSubject(
-            subject.convert(id),
-          );
+      await fireService.createSubject(subject.convert(id));
     }
 
     return subject.convert(id);
@@ -173,7 +165,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     state = {...state, edited.id: edited};
 
     if (syncWithFire) {
-      ref.read(firebaseServiceProvider).updateSubjects([edited]);
+      fireService.updateSubjects([edited]);
     }
   }
 
@@ -257,7 +249,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
     }
 
     state = {...state};
-    await ref.read(firebaseServiceProvider).deleteSubjects(subjects);
+    await fireService.deleteSubjects(subjects);
   }
 
   Future<void> _checkForDeleted() async {
@@ -314,7 +306,7 @@ class SubjectNotifier extends Notifier<Map<String, Subject>> {
       // print(
       //     '\u001b[1;93mediting from hive: ${fireSubject.name}: ${fireSubject.order}');
 
-      ref.read(firebaseServiceProvider).updateSubjects([
+      fireService.updateSubjects([
         localSubject.copyWith(id: fireSubject.id),
       ]);
     } else {

@@ -5,7 +5,6 @@ import 'package:schoolarc/utils/globals.dart';
 
 final useMealsProvider = settingProvider<bool>(Setting.useMeals);
 final useBakaProvider = settingProvider<bool>(Setting.useBakalari);
-final useCloudSyncProvider = settingProvider<bool>(Setting.useCloudSync);
 
 final debugModeProvider = settingProvider<bool>(Setting.debugMode);
 

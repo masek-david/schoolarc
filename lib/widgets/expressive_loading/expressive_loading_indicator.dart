@@ -8,8 +8,8 @@ import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
-class MyExpressiveLoadingIndicator extends StatefulWidget {
-  const MyExpressiveLoadingIndicator({
+class ExpressiveLoadingIndicator extends StatefulWidget {
+  const ExpressiveLoadingIndicator({
     super.key,
     this.progress,
     this.size = 48,
@@ -26,24 +26,23 @@ class MyExpressiveLoadingIndicator extends StatefulWidget {
   final bool useHaptics;
   final double padding;
 
-  factory MyExpressiveLoadingIndicator.big({
+  factory ExpressiveLoadingIndicator.big({
     bool shown = true,
     bool useHaptics = false,
   }) {
-    return MyExpressiveLoadingIndicator(
-      size: 72,
-      padding: 16,
+    return ExpressiveLoadingIndicator(
+      size: 132,
       shown: shown,
       useHaptics: useHaptics,
     );
   }
 
   @override
-  State<MyExpressiveLoadingIndicator> createState() =>
-      _MyExpressiveLoadingIndicatorState();
+  State<ExpressiveLoadingIndicator> createState() =>
+      _ExpressiveLoadingIndicatorState();
 }
 
-class _MyExpressiveLoadingIndicatorState extends State<MyExpressiveLoadingIndicator>
+class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
     with TickerProviderStateMixin {
   static final List<RoundedPolygon> shapes = [
     MaterialShapes.softBurst,
@@ -193,22 +192,26 @@ class _MyExpressiveLoadingIndicatorState extends State<MyExpressiveLoadingIndica
             _morphController.value,
           )!;
         }
-        final scale = 1 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
+        final scale = 0.7 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
 
-        return SizedBox(
-          height: (widget.size + widget.padding * 2) * _appearController.value,
-          child: Transform.scale(
-            scale: _appearController.value + 0.1,
-            child: Transform.rotate(
-              angle: angle,
-              child: Transform.scale(
-                scale: scale,
-                child: Container(
-                  width: widget.size,
-                  height: widget.size,
-                  decoration: ShapeDecoration(
-                    color: widget.color ?? context.col.primary,
-                    shape: shape,
+        return Padding(
+          padding: EdgeInsets.all(widget.padding),
+          child: SizedBox(
+            height: widget.size,
+            width: widget.size,
+            child: Transform.scale(
+              scale: _appearController.value + 0.1,
+              child: Transform.rotate(
+                angle: angle,
+                child: Transform.scale(
+                  scale: scale,
+                  child: Container(
+                    width: widget.size,
+                    height: widget.size,
+                    decoration: ShapeDecoration(
+                      color: widget.color ?? context.col.primary,
+                      shape: shape,
+                    ),
                   ),
                 ),
               ),

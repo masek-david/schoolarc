@@ -18,7 +18,7 @@ class ChangelogScreen extends ConsumerWidget {
         future: rootBundle.loadString('assets/changelog.md'),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return MyExpressiveLoadingIndicator.big(
+            return ExpressiveLoadingIndicator.big(
               useHaptics: ref.read(themeExpressiveHapticsProvider),
             );
           }

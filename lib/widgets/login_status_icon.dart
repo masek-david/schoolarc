@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -11,8 +12,8 @@ class LoginStatusIcon extends ConsumerWidget {
     super.key,
   });
 
-  final AsyncNotifierProvider<AsyncNotifier<bool>, bool> provider;
-  final NotifierProvider<Notifier<bool>, bool> showProvider;
+  final ProviderListenable<AsyncValue<bool>> provider;
+  final ProviderListenable<bool> showProvider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,14 +37,7 @@ class LoginStatusIcon extends ConsumerWidget {
 
         return FilledIcon(info.icon, color: info.foregroundColor);
       },
-      loading: () => const SizedBox(
-        height: 28,
-        width: 28,
-        child: Padding(
-          padding: EdgeInsets.all(4),
-          child: MyExpressiveLoadingIndicator(size: 20),
-        ),
-      ),
+      loading: () => const ExpressiveLoadingIndicator(size: 24),
     );
   }
 }

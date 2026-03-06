@@ -60,7 +60,7 @@ class DisabledException implements Exception {
   final DisabledErrorCodes code;
 }
 
-enum ApiErrorCodes { cantLogIn, passwordCantBeChanged, cantDeleteData }
+enum ApiErrorCodes { cantLogIn, passwordCantBeChanged, emailCantBeChanged, cantDeleteData }
 
 class ApiException implements Exception {
   ApiException(this.apiError, {this.code});

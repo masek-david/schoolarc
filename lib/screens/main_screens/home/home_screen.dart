@@ -7,7 +7,6 @@ import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
@@ -33,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
         ref.read(bakaHomeworksProvider.notifier).refresh(),
         ref.read(stravaMealsProvider.notifier).refresh(),
         ref.read(actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier).refresh(),
-        if (ref.read(useCloudSyncProvider)) syncAllTasks(ref),
+        if (fireService.hasUser) syncAllTasks(ref),
       ]);
     } on Object catch (e) {
       if (context.mounted) {

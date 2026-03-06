@@ -59,7 +59,7 @@ class ThemePage extends ConsumerWidget {
         if (useDeviceColor)
           SettingTile(
             title: loc.themeSystemColorWarning,
-            titleColor: context.col.error,
+            foregroundColor: context.col.error,
           ),
         SettingTile(
           title: loc.themeAppColor,

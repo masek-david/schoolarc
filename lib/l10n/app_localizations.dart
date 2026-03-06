@@ -2268,11 +2268,23 @@ abstract class AppLocalizations {
   /// **'# Privacy Policy\nEffective Date: 11. January 2026\nBy using Schoolarc, you agree to this Privacy Policy. This Privacy Policy may be updated.\nSchoolarc is offline first, however it includes some online features.\nThe developer is not responsible for any data loss caused by device failure, app removal, software bugs, or unauthorized access.\n## Cloud Sync\n### What data is collected\n- Email address - used for login and account association\n- Subjects, exams, homework - uploaded to the cloud and synchronized between your devices\nYour data is not used for advertising or marketing.\n### Your rights\nYou have the right to:\n- Request a copy of your data\n- Request your account and all your data to be deleted\nBoth can be done directly in the app.\n### Third-party services\nCloud Sync data is stored on servers located in the European Union (Belgium) using Google Cloud Firebase.'**
   String get privacyPolicy;
 
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
   /// No description provided for @privacyPolicyAgree.
   ///
   /// In en, this message translates to:
   /// **'By continuing, you agree to our Privacy Policy (click to view)'**
   String get privacyPolicyAgree;
+
+  /// No description provided for @viewSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'View source code (Github)'**
+  String get viewSourceCode;
 
   /// No description provided for @cloudSyncDisabled.
   ///

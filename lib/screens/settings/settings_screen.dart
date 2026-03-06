@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
-import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/import_export_row.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
@@ -48,16 +48,17 @@ class SettingsScreen extends ConsumerWidget {
         if (NotificationSender.isCompatiblePlatform() || kDebugMode)
           SettingTile(
             heroTag: 'notifications',
-              title: loc.upcomingDayNotifications,
-              subtitle: loc.upcomingDayNotificationsDescription,
-              leading: const Icon(Icons.notifications_outlined),
-              trailing: const Icon(Icons.keyboard_arrow_right),
-              onTap: (context) {
-                Navigator.restorablePushNamed(
-                  context,
-                  '/settings/notifications',
-                );
-              }),
+            title: loc.upcomingDayNotifications,
+            subtitle: loc.upcomingDayNotificationsDescription,
+            leading: const Icon(Icons.notifications_outlined),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: (context) {
+              Navigator.restorablePushNamed(
+                context,
+                '/settings/notifications',
+              );
+            },
+          ),
         SettingTile(
           heroTag: 'localizations',
           title: loc.localization,
@@ -106,10 +107,9 @@ class SettingsScreen extends ConsumerWidget {
           leading: const Icon(Icons.cloud_outlined),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/cloudsync'),
-          trailing: LoginStatusIcon(
-            provider: firebaseLoginProvider,
-            showProvider: useCloudSyncProvider,
-          ),
+          trailing: ref.watch(firebaseLoginProvider).value == null
+              ? null
+              : const Icon(Icons.check_circle, color: Colors.green),
         ),
         SettingTile(
           heroTag: 'about',

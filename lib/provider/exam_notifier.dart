@@ -9,7 +9,6 @@ import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final examDataProvider = NotifierProvider<ExamNotifier, Map<String, ExamData>>(
@@ -177,19 +176,16 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref
-        .read(firebaseServiceProvider)
-        .listenExams()
-        .listen(
-          (event) async {
-            ref.read(firebaseActivityProvider.notifier).read(2);
+    listenFirebase = fireService.listenExams().listen(
+      (event) async {
+        ref.read(firebaseActivityProvider.notifier).read(2);
 
-            await checkFireExam(event);
-          },
-          onError: (error) {
-            log('error listening to firebase exams: ${error.toString()}');
-          },
-        );
+        await checkFireExam(event);
+      },
+      onError: (error) {
+        log('error listening to firebase exams: ${error.toString()}');
+      },
+    );
   }
 
   /// at midnight update state with exams for yesterday being completed
@@ -226,7 +222,7 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
   /// checks all online and offline
   Future<void> syncAll() async {
     await listenToFirebase();
-    final fireExams = await ref.read(firebaseServiceProvider).getAllExams();
+    final fireExams = await fireService.getAllExams();
 
     fireExams?.forEach(
       (element) {
@@ -274,7 +270,7 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
     state = {...state, id: exam};
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider).createExam(exam);
+      await fireService.createExam(exam);
     }
 
     return;
@@ -309,7 +305,7 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
 
     examsDb.put(edited.id, edited.toEntity());
     if (syncWithFire) {
-      ref.read(firebaseServiceProvider).updateExams([edited]);
+      fireService.updateExams([edited]);
     }
 
     state = {...state, edited.id: edited};
@@ -417,7 +413,7 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
     }
 
     state = {...state};
-    await ref.read(firebaseServiceProvider).deleteExams(exams);
+    await fireService.deleteExams(exams);
   }
 
   Future<void> _checkForDeleted() async {
@@ -465,7 +461,7 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
       // print(
       //     '\u001b[1;93mediting exam from hive: ${fireExam.toString()}');
 
-      ref.read(firebaseServiceProvider).updateExams([
+      fireService.updateExams([
         localExam.copyWith(id: fireExam.id),
       ]);
     }

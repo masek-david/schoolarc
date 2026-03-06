@@ -152,7 +152,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
                           showMessage(context, context.loc.importSuccess);
                           vibrate.success();
                         }
-                        if (ref.watch(useCloudSyncProvider)) {
+                        if (fireService.hasUser) {
                           syncAllTasks(ref);
                         }
                         if (onDataSyncSuccess != null) {

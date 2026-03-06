@@ -164,7 +164,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
         Center(
-          child: MyExpressiveLoadingIndicator.big(
+          child: ExpressiveLoadingIndicator.big(
             shown: isLoading,
             useHaptics: ref.read(themeExpressiveHapticsProvider),
           ),

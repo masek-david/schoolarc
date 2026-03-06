@@ -2,8 +2,13 @@
 update/start listening to firebase on app reopen ???
 
 check all settingtile spacings
+check all expressiveloadingindicator sizes
 
 ios calendar still refresh pulls
+
+should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
+
+translations
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

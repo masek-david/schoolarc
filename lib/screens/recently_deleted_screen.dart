@@ -8,7 +8,6 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
@@ -32,42 +31,46 @@ class RecentlyDeletedScreen extends ConsumerWidget {
         {
           final hw = item as Homework;
           itemName = hw.text;
-          onRevert = () => ref.read(hwDataProvider.notifier).revertDelete(hw.toData());
+          onRevert = () =>
+              ref.read(hwDataProvider.notifier).revertDelete(hw.toData());
         }
       case const (Exam):
         {
           final exam = item as Exam;
           itemName = exam.text;
-          onRevert = () => ref.read(examDataProvider.notifier).revertDelete(exam.toData());
+          onRevert = () =>
+              ref.read(examDataProvider.notifier).revertDelete(exam.toData());
         }
       case const (Subject):
         {
           final subject = item as Subject;
           itemName = subject.name;
-          onRevert =
-              () => ref.read(subjectsProvider.notifier).revertDelete(subject);
+          onRevert = () =>
+              ref.read(subjectsProvider.notifier).revertDelete(subject);
         }
     }
 
     showDialogAdaptive(
-        context: context,
-        title: Text('${context.loc.recover}?'),
-        content: Text('${context.loc.recover} \'$itemName\'?'),
-        actions: [
-          adaptiveDialogButton(
-            context: context,
-            child: Text(context.loc.cancel),
-            onPressed: () => Navigator.pop(context),
-          ),
-          adaptiveDialogButton(
-              context: context,
-              isDefaultAction: true,
-              child: Text(context.loc.recover),
-              onPressed: () {
-                onRevert();
-                Navigator.pop(context);
-              }),
-        ]);
+      context: context,
+      title: Text('${context.loc.recover}?'),
+      content: Text('${context.loc.recover} \'$itemName\'?'),
+      actions: [
+        adaptiveDialogButton(
+          context: context,
+          child: Text(context.loc.cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        adaptiveDialogButton(
+          context: context,
+          isDefaultAction: true,
+          child: Text(context.loc.recover),
+          onPressed: () {
+            onRevert();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
 
   @override
@@ -93,7 +96,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                   context: context,
                   child: Text(context.loc.close),
                   onPressed: () => Navigator.pop(context),
-                )
+                ),
               ],
             ),
             icon: const Icon(Icons.info_outline),
@@ -115,7 +118,8 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                 switch (item.runtimeType) {
                   case const (Homework):
                     {
-                      daysLeft = 7 +
+                      daysLeft =
+                          7 +
                           (item as Homework).timestamp.difference(now).inDays;
                       tile = HwTile(
                         hw: item,
@@ -141,16 +145,15 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                     }
                   case const (Subject):
                     {
-                      daysLeft = 7 +
+                      daysLeft =
+                          7 +
                           (item as Subject).timestamp.difference(now).inDays;
                       tile = SubjectTile(
                         subject: item,
                         onDelete: kDebugMode
                             ? () {
                                 subjectsDb.delete(item.id);
-                                ref
-                                    .read(firebaseServiceProvider)
-                                    .deleteSubjects([item]);
+                                fireService.deleteSubjects([item]);
                               }
                             : null,
                         onTap: () =>

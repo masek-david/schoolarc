@@ -57,7 +57,7 @@ class AppInfoScreen extends ConsumerWidget {
               context.loc.pleaseUpdateApp,
               style: context.txt.titleMedium,
             ),
-            if (data.isLoading) MyExpressiveLoadingIndicator.big(),
+            if (data.isLoading) ExpressiveLoadingIndicator.big(),
             if (data.value?.messageForOldVersion != null)
               Container(
                 width: double.infinity,

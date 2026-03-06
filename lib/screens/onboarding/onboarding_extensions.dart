@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
-import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/screens/bakalari/bakalari_login_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 
@@ -24,7 +24,6 @@ class OnboardingExtensions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final useBaka = ref.watch(useBakaProvider);
     final useMeals = ref.watch(useMealsProvider);
-    final useCloudSync = ref.watch(useCloudSyncProvider);
 
     return SafeArea(
       child: AnimatedPage(
@@ -42,32 +41,23 @@ class OnboardingExtensions extends ConsumerWidget {
           ),
           AnimatedItem(
             builder: (isShown) {
-              return SettingTile.withSwitch(
+              return SettingTile(
                 heroTag: 'cloudsync',
                 isFirst: true,
                 title: context.loc.cloudSync,
                 subtitle: context.loc.cloudSyncSubtitle,
-                value: useCloudSync,
-                onChanged: (value) {
-                  ref.read(useCloudSyncProvider.notifier).set(value);
-                },
-                leading: useCloudSync
-                    ? LoginStatusIcon(
-                        provider: firebaseLoginProvider,
-                        showProvider: useCloudSyncProvider,
-                      )
-                    : null,
-                newLineAction: useCloudSync
-                    ? FilledButton.tonal(
-                        onPressed: () {
-                          Navigator.restorablePushNamed(
-                            context,
-                            '/cloudsync',
-                          );
-                        },
-                        child: Text(context.loc.login),
-                      )
-                    : null,
+                leading: ref.watch(firebaseLoginProvider).value == null
+                    ? null
+                    : const Icon(Icons.check_circle, color: Colors.green),
+                newLineAction: FilledButton.tonal(
+                  onPressed: () {
+                    Navigator.restorablePushNamed(
+                      context,
+                      '/cloudsync',
+                    );
+                  },
+                  child: Text(context.loc.login),
+                ),
               );
             },
           ),

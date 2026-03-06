@@ -24,8 +24,8 @@ class _LoadingTestState extends State<LoadingTest> {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 10,
           children: [
-            MyExpressiveLoadingIndicator(progress: value),
-            const MyExpressiveLoadingIndicator(),
+            ExpressiveLoadingIndicator(progress: value),
+            const ExpressiveLoadingIndicator(),
             LoadingIconButton(onPressed: () {}, isLoading: true),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -42,14 +43,25 @@ class AboutApp extends StatelessWidget {
               Navigator.restorablePushNamed(context, '/changelog'),
         ),
         SettingTile(
-            title: context.loc.reportBug,
-            subtitle: context.loc.reportBugPolicy,
-            leading: const Icon(Icons.bug_report_outlined),
-            onTap: sendBugReport),
+          title: context.loc.reportBug,
+          subtitle: context.loc.reportBugPolicy,
+          leading: const Icon(Icons.bug_report_outlined),
+          onTap: sendBugReport,
+        ),
         SettingTile(
           title: context.loc.viewLogs,
           leading: const Icon(Icons.data_array),
           onTap: (context) => Navigator.restorablePushNamed(context, '/logs'),
+        ),
+        SettingTile(
+          title: context.loc.privacyPolicyTitle,
+          leading: const Icon(Icons.privacy_tip_rounded),
+          onTap: (context) => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PrivacyPolicy(),
+            ),
+          ),
         ),
         SettingTile(
           isLast: true,
@@ -72,6 +84,15 @@ class AboutApp extends StatelessWidget {
             ),
             applicationVersion: packageInfo.version,
           ),
+        ),
+        SettingTile(
+          isFirst: true,
+          isLast: true,
+          title: context.loc.viewSourceCode,
+          leading: const Icon(Icons.code_rounded),
+          // TODO link github
+          onTap: (context) {},
+          trailing: const Icon(Icons.link_rounded),
         ),
       ],
     );

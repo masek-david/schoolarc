@@ -53,7 +53,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
         builder: (context) {
           if (isLoading) {
             return Center(
-              child: MyExpressiveLoadingIndicator.big(
+              child: ExpressiveLoadingIndicator.big(
                 useHaptics: ref.read(themeExpressiveHapticsProvider),
               ),
             );

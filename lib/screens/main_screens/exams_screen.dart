@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
@@ -85,7 +85,7 @@ class ExamsScreen extends ConsumerWidget {
               enableFeedback: true,
               child: const Icon(Icons.add_rounded),
             );
-          }
+          },
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -97,13 +97,15 @@ class ExamsScreen extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ExpressiveRefreshIndicator(
-              enabled: ref.watch(useCloudSyncProvider) ? true : false,
+              enabled: ref.watch(firebaseLoginProvider).value == null
+                  ? false
+                  : true,
               onRefresh: () async {
                 try {
                   await ref.read(examDataProvider.notifier).syncAll();
                 } on Object catch (e) {
                   if (context.mounted) {
-                    showErrorMessage(context,e);
+                    showErrorMessage(context, e);
                   }
                   return;
                 }

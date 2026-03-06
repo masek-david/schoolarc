@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/import_export_row.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
-import 'package:schoolarc/widgets/login_status_icon.dart';
 
 class OnboardingRestoredata extends ConsumerWidget {
   const OnboardingRestoredata({super.key, required this.next});
@@ -17,8 +15,6 @@ class OnboardingRestoredata extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final useCloudSync = ref.watch(useCloudSyncProvider);
-
     return SafeArea(
       child: AnimatedPage(
         spacing: 0,
@@ -41,12 +37,9 @@ class OnboardingRestoredata extends ConsumerWidget {
                 isFirst: true,
                 title: context.loc.cloudSync,
                 subtitle: context.loc.cloudSyncSubtitle,
-                leading: useCloudSync
-                    ? LoginStatusIcon(
-                        provider: firebaseLoginProvider,
-                        showProvider: useCloudSyncProvider,
-                      )
-                    : null,
+                leading: ref.watch(firebaseLoginProvider).value == null
+                    ? null
+                    : const Icon(Icons.check_circle, color: Colors.green),
                 onTap: (context) {
                   Navigator.push(
                     context,
@@ -65,7 +58,7 @@ class OnboardingRestoredata extends ConsumerWidget {
               return SettingTile(
                 isLast: true,
                 title: context.loc.importBackupFile,
-                subtitle:context.loc.importBackupFileSub,
+                subtitle: context.loc.importBackupFileSub,
                 newLineAction: ImportExportButtonsRow(
                   showExport: false,
                   onDataSyncSuccess: next,

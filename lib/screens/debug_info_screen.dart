@@ -11,7 +11,6 @@ import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
@@ -60,7 +59,7 @@ class DbInfoScreen extends ConsumerWidget {
                   await Hive.openBox(settingsBox);
                   await bakaService.logOut();
                   await stravaService.logOut();
-                  await ref.read(firebaseServiceProvider).logOut();
+                  await fireService.logOut();
                   SecureStorage.deleteAllFromDisk();
                 },
                 label: const Text('Reset all settings (run app as new)'),
@@ -71,7 +70,7 @@ class DbInfoScreen extends ConsumerWidget {
                 onPressed: () {
                   bakaService.logOut();
                   stravaService.logOut();
-                  ref.read(firebaseServiceProvider).logOut();
+                  fireService.logOut();
                   SecureStorage.deleteAllFromDisk();
                 },
                 label: const Text('Sign out everywhere'),
@@ -162,9 +161,7 @@ class DbInfoScreen extends ConsumerWidget {
                     onPressed: () async {
                       late List<HomeworkData>? fireHws;
                       try {
-                        fireHws = await ref
-                            .read(firebaseServiceProvider)
-                            .getAllHomeworks();
+                        fireHws = await fireService.getAllHomeworks();
                       } catch (e) {
                         if (context.mounted) {
                           showErrorMessage(context, e);
@@ -194,7 +191,7 @@ class DbInfoScreen extends ConsumerWidget {
                 Expanded(
                   child: FilledButton(
                     onPressed: () async {
-                      ref.read(firebaseServiceProvider).logOut();
+                      fireService.logOut();
                     },
                     child: const Text('logout from firebase'),
                   ),

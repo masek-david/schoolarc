@@ -63,7 +63,7 @@ class LoadingIconButton extends StatelessWidget {
       alignment: AlignmentDirectional.center,
       children: [
         if (isLoading)
-          MyExpressiveLoadingIndicator(
+          ExpressiveLoadingIndicator(
             color: context.col.secondaryContainer,
             size: 40,
           ),

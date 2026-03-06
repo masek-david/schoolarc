@@ -20,7 +20,6 @@ import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/onboarding/onboarding.dart';
 import 'package:schoolarc/services/firebase/app_info_notifier.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -80,7 +79,13 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (nowActive) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
-          ref.read(actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier).refreshIfOld();
+          ref
+              .read(
+                actualTimetableDataProvider(
+                  getCurrentTimetableWeekIndex(),
+                ).notifier,
+              )
+              .refreshIfOld();
           ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
           ref.read(stravaMealsProvider.notifier).refreshIfOld();
           ref.read(examDataProvider.notifier).checkAllIfCompleted();
@@ -98,7 +103,9 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (newScreenIndex == 0) {
       ref
           .read(
-            actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier,
+            actualTimetableDataProvider(
+              getCurrentTimetableWeekIndex(),
+            ).notifier,
           )
           .refreshIfOld();
       ref.read(stravaMealsProvider.notifier).refreshIfOld();
@@ -156,7 +163,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     } else {
       if (kIsWeb &&
           !settings.get(Setting.stopPwaCloudSyncWarning) &&
-          !FirebaseService.hasUser) {
+          !fireService.hasUser) {
         Future.delayed(
           Duration.zero,
           () {

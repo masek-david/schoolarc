@@ -10,7 +10,6 @@ import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 final hwDataProvider = NotifierProvider<HwNotifier, Map<String, HomeworkData>>(
@@ -204,30 +203,22 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
   Future<void> listenToFirebase() async {
     await listenFirebase?.cancel();
 
-    listenFirebase = ref
-        .read(firebaseServiceProvider)
-        .listenHomeworks()
-        .listen(
-          (event) async {
-            ref.read(firebaseActivityProvider.notifier).read(1);
+    listenFirebase = fireService.listenHomeworks().listen(
+      (event) async {
+        ref.read(firebaseActivityProvider.notifier).read(1);
 
-            // how would this happen, right?
-            // if (!Hive.box(hwBox).isOpen) {
-            //   await Hive.openBox(hwBox);
-            // }
-
-            await checkFireHomework(event);
-          },
-          onError: (error) {
-            log('error listening to firebase hws: ${error.toString()}');
-          },
-        );
+        await checkFireHomework(event);
+      },
+      onError: (error) {
+        log('error listening to firebase hws: ${error.toString()}');
+      },
+    );
   }
 
   /// checks all online and offline, starts listening to firebase
   Future<void> syncAll() async {
     await listenToFirebase();
-    final fireHws = await ref.read(firebaseServiceProvider).getAllHomeworks();
+    final fireHws = await fireService.getAllHomeworks();
 
     fireHws?.forEach(
       (element) async {
@@ -275,7 +266,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     state = {...state, id: hw};
 
     if (syncWithFire) {
-      await ref.read(firebaseServiceProvider).createHw(hw);
+      await fireService.createHw(hw);
     }
   }
 
@@ -310,7 +301,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
 
     homeworksDb.put(edited.id, edited.toEntity());
     if (syncWithFire) {
-      ref.read(firebaseServiceProvider).updateHw([edited]);
+      fireService.updateHw([edited]);
     }
 
     if (playAnimation) {
@@ -450,7 +441,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
     }
 
     state = {...state};
-    await ref.read(firebaseServiceProvider).deleteHomeworks(hws);
+    await fireService.deleteHomeworks(hws);
   }
 
   Future<void> _checkForDeleted() async {
@@ -495,7 +486,7 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
         localTime.millisecondsSinceEpoch) {
       // print('\u001b[1;93mediting hw from hive: ${fireHw.toString()}');
 
-      ref.read(firebaseServiceProvider).updateHw([
+      fireService.updateHw([
         localHw.copyWith(id: fireHw.id),
       ]);
     }

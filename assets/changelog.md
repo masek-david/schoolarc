@@ -7,6 +7,7 @@
 - Subjects can now be created when creating homework or an exam
 - Improved fonts
 - Improved onboarding and tutorial experience
+- Improved Cloud sync account - you can now change your email, verify email, reset password
 
 ### Changed
 - Improved ordering of tasks

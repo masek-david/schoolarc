@@ -24,11 +24,13 @@ class LoginInputScreen extends StatefulWidget {
     required this.fields,
     required this.actionName,
     required this.onSubmit,
+    this.bottomChild,
   });
 
   final List<LoginField> fields;
   final String actionName;
   final void Function(List<String> fieldValues) onSubmit;
+  final Widget? bottomChild;
 
   @override
   State<LoginInputScreen> createState() => _LoginInputScreenState();
@@ -40,8 +42,9 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
     (index) => TextEditingController(text: widget.fields[index].initialValue),
   );
 
-  late List<bool?> obscures =
-      widget.fields.map((e) => e.obscure ? true : null).toList();
+  late List<bool?> obscures = widget.fields
+      .map((e) => e.obscure ? true : null)
+      .toList();
 
   late bool actionEnabled = enabled();
 
@@ -66,16 +69,21 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
       ),
       body: AutofillGroup(
         child: ListView.builder(
-          itemCount: controllers.length + 1,
+          itemCount:
+              controllers.length + 1 + (widget.bottomChild == null ? 0 : 1),
           itemBuilder: (context, index) {
+            if (index == controllers.length + 1 && widget.bottomChild != null) {
+              return Center(child: widget.bottomChild);
+            }
             if (index == controllers.length) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FilledButton(
                     onPressed: actionEnabled
-                        ? () => widget
-                            .onSubmit(controllers.map((e) => e.text).toList())
+                        ? () => widget.onSubmit(
+                            controllers.map((e) => e.text).toList(),
+                          )
                         : null,
                     child: Text(widget.actionName),
                   ),
@@ -92,7 +100,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                 children: [
                   Expanded(
                     child: TextField(
-                      autofocus: index == 0 && !kIsWeb, 
+                      autofocus: index == 0 && !kIsWeb,
                       onChanged: (value) {
                         if (value == '') {
                           setState(() {
@@ -123,8 +131,9 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                               content: Text(field.info!),
                               actions: [
                                 TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(context.loc.ok))
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(context.loc.ok),
+                                ),
                               ],
                             ),
                           );

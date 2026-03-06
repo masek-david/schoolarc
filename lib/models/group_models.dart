@@ -14,9 +14,11 @@ class Member {
     this.waitingForApproval = false,
     this.isYou = false,
     this.isOwner = false,
+    this.email,
   });
   final String name;
   final String id;
+  final String? email;
   final bool waitingForApproval;
   final bool isYou;
   final bool isOwner;

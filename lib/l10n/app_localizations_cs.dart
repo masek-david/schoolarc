@@ -1329,8 +1329,14 @@ class AppLocalizationsCs extends AppLocalizations {
       '# Zásady ochrany osobních údajů\nDatum účinnosti: 11. Ledna 2026\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci.\n\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n';
 
   @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
   String get privacyPolicyAgree =>
       'Pokračováním souhlasíte se Zásadami ochrany osobních údajů (klikněte pro zobrazení)';
+
+  @override
+  String get viewSourceCode => 'View source code (Github)';
 
   @override
   String get cloudSyncDisabled => 'Synchronizace je vypnutá';

@@ -1,20 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/provider/firebase/firebase_login_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 final firebaseNicknameProvider =
     AsyncNotifierProvider<FirebaseNicknameNotifier, String?>(
-        FirebaseNicknameNotifier.new);
+      FirebaseNicknameNotifier.new,
+    );
 
 class FirebaseNicknameNotifier extends AsyncNotifier<String?> {
   @override
   Future<String?> build() async {
-    ref.listen(
-      firebaseLoginProvider,
-      (previous, next) {
-        loadNickname();
-      },
-    );
+    ref.listen(firebaseLoginProvider, (previous, next) => loadNickname());
     return _fetchNickname();
   }
 
@@ -29,7 +25,7 @@ class FirebaseNicknameNotifier extends AsyncNotifier<String?> {
   }
 
   Future<String?> _fetchNickname() async {
-    return ref.read(firebaseServiceProvider).getNickname();
+    return fireService.getNickname();
   }
 
   Future<void> saveNickname(String newNickname) async {
@@ -37,7 +33,7 @@ class FirebaseNicknameNotifier extends AsyncNotifier<String?> {
 
     state = const AsyncValue.loading();
     try {
-      await ref.read(firebaseServiceProvider).saveNickname(newNickname);
+      await fireService.saveNickname(newNickname);
       state = AsyncData(newNickname);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

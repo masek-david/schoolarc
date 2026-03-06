@@ -6,7 +6,7 @@ import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/screens/shared/username_text.dart';
+import 'package:schoolarc/screens/shared/nickname_text.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';

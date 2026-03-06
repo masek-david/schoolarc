@@ -75,7 +75,7 @@ class _ActualTimetableScreenState
           builder: (context) {
             if (provider.isLoading) {
               return Center(
-                child: MyExpressiveLoadingIndicator.big(
+                child: ExpressiveLoadingIndicator.big(
                   useHaptics: ref.read(themeExpressiveHapticsProvider),
                 ),
               );
