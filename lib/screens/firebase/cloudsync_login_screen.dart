@@ -134,15 +134,15 @@ class CloudSyncLoginScreen extends ConsumerWidget {
     pushScreen(
       context,
       LoginInputScreen(
-        actionName: 'Change email address',
+        actionName: context.loc.changeEmailAddress,
         fields: [
           LoginField(
-            name: 'New email address',
+            name: context.loc.newEmailAddress,
             obscure: false,
             autofillHints: [AutofillHints.email],
           ),
           LoginField(
-            name: 'Password',
+            name: context.loc.password,
             obscure: true,
             autofillHints: [AutofillHints.password],
           ),
@@ -158,7 +158,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               showErrorMessage(
                 context,
                 e,
-                message: 'There was an issue changing the email address.',
+                message: context.loc.errorChangingEmail,
               );
             }
             return;
@@ -168,9 +168,9 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             Navigator.pop(context);
             showDialogAdaptive(
               context: context,
-              title: const Text('Email address changed'),
+              title: Text(context.loc.emailAddressChanged),
               content: Text(
-                'Dont forget to click the link in the email sent to ${fields[0]} to be able to login with this address.',
+                context.loc.changeEmailDontForgetClickLink(fields[0]),
               ),
               actions: [
                 adaptiveDialogButton(
@@ -307,7 +307,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           onPressed: () {
             resetPassword(context, ref);
           },
-          child: const Text('Forgot password'),
+          child: Text(context.loc.forgotPassword),
         ),
         onSubmit: (fields) async {
           final key = GlobalKey<ProgressDialogState>();
@@ -397,6 +397,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         ],
         onSubmit: (fields) async {
           final key = GlobalKey<ProgressDialogState>();
+          User? newUser;
 
           if (fields[2] != fields[3]) {
             showErrorMessage(
@@ -420,7 +421,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           );
 
           try {
-            await fireService.createUser(
+            newUser = await fireService.createUser(
               email: fields[0],
               password: fields[2],
               nickname: fields[1],
@@ -456,10 +457,8 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               context,
               context.loc.registeredSuccessfully,
             );
-            // TODO
-            final user = ref.read(firebaseLoginProvider).value;
-            if (user?.emailVerified == false) {
-              verifyEmail(context, ref, user!);
+            if (newUser != null) {
+              verifyEmail(context, ref, newUser);
             }
           }
         },
@@ -476,7 +475,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       await fireService.sendVerification();
 
       if (context.mounted) {
-        showMessage(context, 'Sent');
+        showMessage(context, context.loc.sent);
       }
     } catch (error) {
       if (context.mounted) {
@@ -490,20 +489,20 @@ class CloudSyncLoginScreen extends ConsumerWidget {
     showDialogAdaptive(
       dismissible: false,
       context: context,
-      title: const Text('Verify email address'),
+      title: Text(context.loc.verifyEmailAddress),
       content: Text(
-        'Please open the link in the email sent to ${user.email} and then tap done here. If you didn\'t receive any email, check your spam folder and try again.',
+        context.loc.emailVerificationOpenLinkInEmail(user.email ?? ''),
       ),
       actions: [
         adaptiveDialogButton(
           context: context,
-          child: const Text('Send again'),
+          child: Text(context.loc.sendAgain),
           onPressed: () async {
             try {
               await fireService.sendVerification();
 
               if (context.mounted) {
-                showMessage(context, 'Sent');
+                showMessage(context, context.loc.sent);
               }
             } catch (error) {
               if (context.mounted) {
@@ -516,18 +515,18 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         adaptiveDialogButton(
           isDefaultAction: true,
           context: context,
-          child: const Text('Done'),
+          child: Text(context.loc.done),
           onPressed: () async {
             try {
               await fireService.reloadUser();
               if (fireService.needsVerification == false) {
                 if (context.mounted) {
                   Navigator.pop(context);
-                  showMessage(context, 'Address verified');
+                  showMessage(context, context.loc.addressVerified);
                 }
               } else {
                 if (context.mounted) {
-                  showMessage(context, 'Try again');
+                  showMessage(context, context.loc.tryAgain);
                 }
               }
             } catch (e) {
@@ -549,7 +548,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
     pushScreen(
       context,
       LoginInputScreen(
-        actionName: 'Send password reset',
+        actionName: context.loc.sendPasswordReset,
         fields: [
           LoginField(
             name: context.loc.email,
@@ -561,7 +560,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             await fireService.resetPassword(fields[0]);
 
             if (context.mounted) {
-              showMessage(context, 'Sent');
+              showMessage(context, context.loc.sent);
             }
           } catch (error) {
             if (context.mounted) {
@@ -677,6 +676,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           ),
           const Divider(),
           FilledButton.icon(
+            // TODO this shouldnt be filled
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.disabled)) {

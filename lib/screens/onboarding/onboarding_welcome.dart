@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -120,7 +121,12 @@ class OnboardingWelcome extends StatelessWidget {
             bottom: 16,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/tutorial');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrivacyPolicy(),
+                  ),
+                );
               },
               child: Text(
                 context.loc.privacyPolicyAgree,

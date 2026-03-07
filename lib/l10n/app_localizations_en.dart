@@ -582,6 +582,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'There was an issue changing the password.';
 
   @override
+  String get errorChangingEmail =>
+      'There was an issue changing the email address.';
+
+  @override
   String get registeredSuccessfully =>
       'Registered successfully, everything has been synced';
 
@@ -1344,6 +1348,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseUpdateApp => 'Please update the app.';
+
+  @override
+  String get sendPasswordReset => 'Send password reset';
+
+  @override
+  String get sent => 'Sent';
+
+  @override
+  String get verifyEmailAddress => 'Verify email address';
+
+  @override
+  String emailVerificationOpenLinkInEmail(Object email) {
+    return 'Please open the link in the email sent to $email and then tap done here. If you didn\'t receive any email, check your spam folder and try again.';
+  }
+
+  @override
+  String get sendAgain => 'Send again';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get addressVerified => 'Address verified';
+
+  @override
+  String get changeEmailAddress => 'Change email address';
+
+  @override
+  String get newEmailAddress => 'New email address';
+
+  @override
+  String get emailAddressChanged => 'Email address changed';
+
+  @override
+  String changeEmailDontForgetClickLink(Object email) {
+    return 'Dont forget to click the link in the email sent to $email to be able to login with this address.';
+  }
+
+  @override
+  String get forgotPassword => 'Forgot password';
 
   @override
   String get secondShort => ' sec';

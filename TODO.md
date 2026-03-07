@@ -1,14 +1,13 @@
 # FIX
 update/start listening to firebase on app reopen ???
+should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 
 check all settingtile spacings
 check all expressiveloadingindicator sizes
 
 ios calendar still refresh pulls
 
-should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
-
-translations
+ask user to verify mail on app open
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -32,7 +31,7 @@ translations
 - ✅ screenshots, readme
 - ✅ actual timetable notifier
 - ✅ push info to the app from web + min required version
-- ⬜ firebase verify email + forgot password for firebase ‼️
+- ✅ firebase verify email + forgot password for firebase
 - ⬜ google sign in ???
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?

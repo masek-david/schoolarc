@@ -1046,6 +1046,12 @@ abstract class AppLocalizations {
   /// **'There was an issue changing the password.'**
   String get errorChangingPassword;
 
+  /// No description provided for @errorChangingEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an issue changing the email address.'**
+  String get errorChangingEmail;
+
   /// No description provided for @registeredSuccessfully.
   ///
   /// In en, this message translates to:
@@ -2339,6 +2345,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please update the app.'**
   String get pleaseUpdateApp;
+
+  /// No description provided for @sendPasswordReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Send password reset'**
+  String get sendPasswordReset;
+
+  /// No description provided for @sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get sent;
+
+  /// No description provided for @verifyEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify email address'**
+  String get verifyEmailAddress;
+
+  /// No description provided for @emailVerificationOpenLinkInEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please open the link in the email sent to {email} and then tap done here. If you didn\'t receive any email, check your spam folder and try again.'**
+  String emailVerificationOpenLinkInEmail(Object email);
+
+  /// No description provided for @sendAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Send again'**
+  String get sendAgain;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @addressVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Address verified'**
+  String get addressVerified;
+
+  /// No description provided for @changeEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email address'**
+  String get changeEmailAddress;
+
+  /// No description provided for @newEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'New email address'**
+  String get newEmailAddress;
+
+  /// No description provided for @emailAddressChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address changed'**
+  String get emailAddressChanged;
+
+  /// No description provided for @changeEmailDontForgetClickLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Dont forget to click the link in the email sent to {email} to be able to login with this address.'**
+  String changeEmailDontForgetClickLink(Object email);
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get forgotPassword;
 
   /// No description provided for @secondShort.
   ///

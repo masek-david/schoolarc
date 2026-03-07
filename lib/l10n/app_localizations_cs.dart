@@ -592,6 +592,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get errorChangingPassword => 'Při změně hesla došlo k chybě.';
 
   @override
+  String get errorChangingEmail => 'Při změně emailové adresy došlo k chybě.';
+
+  @override
   String get registeredSuccessfully =>
       'Byli jste úspěšně registrováni, vše je synchronizováno';
 
@@ -1329,14 +1332,14 @@ class AppLocalizationsCs extends AppLocalizations {
       '# Zásady ochrany osobních údajů\nDatum účinnosti: 11. Ledna 2026\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci.\n\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n';
 
   @override
-  String get privacyPolicyTitle => 'Privacy Policy';
+  String get privacyPolicyTitle => 'Zásady ochrany osobních údajů';
 
   @override
   String get privacyPolicyAgree =>
       'Pokračováním souhlasíte se Zásadami ochrany osobních údajů (klikněte pro zobrazení)';
 
   @override
-  String get viewSourceCode => 'View source code (Github)';
+  String get viewSourceCode => 'Zobrazit zdrojový kód (Github)';
 
   @override
   String get cloudSyncDisabled => 'Synchronizace je vypnutá';
@@ -1366,6 +1369,46 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get pleaseUpdateApp => 'Prosím aktualizujte aplikaci.';
+
+  @override
+  String get sendPasswordReset => 'Odeslat obnovení hesla';
+
+  @override
+  String get sent => 'Odesláno';
+
+  @override
+  String get verifyEmailAddress => 'Ověřit emailovou adresu';
+
+  @override
+  String emailVerificationOpenLinkInEmail(Object email) {
+    return 'Otevřete odkaz v emailu zaslaném na $email a poté zde klepněte na Hotovo. Pokud jste e-mail neobdrželi, zkontrolujte spam a zkuste to znovu.';
+  }
+
+  @override
+  String get sendAgain => 'Odeslat znovu';
+
+  @override
+  String get done => 'Hotovo';
+
+  @override
+  String get addressVerified => 'Adresa ověřena';
+
+  @override
+  String get changeEmailAddress => 'Změnit emailovou adresu';
+
+  @override
+  String get newEmailAddress => 'Nová emailová adresa';
+
+  @override
+  String get emailAddressChanged => 'Emailová adresa změněna';
+
+  @override
+  String changeEmailDontForgetClickLink(Object email) {
+    return 'Nezapomeňte kliknout na odkaz v emailu zaslaném na $email, abyste se mohli přihlásit s touto adresou.';
+  }
+
+  @override
+  String get forgotPassword => 'Zapomenuté heslo';
 
   @override
   String get secondShort => ' sek';

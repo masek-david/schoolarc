@@ -64,6 +64,18 @@
                 // "--web-hostname=192.168.100.107",
                 "--web-port=8080"
             ]
-        }
+        },
+        {
+            "program": "integration_test/app_test.dart",
+            "name": "Integration Tests (Dev Flavor)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--flavor",
+                "dev"
+            ],
+            "templateFor": "integration_test"
+        },
     ]
 }

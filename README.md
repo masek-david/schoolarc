@@ -83,7 +83,7 @@ Schoolarc can run on most platforms, however, it is optimized and tested mainly 
 
  ✅ working       ❌ not working     ❔not tested
 
-## How to run locally
+# How to run locally
 
 Note: This is only for development, you can download and install here. TODO
 
@@ -104,10 +104,21 @@ flutter build apk --flavor prod --target-platform=android-arm64
 ```
 as it is compatible with most devices and has the smallest sizes
 
-### Firebase initialization
+## Firebase initialization
 
 Configure [flutterfire](https://firebase.flutter.dev/docs/overview), run flutterfire configure and follow the instructions.
 
 <!-- On windows, sometimes the windows is stuck on white or black - 
 in that case, you can resize the windows using powertoys zones
  and rerun the project -->
+
+## Testing
+
+Init Firebase emulator with
+```
+firebase init emulators
+```
+select a project, tick auth and database and before running, start the emulators with
+```
+firebase emulators:start --only "auth,database"
+```

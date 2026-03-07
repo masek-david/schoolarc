@@ -47,6 +47,10 @@ class FirebaseService {
     return _auth.currentUser?.emailVerified == false;
   }
 
+  Future<DataSnapshot> getAppInfo() {
+    return _database.ref('app_info').get();
+  }
+
   void _refLocation() {
     if (!kIsWeb && Platform.isWindows) return;
 
@@ -76,18 +80,18 @@ class FirebaseService {
     return;
   }
 
-  Future<void> createUser({
+  Future<User?> createUser({
     required String email,
     required String password,
     required String nickname,
   }) async {
-    await _auth.createUserWithEmailAndPassword(
+    final user = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
     _refLocation();
     await saveNickname(nickname);
-    return;
+    return user.user;
   }
 
   /// Sends verification email to the user

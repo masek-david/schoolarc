@@ -80,6 +80,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FilledButton(
+                    key: Key(widget.actionName),
                     onPressed: actionEnabled
                         ? () => widget.onSubmit(
                             controllers.map((e) => e.text).toList(),
@@ -100,6 +101,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                 children: [
                   Expanded(
                     child: TextField(
+                      key: Key(field.name),
                       autofocus: index == 0 && !kIsWeb,
                       onChanged: (value) {
                         if (value == '') {

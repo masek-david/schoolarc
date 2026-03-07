@@ -118,11 +118,11 @@ class NicknameText extends StatelessWidget {
             Row(
               children: [
                 Text(text, style: textStyle),
-                if (editNickname != null)
+                if (editNickname != null && !isLoading && loggedIn)
                   IconButton(
                     color: context.col.onSecondaryContainer,
                     tooltip: context.loc.changeNickname,
-                    onPressed: !isLoading && loggedIn ? editNickname : null,
+                    onPressed: editNickname,
                     icon: const Icon(Icons.edit_rounded),
                   ),
               ],

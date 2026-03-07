@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -28,7 +27,7 @@ final appInfoProvider = AsyncNotifierProvider<AppInfoNotifier, AppInfo>(
 class AppInfoNotifier extends AsyncNotifier<AppInfo> {
   @override
   Future<AppInfo> build() async {
-    final data = await FirebaseDatabase.instance.ref('app_info').get();
+    final data = await fireService.getAppInfo();
 
     final requiredBuild = data.child('requiredBuild').value as int;
 
