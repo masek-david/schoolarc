@@ -25,6 +25,7 @@ class ThemePage extends ConsumerWidget {
       title: loc.colorTheme,
       children: [
         const ThemeColorsShowcase(),
+        const SizedBox(height: 8),
         SettingTile(
           isFirst: true,
           title: loc.themeBrightness,

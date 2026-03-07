@@ -8,6 +8,7 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
@@ -156,23 +157,22 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ),
             ],
           ),
-        const SizedBox(height: 16),
-        (!loggedIn && (ref.watch(debugModeProvider) || kDebugMode))
-            ? SettingTile.withSwitch(
-                isLast: true,
-                isFirst: true,
-                enabled: useMeals,
-                contentPadding: const EdgeInsets.all(0),
-                title: loc.allowStravaLogin,
-                onChanged: (value) {
-                  setState(() {
-                    settings.save(Setting.allowStravaLogin, value);
-                    allowLogin = value;
-                  });
-                },
-                value: allowLogin,
-              )
-            : const SizedBox(height: 8),
+        if (!loggedIn) const SizedBox(height: 16),
+        if (!loggedIn && (ref.watch(debugModeProvider) || kDebugMode))
+          SettingTile.withSwitch(
+            isLast: true,
+            isFirst: true,
+            enabled: useMeals,
+            contentPadding: const EdgeInsets.all(0),
+            title: loc.allowStravaLogin,
+            onChanged: (value) {
+              setState(() {
+                settings.save(Setting.allowStravaLogin, value);
+                allowLogin = value;
+              });
+            },
+            value: allowLogin,
+          ),
         if (allowLogin && loggedIn == false)
           AutofillGroup(
             child: Column(
@@ -210,7 +210,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ],
             ),
           ),
-        if (loggedIn == false)
+        if (!loggedIn)
           FilledButton(
             onPressed: useMeals
                 ? () {
@@ -234,8 +234,11 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                 : null,
             child: Text(loc.logIn),
           ),
-        if (loggedIn == true)
-          OutlinedButton(
+        if (loggedIn)
+          FilledButton.icon(
+            icon: const Icon(Icons.logout_rounded),
+            label: Text(loc.logOut),
+            style: FilledButtonStyles.surface(context),
             onPressed: useMeals
                 ? () {
                     _canteenController.clear();
@@ -250,7 +253,6 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         );
                   }
                 : null,
-            child: Text(loc.logOut),
           ),
       ],
     );

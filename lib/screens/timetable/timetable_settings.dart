@@ -36,6 +36,7 @@ class _TimetableSettingsState extends State<TimetableSettings> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 10),
             SettingTile.withSwitch(
               isFirst: true,
               title: loc.show7DayWeek,

@@ -31,7 +31,13 @@ class HomeScreen extends ConsumerWidget {
       await Future.wait([
         ref.read(bakaHomeworksProvider.notifier).refresh(),
         ref.read(stravaMealsProvider.notifier).refresh(),
-        ref.read(actualTimetableDataProvider(getCurrentTimetableWeekIndex()).notifier).refresh(),
+        ref
+            .read(
+              actualTimetableDataProvider(
+                getCurrentTimetableWeekIndex(),
+              ).notifier,
+            )
+            .refresh(),
         if (fireService.hasUser) syncAllTasks(ref),
       ]);
     } on Object catch (e) {

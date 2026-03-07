@@ -1373,6 +1373,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addressVerified => 'Address verified';
 
   @override
+  String get changeEmail => 'Change email';
+
+  @override
   String get changeEmailAddress => 'Change email address';
 
   @override
@@ -1388,6 +1391,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Forgot password';
+
+  @override
+  String get emailNotVerified => 'Email not verified';
+
+  @override
+  String get tapToVerify => 'Tap to verify';
 
   @override
   String get secondShort => ' sec';

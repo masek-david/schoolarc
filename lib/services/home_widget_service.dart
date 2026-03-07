@@ -81,7 +81,7 @@ Future<void> _saveAndUpdateMain(String data) async {
   );
 }
 
-Future<void> saveLocalizationStrings(BuildContext context) async {
+Future<void> widgetSaveLocalizationStrings(BuildContext context) async {
   if (kIsWeb || !Platform.isAndroid) return;
   final loc = getLocalizationWithoutContext();
 

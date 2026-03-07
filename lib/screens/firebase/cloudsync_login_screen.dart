@@ -13,10 +13,84 @@ import 'package:schoolarc/screens/shared/nickname_text.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 
-// TODO edit the buttons
+Future<void> verifyEmail(
+  BuildContext context,
+  WidgetRef ref,
+  User user,
+) async {
+  try {
+    await fireService.sendVerification();
+
+    if (context.mounted) {
+      showMessage(context, context.loc.sent);
+    }
+  } catch (error) {
+    if (context.mounted) {
+      showErrorMessage(context, error);
+    }
+    return;
+  }
+
+  if (!context.mounted) return;
+
+  showDialogAdaptive(
+    dismissible: false,
+    context: context,
+    title: Text(context.loc.verifyEmailAddress),
+    content: Text(
+      context.loc.emailVerificationOpenLinkInEmail(user.email ?? ''),
+    ),
+    actions: [
+      adaptiveDialogButton(
+        context: context,
+        child: Text(context.loc.sendAgain),
+        onPressed: () async {
+          try {
+            await fireService.sendVerification();
+
+            if (context.mounted) {
+              showMessage(context, context.loc.sent);
+            }
+          } catch (error) {
+            if (context.mounted) {
+              showErrorMessage(context, error);
+            }
+            return;
+          }
+        },
+      ),
+      adaptiveDialogButton(
+        isDefaultAction: true,
+        context: context,
+        child: Text(context.loc.done),
+        onPressed: () async {
+          try {
+            await fireService.reloadUser();
+            if (fireService.needsVerification == false) {
+              if (context.mounted) {
+                Navigator.pop(context);
+                showMessage(context, context.loc.addressVerified);
+              }
+            } else {
+              if (context.mounted) {
+                showMessage(context, context.loc.tryAgain);
+              }
+            }
+          } catch (e) {
+            if (context.mounted) {
+              showErrorMessage(context, e);
+            }
+            return;
+          }
+        },
+      ),
+    ],
+  );
+}
 
 class CloudSyncLoginScreen extends ConsumerWidget {
   const CloudSyncLoginScreen({super.key, this.onDataSyncSuccess});
@@ -466,81 +540,6 @@ class CloudSyncLoginScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> verifyEmail(
-    BuildContext context,
-    WidgetRef ref,
-    User user,
-  ) async {
-    try {
-      await fireService.sendVerification();
-
-      if (context.mounted) {
-        showMessage(context, context.loc.sent);
-      }
-    } catch (error) {
-      if (context.mounted) {
-        showErrorMessage(context, error);
-      }
-      return;
-    }
-
-    if (!context.mounted) return;
-
-    showDialogAdaptive(
-      dismissible: false,
-      context: context,
-      title: Text(context.loc.verifyEmailAddress),
-      content: Text(
-        context.loc.emailVerificationOpenLinkInEmail(user.email ?? ''),
-      ),
-      actions: [
-        adaptiveDialogButton(
-          context: context,
-          child: Text(context.loc.sendAgain),
-          onPressed: () async {
-            try {
-              await fireService.sendVerification();
-
-              if (context.mounted) {
-                showMessage(context, context.loc.sent);
-              }
-            } catch (error) {
-              if (context.mounted) {
-                showErrorMessage(context, error);
-              }
-              return;
-            }
-          },
-        ),
-        adaptiveDialogButton(
-          isDefaultAction: true,
-          context: context,
-          child: Text(context.loc.done),
-          onPressed: () async {
-            try {
-              await fireService.reloadUser();
-              if (fireService.needsVerification == false) {
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  showMessage(context, context.loc.addressVerified);
-                }
-              } else {
-                if (context.mounted) {
-                  showMessage(context, context.loc.tryAgain);
-                }
-              }
-            } catch (e) {
-              if (context.mounted) {
-                showErrorMessage(context, e);
-              }
-              return;
-            }
-          },
-        ),
-      ],
-    );
-  }
-
   Future<void> resetPassword(
     BuildContext context,
     WidgetRef ref,
@@ -582,8 +581,6 @@ class CloudSyncLoginScreen extends ConsumerWidget {
 
     final nickname = ref.watch(firebaseNicknameProvider);
 
-    // TODO ask user to verify email when app launches
-
     return SettingsScaffold(
       heroTag: 'cloudsync',
       title: context.loc.cloudSync,
@@ -601,7 +598,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       children: [
         NicknameText(
           isLoading: isLoading,
-          radius: 32,
+          radius: 36,
           editNickname: () => editNickname(context, ref),
           user: loggedIn
               ? Member(
@@ -614,8 +611,8 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         const SizedBox(height: 12),
         if (user?.emailVerified == false)
           SettingTile(
-            title: 'Email not verified',
-            subtitle: 'Tap to verify',
+            title: context.loc.emailNotVerified,
+            subtitle: context.loc.tapToVerify,
             isFirst: true,
             isLast: true,
             backgroundColor: context.col.errorContainer,
@@ -629,24 +626,16 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             spacing: 12,
             children: [
               Expanded(
-                child: FilledButton.tonalIcon(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      context.col.surfaceContainer,
-                    ),
-                  ),
+                child: FilledButton.icon(
+                  style: FilledButtonStyles.surface(context),
                   onPressed: () => changeEmail(context, ref),
                   icon: const Icon(Icons.email_rounded),
-                  label: const Text('Change email'),
+                  label: Text(context.loc.changeEmail),
                 ),
               ),
               Expanded(
-                child: FilledButton.tonalIcon(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      context.col.surfaceContainer,
-                    ),
-                  ),
+                child: FilledButton.icon(
+                  style: FilledButtonStyles.surface(context),
                   onPressed: () => changePassword(context, ref),
                   icon: const Icon(Icons.password_rounded),
                   label: Text(context.loc.changePassword),
@@ -654,43 +643,21 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               ),
             ],
           ),
-          FilledButton.tonalIcon(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                context.col.surfaceContainer,
-              ),
-            ),
+          FilledButton.icon(
+            style: FilledButtonStyles.surface(context),
             onPressed: () => logOut(context, ref),
             icon: const Icon(Icons.logout_rounded),
             label: Text(context.loc.logOut),
           ),
           FilledButton.tonalIcon(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                context.col.surfaceContainer,
-              ),
-            ),
+            style: FilledButtonStyles.surface(context),
             onPressed: () => getAllData(context, ref),
             icon: const Icon(Icons.download_rounded),
             label: Text(context.loc.getAllData),
           ),
           const Divider(),
-          FilledButton.icon(
-            // TODO this shouldnt be filled
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.disabled)) {
-                  return context.col.errorContainer.withAlpha(14);
-                }
-                return context.col.errorContainer;
-              }),
-              foregroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.disabled)) {
-                  return context.col.onErrorContainer.withAlpha(80);
-                }
-                return context.col.onErrorContainer;
-              }),
-            ),
+          OutlinedButton.icon(
+            style: OutlinedButtonStyles.errorTonal(context),
             onPressed: () => deleteAllData(context, ref),
             icon: const Icon(Icons.delete_forever_rounded),
             label: Text(context.loc.deleteAllData),

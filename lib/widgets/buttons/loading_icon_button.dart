@@ -65,7 +65,7 @@ class LoadingIconButton extends StatelessWidget {
         if (isLoading)
           ExpressiveLoadingIndicator(
             color: context.col.secondaryContainer,
-            size: 40,
+            size: 48,
           ),
         IconButton(
           onPressed: onPressed,

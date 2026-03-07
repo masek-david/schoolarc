@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/buttons/button_styles.dart';
 
 class CancelSaveButton extends StatelessWidget {
   const CancelSaveButton({
@@ -18,7 +19,8 @@ class CancelSaveButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        OutlinedButton(
+        FilledButton(
+          style: FilledButtonStyles.surface(context),
           onPressed: () {
             if (onCancel != null) {
               onCancel!();

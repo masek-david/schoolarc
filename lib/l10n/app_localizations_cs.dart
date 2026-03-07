@@ -1394,6 +1394,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get addressVerified => 'Adresa ověřena';
 
   @override
+  String get changeEmail => 'Změnit email';
+
+  @override
   String get changeEmailAddress => 'Změnit emailovou adresu';
 
   @override
@@ -1409,6 +1412,12 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Zapomenuté heslo';
+
+  @override
+  String get emailNotVerified => 'Email není ověřen';
+
+  @override
+  String get tapToVerify => 'Stiskněte pro ověření';
 
   @override
   String get secondShort => ' sek';

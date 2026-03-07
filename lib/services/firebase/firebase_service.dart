@@ -39,6 +39,10 @@ class FirebaseService {
   late DatabaseReference _homeworks;
   late DatabaseReference _subjects;
 
+  User? get user {
+    return _auth.currentUser;
+  }
+
   bool get hasUser {
     return _auth.currentUser != null;
   }

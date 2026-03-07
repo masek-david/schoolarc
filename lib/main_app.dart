@@ -14,6 +14,7 @@ import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/app_info_screen.dart';
+import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
@@ -52,18 +53,10 @@ class MainApp extends ConsumerStatefulWidget {
 
 class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   late final AppLifecycleListener appStateListener;
-
   late RestorableInt currentPageIndex = RestorableInt(
     settings.get(Setting.initialAppPage),
   );
-
   bool showingOnboarding = false;
-
-  void startOnboarding() {
-    setState(() {
-      showingOnboarding = true;
-    });
-  }
 
   void endOnboarding() {
     setState(() {
@@ -112,6 +105,66 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     }
   }
 
+  // runs frame after first frame drawed
+  void onAppStart({required bool firstTimeOpeningApp}) {
+    updateMainWidget(ref);
+    NotificationSender.scheduleUpcomingDayNotifications(context);
+    ref.read(examDataProvider.notifier).checkAllIfCompleted();
+    ref.read(bakaHomeworksProvider.notifier);
+
+    if (!firstTimeOpeningApp && mounted) {
+      // ask for notifications
+      if (settings.get(Setting.stopAskingForNotifications) != true) {
+        NotificationSender.getPermission(context, tomorrowChannel);
+      }
+
+      // ask to verify email
+      if (fireService.needsVerification) {
+        final user = fireService.user;
+        if (user != null) {
+          verifyEmail(context, ref, user);
+        }
+      }
+
+      // show warning to enable cloud sync on web
+      if (kIsWeb &&
+          !settings.get(Setting.stopPwaCloudSyncWarning) &&
+          !fireService.hasUser) {
+        showDialogAdaptive(
+          context: context,
+          title: Text(context.loc.cloudSyncDisabled),
+          content: Text(context.loc.cloudSyncDisabledWarning),
+          actions: [
+            adaptiveDialogButton(
+              context: context,
+              isDefaultAction: true,
+              child: Text(context.loc.enable),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.restorablePushNamed(context, '/cloudsync');
+              },
+            ),
+            adaptiveDialogButton(
+              context: context,
+              isDestructiveAction: true,
+              child: Text(context.loc.keepDisabled),
+              onPressed: () => Navigator.pop(context),
+            ),
+            adaptiveDialogButton(
+              context: context,
+              isDestructiveAction: true,
+              child: Text(context.loc.dontShowAgain),
+              onPressed: () {
+                settings.save(Setting.stopPwaCloudSyncWarning, true);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      }
+    }
+  }
+
   Locale? _lastLocale;
 
   @override
@@ -123,7 +176,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     // update widgets localization strings
     if (_lastLocale != locale) {
       _lastLocale = locale;
-      saveLocalizationStrings(context);
+      widgetSaveLocalizationStrings(context);
     }
   }
 
@@ -131,15 +184,16 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   void initState() {
     super.initState();
 
+    final firstTimeOpeningApp = settings.firstTimeOpeningApp;
+
     appStateListener = AppLifecycleListener(
       onResume: () => _onAppLeaveOrReturn(true),
       onInactive: () => _onAppLeaveOrReturn(false),
     );
+
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        updateMainWidget(ref);
-        NotificationSender.scheduleUpcomingDayNotifications(context);
-        ref.read(examDataProvider.notifier).checkAllIfCompleted();
+        onAppStart(firstTimeOpeningApp: firstTimeOpeningApp);
       },
     );
 
@@ -157,63 +211,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       });
     }
 
-    if (settings.firstTimeOpeningApp ||
-        settings.get(.onboardingProgress) != null) {
+    if (firstTimeOpeningApp || settings.get(.onboardingProgress) != null) {
       showingOnboarding = true;
-    } else {
-      if (kIsWeb &&
-          !settings.get(Setting.stopPwaCloudSyncWarning) &&
-          !fireService.hasUser) {
-        Future.delayed(
-          Duration.zero,
-          () {
-            if (mounted) {
-              showDialogAdaptive(
-                context: context,
-                title: Text(context.loc.cloudSyncDisabled),
-                content: Text(context.loc.cloudSyncDisabledWarning),
-                actions: [
-                  adaptiveDialogButton(
-                    context: context,
-                    isDefaultAction: true,
-                    child: Text(context.loc.enable),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.restorablePushNamed(context, '/cloudsync');
-                    },
-                  ),
-                  adaptiveDialogButton(
-                    context: context,
-                    isDestructiveAction: true,
-                    child: Text(context.loc.keepDisabled),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  adaptiveDialogButton(
-                    context: context,
-                    isDestructiveAction: true,
-                    child: Text(context.loc.dontShowAgain),
-                    onPressed: () {
-                      settings.save(Setting.stopPwaCloudSyncWarning, true);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              );
-            }
-          },
-        );
-      }
-
-      if (settings.get(Setting.stopAskingForNotifications) != true) {
-        Future.delayed(
-          Duration.zero,
-          () {
-            if (mounted) {
-              NotificationSender.getPermission(context, tomorrowChannel);
-            }
-          },
-        );
-      }
     }
 
     // Only after at least the action method is set, the notification events are delivered
@@ -225,12 +224,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
           NotificationController.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:
           NotificationController.onDismissActionReceivedMethod,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        ref.read(bakaHomeworksProvider.notifier);
-      },
     );
   }
 

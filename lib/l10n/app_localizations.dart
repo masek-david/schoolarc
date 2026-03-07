@@ -2388,6 +2388,12 @@ abstract class AppLocalizations {
   /// **'Address verified'**
   String get addressVerified;
 
+  /// No description provided for @changeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email'**
+  String get changeEmail;
+
   /// No description provided for @changeEmailAddress.
   ///
   /// In en, this message translates to:
@@ -2417,6 +2423,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot password'**
   String get forgotPassword;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not verified'**
+  String get emailNotVerified;
+
+  /// No description provided for @tapToVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to verify'**
+  String get tapToVerify;
 
   /// No description provided for @secondShort.
   ///

@@ -15,7 +15,6 @@ class ExpressiveLoadingIndicator extends StatefulWidget {
     this.size = 48,
     this.color,
     this.shown = true,
-    this.padding = 0,
     this.useHaptics = false,
   });
 
@@ -24,7 +23,6 @@ class ExpressiveLoadingIndicator extends StatefulWidget {
   final Color? color;
   final bool shown;
   final bool useHaptics;
-  final double padding;
 
   factory ExpressiveLoadingIndicator.big({
     bool shown = true,
@@ -194,24 +192,21 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
         }
         final scale = 0.7 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
 
-        return Padding(
-          padding: EdgeInsets.all(widget.padding),
-          child: SizedBox(
-            height: widget.size,
-            width: widget.size,
-            child: Transform.scale(
-              scale: _appearController.value + 0.1,
-              child: Transform.rotate(
-                angle: angle,
-                child: Transform.scale(
-                  scale: scale,
-                  child: Container(
-                    width: widget.size,
-                    height: widget.size,
-                    decoration: ShapeDecoration(
-                      color: widget.color ?? context.col.primary,
-                      shape: shape,
-                    ),
+        return SizedBox(
+          height: _appearController.value * widget.size,
+          width: _appearController.value * widget.size,
+          child: Transform.scale(
+            scale: _appearController.value + 0.1,
+            child: Transform.rotate(
+              angle: angle,
+              child: Transform.scale(
+                scale: scale,
+                child: Container(
+                  width: widget.size,
+                  height: widget.size,
+                  decoration: ShapeDecoration(
+                    color: widget.color ?? context.col.primary,
+                    shape: shape,
                   ),
                 ),
               ),

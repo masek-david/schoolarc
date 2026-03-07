@@ -7,6 +7,7 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
@@ -163,11 +164,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                 : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
-        Center(
-          child: ExpressiveLoadingIndicator.big(
-            shown: isLoading,
-            useHaptics: ref.read(themeExpressiveHapticsProvider),
-          ),
+        ExpressiveLoadingIndicator.big(
+          shown: isLoading,
+          useHaptics: ref.read(themeExpressiveHapticsProvider),
         ),
         if (error != null && !isLoading)
           ErrorTile(
@@ -175,14 +174,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             text: context.loc.errorLoggingIn,
             allowActions: false,
           ),
-        if (!isLoggedIn) const SizedBox(height: 8),
         if (!isLoggedIn)
           TextField(
             enabled: !baka.isLoading && useBaka,
             controller: _schoolController,
             decoration: InputDecoration(labelText: context.loc.schoolWebId),
           ),
-        const SizedBox(height: 8),
+        if (!isLoggedIn) const SizedBox(height: 8),
         if (!isLoggedIn)
           AutofillGroup(
             child: Column(
@@ -296,7 +294,16 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             child: Text(context.loc.logIn),
           ),
         if (isLoggedIn)
-          OutlinedButton(
+          FilledButton.tonal(
+            onPressed: !isLoading ? askToImportTimetable : null,
+            child: Text(context.loc.importTimetable),
+          ),
+        if (isLoggedIn) const Divider(),
+        if (isLoggedIn)
+          FilledButton.icon(
+            icon: const Icon(Icons.logout_rounded),
+            label: Text(context.loc.logOut),
+            style: FilledButtonStyles.surface(context),
             onPressed: baka.isLoading
                 ? null
                 : () async {
@@ -310,13 +317,6 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       vibrate.error();
                     }
                   },
-            child: Text(context.loc.logOut),
-          ),
-        if (isLoggedIn) const Divider(),
-        if (isLoggedIn)
-          FilledButton.tonal(
-            onPressed: !isLoading ? askToImportTimetable : null,
-            child: Text(context.loc.importTimetable),
           ),
       ],
     );

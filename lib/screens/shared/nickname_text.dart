@@ -78,7 +78,7 @@ class NicknameText extends StatelessWidget {
     } else {
       text = loggedIn ? user!.name : context.loc.loggedOut;
 
-      textStyle = context.txt.headlineSmall!.copyWith(
+      textStyle = context.txt.headlineMedium!.copyWith(
         color: loggedIn ? null : col.surfaceContainerHighest,
         fontStyle: name == '' ? FontStyle.italic : null,
       );

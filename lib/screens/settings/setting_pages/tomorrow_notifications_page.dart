@@ -72,22 +72,24 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
     final loc = context.loc;
 
     return PopScope(
-      onPopInvokedWithResult: widget.showMessageOnPop ? (didPop, result) {
-        NotificationSender.scheduleUpcomingDayNotifications(
-          context,
-          firstUpcoming: (date, time) {
-            showMessage(
-              context,
-              loc.nextNotificationInfo(
-                date
-                    .formatWithWeekday(context, useOnFormat: true)
-                    .unCapitalize(),
-                time.format(context),
-              ),
-            );
-          },
-        );
-      } : null,
+      onPopInvokedWithResult: widget.showMessageOnPop
+          ? (didPop, result) {
+              NotificationSender.scheduleUpcomingDayNotifications(
+                context,
+                firstUpcoming: (date, time) {
+                  showMessage(
+                    context,
+                    loc.nextNotificationInfo(
+                      date
+                          .formatWithWeekday(context, useOnFormat: true)
+                          .unCapitalize(),
+                      time.format(context),
+                    ),
+                  );
+                },
+              );
+            }
+          : null,
       child: SettingsScaffold(
         heroTag: 'notifications',
         title: loc.upcomingDayNotifications,
@@ -135,7 +137,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
             value: enabled,
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 16),
             child: Text(loc.upcomingDayNotificationsDescription),
           ),
           SettingTile.withTimePicker(

@@ -56,7 +56,7 @@ class MealsScreen extends ConsumerWidget {
           await refresh(ref);
         },
         child: isLoading
-            ? const Center(child: ExpressiveLoadingIndicator(size: 72))
+            ? Center(child: ExpressiveLoadingIndicator.big())
             : error != null
             ? ListView(
                 children: [

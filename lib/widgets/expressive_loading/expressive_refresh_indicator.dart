@@ -36,7 +36,7 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
       displacement: 20,
       indicatorBuilder: (context, controller) {
         return Padding(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(1),
           child: ExpressiveLoadingIndicator(
             color: context.col.onPrimaryContainer,
             progress: controller.state.isLoading

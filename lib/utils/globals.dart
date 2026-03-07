@@ -166,7 +166,7 @@ void showMessage(
           ...actions,
           if (showLoading)
             ExpressiveLoadingIndicator(
-              size: 28,
+              size: 36,
               color: context.col.onPrimary,
             ),
         ],
