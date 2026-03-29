@@ -97,7 +97,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Text(
                       focusedDate.formatMonth(context),
-                      style: context.txt.displaySmall,
+                      style: context.txt.headlineMedium,
                       textAlign: .left,
                     ),
                   ),

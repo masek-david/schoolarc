@@ -260,7 +260,9 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       (previous, next) {
         final message = next.value?.message;
 
-        if (message != null && message != '' && message != settings.get(.lastSeenMessage)) { 
+        if (message != null &&
+            message != '' &&
+            message != settings.get(.lastSeenMessage)) {
           settings.save(.lastSeenMessage, message);
 
           showDialogAdaptive(
@@ -315,7 +317,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                       duration: Duration(milliseconds: miliseconds),
                       switchInCurve: Curves.easeOutSine,
                       transitionBuilder: (child, animation) {
-                        // TODO test device
                         return AnimatedBuilder(
                           animation: animation,
                           builder: (context, child) {
@@ -326,20 +327,6 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                           },
                           child: child,
                         );
-
-                        
-                        // return AnimatedBuilder(
-                        //   animation: animation,
-                        //   builder: (context, child) {
-                        //     return Padding(
-                        //       padding: EdgeInsets.only(
-                        //         top: (animation.value - 1) * -50,
-                        //       ),
-                        //       child: child,
-                        //     );
-                        //   },
-                        //   child: child,
-                        // );
                       },
                       child: screens[currentPageIndex.value],
                     ),

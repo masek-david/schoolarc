@@ -20,11 +20,15 @@ android widget doesnt open calendar
 
 check for memory leak
 
-error screen/messages
+error screen/messages, logging - firebase ???
 
 manage todo in github - add option to report a bug to github
 
 add arrow buttons to calendar 
+
+remove onWeekday from strings - it should be possible with intl ???
+
+bakalogin, strava login and firebase login are shared between debug and release on windows
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

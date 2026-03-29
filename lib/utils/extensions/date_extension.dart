@@ -51,7 +51,7 @@ extension BetterDate on Date {
     String languageCode = context.locale.languageCode;
 
     String dateFormat =
-        'MMMM ${(year == Date.today().year && !forceShowYear) ? '' : 'yyyy'}';
+        'LLLL ${(year == Date.today().year && !forceShowYear) ? '' : 'yyyy'}';
 
     return format(dateFormat, languageCode);
   }

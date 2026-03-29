@@ -156,9 +156,9 @@ class PagesWidget extends ConsumerWidget {
                             child: Stack(
                               children: [
                                 ListView(
-                                  // TODO remove ??? test device
-                                  // primary:
-                                  //     pageController.page?.round() == daySinceEpoch,
+                                  primary:
+                                      pageController.page?.round() ==
+                                      daySinceEpoch,
                                   children: [
                                     ExamList(
                                       examList: examListForDay,

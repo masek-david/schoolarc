@@ -44,6 +44,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
   );
   late final _focusedDate = RestorableDate(_selectedDate.value);
 
+
+  final _pagesKey = GlobalKey();
   late final _pageController = PageController(
     viewportFraction: 0.90,
     initialPage: _selectedDate.value.daysSinceEpoch,
@@ -110,6 +112,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     if (_selectedDate.value == date) {
       return;
     }
+    vibrate.light();
     setState(() {
       _selectedDate.value = date;
       _focusedDate.value = date;
@@ -152,6 +155,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     List<Homework> missedHws,
   ) {
     return PagesWidget(
+      key: _pagesKey,
       examOnDelete: (exam) => deleteExam(context, ref, exam),
       examOnEdit: (exam) => editExam(context, exam),
       examOnConvert: (exam) => convertExam(context, ref, exam),

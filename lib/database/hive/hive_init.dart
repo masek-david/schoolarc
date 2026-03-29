@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 
@@ -12,7 +15,11 @@ const String logBox = 'logBox';
 
 /// inits hive, can be called even if it is already initialised
 Future<void> initHive() async {
-  await Hive.initFlutter();
+  if (!kIsWeb && Platform.isWindows) {
+    await Hive.initFlutter('Schoolarc${kDebugMode ? '_debug' : ''}');
+  } else {
+    await Hive.initFlutter();
+  }
   try {
     Hive.registerAdapters();
   } catch (e) {
