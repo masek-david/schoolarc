@@ -4,10 +4,12 @@
 - Reworked Android widgets
 - Added new refresh indicator
 - Improved home screen UI and UX
+- New calendar look
 - Subjects can now be created when creating homework or an exam
 - Improved fonts
 - Improved onboarding and tutorial experience
 - Improved Cloud sync account - you can now change your email, verify email, reset password
+- Add Windows Cloud sync support
 
 ### Changed
 - Improved ordering of tasks

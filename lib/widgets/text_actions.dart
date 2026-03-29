@@ -7,36 +7,35 @@ class TextActions extends StatelessWidget {
     super.key,
     required this.text,
     this.greydOut = false,
-    this.actions,
+    this.actions = const [],
+    this.color,
+    this.padding,
   });
 
   final String text;
   final bool greydOut;
-  final List<Widget>? actions;
+  final List<Widget> actions;
+  final Color? color;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
-    final color = greydOut
-        ? getSubtleTextColor(context)
-        : Theme.of(context).colorScheme.onSurface;
+    final textColor = greydOut ? getSubtleTextColor(context) : color;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        4,
-        actions != null && actions!.isNotEmpty ? 0 : 8,
-        0,
-        actions != null && actions!.isNotEmpty ? 0 : 8,
-      ),
+      padding: padding ?? EdgeInsets.fromLTRB(4, actions.isEmpty ? 8 : 0, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Text(
               text,
-              style: context.txt.bodyLarge!.copyWith(color: color),
+              style: context.txt.titleMedium!.copyWith(
+                color: textColor,
+              ),
             ),
           ),
-          if (actions != null) ...actions!
+          ...actions,
         ],
       ),
     );

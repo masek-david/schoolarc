@@ -35,7 +35,10 @@ class _ActualTimetableScreenState
       appBar: AppBar(
         title: Text(context.loc.actualTimetable),
         actions: [
-          AgoText(stream: actualTimetableAgeProvider(week)),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: AgoText(stream: actualTimetableAgeProvider(week)),
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

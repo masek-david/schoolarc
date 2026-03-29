@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 part 'date.g.dart';
 
@@ -24,15 +25,31 @@ class Date implements Comparable<Date> {
   }
 
   Date.fromPrimitiveInt(int dateInt)
-      : year = dateInt ~/ 10000,
-        month = (dateInt % 10000) ~/ 100,
-        day = dateInt % 100;
+    : year = dateInt ~/ 10000,
+      month = (dateInt % 10000) ~/ 100,
+      day = dateInt % 100;
+
+  factory Date.fromDaysSinceEpoch(int daySinceEpoch) {
+    final date = DateTime.fromMillisecondsSinceEpoch(
+      daySinceEpoch * millisecondsInDay,
+    );
+
+    return Date.fromDateTime(date);
+  }
+
+  /// Returns the first day of the week
+  factory Date.fromWeekSinceEpoch(
+    int weekSinceEpoch, {
+    required bool weekStartsOnMonday,
+  }) {
+    return Date.fromDaysSinceEpoch(weekSinceEpoch * 7 + 4);
+  }
 
   /// Just saves the date, so keeps utc/local
   Date.fromDateTime(DateTime dateTime)
-      : year = dateTime.year,
-        month = dateTime.month,
-        day = dateTime.day;
+    : year = dateTime.year,
+      month = dateTime.month,
+      day = dateTime.day;
 
   int toPrimitiveInt() {
     return year * 10000 + month * 100 + day;
@@ -114,6 +131,22 @@ class Date implements Comparable<Date> {
     return toDateTimeLocal().weekday;
   }
 
+  int get _millisecondsSinceEpoch {
+    return toDateTimeUTC().millisecondsSinceEpoch;
+  }
+
+  int get daysSinceEpoch {
+    return (_millisecondsSinceEpoch / millisecondsInDay).floor();
+  }
+
+  /// Returns the number of the week this datetime is part of
+  int get weekSinceEpoch {
+    // substract 4 days, because 1.1.1970 was a thursday
+    return ((_millisecondsSinceEpoch - 4 * millisecondsInDay) /
+            (7 * millisecondsInDay))
+        .floor();
+  }
+
   DateTime toDateTimeLocal() {
     return DateTime(year, month, day);
   }
@@ -125,16 +158,36 @@ class Date implements Comparable<Date> {
   /// Returns the date, but with time of now
   DateTime toDateTimeNowLocal() {
     final now = DateTime.now();
-    return DateTime(year, month, day, now.hour, now.minute, now.second,
-        now.millisecond, now.microsecond);
+    return DateTime(
+      year,
+      month,
+      day,
+      now.hour,
+      now.minute,
+      now.second,
+      now.millisecond,
+      now.microsecond,
+    );
   }
 
   String format(String format, String languageCode) {
     return DateFormat(format, languageCode).format(toDateTimeLocal());
   }
 
+  static List<Date> datesForWeek(
+    int weekSinceEpoch, {
+    required bool startOnMonday,
+  }) {
+    final date = Date.fromWeekSinceEpoch(
+      weekSinceEpoch,
+      weekStartsOnMonday: startOnMonday,
+    );
+
+    return date.allDaysInThisWeek(startOnMonday: startOnMonday);
+  }
+
   /// returns all days in this week
-  List<Date> allDaysInThisWeek(bool startOnMonday) {
+  List<Date> allDaysInThisWeek({required bool startOnMonday}) {
     Date firstDay = subtractDays(weekday - (startOnMonday ? 1 : 0));
     List<Date> list = [];
 

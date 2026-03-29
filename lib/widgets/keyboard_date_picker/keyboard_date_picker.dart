@@ -63,11 +63,8 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarBuilders: myCalendarBuilder(
-                onEdit: (exam) {},
-                currentDate: date,
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerHigh,
+                examOnEdit: (exam) {},
+                onHeaderTapped: () {},
               ),
               focusedDay: date,
               selectedDayPredicate: (day) {

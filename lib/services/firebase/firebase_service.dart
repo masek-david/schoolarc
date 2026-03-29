@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:async/async.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
@@ -56,8 +54,6 @@ class FirebaseService {
   }
 
   void _refLocation() {
-    if (!kIsWeb && Platform.isWindows) return;
-
     _exams = _database.ref('users/${_auth.currentUser?.uid}/e');
     _homeworks = _database.ref(
       'users/${_auth.currentUser?.uid}/h',

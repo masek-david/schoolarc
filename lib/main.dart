@@ -31,7 +31,7 @@ Future<void> main() async {
   };
   PlatformDispatcher.instance.onError = (error, stack) {
     logsService.save(
-      'platform dispatcher: ${error.toString()}\n${stack.toString()}',
+      'Platform Dispatcher Error: ${error.toString()}\n${stack.toString()}',
     );
     return true;
   };

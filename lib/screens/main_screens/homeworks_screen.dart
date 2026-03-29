@@ -154,7 +154,7 @@ class HomeworksScreen extends ConsumerWidget {
 
                         final hw = item.hw!;
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.only(bottom: 8),
                           key: ValueKey(
                             'hw: ${hw.id} ${hw.stateReaddingVersion}',
                           ),
@@ -229,7 +229,7 @@ class HomeworksScreen extends ConsumerWidget {
           (index) {
             final hw = completedHws[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 8),
               child: HwTile(
                 hw: hw,
                 onChangedCompletion: (value) {

@@ -39,4 +39,8 @@ extension BetterDateTime on DateTime {
             (7 * millisecondsInDay))
         .floor();
   }
+
+  DateTime copyAsUtc(){
+    return DateTime.utc(year, month, day, minute, second, millisecond, microsecond);
+  }
 }

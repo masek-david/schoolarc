@@ -159,7 +159,7 @@ class ExamsScreen extends ConsumerWidget {
                           key: ValueKey(
                             'exam: ${exam.id} ${exam.stateReaddingVersion}',
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: ExamTile(
                             exam: exam,
                             onDelete: () => deleteExam(context, ref, exam),
@@ -218,7 +218,7 @@ class ExamsScreen extends ConsumerWidget {
           (index) {
             final exam = completedExams[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 8),
               child: ExamTile(
                 exam: exam,
                 onDelete: () => deleteExam(context, ref, exam),

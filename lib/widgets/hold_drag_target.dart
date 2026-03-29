@@ -7,15 +7,22 @@ import 'package:schoolarc/utils/globals.dart';
 ///
 /// The [heldAction] is called repeatedly while a draggable is held over the target.
 class HoldDragTarget extends StatefulWidget {
-  const HoldDragTarget(
-      {super.key,
-      required this.heldAction,
-      required this.builder,
-      this.onAcceptWithDetails});
+  const HoldDragTarget({
+    super.key,
+    required this.heldAction,
+    required this.hoverStart,
+    required this.builder,
+    this.onAcceptWithDetails,
+  });
 
-  final void Function() heldAction;
-  final Widget Function(BuildContext context, List<Object?> candidateData,
-      List<dynamic> rejectedData) builder;
+  final Future<void> Function() heldAction;
+  final void Function() hoverStart;
+  final Widget Function(
+    BuildContext context,
+    List<Object?> candidateData,
+    List<dynamic> rejectedData,
+  )
+  builder;
   final void Function(DragTargetDetails details)? onAcceptWithDetails;
 
   @override
@@ -36,10 +43,11 @@ class _HoldDragTargetState extends State<HoldDragTarget> {
   void setTimer() {
     timer = Timer(
       const Duration(milliseconds: 1000),
-      () {
+      () async {
         vibrate.medium();
-        widget.heldAction();
         setTimer();
+        await widget.heldAction();
+        widget.hoverStart();
       },
     );
   }
@@ -48,10 +56,15 @@ class _HoldDragTargetState extends State<HoldDragTarget> {
   Widget build(BuildContext context) {
     return DragTarget(
       onMove: (details) async {
+        if (isHovering == false) {
+          isHovering = true;
+          widget.hoverStart();
+        }
         if (timer?.isActive == true) return;
         setTimer();
       },
       onLeave: (data) {
+        isHovering = false;
         timer?.cancel();
       },
       onAcceptWithDetails: widget.onAcceptWithDetails,

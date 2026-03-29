@@ -130,22 +130,24 @@ void main() {
       expect(utc.isUtc, true);
     });
 
-    test('format() correctly formats date for different patterns and locales',
-        () {
-      initializeDateFormatting('en');
-      initializeDateFormatting('cs');
-      final date = const Date(2025, 10, 6);
+    test(
+      'format() correctly formats date for different patterns and locales',
+      () {
+        initializeDateFormatting('en');
+        initializeDateFormatting('cs');
+        final date = const Date(2025, 10, 6);
 
-      expect(date.format('yyyy-MM-dd', 'en'), '2025-10-06');
-      expect(date.format('dd/MM/yyyy', 'cs'), '06/10/2025');
+        expect(date.format('yyyy-MM-dd', 'en'), '2025-10-06');
+        expect(date.format('dd/MM/yyyy', 'cs'), '06/10/2025');
 
-      // English vs Czech month names
-      final englishMonth = date.format('MMMM', 'en').toLowerCase();
-      final czechMonth = date.format('MMMM', 'cs').toLowerCase();
+        // English vs Czech month names
+        final englishMonth = date.format('MMMM', 'en').toLowerCase();
+        final czechMonth = date.format('MMMM', 'cs').toLowerCase();
 
-      expect(englishMonth, 'october');
-      expect(czechMonth, 'říjen');
-    });
+        expect(englishMonth, 'october');
+        expect(czechMonth, 'říjen');
+      },
+    );
 
     test('allDaysInThisMonth returns correct days', () {
       final feb = const Date(2024, 2, 13); // leap year
@@ -157,8 +159,8 @@ void main() {
 
     test('allDaysInThisWeek returns correct days', () {
       final date = const Date(2025, 9, 30);
-      final week = date.allDaysInThisWeek(true);
-      final weekFromSunday = date.allDaysInThisWeek(false);
+      final week = date.allDaysInThisWeek(startOnMonday: true);
+      final weekFromSunday = date.allDaysInThisWeek(startOnMonday: false);
       expect(week.length, 7);
       expect(week.first, const Date(2025, 9, 29)); // Monday
       expect(week.last, const Date(2025, 10, 5)); // Sunday

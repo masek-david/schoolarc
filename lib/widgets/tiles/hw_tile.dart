@@ -38,7 +38,7 @@ class HwTile extends StatefulWidget {
   final bool showCompletion;
   final bool draggable;
   final bool showBorderIfMissed;
-  final void Function(bool)? onChangedCompletion;
+  final void Function(bool completed)? onChangedCompletion;
   final void Function()? onDelete;
   final void Function() onEdit;
   final void Function()? onConvert;
@@ -163,7 +163,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
           border: isMissed && widget.showBorderIfMissed
               ? Border.all(
                   color: missedColor!,
-                  width: 2,
+                  width: 1,
                 )
               : null,
           borderRadius: BorderRadius.circular(borderRadius),

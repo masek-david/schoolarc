@@ -44,7 +44,7 @@ class TimetableCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final useBaka = ref.watch(useBakaProvider);
 
-    final week = dateToShow.weekSinceEpoch;
+    final week = dateToShow.copyAsUtc().weekSinceEpoch;
     final current = ref.watch(actualTimetableProvider(week));
     final isLoading = current.isLoading;
     final error = current.error;

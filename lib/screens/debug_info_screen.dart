@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,10 +37,21 @@ class DbInfoScreen extends ConsumerWidget {
               },
               child: const Text('Launch welcome screen on next open'),
             ),
-            const Text(
-              bool.fromEnvironment('dart.tool.dart2wasm')
-                  ? 'Running in wasm'
-                  : 'Not running in wasm',
+            FilledButton.tonal(
+              onPressed: () {
+                log('Pressed Crash button');
+                
+                throw Exception();
+              },
+              child: const Text('Crash'),
+            ),
+            const Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child: Text(
+                bool.fromEnvironment('dart.tool.dart2wasm')
+                    ? 'Running in wasm'
+                    : 'Not running in wasm',
+              ),
             ),
             if (kDebugMode)
               FilledButton.tonalIcon(
@@ -50,7 +63,7 @@ class DbInfoScreen extends ConsumerWidget {
                   BakaHomeworksDatabase().deleteAllFromDisk();
                 },
                 label: const Text('Delete all boxes from disk'),
-                icon: const Icon(Icons.bug_report),
+                icon: const Icon(Icons.delete_forever_rounded),
               ),
             if (kDebugMode)
               FilledButton.tonalIcon(
@@ -62,18 +75,7 @@ class DbInfoScreen extends ConsumerWidget {
                   await fireService.logOut();
                   SecureStorage.deleteAllFromDisk();
                 },
-                label: const Text('Reset all settings (run app as new)'),
-                icon: const Icon(Icons.bug_report),
-              ),
-            if (kDebugMode)
-              FilledButton.tonalIcon(
-                onPressed: () {
-                  bakaService.logOut();
-                  stravaService.logOut();
-                  fireService.logOut();
-                  SecureStorage.deleteAllFromDisk();
-                },
-                label: const Text('Sign out everywhere'),
+                label: const Text('Reset all settings and log out (run app as new, keep only hw, exam, subjects)'),
                 icon: const Icon(Icons.bug_report),
               ),
             const Divider(),
@@ -81,6 +83,7 @@ class DbInfoScreen extends ConsumerWidget {
               vibrate.hasVibrator ? 'Has vibrator' : 'Doesn\'t have vibrator',
             ),
             Wrap(
+              spacing: 4,
               children: [
                 FilledButton.tonal(
                   onPressed: vibrate.light,
@@ -153,50 +156,35 @@ class DbInfoScreen extends ConsumerWidget {
             ),
             const Divider(),
             const Text('FIREBASE'),
-            Row(
-              spacing: 8,
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () async {
-                      late List<HomeworkData>? fireHws;
-                      try {
-                        fireHws = await fireService.getAllHomeworks();
-                      } catch (e) {
-                        if (context.mounted) {
-                          showErrorMessage(context, e);
-                        }
-                      }
-                      if (context.mounted) {
-                        showDialogAdaptive(
-                          context: context,
-                          content: SingleChildScrollView(
-                            child: Text(fireHws.toString()),
-                          ),
-                          actions: [
-                            adaptiveDialogButton(
-                              context: context,
-                              child: const Text('Close'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                    child: const Text('test firebase'),
-                  ),
-                ),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () async {
-                      fireService.logOut();
-                    },
-                    child: const Text('logout from firebase'),
-                  ),
-                ),
-              ],
+            FilledButton(
+              onPressed: () async {
+                late List<HomeworkData>? fireHws;
+                try {
+                  fireHws = await fireService.getAllHomeworks();
+                } catch (e) {
+                  if (context.mounted) {
+                    showErrorMessage(context, e);
+                  }
+                }
+                if (context.mounted) {
+                  showDialogAdaptive(
+                    context: context,
+                    content: SingleChildScrollView(
+                      child: Text(fireHws.toString()),
+                    ),
+                    actions: [
+                      adaptiveDialogButton(
+                        context: context,
+                        child: const Text('Close'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                }
+              },
+              child: const Text('Test Firebase'),
             ),
             const Text('SUBJECTS'),
             const Divider(),

@@ -57,7 +57,7 @@ class NicknameText extends StatelessWidget {
     } else if (user?.id == 'ELQJHNXQ3LRSSokMMZWubwRUJeR2') {
       text = user!.name;
 
-      textStyle = robotoSerif(color: col.onPrimaryContainer, weight: 600);
+      textStyle = robotoSerif(color: col.onPrimaryContainer, weight: 600, size: 26);
 
       avatar = ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(100),

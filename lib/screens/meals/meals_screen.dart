@@ -46,7 +46,7 @@ class MealsScreen extends ConsumerWidget {
         title: Text(context.loc.meals),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(right: 8),
             child: AgoText(stream: stravaMealsAgeProvider),
           ),
         ],

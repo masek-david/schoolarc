@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Schoolarc",
+            "name": "Schoolarc [dev]",
             "request": "launch",
             "type": "dart",
             "args": [
@@ -14,7 +14,7 @@
             ]
         },
         {
-            "name": "Schoolarc (profile)",
+            "name": "Schoolarc (profile) [dev]",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
@@ -24,7 +24,7 @@
             ]
         },
         {
-            "name": "Schoolarc (release)",
+            "name": "Schoolarc (release) [dev]",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -34,7 +34,7 @@
             ]
         },
         {
-            "name": "Schoolarc (debug prod)",
+            "name": "Schoolarc (debug) [prod]",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -44,7 +44,7 @@
             ]
         },
         {
-            "name": "Schoolarc web 8080",
+            "name": "Schoolarc web-port=8080",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -55,19 +55,8 @@
             ]
         },
         {
-            "name": "Schoolarc web 8080 release",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release",
-            "args": [
-                // "--no-web-experimental-hot-reload",
-                // "--web-hostname=192.168.100.107",
-                "--web-port=8080"
-            ]
-        },
-        {
-            "program": "integration_test/app_test.dart",
             "name": "Integration Tests (Dev Flavor)",
+            "program": "integration_test/app_test.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",

@@ -47,7 +47,7 @@ class ExamList extends ConsumerWidget {
             (index) {
               Exam exam = examList[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: draggable
                     ? LayoutBuilder(
                         builder: (context, constraints) {

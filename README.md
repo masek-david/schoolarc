@@ -77,7 +77,7 @@ Schoolarc can run on most platforms, however, it is optimized and tested mainly 
 | Android |           ✅           |    ✅     |     ✅     |       ✅       |         ✅         |
 | iOS     |           ✅           |    ✅     |     ✅     |       ✅       |         ❌         |
 | Web     |           ✅           |    ✅     |     ✅     |       ❌       |         ❌         |
-| Windows |           ❌           |    ✅     |     ✅     |       ❌       |         ❌         |
+| Windows |           ✅           |    ✅     |     ✅     |       ❌       |         ❌         |
 | macOS   |           ❔           |    ❔     |     ❔     |       ❔       |         ❔         |
 | Linux   |           ❔           |    ❔     |     ❔     |       ❔       |         ❔         |
 

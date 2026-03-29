@@ -264,7 +264,10 @@ class ExamNotifier extends Notifier<Map<String, ExamData>> {
     }
 
     final id = uuid.v4();
-    exam = exam.copyWith(id: id);
+    exam = exam.copyWith(
+      id: id,
+      isCompleted: exam.date.isBefore(Date.today()),
+    );
     await examsDb.put(id, exam.toEntity());
 
     state = {...state, id: exam};

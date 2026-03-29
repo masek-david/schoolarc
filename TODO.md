@@ -4,6 +4,36 @@ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 
 ? ios calendar still refresh pulls
 
+test keyboard date picker
+
+Haptic keeps repeating in calendar drag and drop main (not small calendar)
+
+add hide to found new homeworks
+
+add days to cal
+
+week start on sunday
+
+in calendar tiles, show +2, +3, instead of elipsis
+
+decrease baka and strava polling rate
+
+show at least something in empty notification (add to windows??)
+
+android widget doesnt open calendar
+
+show weekday in all meals
+
+strava clipped text for Doplnek
+
+check for memory leak
+
+error screen/messages
+
+manage todo in github - add option to report a bug to github
+
+add arrow buttons to calendar 
+
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari login
@@ -105,7 +135,7 @@ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
-- ⬜ ? merge duplicate subjects (is it really needed?)
+- ⬜ ? merge subjects with duplicate bakaId, show which one is more used (is it really needed?)
 
 
 

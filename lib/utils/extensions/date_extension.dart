@@ -44,6 +44,17 @@ extension BetterDate on Date {
     return format(dateFormat, languageCode);
   }
 
+  String formatMonth(
+    BuildContext context, {
+    bool forceShowYear = false,
+  }) {
+    String languageCode = context.locale.languageCode;
+
+    String dateFormat = 'MMMM ${(year == Date.today().year && !forceShowYear) ? '' : 'yyyy'}';
+
+    return format(dateFormat, languageCode);
+  }
+
   /// Will try to return Yesterday, Today or Tomorrow, if not possible, will use [formatFromSettings]
   String formatWithText(BuildContext context, {bool forceShowYear = false}) {
     final today = Date.today();

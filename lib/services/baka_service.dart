@@ -327,7 +327,7 @@ class BakaService {
         )
         .toList();
     final dates = date.allDaysInThisWeek(
-      settings.get(Setting.weekStartsOnMonday),
+      startOnMonday: settings.get(Setting.weekStartsOnMonday),
     );
     final table = List.generate(
       7,
@@ -336,7 +336,7 @@ class BakaService {
         (_) => BakaTimetableEntry.empty(),
       ),
     );
-    
+
     // SUBJECTS
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
     final subjects = <String, BakaSubject>{};

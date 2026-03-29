@@ -9,15 +9,18 @@ import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/calendar_widget.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/pages_widget.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/scrollable_calendar.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/week_calendar.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+final _minimumColumnWidth = 350.0;
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
@@ -33,31 +36,29 @@ class CalendarScreen extends ConsumerStatefulWidget {
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen>
     with RestorationMixin {
-  late final RestorableDateTime _focusedDay = RestorableDateTime(
-    showtomorrow
-        ? DateTime.now().toUtc().add(const Duration(days: 1)).toLocal()
-        : DateTime.now(),
-  );
-  late final RestorableDateTime _selectedDay = RestorableDateTime(
-    _focusedDay.value,
-  );
-
-  // how many pages you can scroll to negative
-  static const int negativePageCount = 1000000;
-  late final showtomorrow =
+  late final showTomorrow =
       ref.read(calendarInitialIsTomorrowProvider) || widget.showtomorrow;
-  late final PageController _pageController = PageController(
+
+  late final _selectedDate = RestorableDate(
+    showTomorrow ? Date.today().addDays(1) : Date.today(),
+  );
+  late final _focusedDate = RestorableDate(_selectedDate.value);
+
+  late final _pageController = PageController(
     viewportFraction: 0.90,
-    initialPage: getPageIndex(_selectedDay.value),
+    initialPage: _selectedDate.value.daysSinceEpoch,
+  );
+  late final _monthCalendarController = ItemScrollController();
+  late final _weekCalendarController = PageController(
+    initialPage: _selectedDate.value.weekSinceEpoch,
   );
 
   final _resizeController = ResizableController();
-  List<double> initialRatios = List<double>.from(
+  var initialRatios = List<double>.from(
     settings.get(Setting.calendarResizableContainerRatio),
   );
 
-  // for shorcuts
-  final _focus = FocusNode();
+  final _focus = FocusNode(); // for shorcuts
 
   @override
   void initState() {
@@ -80,9 +81,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
   @override
   void dispose() {
     _pageController.dispose();
+    _weekCalendarController.dispose();
     _focus.dispose();
-    _focusedDay.dispose();
-    _selectedDay.dispose();
+    _selectedDate.dispose();
 
     super.dispose();
   }
@@ -92,48 +93,63 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_focusedDay, 'focusedDay');
-    registerForRestoration(_selectedDay, 'selectedDay');
+    registerForRestoration(_selectedDate, 'selectedDate');
+    registerForRestoration(_focusedDate, 'focusedDate');
   }
 
-  int getPageIndex(DateTime date) {
-    final now = DateTime.now();
-    final nowOnlyDay = DateTime(now.year, now.month, now.day);
-    final dateOnlyDay = DateTime(date.year, date.month, date.day);
-    final dayDifferenceFromNow = dateOnlyDay.difference(nowOnlyDay).inDays;
-    return negativePageCount + dayDifferenceFromNow;
-  }
+  /// if the selectedDay is already set, it skips
+  ///
+  /// [scrollPage] is false when calling from pages widget, so the page isnt scrolled
+  ///
+  /// [scrollCalendar] is false when calling from calendar widget, so the calendar isnt scrolled
+  void setSelectedDate(
+    Date date, {
+    bool scrollPage = true,
+    bool scrollCalendar = true,
+  }) {
+    if (_selectedDate.value == date) {
+      return;
+    }
+    setState(() {
+      _selectedDate.value = date;
+      _focusedDate.value = date;
+    });
 
-  Widget buildCalendar(
-    bool isWide,
-    Map<Date, List<Homework>> hws,
-    Map<Date, List<Exam>> exams,
-  ) {
-    return CalendarWidget(
-      focusedDay: _focusedDay.value,
-      selectedDay: _selectedDay.value,
-      homeworks: hws,
-      exams: exams,
-      calendarFormat: isWide ? CalendarFormat.month : CalendarFormat.week,
-      onEdit: (exam) => editExam(context, exam),
-      setFocusedDay: (date) {
-        setState(() {
-          _focusedDay.value = date;
-        });
-      },
-      setSelectedDay: (date) {
-        if (!mounted) return;
-        if (!isSameDay(date, _selectedDay.value)) {
-          _pageController.jumpToPage(getPageIndex(date));
-        }
-      },
-    );
+    if (!mounted) return;
+    if (scrollPage) {
+      final pageDiff = date.daysSinceEpoch - _pageController.page!;
+      if (pageDiff.abs() <= 1) {
+        _pageController.animateToPage(
+          date.daysSinceEpoch,
+          duration: Durations.medium2,
+          curve: Curves.decelerate,
+        );
+      } else {
+        _pageController.jumpToPage(date.daysSinceEpoch);
+      }
+    }
+    if (scrollCalendar) {
+      if (_monthCalendarController.isAttached) {
+        _monthCalendarController.scrollTo(
+          index: date.weekSinceEpoch - 1,
+          duration: Durations.medium2,
+        );
+      }
+      // _weekCalendarController.jumpTo(date.weekSinceEpoch.toDouble());
+      if (_weekCalendarController.hasClients) {
+        _weekCalendarController.animateToPage(
+          date.weekSinceEpoch,
+          duration: Durations.medium2,
+          curve: Curves.decelerate,
+        );
+      }
+    }
   }
 
   Widget buildPages(
     Map<Date, List<Homework>> hws,
     Map<Date, List<Exam>> exams,
-    List<Homework> missedHw,
+    List<Homework> missedHws,
   ) {
     return PagesWidget(
       examOnDelete: (exam) => deleteExam(context, ref, exam),
@@ -144,20 +160,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       hwOnEdit: (hw) => editHw(context, hw),
       hwOnConvert: (hw) => convertHw(context, ref, hw),
       pageController: _pageController,
-      onPageChanged: (page) {
-        if (!mounted) return;
-        setState(() {
-          _focusedDay.value = DateTime.now()
-              .toUtc()
-              .add(Duration(days: page - negativePageCount))
-              .toLocal();
-          _selectedDay.value = _focusedDay.value;
-        });
-      },
-      negativePageCount: negativePageCount,
+      onPageChanged: (page) =>
+          setSelectedDate(Date.fromDaysSinceEpoch(page), scrollPage: false),
       hwByDate: hws,
       examByDate: exams,
-      missedHwList: missedHw,
+      missedHws: missedHws,
     );
   }
 
@@ -167,7 +174,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     final missedHws = ref.watch(hwMissedProvider);
     final exams = ref.watch(examsDatesProvider);
 
-    final isWide = MediaQuery.of(context).size.width > 750;
+    final isWide =
+        MediaQuery.of(context).size.width > _minimumColumnWidth * 2 + 28 + 84;
+    final pagesWidget = buildPages(hws, exams, missedHws);
 
     return Shortcuts(
       shortcuts: {
@@ -181,13 +190,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
           NewHomeworkIntent: CallbackAction(
             onInvoke: (intent) => addNewHw(
               context,
-              initialDate: Date.fromDateTime(_selectedDay.value.toLocal()),
+              initialDate: _selectedDate.value,
             ),
           ),
           NewExamIntent: CallbackAction(
             onInvoke: (intent) => addNewExam(
               context,
-              initialDate: Date.fromDateTime(_selectedDay.value.toLocal()),
+              initialDate: _selectedDate.value,
             ),
           ),
         },
@@ -205,17 +214,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                     children: [
                       FloatingActionButton.extended(
                         tooltip:
-                            '${context.loc.addNewExamFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
+                            '${context.loc.addNewExamFor} ${_selectedDate.value.formatWithText(context).toLowerCase()}',
                         heroTag: 'exam_btn',
                         onPressed: () {
                           showKeyboard();
                           vibrate.medium();
-                          addNewExam(
-                            context,
-                            initialDate: Date.fromDateTime(
-                              _selectedDay.value.toLocal(),
-                            ),
-                          );
+                          addNewExam(context, initialDate: _selectedDate.value);
                         },
                         icon: const Icon(Icons.add_rounded),
                         label: Text(context.loc.exams(1)),
@@ -223,17 +227,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                       const SizedBox(height: 10),
                       FloatingActionButton.extended(
                         tooltip:
-                            '${context.loc.addNewHomeworkFor} ${Date.fromDateTime(_selectedDay.value).formatWithText(context).toLowerCase()}',
+                            '${context.loc.addNewHomeworkFor} ${_selectedDate.value.formatWithText(context).toLowerCase()}',
                         heroTag: 'homework_btn',
                         onPressed: () {
                           showKeyboard();
                           vibrate.medium();
-                          addNewHw(
-                            context,
-                            initialDate: Date.fromDateTime(
-                              _selectedDay.value.toLocal(),
-                            ),
-                          );
+                          addNewHw(context, initialDate: _selectedDate.value);
                         },
                         icon: const Icon(Icons.add_rounded),
                         label: Text(context.loc.homework(1)),
@@ -250,9 +249,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                         builder: (context, constraints) {
                           // if the screen was big, but now is small, it wouldnt fit, so i check it here and reset it if needed
                           for (var element in initialRatios) {
-                            if (element * constraints.maxWidth < 300) {
+                            if (element * constraints.maxWidth <
+                                _minimumColumnWidth) {
                               initialRatios = [0.5, 0.5];
                             }
+                          }
+
+                          if (initialRatios.first + initialRatios.last >
+                              1.001) {
+                            initialRatios = [0.5, 0.5];
                           }
 
                           return ResizableContainer(
@@ -262,24 +267,32 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                               ResizableChild(
                                 size: ResizableSize.ratio(
                                   initialRatios[0],
-                                  min: 300,
+                                  min: _minimumColumnWidth,
                                 ),
-                                // size: const ResizableSize.expand(min: 300),
                                 divider: const ResizableDivider(
                                   thickness: 4,
                                   length: ResizableSize.pixels(60),
                                   padding: 12,
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: buildCalendar(isWide, hws, exams),
+                                child: ScrollableCalendar(
+                                  controller: _monthCalendarController,
+                                  onExamTap: (exam) => editExam(context, exam),
+                                  homeworks: hws,
+                                  exams: exams,
+                                  selectedDate: _selectedDate.value,
+                                  onTitleTap: () =>
+                                      setSelectedDate(Date.today()),
+                                  onDateSelected: (selectedDate) =>
+                                      setSelectedDate(
+                                        selectedDate,
+                                        scrollCalendar: false,
+                                      ),
                                 ),
                               ),
                               ResizableChild(
-                                // size: const ResizableSize.expand(min: 300),
                                 size: ResizableSize.ratio(
                                   initialRatios[1],
-                                  min: 300,
+                                  min: _minimumColumnWidth,
                                 ),
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -288,7 +301,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                                       context,
                                     ).colorScheme.surface,
                                   ),
-                                  child: buildPages(hws, exams, missedHws),
+                                  child: pagesWidget,
                                 ),
                               ),
                             ],
@@ -298,9 +311,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                     )
                   : Column(
                       children: [
-                        buildCalendar(isWide, hws, exams),
-                        const SizedBox(height: 4),
-                        Expanded(child: buildPages(hws, exams, missedHws)),
+                        WeekCalendar(
+                          controller: _weekCalendarController,
+                          selectedDate: _selectedDate.value,
+                          setSelectedDate: (date) =>
+                              setSelectedDate(date, scrollCalendar: false),
+                          homeworks: hws,
+                          exams: exams,
+                          examOnEdit: (exam) => editExam(context, exam),
+                        ),
+                        Expanded(child: pagesWidget),
                       ],
                     ),
             ),

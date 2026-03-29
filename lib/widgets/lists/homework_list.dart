@@ -37,7 +37,7 @@ class HomeworkList extends StatelessWidget {
             (index) {
               Homework hw = hwList[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: HwTile(
                   // must be here
                   key: ValueKey('hwTile ${hw.id}'),

@@ -113,7 +113,7 @@ class ExamData extends TaskData {
       'n': text,
       if (description != '') 'i': description,
       if (subjectId != null) 's': subjectId,
-      // TODO fire (can be updated after you are 100% sure every version can parse it)
+      // TODO fire (can be updated after you are 100% sure every version can parse it) and after you are sure that every date in firebase uses this format - which could require manual refactor
       // 'd': date.toPrimitiveInt(),
       'd': date.toDateTimeUTC().millisecondsSinceEpoch,
       if (priority != 0) 'p': priority,

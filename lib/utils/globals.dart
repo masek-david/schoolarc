@@ -126,6 +126,7 @@ void showErrorMessage(BuildContext context, Object error, {String? message}) {
             child: Text(
               '${message != null ? '$message: ' : ''}${info.text}',
               style: TextStyle(color: info.foregroundColor),
+              maxLines: 5,
             ),
           ),
           ...actions,

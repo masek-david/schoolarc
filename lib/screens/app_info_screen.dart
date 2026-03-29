@@ -32,8 +32,7 @@ class AppInfoScreen extends ConsumerWidget {
           crossAxisAlignment: .start,
           children: [
             const SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: .spaceBetween,
+            Wrap(
               children: [
                 Text(
                   context.loc.sorry,
