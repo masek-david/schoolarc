@@ -10,21 +10,13 @@ Haptic keeps repeating in calendar drag and drop main (not small calendar)
 
 add hide to found new homeworks
 
-add days to cal
-
-week start on sunday
+check week start on sunday
 
 in calendar tiles, show +2, +3, instead of elipsis
-
-decrease baka and strava polling rate
 
 show at least something in empty notification (add to windows??)
 
 android widget doesnt open calendar
-
-show weekday in all meals
-
-strava clipped text for Doplnek
 
 check for memory leak
 

@@ -533,7 +533,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noTimetableMessage =>
-      'You don\'t have any timetable. You can create time of lessons by tapping the plus button.';
+      'You don\'t have any timetable. You can create time of lessons by tapping the plus button. Or, you can import your timetable from Bakaláři.';
 
   @override
   String get noHomework => 'No homework found';

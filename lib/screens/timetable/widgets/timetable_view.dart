@@ -10,7 +10,6 @@ import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 
 class TimetableView extends StatelessWidget {
   const TimetableView({
@@ -20,13 +19,13 @@ class TimetableView extends StatelessWidget {
     required this.columnWidth,
     required this.onLessonTimesTapped,
     required this.onSubjectTapped,
-    required this.textWhenEmpty,
+    required this.contentWhenEmpty,
   });
 
   final Timetable? timeTable;
   final bool showWholeWeek;
   final double columnWidth;
-  final String textWhenEmpty;
+  final Widget contentWhenEmpty;
   final void Function(LessonTimes lessonTimes, int lessonIndex)?
   onLessonTimesTapped;
   final void Function(int weekday, int lessonIndex, TimetableEntry lesson)?
@@ -37,7 +36,7 @@ class TimetableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (timeTable == null || timeTable!.lessonTimes.isEmpty) {
-      return EmptyMessage(message: textWhenEmpty);
+      return contentWhenEmpty;
     }
 
     final table = timeTable!.table;

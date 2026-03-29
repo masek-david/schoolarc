@@ -100,7 +100,7 @@ class StravaMealsNotifier extends AsyncNotifier<Map<Date, List<Meal>>> {
 
   Future<void> refreshIfOld() async {
     if (lastFetched == null ||
-        DateTime.now().difference(lastFetched!) > const Duration(minutes: 30)) {
+        DateTime.now().difference(lastFetched!) > stravaPollingRate) {
       return refresh();
     }
     return;

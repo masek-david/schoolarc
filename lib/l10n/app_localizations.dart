@@ -953,7 +953,7 @@ abstract class AppLocalizations {
   /// No description provided for @noTimetableMessage.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have any timetable. You can create time of lessons by tapping the plus button.'**
+  /// **'You don\'t have any timetable. You can create time of lessons by tapping the plus button. Or, you can import your timetable from Bakaláři.'**
   String get noTimetableMessage;
 
   /// No description provided for @noHomework.

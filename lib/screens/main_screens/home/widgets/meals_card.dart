@@ -77,32 +77,22 @@ class _MealsCardState extends ConsumerState<MealsCard> {
               final mealsForToday = data?[date];
               final bool empty = mealsForToday == null;
 
+              final onDateText = date
+                  .formatWithWeekday(
+                    context,
+                    useOnFormat: true,
+                    forceShowWeekday: true,
+                  )
+                  .unCapitalize();
+
               String text = '';
               if (isLoading) {
                 text = context.loc.loading;
               } else {
                 if (empty) {
-                  text = context.loc
-                      .noMealsOn(
-                        date
-                            .formatWithWeekday(
-                              context,
-                              useOnFormat: true,
-                            )
-                            .unCapitalize(),
-                      )
-                      .capitalize();
+                  text = context.loc.noMealsOn(onDateText).capitalize();
                 } else {
-                  text = context.loc
-                      .mealsOn(
-                        date
-                            .formatWithWeekday(
-                              context,
-                              useOnFormat: true,
-                            )
-                            .unCapitalize(),
-                      )
-                      .capitalize();
+                  text = context.loc.mealsOn(onDateText).capitalize();
                 }
               }
 

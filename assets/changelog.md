@@ -20,6 +20,7 @@
 - The app now follows system language and formatting
 - Finally resolved keyboard opening on web on ios
 - Improved snackbars
+- Added weekdays to meals
 
 ### Fixed
 - Fixed notifications - now will arrive up to a week after the app had been opened

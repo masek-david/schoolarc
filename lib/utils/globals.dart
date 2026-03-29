@@ -41,6 +41,8 @@ late final PackageInfo packageInfo;
 final timeoutDuration = const Duration(seconds: 10);
 const millisecondsInDay = 86400000;
 
+const bakaPollingRate = Duration(minutes: 60);
+const stravaPollingRate = Duration(minutes: 240);
 
 const noChange = Object();
 

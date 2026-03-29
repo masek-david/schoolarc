@@ -50,7 +50,8 @@ extension BetterDate on Date {
   }) {
     String languageCode = context.locale.languageCode;
 
-    String dateFormat = 'MMMM ${(year == Date.today().year && !forceShowYear) ? '' : 'yyyy'}';
+    String dateFormat =
+        'MMMM ${(year == Date.today().year && !forceShowYear) ? '' : 'yyyy'}';
 
     return format(dateFormat, languageCode);
   }
@@ -76,18 +77,36 @@ extension BetterDate on Date {
   /// Else, will return [formatWithText]
   ///
   /// If [useOnFormat], it will return the form eg. "On Monday"
-  String formatWithWeekday(BuildContext context, {bool useOnFormat = false}) {
-    final diff = difference(Date.today());
-    if (diff > 1 && diff < 8 && isAfter(Date.today())) {
-      if (useOnFormat) {
-        return context.loc.onWeekday(weekday.toString());
-      }
+  String formatWithWeekday(
+    BuildContext context, {
+    bool useOnFormat = false,
+    bool forceShowWeekday = false,
+  }) {
+    final today = Date.today();
+    final diff = difference(today);
+    if (diff == 0) {
+      return context.loc.today;
+    }
+    if (diff == 1 && isAfter(today)) {
+      return context.loc.tomorrow;
+    }
 
-      return DateFormat(
+    String formatted = '';
+
+    if (useOnFormat) {
+      formatted = context.loc.onWeekday(weekday.toString());
+    } else {
+      formatted = DateFormat(
         'EEEE',
         context.locale.languageCode,
       ).format(toDateTimeLocal());
     }
-    return formatWithText(context);
+
+    if (forceShowWeekday && diff > 7 && isAfter(today)) {
+      formatted += ' ';
+      formatted += formatFromSettings(context);
+    }
+
+    return formatted;
   }
 }

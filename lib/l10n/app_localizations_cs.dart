@@ -543,7 +543,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get noTimetableMessage =>
-      'Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus';
+      'Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus, nebo můžete importovat rozvrh z Bakalářů.';
 
   @override
   String get noHomework => 'Nebyly nalezeny žádné úkoly';

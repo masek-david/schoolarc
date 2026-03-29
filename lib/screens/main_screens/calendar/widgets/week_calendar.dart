@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
-import 'package:schoolarc/screens/main_screens/calendar/widgets/scrollable_calendar.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/week_row.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/weekdays_row.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
+import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/hold_drag_target.dart';
 
 class WeekCalendar extends StatefulWidget {
@@ -99,14 +102,19 @@ class _WeekCalendarState extends State<WeekCalendar> {
                     ),
                   ),
                 ),
+                WeekdaysRow(textColor: getSubtleTextColor(context)),
                 SizedBox(
                   // the width is divided to 7 days, plus spacing for the exam tiles (i guessed it though)
                   height: width / 7 + 90,
                   child: PageView.builder(
                     onPageChanged: (value) {
+                      final bool startOnMonday = settings.get(
+                        Setting.weekStartsOnMonday,
+                      );
+
                       if (Date.datesForWeek(
                         value,
-                        startOnMonday: true,
+                        startOnMonday: startOnMonday,
                       ).contains(widget.selectedDate)) {
                         setState(() {
                           focusedDate = widget.selectedDate;
@@ -115,17 +123,16 @@ class _WeekCalendarState extends State<WeekCalendar> {
                         setState(() {
                           focusedDate = Date.fromWeekSinceEpoch(
                             value,
-                            weekStartsOnMonday: true,
+                            weekStartsOnMonday: startOnMonday,
                           ).addDays(3);
                         });
                       }
                     },
                     controller: widget.controller,
                     itemBuilder: (context, weekSinceEpoch) {
-                      // TODO startOnMonday
                       final dates = Date.datesForWeek(
                         weekSinceEpoch,
-                        startOnMonday: true,
+                        startOnMonday: settings.get(Setting.weekStartsOnMonday),
                       );
 
                       return Padding(

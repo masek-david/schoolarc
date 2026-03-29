@@ -101,7 +101,9 @@ class _ActualTimetableScreenState
                 child: SizedBox(
                   width: double.infinity,
                   child: TimetableView(
-                    textWhenEmpty: context.loc.noTimetableMessage,
+                    contentWhenEmpty: EmptyMessage(
+                      message: context.loc.noTimetableMessage,
+                    ),
                     timeTable: timetable,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
                     columnWidth: settings.get(Setting.timeTableTileWidth),

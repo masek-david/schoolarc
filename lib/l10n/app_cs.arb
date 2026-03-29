@@ -181,7 +181,7 @@
   "importTimetable": "Importovat rozvrh a předměty",
   "changeDateTo": "Změnit datum na",
   "actualTimetable": "Aktuální rozvrh",
-  "noTimetableMessage": "Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus",
+  "noTimetableMessage": "Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus, nebo můžete importovat rozvrh z Bakalářů.",
   "noHomework": "Nebyly nalezeny žádné úkoly",
   "noExams": "Nebyly nalezeny žádné testy",
   "noRecentlyDeleted": "Nebyly nalezeny žádné nedávno smazané položky",

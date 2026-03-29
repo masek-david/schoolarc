@@ -79,32 +79,22 @@ class MealsScreen extends ConsumerWidget {
                   final mealsForToday = data?[date];
                   final bool empty = mealsForToday == null;
 
+                  final onDateText = date
+                      .formatWithWeekday(
+                        context,
+                        useOnFormat: true,
+                        forceShowWeekday: true,
+                      )
+                      .unCapitalize();
+
                   return Padding(
                     padding: const .fromLTRB(8, 0, 8, 8),
                     child: CardWithTitle(
                       highContainer: true,
                       greydOut: empty,
                       text: empty
-                          ? context.loc
-                                .noMealsOn(
-                                  date
-                                      .formatWithWeekday(
-                                        context,
-                                        useOnFormat: true,
-                                      )
-                                      .unCapitalize(),
-                                )
-                                .capitalize()
-                          : context.loc
-                                .mealsOn(
-                                  date
-                                      .formatWithWeekday(
-                                        context,
-                                        useOnFormat: true,
-                                      )
-                                      .unCapitalize(),
-                                )
-                                .capitalize(),
+                          ? context.loc.noMealsOn(onDateText).capitalize()
+                          : context.loc.mealsOn(onDateText).capitalize(),
                       childPadding: const .fromLTRB(8, 0, 8, 8),
                       child: empty
                           ? null

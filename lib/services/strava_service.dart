@@ -198,9 +198,12 @@ class StravaService {
           DateFormat('dd.MM.yyyy').parse(mealJson['datum']),
         );
 
+        final String nazev = mealJson['nazev'];
+        final String delsiPopis = mealJson['delsiPopis'];
+
         final Meal meal = Meal(
           type: mealJson['druh_chod'],
-          name: mealJson['nazev'],
+          name: nazev.length > delsiPopis.length ? nazev : delsiPopis,
           selected: mealJson['pocet'] != 0,
         );
 

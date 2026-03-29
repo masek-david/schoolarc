@@ -9,7 +9,7 @@ import 'package:schoolarc/screens/timetable/timetable_settings.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-
+import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 
 class TimetableScreen extends ConsumerStatefulWidget {
   const TimetableScreen({super.key});
@@ -85,7 +85,17 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
       ),
       body: TimetableView(
         timeTable: timeTable,
-        textWhenEmpty: context.loc.noTimetableMessage,
+        contentWhenEmpty: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            EmptyMessage(message: context.loc.noTimetableMessage),
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(context).restorablePushNamed('/bakalari'),
+              child: Text(context.loc.bakalari),
+            ),
+          ],
+        ),
         showWholeWeek: showWholeWeek,
         columnWidth: columnWidth,
         onLessonTimesTapped: (lessonTimes, lessonIndex) {
@@ -113,12 +123,13 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
         },
         onSubjectTapped: (weekday, lessonIndex, lesson) {
           showSelectSubject(
-              context: context,
-              subjects: ref.read(subjectsSortedProvider),
-              delete: () {
-                timetableDb.deleteLessonAt(weekday, lessonIndex);
-                updateView();
-              }).then(
+            context: context,
+            subjects: ref.read(subjectsSortedProvider),
+            delete: () {
+              timetableDb.deleteLessonAt(weekday, lessonIndex);
+              updateView();
+            },
+          ).then(
             (value) {
               if (value != null) {
                 timetableDb.newLessonAt(

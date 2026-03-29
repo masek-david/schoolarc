@@ -98,7 +98,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
 
   Future<void> refreshIfOld() async {
     if (lastFetched == null ||
-        DateTime.now().difference(lastFetched!) > const Duration(minutes: 30)) {
+        DateTime.now().difference(lastFetched!) > bakaPollingRate) {
       return refresh();
     }
     return;

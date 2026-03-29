@@ -181,7 +181,7 @@
   "importTimetable": "Import timetable and subjects",
   "changeDateTo": "Change date to",
   "actualTimetable": "Actual timetable",
-  "noTimetableMessage": "You don't have any timetable. You can create time of lessons by tapping the plus button.",
+  "noTimetableMessage": "You don't have any timetable. You can create time of lessons by tapping the plus button. Or, you can import your timetable from Bakaláři.",
   "noHomework": "No homework found",
   "noExams": "No exams found",
   "noRecentlyDeleted": "No recently deleted items found",

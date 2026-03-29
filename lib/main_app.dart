@@ -260,7 +260,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
       (previous, next) {
         final message = next.value?.message;
 
-        if (message != null && message != settings.get(.lastSeenMessage)) { 
+        if (message != null && message != '' && message != settings.get(.lastSeenMessage)) { 
           settings.save(.lastSeenMessage, message);
 
           showDialogAdaptive(
