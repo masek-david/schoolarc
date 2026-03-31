@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,10 @@ Future<void> main() async {
   FlutterError.onError = (details) {
     FlutterError.presentError(details); // Current error
 
+    if (settings.get(.shareErrorLogs)) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    }
+
     String text =
         '${details.exception.toString()}\n\n ${details.stack.toString()}\nlibrary: ${details.library}\n\ncontext: ';
 
@@ -30,6 +35,10 @@ Future<void> main() async {
     logsService.save(text);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
+    if (settings.get(.shareErrorLogs)) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    }
+
     logsService.save(
       'Platform Dispatcher Error: ${error.toString()}\n${stack.toString()}',
     );

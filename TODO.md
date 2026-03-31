@@ -1,34 +1,23 @@
 # FIX
 update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
-
 ? ios calendar still refresh pulls
+Haptic keeps repeating in calendar drag and drop main (not small calendar)
+android widget doesnt open calendar
+bakalogin, strava login and firebase login are shared between debug and release on windows
 
 test keyboard date picker
-
-Haptic keeps repeating in calendar drag and drop main (not small calendar)
-
-add hide to found new homeworks
-
-check week start on sunday
-
-in calendar tiles, show +2, +3, instead of elipsis
-
-show at least something in empty notification (add to windows??)
-
-android widget doesnt open calendar
+test week start on sunday
+test arrow buttons to calendar 
 
 check for memory leak
+optimize web load times
+analyze apk size
 
-error screen/messages, logging - firebase ???
-
-manage todo in github - add option to report a bug to github
-
-add arrow buttons to calendar 
-
-remove onWeekday from strings - it should be possible with intl ???
-
-bakalogin, strava login and firebase login are shared between debug and release on windows
+in calendar tiles, show +2, +3, instead of elipsis
+privacy policy update
+report bug button - in drawer, send by mail/github
+error reporting to settings
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -57,6 +46,7 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?
     - ⬜ add to onboarding
+- ⬜ error screen/messages, logging - firebase crashlytics
 
 # FEATURES
 
@@ -76,6 +66,8 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
 - ⬜ expressive buttons
+- ⬜ add hide to found new homeworks
+- ⬜ month calendar scroll on hover 
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 
@@ -98,6 +90,8 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
 - ⬜ switch to local_notifications (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
+- ⬜ show at least something in empty notification
+- ⬜ add to windows
 
 ## SHARING
 - ✅ show username in firebase login (create a provider for it?)

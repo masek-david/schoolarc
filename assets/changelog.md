@@ -1,5 +1,5 @@
-## [2.2.0]() - 2026-__-__
-<!-- build __ -->
+## [2.2.0]() - 2026-03-31
+<!-- build 50 -->
 ### Added
 - Reworked Android widgets
 - Added new refresh indicator
@@ -10,6 +10,7 @@
 - Improved onboarding and tutorial experience
 - Improved Cloud sync account - you can now change your email, verify email, reset password
 - Add Windows Cloud sync support
+- Added crash reporting
 
 ### Changed
 - Improved ordering of tasks

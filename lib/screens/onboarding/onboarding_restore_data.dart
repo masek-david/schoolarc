@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/settings/widgets/import_export_row.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
@@ -15,9 +17,39 @@ class OnboardingRestoredata extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(hwProvider).isNotEmpty ||
+        ref.watch(examProvider).isNotEmpty) {
+      return SafeArea(
+        child: AnimatedPage(
+          children: [
+            AnimatedItem(
+              builder: (isShown) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 64, 8, 16),
+                  child: Text(
+                    context.loc.dataLoaded,
+                    style: context.txt.headlineMedium,
+                  ),
+                );
+              },
+            ),
+            AnimatedItem(
+              builder: (isShown) {
+                return SettingTile(
+                  isLast: true,
+                  isFirst: true,
+                  title: context.loc.continueAction,
+                  onTap: (context) => next(),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return SafeArea(
       child: AnimatedPage(
-        spacing: 0,
         children: [
           AnimatedItem(
             builder: (isShown) {

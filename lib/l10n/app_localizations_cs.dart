@@ -412,6 +412,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get noData => 'Žádná data';
 
   @override
+  String get dataLoaded => 'Data načtena';
+
+  @override
   String get newHomework => 'Nové úkoly';
 
   @override
@@ -1329,7 +1332,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get privacyPolicy =>
-      '# Zásady ochrany osobních údajů\nDatum účinnosti: 11. Ledna 2026\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci.\n\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n';
+      'Datum účinnosti: 31. Března 2026\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\nObojí lze provést přímo v aplikaci.\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n## Hlášení chyb\nPokud povolíte odesílání hlášení chyb, budou data odesílána pomocí Firebase Crashlytics za účelem identifikace a opravy chyb.\nShromažďovaná data mohou zahrnovat:\n- záznamy o pádech a stack trace\n- informace o zařízení (např. model a verze operačního systému)\n- verzi aplikace a kontext použití v době pádu\n- časové údaje a jedinečný identifikátor instalace\n- vlastní logy generované aplikací\nTato data jsou využívána výhradně k diagnostice a opravě chyb a ke zlepšení stability aplikace.\n';
 
   @override
   String get privacyPolicyTitle => 'Zásady ochrany osobních údajů';

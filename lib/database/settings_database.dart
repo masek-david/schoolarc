@@ -51,6 +51,7 @@ enum Setting {
   onboardingProgress,
   requiredBuild,
   lastSeenMessage,
+  shareErrorLogs,
 }
 
 class SettingModel {
@@ -218,6 +219,10 @@ class SettingsDatabase {
       defaultValue: null,
       key: 'lastSeenMessage',
     ),
+    Setting.shareErrorLogs: const SettingModel(
+      defaultValue: false,
+      key: 'shareErrorLogs',
+    ),
   };
   final _settingsBox = Hive.box(settingsBox);
 
@@ -247,7 +252,7 @@ class SettingsDatabase {
   }
 
   bool get firstTimeOpeningApp {
-    const dbKey = 'firstTimeOpeningApp1';
+    const dbKey = 'firstTimeOpeningApp2.2.0';
 
     if (_settingsBox.get(dbKey) != true) {
       _settingsBox.put(dbKey, true);

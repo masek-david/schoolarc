@@ -63,6 +63,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
         });
       }
     } else {
+      settings.save(Setting.tomorrowNotificationEnabled, value);
       NotificationSender.cancelByChannelKey(tomorrowChannel);
     }
   }

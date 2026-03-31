@@ -9,8 +9,6 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-// TODO scroll on hover
-
 class ScrollableCalendar extends StatelessWidget {
   const ScrollableCalendar({
     super.key,

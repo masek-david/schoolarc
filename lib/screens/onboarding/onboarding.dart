@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_android_widget.dart';
+import 'package:schoolarc/screens/onboarding/onboarding_consent.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_end.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_extensions.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_notifications.dart';
@@ -54,7 +55,7 @@ class _OnboardingState extends State<Onboarding> {
   late final pages = [
     OnboardingWelcome(
       newUser: () {
-        next(by: 2);
+        next();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Tutorial()),
@@ -63,6 +64,15 @@ class _OnboardingState extends State<Onboarding> {
       returningUser: () {
         isNewUser = false;
         next();
+      },
+    ),
+    OnboardingConsent(
+      next: () {
+        if (isNewUser) {
+          next(by: 2);
+        } else {
+          next();
+        }
       },
     ),
     OnboardingRestoredata(next: next),
