@@ -1412,4 +1412,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get daysShort => 'd';
+
+  @override
+  String get agreeSendCrashReports => 'Agree to send crash reports';
+
+  @override
+  String get agreeSendCrashReportsSubtitle =>
+      'This is optional, however, it will help me fix bugs :)';
+
+  @override
+  String get agreeToPrivacyPolicy => 'Agree to privacy policy';
 }

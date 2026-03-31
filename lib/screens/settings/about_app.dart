@@ -9,8 +9,15 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/send_bug_report.dart';
 
-class AboutApp extends StatelessWidget {
+class AboutApp extends StatefulWidget {
   const AboutApp({super.key});
+
+  @override
+  State<AboutApp> createState() => _AboutAppState();
+}
+
+class _AboutAppState extends State<AboutApp> {
+  bool shareLogs = settings.get(.shareErrorLogs);
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +52,25 @@ class AboutApp extends StatelessWidget {
         SettingTile(
           title: context.loc.reportBug,
           subtitle: context.loc.reportBugPolicy,
-          leading: const Icon(Icons.bug_report_outlined),
+          leading: const Icon(Icons.bug_report_rounded),
           onTap: sendBugReport,
         ),
         SettingTile(
           title: context.loc.viewLogs,
           leading: const Icon(Icons.data_array),
           onTap: (context) => Navigator.restorablePushNamed(context, '/logs'),
+        ),
+        SettingTile.withSwitch(
+          leading: const Icon(Icons.bug_report_rounded),
+          title: context.loc.agreeSendCrashReports,
+          subtitle: context.loc.agreeSendCrashReportsSubtitle,
+          value: shareLogs,
+          onChanged: (value) {
+            settings.save(.shareErrorLogs, value);
+            setState(() {
+              shareLogs = value;
+            });
+          },
         ),
         SettingTile(
           title: context.loc.privacyPolicyTitle,

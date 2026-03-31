@@ -1433,4 +1433,16 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get daysShort => 'd';
+
+  @override
+  String get agreeSendCrashReports =>
+      'Souhlasím se zasíláním hlášení o selhání';
+
+  @override
+  String get agreeSendCrashReportsSubtitle =>
+      'Toto je volitelné, ale pomůže mi to opravit chyby :)';
+
+  @override
+  String get agreeToPrivacyPolicy =>
+      'Souhlasím se zásadami ochrany osobních údajů';
 }

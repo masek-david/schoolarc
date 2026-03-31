@@ -15,7 +15,7 @@ class OnboardingConsent extends StatefulWidget {
 }
 
 class _OnboardingConsentState extends State<OnboardingConsent> {
-  bool shareAgree = false;
+  bool shareLogs = settings.get(.shareErrorLogs);
   bool privacyPolicyAgree = false;
 
   @override
@@ -46,14 +46,13 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
             builder: (isShown) {
               return SettingTile.withSwitch(
                 isFirst: true,
-                title: 'Agree send crash reports',
-                subtitle:
-                    'This is optional, however, it will help me fix bugs :)',
-                value: shareAgree,
+                title: context.loc.agreeSendCrashReports,
+                subtitle: context.loc.agreeSendCrashReportsSubtitle,
+                value: shareLogs,
                 onChanged: (value) {
                   settings.save(.shareErrorLogs, value);
                   setState(() {
-                    shareAgree = value;
+                    shareLogs = value;
                   });
                 },
               );
@@ -63,7 +62,7 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
             builder: (isShown) {
               return SettingTile.withSwitch(
                 isLast: true,
-                title: 'Agree to privacy policy',
+                title: context.loc.agreeToPrivacyPolicy,
                 value: privacyPolicyAgree,
                 onChanged: (value) {
                   setState(() {

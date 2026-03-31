@@ -6,18 +6,17 @@ Haptic keeps repeating in calendar drag and drop main (not small calendar)
 android widget doesnt open calendar
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
-test keyboard date picker
-test week start on sunday
-test arrow buttons to calendar 
+check keyboard date picker
+check week start on sunday
+check arrow buttons in calendar 
+check markdown
 
 check for memory leak
 optimize web load times
 analyze apk size
 
 in calendar tiles, show +2, +3, instead of elipsis
-privacy policy update
 report bug button - in drawer, send by mail/github
-error reporting to settings
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

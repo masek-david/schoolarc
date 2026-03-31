@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
@@ -23,7 +23,7 @@ class ChangelogScreen extends ConsumerWidget {
             );
           }
 
-          return Markdown(data: snapshot.data!);
+          return GptMarkdown(snapshot.data!);
         },
       ),
     );

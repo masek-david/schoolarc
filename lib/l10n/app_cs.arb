@@ -440,5 +440,8 @@
   "secondShort": " sek",
   "minutesShort": " min",
   "hoursShort": "h",
-  "daysShort": "d"
+  "daysShort": "d",
+  "agreeSendCrashReports": "Souhlasím se zasíláním hlášení o selhání",
+  "agreeSendCrashReportsSubtitle": "Toto je volitelné, ale pomůže mi to opravit chyby :)",
+  "agreeToPrivacyPolicy": "Souhlasím se zásadami ochrany osobních údajů"
 }

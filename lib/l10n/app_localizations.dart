@@ -2465,6 +2465,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'d'**
   String get daysShort;
+
+  /// No description provided for @agreeSendCrashReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to send crash reports'**
+  String get agreeSendCrashReports;
+
+  /// No description provided for @agreeSendCrashReportsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is optional, however, it will help me fix bugs :)'**
+  String get agreeSendCrashReportsSubtitle;
+
+  /// No description provided for @agreeToPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to privacy policy'**
+  String get agreeToPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate
