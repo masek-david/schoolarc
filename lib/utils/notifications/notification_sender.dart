@@ -23,42 +23,42 @@ import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
 const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
 
-Future<void> initNotifications() async {
-  final loc = getLocalizationWithoutContext();
-
-  await AwesomeNotifications().initialize(
-    'resource://drawable/notification_icon',
-    [
-      NotificationChannel(
-        onlyAlertOnce: true,
-        channelGroupKey: tomorrowChannel,
-        channelKey: tomorrowChannel,
-        channelName: loc.upcomingDayNotifications, // localized string
-        channelDescription: loc.upcomingDayChannelDescription,
-        defaultColor: Colors.blue,
-        ledColor: Colors.blue,
-      ),
-      NotificationChannel(
-        onlyAlertOnce: true,
-        channelGroupKey: mainChannel,
-        channelKey: mainChannel,
-        channelName: loc.mainChannel,
-        channelDescription: loc.mainChannelDescription,
-        defaultColor: Colors.blue,
-        ledColor: Colors.blue,
-      ),
-    ],
-    channelGroups: [
-      NotificationChannelGroup(
-        channelGroupKey: tomorrowChannel,
-        channelGroupName: loc.upcomingDayNotifications,
-      ),
-    ],
-    debug: kDebugMode,
-  );
-}
-
 class NotificationSender {
+  static Future<void> initNotifications() async {
+    final loc = getLocalizationWithoutContext();
+
+    await AwesomeNotifications().initialize(
+      'resource://drawable/notification_icon',
+      [
+        NotificationChannel(
+          onlyAlertOnce: true,
+          channelGroupKey: tomorrowChannel,
+          channelKey: tomorrowChannel,
+          channelName: loc.upcomingDayNotifications, // localized string
+          channelDescription: loc.upcomingDayChannelDescription,
+          defaultColor: Colors.blue,
+          ledColor: Colors.blue,
+        ),
+        NotificationChannel(
+          onlyAlertOnce: true,
+          channelGroupKey: mainChannel,
+          channelKey: mainChannel,
+          channelName: loc.mainChannel,
+          channelDescription: loc.mainChannelDescription,
+          defaultColor: Colors.blue,
+          ledColor: Colors.blue,
+        ),
+      ],
+      channelGroups: [
+        NotificationChannelGroup(
+          channelGroupKey: tomorrowChannel,
+          channelGroupName: loc.upcomingDayNotifications,
+        ),
+      ],
+      debug: kDebugMode,
+    );
+  }
+
   /// Schedules upcoming notification for first possible day.
   /// Will send on settings time and not before weekend if setting set
   /// In total, will schedule 7 notifications, including today.

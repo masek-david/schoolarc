@@ -38,8 +38,11 @@ final logsService = LogsDatabase();
 final uuid = const Uuid();
 late final Vibrate vibrate;
 late final PackageInfo packageInfo;
-final timeoutDuration = const Duration(seconds: 10);
+const timeoutDuration = Duration(seconds: 10);
 const millisecondsInDay = 86400000;
+
+const scrollDuration = Duration(milliseconds: 250);
+const scrollCurve = Curves.decelerate;
 
 const bakaPollingRate = Duration(minutes: 60);
 const stravaPollingRate = Duration(minutes: 240);

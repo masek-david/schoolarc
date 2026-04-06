@@ -77,7 +77,7 @@ Widget adaptiveDialogButton({
             )
           : null,
       child: DefaultTextStyle(
-        style: TextStyle(color: textColor),
+        style: context.txt.labelLarge!.copyWith(color: textColor),
         child: child,
       ),
     );

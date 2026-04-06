@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ArrowButtonsRow extends StatelessWidget {
   const ArrowButtonsRow({
@@ -12,36 +13,39 @@ class ArrowButtonsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(120);
-    final padding = const EdgeInsets.all(6);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: onPressedLeft,
-          icon: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: color,
-            ),
-            child: const Icon(Icons.keyboard_arrow_left),
-          ),
-        ),
-        IconButton(
-          onPressed: onPressedRight,
-          icon: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: color,
-            ),
-            child: const Icon(Icons.keyboard_arrow_right),
-          ),
-        ),
+        ArrowButton(onPressed: onPressedLeft, left: true),
+        ArrowButton(onPressed: onPressedRight),
       ],
+    );
+  }
+}
+
+class ArrowButton extends StatelessWidget {
+  const ArrowButton({super.key, required this.onPressed, this.left = false});
+
+  final void Function() onPressed;
+  final bool left;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onPressed,
+      padding: const EdgeInsets.all(0),
+      icon: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: context.col.surfaceContainerHigh.withAlpha(120),
+        ),
+        child: Icon(
+          left
+              ? Icons.keyboard_arrow_left_rounded
+              : Icons.keyboard_arrow_right_rounded,
+        ),
+      ),
     );
   }
 }

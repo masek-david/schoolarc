@@ -6,9 +6,11 @@ class WeekdaysRow extends StatelessWidget {
   const WeekdaysRow({
     super.key,
     this.textColor,
+    required this.startOnMonday,
   });
 
   final Color? textColor;
+  final bool startOnMonday;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class WeekdaysRow extends StatelessWidget {
             Date(
               2026,
               3,
-              2 + index,
+              2 + index + (startOnMonday ? 0 : -1),
             ).format('EEE', context.locale.languageCode),
           ),
         ),

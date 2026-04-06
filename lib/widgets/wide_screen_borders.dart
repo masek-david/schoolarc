@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
-import 'package:schoolarc/utils/web/bar_color.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:web/web.dart' as web;
 
 class WideScreenBorders extends StatelessWidget {
   const WideScreenBorders({
@@ -19,7 +20,10 @@ class WideScreenBorders extends StatelessWidget {
     double bottom = MediaQuery.paddingOf(context).bottom;
 
     if (kIsWeb) {
-      setBarColor(Theme.of(context).colorScheme.surfaceContainer.toHexString());
+      web.window.localStorage.setItem('surfaceContainer', context.col.surfaceContainer.toHexString());
+      web.window.localStorage.setItem('surface', context.col.surface.toHexString());
+      web.window.localStorage.setItem('primaryFixedDim', context.col.primaryFixedDim.toHexString());
+      web.window.localStorage.setItem('secondary', context.col.secondary.toHexString());
     }
 
     if (top == 0) {

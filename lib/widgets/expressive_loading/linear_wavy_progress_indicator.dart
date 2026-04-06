@@ -12,6 +12,8 @@ class LinearWavyProgressIndicator extends StatefulWidget {
     this.strokeWidth = 8,
     this.wavelength = 40,
     this.amplitude = 3,
+    this.forceFullWave = false,
+    this.duration = const Duration(milliseconds: 1000),
   });
 
   final double value;
@@ -20,6 +22,10 @@ class LinearWavyProgressIndicator extends StatefulWidget {
   final double wavelength;
   final Color? activeColor;
   final Color? inactiveColor;
+  final Duration duration;
+
+  /// If true, the wave wont stop when progress reaches the end
+  final bool forceFullWave;
 
   @override
   State<LinearWavyProgressIndicator> createState() =>
@@ -27,10 +33,11 @@ class LinearWavyProgressIndicator extends StatefulWidget {
 }
 
 class _LinearWavyProgressIndicatorState
-    extends State<LinearWavyProgressIndicator> with TickerProviderStateMixin {
+    extends State<LinearWavyProgressIndicator>
+    with TickerProviderStateMixin {
   late final _fazeController = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1000),
+    duration: widget.duration,
   );
   late final _amplitudeController = AnimationController(
     vsync: this,
@@ -52,10 +59,14 @@ class _LinearWavyProgressIndicatorState
 
   @override
   Widget build(BuildContext context) {
-    if (widget.value > 0.1 && widget.value < 0.9) {
-      _amplitudeController.animateTo(1);
+    if (widget.forceFullWave) {
+      _amplitudeController.value = 1;
     } else {
-      _amplitudeController.animateTo(0);
+      if (widget.value > 0.1 && widget.value < 0.9) {
+        _amplitudeController.animateTo(1);
+      } else {
+        _amplitudeController.animateTo(0);
+      }
     }
 
     return AnimatedBuilder(
@@ -64,13 +75,18 @@ class _LinearWavyProgressIndicatorState
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: CustomPaint(
-            size: Size(double.infinity, 2 * widget.amplitude + widget.strokeWidth),
+            size: Size(
+              double.infinity,
+              2 * widget.amplitude + widget.strokeWidth,
+            ),
             painter: _WavyLinearProgressIndicatorPainter(
+              showStopper: !widget.forceFullWave,
               amplitude: _amplitudeController.value * widget.amplitude,
               wavelength: widget.wavelength,
               strokeWidth: widget.strokeWidth,
               activeColor: widget.activeColor ?? context.col.primary,
-              inactiveColor: widget.inactiveColor ?? context.col.secondaryContainer,
+              inactiveColor:
+                  widget.inactiveColor ?? context.col.secondaryContainer,
               faze: _fazeController.value,
               progress: widget.value,
             ),
@@ -89,6 +105,7 @@ class _WavyLinearProgressIndicatorPainter extends CustomPainter {
   final double wavelength;
   final double progress;
   final double faze;
+  final bool showStopper;
 
   _WavyLinearProgressIndicatorPainter({
     required this.amplitude,
@@ -98,6 +115,7 @@ class _WavyLinearProgressIndicatorPainter extends CustomPainter {
     required this.strokeWidth,
     required this.progress,
     required this.faze,
+    required this.showStopper,
   });
 
   @override
@@ -152,7 +170,9 @@ class _WavyLinearProgressIndicatorPainter extends CustomPainter {
 
     canvas.drawPath(activePath, activePaint);
     canvas.drawPath(inactivePath, inactivePaint);
-    canvas.drawPath(stopperPath, stopperPaint);
+    if (showStopper) {
+      canvas.drawPath(stopperPath, stopperPaint);
+    }
   }
 
   @override

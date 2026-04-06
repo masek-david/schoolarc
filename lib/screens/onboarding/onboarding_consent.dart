@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -37,8 +37,13 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
           AnimatedItem(
             builder: (isShown) {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(4, 0, 4, 32),
-                child: GptMarkdown(context.loc.privacyPolicy),
+                padding: const EdgeInsetsGeometry.only(bottom: 16),
+                child: Markdown(
+                  padding: const EdgeInsets.all(0),
+                  data: context.loc.privacyPolicy,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                ),
               );
             },
           ),

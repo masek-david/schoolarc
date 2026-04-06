@@ -34,7 +34,7 @@ class OnboardingAndroidWidget extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(28),
                     child: Image.asset(
-                      'assets/images/android_widgets_${context.isDark ? 'dark' : 'light'}.png',
+                      'assets/images/android_widgets_${context.isDark ? 'dark' : 'light'}.webp',
                       height: 450,
                     ),
                   ),

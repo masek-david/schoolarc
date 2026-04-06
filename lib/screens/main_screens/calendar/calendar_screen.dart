@@ -25,10 +25,10 @@ final _minimumColumnWidth = 350.0;
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
-    this.showtomorrow = false,
+    this.initialDate,
   });
 
-  final bool showtomorrow;
+  final Date? initialDate;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -36,14 +36,13 @@ class CalendarScreen extends ConsumerStatefulWidget {
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen>
     with RestorationMixin {
-  late final showTomorrow =
-      ref.read(calendarInitialIsTomorrowProvider) || widget.showtomorrow;
+  late final showTomorrow = ref.read(calendarInitialIsTomorrowProvider);
 
   late final _selectedDate = RestorableDate(
-    showTomorrow ? Date.today().addDays(1) : Date.today(),
+    widget.initialDate ??
+        (showTomorrow ? Date.today().addDays(1) : Date.today()),
   );
   late final _focusedDate = RestorableDate(_selectedDate.value);
-
 
   final _pagesKey = GlobalKey();
   late final _pageController = PageController(

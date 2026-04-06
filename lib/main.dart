@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -46,8 +44,25 @@ Future<void> main() async {
   };
 
   await initHive();
-  await initNotifications();
-  await initializeDateFormatting();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final futureResult = await Future.wait<dynamic>([
+    PackageInfo.fromPlatform(),
+    NotificationSender.initNotifications(),
+    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    Vibrate.create(),
+    initializeDateFormatting(),
+    if (HomeWidgetService.isSupportedPlatform)
+      HomeWidget.registerInteractivityCallback(
+        HomeWidgetService.backgroundCallback,
+      ),
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.top],
+    ),
+  ]);
+  packageInfo = futureResult[0];
+  addLicenses();
 
   // gets rid of android bottom colored bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -58,21 +73,6 @@ Future<void> main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.edgeToEdge,
-    overlays: [SystemUiOverlay.top],
-  );
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  packageInfo = await PackageInfo.fromPlatform();
-  vibrate = await Vibrate.create();
-
-  if (!kIsWeb && Platform.isAndroid) {
-    HomeWidget.registerInteractivityCallback(backgroundCallback);
-  }
-
-  addLicenses();
 
   runApp(
     ProviderScope(

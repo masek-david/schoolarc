@@ -108,10 +108,6 @@ as it is compatible with most devices and has the smallest sizes
 
 Configure [flutterfire](https://firebase.flutter.dev/docs/overview), run flutterfire configure and follow the instructions.
 
-<!-- On windows, sometimes the windows is stuck on white or black - 
-in that case, you can resize the windows using powertoys zones
- and rerun the project -->
-
 ## Testing
 
 Init Firebase emulator with
@@ -122,3 +118,41 @@ select a project, tick auth and database and before running, start the emulators
 ```
 firebase emulators:start --only "auth,database"
 ```
+
+
+<!-- On windows, sometimes the windows is stuck on white or black - 
+in that case, you can resize the windows using powertoys zones
+ and rerun the project -->
+
+<!-- my firebase.json config for caching
+"hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|otf|wasm|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=31536000,immutable"
+          }
+        ]
+      },
+      {
+        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=3600,immutable"
+          }
+        ]
+      }
+    ],
+    "frameworksBackend": {
+      "region": "europe-west1"
+    }
+  }, -->

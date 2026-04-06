@@ -24,7 +24,8 @@
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Schoolarc">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
@@ -37,13 +38,11 @@
 
   <link rel="preload" href="main.dart.js" as="script">
   <link rel="preload" href="icons/Icon-192.png" as="image">
-
-  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
-    <img src="icons/Icon-192.png" srcset="icons/Icon-192.png 1x, icons/Icon-512.png 2x" alt="icon"
-      style="width: 35vmin; height: auto; max-width: 512px; max-height: 512px;">
-
-    <span class="loader"></span>
-  </div>
+  <!-- preload the fonts -->
+  <link rel="preload" href="assets/assets/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf"
+    as="fetch" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="assets/assets/fonts/RobotoSerif-VariableFont_GRAD,opsz,wdth,wght.ttf" as="fetch"
+    type="font/ttf" crossorigin="anonymous">
 
   <style>
     html,
@@ -53,7 +52,46 @@
   </style>
 </head>
 
-<body style="background-color:#0c1220;">
+<body>
+  <div style="position: fixed; inset: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;">
+
+    <svg height="180" width="180" stroke-miterlimit="10"
+      style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1"
+      viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+      xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs />
+      <g id="Layer-3">
+        <path class="primary"
+          d="M472.932 256.56C472.932 376.301 375.863 473.371 256.121 473.371C136.38 473.371 39.3105 376.301 39.3105 256.56C39.3105 136.819 136.38 39.7492 256.121 39.7492"
+          fill="none" opacity="1" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="75.9409" />
+        <g opacity="1">
+          <path class="secondary"
+            d="M287.176 178.169L334.672 225.664L361.942 198.394L375.332 185.004L445.105 115.231C453.108 107.228 453.108 94.2602 445.105 86.2576L426.583 67.7353C418.58 59.7327 405.612 59.7327 397.61 67.7353L327.837 137.509L314.446 150.899L287.176 178.169Z"
+            fill="#ffffff" fill-rule="nonzero" opacity="1" stroke="none" />
+          <path class="secondary" d="M241.854 223.49L274.114 191.231L321.616 238.732L289.356 270.992L241.854 223.49Z"
+            fill="#ffffff" fill-rule="nonzero" opacity="1" stroke="none" />
+          <path class="secondary"
+            d="M172.474 257.693C165.916 264.251 161.313 272.002 158.524 280.228L158.477 280.228L132.28 356.906L137.365 364.091L167.225 334.232C167.232 334.24 167.242 334.246 167.248 334.255L193.049 308.454C190.134 301.142 191.608 292.493 197.528 286.573C205.461 278.64 218.335 278.64 226.268 286.573C234.2 294.506 234.2 307.38 226.268 315.313C220.355 321.225 211.716 322.715 204.409 319.815L178.609 345.616C178.618 345.622 178.624 345.632 178.632 345.639L148.773 375.498L155.958 380.584L232.659 354.41L232.613 354.317C240.841 351.527 248.588 346.926 255.147 340.367C277.972 317.542 277.972 280.518 255.147 257.693C232.322 234.868 195.299 234.868 172.474 257.693Z"
+            fill="#ffffff" fill-rule="nonzero" opacity="1" stroke="none" />
+        </g>
+      </g>
+    </svg>
+
+    <span class="loader"></span>
+  </div>
+
+  <style>
+    .primary {
+      stroke: #ffffff;
+    }
+
+    .secondary {
+      fill: #ffffff;
+    }
+  </style>
+
   <script>
     window.addEventListener('keydown', function (event) {
       if (event.metaKey || event.ctrlKey) {
@@ -72,32 +110,35 @@
       }
     });
 
-    window.setBarColor = function (color) {
-      try {
-        console.log('Trying to set color: ' + color);
+    function blockTouch(e) {
+      if (e.touches.length > 1) return;
+      e.preventDefault();
+    }
 
-        let meta = document.querySelector('meta[name="theme-color"]');
+    const surfaceContainer = localStorage.getItem('surfaceContainer') || '#0c1220';
+    const surface = localStorage.getItem('surface') || '#0c1220';
+    const primaryFixedDim = localStorage.getItem('primaryFixedDim') || '#879cc0';
+    const secondary = localStorage.getItem('secondary') || '#dbe2fc';
 
-        if (!meta) {
-          meta = document.createElement('meta');
-          meta.name = 'theme-color';
-          document.head.appendChild(meta);
-        }
+    document.querySelector('.primary').style.stroke = primaryFixedDim;
+    const elements = document.querySelectorAll('.secondary');
+    elements.forEach(el => {
+      el.style.fill = secondary;
+    });
 
-        meta.setAttribute('content', color);
+    if (window.innerWidth < 600) {
+      // mobile
+      document.body.style.backgroundColor = surface
+    } else {
+      // tablet
+      document.body.style.backgroundColor = surfaceContainer;
+    }
 
-        // document
-        //   .querySelector('meta[name="theme-color"]')
-        //   .setAttribute('content', color);
-      } catch (e) {
-        console.error("Failed to set bar color:", e);
-      }
-    };
+    const loader = document.querySelector('.loader');
+    loader.style.backgroundColor = primaryFixedDim;
+    loader.style.setProperty('--loader-color', secondary);
 
-    document.addEventListener('touchstart', (startEvent) => {
-      if (startEvent.touches.length > 1) return;
-      startEvent.preventDefault();
-    }, { passive: false });
+    document.addEventListener('touchstart', blockTouch, { passive: false });
   </script>
 
   <!-- Flutter app -->

@@ -44,10 +44,10 @@
             ]
         },
         {
-            "name": "Schoolarc web-port=8080",
+            "name": "Schoolarc (release) web-port=8080",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "debug",
+            "flutterMode": "release",
             "args": [
                 // "--no-web-experimental-hot-reload",
                 // "--web-hostname=192.168.100.107",

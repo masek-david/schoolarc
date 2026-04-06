@@ -252,8 +252,7 @@ class AppConfig extends ConsumerWidget {
                 '/settings': (context) => const SettingsScreen(),
                 '/subjects': (context) => const SubjectsScreen(),
                 '/timetable': (context) => const TimetableScreen(),
-                '/timetable-actual': (context) =>
-                    const ActualTimetableScreen(),
+                '/timetable-actual': (context) => const ActualTimetableScreen(),
                 '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
                 '/deleted': (context) => const RecentlyDeletedScreen(),
                 '/database': (context) => const DbInfoScreen(),

@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.2.0+50
+version: 2.2.1+53
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -52,7 +52,7 @@ dependencies:
   http: ^1.6.0
   flutter_secure_storage: ^10.0.0
   xml: ^6.6.1
-  expandable_page_view: ^1.2.1
+  expandable_page_view: ^1.3.0
   smooth_page_indicator: ^2.0.1
   flutter_resizable_container: ^4.2.0
   firebase_core: ^4.6.0
@@ -80,7 +80,9 @@ dependencies:
   vibration: ^3.1.8
   scrollable_positioned_list: ^0.3.8
   firebase_crashlytics: ^5.1.0
-  gpt_markdown: ^1.1.5
+  flutter_markdown_plus: ^1.0.7
+  markdown: ^7.3.1
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -115,10 +117,10 @@ flutter:
     - assets/confetti.svg
     - assets/schoolarc_logo.svg
     - assets/schoolarc_icon.svg
-    - assets/images/android_notification_light.png
-    - assets/images/android_notification_dark.png
-    - assets/images/android_widgets_light.png
-    - assets/images/android_widgets_dark.png
+    - assets/images/android_notification_light.webp
+    - assets/images/android_notification_dark.webp
+    - assets/images/android_widgets_light.webp
+    - assets/images/android_widgets_dark.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -135,8 +137,6 @@ flutter:
     - family: Roboto Serif
       fonts:
         - asset: assets/fonts/RobotoSerif-VariableFont_GRAD,opsz,wdth,wght.ttf
-        - asset: assets/fonts/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf
-          style: italic
     - family: Google Sans Flex
       fonts:
         - asset: assets\fonts\GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf

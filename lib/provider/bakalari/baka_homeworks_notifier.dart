@@ -149,6 +149,18 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
     }
   }
 
+  void _markAllSeen() {
+    if (state.value == null) return;
+    final List<BakaHomework> newList = [];
+
+    for (final hw in state.value!) {
+      newList.add(hw.copyWith(alreadySeen: true));
+      bakaHwDb.markAsSeen(hw.bakaId);
+    }
+
+    state = AsyncData(newList);
+  }
+
   void showNewHomeworksFoundMessage(int count) {
     final context = navigatorKey.currentContext;
     if (context != null) {
@@ -157,10 +169,20 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
         context.loc.newHomeworkFound(count),
         isPersistent: true,
         actions: [
+          IconButton(
+            icon: Icon(
+              Icons.close_rounded,
+              color: context.col.onInverseSurface,
+            ),
+            onPressed: () {
+              _markAllSeen();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
           FilledButton(
             onPressed: () {
               Navigator.restorablePushNamed(context, '/bakalari-homeworks');
-              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
             child: Text(context.loc.view),
           ),

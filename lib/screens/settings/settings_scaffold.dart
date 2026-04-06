@@ -9,12 +9,17 @@ class SettingsScaffold extends StatelessWidget {
     required this.title,
     required this.children,
     required this.heroTag,
+    this.child,
     this.actions = const [],
   });
 
   final String title;
   final String heroTag;
   final List<Widget> children;
+  /// If child widget is provided, children is ignored
+  /// 
+  /// child must be scrollable
+  final Widget? child;
   final List<Widget> actions;
 
   @override
@@ -28,7 +33,7 @@ class SettingsScaffold extends StatelessWidget {
           child: MediaQuery.removePadding(
             context: context,
             removeTop: true,
-            child: ListView(
+            child: child ?? ListView(
               children: children,
             ),
           ),

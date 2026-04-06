@@ -1,5 +1,21 @@
-## [2.2.0]() - 2026-03-31
-<!-- build 50 -->
+## [2.2.1](2026-04-06;build53)
+### Added
+- Improved web load times and app size
+- Added haptic feedback to web
+
+### Changed
+- Added button to close Bakaláři homework snackbar
+
+### Fixed
+- Fixed Theme page images height
+- Fixed Changelog page
+- Fixed week not starting on Sunday when enabled
+- Improve keyboard date picker
+- Web loader now uses app color
+
+---
+
+## [2.2.0](2026-03-31;build50)
 ### Added
 - Reworked Android widgets
 - Added new refresh indicator
@@ -32,7 +48,7 @@
 
 ---
 
-## [2.1.7]() - 2025-10-14
+## [2.1.7](2025-10-14)
 ### Added
 
 ### Changed
@@ -47,7 +63,7 @@
 
 ---
 
-## [2.1.6]() - 2025-09-27
+## [2.1.6](2025-09-27)
 ### Added
 
 ### Changed
@@ -60,21 +76,21 @@
 
 ---
 
-## [2.1.5]() - 2025-09-25
+## [2.1.5](2025-09-25)
 ### Added
 - Added loading animation for web
 
 ### Changed
 
 ### Fixed
-- Fixed bakalari homeworks not assigning correct subjects
-- Fixed bakalari homeworks not saving viewed homeworks
+- Fixed Bakaláři homeworks not assigning correct subjects
+- Fixed Bakaláři homeworks not saving viewed homeworks
 - Fixed some translation strings
 - Fixed wrong calendar page in some time zones
 
 ---
 
-## [2.1.4]() - 2025-09-02
+## [2.1.4](2025-09-02)
 ### Added
 
 ### Changed
@@ -86,7 +102,7 @@
 
 ---
 
-## [2.1.3]() - 2025-09-01
+## [2.1.3](2025-09-01)
 ### Added
 
 ### Changed
@@ -98,7 +114,7 @@
 
 ---
 
-## [2.1.2]() - 2025-08-11
+## [2.1.2](2025-08-11)
 ### Added
 
 ### Changed
@@ -112,7 +128,7 @@
 
 ---
 
-## [2.1.1]() - 2025-07-28
+## [2.1.1](2025-07-28)
 ### Added
 - Added state restoration on Android
 
@@ -124,7 +140,7 @@
 
 ---
 
-## [2.1.0]() - 2025-07-25
+## [2.1.0](2025-07-25)
 ### Added
 - Added app logo to drawer
 - Added image showing app colors in theme settings
@@ -148,7 +164,7 @@
 
 ---
 
-## [2.0.2]() - 2025-07-08
+## [2.0.2](2025-07-08)
 ### Added
 - Added czech translation
 - Added options for date and time formats
@@ -159,7 +175,7 @@
 
 ---
 
-## [2.0.1]() - 2025-07-04
+## [2.0.1](2025-07-04)
 ### Added
 - Added keyboard shortcut support
 - Added option to change password for Cloud sync
@@ -177,10 +193,10 @@
 
 ---
 
-## [2.0.0]() - 2025-06-25
+## [2.0.0](2025-06-25)
 ### Added
 - Added option for importing app data, including subjects, homework and exams
-- Added full Bakalari support for web
+- Added full Bakaláři support for web
 - Added year recap
 - Added info about how many times a subject is used
 - Added new priority picker
@@ -201,7 +217,7 @@
 
 ---
 
-## [1.1.0]() - 2025-03-30
+## [1.1.0](2025-03-30)
 ### Added
 - Added option for exporting app data, including subjects, homework and exams
 
@@ -211,7 +227,7 @@
 
 ---
 
-## [1.0.1]() - 2025-03-29
+## [1.0.1](2025-03-29)
 ### Added
 - Added changelog
 

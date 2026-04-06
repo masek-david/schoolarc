@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/database/settings_database.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/provider/settings_notifiers.dart';
+import 'package:schoolarc/screens/main_screens/calendar/widgets/arrow_buttons_row.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/week_row.dart';
 import 'package:schoolarc/screens/main_screens/calendar/widgets/weekdays_row.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -10,7 +12,7 @@ import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/hold_drag_target.dart';
 
-class WeekCalendar extends StatefulWidget {
+class WeekCalendar extends ConsumerStatefulWidget {
   const WeekCalendar({
     super.key,
     required this.selectedDate,
@@ -29,10 +31,10 @@ class WeekCalendar extends StatefulWidget {
   final PageController controller;
 
   @override
-  State<WeekCalendar> createState() => _WeekCalendarState();
+  ConsumerState<WeekCalendar> createState() => _WeekCalendarState();
 }
 
-class _WeekCalendarState extends State<WeekCalendar> {
+class _WeekCalendarState extends ConsumerState<WeekCalendar> {
   /// focused day is always the date selected or if that date isnt in the current week, the middle day of the week
   late Date focusedDate = widget.selectedDate;
 
@@ -59,19 +61,22 @@ class _WeekCalendarState extends State<WeekCalendar> {
     if (!mounted) return;
     if (forward) {
       await widget.controller.nextPage(
-        duration: Durations.medium2,
-        curve: Curves.decelerate,
+        duration: scrollDuration,
+        curve: scrollCurve,
       );
     } else {
       await widget.controller.previousPage(
-        duration: Durations.medium2,
-        curve: Curves.decelerate,
+        duration: scrollDuration,
+        curve: scrollCurve,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final showArrows = ref.watch(calendarShowArrowsProvider);
+    final weekStartsOnMonday = ref.watch(weekStartsOnMondayProvider);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -80,41 +85,64 @@ class _WeekCalendarState extends State<WeekCalendar> {
           children: [
             Column(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    final today = Date.today();
-                    final page = today.weekSinceEpoch;
+                Row(
+                  mainAxisAlignment: showArrows ? .spaceBetween : .center,
+                  children: [
+                    if (showArrows)
+                      ArrowButton(
+                        left: true,
+                        onPressed: () {
+                          widget.controller.previousPage(
+                            duration: scrollDuration,
+                            curve: scrollCurve,
+                          );
+                        },
+                      ),
+                    GestureDetector(
+                      onTap: () {
+                        final today = Date.today();
+                        final page = today.weekSinceEpoch;
 
-                    widget.controller.animateToPage(
-                      page,
-                      duration: Durations.medium2,
-                      curve: Curves.decelerate,
-                    );
+                        widget.controller.animateToPage(
+                          page,
+                          duration: scrollDuration,
+                          curve: scrollCurve,
+                        );
 
-                    widget.setSelectedDate(today);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      focusedDate.formatMonth(context),
-                      style: context.txt.headlineMedium,
-                      textAlign: .left,
+                        widget.setSelectedDate(today);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          focusedDate.formatMonth(context),
+                          style: context.txt.headlineMedium,
+                          textAlign: .left,
+                        ),
+                      ),
                     ),
-                  ),
+                    if (showArrows)
+                      ArrowButton(
+                        onPressed: () {
+                          widget.controller.nextPage(
+                            duration: scrollDuration,
+                            curve: scrollCurve,
+                          );
+                        },
+                      ),
+                  ],
                 ),
-                WeekdaysRow(textColor: getSubtleTextColor(context)),
+                WeekdaysRow(
+                  textColor: getSubtleTextColor(context),
+                  startOnMonday: weekStartsOnMonday,
+                ),
                 SizedBox(
                   // the width is divided to 7 days, plus spacing for the exam tiles (i guessed it though)
                   height: width / 7 + 90,
                   child: PageView.builder(
                     onPageChanged: (value) {
-                      final bool startOnMonday = settings.get(
-                        Setting.weekStartsOnMonday,
-                      );
-
                       if (Date.datesForWeek(
                         value,
-                        startOnMonday: startOnMonday,
+                        startOnMonday: weekStartsOnMonday,
                       ).contains(widget.selectedDate)) {
                         setState(() {
                           focusedDate = widget.selectedDate;
@@ -123,7 +151,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
                         setState(() {
                           focusedDate = Date.fromWeekSinceEpoch(
                             value,
-                            weekStartsOnMonday: startOnMonday,
+                            weekStartsOnMonday: weekStartsOnMonday,
                           ).addDays(3);
                         });
                       }
@@ -132,7 +160,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
                     itemBuilder: (context, weekSinceEpoch) {
                       final dates = Date.datesForWeek(
                         weekSinceEpoch,
-                        startOnMonday: settings.get(Setting.weekStartsOnMonday),
+                        startOnMonday: weekStartsOnMonday,
                       );
 
                       return Padding(

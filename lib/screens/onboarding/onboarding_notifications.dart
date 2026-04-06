@@ -34,7 +34,7 @@ class OnboardingNotifications extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(28),
                     child: Image.asset(
-                      'assets/images/android_notification_${context.isDark ? 'dark' : 'light'}.png',
+                      'assets/images/android_notification_${context.isDark ? 'dark' : 'light'}.webp',
                       height: 450,
                     ),
                   ),

@@ -3,20 +3,23 @@ update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios calendar still refresh pulls
 Haptic keeps repeating in calendar drag and drop main (not small calendar)
-android widget doesnt open calendar
+
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
-check keyboard date picker
-check week start on sunday
-check arrow buttons in calendar 
-check markdown
-
 check for memory leak
-optimize web load times
-analyze apk size
 
 in calendar tiles, show +2, +3, instead of elipsis
-report bug button - in drawer, send by mail/github
+report bug/request feature button - in drawer, send by mail/github or some service ???
+firebase crashlytics not on web
+ask for email verification
+
+stop showing adaptive dialogs - show only material one
+
+web add haptics
+create empty project to test safari top bar color
+
+if taking too long, retry ???
+web crashes other platforms
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -52,6 +55,7 @@ report bug button - in drawer, send by mail/github
 ## UI
 - ✅ settings use bigger headlines and scroll them
 - ✅ check scrolling in timetable (dont overscroll, dont show pull tabs)
+- ✅ add hide to found new homeworks
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
 - ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
@@ -65,7 +69,6 @@ report bug button - in drawer, send by mail/github
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
 - ⬜ expressive buttons
-- ⬜ add hide to found new homeworks
 - ⬜ month calendar scroll on hover 
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
@@ -74,6 +77,7 @@ report bug button - in drawer, send by mail/github
 - ✅ save only date for deadlines
 - ✅ rework exceptions - string should be just shown in ui, not from service
 - ✅ refactor to use date instead of datetime
+- ⬜ android main widget doesnt open calendar to its date
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
@@ -185,3 +189,6 @@ report bug button - in drawer, send by mail/github
     - ✅ homeworks
         - ✅ fix the frequency when is app searching for baka homeworks
     - ✅ name
+
+
+release - update pub, update pubspec version, update firebase realtimeDB versions, update changelog

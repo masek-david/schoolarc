@@ -98,10 +98,15 @@ class _OnboardingState extends State<Onboarding> {
         backgroundColor: transparent ? Colors.transparent : null,
         appBar: AppBar(
           centerTitle: false,
-          title: kDebugMode
-              ? TextButton(
-                  onPressed: widget.closeOnboarding,
-                  child: const Text('x'),
+          leading: kDebugMode
+              ? GestureDetector(
+                  onTap: kDebugMode ? widget.closeOnboarding : null,
+                  onLongPress: widget.closeOnboarding,
+                  child: const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: Center(child: Text('x')),
+                  ),
                 )
               : null,
           actions: kDebugMode

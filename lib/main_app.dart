@@ -11,11 +11,11 @@ import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
+import 'package:schoolarc/provider/home_page_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/app_info_screen.dart';
-import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/main_screens/calendar/calendar_screen.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
@@ -35,7 +35,7 @@ import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
 import 'package:schoolarc/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:schoolarc/widgets/wide_screen_borders.dart';
 
-var _scaffoldKey = GlobalKey<ScaffoldState>();
+final _scaffoldKey = GlobalKey<ScaffoldState>();
 
 void openDrawer() {
   _scaffoldKey.currentState?.openDrawer();
@@ -52,11 +52,8 @@ class MainApp extends ConsumerStatefulWidget {
   ConsumerState<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
+class _MainAppState extends ConsumerState<MainApp> {
   late final AppLifecycleListener appStateListener;
-  late RestorableInt currentPageIndex = RestorableInt(
-    settings.get(Setting.initialAppPage),
-  );
   bool showingOnboarding = false;
 
   void endOnboarding() {
@@ -67,12 +64,14 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
-    FirebaseCrashlytics.instance.log(
-      nowActive
-          ? 'SYSTEM: App is now in foreground'
-          : 'SYSTEM: App is now in background',
-    );
-    updateMainWidget(ref);
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
+      FirebaseCrashlytics.instance.log(
+        nowActive
+            ? 'SYSTEM: App is now in foreground'
+            : 'SYSTEM: App is now in background',
+      );
+    }
+    HomeWidgetService.updateMainWidget(ref);
     NotificationSender.scheduleUpcomingDayNotifications(context);
 
     if (nowActive) {
@@ -94,9 +93,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   }
 
   void switchPage({required int newScreenIndex}) {
-    setState(() {
-      currentPageIndex.value = newScreenIndex;
-    });
+    ref.read(homePageProvider.notifier).switchPage(newScreenIndex);
 
     // try refreshing data for homescreen
     if (newScreenIndex == 0) {
@@ -113,7 +110,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
   // runs frame after first frame drawed
   void onAppStart({required bool firstTimeOpeningApp}) {
-    updateMainWidget(ref);
+    HomeWidgetService.updateMainWidget(ref);
     NotificationSender.scheduleUpcomingDayNotifications(context);
     ref.read(examDataProvider.notifier).checkAllIfCompleted();
     ref.read(bakaHomeworksProvider.notifier);
@@ -124,13 +121,13 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
         NotificationSender.getPermission(context, tomorrowChannel);
       }
 
-      // ask to verify email
-      if (fireService.needsVerification) {
-        final user = fireService.user;
-        if (user != null) {
-          verifyEmail(context, ref, user);
-        }
-      }
+      // TODO ask to verify email
+      // if (fireService.needsVerification) {
+      //   final user = fireService.user;
+      //   if (user != null) {
+      //     verifyEmail(context, ref, user);
+      //   }
+      // }
 
       // show warning to enable cloud sync on web
       if (kIsWeb &&
@@ -182,7 +179,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     // update widgets localization strings
     if (_lastLocale != locale) {
       _lastLocale = locale;
-      widgetSaveLocalizationStrings(context);
+      HomeWidgetService.widgetSaveLocalizationStrings(context);
     }
   }
 
@@ -206,13 +203,21 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
     if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       HomeWidget.initiallyLaunchedFromHomeWidget().then((event) {
         if (event != null && navigatorKey.currentContext?.mounted == true) {
-          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+          HomeWidgetService.handleWidgetClick(
+            event,
+            navigatorKey.currentContext!,
+            ref,
+          );
         }
       });
 
       HomeWidget.widgetClicked.listen((event) {
         if (event != null && navigatorKey.currentContext?.mounted == true) {
-          handleWidgetClick(event, navigatorKey.currentContext!, ref);
+          HomeWidgetService.handleWidgetClick(
+            event,
+            navigatorKey.currentContext!,
+            ref,
+          );
         }
       });
     }
@@ -235,17 +240,8 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
 
   @override
   void dispose() {
-    currentPageIndex.dispose();
     appStateListener.dispose();
     super.dispose();
-  }
-
-  @override
-  String? get restorationId => 'mainApp';
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(currentPageIndex, 'currentPage');
   }
 
   final screens = [
@@ -258,6 +254,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
   @override
   Widget build(BuildContext context) {
     final isWide = context.isWide;
+    final page = ref.watch(homePageProvider);
     final miliseconds =
         (settings.get(Setting.pageSwitchAnimationDuration) as double).toInt();
 
@@ -312,11 +309,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             body: SlidableAutoCloseBehavior(
               child: Row(
                 children: [
-                  if (isWide)
-                    SideNavBar(
-                      onTap: switchPage,
-                      pageIndex: currentPageIndex.value,
-                    ),
+                  if (isWide) SideNavBar(onTap: switchPage, pageIndex: page),
                   WideScreenBorders(
                     show: isWide,
                     child: AnimatedSwitcher(
@@ -334,7 +327,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
                           child: child,
                         );
                       },
-                      child: screens[currentPageIndex.value],
+                      child: screens[page],
                     ),
                   ),
                 ],
@@ -343,10 +336,7 @@ class _MainAppState extends ConsumerState<MainApp> with RestorationMixin {
             drawer: const MyDrawer(),
             bottomNavigationBar: isWide
                 ? null
-                : BottomNavBar(
-                    onTap: switchPage,
-                    pageIndex: currentPageIndex.value,
-                  ),
+                : BottomNavBar(onTap: switchPage, pageIndex: page),
           ),
         ),
         if (showingOnboarding) Onboarding(closeOnboarding: endOnboarding),

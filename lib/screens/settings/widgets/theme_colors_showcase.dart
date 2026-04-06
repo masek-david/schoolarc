@@ -10,7 +10,7 @@ class ThemeColorsShowcase extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final height = constraints.maxWidth / 3 - 16;
+        final height = (constraints.maxWidth / 3 - 16).clamp(0, 150).toDouble();
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8),

@@ -58,7 +58,7 @@ class LocalizationPage extends ConsumerWidget {
             value: language,
             onChanged: (value) {
               vibrate.light();
-              widgetSaveLocalizationStrings(context);
+              HomeWidgetService.widgetSaveLocalizationStrings(context);
               ref.read(languageCodeProvider.notifier).set(value);
             },
             items: dropDownItems,

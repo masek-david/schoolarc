@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class PrivacyPolicy extends StatelessWidget {
@@ -7,14 +8,13 @@ class PrivacyPolicy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: GptMarkdown(context.loc.privacyPolicy),
-          ),
-        ],
+    return SettingsScaffold(
+      title: context.loc.privacyPolicyTitle,
+      heroTag: 'privacyPolicy',
+      children: const [],
+      child: Markdown(
+        data: context.loc.privacyPolicy,
+        padding: const EdgeInsets.all(0),
       ),
     );
   }

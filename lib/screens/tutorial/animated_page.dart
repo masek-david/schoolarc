@@ -64,6 +64,7 @@ class _AnimatedPageState extends State<AnimatedPage> {
     return Padding(
       padding: padding,
       child: ListView.builder(
+        physics: const ClampingScrollPhysics(),
         itemCount: widget.children.length,
         itemBuilder: (context, index) {
           final item = widget.children[index];

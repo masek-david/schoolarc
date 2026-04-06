@@ -234,7 +234,7 @@ class MainWidget : GlanceAppWidget() {
                             Row(
                                 modifier = GlanceModifier.fillMaxWidth().clickable(
                                     actionStartActivity<MainActivity>(
-                                        context, "schoolarc://".toUri()
+                                        context, "schoolarc://calendar?date=$dateString".toUri()
                                     )
                                 )
                             ) {
