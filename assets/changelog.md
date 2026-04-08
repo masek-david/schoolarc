@@ -1,3 +1,14 @@
+## [2.2.2](2026-;build)
+### Added
+- PWA offline support, faster load times
+
+### Changed
+
+
+### Fixed
+
+
+---
 ## [2.2.1](2026-04-06;build53)
 ### Added
 - Improved web load times and app size

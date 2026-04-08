@@ -19,7 +19,9 @@ web add haptics
 create empty project to test safari top bar color
 
 if taking too long, retry ???
-web crashes other platforms
+web crashes on other platforms
+
+index.html - show the loader after a second, to not even show it on fast loads
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

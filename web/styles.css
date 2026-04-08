@@ -1,4 +1,4 @@
-.loader {
+.myLoader {
   margin-top: 20px;
   display: block;
   position: relative;
@@ -9,12 +9,12 @@
   overflow: hidden;
 }
 
-.loader::after {
+.myLoader::after {
   content: '';
   width: 60%;
   height: 100%;
   border-radius: 10px;
-  background: var(--loader-color, #ff0000);
+  background: var(--myLoader-color, #ff0000);
   position: absolute;
   top: 0;
   left: 0;
