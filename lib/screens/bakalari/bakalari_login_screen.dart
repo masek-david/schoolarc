@@ -9,7 +9,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -38,18 +38,16 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
 
   void askToImportTimetable() {
     if (!mounted) return;
-    showDialogAdaptive(
+    showMyDialog(
       context: context,
-      title: Text(context.loc.importTimetableTitle),
-      content: Text(context.loc.importTimetableWarning),
+      title: context.loc.importTimetableTitle,
+      text: context.loc.importTimetableWarning,
       actions: [
-        adaptiveDialogButton(
-          context: context,
+        DialogActionButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(context.loc.cancel),
+          text: context.loc.cancel,
         ),
-        adaptiveDialogButton(
-          context: context,
+        DialogActionButton(
           isDestructiveAction: true,
           onPressed: () async {
             Navigator.pop(context);
@@ -79,7 +77,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               showMessage(context, context.loc.success);
             }
           },
-          child: Text(context.loc.import),
+          text: context.loc.import,
         ),
       ],
     );
@@ -130,14 +128,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
           icon: const Icon(Icons.refresh),
         ),
         IconButton(
-          onPressed: () => showDialogAdaptive(
+          onPressed: () => showMyDialog(
             context: context,
-            title: Text(context.loc.secureLogin),
-            content: Text(context.loc.secureLoginInfo),
+            title: context.loc.secureLogin,
+            text: context.loc.secureLoginInfo,
             actions: [
-              adaptiveDialogButton(
-                context: context,
-                child: Text(context.loc.close),
+              DialogActionButton(
+                text: context.loc.close,
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -236,20 +233,18 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                   onChanged: !baka.isLoading && useBaka
                       ? (value) async {
                           if (!value!) {
-                            value = await showDialogAdaptive(
+                            value = await showMyDialog(
                               context: context,
-                              title: Text(context.loc.rememberMeTitle),
-                              content: Text(context.loc.rememberMeWarning),
+                              title: context.loc.rememberMeTitle,
+                              text: context.loc.rememberMeWarning,
                               actions: [
-                                adaptiveDialogButton(
-                                  context: context,
-                                  child: Text(context.loc.cancel),
+                                DialogActionButton(
+                                  text: context.loc.cancel,
                                   onPressed: () => Navigator.pop(context, true),
                                 ),
-                                adaptiveDialogButton(
+                                DialogActionButton(
                                   isDestructiveAction: true,
-                                  context: context,
-                                  child: Text(context.loc.continueAction),
+                                  text: context.loc.continueAction,
                                   onPressed: () =>
                                       Navigator.pop(context, false),
                                 ),

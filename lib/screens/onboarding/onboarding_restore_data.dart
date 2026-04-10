@@ -8,7 +8,7 @@ import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class OnboardingRestoredata extends ConsumerWidget {
   const OnboardingRestoredata({super.key, required this.next});
@@ -103,19 +103,17 @@ class OnboardingRestoredata extends ConsumerWidget {
               return Center(
                 child: GestureDetector(
                   onTap: () {
-                    showDialogAdaptive(
+                    showMyDialog(
                       context: context,
-                      title: Text(context.loc.skipRestoringQ),
+                      title: context.loc.skipRestoringQ,
                       content: Text(context.loc.skipRestoringSub),
                       actions: [
-                        adaptiveDialogButton(
-                          context: context,
-                          child: Text(context.loc.cancel),
+                        DialogActionButton(
+                          text: context.loc.cancel,
                           onPressed: () => Navigator.pop(context),
                         ),
-                        adaptiveDialogButton(
-                          context: context,
-                          child: Text(context.loc.skipRestoring),
+                        DialogActionButton(
+                          text: context.loc.skipRestoring,
                           isDestructiveAction: true,
                           onPressed: () {
                             Navigator.pop(context);

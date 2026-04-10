@@ -63,11 +63,11 @@
       xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
       <defs />
       <g id="Layer-3">
-        <path class="primary"
+        <path id="logoLine" class="primary"
           d="M472.932 256.56C472.932 376.301 375.863 473.371 256.121 473.371C136.38 473.371 39.3105 376.301 39.3105 256.56C39.3105 136.819 136.38 39.7492 256.121 39.7492"
-          fill="none" opacity="1" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"
+          fill="none" opacity="1" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" 
           stroke-width="75.9409" />
-        <g opacity="1">
+        <g id="logoPen" opacity="1" >
           <path class="secondary"
             d="M287.176 178.169L334.672 225.664L361.942 198.394L375.332 185.004L445.105 115.231C453.108 107.228 453.108 94.2602 445.105 86.2576L426.583 67.7353C418.58 59.7327 405.612 59.7327 397.61 67.7353L327.837 137.509L314.446 150.899L287.176 178.169Z"
             fill="#ffffff" fill-rule="nonzero" opacity="1" stroke="none" />
@@ -80,7 +80,7 @@
       </g>
     </svg>
 
-    <span class="myLoader"></span>
+    <span id="loaderID" class="myLoader"></span>
   </div>
 
   <style>
@@ -111,6 +111,11 @@
         }
       }
     });
+    
+    // Show the loader after 2 seconds
+    setTimeout(() => {
+      document.getElementById('loaderID').style.height = '12px';
+    }, 2000);
 
     function blockTouch(e) {
       if (e.touches.length > 1) return;

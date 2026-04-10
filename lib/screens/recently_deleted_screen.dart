@@ -11,7 +11,7 @@ import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
@@ -50,20 +50,18 @@ class RecentlyDeletedScreen extends ConsumerWidget {
         }
     }
 
-    showDialogAdaptive(
+    showMyDialog(
       context: context,
-      title: Text('${context.loc.recover}?'),
-      content: Text('${context.loc.recover} \'$itemName\'?'),
+      title: '${context.loc.recover}?',
+      text: '${context.loc.recover} \'$itemName\'?',
       actions: [
-        adaptiveDialogButton(
-          context: context,
-          child: Text(context.loc.cancel),
+        DialogActionButton(
+          text: context.loc.cancel,
           onPressed: () => Navigator.pop(context),
         ),
-        adaptiveDialogButton(
-          context: context,
+        DialogActionButton(
+          text: context.loc.recover,
           isDefaultAction: true,
-          child: Text(context.loc.recover),
           onPressed: () {
             onRevert();
             Navigator.pop(context);
@@ -87,14 +85,13 @@ class RecentlyDeletedScreen extends ConsumerWidget {
         title: Text(context.loc.recentlyDeleted),
         actions: [
           IconButton(
-            onPressed: () => showDialogAdaptive(
+            onPressed: () => showMyDialog(
               context: context,
-              title: Text(context.loc.recover),
-              content: Text(context.loc.recoverInfoContent),
+              title: context.loc.recover,
+              text: context.loc.recoverInfoContent,
               actions: [
-                adaptiveDialogButton(
-                  context: context,
-                  child: Text(context.loc.close),
+                DialogActionButton(
+                  text: context.loc.close,
                   onPressed: () => Navigator.pop(context),
                 ),
               ],

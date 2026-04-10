@@ -37,8 +37,8 @@ class ScrollableCalendar extends ConsumerWidget {
       color: context.col.surfaceContainer,
       child: Column(
         children: [
-          const WeekdaysRow(
-            startOnMonday: false,
+          WeekdaysRow(
+            startOnMonday: weekStartsOnMonday,
           ),
           const SizedBox(height: 4),
           Expanded(

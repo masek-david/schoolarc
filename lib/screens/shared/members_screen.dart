@@ -5,7 +5,7 @@ import 'package:schoolarc/screens/shared/nickname_text.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class MembersScreen extends StatelessWidget {
   const MembersScreen({super.key, required this.members});
@@ -72,18 +72,16 @@ class MembersScreen extends StatelessWidget {
                             IconButton(
                               icon: const Icon(Icons.person_remove_outlined),
                               onPressed: () async {
-                                showDialogAdaptive(
+                                showMyDialog(
                                   context: context,
-                                  title: Text('Remove ${user.name} ?'),
+                                  title: 'Remove ${user.name}?',
                                   actions: [
-                                    adaptiveDialogButton(
-                                      context: context,
-                                      child: Text(context.loc.cancel),
+                                    DialogActionButton(
+                                      text: context.loc.cancel,
                                       onPressed: () => Navigator.pop(context),
                                     ),
-                                    adaptiveDialogButton(
-                                      context: context,
-                                      child: const Text('Remove'),
+                                    DialogActionButton(
+                                      text: 'Remove',
                                       isDestructiveAction: true,
                                       onPressed: () async {
                                         Navigator.pop(context);

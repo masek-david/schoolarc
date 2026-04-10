@@ -11,8 +11,11 @@ import 'package:schoolarc/database/logs_database.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/database/timetable_database.dart';
+import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
+import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
+import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/services/baka_service.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
@@ -65,6 +68,28 @@ bool needsRefreshButton() {
     return true;
   }
   return false;
+}
+
+Future<void> refreshAll(BuildContext context, WidgetRef ref) async {
+  try {
+    await Future.wait([
+      ref.read(bakaHomeworksProvider.notifier).refresh(),
+      ref.read(stravaMealsProvider.notifier).refresh(),
+      ref
+          .read(
+            actualTimetableDataProvider(
+              getCurrentTimetableWeekIndex(),
+            ).notifier,
+          )
+          .refresh(),
+      if (fireService.hasUser) syncAllTasks(ref),
+    ]);
+  } on Object catch (e) {
+    if (context.mounted) {
+      showErrorMessage(context, e);
+    }
+  }
+  return;
 }
 
 Color getSubtleTextColor(BuildContext context) {

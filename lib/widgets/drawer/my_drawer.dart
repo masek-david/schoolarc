@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
-import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
-import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -28,9 +26,6 @@ class MyDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool debugMode = ref.watch(debugModeProvider);
-    final bool showFire = ref.watch(debugShowFireOverlayProvider);
-    final bool showPerformance = ref.watch(debugShowPerformanceOverlayProvider);
     final loc = context.loc;
 
     return Drawer(
@@ -106,42 +101,8 @@ class MyDrawer extends ConsumerWidget {
                         Navigator.restorablePushNamed(context, '/deleted');
                       },
                     ),
-                    if (kDebugMode || debugMode)
-                      const Divider(indent: 28, endIndent: 28),
-                    if (kDebugMode || debugMode)
-                      SettingTile.withSwitch(
-                        isFirst: true,
-                        isLast: !debugMode,
-                        title: loc.developerMode,
-                        value: debugMode,
-                        onChanged: (value) {
-                          ref.read(debugModeProvider.notifier).set(value);
-                        },
-                      ),
-                    if (debugMode)
-                      SettingTile.withSwitch(
-                        title: loc.showPerformanceOverlay,
-                        value: showPerformance,
-                        onChanged: (value) {
-                          ref
-                              .read(
-                                debugShowPerformanceOverlayProvider.notifier,
-                              )
-                              .set(value);
-                        },
-                      ),
-                    if (debugMode)
-                      SettingTile.withSwitch(
-                        isLast: true,
-                        title: loc.showFirebaseOverlay,
-                        value: showFire,
-                        onChanged: (value) {
-                          ref
-                              .read(debugShowFireOverlayProvider.notifier)
-                              .set(value);
-                        },
-                      ),
-                    if (debugMode)
+                    if (kDebugMode) const Divider(indent: 28, endIndent: 28),
+                    if (kDebugMode)
                       MyDrawerButton(
                         text: loc.viewDatabase,
                         icon: const Icon(Icons.data_array),
@@ -149,7 +110,7 @@ class MyDrawer extends ConsumerWidget {
                           Navigator.restorablePushNamed(context, '/database');
                         },
                       ),
-                    if (kDebugMode || debugMode)
+                    if (kDebugMode)
                       MyDrawerButton(
                         text: loc.viewLogs,
                         icon: const Icon(Icons.bug_report),
@@ -180,7 +141,7 @@ class MyDrawer extends ConsumerWidget {
                 Navigator.restorablePushNamed(context, '/settings');
               },
             ),
-            if (debugMode || kDebugMode)
+            if (kDebugMode)
               GestureDetector(
                 onTap: () => Navigator.restorablePushNamed(
                   context,

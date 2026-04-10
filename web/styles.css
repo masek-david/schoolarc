@@ -1,11 +1,36 @@
+#logoLine {
+  stroke-dasharray: 1500;
+  stroke-dashoffset: -1500;
+  animation: drawLine 800ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+#logoPen {
+  transform: translate(100px, -100px);
+  opacity: 0;
+  animation: slideIn 800ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .myLoader {
   margin-top: 20px;
-  display: block;
   position: relative;
-  height: 12px;
+  /* it will be shown after 2 seconds */
+  height: 0px;
   width: 40%;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 6px;
   overflow: hidden;
 }
 

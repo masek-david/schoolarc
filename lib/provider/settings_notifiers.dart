@@ -6,7 +6,7 @@ import 'package:schoolarc/utils/globals.dart';
 final useMealsProvider = settingProvider<bool>(Setting.useMeals);
 final useBakaProvider = settingProvider<bool>(Setting.useBakalari);
 
-final debugModeProvider = settingProvider<bool>(Setting.debugMode);
+final devModeProvider = settingProvider<bool>(Setting.debugMode);
 
 final use24HourFormatProvider = settingProvider<bool>(Setting.use24HourFormat);
 

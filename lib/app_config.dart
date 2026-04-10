@@ -175,7 +175,7 @@ class AppConfig extends ConsumerWidget {
               locale: locale,
               debugShowCheckedModeBanner: false,
               showPerformanceOverlay:
-                  ref.watch(debugModeProvider) &&
+                  ref.watch(devModeProvider) &&
                   ref.watch(debugShowPerformanceOverlayProvider),
               theme: ThemeData(
                 textTheme: getTextTheme(),

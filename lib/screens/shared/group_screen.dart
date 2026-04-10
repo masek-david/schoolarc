@@ -14,7 +14,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
@@ -140,18 +140,16 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                 PopupMenuItem(
                   child: const Text('Leave group'),
                   onTap: () {
-                    showDialogAdaptive(
+                    showMyDialog(
                       context: context,
-                      title: const Text('Leave the group?'),
+                      title: 'Leave the group?',
                       actions: [
-                        adaptiveDialogButton(
-                          context: context,
-                          child: Text(context.loc.cancel),
+                        DialogActionButton(
+                          text: context.loc.cancel,
                           onPressed: () => Navigator.pop(context),
                         ),
-                        adaptiveDialogButton(
-                          context: context,
-                          child: const Text('Leave'),
+                        DialogActionButton(
+                          text: 'Leave',
                           isDestructiveAction: true,
                           onPressed: () async {
                             Navigator.pop(context);
@@ -237,19 +235,17 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                 PopupMenuItem(
                   child: const Text('Delete your group'),
                   onTap: () {
-                    showDialogAdaptive(
+                    showMyDialog(
                       context: context,
-                      title: const Text('Delete your group?'),
+                      title: 'Delete your group?',
                       content: const Text('This action is irreversible'),
                       actions: [
-                        adaptiveDialogButton(
-                          context: context,
-                          child: Text(context.loc.cancel),
+                        DialogActionButton(
+                          text: context.loc.cancel,
                           onPressed: () => Navigator.pop(context),
                         ),
-                        adaptiveDialogButton(
-                          context: context,
-                          child: const Text('Delete'),
+                        DialogActionButton(
+                          text: 'Delete',
                           isDestructiveAction: true,
                           onPressed: () async {
                             Navigator.pop(context);

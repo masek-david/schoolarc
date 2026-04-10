@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
@@ -189,19 +188,19 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (settings.get(Setting.debugMode))
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(widget.hw.stateReaddingVersion.toString()),
-                              Text(widget.hw.order.toString()),
-                              if (widget.hw.isBeingAnimated)
-                                const Icon(
-                                  Icons.animation,
-                                  size: 15,
-                                ),
-                            ],
-                          ),
+                        // if (settings.get(Setting.debugMode))
+                        //   Column(
+                        //     mainAxisAlignment: MainAxisAlignment.center,
+                        //     children: [
+                        //       Text(widget.hw.stateReaddingVersion.toString()),
+                        //       Text(widget.hw.order.toString()),
+                        //       if (widget.hw.isBeingAnimated)
+                        //         const Icon(
+                        //           Icons.animation,
+                        //           size: 15,
+                        //         ),
+                        //     ],
+                        //   ),
                         Container(
                           width: 50,
                           height: 50,

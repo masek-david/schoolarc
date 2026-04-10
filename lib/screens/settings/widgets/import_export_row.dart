@@ -13,7 +13,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/import_export.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class ImportExportButtonsRow extends ConsumerWidget {
   const ImportExportButtonsRow({
@@ -88,9 +88,9 @@ class ImportExportButtonsRow extends ConsumerWidget {
               final totalCount = subjectsCount + examsCount + hwsCount;
 
               if (context.mounted) {
-                showDialogAdaptive(
+                showMyDialog(
                   context: context,
-                  title: Text(context.loc.import),
+                  title: context.loc.import,
                   dismissible: false,
                   content: Text(
                     context.loc.importConfirmationText(
@@ -100,15 +100,13 @@ class ImportExportButtonsRow extends ConsumerWidget {
                     ),
                   ),
                   actions: [
-                    adaptiveDialogButton(
-                      context: context,
-                      child: Text(context.loc.cancel),
+                    DialogActionButton(
+                      text: context.loc.cancel,
                       onPressed: () => Navigator.pop(context),
                     ),
-                    adaptiveDialogButton(
-                      context: context,
+                    DialogActionButton(
+                      text: context.loc.import,
                       isDefaultAction: true,
-                      child: Text(context.loc.import),
                       onPressed: () async {
                         final GlobalKey<ProgressDialogState> dialogKey =
                             GlobalKey();

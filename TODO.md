@@ -10,18 +10,12 @@ check for memory leak
 
 in calendar tiles, show +2, +3, instead of elipsis
 report bug/request feature button - in drawer, send by mail/github or some service ???
-firebase crashlytics not on web
 ask for email verification
 
-stop showing adaptive dialogs - show only material one
-
 web add haptics
+
+if web taking too long, retry ???
 create empty project to test safari top bar color
-
-if taking too long, retry ???
-web crashes on other platforms
-
-index.html - show the loader after a second, to not even show it on fast loads
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -50,7 +44,7 @@ index.html - show the loader after a second, to not even show it on fast loads
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?
     - ⬜ add to onboarding
-- ⬜ error screen/messages, logging - firebase crashlytics
+- ⬜ error screen/messages, logging - posthog
 
 # FEATURES
 
@@ -58,10 +52,10 @@ index.html - show the loader after a second, to not even show it on fast loads
 - ✅ settings use bigger headlines and scroll them
 - ✅ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ✅ add hide to found new homeworks
+- ✅ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
+- ✅ scroll calendar vertically on big screens
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
-- ⬜ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
-- ⬜ scroll calendar vertically on big screens
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
     - ⬜ prevent from accidental scroll closing ‼️
@@ -71,7 +65,7 @@ index.html - show the loader after a second, to not even show it on fast loads
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
 - ⬜ expressive buttons
-- ⬜ month calendar scroll on hover 
+- ⬜ month calendar scroll on hover
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 

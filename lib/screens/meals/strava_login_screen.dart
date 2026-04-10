@@ -9,7 +9,7 @@ import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/button_styles.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
@@ -81,14 +81,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
           icon: const Icon(Icons.refresh),
         ),
         IconButton(
-          onPressed: () => showDialogAdaptive(
+          onPressed: () => showMyDialog(
             context: context,
-            title: Text(context.loc.secureLogin),
+            title: context.loc.secureLogin,
             content: Text(context.loc.secureLoginInfo),
             actions: [
-              adaptiveDialogButton(
-                context: context,
-                child: Text(context.loc.close),
+              DialogActionButton(
+                text: context.loc.close,
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -140,14 +139,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  showDialogAdaptive(
+                  showMyDialog(
                     context: context,
-                    title: Text(loc.schoolCanteenId),
+                    title: loc.schoolCanteenId,
                     content: Text(loc.schoolCanteenIdDescription),
                     actions: [
-                      adaptiveDialogButton(
-                        context: context,
-                        child: Text(loc.close),
+                      DialogActionButton(
+                        text: loc.close,
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -158,7 +156,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             ],
           ),
         if (!loggedIn) const SizedBox(height: 16),
-        if (!loggedIn && (ref.watch(debugModeProvider) || kDebugMode))
+        if (!loggedIn && (ref.watch(devModeProvider) || kDebugMode))
           SettingTile.withSwitch(
             isLast: true,
             isFirst: true,

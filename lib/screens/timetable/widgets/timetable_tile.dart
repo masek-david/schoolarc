@@ -1,11 +1,9 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
-import 'package:schoolarc/utils/globals.dart';
 
 class TimetableTile extends StatelessWidget {
   const TimetableTile({
@@ -96,9 +94,9 @@ class TimetableTile extends StatelessWidget {
                         : const SizedBox.square(dimension: 5),
                   ],
                 ),
-                if (lesson?.subject?.isFromBakalari == true &&
-                    settings.get(Setting.debugMode))
-                  Text('baka: ${lesson?.subject?.bakaId}'),
+                // if (lesson?.subject?.isFromBakalari == true &&
+                //     settings.get(Setting.debugMode))
+                //   Text('baka: ${lesson?.subject?.bakaId}'),
                 const Spacer(flex: 10),
                 if (lesson?.change?.type == ChangeType.canceled)
                   Text(

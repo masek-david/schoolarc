@@ -13,7 +13,7 @@ import 'package:schoolarc/database/subject_database.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class DbInfoScreen extends ConsumerWidget {
   const DbInfoScreen({super.key});
@@ -39,7 +39,6 @@ class DbInfoScreen extends ConsumerWidget {
             FilledButton.tonal(
               onPressed: () {
                 FirebaseCrashlytics.instance.log('Pressed Crash button');
-                
                 throw Exception();
               },
               child: const Text('Crash'),
@@ -74,7 +73,9 @@ class DbInfoScreen extends ConsumerWidget {
                   await fireService.logOut();
                   SecureStorage.deleteAllFromDisk();
                 },
-                label: const Text('Reset all settings and log out (run app as new, keep only hw, exam, subjects)'),
+                label: const Text(
+                  'Reset all settings and log out (run app as new, keep only hw, exam, subjects)',
+                ),
                 icon: const Icon(Icons.bug_report),
               ),
             const Divider(),
@@ -166,15 +167,14 @@ class DbInfoScreen extends ConsumerWidget {
                   }
                 }
                 if (context.mounted) {
-                  showDialogAdaptive(
+                  showMyDialog(
                     context: context,
                     content: SingleChildScrollView(
                       child: Text(fireHws.toString()),
                     ),
                     actions: [
-                      adaptiveDialogButton(
-                        context: context,
-                        child: const Text('Close'),
+                      DialogActionButton(
+                        text: 'Close',
                         onPressed: () {
                           Navigator.pop(context);
                         },

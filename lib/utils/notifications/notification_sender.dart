@@ -18,7 +18,7 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 const String tomorrowChannel = 'tomorrow_channel';
 const String mainChannel = 'main_channel';
@@ -292,26 +292,23 @@ class NotificationSender {
       return false;
     }
     final loc = context.loc;
-    return await showDialogAdaptive<bool?>(
+    return await showMyDialog<bool?>(
           context: context,
-          title: Text(loc.notificationPermission),
+          title: loc.notificationPermission,
           actions: [
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               isDestructiveAction: true,
               onPressed: () {
                 settings.save(Setting.stopAskingForNotifications, true);
                 Navigator.pop(context);
               },
-              child: Text(loc.stopAsking),
+              text: loc.stopAsking,
             ),
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(loc.later),
+              text: loc.later,
             ),
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               onPressed: () async {
                 await AwesomeNotifications()
                     .requestPermissionToSendNotifications(
@@ -323,7 +320,7 @@ class NotificationSender {
                 }
               },
               isDefaultAction: true,
-              child: Text(loc.grant),
+              text: loc.grant,
             ),
           ],
           content: Column(

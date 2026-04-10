@@ -28,7 +28,7 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_controller.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 import 'package:schoolarc/widgets/config/my_shortcuts.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/drawer/my_drawer.dart';
 import 'package:schoolarc/widgets/firebase_overlay.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
@@ -133,30 +133,27 @@ class _MainAppState extends ConsumerState<MainApp> {
       if (kIsWeb &&
           !settings.get(Setting.stopPwaCloudSyncWarning) &&
           !fireService.hasUser) {
-        showDialogAdaptive(
+        showMyDialog(
           context: context,
-          title: Text(context.loc.cloudSyncDisabled),
-          content: Text(context.loc.cloudSyncDisabledWarning),
+          title: context.loc.cloudSyncDisabled,
+          text: context.loc.cloudSyncDisabledWarning,
           actions: [
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               isDefaultAction: true,
-              child: Text(context.loc.enable),
+              text: context.loc.enable,
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.restorablePushNamed(context, '/cloudsync');
               },
             ),
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               isDestructiveAction: true,
-              child: Text(context.loc.keepDisabled),
+              text: context.loc.keepDisabled,
               onPressed: () => Navigator.pop(context),
             ),
-            adaptiveDialogButton(
-              context: context,
+            DialogActionButton(
               isDestructiveAction: true,
-              child: Text(context.loc.dontShowAgain),
+              text: context.loc.dontShowAgain,
               onPressed: () {
                 settings.save(Setting.stopPwaCloudSyncWarning, true);
                 Navigator.pop(context);
@@ -268,13 +265,12 @@ class _MainAppState extends ConsumerState<MainApp> {
             message != settings.get(.lastSeenMessage)) {
           settings.save(.lastSeenMessage, message);
 
-          showDialogAdaptive(
+          showMyDialog(
             context: context,
-            content: Text(next.value!.message!),
+            text: next.value!.message!,
             actions: [
-              adaptiveDialogButton(
-                context: context,
-                child: Text(context.loc.close),
+              DialogActionButton(
+                text: context.loc.close,
                 onPressed: () => Navigator.pop(context),
               ),
             ],

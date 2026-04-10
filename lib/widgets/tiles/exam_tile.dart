@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -69,8 +68,8 @@ class ExamTile extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            if (settings.get(Setting.debugMode))
-                              Text(exam.order.toString()),
+                            // if (settings.get(Setting.debugMode))
+                            //   Text(exam.order.toString()),
                             AnimatedContainer(
                               width: 50,
                               height: 50,

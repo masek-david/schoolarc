@@ -20,7 +20,11 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = context.loc;
-    final debugMode = ref.watch(debugModeProvider);
+    final devMode = ref.watch(devModeProvider);
+    final showFirebaseOverlay = ref.watch(debugShowFireOverlayProvider);
+    final showPerformanceOverlay = ref.watch(
+      debugShowPerformanceOverlayProvider,
+    );
 
     return SettingsScaffold(
       heroTag: 'settings',
@@ -119,32 +123,65 @@ class SettingsScreen extends ConsumerWidget {
           onTap: (context) => Navigator.restorablePushNamed(context, '/about'),
         ),
         SettingTile(
-          isLast: !(debugMode || kDebugMode),
+          isLast: true,
           title: context.loc.appDataLabel,
           trailing: const ImportExportButtonsRow(),
         ),
-        if (debugMode || kDebugMode)
-          SettingTile.withSwitch(
-            isLast: true,
-            leading: const Icon(Icons.bug_report_outlined),
-            title: loc.developerMode,
-            value: debugMode,
-            onChanged: (value) {
-              ref.read(debugModeProvider.notifier).set(value);
-            },
-          ),
-        if (debugMode)
+        if (devMode)
           Center(
             child: Text(
               packageInfo.packageName,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                color: context.col.surfaceContainerHighest,
               ),
             ),
           ),
         const Center(
           child: PackageInfoWidget(enableTap: true),
         ),
+        const SizedBox(height: 16),
+        if (devMode || kDebugMode)
+          SettingTile.withSwitch(
+            isFirst: true,
+            isLast: !devMode,
+            leading: const Icon(Icons.bug_report_outlined),
+            title: loc.developerMode,
+            value: devMode,
+            onChanged: (value) {
+              ref.read(devModeProvider.notifier).set(value);
+            },
+          ),
+        if (devMode)
+          SettingTile.withSwitch(
+            title: loc.showPerformanceOverlay,
+            value: showPerformanceOverlay,
+            leading: const Icon(Icons.bug_report_outlined),
+            onChanged: (value) {
+              ref
+                  .read(
+                    debugShowPerformanceOverlayProvider.notifier,
+                  )
+                  .set(value);
+            },
+          ),
+        if (devMode)
+          SettingTile.withSwitch(
+            title: loc.showFirebaseOverlay,
+            value: showFirebaseOverlay,
+            leading: const Icon(Icons.bug_report_outlined),
+            onChanged: (value) {
+              ref.read(debugShowFireOverlayProvider.notifier).set(value);
+            },
+          ),
+        if (devMode)
+          SettingTile(
+            isLast: true,
+            title: loc.viewDatabase,
+            leading: const Icon(Icons.data_array),
+            onTap: (context) {
+              Navigator.restorablePushNamed(context, '/database');
+            },
+          ),
         const SizedBox(height: 100),
       ],
     );

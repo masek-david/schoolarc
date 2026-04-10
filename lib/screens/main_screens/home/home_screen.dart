@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
-import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
-import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
-import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
@@ -25,28 +22,6 @@ import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
-
-  Future<void> refresh(BuildContext context, WidgetRef ref) async {
-    try {
-      await Future.wait([
-        ref.read(bakaHomeworksProvider.notifier).refresh(),
-        ref.read(stravaMealsProvider.notifier).refresh(),
-        ref
-            .read(
-              actualTimetableDataProvider(
-                getCurrentTimetableWeekIndex(),
-              ).notifier,
-            )
-            .refresh(),
-        if (fireService.hasUser) syncAllTasks(ref),
-      ]);
-    } on Object catch (e) {
-      if (context.mounted) {
-        showErrorMessage(context, e);
-      }
-    }
-    return;
-  }
 
   bool isLessonsEmpty(List<(LessonTimes, TimetableEntry)> lessons) {
     bool isEmpty = true;
@@ -99,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
       child: Container(
         color: context.col.surface,
         child: ExpressiveRefreshIndicator(
-          onRefresh: () => refresh(context, ref),
+          onRefresh: () => refreshAll(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ListView(

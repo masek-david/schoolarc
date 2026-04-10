@@ -15,7 +15,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 Future<void> verifyEmail(
   BuildContext context,
@@ -37,17 +37,16 @@ Future<void> verifyEmail(
 
   if (!context.mounted) return;
 
-  showDialogAdaptive(
+  showMyDialog(
     dismissible: false,
     context: context,
-    title: Text(context.loc.verifyEmailAddress),
+    title: context.loc.verifyEmailAddress,
     content: Text(
       context.loc.emailVerificationOpenLinkInEmail(user.email ?? ''),
     ),
     actions: [
-      adaptiveDialogButton(
-        context: context,
-        child: Text(context.loc.sendAgain),
+      DialogActionButton(
+        text: context.loc.sendAgain,
         onPressed: () async {
           try {
             await fireService.sendVerification();
@@ -63,10 +62,9 @@ Future<void> verifyEmail(
           }
         },
       ),
-      adaptiveDialogButton(
+      DialogActionButton(
+        text: context.loc.done,
         isDefaultAction: true,
-        context: context,
-        child: Text(context.loc.done),
         onPressed: () async {
           try {
             await fireService.reloadUser();
@@ -240,16 +238,15 @@ class CloudSyncLoginScreen extends ConsumerWidget {
 
           if (context.mounted) {
             Navigator.pop(context);
-            showDialogAdaptive(
+            showMyDialog(
               context: context,
-              title: Text(context.loc.emailAddressChanged),
+              title: context.loc.emailAddressChanged,
               content: Text(
                 context.loc.changeEmailDontForgetClickLink(fields[0]),
               ),
               actions: [
-                adaptiveDialogButton(
-                  context: context,
-                  child: Text(context.loc.ok),
+                DialogActionButton(
+                  text: context.loc.ok,
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -263,19 +260,17 @@ class CloudSyncLoginScreen extends ConsumerWidget {
   }
 
   Future<void> logOut(BuildContext context, WidgetRef ref) async {
-    showDialogAdaptive(
+    showMyDialog(
       context: context,
-      title: Text('${context.loc.logOut}?'),
+      title: '${context.loc.logOut}?',
       actions: [
-        adaptiveDialogButton(
-          context: context,
-          child: Text(context.loc.cancel),
+        DialogActionButton(
+          text: context.loc.cancel,
           onPressed: () => Navigator.pop(context),
         ),
-        adaptiveDialogButton(
-          context: context,
+        DialogActionButton(
+          text: context.loc.logOut,
           isDestructiveAction: true,
-          child: Text(context.loc.logOut),
           onPressed: () async {
             Navigator.pop(context);
             try {
@@ -320,20 +315,18 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           ),
         ],
         onSubmit: (fields) async {
-          showDialogAdaptive(
+          showMyDialog(
             context: context,
-            title: Text(context.loc.deleteAllDataTitle),
+            title: context.loc.deleteAllDataTitle,
             content: Text(context.loc.deleteAllDataText),
             actions: [
-              adaptiveDialogButton(
-                context: context,
-                child: Text(context.loc.cancel),
+              DialogActionButton(
+                text: context.loc.cancel,
                 onPressed: () => Navigator.pop(context),
               ),
-              adaptiveDialogButton(
-                context: context,
+              DialogActionButton(
+                text: context.loc.delete,
                 isDestructiveAction: true,
-                child: Text(context.loc.delete),
                 onPressed: () async {
                   Navigator.pop(context);
                   try {

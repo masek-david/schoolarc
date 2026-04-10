@@ -1,12 +1,14 @@
 ## [2.2.2](2026-;build)
 ### Added
 - PWA offline support, faster load times
+- Improved web loading page - animated logo, showing loading indicator only after some time
+- Added pull to refresh to calendar
 
 ### Changed
-
+- Dialogs now use Material design language on all platforms
 
 ### Fixed
-
+- Fixed calendar on big screens not showing correct days of the week
 
 ---
 ## [2.2.1](2026-04-06;build53)

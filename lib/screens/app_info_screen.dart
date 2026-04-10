@@ -16,7 +16,7 @@ class AppInfoScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          if (ref.watch(debugModeProvider))
+          if (ref.watch(devModeProvider))
             IconButton(
               onPressed: () {
                 ref.read(needsUpdateProvider.notifier).bypass();

@@ -19,7 +19,7 @@ class PackageInfoWidget extends ConsumerWidget {
       onTap: enableTap
           ? () {
               tapped++;
-              if (ref.read(debugModeProvider)) {
+              if (ref.read(devModeProvider)) {
                 showMessage(context, context.loc.alreadyDeveloper);
                 return;
               }
@@ -30,7 +30,7 @@ class PackageInfoWidget extends ConsumerWidget {
               if (tapped == 5) {
                 showMessage(context, context.loc.becameDeveloper);
                 tapped = 0;
-                ref.read(debugModeProvider.notifier).set(true);
+                ref.read(devModeProvider.notifier).set(true);
               }
             }
           : null,

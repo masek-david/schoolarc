@@ -5,7 +5,7 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/send_bug_report.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/dialogs/show_adaptive_dialog.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/text_actions.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -34,25 +34,24 @@ class _LogsScreenState extends State<LogsScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              showDialogAdaptive(
+              showMyDialog(
                 context: context,
-                title: Text(context.loc.sendAllReports),
-                content: Text(context.loc.reportBugPolicy),
+                title: context.loc.sendAllReports,
+                text: context.loc.reportBugPolicy,
                 actions: [
-                  adaptiveDialogButton(
-                    context: context,
-                    child: Text(context.loc.cancel),
+                  DialogActionButton(
+                    text: context.loc.cancel,
                     onPressed: () => Navigator.pop(context),
                   ),
-                  adaptiveDialogButton(
-                    context: context,
-                    child: Text(context.loc.send),
+                  DialogActionButton(
+                    text: context.loc.send,
                     isDefaultAction: true,
                     onPressed: () {
                       final message = logs
                           .getRange(0, 118)
-                          .map((e) =>
-                              '=====   ${e.$2.date}   =====\n${e.$2.log}')
+                          .map(
+                            (e) => '=====   ${e.$2.date}   =====\n${e.$2.log}',
+                          )
                           .join('\n\n\n')
                           .replaceAll(
                             RegExp(r'^\s*#.*(?:\r?\n)?', multiLine: true),
@@ -74,21 +73,19 @@ class _LogsScreenState extends State<LogsScreen> {
           ),
           IconButton(
             onPressed: () {
-              showDialogAdaptive(
+              showMyDialog(
                 context: context,
-                title: Text(context.loc.deleteAllLogs),
+                title: context.loc.deleteAllLogs,
                 actions: [
-                  adaptiveDialogButton(
-                    context: context,
-                    child: Text(context.loc.cancel),
+                  DialogActionButton(
+                    text: context.loc.cancel,
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                  adaptiveDialogButton(
-                    context: context,
+                  DialogActionButton(
+                    text: context.loc.delete,
                     isDestructiveAction: true,
-                    child: Text(context.loc.delete),
                     onPressed: () {
                       Navigator.pop(context);
                       logsService.deleteAll();
@@ -123,24 +120,24 @@ class _LogsScreenState extends State<LogsScreen> {
                           actions: [
                             IconButton(
                               onPressed: () {
-                                showDialogAdaptive(
+                                showMyDialog(
                                   context: context,
-                                  title: Text(context.loc.sendReport),
-                                  content: Text(context.loc.reportBugPolicy),
+                                  title: context.loc.sendReport,
+                                  text: context.loc.reportBugPolicy,
                                   actions: [
-                                    adaptiveDialogButton(
-                                      context: context,
-                                      child: Text(context.loc.cancel),
+                                    DialogActionButton(
+                                      text: context.loc.cancel,
                                       onPressed: () => Navigator.pop(context),
                                     ),
-                                    adaptiveDialogButton(
-                                      context: context,
-                                      child: Text(context.loc.send),
+                                    DialogActionButton(
+                                      text: context.loc.send,
                                       isDefaultAction: true,
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        sendBugReport(context,
-                                            bug: logs[index].$2.log);
+                                        sendBugReport(
+                                          context,
+                                          bug: logs[index].$2.log,
+                                        );
                                       },
                                     ),
                                   ],
@@ -150,28 +147,27 @@ class _LogsScreenState extends State<LogsScreen> {
                             ),
                             IconButton(
                               onPressed: () {
-                                showDialogAdaptive(
-                                    context: context,
-                                    title: Text(context.loc.deleteLog),
-                                    actions: [
-                                      adaptiveDialogButton(
-                                        context: context,
-                                        child: Text(context.loc.cancel),
-                                        onPressed: () => Navigator.pop(context),
-                                      ),
-                                      adaptiveDialogButton(
-                                        context: context,
-                                        child: Text(context.loc.delete),
-                                        isDestructiveAction: true,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          logsService.delete(logs[index].$1);
-                                          setState(() {
-                                            logsMap.remove(logs[index].$1);
-                                          });
-                                        },
-                                      ),
-                                    ]);
+                                showMyDialog(
+                                  context: context,
+                                  title: context.loc.deleteLog,
+                                  actions: [
+                                    DialogActionButton(
+                                      text: context.loc.cancel,
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                    DialogActionButton(
+                                      text: context.loc.delete,
+                                      isDestructiveAction: true,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        logsService.delete(logs[index].$1);
+                                        setState(() {
+                                          logsMap.remove(logs[index].$1);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
                               icon: const Icon(Icons.delete_outline),
                             ),
