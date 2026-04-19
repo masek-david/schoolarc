@@ -192,7 +192,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
             3,
             subjects.isEmpty
                 ? const Text(
-                    'There aren\'t enough data to show :( . Keep using the app!')
+                    'There isnt\'t enough data to show :( . Keep using the app!')
                 : RichText(
                     text: TextSpan(
                       children: [

@@ -1,0 +1,28 @@
+{
+  "name": "schoolarc",
+  "version": "1.0.0",
+  "description": "<h1 align=\"center\">Schoolarc</h1>",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masek-david/schoolarc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/masek-david/schoolarc/issues"
+  },
+  "homepage": "https://github.com/masek-david/schoolarc#readme",
+  "devDependencies": {
+    "workbox-build": "^7.4.0"
+  }
+}

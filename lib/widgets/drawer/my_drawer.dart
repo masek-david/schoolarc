@@ -150,7 +150,7 @@ class MyDrawer extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(
-                    '${packageInfo.version} build ${packageInfo.buildNumber}',
+                    '$appVersion build $appBuildNumber',
                     style: TextStyle(color: getSubtleTextColor(context)),
                   ),
                 ),

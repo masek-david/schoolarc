@@ -58,6 +58,7 @@ create empty project to test safari top bar color
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
 - ⬜ rethink addnewtask bottom sheet
     - ⬜ show on top if it is hw/exam
+    - ⬜ share with qr
     - ⬜ prevent from accidental scroll closing ‼️
     - ⬜ fix the scrolling
     - ⬜ animation FAB morph to the sheet?

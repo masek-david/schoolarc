@@ -54,7 +54,7 @@ Future<void> sendBugReport(BuildContext context, {String? bug}) async {
 
     final body =
         '$bug\n\n\n\n'
-        'Schoolarc: ${packageInfo.version}+${packageInfo.buildNumber}\n'
+        'Schoolarc: $appVersion+$appBuildNumber\n'
         '$version \n'
         'RAM: $ram';
 

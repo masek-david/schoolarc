@@ -35,7 +35,7 @@ class PackageInfoWidget extends ConsumerWidget {
             }
           : null,
       child: Text(
-        '${packageInfo.version} build ${packageInfo.buildNumber}',
+        '$appVersion build $appBuildNumber',
         style: TextStyle(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),

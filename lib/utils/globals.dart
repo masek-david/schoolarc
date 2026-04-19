@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hw_database.dart';
@@ -40,7 +39,8 @@ final fireService = FirebaseService();
 final logsService = LogsDatabase();
 final uuid = const Uuid();
 late final Vibrate vibrate;
-late final PackageInfo packageInfo;
+late final String appVersion;
+late final int appBuildNumber;
 const timeoutDuration = Duration(seconds: 10);
 const millisecondsInDay = 86400000;
 

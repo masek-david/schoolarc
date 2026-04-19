@@ -101,7 +101,7 @@ class _AboutAppState extends State<AboutApp> {
                 ),
               ),
             ),
-            applicationVersion: packageInfo.version,
+            applicationVersion: appVersion,
           ),
         ),
         SettingTile(

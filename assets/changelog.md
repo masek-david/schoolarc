@@ -1,4 +1,14 @@
-## [2.2.2](2026-;build)
+## [2.2.3](2026-04-19;build56)
+### Added
+
+### Changed
+
+### Fixed
+- Fixed PWA offline support for iOS
+
+---
+
+## [2.2.2](2026-04-10;build55)
 ### Added
 - PWA offline support, faster load times
 - Improved web loading page - animated logo, showing loading indicator only after some time
@@ -11,6 +21,7 @@
 - Fixed calendar on big screens not showing correct days of the week
 
 ---
+
 ## [2.2.1](2026-04-06;build53)
 ### Added
 - Improved web load times and app size

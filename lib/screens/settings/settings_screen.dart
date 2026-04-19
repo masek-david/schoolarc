@@ -10,7 +10,6 @@ import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 
@@ -130,7 +129,7 @@ class SettingsScreen extends ConsumerWidget {
         if (devMode)
           Center(
             child: Text(
-              packageInfo.packageName,
+              'Schoolarc',
               style: TextStyle(
                 color: context.col.surfaceContainerHighest,
               ),
