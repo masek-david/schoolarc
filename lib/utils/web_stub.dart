@@ -9,3 +9,16 @@ class Window {
 class LocalStorage {
   void setItem(dynamic _, dynamic _) {}
 }
+
+class Vibration {
+  Vibration({required this.duration, required this.intensity});
+
+  final int duration;
+  final double intensity;
+}
+
+class WebHaptics {
+  WebHaptics();
+
+  void trigger(List<Vibration> _){}
+}

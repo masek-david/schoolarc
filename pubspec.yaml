@@ -2,7 +2,7 @@ name: schoolarc
 description: "Simple app for students to take track of their homeworks and exams"
 publish_to: 'none'
 
-version: 2.2.1+56
+version: 2.2.3+56
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -61,6 +61,7 @@ dependencies:
   markdown: ^7.3.1
   web: ^1.1.1
   yaml: ^3.1.3
+  web_haptics: ^0.0.2
 
 dev_dependencies:
   flutter_test:

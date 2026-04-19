@@ -148,8 +148,8 @@ class SettingsDatabase {
       key: 'bakaKeepLoggedIn',
     ),
     Setting.calendarInitialIsTomorrow: const SettingModel(
-      defaultValue: true,
-      key: 'calendarInitialIstomorrow',
+      defaultValue: false,
+      key: 'calendarInitialIstomorrow1',
     ),
     Setting.calendarShowMissed: const SettingModel(
       defaultValue: true,

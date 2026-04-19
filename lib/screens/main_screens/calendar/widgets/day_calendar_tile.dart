@@ -21,7 +21,6 @@ class DayTile extends StatelessWidget {
     required this.exams,
     required this.onExamTap,
     this.backgroundColor,
-    this.todayColor,
   });
 
   static const _dotSize = 8.0;
@@ -41,7 +40,6 @@ class DayTile extends StatelessWidget {
   final void Function() onTap;
 
   final Color? backgroundColor;
-  final Color? todayColor;
 
   Widget _buildExamTile(Exam exam, BuildContext context) {
     var backgroundCol = exam.priority.getContainerColor(context);
@@ -112,7 +110,7 @@ class DayTile extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
 
-        final maxHwMarkers = (width / (_dotSize + _dotSpacing)).floor();
+        final maxHwMarkers = (width / (_dotSize + _dotSpacing + 1)).floor();
         final tooManyHw = homeworks.length > maxHwMarkers;
         final tooManyExams = exams.length > _maxExamMarkers;
 
@@ -149,10 +147,13 @@ class DayTile extends StatelessWidget {
                             margin: const EdgeInsets.all(4),
                             decoration: isToday
                                 ? BoxDecoration(
+                                    border: Border.all(
+                                      width: 2,
+                                      color: isSelected
+                                          ? context.col.onTertiaryContainer
+                                          : context.col.tertiaryContainer,
+                                    ),
                                     shape: BoxShape.circle,
-                                    color:
-                                        todayColor ??
-                                        context.col.surfaceContainer,
                                   )
                                 : null,
                             alignment: Alignment.center,
@@ -180,7 +181,14 @@ class DayTile extends StatelessWidget {
                               tooManyHw ? maxHwMarkers : homeworks.length,
                               (index) {
                                 if (tooManyHw && index == maxHwMarkers - 1) {
-                                  return const _Ellipsis();
+                                  final hiddenCount =
+                                      homeworks.length - maxHwMarkers;
+                                  return Text(
+                                    hiddenCount > 9 ? '+' : '+$hiddenCount',
+                                    style: context.txt.labelMedium!.copyWith(
+                                      height: .7,
+                                    ),
+                                  );
                                 }
 
                                 Homework hw = homeworks[index];
@@ -208,9 +216,18 @@ class DayTile extends StatelessWidget {
                       _maxExamMarkers,
                       (index) {
                         if (tooManyExams && index == _maxExamMarkers - 1) {
-                          return const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: _Ellipsis(size: 13),
+                          return SizedBox(
+                            height: 20,
+                            child: Row(
+                              mainAxisAlignment: .end,
+                              children: [
+                                Text(
+                                  '+${exams.length - _maxExamMarkers}',
+                                  style: context.txt.labelMedium,
+                                ),
+                                const SizedBox(width: 4),
+                              ],
+                            ),
                           );
                         }
 
@@ -257,32 +274,6 @@ class DayTile extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Ellipsis extends StatelessWidget {
-  // ignore: unused_element_parameter
-  const _Ellipsis({super.key, this.size = 10});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: .end,
-      spacing: 0.5,
-      children: List.generate(
-        3,
-        (index) => Container(
-          decoration: BoxDecoration(
-            color: context.col.onSurface,
-            shape: .circle,
-          ),
-          width: (size - 1) / 3,
-          height: (size - 1) / 3,
-        ),
-      ),
     );
   }
 }

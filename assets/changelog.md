@@ -1,10 +1,16 @@
 ## [2.2.3](2026-04-19;build56)
 ### Added
+- Show how many exams or pieces of homework are hidden in calendar
+- Added haptics to web
 
 ### Changed
+- Improved calendar today tile visibility
+- Calendar now opens today tile on default
 
 ### Fixed
 - Fixed PWA offline support for iOS
+- Fixed web splash screen animation on iOS
+- Fixed dragging in calendar
 
 ---
 
@@ -19,6 +25,7 @@
 
 ### Fixed
 - Fixed calendar on big screens not showing correct days of the week
+- Tapping outside of editing dialog no longer closes the dialog
 
 ---
 

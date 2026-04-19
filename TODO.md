@@ -2,20 +2,14 @@
 update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios calendar still refresh pulls
-Haptic keeps repeating in calendar drag and drop main (not small calendar)
+Haptic keeps repeating in calendar drag and drop main (not on calendar)
 
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
 check for memory leak
 
-in calendar tiles, show +2, +3, instead of elipsis
 report bug/request feature button - in drawer, send by mail/github or some service ???
 ask for email verification
-
-web add haptics
-
-if web taking too long, retry ???
-create empty project to test safari top bar color
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

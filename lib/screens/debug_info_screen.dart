@@ -113,6 +113,22 @@ class DbInfoScreen extends ConsumerWidget {
                   onPressed: vibrate.rigid,
                   child: const Text('Rigid'),
                 ),
+                FilledButton.tonal(
+                  onPressed: () => vibrate.complete(true),
+                  child: const Text('Complete'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.release,
+                  child: const Text('Release'),
+                ),
+                FilledButton.tonal(
+                  onPressed: vibrate.releaseLong,
+                  child: const Text('Release long'),
+                ),
+                FilledButton.tonal(
+                  onPressed: () => vibrate.switchUI(true),
+                  child: const Text('Switch'),
+                ),
               ],
             ),
             if (kDebugMode) const Divider(),

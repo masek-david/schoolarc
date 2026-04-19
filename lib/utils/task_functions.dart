@@ -27,6 +27,7 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
       autoSetDate: initialDate == null,
     ),
     isScrollControlled: true,
+    isDismissible: false,
   );
 }
 

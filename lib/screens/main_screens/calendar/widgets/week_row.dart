@@ -20,11 +20,9 @@ class WeekRow extends StatelessWidget {
     required this.onMonthTitleTap,
     this.dayBackground,
     this.showMonthTitle = true,
-    this.todayBackground,
   });
 
   final Color? dayBackground;
-  final Color? todayBackground;
   final bool showMonthTitle;
 
   final List<Date> dates;
@@ -76,7 +74,6 @@ class WeekRow extends StatelessWidget {
                   ),
                   child: DayTile(
                     backgroundColor: dayBackground,
-                    todayColor: todayBackground,
                     onExamTap: onExamTap,
                     exams: exams[date] ?? [],
                     homeworks: homeworks[date] ?? [],

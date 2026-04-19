@@ -43,7 +43,7 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
       hoverStart: () => hintScroll(forward),
       heldAction: () => scroll(forward),
       builder: (context, candidateData, rejectedData) {
-        return const SizedBox(width: 20);
+        return const SizedBox(width: 25, height: double.infinity);
       },
     );
   }
@@ -168,7 +168,6 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
                         child: WeekRow(
                           showMonthTitle: false,
                           dayBackground: context.col.surfaceContainerLow,
-                          todayBackground: context.col.surface,
                           dates: dates,
                           selectedDate: widget.selectedDate,
                           onDateSelected: (date) {

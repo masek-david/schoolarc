@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/web_stub.dart'
+    if (dart.library.html) 'package:web_haptics/web_haptics.dart'
+    as web_vibration;
 import 'package:vibration/vibration.dart';
-// import 'package:web_haptics/web_haptics.dart' as web_vibration;
 
 final primitiveClick = 5;
 final primitiveTick = 5;
@@ -13,23 +15,21 @@ class Vibrate {
 
   static Future<void> create() async {
     final hasVibrator = await Vibration.hasVibrator();
-    // final webHasVibrator = web_vibration.WebHaptics.isSupported;
-    // vibrate = Vibrate._(hasVibrator || webHasVibrator);
-    vibrate = Vibrate._(hasVibrator);
+    vibrate = Vibrate._(hasVibrator || kIsWeb);
   }
 
   void _vibrate({required List<int> pattern, required List<int> intensities}) {
     if (kIsWeb) {
-      // final List<web_vibration.Vibration> list = [];
-      // for (int i = 0; i < pattern.length; i++) {
-      //   list.add(
-      //     // web_vibration.Vibration(
-      //       duration: pattern[i],
-      //       intensity: intensities[i] / 255,
-      //     ),
-      //   );
-      // }
-      // web_vibration.WebHaptics().trigger(list);
+      final List<web_vibration.Vibration> list = [];
+      for (int i = 0; i < pattern.length; i++) {
+        list.add(
+          web_vibration.Vibration(
+            duration: pattern[i],
+            intensity: intensities[i] / 255,
+          ),
+        );
+      }
+      web_vibration.WebHaptics().trigger(list);
     } else if (hasVibrator) {
       Vibration.vibrate(pattern: pattern, intensities: intensities);
     }

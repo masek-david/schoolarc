@@ -108,6 +108,21 @@ as it is compatible with most devices and has the smallest sizes
 
 Configure [flutterfire](https://firebase.flutter.dev/docs/overview), run flutterfire configure and follow the instructions.
 
+In firebase.json, hosting should look like this:
+```
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "europe-west1"
+    }
+  },
+```
+
 ## Testing
 
 Init Firebase emulator with
