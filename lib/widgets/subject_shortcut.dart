@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/utils/fonts.dart';
 
 class SubjectShortcut extends StatelessWidget {
   const SubjectShortcut({
@@ -17,10 +18,12 @@ class SubjectShortcut extends StatelessWidget {
       child: Text(
         subject?.trimmedShortcut ?? '',
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: googleSansFlex(
+          size: 18,
+          weight: 600,
+          width: 80,
+          roundness: 100,
           color: color ?? Theme.of(context).colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
         ),
       ),
     );

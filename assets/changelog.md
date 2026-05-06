@@ -1,3 +1,16 @@
+## [2.2.4](2026-04-;build)
+### Added
+- Added license
+- Contact developer
+
+### Changed
+- New icon for Bakaláři
+
+### Fixed
+- Android notification now arrives more precisely
+- Fixed offline messages on web
+
+---
 ## [2.2.3](2026-04-19;build56)
 ### Added
 - Show how many exams or pieces of homework are hidden in calendar

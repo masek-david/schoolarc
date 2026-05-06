@@ -227,6 +227,7 @@
   "searchForSubject": "Vyhledat předmět",
   "choosePriority": "Vybrat prioritu",
   "pickDate": "Vybrat datum",
+  "pickAction": "Vyberte akci",
   "styleMotion": "Styl & Pohyb",
   "styleMotionScreenSwitchAnimationTitle": "Doba přechodu obrazovky",
   "styleMotionScreenSwitchAnimationSubtitle": "V milisekundách (0 vypne animaci)",

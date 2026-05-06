@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
 import 'package:schoolarc/screens/logs/log_screen.dart';
+import 'package:schoolarc/utils/contact_dev_dialog.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/send_bug_report.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/text_actions.dart';
@@ -63,7 +63,7 @@ class _LogsScreenState extends State<LogsScreen> {
                           : message;
 
                       Navigator.pop(context);
-                      sendBugReport(context, bug: trimmed);
+                      emailBugReport(context, bug: trimmed);
                     },
                   ),
                 ],
@@ -134,7 +134,7 @@ class _LogsScreenState extends State<LogsScreen> {
                                       isDefaultAction: true,
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        sendBugReport(
+                                        emailBugReport(
                                           context,
                                           bug: logs[index].$2.log,
                                         );

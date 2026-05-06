@@ -681,6 +681,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickDate => 'Pick a date';
 
   @override
+  String get pickAction => 'Pick an action';
+
+  @override
   String get styleMotion => 'Style & Motion';
 
   @override

@@ -36,13 +36,13 @@ class MyDrawer extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: .start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: SizedBox(
                         height: 100,
                         child: SvgPicture.asset(
-                          alignment: Alignment.centerLeft,
                           'assets/schoolarc_logo.svg',
                           colorMapper: LogoColorMapper(
                             isDark:

@@ -39,7 +39,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
             onPressed: () async {
               final json = export();
 
-              final location = await FilePicker.platform.saveFile(
+              final location = await FilePicker.saveFile(
                 dialogTitle: context.loc.chooseSaveLocation,
                 type: FileType.custom,
                 allowedExtensions: ['json'],
@@ -63,7 +63,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
           icon: const Icon(Icons.file_download_outlined),
           onPressed: () async {
             try {
-              final pickedFile = await FilePicker.platform.pickFiles(
+              final pickedFile = await FilePicker.pickFiles(
                 dialogTitle: context.loc.pickSaveFile,
                 type: FileType.custom,
                 allowedExtensions: ['json'],

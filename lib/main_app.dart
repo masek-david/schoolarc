@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,13 +63,6 @@ class _MainAppState extends ConsumerState<MainApp> {
 
   // called when user closes the app and when user opens the app
   void _onAppLeaveOrReturn(bool nowActive) {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
-      FirebaseCrashlytics.instance.log(
-        nowActive
-            ? 'SYSTEM: App is now in foreground'
-            : 'SYSTEM: App is now in background',
-      );
-    }
     HomeWidgetService.updateMainWidget(ref);
     NotificationSender.scheduleUpcomingDayNotifications(context);
 

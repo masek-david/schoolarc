@@ -11,6 +11,7 @@
 .history
 .svn/
 .firebase
+.sentry-native
 untranslated.json
 firebase.json
 .firebaserc

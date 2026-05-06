@@ -11,6 +11,7 @@ import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
+import 'package:schoolarc/widgets/baka_imported_icon.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -85,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
           heroTag: 'bakalari',
           isFirst: true,
           title: loc.bakalari,
-          leading: const Icon(Icons.hexagon_outlined),
+          leading: const BakaImportedIcon(showIcon: false),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/bakalari'),
           trailing: LoginStatusIcon(

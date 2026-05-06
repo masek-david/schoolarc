@@ -51,6 +51,7 @@ const bakaPollingRate = Duration(minutes: 60);
 const stravaPollingRate = Duration(minutes: 240);
 
 const noChange = Object();
+const githubUrl = 'https://github.com/masek-david/schoolarc';
 
 /// Returns the week number of the week that should be shown in the current timetable - for Saturday and Sunday show next week
 int getCurrentTimetableWeekIndex() {

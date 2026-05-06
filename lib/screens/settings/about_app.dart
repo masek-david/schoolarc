@@ -5,9 +5,10 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
+import 'package:schoolarc/utils/contact_dev_dialog.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/send_bug_report.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutApp extends StatefulWidget {
   const AboutApp({super.key});
@@ -44,18 +45,29 @@ class _AboutAppState extends State<AboutApp> {
         const SizedBox(height: 16),
         SettingTile(
           isFirst: true,
+          isLast: true,
           title: context.loc.viewAppChangelog,
           leading: const Icon(Icons.history_outlined),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/changelog'),
         ),
-        SettingTile(
-          title: context.loc.reportBug,
-          subtitle: context.loc.reportBugPolicy,
-          leading: const Icon(Icons.bug_report_rounded),
-          onTap: sendBugReport,
+        const SettingTile(
+          isFirst: true,
+          title: 'Contact developer',
+          leading: Icon(Icons.send_rounded),
+          onTap: contactDev,
         ),
         SettingTile(
+          isLast: true,
+          title: context.loc.viewSourceCode,
+          leading: const Icon(Icons.code_rounded),
+          onTap: (context) {
+            launchUrl(Uri.parse(githubUrl));
+          },
+          trailing: const Icon(Icons.exit_to_app_rounded),
+        ),
+        SettingTile(
+          isFirst: true,
           title: context.loc.viewLogs,
           leading: const Icon(Icons.data_array),
           onTap: (context) => Navigator.restorablePushNamed(context, '/logs'),
@@ -103,15 +115,6 @@ class _AboutAppState extends State<AboutApp> {
             ),
             applicationVersion: appVersion,
           ),
-        ),
-        SettingTile(
-          isFirst: true,
-          isLast: true,
-          title: context.loc.viewSourceCode,
-          leading: const Icon(Icons.code_rounded),
-          // TODO link github
-          onTap: (context) {},
-          trailing: const Icon(Icons.link_rounded),
         ),
       ],
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +23,9 @@ import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/web_stub.dart'
+    if (dart.library.html) 'package:web/web.dart'
+    as web;
 
 class BakaService {
   String? _accessToken;
@@ -133,6 +137,11 @@ class BakaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 
@@ -143,6 +152,14 @@ class BakaService {
     }
 
     final parsedJson = json.decode(response.body);
+
+    final error = parsedJson['error'];
+    if (error != null) {
+      if (error == 'invalid_grant') {
+        throw AuthException(.loggedOut);
+      }
+      throw ApiException(parsedJson['error_description'], code: .cantLogIn);
+    }
 
     final accessToken = parsedJson["access_token"];
     final refreshToken = parsedJson["refresh_token"];
@@ -212,6 +229,11 @@ class BakaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 
@@ -303,6 +325,11 @@ class BakaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 
@@ -534,6 +561,11 @@ class BakaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 

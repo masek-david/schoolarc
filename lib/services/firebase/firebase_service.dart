@@ -199,7 +199,7 @@ class FirebaseService {
       };
       final exportJson = jsonEncode(exportData);
 
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         dialogTitle: loc.chooseSaveLocation,
         type: FileType.custom,
         allowedExtensions: ['json'],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/baka_imported_icon.dart';
 import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 
 Future<void> editSubject(
@@ -101,7 +102,7 @@ class _SubjectDialogState extends ConsumerState<NewSubjectDialog> {
                 widget.isEditing
                     ? context.loc.editSubject
                     : context.loc.addNewSubject,
-                style: const TextStyle(fontSize: 18),
+                style: context.txt.titleLarge,
               ),
             ),
             TextField(
@@ -124,6 +125,18 @@ class _SubjectDialogState extends ConsumerState<NewSubjectDialog> {
             ),
             if (widget.usedTimes != null)
               Text(loc.subjectUsedTimes(widget.usedTimes!)),
+            if (widget.initial.isFromBakalari)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: .center,
+                  spacing: 16,
+                  children: [
+                    const BakaImportedIcon(),
+                    Text(context.loc.importedSubject),
+                  ],
+                ),
+              ),
             CancelSaveButton(onSave: onSave),
           ],
         ),

@@ -8,6 +8,7 @@ import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/shapes_list.dart';
@@ -245,9 +246,8 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                           Text(
                             widget.hw.date.formatWithText(context),
                             maxLines: 2,
-                            style: TextStyle(
+                            style: context.txt.labelMedium!.copyWith(
                               color: isMissed ? missedColor : null,
-                              fontSize: 12,
                             ),
                           ),
                         const SizedBox(width: 4),

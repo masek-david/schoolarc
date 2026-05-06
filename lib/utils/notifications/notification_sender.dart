@@ -205,7 +205,11 @@ class NotificationSender {
     }
 
     final schedule = arrive != null
-        ? NotificationCalendar.fromDate(date: arrive)
+        ? NotificationCalendar.fromDate(
+            date: arrive,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          )
         : null;
     final result = await AwesomeNotifications().createNotification(
       schedule: schedule,

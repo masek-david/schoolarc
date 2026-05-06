@@ -6,14 +6,11 @@ Haptic keeps repeating in calendar drag and drop main (not on calendar)
 
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
-check for memory leak
-
-report bug/request feature button - in drawer, send by mail/github or some service ???
-ask for email verification
+public git repo
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
-- ✅ info about bakalari login
+- ✅ info about bakalari loginch
 - ✅ info about strava.cz login
 - ✅ privacy policy info for cloud sync
 - ✅ widgets
@@ -35,10 +32,11 @@ ask for email verification
 - ✅ push info to the app from web + min required version
 - ✅ firebase verify email + forgot password for firebase
 - ⬜ google sign in ???
+- ⬜ ask for email verification
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?
     - ⬜ add to onboarding
-- ⬜ error screen/messages, logging - posthog
+- ⬜ error tracking, error screen/messages
 
 # FEATURES
 

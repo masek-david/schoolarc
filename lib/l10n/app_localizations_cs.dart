@@ -690,6 +690,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get pickDate => 'Vybrat datum';
 
   @override
+  String get pickAction => 'Vyberte akci';
+
+  @override
   String get styleMotion => 'Styl & Pohyb';
 
   @override

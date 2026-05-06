@@ -70,7 +70,7 @@ class TimetableEntry {
               ),
             if (subject?.id == '')
               Padding(
-                padding: const EdgeInsets.fromLTRB(4, 0, 0, 16),
+                padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
                 child: Row(
                   spacing: 12,
                   children: [

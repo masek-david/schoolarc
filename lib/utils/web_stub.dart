@@ -4,6 +4,12 @@ final window = Window();
 
 class Window {
   final localStorage = LocalStorage();
+
+  final navigator = Navigator();
+}
+
+class Navigator {
+  final onLine = false;
 }
 
 class LocalStorage {
@@ -20,5 +26,5 @@ class Vibration {
 class WebHaptics {
   WebHaptics();
 
-  void trigger(List<Vibration> _){}
+  void trigger(List<Vibration> _) {}
 }

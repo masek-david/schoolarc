@@ -227,6 +227,7 @@
   "searchForSubject": "Search for a subject",
   "choosePriority": "Choose a priority",
   "pickDate": "Pick a date",
+  "pickAction": "Pick an action",
   "styleMotion": "Style & Motion",
   "styleMotionScreenSwitchAnimationTitle": "Screen switching animation duration",
   "styleMotionScreenSwitchAnimationSubtitle": "In milliseconds (0 disables animation)",

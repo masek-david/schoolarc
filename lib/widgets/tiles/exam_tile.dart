@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/subject_shortcut.dart';
@@ -29,92 +30,81 @@ class ExamTile extends StatelessWidget {
       opacity = 0.5;
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double extentRatio = 135 / constraints.maxWidth;
-
-        if (extentRatio > 1) {
-          extentRatio = 1;
-        }
-
-        return TileSlidable(
-          isHomework: false,
-          borderRadius: 100,
-          onDelete: onDelete,
-          onConvert: onConvert,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(35),
-              color: exam.isCompleted
-                  ? Theme.of(context).colorScheme.surfaceContainerLowest
-                  : Theme.of(context).colorScheme.surfaceContainerLow,
-            ),
-            child: WebRequestFocusBuilder(
-              builder: (showKeyboard) {
-                return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      showKeyboard();
-                      vibrate.medium();
-                      onEdit();
-                    },
-                    borderRadius: BorderRadius.circular(35),
-                    child: Opacity(
-                      opacity: opacity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            // if (settings.get(Setting.debugMode))
-                            //   Text(exam.order.toString()),
-                            AnimatedContainer(
-                              width: 50,
-                              height: 50,
-                              duration: const Duration(milliseconds: 300),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                color: exam.priority.getContainerColor(context),
-                              ),
-                              child: SubjectShortcut(
-                                subject: exam.subject,
-                                color: exam.priority.getOnContainerColor(
-                                  context,
-                                ),
-                              ),
+    return TileSlidable(
+      isHomework: false,
+      borderRadius: 100,
+      onDelete: onDelete,
+      onConvert: onConvert,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(35),
+          color: exam.isCompleted
+              ? Theme.of(context).colorScheme.surfaceContainerLowest
+              : Theme.of(context).colorScheme.surfaceContainerLow,
+        ),
+        child: WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  showKeyboard();
+                  vibrate.medium();
+                  onEdit();
+                },
+                borderRadius: BorderRadius.circular(35),
+                child: Opacity(
+                  opacity: opacity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        // if (settings.get(Setting.debugMode))
+                        //   Text(exam.order.toString()),
+                        AnimatedContainer(
+                          width: 50,
+                          height: 50,
+                          duration: const Duration(milliseconds: 300),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: exam.priority.getContainerColor(context),
+                          ),
+                          child: SubjectShortcut(
+                            subject: exam.subject,
+                            color: exam.priority.getOnContainerColor(
+                              context,
                             ),
-                            if (exam.description != '')
-                              const SizedBox(width: 8),
-                            if (exam.description != '')
-                              Icon(
-                                Icons.notes,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            const SizedBox(width: 8),
-                            Expanded(child: Text(exam.text, maxLines: 2)),
-                            const SizedBox(width: 8),
-                            if (showDeadline)
-                              Text(
-                                exam.date.formatWithText(context),
-                                maxLines: 2,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            const SizedBox(width: 8),
-                          ],
+                          ),
                         ),
-                      ),
+                        if (exam.description != '') const SizedBox(width: 8),
+                        if (exam.description != '')
+                          Icon(
+                            Icons.notes,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(exam.text, maxLines: 2)),
+                        const SizedBox(width: 8),
+                        if (showDeadline)
+                          Text(
+                            exam.date.formatWithText(context),
+                            maxLines: 2,
+                            style: context.txt.labelMedium!,
+                          ),
+                        const SizedBox(width: 8),
+                      ],
                     ),
                   ),
-                );
-              }
-            ),
-          ),
-        );
-      },
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

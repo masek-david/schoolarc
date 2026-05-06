@@ -22,10 +22,36 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
-import 'package:schoolarc/widgets/create_new_dialog.dart';
+import 'package:schoolarc/widgets/button_dialog.dart';
 
 class HomeWidgetService {
   static final isSupportedPlatform = !kIsWeb && Platform.isAndroid;
+
+  static void addClickPickAction(BuildContext context) {
+    showButtonDialog(
+      context,
+      title: context.loc.pickAction,
+      icon: Icons.add,
+      buttons: [
+        ButtonDialogButton(
+          onTap: () {
+            Navigator.pop(context);
+            addNewHw(context);
+          },
+          isFirst: true,
+          text: context.loc.addNewHomework,
+        ),
+        ButtonDialogButton(
+          onTap: () {
+            Navigator.pop(context);
+            addNewExam(context);
+          },
+          isLast: true,
+          text: context.loc.addNewExam,
+        ),
+      ],
+    );
+  }
 
   /// Checks all past completed homework, updates them
   ///
@@ -186,7 +212,7 @@ class HomeWidgetService {
     Navigator.popUntil(context, (route) => route.isFirst);
     closeDrawer();
     if (uri.host == 'create') {
-      pickAction(context);
+      addClickPickAction(context);
     } else if (uri.host == 'view') {
       final id = uri.queryParameters['id'];
       if (bool.parse(uri.queryParameters['isHomework']!)) {

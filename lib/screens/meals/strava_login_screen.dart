@@ -121,10 +121,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
           ),
         ),
         if (error != null && !isLoading)
-          ErrorTile(
-            error: error,
-            text: context.loc.errorLoggingIn,
-            allowActions: false,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ErrorTile(
+              error: error,
+              text: context.loc.errorLoggingIn,
+              allowActions: false,
+            ),
           ),
         if (loggedIn == false)
           Row(

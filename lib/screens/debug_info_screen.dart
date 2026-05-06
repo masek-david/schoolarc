@@ -1,4 +1,3 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,8 +37,7 @@ class DbInfoScreen extends ConsumerWidget {
             ),
             FilledButton.tonal(
               onPressed: () {
-                FirebaseCrashlytics.instance.log('Pressed Crash button');
-                throw Exception();
+                throw Exception('Crash button pressed');
               },
               child: const Text('Crash'),
             ),

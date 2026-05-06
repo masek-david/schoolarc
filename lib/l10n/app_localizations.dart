@@ -1226,6 +1226,12 @@ abstract class AppLocalizations {
   /// **'Pick a date'**
   String get pickDate;
 
+  /// No description provided for @pickAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an action'**
+  String get pickAction;
+
   /// No description provided for @styleMotion.
   ///
   /// In en, this message translates to:

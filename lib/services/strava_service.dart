@@ -12,6 +12,9 @@ import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/web_stub.dart'
+    if (dart.library.html) 'package:web/web.dart'
+    as web;
 import 'package:schoolarc/utils/windows1250.dart';
 import 'package:xml/xml.dart';
 
@@ -102,6 +105,11 @@ class StravaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+      
       throw NetworkException(.serverError, originalError: e);
     }
 
@@ -112,6 +120,11 @@ class StravaService {
       } on Object {
         message = response.reasonPhrase ?? 'Error';
       }
+
+      if(message == 'Chybné heslo'){
+        throw AuthException(.loggedOut, exceptionAction: .stravaLogin);
+      }
+      
       throw ApiException(message);
     }
 
@@ -143,10 +156,10 @@ class StravaService {
   }
 
   Future<Map<Date, List<Meal>>> getMeals() async {
-    if(MockData.useMock){
+    if (MockData.useMock) {
       return MockData.meals;
     }
-    
+
     bool loggedIn = _sid != null;
     if (!loggedIn) {
       try {
@@ -181,6 +194,11 @@ class StravaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 
@@ -261,6 +279,11 @@ class StravaService {
     } on TimeoutException catch (_) {
       throw NetworkException(.timeout);
     } catch (e) {
+      // on web, http doesnt throw socketexception when offline
+      if (e is ClientException && kIsWeb && !web.window.navigator.onLine) {
+        throw NetworkException(.offline);
+      }
+
       throw NetworkException(.serverError, originalError: e);
     }
 
