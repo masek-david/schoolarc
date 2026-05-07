@@ -20,7 +20,10 @@ class BakaImportedIcon extends StatelessWidget {
             shape: StarBorder.polygon(
               pointRounding: 0.2,
               sides: 6,
-              side: BorderSide(color: color ?? context.col.onSurface, width: 2.5),
+              side: BorderSide(
+                color: color ?? context.col.onSurface,
+                width: 2.5,
+              ),
             ),
           ),
         ),
@@ -28,3 +31,5 @@ class BakaImportedIcon extends StatelessWidget {
     );
   }
 }
+
+

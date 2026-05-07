@@ -1950,6 +1950,18 @@ abstract class AppLocalizations {
   /// **'Backup and sync your data between devices'**
   String get cloudSyncSubtitle;
 
+  /// No description provided for @cantRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t register'**
+  String get cantRegister;
+
+  /// No description provided for @cloudSyncInBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, Schoolarc is still in active development and Cloud Sync will be available later'**
+  String get cloudSyncInBeta;
+
   /// No description provided for @goToApp.
   ///
   /// In en, this message translates to:

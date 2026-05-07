@@ -438,6 +438,22 @@ class CloudSyncLoginScreen extends ConsumerWidget {
   }
 
   Future<void> register(BuildContext context, WidgetRef ref) async {
+    if (!settings.get(.debugMode)) {
+      showMyDialog(
+        context: context,
+        title: context.loc.cantRegister,
+        text:
+        context.loc.cloudSyncInBeta,
+        actions: [
+          DialogActionButton(
+            text: context.loc.ok,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      );
+      return;
+    }
+
     pushScreen(
       context,
       LoginInputScreen(

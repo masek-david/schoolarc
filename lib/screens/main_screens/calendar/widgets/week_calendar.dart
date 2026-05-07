@@ -59,6 +59,7 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
 
   Future<void> scroll(bool forward) async {
     if (!mounted) return;
+    vibrate.medium();
     if (forward) {
       await widget.controller.nextPage(
         duration: scrollDuration,

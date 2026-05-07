@@ -1127,6 +1127,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudSyncSubtitle => 'Backup and sync your data between devices';
 
   @override
+  String get cantRegister => 'Can\'t register';
+
+  @override
+  String get cloudSyncInBeta =>
+      'Sorry, Schoolarc is still in active development and Cloud Sync will be available later';
+
+  @override
   String get goToApp => 'Go to app';
 
   @override

@@ -2,11 +2,7 @@
 update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios calendar still refresh pulls
-Haptic keeps repeating in calendar drag and drop main (not on calendar)
-
 bakalogin, strava login and firebase login are shared between debug and release on windows
-
-public git repo
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

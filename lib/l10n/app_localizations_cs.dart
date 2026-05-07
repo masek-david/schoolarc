@@ -568,10 +568,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get convertToExam => 'Převést na test';
 
   @override
-  String get cloudSync => 'Synchronizace';
+  String get cloudSync => 'Cloud Sync';
 
   @override
-  String get useCloudSync => 'Používat synchronizaci';
+  String get useCloudSync => 'Používat Cloud Sync';
 
   @override
   String get register => 'Registrovat se';
@@ -1148,6 +1148,13 @@ class AppLocalizationsCs extends AppLocalizations {
       'Zálohuje a synchronizuje data mezi zařízeními';
 
   @override
+  String get cantRegister => 'Nelze registrovat';
+
+  @override
+  String get cloudSyncInBeta =>
+      'Omlouvám se, Schoolarc je stále v aktivním vývoji a Cloud Sync bude dostupný později';
+
+  @override
   String get goToApp => 'Přejít do aplikace';
 
   @override
@@ -1348,11 +1355,11 @@ class AppLocalizationsCs extends AppLocalizations {
   String get viewSourceCode => 'Zobrazit zdrojový kód (Github)';
 
   @override
-  String get cloudSyncDisabled => 'Synchronizace je vypnutá';
+  String get cloudSyncDisabled => 'Cloud Sync je vypnutý';
 
   @override
   String get cloudSyncDisabledWarning =>
-      'Při používání webové aplikace je doporučeno zapnout synchronizaci, aby nedošlo ke ztrátě dat.';
+      'Při používání webové aplikace je doporučeno zapnout Cloud Sync, aby nedošlo ke ztrátě dat.';
 
   @override
   String get enable => 'Zapnout';

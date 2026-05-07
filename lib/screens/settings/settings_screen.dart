@@ -107,6 +107,7 @@ class SettingsScreen extends ConsumerWidget {
         SettingTile(
           heroTag: 'cloudsync',
           title: loc.cloudSync,
+          betaTag: true,
           isLast: true,
           leading: const Icon(Icons.cloud_outlined),
           onTap: (context) =>

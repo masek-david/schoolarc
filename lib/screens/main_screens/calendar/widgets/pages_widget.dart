@@ -122,6 +122,7 @@ class PagesWidget extends ConsumerWidget {
                             if (pageController.page?.round() == daySinceEpoch) {
                               return;
                             }
+                            vibrate.medium();
                             await pageController.animateToPage(
                               daySinceEpoch,
                               duration: Durations.medium2,

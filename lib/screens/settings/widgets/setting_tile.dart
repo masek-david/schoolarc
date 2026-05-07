@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/beta_icon.dart';
 
 class SettingTile extends StatelessWidget {
   const SettingTile({
@@ -23,6 +24,7 @@ class SettingTile extends StatelessWidget {
     this.foregroundColor,
     this.backgroundColor,
     this.hapticFeedback = true,
+    this.betaTag = false,
   });
 
   final String title;
@@ -40,6 +42,7 @@ class SettingTile extends StatelessWidget {
   final Color? foregroundColor;
   final Color? backgroundColor;
   final bool hapticFeedback;
+  final bool betaTag;
 
   final animationDuration = const Duration(milliseconds: 200);
   final animationCurve = Curves.decelerate;
@@ -294,6 +297,11 @@ class SettingTile extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (betaTag)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: BetaIcon(),
+                    ),
                   if (trailing != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 8),

@@ -75,6 +75,18 @@
     </div>
 </details>
 
+## Download
+
+### Android
+Download the apk from [releases](https://github.com/masek-david/schoolarc/releases/latest), or import to [Obtanium](obtainium://add/https://github.com/masek-david/schoolarc).
+
+### iOS
+While Schoolarc can run on iOS, releasing and signing .ipa files requires paid developer account. Unsigned .ipa files will be added later, however, they have to be sideloaded. 
+
+### Other platforms
+
+Other platforms may be supported in the future. 
+
 ## Platforms
 Schoolarc can run on most platforms, however, it is optimized and tested mainly for use on Android and iOS. Some functions don't even work on other operating systems and on web data loss can occur.
 

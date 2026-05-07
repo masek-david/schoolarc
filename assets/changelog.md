@@ -1,4 +1,4 @@
-## [2.2.4](2026-04-;build)
+## [2.2.4](2026-05-07;build57)
 ### Added
 - Added license
 - Contact developer
@@ -9,6 +9,7 @@
 ### Fixed
 - Android notification now arrives more precisely
 - Fixed offline messages on web
+- Fixed haptic feedback in calendar
 
 ---
 ## [2.2.3](2026-04-19;build56)

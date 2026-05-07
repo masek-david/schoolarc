@@ -355,6 +355,8 @@
   "bakalariSubtitle": "Import subjects and view actual timetable",
   "stravaCzSubtitle": "View meals in your canteen",
   "cloudSyncSubtitle": "Backup and sync your data between devices",
+  "cantRegister": "Can't register",
+  "cloudSyncInBeta": "Sorry, Schoolarc is still in active development and Cloud Sync will be available later",
   "goToApp": "Go to app",
   "welcome": "Welcome",
   "onboardingWelcome": "Thank you for downloading Schoolarc. If you are new here, you can view a tutorial, which will explain the basics of the app. It will always be available to view later.",
