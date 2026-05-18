@@ -1,8 +1,10 @@
 # FIX
 update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
-? ios calendar still refresh pulls
+? ios timetable still refresh pulls
 bakalogin, strava login and firebase login are shared between debug and release on windows
+
+fix refresh in calendar
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -27,20 +29,23 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ✅ actual timetable notifier
 - ✅ push info to the app from web + min required version
 - ✅ firebase verify email + forgot password for firebase
-- ⬜ google sign in ???
-- ⬜ ask for email verification
-- ⬜ sync everything (hws, exams, subjects) properly ‼️
-- ⬜ plus - 5 usd, limit to 100 users? - sync, widgets?
-    - ⬜ add to onboarding
 - ⬜ error tracking, error screen/messages
 
 # FEATURES
+
+## Schoolarc Plus v2.4.0
+- ⬜ 5 usd ?
+- ⬜ sync everything (hws, exams, subjects) properly ‼️
+- ⬜ google sign in
+- ⬜ ask for email verification
+- ⬜ sync, widgets ?, ...
+- ⬜ add to onboarding
 
 ## UI
 - ✅ settings use bigger headlines and scroll them
 - ✅ check scrolling in timetable (dont overscroll, dont show pull tabs)
 - ✅ add hide to found new homeworks
-- ✅ better calendar screen scroll - shrink calendar, make better missed, fix jump when switching pages
+- ✅ better calendar screen scroll - shrink calendar, make betterwi missed, fix jump when switching pages
 - ✅ scroll calendar vertically on big screens
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
@@ -54,6 +59,7 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects
 - ⬜ expressive buttons
+- ⬜ better refresh indicator
 - ⬜ month calendar scroll on hover
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
@@ -111,7 +117,6 @@ bakalogin, strava login and firebase login are shared between debug and release 
 - ⬜ ? refactor baka_service - add separate file for http requests
 - ⬜ ? add option to mark day in calendar as empty (weekends, holidays)
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
-- ⬜ ? add images to meals
 - ⬜ ? remove slide to delete
 - ⬜ ? merge subjects with duplicate bakaId, show which one is more used (is it really needed?)
 

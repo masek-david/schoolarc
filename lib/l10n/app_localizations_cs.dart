@@ -908,6 +908,27 @@ class AppLocalizationsCs extends AppLocalizations {
   String get viewAppChangelog => 'Zobrazit změny aplikace';
 
   @override
+  String get contactDev => 'Kontaktovat vývojáře';
+
+  @override
+  String get contactDevSubtitle => 'Nahlásit chybu nebo požádat o novou funkci';
+
+  @override
+  String get contact => 'Kontaktovat';
+
+  @override
+  String get iHaveAnIssue => 'Mám problém';
+
+  @override
+  String get iHaveAnIdea => 'Mám nápad / Chci novou funkci';
+
+  @override
+  String get sendEmail => 'Poslat e-mail';
+
+  @override
+  String get createGithubIssue => 'Vytvořit GitHub issue';
+
+  @override
   String get developerMode => 'Režim vývojáře';
 
   @override

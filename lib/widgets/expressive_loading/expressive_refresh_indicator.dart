@@ -41,7 +41,7 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
             color: context.col.onPrimaryContainer,
             progress: controller.state.isLoading
                 ? null
-                : controller.value.clamp(0, 1),
+                : controller.value,
           ),
         );
       },

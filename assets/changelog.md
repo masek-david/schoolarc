@@ -1,7 +1,8 @@
-## [2.2.4](2026-05-07;build57)
+## [2.2.4](2026-05-;build57)
 ### Added
 - Added license
 - Contact developer
+- Open web search with images of the meal
 
 ### Changed
 - New icon for Bakaláři

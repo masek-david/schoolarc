@@ -51,10 +51,11 @@ class _AboutAppState extends State<AboutApp> {
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/changelog'),
         ),
-        const SettingTile(
+        SettingTile(
           isFirst: true,
-          title: 'Contact developer',
-          leading: Icon(Icons.send_rounded),
+          title: context.loc.contactDev,
+          subtitle: context.loc.contactDevSubtitle,
+          leading: const Icon(Icons.send_rounded),
           onTap: contactDev,
         ),
         SettingTile(

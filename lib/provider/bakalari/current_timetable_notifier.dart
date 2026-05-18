@@ -18,11 +18,15 @@ final actualTimetableAgeProvider = StreamProvider.family<Duration?, int>((
   while (true) {
     final lastFetched = notifier.lastFetched;
     if (lastFetched != null) {
-      yield DateTime.now().difference(lastFetched);
+      final diff = DateTime.now().difference(lastFetched);
+      yield diff;
+      if (diff > const Duration(minutes: 1)) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
     } else {
       yield null;
     }
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 200));
   }
 });
 

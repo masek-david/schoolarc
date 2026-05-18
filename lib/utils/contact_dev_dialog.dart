@@ -13,11 +13,11 @@ void contactDev(BuildContext context) {
   showButtonDialog(
     context,
     icon: Icons.send_rounded,
-    title: 'Contact',
+    title: context.loc.contact,
     buttons: [
       ButtonDialogButton(
         isFirst: true,
-        text: 'I have an issue',
+        text: context.loc.iHaveAnIssue,
         onTap: () {
           Navigator.pop(context);
           _reportBug(context);
@@ -25,7 +25,7 @@ void contactDev(BuildContext context) {
       ),
       ButtonDialogButton(
         isLast: true,
-        text: 'I have an idea / I want a new feature',
+        text: context.loc.iHaveAnIdea,
         onTap: () {
           Navigator.pop(context);
           _requestFeature(context);
@@ -39,11 +39,11 @@ void _reportBug(BuildContext context) {
   showButtonDialog(
     context,
     icon: Icons.bug_report_rounded,
-    title: 'I have an issue',
+    title: context.loc.iHaveAnIssue,
     buttons: [
       ButtonDialogButton(
         isFirst: true,
-        text: 'Send email',
+        text: context.loc.sendEmail,
         onTap: () {
           Navigator.pop(context);
           emailBugReport(context);
@@ -51,7 +51,7 @@ void _reportBug(BuildContext context) {
       ),
       ButtonDialogButton(
         isLast: true,
-        text: 'Create a github issue',
+        text: context.loc.createGithubIssue,
         onTap: () {
           Navigator.pop(context);
           launchUrl(Uri.parse('$githubUrl/issues/new?labels=bug'));
@@ -65,11 +65,11 @@ void _requestFeature(BuildContext context) {
   showButtonDialog(
     context,
     icon: Icons.lightbulb_rounded,
-    title: 'I have an idea / I want a new feature',
+    title: context.loc.iHaveAnIdea,
     buttons: [
       ButtonDialogButton(
         isFirst: true,
-        text: 'Send email',
+        text: context.loc.sendEmail,
         onTap: () {
           Navigator.pop(context);
           emailFeatureRequest(context);
@@ -77,7 +77,7 @@ void _requestFeature(BuildContext context) {
       ),
       ButtonDialogButton(
         isLast: true,
-        text: 'Create a github issue',
+        text: context.loc.createGithubIssue,
         onTap: () {
           Navigator.pop(context);
           launchUrl(Uri.parse('$githubUrl/issues/new?labels=enhancement'));

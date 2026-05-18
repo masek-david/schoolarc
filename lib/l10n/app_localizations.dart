@@ -1554,6 +1554,48 @@ abstract class AppLocalizations {
   /// **'View app changelog'**
   String get viewAppChangelog;
 
+  /// No description provided for @contactDev.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact the developer'**
+  String get contactDev;
+
+  /// No description provided for @contactDevSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a bug or request a feature'**
+  String get contactDevSubtitle;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @iHaveAnIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an issue'**
+  String get iHaveAnIssue;
+
+  /// No description provided for @iHaveAnIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an idea / I want a new feature'**
+  String get iHaveAnIdea;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send email'**
+  String get sendEmail;
+
+  /// No description provided for @createGithubIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a github issue'**
+  String get createGithubIssue;
+
   /// No description provided for @developerMode.
   ///
   /// In en, this message translates to:

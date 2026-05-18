@@ -5,14 +5,15 @@
 </h4>
 
 <div align="center">
-    <img src="screenshots/banner.png" width="500" style="border-radius:12px">
+    <img src="assets/readme_assets/banner.png" width="500" style="border-radius:12px">
 </div>
 
-<div align="center">
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/30463115/393344052-713d71c5-3dec-4ec4-a3f2-8d28d025a9c6.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260502%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260502T201911Z&X-Amz-Expires=300&X-Amz-Signature=0eaedf9a40598ecd1dff2030cb8c57dc04f5d1c6ba54e17ec47de42b4cab4065&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng" width=240 href="obtainium://add/https://github.com/masek-david/schoolarc">
-<img alt="Get it on GitHub" src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" width="240" href="https://github.com/masek-david/schoolarc/releases/latest/">
-<!-- TODO download the apk -->
-</div>
+<style>
+  @font-face { font-family: GoogleSansFlex; src: "assets/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf"; } 
+  h1 {
+     font-family: GoogleSansFlex
+  }
+</style>
 
 ## Features
 
@@ -34,44 +35,44 @@
 <details open>
     <summary>Dark mode screenshots</summary>
         <div align="center">
-            <img src="screenshots/mobile/home_dark.png" width="250" style="border-radius:36px">
-            <img src="screenshots/mobile/calendar_dark.png" width="250" style="border-radius:36px">
-            <img src="screenshots/mobile/create_dark.png" width="250" style="border-radius:36px">
-            <img src="screenshots/mobile/timetable_dark.png" width="250" style="border-radius:36px">
-            <img src="screenshots/mobile/meals_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/home_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/calendar_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/create_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/timetable_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/meals_dark.png" width="250" style="border-radius:36px">
         </div>
 </details>
 
 <details>
     <summary>Light mode screenshots</summary>
     <div align="center">
-        <img src="screenshots/mobile/home_light.png" width="250" style="border-radius:36px">
-        <img src="screenshots/mobile/calendar_light.png" width="250" style="border-radius:36px">
-        <img src="screenshots/mobile/create_light.png" width="250" style="border-radius:36px">
-        <img src="screenshots/mobile/timetable_light.png" width="250" style="border-radius:36px">
-        <img src="screenshots/mobile/meals_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/home_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/calendar_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/create_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/timetable_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/meals_light.png" width="250" style="border-radius:36px">
     </div>
 </details>
 
 <details>
     <summary>Dark mode desktop screenshots</summary>
     <div align="center">
-        <img src="screenshots/desktop/home_dark.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/calendar_dark.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/create_dark.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/timetable_dark.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/meals_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/home_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/calendar_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/create_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/timetable_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/meals_dark.png" width="500" style="border-radius:8px">
     </div>
 </details>
 
 <details>
     <summary>Light mode desktop screenshots</summary>
     <div align="center">
-        <img src="screenshots/desktop/home_light.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/calendar_light.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/create_light.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/timetable_light.png" width="500" style="border-radius:8px">
-        <img src="screenshots/desktop/meals_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/home_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/calendar_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/create_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/timetable_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/meals_light.png" width="500" style="border-radius:8px">
     </div>
 </details>
 
@@ -84,7 +85,6 @@ Download the apk from [releases](https://github.com/masek-david/schoolarc/releas
 While Schoolarc can run on iOS, releasing and signing .ipa files requires paid developer account. Unsigned .ipa files will be added later, however, they have to be sideloaded. 
 
 ### Other platforms
-
 Other platforms may be supported in the future. 
 
 ## Platforms
@@ -103,7 +103,7 @@ Schoolarc can run on most platforms, however, it is optimized and tested mainly 
 
 # How to run locally
 
-Note: This is only for development, you can download and install [here](https://github.com/masek-david/schoolarc/releases/latest). TODO
+Note: This is only for development, you can download and install [here](https://github.com/masek-david/schoolarc/releases/latest).
 
 First, install [flutter sdk](https://docs.flutter.dev/install). Copy the repository and inside the console run
 ```

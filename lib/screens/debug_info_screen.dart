@@ -9,6 +9,8 @@ import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -29,6 +31,66 @@ class DbInfoScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
+            Wrap(
+              children: [
+                IconButtonM3E.filled(
+                  icon: const Icon(Icons.lock_rounded),
+                  onPressed: () {},
+                  // size: .large,
+                ),
+                const SizedBox(height: 8),
+                IconButtonM3E.tonal(
+                  icon: const Icon(Icons.lock_rounded),
+                  onPressed: () {},
+                  // size: .medium,
+                ),
+                const SizedBox(height: 4),
+                IconButtonM3E.outlined(
+                  icon: const Icon(Icons.lock_rounded),
+                  onPressed: () {},
+                  // size: .small,
+                ),
+                IconButtonM3E(
+                  icon: const Icon(Icons.lock_rounded),
+                  onPressed: () {},
+                  // size: .extraSmall,
+                ),
+              ],
+            ),
+            ButtonM3E.elevated(
+              icon: const Icon(Icons.lock_rounded),
+              onPressed: () {},
+              size: .extraLarge,
+              child: const Text('Elevated'),
+            ),
+            const SizedBox(height: 8),
+            ButtonM3E.filled(
+              icon: const Icon(Icons.lock_rounded),
+              onPressed: () {},
+              size: .large,
+              child: const Text('Filled'),
+            ),
+            const SizedBox(height: 8),
+            ButtonM3E.tonal(
+              icon: const Icon(Icons.lock_rounded),
+              onPressed: () {},
+              size: .medium,
+              child: const Text('Tonal'),
+            ),
+            const SizedBox(height: 4),
+            ButtonM3E.outlined(
+              icon: const Icon(Icons.lock_rounded),
+              onPressed: () {},
+              size: .small,
+              child: const Text('Outlined'),
+            ),
+            ButtonM3E.text(
+              icon: const Icon(Icons.lock_rounded),
+              onPressed: () {},
+              size: .extraSmall,
+              child: const Text('Text'),
+            ),
+            const SizedBox(height: 50),
             FilledButton(
               onPressed: () {
                 settings.save(.onboardingProgress, 0);
@@ -83,7 +145,7 @@ class DbInfoScreen extends ConsumerWidget {
             Wrap(
               spacing: 4,
               children: [
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.light,
                   child: const Text('Light'),
                 ),
@@ -91,7 +153,7 @@ class DbInfoScreen extends ConsumerWidget {
                   onPressed: vibrate.medium,
                   child: const Text('Medium'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.heavy,
                   child: const Text('Heavy'),
                 ),

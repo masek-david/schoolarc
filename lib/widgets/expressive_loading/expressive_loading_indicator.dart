@@ -175,7 +175,7 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
           shape = ShapeBorder.lerp(
             RoundedPolygonBorder(polygon: MaterialShapes.circle),
             RoundedPolygonBorder(polygon: shapes[0]),
-            widget.progress!,
+            widget.progress!.clamp(0, 1),
           )!;
         } else {
           angle =
@@ -190,7 +190,8 @@ class _ExpressiveLoadingIndicatorState extends State<ExpressiveLoadingIndicator>
             _morphController.value,
           )!;
         }
-        final scale = 0.7 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
+        final scale =
+            0.7 + ((0.5 - (_morphController.value - 0.5).abs()) * 0.3);
 
         return SizedBox(
           height: _appearController.value * widget.size,

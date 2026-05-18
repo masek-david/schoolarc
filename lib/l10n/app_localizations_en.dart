@@ -893,6 +893,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewAppChangelog => 'View app changelog';
 
   @override
+  String get contactDev => 'Contact the developer';
+
+  @override
+  String get contactDevSubtitle => 'Report a bug or request a feature';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get iHaveAnIssue => 'I have an issue';
+
+  @override
+  String get iHaveAnIdea => 'I have an idea / I want a new feature';
+
+  @override
+  String get sendEmail => 'Send email';
+
+  @override
+  String get createGithubIssue => 'Create a github issue';
+
+  @override
   String get developerMode => 'Developer mode';
 
   @override
