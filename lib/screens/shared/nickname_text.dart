@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -119,9 +120,10 @@ class NicknameText extends StatelessWidget {
               children: [
                 Text(text, style: textStyle),
                 if (editNickname != null && !isLoading && loggedIn)
-                  IconButton(
-                    color: context.col.onSecondaryContainer,
-                    tooltip: context.loc.changeNickname,
+                  IconButtonM3E(
+                    foregroundColor: context.col.onSecondaryContainer,
+                    // TODO
+                    // tooltip: context.loc.changeNickname,
                     onPressed: editNickname,
                     icon: const Icon(Icons.edit_rounded),
                   ),

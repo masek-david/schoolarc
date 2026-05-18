@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -121,13 +123,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
       heroTag: 'bakalari',
       title: context.loc.bakalari,
       actions: [
-        IconButton(
+        IconButtonM3E(
           onPressed: () {
             ref.read(bakaLoginProvider.notifier).refreshLogin();
           },
           icon: const Icon(Icons.refresh),
         ),
-        IconButton(
+        IconButtonM3E(
           onPressed: () => showMyDialog(
             context: context,
             title: context.loc.secureLogin,
@@ -206,7 +208,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       ),
                     ),
                     ExcludeFocus(
-                      child: IconButton(
+                      child: IconButtonM3E(
                         onPressed: () {
                           setState(() {
                             obscureText = !obscureText;
@@ -263,7 +265,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             ],
           ),
         if (!isLoggedIn)
-          FilledButton(
+          ButtonM3E.filled(
+            icon: const Icon(Icons.login_rounded),
+            size: .medium,
             onPressed: !baka.isLoading && useBaka
                 ? () async {
                     vibrate.medium();

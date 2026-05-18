@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
@@ -35,12 +36,12 @@ class SubjectPicker extends StatelessWidget {
       children: [
         WebRequestFocusBuilder(
           builder: (showKeyboard) {
-            return IconButton(
+            return IconButtonM3E(
               onPressed: () {
                 showKeyboard();
                 searchSubject(context);
               },
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search_rounded),
             );
           },
         ),

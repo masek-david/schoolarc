@@ -6,6 +6,18 @@ bakalogin, strava login and firebase login are shared between debug and release 
 
 fix refresh in calendar
 
+# m3e
+.icon buttons
+showonboarding from drawer
+onboarding end button animation to 0.1 on tap down
+tooltips
+all icons rounded
+buttongroup
+buttondialogbutton
+
+bottom sheet animations
+toggle - logininputscreen
+
 # RELEASE
 - ✅ info about app, credits (font, svgs)
 - ✅ info about bakalari loginch

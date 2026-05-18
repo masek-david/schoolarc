@@ -1,6 +1,7 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
@@ -125,7 +126,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                         onPressed: refresh,
                         isLoading: isLoading,
                       ),
-                      IconButton(
+                      IconButtonM3E(
                         onPressed: () {
                           ref.read(stravaMealsProvider.notifier).refreshIfOld();
                           Navigator.restorablePushNamed(
@@ -137,6 +138,7 @@ class _MealsCardState extends ConsumerState<MealsCard> {
                           Icons.keyboard_arrow_right_rounded,
                         ),
                       ),
+                      const SizedBox(width: 4),
                     ],
                   ),
                   if (!empty)

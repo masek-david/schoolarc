@@ -91,13 +91,13 @@ class DbInfoScreen extends ConsumerWidget {
               child: const Text('Text'),
             ),
             const SizedBox(height: 50),
-            FilledButton(
+            ButtonM3E.filled(
               onPressed: () {
                 settings.save(.onboardingProgress, 0);
               },
               child: const Text('Launch welcome screen on next open'),
             ),
-            FilledButton.tonal(
+            ButtonM3E.tonal(
               onPressed: () {
                 throw Exception('Crash button pressed');
               },
@@ -112,7 +112,7 @@ class DbInfoScreen extends ConsumerWidget {
               ),
             ),
             if (kDebugMode)
-              FilledButton.tonalIcon(
+              ButtonM3E.tonal(
                 onPressed: () {
                   HomeworksDatabase().deleteBoxFromDisk();
                   SubjectDatabase().deleteAllFromDisk();
@@ -120,11 +120,11 @@ class DbInfoScreen extends ConsumerWidget {
                   SettingsDatabase().deleteAllFromDisk();
                   BakaHomeworksDatabase().deleteAllFromDisk();
                 },
-                label: const Text('Delete all boxes from disk'),
                 icon: const Icon(Icons.delete_forever_rounded),
+                child: const Text('Delete all boxes from disk'),
               ),
             if (kDebugMode)
-              FilledButton.tonalIcon(
+              ButtonM3E.filled(
                 onPressed: () async {
                   SettingsDatabase().deleteAllFromDisk();
                   await Hive.openBox(settingsBox);
@@ -133,10 +133,10 @@ class DbInfoScreen extends ConsumerWidget {
                   await fireService.logOut();
                   SecureStorage.deleteAllFromDisk();
                 },
-                label: const Text(
-                  'Reset all settings and log out (run app as new, keep only hw, exam, subjects)',
-                ),
                 icon: const Icon(Icons.bug_report),
+                child: const Text(
+                  'Reset all settings and log out (run app as new, keep only hw, exam, subjects) ',
+                ),
               ),
             const Divider(),
             Text(
@@ -149,7 +149,7 @@ class DbInfoScreen extends ConsumerWidget {
                   onPressed: vibrate.light,
                   child: const Text('Light'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.medium,
                   child: const Text('Medium'),
                 ),
@@ -157,35 +157,35 @@ class DbInfoScreen extends ConsumerWidget {
                   onPressed: vibrate.heavy,
                   child: const Text('Heavy'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.success,
                   child: const Text('Success'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.warning,
                   child: const Text('Warning'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.error,
                   child: const Text('Error'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.rigid,
                   child: const Text('Rigid'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: () => vibrate.complete(true),
                   child: const Text('Complete'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.release,
                   child: const Text('Release'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: vibrate.releaseLong,
                   child: const Text('Release long'),
                 ),
-                FilledButton.tonal(
+                ButtonM3E.tonal(
                   onPressed: () => vibrate.switchUI(true),
                   child: const Text('Switch'),
                 ),
@@ -197,7 +197,7 @@ class DbInfoScreen extends ConsumerWidget {
               spacing: 8,
               children: [
                 Expanded(
-                  child: FilledButton(
+                  child: ButtonM3E.filled(
                     onPressed: () async {
                       try {
                         await SecureStorage.write(
@@ -218,7 +218,7 @@ class DbInfoScreen extends ConsumerWidget {
                   ),
                 ),
                 Expanded(
-                  child: FilledButton(
+                  child: ButtonM3E.filled(
                     onPressed: () async {
                       final text = await SecureStorage.read('test');
                       if (context.mounted) {
@@ -232,7 +232,7 @@ class DbInfoScreen extends ConsumerWidget {
             ),
             const Divider(),
             const Text('FIREBASE'),
-            FilledButton(
+            ButtonM3E.filled(
               onPressed: () async {
                 late List<HomeworkData>? fireHws;
                 try {

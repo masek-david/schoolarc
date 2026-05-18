@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 Future<Subject?> showSelectSubject({
   required BuildContext context,
@@ -39,18 +40,19 @@ class SelectSubjectDialog extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
       title: Text(loc.selectSubject),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(loc.cancel),
-        ),
         if (delete != null)
-          TextButton(
+          DialogActionButton(
+            isDestructiveAction: true,
             onPressed: () {
               delete!();
               Navigator.pop(context);
             },
-            child: Text(loc.setToEmpty),
+            text: loc.setToEmpty,
           ),
+        DialogActionButton(
+          onPressed: () => Navigator.pop(context),
+          text: loc.cancel,
+        ),
       ],
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,17 +64,15 @@ class SelectSubjectDialog extends StatelessWidget {
             },
             fieldViewBuilder:
                 (context, textEditingController, focusNode, onFieldSubmitted) {
-              return TextField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                autofocus: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (value) => onFieldSubmitted(),
-                decoration: InputDecoration(
-                  hintText: loc.searchForSubject
-                ),
-              );
-            },
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    autofocus: true,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (value) => onFieldSubmitted(),
+                    decoration: InputDecoration(hintText: loc.searchForSubject),
+                  );
+                },
             displayStringForOption: (option) => option.name,
             optionsBuilder: (textEditingValue) {
               if (textEditingValue.text.isEmpty) {

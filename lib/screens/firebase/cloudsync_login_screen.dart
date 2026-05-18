@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/provider/firebase/firebase_nickname_notifier.dart';
@@ -594,7 +595,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       heroTag: 'cloudsync',
       title: context.loc.cloudSync,
       actions: [
-        IconButton(
+        IconButtonM3E(
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(

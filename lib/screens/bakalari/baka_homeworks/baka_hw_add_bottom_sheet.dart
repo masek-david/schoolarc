@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -72,7 +73,8 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              FilledButton(
+              ButtonM3E.filled(
+                size: .medium,
                 onPressed: () {
                   widget.onSave(
                     true,
@@ -83,7 +85,8 @@ class _BakaHwAddBottomSheetState extends State<BakaHwAddBottomSheet> {
                 },
                 child: Text(context.loc.addAsHomework),
               ),
-              FilledButton(
+              ButtonM3E.filled(
+                size: .medium,
                 onPressed: () {
                   widget.onSave(
                     false,

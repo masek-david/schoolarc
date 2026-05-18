@@ -13,7 +13,6 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
   }) : colorStyle = .filled;
 
   const IconButtonM3E.outlined({
@@ -25,7 +24,6 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
   }) : colorStyle = .outlined;
 
   const IconButtonM3E.tonal({
@@ -37,7 +35,6 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
   }) : colorStyle = .tonal;
 
   const IconButtonM3E({
@@ -49,7 +46,6 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
   }) : colorStyle = .standard;
 
   final void Function()? onPressed;
@@ -59,7 +55,6 @@ class IconButtonM3E extends StatelessWidget {
   final IconButtonColorStyle colorStyle;
   final Color? backgroundColor;
   final Color? foregroundColor;
-  final bool elevateOnHover;
   final ButtonShape shape;
 
   @override
@@ -100,7 +95,7 @@ class IconButtonM3E extends StatelessWidget {
           bgCol ??= col.secondaryContainer;
           fgCol ??= col.onSecondaryContainer;
         case .outlined:
-          bgCol ??= col.surface;
+          bgCol ??= Colors.transparent;
           fgCol ??= col.onSurfaceVariant;
           outlineWidth = 1;
           outlineColor = col.outlineVariant;

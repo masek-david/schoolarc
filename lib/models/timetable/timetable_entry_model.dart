@@ -1,6 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -8,6 +9,7 @@ import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class TimetableEntry {
   TimetableEntry({
@@ -87,7 +89,7 @@ class TimetableEntry {
                     Flexible(
                       child: Text(context.loc.subjectHasntBeenAdded),
                     ),
-                    FilledButton(
+                    ButtonM3E.filled(
                       onPressed: () async {
                         await ref
                             .read(subjectsProvider.notifier)
@@ -97,6 +99,7 @@ class TimetableEntry {
                           showMessage(context, context.loc.importedSubject);
                         }
                       },
+                      icon: const Icon(Icons.add_rounded),
                       child: Text(context.loc.add),
                     ),
                   ],
@@ -110,9 +113,9 @@ class TimetableEntry {
           ],
         ),
         actions: [
-          TextButton(
+          DialogActionButton(
+            text: context.loc.close,
             onPressed: () => Navigator.pop(context),
-            child: Text(context.loc.close),
           ),
         ],
       ),

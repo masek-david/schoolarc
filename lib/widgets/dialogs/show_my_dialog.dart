@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 Future<T> showMyDialog<T>({
@@ -41,18 +42,16 @@ class DialogActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isDefaultAction) {
-      return FilledButton(onPressed: onPressed, child: Text(text));
+      return ButtonM3E.filled(onPressed: onPressed, child: Text(text));
     }
     Color textColor = Theme.of(context).colorScheme.onSurface;
     if (isDestructiveAction) {
       textColor = Theme.of(context).colorScheme.error;
     }
-    return TextButton(
+    return ButtonM3E.text(
       onPressed: onPressed,
-      style: isDestructiveAction
-          ? ButtonStyle(
-              overlayColor: WidgetStatePropertyAll(context.col.errorContainer),
-            )
+      foregroundColor: isDestructiveAction
+          ? context.col.onErrorContainer
           : null,
       child: Text(
         text,

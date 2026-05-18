@@ -27,6 +27,7 @@ class RawButtonM3E extends StatefulWidget {
     required this.fontSize,
     this.outlineColor,
     this.outlineWidth,
+    this.alignment = .center,
   });
 
   final void Function()? onPressed;
@@ -46,6 +47,7 @@ class RawButtonM3E extends StatefulWidget {
   final double hoverElevation;
   final double? outlineWidth;
   final Color? outlineColor;
+  final MainAxisAlignment alignment;
 
   /// if true, the button will "spring" to become smaller if the animation
   /// overshoots maximum border radius (happens only for fullyRounded button)
@@ -127,7 +129,7 @@ class _RawButtonM3EState extends State<RawButtonM3E>
           animation: _animation,
           child: Row(
             mainAxisSize: .min,
-            mainAxisAlignment: .center,
+            mainAxisAlignment: widget.alignment,
             children: [
               if (widget.icon != null)
                 Theme(
@@ -141,7 +143,7 @@ class _RawButtonM3EState extends State<RawButtonM3E>
                 ),
               if (widget.icon != null && widget.child != null)
                 SizedBox(width: widget.iconPadding),
-              ?widget.child,
+              if (widget.child != null) Flexible(child: widget.child!),
             ],
           ),
           builder: (context, child) {

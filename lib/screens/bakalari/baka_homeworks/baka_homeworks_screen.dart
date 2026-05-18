@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
@@ -62,7 +63,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
             return ErrorTile(
               error: error,
               actions: [
-                IconButton(
+                IconButtonM3E(
                   onPressed: ref.read(bakaHomeworksProvider.notifier).refresh,
                   icon: const Icon(Icons.refresh),
                 ),

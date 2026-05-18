@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class FinalPage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _FinalPageState extends State<FinalPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FilledButton(
+                  ButtonM3E.filled(
                     onPressed: () {
                       settings.save(
                           Setting.recapShownForYear, DateTime.now().year);

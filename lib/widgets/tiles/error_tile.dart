@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
@@ -146,33 +147,27 @@ List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
   final col = context.col;
   return [
     if (info.action == ExceptionActions.stravaLogin)
-      FilledButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-        ),
+      ButtonM3E.filled(
+        backgroundColor: col.errorContainer,
+        foregroundColor: col.onErrorContainer,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/strava');
         },
         child: Text(context.loc.login),
       ),
     if (info.action == ExceptionActions.bakaLogin)
-      FilledButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-        ),
+      ButtonM3E.filled(
+        backgroundColor: col.errorContainer,
+        foregroundColor: col.onErrorContainer,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/bakalari');
         },
         child: Text(context.loc.login),
       ),
     if (info.action == ExceptionActions.cloudsyncLogin)
-      FilledButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(col.errorContainer),
-          foregroundColor: WidgetStatePropertyAll(col.onErrorContainer),
-        ),
+      ButtonM3E.filled(
+        backgroundColor: col.errorContainer,
+        foregroundColor: col.onErrorContainer,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/cloudsync');
         },

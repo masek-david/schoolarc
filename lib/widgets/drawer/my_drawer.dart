@@ -60,7 +60,7 @@ class MyDrawer extends ConsumerWidget {
                     ),
                     MyDrawerButton(
                       text: loc.subjects,
-                      icon: const Icon(Icons.school_outlined),
+                      icon: const Icon(Icons.school_rounded),
                       showBadge: ref.watch(subjectsNonDeletedProvider).isEmpty,
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/subjects');
@@ -68,7 +68,7 @@ class MyDrawer extends ConsumerWidget {
                     ),
                     MyDrawerButton(
                       text: loc.permanentTimetable,
-                      icon: const Icon(Icons.calendar_month_outlined),
+                      icon: const Icon(Icons.calendar_month_rounded),
                       showBadge: timetableDb.timeTable.lessonTimes.isEmpty,
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/timetable');
@@ -76,7 +76,7 @@ class MyDrawer extends ConsumerWidget {
                     ),
                     // MyDrawerButton(
                     //   text: context.loc.group,
-                    //   icon: const Icon(Icons.group_outlined),
+                    //   icon: const Icon(Icons.group_rounded),
                     //   onTap: () {
                     //     Navigator.restorablePushNamed(context, '/group');
                     //   },
@@ -84,7 +84,7 @@ class MyDrawer extends ConsumerWidget {
                     const Divider(indent: 28, endIndent: 28),
                     MyDrawerButton(
                       text: loc.hwFromBaka,
-                      icon: const Icon(Icons.home_work_outlined),
+                      icon: const Icon(Icons.home_work_rounded),
                       onTap: () {
                         ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
                         Navigator.restorablePushNamed(
@@ -96,7 +96,7 @@ class MyDrawer extends ConsumerWidget {
                     const Divider(indent: 28, endIndent: 28),
                     MyDrawerButton(
                       text: loc.recentlyDeleted,
-                      icon: const Icon(Icons.delete_forever),
+                      icon: const Icon(Icons.delete_forever_rounded),
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/deleted');
                       },
@@ -105,7 +105,7 @@ class MyDrawer extends ConsumerWidget {
                     if (kDebugMode)
                       MyDrawerButton(
                         text: loc.viewDatabase,
-                        icon: const Icon(Icons.data_array),
+                        icon: const Icon(Icons.data_array_rounded),
                         onTap: () {
                           Navigator.restorablePushNamed(context, '/database');
                         },
@@ -113,7 +113,7 @@ class MyDrawer extends ConsumerWidget {
                     if (kDebugMode)
                       MyDrawerButton(
                         text: loc.viewLogs,
-                        icon: const Icon(Icons.bug_report),
+                        icon: const Icon(Icons.bug_report_rounded),
                         onTap: () {
                           Navigator.restorablePushNamed(context, '/logs');
                         },
@@ -129,14 +129,14 @@ class MyDrawer extends ConsumerWidget {
               ),
             MyDrawerButton(
               text: loc.viewTutorial,
-              icon: const Icon(Icons.school),
+              icon: const Icon(Icons.school_rounded),
               onTap: () {
                 Navigator.restorablePushNamed(context, '/tutorial');
               },
             ),
             MyDrawerButton(
               text: loc.settings,
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.settings_rounded),
               onTap: () {
                 Navigator.restorablePushNamed(context, '/settings');
               },

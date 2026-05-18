@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/services/firebase/app_info_notifier.dart';
@@ -17,7 +18,7 @@ class AppInfoScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           if (ref.watch(devModeProvider))
-            IconButton(
+            IconButtonM3E(
               onPressed: () {
                 ref.read(needsUpdateProvider.notifier).bypass();
               },

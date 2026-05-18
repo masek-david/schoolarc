@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/expressive_loading/circular_wavy_progress_indicator.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
@@ -46,7 +47,7 @@ class ProgressDialogState extends State<ProgressDialog> {
         title: Center(child: Text(_text)),
         actions: kDebugMode
             ? [
-                OutlinedButton(
+                ButtonM3E.outlined(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('pop(debug)'),
                 ),

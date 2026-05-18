@@ -106,7 +106,7 @@ class ButtonM3E extends StatelessWidget {
           bgCol ??= col.secondaryContainer;
           fgCol ??= col.onSecondaryContainer;
         case .outlined:
-          bgCol ??= col.surface;
+          bgCol ??= Colors.transparent;
           fgCol ??= col.onSurfaceVariant;
           outlineWidth = 1;
           outlineColor = col.outlineVariant;

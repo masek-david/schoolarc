@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -98,7 +100,7 @@ class _TutorialState extends State<Tutorial> {
             leading: const SizedBox.shrink(),
             leadingWidth: 0,
             centerTitle: false,
-            title: TextButton(
+            title: ButtonM3E.text(
               onPressed: () {
                 _controller.jumpToPage(4);
               },
@@ -112,7 +114,7 @@ class _TutorialState extends State<Tutorial> {
           floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
+              IconButtonM3E(
                 onPressed: () => scroll(forward: false),
                 icon: const Icon(
                   Icons.keyboard_arrow_left_rounded,
@@ -131,7 +133,7 @@ class _TutorialState extends State<Tutorial> {
                 ),
                 count: pages.length,
               ),
-              IconButton(
+              IconButtonM3E(
                 onPressed: scroll,
                 icon: const Icon(
                   Icons.keyboard_arrow_right_rounded,

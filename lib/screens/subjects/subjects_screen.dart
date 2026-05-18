@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
@@ -55,9 +56,9 @@ class SubjectsScreen extends ConsumerWidget {
         title: Text(context.loc.subjects),
         actions: [
           if (kIsWeb && ref.watch(firebaseLoginProvider).value != null)
-            IconButton(
+            IconButtonM3E(
               onPressed: () => onRefresh(context, ref),
-              icon: const Icon(Icons.refresh_outlined),
+              icon: const Icon(Icons.refresh_rounded),
             ),
         ],
       ),

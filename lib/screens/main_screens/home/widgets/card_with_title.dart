@@ -65,6 +65,7 @@ class CardWithTitle extends StatelessWidget {
                           ),
                   ),
                   ...actions,
+                  const SizedBox(width: 4),
                 ],
               ),
               if (child != null)

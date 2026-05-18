@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
@@ -169,7 +171,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
         context.loc.newHomeworkFound(count),
         isPersistent: true,
         actions: [
-          IconButton(
+          IconButtonM3E(
             icon: Icon(
               Icons.close_rounded,
               color: context.col.onInverseSurface,
@@ -179,7 +181,7 @@ class BakaHomeworksNotifier extends AsyncNotifier<List<BakaHomework>> {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
           ),
-          FilledButton(
+          ButtonM3E.filled(
             onPressed: () {
               Navigator.restorablePushNamed(context, '/bakalari-homeworks');
               ScaffoldMessenger.of(context).hideCurrentSnackBar();

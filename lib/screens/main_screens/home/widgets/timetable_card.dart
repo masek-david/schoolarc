@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
@@ -73,7 +74,7 @@ class TimetableCard extends ConsumerWidget {
             onPressed: () => refresh(ref, week),
             isLoading: isLoading,
           ),
-        IconButton(
+        IconButtonM3E(
           onPressed: () {
             ref.read(actualTimetableDataProvider(week).notifier).refreshIfOld();
             Navigator.restorablePushNamed(
@@ -81,9 +82,7 @@ class TimetableCard extends ConsumerWidget {
               '/timetable-actual',
             );
           },
-          icon: const Icon(
-            Icons.keyboard_arrow_right_rounded,
-          ),
+          icon: const Icon(Icons.keyboard_arrow_right_rounded),
         ),
       ],
       child: !areThereUpcomingLessons

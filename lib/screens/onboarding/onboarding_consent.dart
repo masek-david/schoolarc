@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -81,8 +82,10 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
             builder: (isShown) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 32),
-                child: FilledButton(
+                child: ButtonM3E.filled(
+                  size: .medium,
                   onPressed: privacyPolicyAgree ? widget.next : null,
+                  icon: const Icon(Icons.keyboard_arrow_right_rounded),
                   child: Text(context.loc.continueAction),
                 ),
               );

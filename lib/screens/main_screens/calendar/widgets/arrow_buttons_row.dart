@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ArrowButtonsRow extends StatelessWidget {
@@ -31,20 +32,13 @@ class ArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return IconButtonM3E(
       onPressed: onPressed,
-      padding: const EdgeInsets.all(0),
-      icon: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: context.col.surfaceContainerHigh.withAlpha(120),
-        ),
-        child: Icon(
-          left
-              ? Icons.keyboard_arrow_left_rounded
-              : Icons.keyboard_arrow_right_rounded,
-        ),
+      backgroundColor: context.col.surfaceContainerHighest.withAlpha(120),
+      icon: Icon(
+        left
+            ? Icons.keyboard_arrow_left_rounded
+            : Icons.keyboard_arrow_right_rounded,
       ),
     );
   }

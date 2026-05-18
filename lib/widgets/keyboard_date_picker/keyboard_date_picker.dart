@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -121,13 +122,13 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
               mainAxisAlignment: MainAxisAlignment.end,
               spacing: 8,
               children: [
-                TextButton(
+                ButtonM3E.text(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   child: Text(context.loc.close),
                 ),
-                FilledButton(
+                ButtonM3E.filled(
                   onPressed: () {
                     Navigator.pop(context, date);
                   },

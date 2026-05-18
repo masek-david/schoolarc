@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
@@ -127,8 +128,10 @@ class OnboardingExtensions extends ConsumerWidget {
             builder: (isShown) {
               return Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: FilledButton(
-                  onPressed: () => next(),
+                child: ButtonM3E.filled(
+                  size: .medium,
+                  onPressed: next,
+                  icon: const Icon(Icons.keyboard_arrow_right_rounded),
                   child: Text(context.loc.continueAction),
                 ),
               );

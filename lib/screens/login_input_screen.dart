@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class LoginField {
   LoginField({
@@ -78,8 +81,9 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
             if (index == controllers.length) {
               return Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilledButton(
+                  padding: const EdgeInsets.all(16),
+                  child: ButtonM3E.filled(
+                    size: .medium,
                     key: Key(widget.actionName),
                     onPressed: actionEnabled
                         ? () => widget.onSubmit(
@@ -124,20 +128,18 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                   ),
                   if (field.info != null)
                     ExcludeFocus(
-                      child: IconButton(
+                      child: IconButtonM3E(
                         onPressed: () {
-                          showDialog(
+                          showMyDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(field.name),
-                              content: Text(field.info!),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(context.loc.ok),
-                                ),
-                              ],
-                            ),
+                            title: field.name,
+                            text: field.info,
+                            actions: [
+                              DialogActionButton(
+                                text: context.loc.ok,
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
                           );
                         },
                         icon: const Icon(Icons.info_outline),
@@ -145,7 +147,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                     ),
                   if (obscure != null)
                     ExcludeFocus(
-                      child: IconButton(
+                      child: IconButtonM3E(
                         onPressed: () {
                           setState(() {
                             obscures[index] = !obscure;

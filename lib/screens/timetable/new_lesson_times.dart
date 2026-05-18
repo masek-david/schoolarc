@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
+import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
 class NewLessonTimes extends StatefulWidget {
   const NewLessonTimes({
@@ -39,14 +41,17 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
       title: Text(loc.createNewTimes),
       actions: [
         if (widget.delete != null)
-          OutlinedButton(
+          DialogActionButton(
+            isDestructiveAction: true,
+            text: loc.deleteThisLesson,
             onPressed: () {
               widget.delete!();
               Navigator.pop(context);
             },
-            child: Text(loc.deleteThisLesson),
           ),
-        FilledButton(
+        DialogActionButton(
+          text: loc.save,
+          isDefaultAction: true,
           onPressed: startTime != null && endTime != null
               ? () {
                   Navigator.pop(
@@ -58,8 +63,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
                     ),
                   );
                 }
-              : null,
-          child: Text(loc.save),
+              : () {},
         ),
       ],
       content: Column(
@@ -73,7 +77,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(loc.beginningTime),
-              TextButton(
+              ButtonM3E.text(
                 child: Text(startTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(
@@ -92,7 +96,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(loc.endingTime),
-              TextButton(
+              ButtonM3E.text(
                 child: Text(endTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(

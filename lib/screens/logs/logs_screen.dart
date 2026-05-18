@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
 import 'package:schoolarc/screens/logs/log_screen.dart';
 import 'package:schoolarc/utils/contact_dev_dialog.dart';
@@ -32,7 +33,7 @@ class _LogsScreenState extends State<LogsScreen> {
       appBar: AppBar(
         title: Text(context.loc.logs),
         actions: [
-          IconButton(
+          IconButtonM3E(
             onPressed: () {
               showMyDialog(
                 context: context,
@@ -71,7 +72,7 @@ class _LogsScreenState extends State<LogsScreen> {
             },
             icon: const Icon(Icons.bug_report_outlined),
           ),
-          IconButton(
+          IconButtonM3E(
             onPressed: () {
               showMyDialog(
                 context: context,
@@ -118,7 +119,8 @@ class _LogsScreenState extends State<LogsScreen> {
                         TextActions(
                           text: logs[index].$2.date.toString(),
                           actions: [
-                            IconButton(
+                            IconButtonM3E.tonal(
+                              width: .narrow,
                               onPressed: () {
                                 showMyDialog(
                                   context: context,
@@ -145,7 +147,8 @@ class _LogsScreenState extends State<LogsScreen> {
                               },
                               icon: const Icon(Icons.bug_report_outlined),
                             ),
-                            IconButton(
+                            IconButtonM3E.tonal(
+                              width: .narrow,
                               onPressed: () {
                                 showMyDialog(
                                   context: context,
@@ -171,7 +174,8 @@ class _LogsScreenState extends State<LogsScreen> {
                               },
                               icon: const Icon(Icons.delete_outline),
                             ),
-                            IconButton(
+                            IconButtonM3E.tonal(
+                              width: .wide,
                               onPressed: () {
                                 Navigator.push(
                                   context,

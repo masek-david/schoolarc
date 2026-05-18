@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/provider/firebase/firebase_activity_notifier.dart';
 
 final _opacityProvider = NotifierProvider<_Opacity, bool>(_Opacity.new);
@@ -100,7 +101,7 @@ class FirebaseOverlay extends ConsumerWidget {
             ),
           ),
         ),
-        IconButton(
+        IconButtonM3E(
           onPressed: () {
             if (ref.read(_opacityProvider)) {
               ref.read(_opacityProvider.notifier).hide();

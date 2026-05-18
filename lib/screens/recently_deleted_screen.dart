@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -84,7 +85,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.loc.recentlyDeleted),
         actions: [
-          IconButton(
+          IconButtonM3E(
             onPressed: () => showMyDialog(
               context: context,
               title: context.loc.recover,

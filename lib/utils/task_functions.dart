@@ -20,6 +20,7 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
       : null;
 
   return ModalBottomSheetRoute(
+    backgroundColor: Colors.transparent,
     builder: (context) => AddTaskBottomSheet(
       initialTaskId: arguments['id'],
       initialDate: initialDate,
