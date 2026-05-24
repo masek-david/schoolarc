@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
@@ -14,7 +15,6 @@ import 'package:schoolarc/screens/shared/nickname_text.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
@@ -371,7 +371,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             autofillHints: [AutofillHints.password],
           ),
         ],
-        bottomChild: FilledButton.tonal(
+        bottomChild: ButtonM3E.tonal(
           onPressed: () {
             resetPassword(context, ref);
           },
@@ -443,8 +443,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       showMyDialog(
         context: context,
         title: context.loc.cantRegister,
-        text:
-        context.loc.cloudSyncInBeta,
+        text: context.loc.cloudSyncInBeta,
         actions: [
           DialogActionButton(
             text: context.loc.ok,
@@ -602,7 +601,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
               builder: (context) => const PrivacyPolicy(),
             ),
           ),
-          icon: const Icon(Icons.info_outline),
+          icon: const Icon(Icons.info_outline_rounded),
         ),
       ],
       children: [
@@ -636,56 +635,64 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             spacing: 12,
             children: [
               Expanded(
-                child: FilledButton.icon(
-                  style: FilledButtonStyles.surface(context),
+                child: ButtonM3E.elevated(
                   onPressed: () => changeEmail(context, ref),
                   icon: const Icon(Icons.email_rounded),
-                  label: Text(context.loc.changeEmail),
+                  child: Text(context.loc.changeEmail),
                 ),
               ),
               Expanded(
-                child: FilledButton.icon(
-                  style: FilledButtonStyles.surface(context),
+                child: ButtonM3E.elevated(
                   onPressed: () => changePassword(context, ref),
                   icon: const Icon(Icons.password_rounded),
-                  label: Text(context.loc.changePassword),
+                  child: Text(context.loc.changePassword),
                 ),
               ),
             ],
           ),
-          FilledButton.icon(
-            style: FilledButtonStyles.surface(context),
+          ButtonM3E.elevated(
             onPressed: () => logOut(context, ref),
             icon: const Icon(Icons.logout_rounded),
-            label: Text(context.loc.logOut),
+            child: Text(context.loc.logOut),
           ),
-          FilledButton.tonalIcon(
-            style: FilledButtonStyles.surface(context),
+          ButtonM3E.elevated(
             onPressed: () => getAllData(context, ref),
             icon: const Icon(Icons.download_rounded),
-            label: Text(context.loc.getAllData),
+            child: Text(context.loc.getAllData),
           ),
           const Divider(),
-          OutlinedButton.icon(
-            style: OutlinedButtonStyles.errorTonal(context),
+          ButtonM3E.outlined(
+            foregroundColor: context.col.error,
+            outlineColor: context.col.errorContainer,
             onPressed: () => deleteAllData(context, ref),
             icon: const Icon(Icons.delete_forever_rounded),
-            label: Text(context.loc.deleteAllData),
+            child: Text(context.loc.deleteAllData),
           ),
         ],
-
-        if (!loggedIn) ...[
-          FilledButton.icon(
-            onPressed: () => logIn(context, ref),
-            icon: const Icon(Icons.login_rounded),
-            label: Text(context.loc.logIn),
+        if (!loggedIn)
+          Row(
+            spacing: 8,
+            children: [
+              Expanded(
+                child: ButtonM3E.filled(
+                  shape: .square,
+                  size: .medium,
+                  onPressed: () => logIn(context, ref),
+                  icon: const Icon(Icons.login_rounded),
+                  child: Text(context.loc.logIn),
+                ),
+              ),
+              Expanded(
+                child: ButtonM3E.tonal(
+                  size: .medium,
+                  shape: .square,
+                  onPressed: () => register(context, ref),
+                  icon: const Icon(Icons.login_rounded),
+                  child: Text(context.loc.register),
+                ),
+              ),
+            ],
           ),
-          FilledButton.tonalIcon(
-            onPressed: () => register(context, ref),
-            icon: const Icon(Icons.login),
-            label: Text(context.loc.register),
-          ),
-        ],
       ],
     );
   }

@@ -6,7 +6,7 @@ class RecapButton extends StatelessWidget {
   const RecapButton({
     super.key,
     required this.content,
-    this.borderRadius = 20,
+    this.borderRadius = 24,
   });
 
   factory RecapButton.full(BuildContext context) {
@@ -21,11 +21,22 @@ class RecapButton extends StatelessWidget {
               children: [
                 Text(
                   '${context.loc.anotherYearBehind} 🎉',
-                  style: robotoSerif(size: 20, weight: 600, width: 50),
+                  style: googleSansFlex(
+                    size: 24,
+                    width: 50,
+                    weight: 700,
+                    roundness: 100,
+                  ),
                 ),
                 Text(
                   context.loc.viewYearStats,
-                  style: robotoSerif(size: 14, width: 100),
+                  style: googleSansFlex(
+                    color: context.col.onSurfaceVariant,
+                    size: 16,
+                    width: 120,
+                    weight: 200,
+                    roundness: 100,
+                  ),
                 ),
               ],
             ),

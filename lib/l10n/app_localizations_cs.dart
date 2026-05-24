@@ -940,12 +940,6 @@ class AppLocalizationsCs extends AppLocalizations {
       'Takto bude aplikace vypadat s těmito barvami:';
 
   @override
-  String get filledButton => 'Tlačítko';
-
-  @override
-  String get choiceChip => 'Výběr';
-
-  @override
   String get loginToStrava => 'Přihlásit se do Strava.cz';
 
   @override
@@ -1464,6 +1458,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get daysShort => 'd';
+
+  @override
+  String get share => 'Share';
 
   @override
   String get agreeSendCrashReports =>

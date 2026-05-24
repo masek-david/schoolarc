@@ -71,7 +71,7 @@ class OnboardingRestoredata extends ConsumerWidget {
                 subtitle: context.loc.cloudSyncSubtitle,
                 leading: ref.watch(firebaseLoginProvider).value == null
                     ? null
-                    : const Icon(Icons.check_circle, color: Colors.green),
+                    : const Icon(Icons.check_circle_rounded, color: Colors.green),
                 onTap: (context) {
                   Navigator.push(
                     context,

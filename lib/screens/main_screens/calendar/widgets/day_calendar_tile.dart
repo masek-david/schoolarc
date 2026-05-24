@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/m3e_parameters.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -124,7 +125,8 @@ class DayTile extends StatelessWidget {
               }
 
               return AnimatedContainer(
-                duration: _animationDuration,
+                curve: SpatialMotion.fast.curve,
+                duration: SpatialMotion.fast.duration,
                 decoration: BoxDecoration(
                   color: candidateData.isNotEmpty ? col.primary : background,
                   borderRadius: BorderRadius.vertical(

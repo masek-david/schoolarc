@@ -10,7 +10,6 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
@@ -80,7 +79,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
           onPressed: () {
             ref.read(stravaLoginProvider.notifier).refreshLogin();
           },
-          icon: const Icon(Icons.refresh),
+          icon: const Icon(Icons.refresh_rounded),
         ),
         IconButtonM3E(
           onPressed: () => showMyDialog(
@@ -94,7 +93,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
               ),
             ],
           ),
-          icon: const Icon(Icons.info_outline),
+          icon: const Icon(Icons.info_outline_rounded),
         ),
       ],
       children: [
@@ -112,7 +111,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             title: loggedIn ? context.loc.loggedIn : context.loc.loggedOut,
             subtitle: loggedIn ? loggedInSubtitle : null,
             leading: loggedIn
-                ? const Icon(Icons.check_circle, color: Colors.green)
+                ? const Icon(Icons.check_circle_rounded, color: Colors.green)
                 : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
@@ -156,7 +155,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                     ],
                   );
                 },
-                icon: const Icon(Icons.info_outline),
+                icon: const Icon(Icons.info_outline_rounded),
               ),
             ],
           ),
@@ -204,7 +203,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         obscure = !obscure;
                       }),
                       icon: Icon(
-                        obscure ? Icons.visibility : Icons.visibility_off,
+                        obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
                       ),
                     ),
                   ],
@@ -240,10 +239,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             child: Text(loc.logIn),
           ),
         if (loggedIn)
-          FilledButton.icon(
-            icon: const Icon(Icons.logout_rounded),
-            label: Text(loc.logOut),
-            style: FilledButtonStyles.surface(context),
+          ButtonM3E.elevated(
             onPressed: useMeals
                 ? () {
                     _canteenController.clear();
@@ -258,6 +254,8 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         );
                   }
                 : null,
+            icon: const Icon(Icons.logout_rounded),
+            child: Text(loc.logOut),
           ),
       ],
     );

@@ -6,7 +6,7 @@ import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicato
 class LoadingIconButtonWithFuture extends StatefulWidget {
   const LoadingIconButtonWithFuture({
     super.key,
-    this.icon = Icons.refresh,
+    this.icon = Icons.refresh_rounded,
     required this.onPressed,
   });
 

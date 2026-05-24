@@ -45,7 +45,7 @@ class _ActualTimetableScreenState
       floatingActionButton: FloatingActionBar(
         actions: [
           FloatingActionBarAction(
-            icon: Icons.arrow_back,
+            icon: Icons.arrow_back_rounded,
             onTap: () {
               setState(() {
                 week -= 1;
@@ -53,7 +53,7 @@ class _ActualTimetableScreenState
             },
           ),
           FloatingActionBarAction(
-            icon: Icons.home,
+            icon: Icons.home_rounded,
             onTap: () {
               setState(() {
                 week = getCurrentTimetableWeekIndex();
@@ -61,7 +61,7 @@ class _ActualTimetableScreenState
             },
           ),
           FloatingActionBarAction(
-            icon: Icons.arrow_forward,
+            icon: Icons.arrow_forward_rounded,
             onTap: () {
               setState(() {
                 week += 1;

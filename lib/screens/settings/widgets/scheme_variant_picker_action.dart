@@ -127,7 +127,7 @@ class _SchemeVariantPickerActionState
                       if (isHighlighted)
                         Center(
                           child: Icon(
-                            Icons.check,
+                            Icons.check_rounded,
                             shadows: <Shadow>[
                               Shadow(
                                 color: Theme.of(

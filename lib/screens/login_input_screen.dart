@@ -142,7 +142,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                             ],
                           );
                         },
-                        icon: const Icon(Icons.info_outline),
+                        icon: const Icon(Icons.info_outline_rounded),
                       ),
                     ),
                   if (obscure != null)
@@ -154,7 +154,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                           });
                         },
                         icon: Icon(
-                          obscure ? Icons.visibility : Icons.visibility_off,
+                          obscure ? Icons.visibility_off_rounded : Icons.visibility_off_rounded,
                         ),
                       ),
                     ),

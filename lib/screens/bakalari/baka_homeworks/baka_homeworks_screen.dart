@@ -65,7 +65,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
               actions: [
                 IconButtonM3E(
                   onPressed: ref.read(bakaHomeworksProvider.notifier).refresh,
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh_rounded),
                 ),
               ],
             );

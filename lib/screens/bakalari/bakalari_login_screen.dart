@@ -9,7 +9,6 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/buttons/button_styles.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
@@ -127,7 +126,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
           onPressed: () {
             ref.read(bakaLoginProvider.notifier).refreshLogin();
           },
-          icon: const Icon(Icons.refresh),
+          icon: const Icon(Icons.refresh_rounded),
         ),
         IconButtonM3E(
           onPressed: () => showMyDialog(
@@ -141,7 +140,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
               ),
             ],
           ),
-          icon: const Icon(Icons.info_outline),
+          icon: const Icon(Icons.info_outline_rounded),
         ),
       ],
       children: [
@@ -159,7 +158,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             title: isLoggedIn ? context.loc.loggedIn : context.loc.loggedOut,
             subtitle: subtitle,
             leading: isLoggedIn
-                ? const Icon(Icons.check_circle, color: Colors.green)
+                ? const Icon(Icons.check_circle_rounded, color: Colors.green)
                 : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
           ),
@@ -215,7 +214,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                           });
                         },
                         icon: Icon(
-                          obscureText ? Icons.visibility : Icons.visibility_off,
+                          obscureText ? Icons.visibility_rounded : Icons.visibility_off_rounded,
                         ),
                       ),
                     ),
@@ -293,16 +292,15 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             child: Text(context.loc.logIn),
           ),
         if (isLoggedIn)
-          FilledButton.tonal(
+          ButtonM3E.tonal(
             onPressed: !isLoading ? askToImportTimetable : null,
+            icon: const Icon(Icons.download_rounded),
             child: Text(context.loc.importTimetable),
           ),
         if (isLoggedIn) const Divider(),
         if (isLoggedIn)
-          FilledButton.icon(
+          ButtonM3E.elevated(
             icon: const Icon(Icons.logout_rounded),
-            label: Text(context.loc.logOut),
-            style: FilledButtonStyles.surface(context),
             onPressed: baka.isLoading
                 ? null
                 : () async {
@@ -316,6 +314,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       vibrate.error();
                     }
                   },
+            child: Text(context.loc.logOut),
           ),
       ],
     );

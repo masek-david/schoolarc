@@ -71,7 +71,7 @@ class TileSlidable extends StatelessWidget {
                         vibrate.medium();
                         onDelete!();
                       },
-                      icon: Icons.delete,
+                      icon: Icons.delete_rounded,
                       foregroundColor: Theme.of(
                         context,
                       ).colorScheme.onErrorContainer,

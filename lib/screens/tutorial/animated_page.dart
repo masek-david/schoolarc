@@ -5,10 +5,12 @@ class AnimatedItem {
   AnimatedItem({
     required this.builder,
     this.transition = true,
+    this.spacing,
   });
 
   final Widget Function(bool isShown) builder;
   final bool transition;
+  final double? spacing;
 }
 
 class AnimatedPage extends StatefulWidget {
@@ -17,21 +19,22 @@ class AnimatedPage extends StatefulWidget {
     required this.children,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.spacing = 0,
+    this.duration = const Duration(milliseconds: 800),
+    this.itemDelay = const Duration(milliseconds: 200),
   });
 
   final List<AnimatedItem> children;
   final EdgeInsetsGeometry padding;
   final double spacing;
 
+  final Duration duration;
+  final Duration itemDelay;
+
   @override
   State<AnimatedPage> createState() => _AnimatedPageState();
 }
 
 class _AnimatedPageState extends State<AnimatedPage> {
-  final duration = const Duration(milliseconds: 800);
-  final itemDelay = const Duration(milliseconds: 200);
-  late final padding = widget.padding;
-
   int showing = -1;
 
   @override
@@ -49,7 +52,7 @@ class _AnimatedPageState extends State<AnimatedPage> {
       },
     );
     for (int i = 1; i < widget.children.length; i++) {
-      await Future.delayed(itemDelay);
+      await Future.delayed(widget.itemDelay);
       if (mounted) {
         setState(() {
           vibrate.light();
@@ -62,19 +65,22 @@ class _AnimatedPageState extends State<AnimatedPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding,
+      padding: widget.padding,
       child: ListView.builder(
         physics: const ClampingScrollPhysics(),
         itemCount: widget.children.length,
         itemBuilder: (context, index) {
           final item = widget.children[index];
           final isShown = showing >= index;
-
+    
           if (item.transition) {
             return Padding(
-              padding: EdgeInsets.only(bottom: widget.spacing),
+              padding: EdgeInsets.only(
+                bottom: widget.spacing,
+                top: item.spacing ?? 0,
+              ),
               child: AnimatedOpacity(
-                duration: duration,
+                duration: widget.duration,
                 curve: Curves.easeInOut,
                 opacity: isShown ? 1 : 0,
                 child: item.builder(isShown),

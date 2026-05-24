@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class SubjectPicker extends StatelessWidget {
@@ -73,10 +75,10 @@ class SubjectPicker extends StatelessWidget {
                     );
                   },
                 ),
-                FilledButton.tonalIcon(
+                ButtonM3E.tonal(
                   icon: const Icon(Icons.add_rounded),
                   onPressed: () => addNewSubject(context),
-                  label: const Text('Create a new subject'),
+                  child: Text(context.loc.addNewSubject),
                 ),
               ],
             ),

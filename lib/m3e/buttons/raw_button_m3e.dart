@@ -61,7 +61,7 @@ class _RawButtonM3EState extends State<RawButtonM3E>
     with SingleTickerProviderStateMixin {
   late final _controller = AnimationController(
     vsync: this,
-    duration: durationFastSpatial,
+    duration: SpatialMotion.fast.duration,
   );
   late Animation _animation = getAnimation();
   bool hovered = false;
@@ -74,19 +74,21 @@ class _RawButtonM3EState extends State<RawButtonM3E>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: curveFastSpatial,
-        reverseCurve: curveFastSpatial.flipped,
+        curve: SpatialMotion.fast.curve,
+        reverseCurve: SpatialMotion.fast.curve.flipped,
       ),
     );
   }
 
   Future<void> animateTapUp() async {
     if (_controller.value < 0.3) {
+      // Finish the animation at least to 30 %
       await Future.delayed(
-        durationFastSpatial * (0.3 - _controller.value),
+        SpatialMotion.fast.duration * (0.3 - _controller.value),
       );
       if (!mounted) return;
     }
+    // Then animate back
     _controller.animateBack(0);
   }
 
@@ -155,7 +157,6 @@ class _RawButtonM3EState extends State<RawButtonM3E>
 
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: addOffset),
-
               child: Stack(
                 fit: .passthrough,
                 clipBehavior: .none,
@@ -222,7 +223,11 @@ class _RawButtonM3EState extends State<RawButtonM3E>
                       onTapDown: enabled ? (details) => animateTapDown() : null,
                       onTapUp: enabled ? (details) => animateTapUp() : null,
                       onTapCancel: enabled ? () => animateTapCancel() : null,
-                      onTap: widget.onPressed,
+                      onTap: () {
+                        if (widget.onPressed != null) {
+                          widget.onPressed!();
+                        }
+                      },
                       child: SizedBox(
                         height: widget.height,
                         width: widget.width,

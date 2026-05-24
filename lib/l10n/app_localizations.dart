@@ -1614,18 +1614,6 @@ abstract class AppLocalizations {
   /// **'This is how the app will look with these colors:'**
   String get colorShowcaseTitle;
 
-  /// No description provided for @filledButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Filled button'**
-  String get filledButton;
-
-  /// No description provided for @choiceChip.
-  ///
-  /// In en, this message translates to:
-  /// **'Choice chip'**
-  String get choiceChip;
-
   /// No description provided for @loginToStrava.
   ///
   /// In en, this message translates to:
@@ -2525,6 +2513,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'d'**
   String get daysShort;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
 
   /// No description provided for @agreeSendCrashReports.
   ///

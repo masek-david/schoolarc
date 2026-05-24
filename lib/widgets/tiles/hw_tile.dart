@@ -197,7 +197,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                         //       Text(widget.hw.order.toString()),
                         //       if (widget.hw.isBeingAnimated)
                         //         const Icon(
-                        //           Icons.animation,
+                        //           Icons.animation_rounded,
                         //           size: 15,
                         //         ),
                         //     ],
@@ -221,7 +221,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                           children: [
                             // if (widget.hw.isShared)
                             //   Icon(
-                            //     Icons.share,
+                            //     Icons.share_rounded,
                             //     size: 16,
                             //     color: Theme.of(context)
                             //         .colorScheme
@@ -229,7 +229,7 @@ class _HwTileState extends State<HwTile> with TickerProviderStateMixin {
                             //   ),
                             if (widget.hw.description != '')
                               Icon(
-                                Icons.notes,
+                                Icons.notes_rounded,
                                 size: 16,
                                 color: Theme.of(
                                   context,

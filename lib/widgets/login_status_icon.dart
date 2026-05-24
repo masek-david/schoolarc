@@ -26,7 +26,7 @@ class LoginStatusIcon extends ConsumerWidget {
 
     return state.when(
       data: (value) => value
-          ? const Icon(Icons.check_circle, color: Colors.green)
+          ? const Icon(Icons.check_circle_rounded, color: Colors.green)
           : const FilledIcon(Icons.logout_rounded, color: Colors.yellow),
       error: (e, _) {
         final info = ErrorInfoUI.fromError(
@@ -58,7 +58,7 @@ class FilledIcon extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Icon(
-          Icons.circle,
+          Icons.circle_rounded,
           color: color,
         ),
         // to set the weight of the icon

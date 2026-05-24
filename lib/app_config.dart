@@ -195,20 +195,6 @@ class AppConfig extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                filledButtonTheme: FilledButtonThemeData(
-                  style: ButtonStyle(
-                    side: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.focused)) {
-                        return BorderSide(
-                          color: light.primary,
-                          width: 3,
-                          strokeAlign: 3,
-                        );
-                      }
-                      return null;
-                    }),
-                  ),
-                ),
               ),
               darkTheme: ThemeData(
                 textTheme: getTextTheme(),
@@ -223,20 +209,6 @@ class AppConfig extends ConsumerWidget {
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                filledButtonTheme: FilledButtonThemeData(
-                  style: ButtonStyle(
-                    side: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.focused)) {
-                        return BorderSide(
-                          color: dark.primary,
-                          width: 3,
-                          strokeAlign: 3,
-                        );
-                      }
-                      return null;
-                    }),
                   ),
                 ),
                 progressIndicatorTheme: const ProgressIndicatorThemeData(

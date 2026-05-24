@@ -6,17 +6,24 @@ bakalogin, strava login and firebase login are shared between debug and release 
 
 fix refresh in calendar
 
-# m3e
-.icon buttons
-showonboarding from drawer
-onboarding end button animation to 0.1 on tap down
-tooltips
-all icons rounded
-buttongroup
-buttondialogbutton
+!!! github builds have wrong version
 
-bottom sheet animations
+sticker
+better sort in search 
+
+# m3e
+tooltips
+buttongroup - refactor rawbutton to use shape instead of just double with radius and lerp between the two shapes
+buttondialogbutton
+check drawer button in m3.material.io
+
+bottom sheet animations - stupidsimplesheet ??? and add motor ???
+bottom sheet - button with option to save as the other type exam/hw
 toggle - logininputscreen
+settingtile shape animation
+calendartiles animation
+
+fabs - fab appear animation, fab hide text on scroll in calendar
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

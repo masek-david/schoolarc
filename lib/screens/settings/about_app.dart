@@ -47,7 +47,7 @@ class _AboutAppState extends State<AboutApp> {
           isFirst: true,
           isLast: true,
           title: context.loc.viewAppChangelog,
-          leading: const Icon(Icons.history_outlined),
+          leading: const Icon(Icons.history_rounded),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/changelog'),
         ),
@@ -70,7 +70,7 @@ class _AboutAppState extends State<AboutApp> {
         SettingTile(
           isFirst: true,
           title: context.loc.viewLogs,
-          leading: const Icon(Icons.data_array),
+          leading: const Icon(Icons.data_array_rounded),
           onTap: (context) => Navigator.restorablePushNamed(context, '/logs'),
         ),
         SettingTile.withSwitch(
@@ -98,7 +98,7 @@ class _AboutAppState extends State<AboutApp> {
         SettingTile(
           isLast: true,
           title: context.loc.viewLicenses,
-          leading: const Icon(Icons.attribution),
+          leading: const Icon(Icons.attribution_rounded),
           onTap: (context) => showLicensePage(
             context: context,
             applicationIcon: Padding(

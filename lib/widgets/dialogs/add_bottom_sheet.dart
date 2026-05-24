@@ -251,7 +251,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(32),
                 ),
-                color: context.col.surfaceContainer,
+                color: context.col.surfaceContainerLow,
               ),
               padding: EdgeInsets.only(
                 bottom: viewInsets.bottom,

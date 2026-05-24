@@ -13,6 +13,8 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .filled;
 
   const IconButtonM3E.outlined({
@@ -24,6 +26,8 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .outlined;
 
   const IconButtonM3E.tonal({
@@ -35,6 +39,8 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .tonal;
 
   const IconButtonM3E({
@@ -46,6 +52,8 @@ class IconButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .standard;
 
   final void Function()? onPressed;
@@ -56,14 +64,16 @@ class IconButtonM3E extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final ButtonShape shape;
+  final double? elevation;
+  final double? hoverElevation;
 
   @override
   Widget build(BuildContext context) {
     final col = context.col;
     Color? bgCol = backgroundColor;
     Color? fgCol = foregroundColor;
-    double elevation = 0;
-    double hoverElevation = 1;
+    double elev = elevation ?? 0;
+    double hoverElev = hoverElevation ?? 1;
     double? outlineWidth;
     Color? outlineColor;
 
@@ -99,11 +109,11 @@ class IconButtonM3E extends StatelessWidget {
           fgCol ??= col.onSurfaceVariant;
           outlineWidth = 1;
           outlineColor = col.outlineVariant;
-          hoverElevation = 0;
+          hoverElev = 0;
         case .standard:
           bgCol ??= Colors.transparent;
           fgCol ??= col.onSurfaceVariant;
-          hoverElevation = 0;
+          hoverElev = 0;
       }
     }
 
@@ -119,8 +129,8 @@ class IconButtonM3E extends StatelessWidget {
       iconPadding: 0,
       height: size.height,
       fontSize: 0,
-      elevation: elevation,
-      hoverElevation: hoverElevation,
+      elevation: elev,
+      hoverElevation: hoverElev,
       shrinkAnimation: false,
       outlineColor: outlineColor,
       outlineWidth: outlineWidth,

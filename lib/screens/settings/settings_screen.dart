@@ -36,7 +36,7 @@ class SettingsScreen extends ConsumerWidget {
           title: loc.colorTheme,
           subtitle: loc.colorThemeDescription,
           leading: const Icon(Icons.palette_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          trailing: const Icon(Icons.keyboard_arrow_right_rounded),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/settings/theme'),
         ),
@@ -44,8 +44,8 @@ class SettingsScreen extends ConsumerWidget {
           heroTag: 'style',
           title: loc.styleMotion,
           subtitle: loc.styleMotionDescription,
-          leading: const Icon(Icons.animation),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: const Icon(Icons.animation_rounded),
+          trailing: const Icon(Icons.keyboard_arrow_right_rounded),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/settings/style'),
         ),
@@ -55,7 +55,7 @@ class SettingsScreen extends ConsumerWidget {
             title: loc.upcomingDayNotifications,
             subtitle: loc.upcomingDayNotificationsDescription,
             leading: const Icon(Icons.notifications_outlined),
-            trailing: const Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right_rounded),
             onTap: (context) {
               Navigator.restorablePushNamed(
                 context,
@@ -68,7 +68,7 @@ class SettingsScreen extends ConsumerWidget {
           title: loc.localization,
           subtitle: loc.localizationSubtitle,
           leading: const Icon(Icons.language_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          trailing: const Icon(Icons.keyboard_arrow_right_rounded),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/settings/localization'),
         ),
@@ -78,7 +78,7 @@ class SettingsScreen extends ConsumerWidget {
           title: loc.shortcuts,
           subtitle: loc.shortcutsDescription,
           leading: const Icon(Icons.keyboard_alt_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          trailing: const Icon(Icons.keyboard_arrow_right_rounded),
           onTap: (context) =>
               Navigator.restorablePushNamed(context, '/settings/shortcuts'),
         ),
@@ -97,7 +97,7 @@ class SettingsScreen extends ConsumerWidget {
         SettingTile(
           heroTag: 'strava',
           title: loc.stravaCz,
-          leading: const Icon(Icons.restaurant_outlined),
+          leading: const Icon(Icons.restaurant_rounded),
           onTap: (context) => Navigator.restorablePushNamed(context, '/strava'),
           trailing: LoginStatusIcon(
             provider: stravaLoginProvider,
@@ -114,7 +114,7 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.restorablePushNamed(context, '/cloudsync'),
           trailing: ref.watch(firebaseLoginProvider).value == null
               ? null
-              : const Icon(Icons.check_circle, color: Colors.green),
+              : const Icon(Icons.check_circle_rounded, color: Colors.green),
         ),
         SettingTile(
           heroTag: 'about',
@@ -178,7 +178,7 @@ class SettingsScreen extends ConsumerWidget {
           SettingTile(
             isLast: true,
             title: loc.viewDatabase,
-            leading: const Icon(Icons.data_array),
+            leading: const Icon(Icons.data_array_rounded),
             onTap: (context) {
               Navigator.restorablePushNamed(context, '/database');
             },

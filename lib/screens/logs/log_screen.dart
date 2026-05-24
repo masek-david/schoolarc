@@ -31,9 +31,7 @@ class _LogScreenState extends State<LogScreen> {
                 }
               });
             },
-            icon: const Icon(
-              Icons.remove,
-            ),
+            icon: const Icon(Icons.remove_rounded),
           ),
           IconButtonM3E(
             onPressed: () {

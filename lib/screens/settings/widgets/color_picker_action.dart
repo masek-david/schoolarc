@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class ColorPickerAction extends StatelessWidget {
@@ -49,32 +50,17 @@ class ColorPickerAction extends StatelessWidget {
               final color = colors[index];
               final isHighlighted = index == selectedColorIndex;
 
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: isHighlighted
-                      ? Border.all(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          width: 4,
-                        )
-                      : null,
-                  color: color,
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(100),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () {
-                      vibrate.medium();
-                      onChanged(color);
-                    },
-                    child: isHighlighted ? const Icon(Icons.check) : null,
-                  ),
-                ),
+              // TODO toggle
+              return IconButtonM3E(
+                shape: isHighlighted ? .square : .round,
+                backgroundColor: color,
+                onPressed: () {
+                  vibrate.medium();
+                  onChanged(color);
+                },
+                icon: isHighlighted
+                    ? const Icon(Icons.check_rounded)
+                    : const SizedBox.shrink(),
               );
             },
           ),

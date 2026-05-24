@@ -31,7 +31,7 @@ class HomeWidgetService {
     showButtonDialog(
       context,
       title: context.loc.pickAction,
-      icon: Icons.add,
+      icon: Icons.add_rounded,
       buttons: [
         ButtonDialogButton(
           onTap: () {

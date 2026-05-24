@@ -230,7 +230,7 @@ class ErrorTile extends StatelessWidget {
             ),
           ),
           if (allowActions) ...resolveErrorAction(context, info),
-          if (actions != null) ...actions!,
+          ...?actions,
         ],
       ),
     );

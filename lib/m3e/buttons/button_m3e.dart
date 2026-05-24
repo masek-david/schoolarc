@@ -13,7 +13,9 @@ class ButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
+    this.outlineColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .elevated;
 
   const ButtonM3E.filled({
@@ -25,7 +27,9 @@ class ButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
+    this.outlineColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .filled;
 
   const ButtonM3E.tonal({
@@ -37,7 +41,9 @@ class ButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
+    this.outlineColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .tonal;
 
   const ButtonM3E.outlined({
@@ -49,7 +55,9 @@ class ButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
+    this.outlineColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .outlined;
 
   const ButtonM3E.text({
@@ -61,7 +69,9 @@ class ButtonM3E extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-    this.elevateOnHover = true,
+    this.outlineColor,
+    this.elevation,
+    this.hoverElevation,
   }) : colorStyle = .text;
 
   final void Function()? onPressed;
@@ -71,16 +81,18 @@ class ButtonM3E extends StatelessWidget {
   final ButtonColorStyle colorStyle;
   final Color? backgroundColor;
   final Color? foregroundColor;
-  final bool elevateOnHover;
+  final Color? outlineColor;
   final ButtonShape shape;
+  final double? elevation;
+  final double? hoverElevation;
 
   @override
   Widget build(BuildContext context) {
     final col = context.col;
     Color? bgCol = backgroundColor;
     Color? fgCol = foregroundColor;
-    double elevation = 0;
-    double hoverElevation = 1;
+    double elev = elevation ?? 0;
+    double hoverElev = hoverElevation ?? 1;
     double? outlineWidth;
     Color? outlineColor;
 
@@ -97,8 +109,8 @@ class ButtonM3E extends StatelessWidget {
         case .elevated:
           bgCol ??= col.surfaceContainerLow;
           fgCol ??= col.primary;
-          elevation = 1;
-          hoverElevation = 3;
+          elev = 1;
+          hoverElev = 3;
         case .filled:
           bgCol ??= col.primary;
           fgCol ??= col.onPrimary;
@@ -110,11 +122,11 @@ class ButtonM3E extends StatelessWidget {
           fgCol ??= col.onSurfaceVariant;
           outlineWidth = 1;
           outlineColor = col.outlineVariant;
-          hoverElevation = 0;
+          hoverElev = 0;
         case .text:
           bgCol ??= Colors.transparent;
           fgCol ??= col.primary;
-          hoverElevation = 0;
+          hoverElev = 0;
       }
     }
 
@@ -131,8 +143,8 @@ class ButtonM3E extends StatelessWidget {
       height: size.height,
       fontSize: size.fontSize,
       icon: icon,
-      elevation: elevation,
-      hoverElevation: hoverElevation,
+      elevation: elev,
+      hoverElevation: hoverElev,
       shrinkAnimation: true,
       outlineColor: outlineColor,
       outlineWidth: outlineWidth,

@@ -49,8 +49,8 @@ class OnboardingExtensions extends ConsumerWidget {
                 subtitle: context.loc.cloudSyncSubtitle,
                 leading: ref.watch(firebaseLoginProvider).value == null
                     ? null
-                    : const Icon(Icons.check_circle, color: Colors.green),
-                newLineAction: FilledButton.tonal(
+                    : const Icon(Icons.check_circle_rounded, color: Colors.green),
+                newLineAction: ButtonM3E.tonal(
                   onPressed: () {
                     Navigator.restorablePushNamed(
                       context,
@@ -79,7 +79,7 @@ class OnboardingExtensions extends ConsumerWidget {
                       )
                     : null,
                 newLineAction: useBaka
-                    ? FilledButton.tonal(
+                    ? ButtonM3E.tonal(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -114,7 +114,7 @@ class OnboardingExtensions extends ConsumerWidget {
                       )
                     : null,
                 newLineAction: useMeals
-                    ? FilledButton.tonal(
+                    ? ButtonM3E.tonal(
                         onPressed: () {
                           Navigator.restorablePushNamed(context, '/strava');
                         },

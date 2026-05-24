@@ -10,7 +10,6 @@ import 'package:schoolarc/screens/main_screens/home/widgets/meals_card.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/overview.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/timetable_card.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
-import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
@@ -83,11 +82,11 @@ class HomeScreen extends ConsumerWidget {
                   padding: EdgeInsets.fromLTRB(8, isWide ? 24 : 0, 8, 24),
                   child: const Overview(),
                 ),
-                if (isRecapDate() && !hasSeenRecap())
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: RecapButton.full(context),
-                  ),
+                // if (isRecapDate() && !hasSeenRecap())
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: RecapButton.full(context),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 10,

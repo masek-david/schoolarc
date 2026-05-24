@@ -37,7 +37,7 @@ class StyleMotionPage extends ConsumerWidget {
         SettingTile(
           title: loc.styleMotionScreenSwitchAnimationTitle,
           subtitle: loc.styleMotionScreenSwitchAnimationSubtitle,
-          leading: const Icon(Icons.timelapse),
+          leading: const Icon(Icons.timelapse_rounded),
           newLineAction: SliderAction(
             inititalValue: settings.get(Setting.pageSwitchAnimationDuration),
             divisions: 10,

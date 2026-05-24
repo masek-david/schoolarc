@@ -109,7 +109,7 @@ class FirebaseOverlay extends ConsumerWidget {
               ref.read(_opacityProvider.notifier).show();
             }
           },
-          icon: const Icon(Icons.hide_source),
+          icon: const Icon(Icons.hide_source_rounded),
         ),
       ],
     );

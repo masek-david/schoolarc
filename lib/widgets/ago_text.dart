@@ -44,7 +44,7 @@ class AgoText extends ConsumerWidget {
       children: [
         Transform.scale(
           scale: 0.7,
-          child: Icon(Icons.history, color: color),
+          child: Icon(Icons.history_rounded, color: color),
         ),
         Text(
           formatDuration(context, duration!),

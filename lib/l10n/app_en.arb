@@ -299,8 +299,6 @@
   "developerMode": "Developer mode",
   "useExperimentalHomeworkTileOverlay": "Use experimental homework tile overlay",
   "colorShowcaseTitle": "This is how the app will look with these colors:",
-  "filledButton": "Filled button",
-  "choiceChip": "Choice chip",
   "loginToStrava": "Login to Strava.cz",
   "schoolCanteenId": "School canteen ID",
   "schoolCanteenIdDescription": "School canteen id is a 4-digit number you use to login to your Strava app.",
@@ -451,6 +449,7 @@
   "minutesShort": " min",
   "hoursShort": "h",
   "daysShort": "d",
+  "share": "Share",
   "agreeSendCrashReports": "Agree to send crash reports",
   "agreeSendCrashReportsSubtitle": "This is optional, however, it will help me fix bugs :)",
   "agreeToPrivacyPolicy": "Agree to privacy policy"

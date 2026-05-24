@@ -69,8 +69,25 @@ class _OnboardingEndState extends State<OnboardingEnd>
     super.dispose();
   }
 
-  void animate() {
-    if (_controller.isAnimating) {
+  void onTapDown() {
+    if (_controller.value > 0.02) {
+      return;
+    }
+
+    vibrate.light();
+    _controller.animateTo(0.02);
+  }
+
+  void onTapCancel() {
+    if (_controller.value > 0.02) {
+      return;
+    }
+
+    _controller.animateTo(0);
+  }
+
+  void onTapUp() {
+    if (_controller.value > 0.02) {
       return;
     }
 
@@ -122,7 +139,9 @@ class _OnboardingEndState extends State<OnboardingEnd>
                     child: Transform.rotate(
                       angle: morphAnimation.value * pi,
                       child: GestureDetector(
-                        onTap: animate,
+                        onTapDown: (details) => onTapDown(),
+                        onTapUp: (details) => onTapUp(),
+                        onTapCancel: onTapCancel,
                         child: Container(
                           decoration: ShapeDecoration(
                             shape: ShapeBorder.lerp(

@@ -97,7 +97,7 @@ class RecentlyDeletedScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline_rounded),
           ),
         ],
       ),

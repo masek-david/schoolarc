@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 
 class SettingsScaffold extends StatelessWidget {
@@ -16,8 +18,9 @@ class SettingsScaffold extends StatelessWidget {
   final String title;
   final String heroTag;
   final List<Widget> children;
+
   /// If child widget is provided, children is ignored
-  /// 
+  ///
   /// child must be scrollable
   final Widget? child;
   final List<Widget> actions;
@@ -33,9 +36,11 @@ class SettingsScaffold extends StatelessWidget {
           child: MediaQuery.removePadding(
             context: context,
             removeTop: true,
-            child: child ?? ListView(
-              children: children,
-            ),
+            child:
+                child ??
+                ListView(
+                  children: children,
+                ),
           ),
         ),
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -44,6 +49,14 @@ class SettingsScaffold extends StatelessWidget {
               collapsedHeight: kToolbarHeight,
               expandedHeight: expandedHeight,
               pinned: true,
+              leading: Align(
+                alignment: .center,
+                child: IconButtonM3E(
+                  onPressed: () => Navigator.pop(context),
+                  backgroundColor: context.col.surfaceContainer,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+              ),
               actions: actions,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
@@ -63,7 +76,7 @@ class SettingsScaffold extends StatelessWidget {
                   return FlexibleSpaceBar(
                     titlePadding: EdgeInsets.only(
                       left: leftPadding.toDouble(),
-                      bottom: 14
+                      bottom: 14,
                     ),
                     expandedTitleScale: 1,
                     title: Hero(

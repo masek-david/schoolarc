@@ -1,11 +1,37 @@
 import 'package:flutter/material.dart';
 
-const curveFastSpatial = Cubic(0.42, 1.67, 0.21, 0.90);
-const durationFastSpatial = Duration(milliseconds: 350);
-const curveDefaultSpatial = Cubic(0.38, 1.21, 0.22, 1.00);
-const durationDefaultSpatial = Duration(milliseconds: 500);
-const curveSlowSpatial = Cubic(0.39, 1.29, 0.35, 0.98);
-const durationSlowSpatial = Duration(milliseconds: 650);
+/// Spatial spring tokens are used for animations that move something on screen, for example the x and y position, rotation, size, rounded corners. This spring overshoots the final value and bounces into place.
+enum SpatialMotion {
+  /// Default
+  ///
+  /// Animations that partially cover the screen, such as bottom sheet and  expanded navigation rail	Opacity of the content within a  navigation rail
+  defaultMotion(
+    curve: Cubic(0.38, 1.21, 0.22, 1.00),
+    duration: Duration(milliseconds: 500),
+  ),
+
+  /// Fast
+  ///
+  /// Small components, such as switches and  buttons	Color change of the switch handle
+  fast(
+    curve: Cubic(0.42, 1.67, 0.21, 0.90),
+    duration: Duration(milliseconds: 350),
+  ),
+
+  /// Slow
+  ///
+  /// Full-screen animations	Full-screen content refresh
+  slow(
+    curve: Cubic(0.39, 1.29, 0.35, 0.98),
+    duration: Duration(milliseconds: 650),
+  ),
+  ;
+
+  const SpatialMotion({required this.curve, required this.duration});
+
+  final Curve curve;
+  final Duration duration;
+}
 
 enum ButtonColorStyle { elevated, filled, tonal, outlined, text }
 

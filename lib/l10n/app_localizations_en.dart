@@ -925,12 +925,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'This is how the app will look with these colors:';
 
   @override
-  String get filledButton => 'Filled button';
-
-  @override
-  String get choiceChip => 'Choice chip';
-
-  @override
   String get loginToStrava => 'Login to Strava.cz';
 
   @override
@@ -1443,6 +1437,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get daysShort => 'd';
+
+  @override
+  String get share => 'Share';
 
   @override
   String get agreeSendCrashReports => 'Agree to send crash reports';

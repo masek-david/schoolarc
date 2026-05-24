@@ -19,7 +19,7 @@ class ShortcutsPage extends StatelessWidget {
           trailing: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.keyboard_control_key),
+              Icon(Icons.keyboard_control_key_rounded),
               _KeyboardIcon('H'),
             ],
           ),
@@ -30,7 +30,7 @@ class ShortcutsPage extends StatelessWidget {
           trailing: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.keyboard_control_key),
+              Icon(Icons.keyboard_control_key_rounded),
               _KeyboardIcon('E'),
             ],
           ),
@@ -42,7 +42,7 @@ class ShortcutsPage extends StatelessWidget {
           trailing: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.keyboard_control_key),
+              Icon(Icons.keyboard_control_key_rounded),
               _KeyboardIcon('F'),
             ],
           ),
@@ -52,7 +52,7 @@ class ShortcutsPage extends StatelessWidget {
           trailing: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.keyboard_control_key),
+              Icon(Icons.keyboard_control_key_rounded),
               _KeyboardIcon('1'),
               Text(' - '),
               _KeyboardIcon('4'),
@@ -65,7 +65,7 @@ class ShortcutsPage extends StatelessWidget {
           trailing: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.keyboard_control_key),
+              Icon(Icons.keyboard_control_key_rounded),
               _KeyboardIcon('D'),
             ],
           ),

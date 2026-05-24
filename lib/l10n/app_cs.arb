@@ -299,8 +299,6 @@
   "developerMode": "Režim vývojáře",
   "useExperimentalHomeworkTileOverlay": "Používat experimentální překrývané okno úkolu",
   "colorShowcaseTitle": "Takto bude aplikace vypadat s těmito barvami:",
-  "filledButton": "Tlačítko",
-  "choiceChip": "Výběr",
   "loginToStrava": "Přihlásit se do Strava.cz",
   "schoolCanteenId": "ID školní jídelny",
   "schoolCanteenIdDescription": "ID školní jídelny je 4místné číslo, které používáte k přihlášení do aplikace Strava.",

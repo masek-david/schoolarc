@@ -41,12 +41,14 @@ TextStyle googleSansFlex({
   double? slant,
   double? roundness,
   double? letterSpacing,
+  double? height,
 }) {
   return TextStyle(
     fontFamily: 'Google Sans Flex',
     fontSize: size,
     letterSpacing: letterSpacing,
     color: color,
+    height: height,
     fontVariations: [
       if (width != null) FontVariation('wdth', width),
       if (weight != null) FontVariation('wght', weight),

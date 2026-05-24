@@ -6,23 +6,19 @@ plugins {
     id("kotlin-android")
     // Compose [version]
     // this version matches your Kotlin version
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
     namespace = "cz.masci.schoolarc"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     defaultConfig {
@@ -63,10 +59,10 @@ composeCompiler {
 
 dependencies {
     implementation("androidx.glance:glance-appwidget:1.1.1")
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.google.code.gson:gson:2.14.0")
     implementation("androidx.compose.material3:material3-android:1.4.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("com.materialkolor:material-color-utilities:4.0.2")
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation("com.materialkolor:material-color-utilities:4.1.1")
     implementation("androidx.glance:glance-preview:1.1.1")
     debugImplementation("androidx.glance:glance-preview:1.1.1")
     debugImplementation("androidx.glance:glance-appwidget-preview:1.1.1")

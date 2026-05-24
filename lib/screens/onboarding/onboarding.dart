@@ -111,11 +111,11 @@ class _OnboardingState extends State<Onboarding> {
               ? [
                   IconButtonM3E(
                     onPressed: () => next(by: -1),
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   IconButtonM3E(
                     onPressed: () => next(),
-                    icon: const Icon(Icons.arrow_forward),
+                    icon: const Icon(Icons.arrow_forward_rounded),
                   ),
                 ]
               : null,

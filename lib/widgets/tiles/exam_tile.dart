@@ -81,7 +81,7 @@ class ExamTile extends StatelessWidget {
                         if (exam.description != '') const SizedBox(width: 8),
                         if (exam.description != '')
                           Icon(
-                            Icons.notes,
+                            Icons.notes_rounded,
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurfaceVariant,
