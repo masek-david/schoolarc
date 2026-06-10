@@ -1,11 +1,13 @@
 ## [2.2.4](2026-05-;build57)
 ### Added
+- Added 2025-26 year recap and sticker
 - Added license
 - Contact developer
 - Open web search with images of the meal
 
 ### Changed
 - New icon for Bakaláři
+- Improved the app theme color options
 
 ### Fixed
 - Android notification now arrives more precisely

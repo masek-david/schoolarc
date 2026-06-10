@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/home/home_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/screens/onboarding/onboarding.dart';
+import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/services/firebase/app_info_notifier.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -54,6 +57,7 @@ class MainApp extends ConsumerStatefulWidget {
 
 class _MainAppState extends ConsumerState<MainApp> {
   late final AppLifecycleListener appStateListener;
+  late final StreamSubscription<Uri> appLinksSub;
   bool showingOnboarding = false;
 
   void endOnboarding() {
@@ -177,6 +181,26 @@ class _MainAppState extends ConsumerState<MainApp> {
   void initState() {
     super.initState();
 
+    final appLinks = AppLinks();
+    appLinksSub = appLinks.uriLinkStream.listen((uri) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          try {
+            final recap = RecapData.decode(
+              Uri.decodeComponent(uri.query),
+            );
+            Navigator.pushNamed(
+              context,
+              '/recap-sticker',
+              arguments: recap,
+            );
+          } catch (e) {
+            showErrorMessage(context, e.toString());
+          }
+        },
+      );
+    });
+
     final firstTimeOpeningApp = settings.firstTimeOpeningApp;
 
     appStateListener = AppLifecycleListener(
@@ -231,6 +255,7 @@ class _MainAppState extends ConsumerState<MainApp> {
   @override
   void dispose() {
     appStateListener.dispose();
+    appLinksSub.cancel();
     super.dispose();
   }
 

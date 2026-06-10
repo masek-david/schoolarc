@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/m3e_parameters.dart';
-import 'package:schoolarc/screens/recap/recap_screen.dart';
-import 'package:schoolarc/screens/recap/recap_sticker.dart';
+import 'package:schoolarc/screens/recap/recap.dart';
+import 'package:schoolarc/screens/recap/sticker/recap_sticker.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -19,11 +19,23 @@ class RecapEndPage extends StatelessWidget {
     final curve = SpatialMotion.fast.curve;
 
     return AnimatedPage(
+      overlayButton: ButtonM3E.filled(
+        size: .large,
+        onPressed: () {
+          settings.save(
+            Setting.recapShownForYear,
+            DateTime.now().year,
+          );
+          Navigator.pop(context);
+        },
+        icon: const Text('🏄'),
+        child: const Text('Exit'),
+      ),
       duration: const Duration(milliseconds: 800),
       itemDelay: const Duration(milliseconds: 800),
       children: [
         AnimatedItem(
-          spacing: 150,
+          spacing: 48,
           builder: (isShown) {
             return AnimatedDefaultTextStyle(
               style: googleSansFlex(
@@ -33,7 +45,7 @@ class RecapEndPage extends StatelessWidget {
                 weight: isShown ? 500 : 1000,
                 color: context.col.onSurface,
               ),
-              curve: SpatialMotion.fast.curve,
+              curve: curve,
               duration: const Duration(milliseconds: 800),
               child: const Text('That\'s it for this year.'),
             );
@@ -62,25 +74,6 @@ class RecapEndPage extends StatelessWidget {
           builder: (isShown) {
             return Align(
               child: RecapSticker(recapData: recapData),
-            );
-          },
-        ),
-        AnimatedItem(
-          spacing: 72,
-          builder: (isShown) {
-            return Align(
-              child: ButtonM3E.filled(
-                size: .large,
-                onPressed: () {
-                  settings.save(
-                    Setting.recapShownForYear,
-                    DateTime.now().year,
-                  );
-                  Navigator.pop(context);
-                },
-                icon: const Text('🏄'),
-                child: const Text('Exit'),
-              ),
             );
           },
         ),

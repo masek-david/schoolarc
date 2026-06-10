@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:schoolarc/models/priority_model.dart';
-import 'package:schoolarc/screens/recap/recap_screen.dart';
+import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
+import 'package:schoolarc/utils/globals.dart';
 
 /// 3.5 x 2 in  |  8.9 x 5.08 cm  |  336 x 192 px
 class RecapSticker26 extends StatelessWidget {
@@ -54,7 +54,7 @@ class RecapSticker26 extends StatelessWidget {
       }
     }
 
-    final r1 = 35.0;
+    final r1 = recapData.subjects.first.usedTimes > 0 ? 35.0 : double.nan;
     final r2 =
         r1 * recapData.subjects[1].usedTimes / recapData.subjects[0].usedTimes;
     final r3 =
@@ -76,13 +76,19 @@ class RecapSticker26 extends StatelessWidget {
     final x3 = (r1 + r3) * sin(pi / 2 - delta - alpha) + x1;
     final y3 = (r1 + r3) * cos(pi / 2 - delta - alpha) + y1;
 
+    final col = ThemeData.from(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: presetColors[recapData.colorIndex!],
+      ),
+    ).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
         boxShadow: const [
           BoxShadow(blurRadius: 5, offset: Offset(4, 4)),
         ],
         borderRadius: BorderRadius.circular(16),
-        color: context.col.surfaceContainer,
+        color: col.surfaceContainer,
       ),
       width: 336,
       height: 192,
@@ -90,63 +96,66 @@ class RecapSticker26 extends StatelessWidget {
       child: Stack(
         children: [
           Align(
-            alignment: const .xy(0.76, -1),
+            alignment: const .xy(1, -1),
             child: SizedBox(
               height: 50,
               child: PrettyQrView(
                 decoration: PrettyQrDecoration(
                   shape: PrettyQrSmoothSymbol(
-                    color: context.col.tertiary.withAlpha(150),
+                    color: col.tertiary.withAlpha(150),
                   ),
                 ),
                 qrImage: QrImage(
                   QrCode.fromData(
-                    data: recapData.encode(),
+                    data: recapData.encode().toString(),
                     errorCorrectLevel: QrErrorCorrectLevel.L,
                   ),
                 ),
               ),
             ),
           ),
-          Positioned(
-            bottom: y3 - r3,
-            left: x3 - r3,
-            width: r3 * 2,
-            height: r3 * 2,
-            child: _buildCircle(
-              context,
-              size: r3,
-              text: recapData.subjects[2].subject.shortcut,
-              bg: context.col.secondaryContainer,
-              fg: context.col.onSecondaryContainer,
+          if (!r3.isNaN)
+            Positioned(
+              bottom: y3 - r3,
+              left: x3 - r3,
+              width: r3 * 2,
+              height: r3 * 2,
+              child: _buildCircle(
+                context,
+                size: r3,
+                text: recapData.subjects[2].subject.shortcut,
+                bg: col.secondaryContainer,
+                fg: col.onSecondaryContainer,
+              ),
             ),
-          ),
-          Positioned(
-            bottom: y2 - r2,
-            left: x2 - r2,
-            width: r2 * 2,
-            height: r2 * 2,
-            child: _buildCircle(
-              context,
-              size: r2,
-              text: recapData.subjects[1].subject.shortcut,
-              bg: context.col.tertiaryContainer,
-              fg: context.col.onTertiaryContainer,
+          if (!r2.isNaN)
+            Positioned(
+              bottom: y2 - r2,
+              left: x2 - r2,
+              width: r2 * 2,
+              height: r2 * 2,
+              child: _buildCircle(
+                context,
+                size: r2,
+                text: recapData.subjects[1].subject.shortcut,
+                bg: col.tertiaryContainer,
+                fg: col.onTertiaryContainer,
+              ),
             ),
-          ),
-          Positioned(
-            bottom: y1 - r1,
-            left: x1 - r1,
-            width: r1 * 2,
-            height: r1 * 2,
-            child: _buildCircle(
-              context,
-              size: r1,
-              text: recapData.subjects[0].subject.shortcut,
-              bg: context.col.primaryContainer,
-              fg: context.col.onPrimaryContainer,
+          if (!r1.isNaN)
+            Positioned(
+              bottom: y1 - r1,
+              left: x1 - r1,
+              width: r1 * 2,
+              height: r1 * 2,
+              child: _buildCircle(
+                context,
+                size: r1,
+                text: recapData.subjects[0].subject.shortcut,
+                bg: col.primaryContainer,
+                fg: col.onPrimaryContainer,
+              ),
             ),
-          ),
           Align(
             alignment: const .xy(1, 1),
             child: Row(
@@ -164,7 +173,7 @@ class RecapSticker26 extends StatelessWidget {
                         width: 131,
                         roundness: 100,
                         slant: -10,
-                        color: context.col.tertiary,
+                        color: col.tertiary,
                       ),
                     ),
                     Text(
@@ -175,7 +184,7 @@ class RecapSticker26 extends StatelessWidget {
                         weight: 300,
                         width: 50,
                         roundness: 100,
-                        color: context.col.tertiary,
+                        color: col.tertiary,
                       ),
                     ),
                   ],
@@ -191,7 +200,7 @@ class RecapSticker26 extends StatelessWidget {
                         width: 131,
                         roundness: 100,
                         slant: -10,
-                        color: context.col.tertiary,
+                        color: col.tertiary,
                       ),
                     ),
                     Text(
@@ -202,7 +211,7 @@ class RecapSticker26 extends StatelessWidget {
                         weight: 300,
                         width: 50,
                         roundness: 100,
-                        color: context.col.tertiary,
+                        color: col.tertiary,
                       ),
                     ),
                   ],
@@ -210,9 +219,8 @@ class RecapSticker26 extends StatelessWidget {
               ],
             ),
           ),
-
           Align(
-            alignment: const .xy(1, -1),
+            alignment: const .xy(0.60, -1),
             child: SizedBox(
               height: 25,
               child: Opacity(
@@ -221,9 +229,8 @@ class RecapSticker26 extends StatelessWidget {
                   'assets/schoolarc_icon.svg',
                   colorMapper: LogoColorMapper(
                     isDark: Theme.of(context).brightness == Brightness.dark,
-                    primaryFixedDimColor: context.col.primaryFixedDim
-                        .toARGB32(),
-                    secondaryColor: context.col.secondary.toARGB32(),
+                    primaryFixedDimColor: col.primaryFixedDim.toARGB32(),
+                    secondaryColor: col.secondary.toARGB32(),
                   ),
                 ),
               ),
@@ -289,7 +296,7 @@ class RecapSticker26 extends StatelessWidget {
                       isCurved: true,
                       isStrokeCapRound: true,
                       preventCurveOverShooting: true,
-                      color: context.col.primary.withAlpha(120),
+                      color: col.primary.withAlpha(120),
                       barWidth: 4,
                       dotData: FlDotData(
                         checkToShowDot: (spot, barData) {
@@ -312,16 +319,15 @@ class RecapSticker26 extends StatelessWidget {
               ),
             ),
           ),
-
           Align(
             alignment: const .xy(-1, -1.1),
             child: Column(
               crossAxisAlignment: .start,
               children: [
                 Text(
-                  'David',
+                  recapData.name,
                   style: googleSansFlex(
-                    color: context.col.primary,
+                    color: col.primary,
                     size: 40,
                     weight: 800,
                     roundness: 100,
@@ -333,7 +339,7 @@ class RecapSticker26 extends StatelessWidget {
                 Text(
                   '2025-26',
                   style: googleSansFlex(
-                    color: context.col.primary,
+                    color: col.primary,
                     size: 14,
                     weight: 200,
                     width: 151,

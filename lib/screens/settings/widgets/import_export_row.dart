@@ -76,7 +76,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
               File file = File(pickedFile.files.first.path!);
               Uint8List bytes;
               if (kIsWeb) {
-                bytes = pickedFile.files.first.bytes!;
+                bytes = await pickedFile.files.first.readAsBytes();
               } else {
                 bytes = await file.readAsBytes();
               }

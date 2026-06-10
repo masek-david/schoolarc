@@ -1,7 +1,5 @@
 package cz.masci.schoolarc
 
-import es.antonborri.home_widget.HomeWidgetGlanceState
-import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import Task
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -52,6 +50,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.materialkolor.blend.Blend
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
+import es.antonborri.home_widget.HomeWidgetGlanceState
+import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import es.antonborri.home_widget.actionStartActivity
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

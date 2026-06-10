@@ -17,6 +17,7 @@ import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
 import 'package:schoolarc/screens/meals/strava_login_screen.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
+import 'package:schoolarc/screens/recap/sticker/recap_sticker_screen.dart';
 import 'package:schoolarc/screens/recently_deleted_screen.dart';
 import 'package:schoolarc/screens/settings/about_app.dart';
 import 'package:schoolarc/screens/settings/setting_pages/localization_page.dart';
@@ -244,6 +245,7 @@ class AppConfig extends ConsumerWidget {
                 '/about': (context) => const AboutApp(),
                 '/changelog': (context) => const ChangelogScreen(),
                 '/tutorial': (context) => const Tutorial(),
+                '/recap-sticker': (context) => const RecapStickerScreen(),
               },
             );
           },

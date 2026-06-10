@@ -53,6 +53,21 @@ const stravaPollingRate = Duration(minutes: 240);
 const noChange = Object();
 const githubUrl = 'https://github.com/masek-david/schoolarc';
 
+/// Handpicked colors used for the whole app theme as well as sticker colors, see https://bitfume.com/tools/hue-names/#x
+const presetColors = [
+  Color(0xFFFF0000), // red
+  Color(0xffFF8000), // Orange
+  Color(0xffffff00), // yellow
+  Color(0xFFBFFF00), // lime
+  Color(0xFF00FF60), // irish emerald
+  Color(0xFF00FFDF), // aqua
+  Color(0xFF009FFF), // celeste
+  Color(0xFF0040FF), // Cerulean
+  Color(0xFF8000FF), // violet
+  Color(0xFFFF00FF), // magenta
+  Color(0xFFFF0080), // rose
+];
+
 /// Returns the week number of the week that should be shown in the current timetable - for Saturday and Sunday show next week
 int getCurrentTimetableWeekIndex() {
   final now = DateTime.now();

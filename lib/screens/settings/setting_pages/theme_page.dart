@@ -67,8 +67,8 @@ class ThemePage extends ConsumerWidget {
           enabled: !useDeviceColor,
           newLineAction: ColorPickerAction(
             color: color,
-            onChanged: (value) {
-              ref.read(themeColorValueProvider.notifier).set(value.toARGB32());
+            onChanged: (color, _) {
+              ref.read(themeColorValueProvider.notifier).set(color.toARGB32());
             },
           ),
         ),

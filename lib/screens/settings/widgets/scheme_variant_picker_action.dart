@@ -48,6 +48,8 @@ class _SchemeVariantPickerActionState
                 dynamicSchemeVariant: schemeVariant,
               );
 
+              // TODO toggle m3e button, animated checkmark
+
               return Tooltip(
                 message: schemeVariant.name.camelToSentence(),
                 preferBelow: false,

@@ -8,7 +8,6 @@ fix refresh in calendar
 
 !!! github builds have wrong version
 
-sticker
 better sort in search 
 
 # m3e

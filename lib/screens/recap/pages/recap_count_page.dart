@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/m3e/m3e_parameters.dart';
-import 'package:schoolarc/screens/recap/recap_screen.dart';
+import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -24,6 +24,12 @@ class RecapCountPage extends StatelessWidget {
     return AnimatedPage(
       duration: const Duration(milliseconds: 800),
       itemDelay: const Duration(milliseconds: 800),
+      overlayButton: IconButtonM3E.tonal(
+        width: .wide,
+        size: .large,
+        icon: const Icon(Icons.keyboard_arrow_right_rounded),
+        onPressed: next,
+      ),
       children: [
         AnimatedItem(
           spacing: 48,
@@ -99,22 +105,6 @@ class RecapCountPage extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        ),
-        AnimatedItem(
-          spacing: 72,
-          builder: (isShown) {
-            return Row(
-              mainAxisAlignment: .end,
-              children: [
-                IconButtonM3E.tonal(
-                  width: .wide,
-                  size: .large,
-                  icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                  onPressed: next,
-                ),
-              ],
             );
           },
         ),
