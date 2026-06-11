@@ -75,22 +75,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yes => 'Yes';
 
   @override
-  String get high => 'High';
+  String priority(String priority) {
+    String _temp0 = intl.Intl.selectLogic(
+      priority,
+      {
+        '0': 'None',
+        '1': 'Low',
+        '2': 'Medium',
+        '3': 'High',
+        'other': '',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get medium => 'Medium';
-
-  @override
-  String get low => 'Low';
-
-  @override
-  String get noPriority => 'No priority';
-
-  @override
-  String get anotherYearBehind => 'Another year behind';
-
-  @override
-  String get viewYearStats => 'View stats about your year';
+  String priorityAccusative(String priority) {
+    String _temp0 = intl.Intl.selectLogic(
+      priority,
+      {
+        '0': 'None',
+        '1': 'Low',
+        '2': 'Medium',
+        '3': 'High',
+        'other': '',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get importing => 'Importing';
@@ -1450,4 +1462,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agreeToPrivacyPolicy => 'Agree to privacy policy';
+
+  @override
+  String get recapAnotherYearFlewBy => 'Another year flew by';
+
+  @override
+  String get recapViewStats => 'View stats about your year';
+
+  @override
+  String get recapLetsSeeHowYouDid => 'Now let\'s see how you did:';
+
+  @override
+  String get recapHardestDay => 'Which day was usually the hardest?';
+
+  @override
+  String get recapNotEnoughData =>
+      'There isn\'t enough data to show :( Keep using the app!';
+
+  @override
+  String get recapBusiestDayStart => 'On average, ';
+
+  @override
+  String recapBusiestDayEnd(String weekday) {
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        'other': '',
+      },
+    );
+    return ' ${_temp0}was your busiest day.';
+  }
+
+  @override
+  String get recapThatsIt => 'That\'s it for this year.';
+
+  @override
+  String get recapEnjoySummer => 'Enjoy your summer break!';
+
+  @override
+  String get recapWhichPriority => 'Which priority did you use the most?';
+
+  @override
+  String get recapMostUsedPriorityStart => 'You assigned the ';
+
+  @override
+  String get recapMostUsedPriorityEnd => ' priority more than the others.';
+
+  @override
+  String get recapWhichSubject => 'Which subject was the most demanding?';
+
+  @override
+  String get recapMostUsedSubjectStart => 'You assigned the subject ';
+
+  @override
+  String get recapMostUsedSubjectEnd => ' more than others.';
 }

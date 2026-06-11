@@ -81,22 +81,34 @@ class AppLocalizationsCs extends AppLocalizations {
   String get yes => 'Ano';
 
   @override
-  String get high => 'Vysoká';
+  String priority(String priority) {
+    String _temp0 = intl.Intl.selectLogic(
+      priority,
+      {
+        '0': 'Žádná',
+        '1': 'Nízká',
+        '2': 'Střední',
+        '3': 'Vysoká',
+        'other': '',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get medium => 'Střední';
-
-  @override
-  String get low => 'Nízká';
-
-  @override
-  String get noPriority => 'Bez priority';
-
-  @override
-  String get anotherYearBehind => 'Další rok za námi';
-
-  @override
-  String get viewYearStats => 'Zobrazit statistiky vašeho roku';
+  String priorityAccusative(String priority) {
+    String _temp0 = intl.Intl.selectLogic(
+      priority,
+      {
+        '0': 'Žádnou',
+        '1': 'Nízkou',
+        '2': 'Střední',
+        '3': 'Vysokou',
+        'other': '',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get importing => 'Importování';
@@ -1460,7 +1472,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get daysShort => 'd';
 
   @override
-  String get share => 'Share';
+  String get share => 'Sdílet';
 
   @override
   String get agreeSendCrashReports =>
@@ -1473,4 +1485,66 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get agreeToPrivacyPolicy =>
       'Souhlasím se zásadami ochrany osobních údajů';
+
+  @override
+  String get recapAnotherYearFlewBy => 'Další rok je za námi';
+
+  @override
+  String get recapViewStats => 'Zobrazit statistiky roku';
+
+  @override
+  String get recapLetsSeeHowYouDid => 'Pojďme se podívat, jak se vám dařilo:';
+
+  @override
+  String get recapHardestDay => 'Který den byl obvykle ten nejnáročnější?';
+
+  @override
+  String get recapNotEnoughData =>
+      'Není dostatek dat k zobrazení :( Používejte aplikaci dál!';
+
+  @override
+  String get recapBusiestDayStart => '';
+
+  @override
+  String recapBusiestDayEnd(String weekday) {
+    String _temp0 = intl.Intl.selectLogic(
+      weekday,
+      {
+        '1': 'bylo',
+        '2': 'bylo',
+        '3': 'byla',
+        '4': 'byl',
+        '5': 'byl',
+        '6': 'byla',
+        '7': 'byla',
+        'other': 'neznámé',
+      },
+    );
+    return ' $_temp0 v průměru váš nejrušnější den.';
+  }
+
+  @override
+  String get recapThatsIt => 'To je pro tento rok vše.';
+
+  @override
+  String get recapEnjoySummer => 'Užijte si letní prázdniny!';
+
+  @override
+  String get recapWhichPriority => 'Kterou prioritu jste použili nejvíce?';
+
+  @override
+  String get recapMostUsedPriorityStart => '';
+
+  @override
+  String get recapMostUsedPriorityEnd =>
+      ' prioritu jste přiřadili častěji než ostatní.';
+
+  @override
+  String get recapWhichSubject => 'Který předmět byl nejnáročnější?';
+
+  @override
+  String get recapMostUsedSubjectStart => 'Předmět ';
+
+  @override
+  String get recapMostUsedSubjectEnd => ' jste přiřadili častěji než ostatní.';
 }

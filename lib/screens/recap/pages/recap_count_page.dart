@@ -44,7 +44,7 @@ class RecapCountPage extends StatelessWidget {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('Another year flew by.'),
+              child: Text(context.loc.recapAnotherYearFlewBy),
             );
           },
         ),
@@ -60,7 +60,7 @@ class RecapCountPage extends StatelessWidget {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('Now let\'s see how you did:'),
+              child: Text(context.loc.recapLetsSeeHowYouDid),
             );
           },
         ),

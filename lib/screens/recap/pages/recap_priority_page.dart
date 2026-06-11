@@ -94,24 +94,24 @@ class _SubjectsPageState extends State<RecapPriorityPage> {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('Which priority did you use the most?'),
+              child: Text(context.loc.recapWhichPriority),
             );
           },
         ),
         AnimatedItem(
           spacing: 32,
           builder: (isShown) {
+            if (widget.recapData.needsMoreData) {
+              return Text(
+                context.loc.recapNotEnoughData,
+                style: context.txt.titleMedium,
+              );
+            }
+
             final height = 300.0;
             final columnWidth = 60.0;
             final outerPadding = 8.0;
             final innerPadding = 4.0;
-
-            if (widget.recapData.needsMoreData) {
-              return Text(
-                'There isnt\'t enough data to show :( . Keep using the app!',
-                style: context.txt.titleMedium,
-              );
-            }
 
             return GestureDetector(
               onTap: () {
@@ -197,18 +197,17 @@ class _SubjectsPageState extends State<RecapPriorityPage> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'You assigned the priority ',
+                    text: context.loc.recapMostUsedPriorityStart,
                     style: text.headlineSmall,
                   ),
                   TextSpan(
-                    text: TaskPriority(mostPickedIndex).name(context),
+                    text: context.loc.priorityAccusative(mostPickedIndex.toString()),
                     style: text.displaySmall!.copyWith(
                       color: TaskPriority(mostPickedIndex).getColor(context),
                     ),
                   ),
                   TextSpan(
-                    text: ' more than the others.',
-
+                    text: context.loc.recapMostUsedPriorityEnd,
                     style: text.headlineSmall,
                   ),
                 ],

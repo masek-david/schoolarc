@@ -29,7 +29,7 @@ class RecapEndPage extends StatelessWidget {
           Navigator.pop(context);
         },
         icon: const Text('🏄'),
-        child: const Text('Exit'),
+        child: Text(context.loc.exit),
       ),
       duration: const Duration(milliseconds: 800),
       itemDelay: const Duration(milliseconds: 800),
@@ -47,7 +47,7 @@ class RecapEndPage extends StatelessWidget {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('That\'s it for this year.'),
+              child: Text(context.loc.recapThatsIt),
             );
           },
         ),
@@ -63,9 +63,7 @@ class RecapEndPage extends StatelessWidget {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text(
-                'Enjoy your summer break!',
-              ),
+              child: Text(context.loc.recapEnjoySummer),
             );
           },
         ),

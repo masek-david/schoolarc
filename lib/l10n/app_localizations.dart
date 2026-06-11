@@ -158,41 +158,17 @@ abstract class AppLocalizations {
   /// **'Yes'**
   String get yes;
 
-  /// No description provided for @high.
+  /// No description provided for @priority.
   ///
   /// In en, this message translates to:
-  /// **'High'**
-  String get high;
+  /// **'{priority, select, 0{None} 1{Low} 2{Medium} 3{High} other{}}'**
+  String priority(String priority);
 
-  /// No description provided for @medium.
+  /// No description provided for @priorityAccusative.
   ///
   /// In en, this message translates to:
-  /// **'Medium'**
-  String get medium;
-
-  /// No description provided for @low.
-  ///
-  /// In en, this message translates to:
-  /// **'Low'**
-  String get low;
-
-  /// No description provided for @noPriority.
-  ///
-  /// In en, this message translates to:
-  /// **'No priority'**
-  String get noPriority;
-
-  /// No description provided for @anotherYearBehind.
-  ///
-  /// In en, this message translates to:
-  /// **'Another year behind'**
-  String get anotherYearBehind;
-
-  /// No description provided for @viewYearStats.
-  ///
-  /// In en, this message translates to:
-  /// **'View stats about your year'**
-  String get viewYearStats;
+  /// **'{priority, select, 0{None} 1{Low} 2{Medium} 3{High} other{}}'**
+  String priorityAccusative(String priority);
 
   /// No description provided for @importing.
   ///
@@ -2537,6 +2513,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Agree to privacy policy'**
   String get agreeToPrivacyPolicy;
+
+  /// No description provided for @recapAnotherYearFlewBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Another year flew by'**
+  String get recapAnotherYearFlewBy;
+
+  /// No description provided for @recapViewStats.
+  ///
+  /// In en, this message translates to:
+  /// **'View stats about your year'**
+  String get recapViewStats;
+
+  /// No description provided for @recapLetsSeeHowYouDid.
+  ///
+  /// In en, this message translates to:
+  /// **'Now let\'s see how you did:'**
+  String get recapLetsSeeHowYouDid;
+
+  /// No description provided for @recapHardestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Which day was usually the hardest?'**
+  String get recapHardestDay;
+
+  /// No description provided for @recapNotEnoughData.
+  ///
+  /// In en, this message translates to:
+  /// **'There isn\'t enough data to show :( Keep using the app!'**
+  String get recapNotEnoughData;
+
+  /// No description provided for @recapBusiestDayStart.
+  ///
+  /// In en, this message translates to:
+  /// **'On average, '**
+  String get recapBusiestDayStart;
+
+  /// No description provided for @recapBusiestDayEnd.
+  ///
+  /// In en, this message translates to:
+  /// **' {weekday, select, other{}}was your busiest day.'**
+  String recapBusiestDayEnd(String weekday);
+
+  /// No description provided for @recapThatsIt.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s it for this year.'**
+  String get recapThatsIt;
+
+  /// No description provided for @recapEnjoySummer.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy your summer break!'**
+  String get recapEnjoySummer;
+
+  /// No description provided for @recapWhichPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Which priority did you use the most?'**
+  String get recapWhichPriority;
+
+  /// No description provided for @recapMostUsedPriorityStart.
+  ///
+  /// In en, this message translates to:
+  /// **'You assigned the '**
+  String get recapMostUsedPriorityStart;
+
+  /// No description provided for @recapMostUsedPriorityEnd.
+  ///
+  /// In en, this message translates to:
+  /// **' priority more than the others.'**
+  String get recapMostUsedPriorityEnd;
+
+  /// No description provided for @recapWhichSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Which subject was the most demanding?'**
+  String get recapWhichSubject;
+
+  /// No description provided for @recapMostUsedSubjectStart.
+  ///
+  /// In en, this message translates to:
+  /// **'You assigned the subject '**
+  String get recapMostUsedSubjectStart;
+
+  /// No description provided for @recapMostUsedSubjectEnd.
+  ///
+  /// In en, this message translates to:
+  /// **' more than others.'**
+  String get recapMostUsedSubjectEnd;
 }
 
 class _AppLocalizationsDelegate

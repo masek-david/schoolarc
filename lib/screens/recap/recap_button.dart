@@ -20,7 +20,7 @@ class RecapButton extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${context.loc.anotherYearBehind} 🎉',
+                  '${context.loc.recapAnotherYearFlewBy} 🎉',
                   style: googleSansFlex(
                     size: 24,
                     width: 50,
@@ -29,7 +29,7 @@ class RecapButton extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  context.loc.viewYearStats,
+                  context.loc.recapViewStats,
                   style: googleSansFlex(
                     color: context.col.onSurfaceVariant,
                     size: 16,
@@ -46,6 +46,7 @@ class RecapButton extends StatelessWidget {
       ),
     );
   }
+
   factory RecapButton.small(BuildContext context) {
     return RecapButton(
       content: SizedBox(
@@ -57,7 +58,7 @@ class RecapButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${context.loc.viewYearStats} 🎉',
+                '${context.loc.recapViewStats} 🎉',
                 style: robotoSerif(size: 16, weight: 600, width: 50),
               ),
               const Icon(Icons.keyboard_arrow_right_rounded),

@@ -95,6 +95,7 @@ fabs - fab appear animation, fab hide text on scroll in calendar
 - ⬜ create offline timetable provider
 - ⬜ strava.cz stop saving the password
 - ⬜ translation - google sheets
+- ⬜ meals images - generate them using ai
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
@@ -122,8 +123,7 @@ fabs - fab appear animation, fab hide text on scroll in calendar
 - ⬜ qr group invite?
 
 ## YEAR RECAP
-- ⬜ translate
-- ⬜ improve UI - go wild - custom design - MD3E or something else?
+- ⬜ custom design - MD3E or something else (liquid glass 2027?)
 - ⬜ in background move this years hws and exams tiles
 - ⬜ something with timetable? (how many hours were with changes, with what hour did you begin...)
 
@@ -137,6 +137,8 @@ fabs - fab appear animation, fab hide text on scroll in calendar
 - ⬜ ? remake import to be faster (write everything to hive and reload, maybe add check for order to notifiers, which would be triggered on build)
 - ⬜ ? remove slide to delete
 - ⬜ ? merge subjects with duplicate bakaId, show which one is more used (is it really needed?)
+- ⬜ You can plan how long you need to learn for test or complete a homework and when you want to do it
+- ⬜ Integration with device calendar
 
 
 

@@ -49,12 +49,8 @@
   "@no": {
     "description": "Represents the absence of number, or something like: 'No errors found'"
   },
-  "high": "High",
-  "medium": "Medium",
-  "low": "Low",
-  "noPriority": "No priority",
-  "anotherYearBehind": "Another year behind",
-  "viewYearStats": "View stats about your year",
+  "priority": "{priority, select, 0{None} 1{Low} 2{Medium} 3{High} other{}}",
+  "priorityAccusative": "{priority, select, 0{None} 1{Low} 2{Medium} 3{High} other{}}",
   "importing": "Importing",
   "completed": "Completed",
   "deadline": "Deadline",
@@ -452,5 +448,20 @@
   "share": "Share",
   "agreeSendCrashReports": "Agree to send crash reports",
   "agreeSendCrashReportsSubtitle": "This is optional, however, it will help me fix bugs :)",
-  "agreeToPrivacyPolicy": "Agree to privacy policy"
+  "agreeToPrivacyPolicy": "Agree to privacy policy",
+  "recapAnotherYearFlewBy": "Another year flew by",
+  "recapViewStats": "View stats about your year",
+  "recapLetsSeeHowYouDid": "Now let's see how you did:",
+  "recapHardestDay": "Which day was usually the hardest?",
+  "recapNotEnoughData": "There isn't enough data to show :( Keep using the app!",
+  "recapBusiestDayStart": "On average, ",
+  "recapBusiestDayEnd": " {weekday, select, other{}}was your busiest day.",
+  "recapThatsIt": "That's it for this year.",
+  "recapEnjoySummer": "Enjoy your summer break!",
+  "recapWhichPriority": "Which priority did you use the most?",
+  "recapMostUsedPriorityStart": "You assigned the ",
+  "recapMostUsedPriorityEnd": " priority more than the others.",
+  "recapWhichSubject": "Which subject was the most demanding?",
+  "recapMostUsedSubjectStart": "You assigned the subject ",
+  "recapMostUsedSubjectEnd": " more than others."
 }

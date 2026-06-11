@@ -25,16 +25,7 @@ class TaskPriority {
           : const Color(0xFF2196F3);
 
   String name(BuildContext context) {
-    switch (index) {
-      case 3:
-        return context.loc.high;
-      case 2:
-        return context.loc.medium;
-      case 1:
-        return context.loc.low;
-      default:
-        return context.loc.noPriority;
-    }
+    return context.loc.priority(index.toString());
   }
 
   Color getColor(BuildContext context) {

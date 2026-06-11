@@ -46,15 +46,18 @@ class _RecapStickerState extends State<RecapSticker> {
 
   @override
   Widget build(BuildContext context) {
-    if (recapData.needsMoreData) {
-      return const Text('There is\'t enough data for the sticker.');
+    if (widget.recapData.needsMoreData) {
+      return Text(
+        context.loc.recapNotEnoughData,
+        style: context.txt.titleMedium,
+      );
     }
 
     final stickerWidget = switch (recapData.year) {
       '2025-26' => RecapSticker26(
         recapData: recapData.copyWith(colorIndex: colorIndex),
       ),
-      _ => const Text('Unsupported year'),
+      _ => const Text('Unsupported'),
     };
 
     return Column(

@@ -22,6 +22,7 @@ class RecapDaysPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
 
+    // monday is 0
     int busiestDayIndex = 0;
     int maxY = 0;
     for (int i = 0; i < 7; i++) {
@@ -56,7 +57,7 @@ class RecapDaysPage extends StatelessWidget {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('What day was usually the hardest?'),
+              child: Text(context.loc.recapHardestDay),
             );
           },
         ),
@@ -66,7 +67,10 @@ class RecapDaysPage extends StatelessWidget {
             final height = 300.0;
 
             if (recapData.needsMoreData) {
-              return const Text('There isnt enought data to show');
+              return Text(
+                context.loc.recapNotEnoughData,
+                style: context.txt.titleMedium,
+              );
             }
 
             return Container(
@@ -129,7 +133,7 @@ class RecapDaysPage extends StatelessWidget {
                             meta: meta,
                             space: 12,
                             child: Text(
-                              DateFormat.E().format(
+                              DateFormat.E(context.locale.languageCode).format(
                                 // this week was begining on monday, thats why i use it
                                 DateTime(2024, 7, value.toInt() + 1),
                               ),
@@ -160,11 +164,11 @@ class RecapDaysPage extends StatelessWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'On average, ',
+                    text: context.loc.recapBusiestDayStart,
                     style: text.headlineSmall,
                   ),
                   TextSpan(
-                    text: DateFormat.EEEE()
+                    text: DateFormat.EEEE(context.locale.languageCode)
                         .format(
                           // this week was begining on monday, thats why i use it
                           DateTime(2024, 7, busiestDayIndex.toInt() + 1),
@@ -175,7 +179,9 @@ class RecapDaysPage extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: ' was your busiest day.',
+                    text: context.loc.recapBusiestDayEnd(
+                      (busiestDayIndex + 1).toString(),
+                    ),
                     style: text.headlineSmall,
                   ),
                 ],

@@ -55,7 +55,7 @@ dependencies:
   web_haptics: ^0.0.2
   pretty_qr_code: ^3.6.0
   share_plus: ^13.1.0
-  app_links: ^7.1.1
+  app_links: ^7.1.2
   cbor: ^6.5.1
 
 dev_dependencies:

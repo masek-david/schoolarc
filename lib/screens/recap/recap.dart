@@ -218,12 +218,10 @@ bool hasSeenRecap() {
   return settings.get(Setting.recapShownForYear) >= DateTime.now().year;
 }
 
-// returns true if it is last two weeks of school
+// returns true if it is last three weeks of school
 bool isRecapDate() {
   final now = DateTime.now();
 
-  return now.isAfter(now.copyWith(month: 6, day: 23)) &&
-      now.isBefore(
-        now.copyWith(month: 7, day: 8),
-      );
+  return now.isAfter(DateTime(now.year, 6, 15)) &&
+      now.isBefore(DateTime(now.year, 7, 8));
 }

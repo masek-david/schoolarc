@@ -82,7 +82,7 @@ class _RecapSubjectsPageState extends State<RecapSubjectsPage> {
               ),
               curve: curve,
               duration: const Duration(milliseconds: 800),
-              child: const Text('Which subject was the most demanding?'),
+              child: Text(context.loc.recapWhichSubject),
             );
           },
         ),
@@ -91,7 +91,7 @@ class _RecapSubjectsPageState extends State<RecapSubjectsPage> {
           builder: (isShown) {
             if (widget.recapData.needsMoreData) {
               return Text(
-                ' There isnt\'t enough data to show :( . Keep using the app!',
+                context.loc.recapNotEnoughData,
                 style: context.txt.titleMedium,
               );
             }
@@ -199,7 +199,7 @@ class _RecapSubjectsPageState extends State<RecapSubjectsPage> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'You assigned the subject ',
+                    text: context.loc.recapMostUsedSubjectStart,
                     style: text.headlineSmall,
                   ),
                   TextSpan(
@@ -209,8 +209,7 @@ class _RecapSubjectsPageState extends State<RecapSubjectsPage> {
                     ),
                   ),
                   TextSpan(
-                    text: ' more than others.',
-
+                    text: context.loc.recapMostUsedSubjectEnd,
                     style: text.headlineSmall,
                   ),
                 ],
