@@ -9,6 +9,7 @@ import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
@@ -118,6 +119,8 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
     final isLoading = baka.isLoading;
     final isLoggedIn = baka.value == true;
 
+    final devMode = ref.watch(devModeProvider);
+
     return SettingsScaffold(
       heroTag: 'bakalari',
       title: context.loc.bakalari,
@@ -153,6 +156,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
         ),
         if (error == null && !isLoading)
           SettingTile(
+            trailing: devMode ? AgoText(stream: bakaLoginExpirationProvider) : null,
             isLast: true,
             isFirst: true,
             title: isLoggedIn ? context.loc.loggedIn : context.loc.loggedOut,
@@ -214,7 +218,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                           });
                         },
                         icon: Icon(
-                          obscureText ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+                          obscureText
+                              ? Icons.visibility_rounded
+                              : Icons.visibility_off_rounded,
                         ),
                       ),
                     ),

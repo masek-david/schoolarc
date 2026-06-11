@@ -4,11 +4,7 @@ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios timetable still refresh pulls
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
-fix refresh in calendar
-
-!!! github builds have wrong version
-
-better sort in search 
+fix pull to refresh in calendar
 
 # m3e
 tooltips
@@ -200,5 +196,4 @@ fabs - fab appear animation, fab hide text on scroll in calendar
         - ✅ fix the frequency when is app searching for baka homeworks
     - ✅ name
 
-
-release - update pub, update pubspec version, update firebase realtimeDB versions, update changelog
+release - update pub, update pubspec version, update firebase realtimeDB versions, update changelog, github release - dont build for all abi - it would make build version wrong

@@ -439,7 +439,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
   }
 
   Future<void> register(BuildContext context, WidgetRef ref) async {
-    if (!settings.get(.debugMode)) {
+    if (!settings.get(.devMode)) {
       showMyDialog(
         context: context,
         title: context.loc.cantRegister,

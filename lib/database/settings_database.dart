@@ -42,7 +42,7 @@ enum Setting {
   allowStravaLogin,
   useBakalari,
   useCloudSync,
-  debugMode,
+  devMode,
   debugShowPerformanceOverlay,
   debugShowFireOverlay,
   recapShownForYear,
@@ -191,7 +191,7 @@ class SettingsDatabase {
       defaultValue: kIsWeb,
       key: 'useFirebase',
     ),
-    Setting.debugMode: const SettingModel(
+    Setting.devMode: const SettingModel(
       defaultValue: false,
       key: 'showDebug',
     ),

@@ -1,3 +1,14 @@
+## [2.](2026-0;build)
+### Added
+
+### Changed
+- Search now sorts by date
+- Bakalari now doesnt show as logged out on token expiration
+
+### Fixed
+
+---
+
 ## [2.2.4](2026-06-11;build61)
 ### Added
 - Added 2025-26 year recap and sticker
@@ -15,6 +26,7 @@
 - Fixed haptic feedback in calendar
 
 ---
+
 ## [2.2.3](2026-04-19;build56)
 ### Added
 - Show how many exams or pieces of homework are hidden in calendar

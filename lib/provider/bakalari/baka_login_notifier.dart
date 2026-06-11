@@ -5,13 +5,27 @@ import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/globals.dart';
 
+final bakaLoginExpirationProvider = StreamProvider<Duration?>((ref) async* {
+  while (true) {
+    final expiration = bakaService.tokenExpiration;
+    if (expiration != null) {
+      final diff = expiration.difference(DateTime.now());
+      yield diff;
+      if (diff > const Duration(minutes: 1)) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    } else {
+      yield null;
+    }
+    await Future.delayed(const Duration(milliseconds: 1000));
+  }
+});
+
 final bakaLoginProvider = AsyncNotifierProvider<BakaLoginNotifier, bool>(
   BakaLoginNotifier.new,
 );
 
 class BakaLoginNotifier extends AsyncNotifier<bool> {
-  Timer? _tokenExpirationTimer;
-
   @override
   Future<bool> build() async {
     if (!ref.read(useBakaProvider)) {
@@ -19,7 +33,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
     }
     try {
       final result = await bakaService.refreshLogin();
-      _tokenExpirationTime();
       return result;
     } catch (e) {
       // If the user is logged out, set state to false, else rethrow
@@ -28,20 +41,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       }
       rethrow;
     }
-  }
-
-  void _tokenExpirationTime() {
-    final duration = bakaService.tokenExpiration?.difference(DateTime.now());
-
-    if (duration == null) return;
-
-    _tokenExpirationTimer?.cancel();
-    _tokenExpirationTimer = Timer(
-      duration,
-      () {
-        state = const AsyncValue.data(false);
-      },
-    );
   }
 
   Future<bool> refreshLogin() async {
@@ -57,7 +56,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       }
       return false;
     }
-    _tokenExpirationTime();
     state = const AsyncValue.data(true);
     return true;
   }
@@ -81,7 +79,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       state = AsyncValue.error(e, st);
       return false;
     }
-    _tokenExpirationTime();
     state = const AsyncValue.data(true);
     return true;
   }
@@ -96,7 +93,6 @@ class BakaLoginNotifier extends AsyncNotifier<bool> {
       state = AsyncValue.error(e, st);
       return false;
     }
-    _tokenExpirationTimer?.cancel();
     state = const AsyncValue.data(false);
     return true;
   }

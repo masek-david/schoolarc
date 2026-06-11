@@ -34,6 +34,9 @@ class MySearchBar extends ConsumerWidget {
       if (a.isCompleted != b.isCompleted) {
         return (a.isCompleted ? 1 : 0).compareTo((b.isCompleted ? 1 : 0));
       }
+      if (a.date != b.date) {
+        return b.date.compareTo(a.date);
+      }
       if (a.priority.index != b.priority.index) {
         return b.priority.index.compareTo(a.priority.index);
       }
@@ -52,53 +55,55 @@ class MySearchBar extends ConsumerWidget {
 
         tasks
             .where(
-          (task) => task.containsText(text) && !task.isDeleted,
-        )
+              (task) => task.containsText(text) && !task.isDeleted,
+            )
             .forEach(
-          (task) {
-            late Widget item;
-            if (task.runtimeType == Homework) {
-              item = HwTile(
-                hw: task as Homework,
-                onChangedCompletion: (p0) {},
-                onDelete: null,
-                onEdit: () {
-                  editHw(context, task);
-                },
-                onConvert: null,
-              );
-            } else {
-              item = ExamTile(
-                exam: task as Exam,
-                onDelete: null,
-                onEdit: () {
-                  editExam(context, task);
-                },
-                onConvert: null,
-              );
-            }
+              (task) {
+                late Widget item;
+                if (task.runtimeType == Homework) {
+                  item = HwTile(
+                    hw: task as Homework,
+                    onChangedCompletion: (p0) {},
+                    onDelete: null,
+                    onEdit: () {
+                      editHw(context, task);
+                    },
+                    onConvert: null,
+                  );
+                } else {
+                  item = ExamTile(
+                    exam: task as Exam,
+                    onDelete: null,
+                    onEdit: () {
+                      editExam(context, task);
+                    },
+                    onConvert: null,
+                  );
+                }
 
-            list.add(
-              Padding(
-                padding: itemPadding,
-                child: item,
-              ),
+                list.add(
+                  Padding(
+                    padding: itemPadding,
+                    child: item,
+                  ),
+                );
+              },
             );
-          },
-        );
         subjects
             .where(
               (subject) => subject.containsText(text) && !subject.isDeleted,
             )
             .forEach(
-              (subject) => list.add(Padding(
-                padding: itemPadding,
-                child: SubjectTile(
-                  subject: subject,
-                  onTap: () {},
-                  onDelete: null,
+              (subject) => list.add(
+                Padding(
+                  padding: itemPadding,
+                  child: SubjectTile(
+                    subject: subject,
+                    onTap: () {},
+                    onDelete: null,
+                  ),
                 ),
-              )),
+              ),
             );
 
         return list;

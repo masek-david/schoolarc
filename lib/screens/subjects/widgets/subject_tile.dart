@@ -29,7 +29,7 @@ class SubjectTile extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final debug = settings.get(Setting.debugMode);
+        final debug = settings.get(Setting.devMode);
         double extentRatio = 120 / constraints.maxWidth;
 
         if (extentRatio > 1) {
