@@ -1,8 +1,8 @@
-## [2.2.4](2026-05-;build57)
+## [2.2.4](2026-06-11;build61)
 ### Added
 - Added 2025-26 year recap and sticker
 - Added license
-- Contact developer
+- Added Contact developer
 - Open web search with images of the meal
 
 ### Changed
