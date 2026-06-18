@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 Future<T> showMyDialog<T>({
   required BuildContext context,
@@ -42,21 +41,16 @@ class DialogActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isDefaultAction) {
-      return ButtonM3E.filled(onPressed: onPressed, child: Text(text));
-    }
-    Color textColor = Theme.of(context).colorScheme.onSurface;
-    if (isDestructiveAction) {
-      textColor = Theme.of(context).colorScheme.error;
+      return ButtonM3E.filled(
+        onPressed: onPressed,
+        error: isDestructiveAction,
+        child: Text(text),
+      );
     }
     return ButtonM3E.text(
       onPressed: onPressed,
-      foregroundColor: isDestructiveAction
-          ? context.col.onErrorContainer
-          : null,
-      child: Text(
-        text,
-        style: context.txt.labelLarge!.copyWith(color: textColor),
-      ),
+      error: isDestructiveAction,
+      child: Text(text),
     );
   }
 }

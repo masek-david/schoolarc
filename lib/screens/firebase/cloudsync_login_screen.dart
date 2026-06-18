@@ -662,8 +662,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           ),
           const Divider(),
           ButtonM3E.outlined(
-            foregroundColor: context.col.error,
-            outlineColor: context.col.errorContainer,
+            error: true,
             onPressed: () => deleteAllData(context, ref),
             icon: const Icon(Icons.delete_forever_rounded),
             child: Text(context.loc.deleteAllData),

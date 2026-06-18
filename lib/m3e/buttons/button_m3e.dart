@@ -1,154 +1,214 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/m3e/buttons/raw_button_m3e.dart';
 import 'package:schoolarc/m3e/m3e_parameters.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ButtonM3E extends StatelessWidget {
   const ButtonM3E.elevated({
     super.key,
-    required this.onPressed,
     required this.child,
+    required this.onPressed,
     this.size = .small,
     this.shape = .round,
     this.icon,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.outlineColor,
-    this.elevation,
-    this.hoverElevation,
-  }) : colorStyle = .elevated;
+  }) : _colorStyle = .elevated,
+       error = false;
 
   const ButtonM3E.filled({
     super.key,
-    required this.onPressed,
     required this.child,
+    required this.onPressed,
     this.size = .small,
     this.shape = .round,
     this.icon,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.outlineColor,
-    this.elevation,
-    this.hoverElevation,
-  }) : colorStyle = .filled;
+    this.error = false,
+  }) : _colorStyle = .filled;
 
   const ButtonM3E.tonal({
     super.key,
-    required this.onPressed,
     required this.child,
+    required this.onPressed,
     this.size = .small,
     this.shape = .round,
     this.icon,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.outlineColor,
-    this.elevation,
-    this.hoverElevation,
-  }) : colorStyle = .tonal;
+    this.error = false,
+  }) : _colorStyle = .tonal;
 
   const ButtonM3E.outlined({
     super.key,
-    required this.onPressed,
     required this.child,
+    required this.onPressed,
     this.size = .small,
     this.shape = .round,
     this.icon,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.outlineColor,
-    this.elevation,
-    this.hoverElevation,
-  }) : colorStyle = .outlined;
+    this.error = false,
+  }) : _colorStyle = .outlined;
 
   const ButtonM3E.text({
     super.key,
-    required this.onPressed,
     required this.child,
+    required this.onPressed,
     this.size = .small,
     this.shape = .round,
     this.icon,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.outlineColor,
-    this.elevation,
-    this.hoverElevation,
-  }) : colorStyle = .text;
+    this.error = false,
+  }) : _colorStyle = .text;
 
+  final Widget child;
   final void Function()? onPressed;
-  final Widget? child;
-  final Widget? icon;
   final ButtonSize size;
-  final ButtonColorStyle colorStyle;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final Color? outlineColor;
   final ButtonShape shape;
-  final double? elevation;
-  final double? hoverElevation;
+  final Widget? icon;
+  final ButtonColorStyle _colorStyle;
+
+  final bool error;
 
   @override
   Widget build(BuildContext context) {
-    final col = context.col;
-    Color? bgCol = backgroundColor;
-    Color? fgCol = foregroundColor;
-    double elev = elevation ?? 0;
-    double hoverElev = hoverElevation ?? 1;
-    double? outlineWidth;
-    Color? outlineColor;
+    final col = Theme.of(context).colorScheme;
+    final isRound = shape == .round;
 
-    if (onPressed == null) {
-      bgCol ??= col.onSurface.withAlpha(25);
-      fgCol ??= col.onSurface.withAlpha(97);
-
-      if (colorStyle == .outlined) {
-        outlineWidth = 1;
-        outlineColor = col.outlineVariant;
-      }
-    } else {
-      switch (colorStyle) {
-        case .elevated:
-          bgCol ??= col.surfaceContainerLow;
-          fgCol ??= col.primary;
-          elev = 1;
-          hoverElev = 3;
-        case .filled:
-          bgCol ??= col.primary;
-          fgCol ??= col.onPrimary;
-        case .tonal:
-          bgCol ??= col.secondaryContainer;
-          fgCol ??= col.onSecondaryContainer;
-        case .outlined:
-          bgCol ??= Colors.transparent;
-          fgCol ??= col.onSurfaceVariant;
-          outlineWidth = 1;
-          outlineColor = col.outlineVariant;
-          hoverElev = 0;
-        case .text:
-          bgCol ??= Colors.transparent;
-          fgCol ??= col.primary;
-          hoverElev = 0;
-      }
+    switch (_colorStyle) {
+      case .elevated:
+        return RawButtonM3E(
+          onPressed: onPressed,
+          backgroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(26),
+              WidgetState.any: col.surfaceContainerLow,
+            },
+          ),
+          foregroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(97),
+              WidgetState.any: col.primary,
+            },
+          ),
+          elevation: const WidgetStateProperty.fromMap({
+            WidgetState.hovered: 1,
+            WidgetState.disabled: 0,
+            WidgetState.any: 1,
+          }),
+          height: size.height,
+          iconSize: size.iconSize,
+          iconSpacing: size.iconSpacing,
+          radius: WidgetStateProperty.fromMap({
+            WidgetState.pressed: size.pressedShape,
+            WidgetState.any: isRound ? size.shape : size.squareShape,
+          }),
+          padding: size.padding,
+          fontSize: size.fontSize,
+          icon: icon,
+          child: child,
+        );
+      case .filled:
+        return RawButtonM3E(
+          onPressed: onPressed,
+          backgroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(26),
+              WidgetState.any: error ? col.errorContainer : col.primary,
+            },
+          ),
+          foregroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(97),
+              WidgetState.any: error ? col.onErrorContainer : col.onPrimary,
+            },
+          ),
+          height: size.height,
+          iconSize: size.iconSize,
+          iconSpacing: size.iconSpacing,
+          radius: WidgetStateProperty.fromMap({
+            WidgetState.pressed: size.pressedShape,
+            WidgetState.any: isRound ? size.shape : size.squareShape,
+          }),
+          padding: size.padding,
+          fontSize: size.fontSize,
+          icon: icon,
+          child: child,
+        );
+      case .tonal:
+        return RawButtonM3E(
+          onPressed: onPressed,
+          backgroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(26),
+              WidgetState.any: error ? col.error : col.secondaryContainer,
+            },
+          ),
+          foregroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(97),
+              WidgetState.any: error ? col.onError : col.onSecondaryContainer,
+            },
+          ),
+          height: size.height,
+          iconSize: size.iconSize,
+          iconSpacing: size.iconSpacing,
+          radius: WidgetStateProperty.fromMap({
+            WidgetState.pressed: size.pressedShape,
+            WidgetState.any: isRound ? size.shape : size.squareShape,
+          }),
+          padding: size.padding,
+          fontSize: size.fontSize,
+          icon: icon,
+          child: child,
+        );
+      case .outlined:
+        return RawButtonM3E(
+          onPressed: onPressed,
+          backgroundColor: const WidgetStateColor.fromMap(
+            {WidgetState.any: Colors.transparent},
+          ),
+          foregroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(97),
+              WidgetState.any: error ? col.error : col.onSurfaceVariant,
+            },
+          ),
+          height: size.height,
+          iconSize: size.iconSize,
+          iconSpacing: size.iconSpacing,
+          radius: WidgetStateProperty.fromMap({
+            WidgetState.pressed: size.pressedShape,
+            WidgetState.any: isRound ? size.shape : size.squareShape,
+          }),
+          padding: size.padding,
+          fontSize: size.fontSize,
+          outlineWidth: const WidgetStateProperty.fromMap({WidgetState.any: 1}),
+          outlineColor: WidgetStateColor.fromMap(
+            {WidgetState.any: error ? col.errorContainer : col.outlineVariant},
+          ),
+          icon: icon,
+          child: child,
+        );
+      case .text:
+        return RawButtonM3E(
+          onPressed: onPressed,
+          backgroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(26),
+              WidgetState.any: Colors.transparent,
+            },
+          ),
+          foregroundColor: WidgetStateColor.fromMap(
+            {
+              WidgetState.disabled: col.onSurface.withAlpha(97),
+              WidgetState.any: error ? col.error : col.primary,
+            },
+          ),
+          height: size.height,
+          iconSize: size.iconSize,
+          iconSpacing: size.iconSpacing,
+          radius: WidgetStateProperty.fromMap({
+            WidgetState.pressed: size.pressedShape,
+            WidgetState.any: isRound ? size.shape : size.squareShape,
+          }),
+          padding: size.padding,
+          fontSize: size.fontSize,
+          icon: icon,
+          child: child,
+        );
     }
-
-    return RawButtonM3E(
-      onPressed: onPressed,
-      foregroundColor: fgCol,
-      backgroundColor: bgCol,
-      width: null,
-      radius: shape == .square ? size.radius : size.height / 2,
-      pressedRadius: size.pressedRadius,
-      padding: size.padding,
-      iconSize: size.iconSize,
-      iconPadding: size.iconPadding,
-      height: size.height,
-      fontSize: size.fontSize,
-      icon: icon,
-      elevation: elev,
-      hoverElevation: hoverElev,
-      shrinkAnimation: true,
-      outlineColor: outlineColor,
-      outlineWidth: outlineWidth,
-      child: child,
-    );
   }
 }

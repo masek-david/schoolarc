@@ -121,9 +121,7 @@ class NicknameText extends StatelessWidget {
                 Text(text, style: textStyle),
                 if (editNickname != null && !isLoading && loggedIn)
                   IconButtonM3E(
-                    foregroundColor: context.col.onSecondaryContainer,
-                    // TODO
-                    // tooltip: context.loc.changeNickname,
+                    // TODO tooltip: context.loc.changeNickname,
                     onPressed: editNickname,
                     icon: const Icon(Icons.edit_rounded),
                   ),

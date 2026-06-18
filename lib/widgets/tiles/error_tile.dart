@@ -144,12 +144,10 @@ class ErrorInfoUI {
 }
 
 List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
-  final col = context.col;
   return [
     if (info.action == ExceptionActions.stravaLogin)
       ButtonM3E.filled(
-        backgroundColor: col.errorContainer,
-        foregroundColor: col.onErrorContainer,
+        error: true,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/strava');
         },
@@ -157,8 +155,7 @@ List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
       ),
     if (info.action == ExceptionActions.bakaLogin)
       ButtonM3E.filled(
-        backgroundColor: col.errorContainer,
-        foregroundColor: col.onErrorContainer,
+        error: true,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/bakalari');
         },
@@ -166,8 +163,7 @@ List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
       ),
     if (info.action == ExceptionActions.cloudsyncLogin)
       ButtonM3E.filled(
-        backgroundColor: col.errorContainer,
-        foregroundColor: col.onErrorContainer,
+        error: true,
         onPressed: () {
           Navigator.restorablePushNamed(context, '/cloudsync');
         },

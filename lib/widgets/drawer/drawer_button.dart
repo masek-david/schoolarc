@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/m3e/buttons/raw_button_m3e.dart';
-import 'package:schoolarc/m3e/m3e_parameters.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class MyDrawerButton extends StatelessWidget {
@@ -19,23 +18,21 @@ class MyDrawerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = ButtonSize.medium;
-
     return RawButtonM3E(
+      iconSpacing: 12,
+      outlineWidth: null,
+      outlineColor: null,
       alignment: .start,
       icon: icon,
       onPressed: onTap,
-      backgroundColor: Colors.transparent,
-      foregroundColor: context.col.primary,
-      elevation: 0,
-      hoverElevation: 0,
+      backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(context.col.onSurfaceVariant),
+      elevation: const WidgetStatePropertyAll(0),
       width: double.infinity,
-      height: size.height,
-      iconSize: 20,
-      iconPadding: 12,
-      radius: size.height / 2,
-      pressedRadius: size.pressedRadius,
-      padding: size.padding,
+      height: 56,
+      iconSize: 24,
+      radius: WidgetStatePropertyAll(.circular(28)),
+      padding: 16,
       fontSize: 14,
       child: Row(
         children: [

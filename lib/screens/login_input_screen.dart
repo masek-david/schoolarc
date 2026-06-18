@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/toggle_button_m3e.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
@@ -147,14 +148,15 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                     ),
                   if (obscure != null)
                     ExcludeFocus(
-                      child: IconButtonM3E(
+                      child: ToggleIconButtonM3E.outlined(
+                        selected: !obscure,
                         onPressed: () {
                           setState(() {
                             obscures[index] = !obscure;
                           });
                         },
                         icon: Icon(
-                          obscure ? Icons.visibility_off_rounded : Icons.visibility_off_rounded,
+                          obscure ? Icons.visibility_off_rounded : Icons.visibility_rounded,
                         ),
                       ),
                     ),

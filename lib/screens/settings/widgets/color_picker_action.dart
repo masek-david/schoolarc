@@ -49,28 +49,40 @@ class ColorPickerAction extends StatelessWidget {
             presetColors.length,
             (index) {
               final color = presetColors[index];
-              final isHighlighted = index == selectedColorIndex;
+              final isSelected = index == selectedColorIndex;
               final foregroundColor = _foregroundColors[index];
+              final size = 50.0;
 
-              // TODO toggle m3e button, animated checkmark
               return RawButtonM3E(
+                child: null,
+                selected: isSelected,
+                outlineWidth: null,
+                outlineColor: null,
+                iconSpacing: 0,
                 onPressed: () {
                   vibrate.medium();
                   onChanged(color, index);
                 },
-                backgroundColor: color,
-                foregroundColor: foregroundColor,
-                elevation: 1,
-                hoverElevation: 0,
-                width: 50,
-                height: 50,
+                backgroundColor: WidgetStateColor.fromMap({
+                  WidgetState.any: color,
+                }),
+                foregroundColor: WidgetStateColor.fromMap({
+                  WidgetState.any: foregroundColor,
+                }),
+                elevation: const WidgetStateProperty.fromMap({
+                  WidgetState.any: 1,
+                }),
+                width: size,
+                height: size,
                 iconSize: 40,
-                iconPadding: 0,
-                radius: isHighlighted ? 12 : 25,
-                pressedRadius: 8,
+                radius: WidgetStateProperty.fromMap({
+                  WidgetState.pressed: .circular(12),
+                  WidgetState.selected: .circular(16),
+                  WidgetState.any: .circular(size / 2),
+                }),
                 padding: 0,
                 fontSize: 0,
-                icon: isHighlighted
+                icon: isSelected
                     ? const Icon(Icons.check_rounded)
                     : const SizedBox.shrink(),
               );

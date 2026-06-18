@@ -68,6 +68,8 @@ enum EffectsMotion {
 
 enum ButtonColorStyle { elevated, filled, tonal, outlined, text }
 
+enum SplitButtonColorStyle { elevated, filled, tonal, outlined, text }
+
 enum IconButtonColorStyle { filled, tonal, outlined, standard }
 
 enum ButtonShape { round, square }
@@ -76,8 +78,8 @@ enum IconButtonWidth { narrow, defaultWidth, wide }
 
 enum IconButtonSize {
   extraSmall(
-    radius: 12,
-    pressedRadius: 8,
+    squareShape: .all(.circular(12)),
+    pressedShape: .all(.circular(8)),
     defaultWidth: 32,
     narrowWidth: 28,
     wideWidth: 40,
@@ -85,8 +87,8 @@ enum IconButtonSize {
     iconSize: 20,
   ),
   small(
-    radius: 12,
-    pressedRadius: 8,
+    squareShape: .all(.circular(12)),
+    pressedShape: .all(.circular(8)),
     defaultWidth: 40,
     narrowWidth: 32,
     wideWidth: 52,
@@ -94,8 +96,8 @@ enum IconButtonSize {
     iconSize: 24,
   ),
   medium(
-    radius: 16,
-    pressedRadius: 12,
+    squareShape: .all(.circular(16)),
+    pressedShape: .all(.circular(12)),
     defaultWidth: 56,
     narrowWidth: 48,
     wideWidth: 72,
@@ -103,8 +105,8 @@ enum IconButtonSize {
     iconSize: 24,
   ),
   large(
-    radius: 28,
-    pressedRadius: 16,
+    squareShape: .all(.circular(28)),
+    pressedShape: .all(.circular(16)),
     defaultWidth: 96,
     narrowWidth: 64,
     wideWidth: 128,
@@ -112,19 +114,18 @@ enum IconButtonSize {
     iconSize: 32,
   ),
   extraLarge(
-    radius: 28,
-    pressedRadius: 16,
+    squareShape: .all(.circular(28)),
+    pressedShape: .all(.circular(16)),
     defaultWidth: 136,
     narrowWidth: 104,
     wideWidth: 184,
     height: 136,
     iconSize: 40,
-  )
-  ;
+  );
 
   const IconButtonSize({
-    required this.radius,
-    required this.pressedRadius,
+    required this.squareShape,
+    required this.pressedShape,
     required this.height,
     required this.defaultWidth,
     required this.narrowWidth,
@@ -132,8 +133,8 @@ enum IconButtonSize {
     required this.iconSize,
   });
 
-  final double radius;
-  final double pressedRadius;
+  final BorderRadiusGeometry squareShape;
+  final BorderRadiusGeometry pressedShape;
   final double height;
   final double defaultWidth;
   final double narrowWidth;
@@ -143,67 +144,171 @@ enum IconButtonSize {
 
 enum ButtonSize {
   extraSmall(
-    radius: 12,
-    pressedRadius: 8,
+    squareShape: .all(.circular(12)),
+    shape: .all(.circular(16)),
+    pressedShape: .all(.circular(8)),
     height: 32,
     padding: 12,
-    iconPadding: 4,
+    iconSpacing: 4,
     fontSize: 14,
     iconSize: 20,
   ),
   small(
-    radius: 12,
-    pressedRadius: 8,
+    squareShape: .all(.circular(12)),
+    shape: .all(.circular(20)),
+    pressedShape: .all(.circular(8)),
     height: 40,
     padding: 16,
-    iconPadding: 8,
+    iconSpacing: 8,
     fontSize: 14,
     iconSize: 20,
   ),
   medium(
-    radius: 16,
-    pressedRadius: 12,
+    squareShape: .all(.circular(16)),
+    shape: .all(.circular(28)),
+    pressedShape: .all(.circular(12)),
     height: 56,
     padding: 24,
-    iconPadding: 8,
+    iconSpacing: 8,
     fontSize: 16,
     iconSize: 24,
   ),
   large(
-    radius: 28,
-    pressedRadius: 16,
+    squareShape: .all(.circular(28)),
+    shape: .all(.circular(48)),
+    pressedShape: .all(.circular(12)),
     height: 96,
     padding: 48,
-    iconPadding: 12,
+    iconSpacing: 12,
     fontSize: 24,
     iconSize: 32,
   ),
   extraLarge(
-    radius: 28,
-    pressedRadius: 16,
+    squareShape: .all(.circular(28)),
+    shape: .all(.circular(68)),
+    pressedShape: .all(.circular(16)),
     height: 136,
     padding: 64,
-    iconPadding: 16,
+    iconSpacing: 16,
     fontSize: 32,
     iconSize: 64,
-  )
-  ;
+  );
 
   const ButtonSize({
-    required this.radius,
-    required this.pressedRadius,
+    required this.shape,
+    required this.squareShape,
+    required this.pressedShape,
     required this.height,
     required this.padding,
-    required this.iconPadding,
+    required this.iconSpacing,
     required this.fontSize,
     required this.iconSize,
   });
 
-  final double radius;
-  final double pressedRadius;
+  final BorderRadiusGeometry shape;
+  final BorderRadiusGeometry squareShape;
+  final BorderRadiusGeometry pressedShape;
   final double height;
   final double padding;
-  final double iconPadding;
+  final double iconSpacing;
   final double fontSize;
   final double iconSize;
+}
+
+enum SplitButtonSize {
+  extraSmall(
+    innerRadius: 4,
+    pressedRadius: 8, //
+    height: 32,
+    paddingLeft: 12,
+    paddingRight: 10,
+    menuIconOffset: 1,
+    menuPadding: 13,
+    iconSpacing: 4,
+    fontSize: 14, //
+    iconSize: 20,
+    menuIconSize: 22,
+  ),
+  small(
+    innerRadius: 4,
+    pressedRadius: 8, //
+    height: 40,
+    paddingLeft: 16,
+    paddingRight: 12,
+    menuIconOffset: 1,
+    menuPadding: 13,
+    iconSpacing: 8,
+    fontSize: 14, //
+    iconSize: 20,
+    menuIconSize: 22,
+  ),
+  medium(
+    innerRadius: 4,
+    pressedRadius: 12, //
+    height: 56,
+    paddingLeft: 24,
+    paddingRight: 24,
+    menuIconOffset: 2,
+    menuPadding: 15,
+    iconSpacing: 8,
+    fontSize: 16, //
+    iconSize: 24,
+    menuIconSize: 26,
+  ),
+  large(
+    innerRadius: 8,
+    pressedRadius: 12, //
+    height: 96,
+    paddingLeft: 48,
+    paddingRight: 48,
+    menuIconOffset: 3,
+    menuPadding: 29,
+    iconSpacing: 12,
+    fontSize: 16, //
+    iconSize: 32,
+    menuIconSize: 38,
+  ),
+  extraLarge(
+    innerRadius: 12,
+    pressedRadius: 12, //
+    height: 136,
+    paddingLeft: 64,
+    paddingRight: 64,
+    menuIconOffset: 6,
+    menuPadding: 43,
+    iconSpacing: 16,
+    fontSize: 16, //
+    iconSize: 40,
+    menuIconSize: 50,
+  );
+
+  const SplitButtonSize({
+    required this.innerRadius,
+    required this.pressedRadius,
+    required this.height,
+    required this.iconSpacing,
+    required this.fontSize,
+    required this.iconSize,
+    required this.paddingLeft,
+    required this.paddingRight,
+    required this.menuPadding,
+    required this.menuIconOffset,
+    required this.menuIconSize,
+  });
+
+  final double innerRadius;
+  final double pressedRadius;
+  final double height;
+  final double paddingLeft;
+  final double paddingRight;
+
+  /// padding of the right menu button
+  final double menuPadding;
+
+  /// the offset when unselected
+  final double menuIconOffset;
+  final double iconSpacing;
+  final double fontSize;
+  final double iconSize;
+  final double menuIconSize;
 }

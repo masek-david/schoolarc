@@ -48,60 +48,64 @@ class _SplitButtonState extends State<SplitButton> {
           ),
         ),
         const SizedBox(width: 2),
-        Container(
-          height: widget.size.height,
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: .horizontal(
-              left: Radius.circular(widget.size.innerRadius),
-              right: Radius.circular(widget.size.height / 2),
+
+        MenuAnchor(
+          animated: true,
+          menuChildren: const <Widget>[
+            MenuItemButton(
+              child: Text('label'),
             ),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: widget.size.menuPadding - widget.size.menuIconOffset,
-              ),
-              Icon(
-                Icons.keyboard_arrow_down,
-                size: widget.size.menuIconSize,
-              ),
-              MenuAnchor(
-                animated: true,
-                menuChildren: const <Widget>[
-                  MenuItemButton(
-                    child: Text('label'),
+            MenuItemButton(
+              child: Text('label'),
+            ),
+            MenuItemButton(
+              child: Text('label'),
+            ),
+          ],
+          builder:
+              (
+                BuildContext context,
+                MenuController controller,
+                Widget? child,
+              ) {
+                return Container(
+                  height: widget.size.height,
+                  decoration: BoxDecoration(
+                    color: bg,
+                    borderRadius: .horizontal(
+                      left: Radius.circular(widget.size.innerRadius),
+                      right: Radius.circular(widget.size.height / 2),
+                    ),
                   ),
-                  MenuItemButton(
-                    child: Text('label'),
-                  ),
-                  MenuItemButton(
-                    child: Text('label'),
-                  ),
-                ],
-                builder:
-                    (
-                      BuildContext context,
-                      MenuController controller,
-                      Widget? child,
-                    ) {
-                      return TextButton(
-                        onPressed: () {
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                        },
-                        child: const Text('OPEN MENU'),
-                      );
+                  child: InkWell(
+                    onTap: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
                     },
-              ),
-              SizedBox(
-                width: widget.size.menuPadding + widget.size.menuIconOffset,
-              ),
-            ],
-          ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width:
+                              widget.size.menuPadding -
+                              widget.size.menuIconOffset,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          size: widget.size.menuIconSize,
+                        ),
+                        SizedBox(
+                          width:
+                              widget.size.menuPadding +
+                              widget.size.menuIconOffset,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
         ),
       ],
     );

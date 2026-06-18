@@ -2,32 +2,30 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:schoolarc/m3e/instant_ink_well.dart';
 import 'package:schoolarc/m3e/m3e_parameters.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/utils/globals.dart' show vibrate;
 
 class RawButtonM3E extends StatefulWidget {
   const RawButtonM3E({
     super.key,
     required this.onPressed,
-    this.child,
+    required this.child,
     this.icon,
-    this.shrinkAnimation = true,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.elevation,
-    required this.hoverElevation,
-    required this.width,
-    required this.height,
-    required this.iconSize,
-    required this.iconPadding,
-    required this.radius,
-    required this.pressedRadius,
-    required this.padding,
-    required this.fontSize,
-    this.outlineColor,
-    this.outlineWidth,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.elevation,
+    this.width,
+    this.height = 40,
+    this.iconSize = 20,
+    this.iconSpacing = 8,
+    this.radius,
+    this.padding = 16,
+    this.fontSize = 14,
     this.alignment = .center,
+    this.outlineWidth,
+    this.outlineColor,
+    this.selected = false,
   });
 
   final void Function()? onPressed;
@@ -36,22 +34,17 @@ class RawButtonM3E extends StatefulWidget {
   final double? width;
   final double height;
   final double iconSize;
-  final double iconPadding;
-  final double radius;
-  final double pressedRadius;
+  final double iconSpacing;
   final double padding;
   final double fontSize;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final double elevation;
-  final double hoverElevation;
-  final double? outlineWidth;
-  final Color? outlineColor;
+  final bool selected;
   final MainAxisAlignment alignment;
-
-  /// if true, the button will "spring" to become smaller if the animation
-  /// overshoots maximum border radius (happens only for fullyRounded button)
-  final bool shrinkAnimation;
+  final WidgetStateProperty<Color>? backgroundColor;
+  final WidgetStateProperty<Color>? foregroundColor;
+  final WidgetStateProperty<BorderRadiusGeometry>? radius;
+  final WidgetStateProperty<double>? elevation;
+  final WidgetStateProperty<double>? outlineWidth;
+  final WidgetStateProperty<Color>? outlineColor;
 
   @override
   State<RawButtonM3E> createState() => _RawButtonM3EState();
@@ -59,76 +52,131 @@ class RawButtonM3E extends StatefulWidget {
 
 class _RawButtonM3EState extends State<RawButtonM3E>
     with SingleTickerProviderStateMixin {
-  late final _controller = AnimationController(
-    vsync: this,
-    duration: SpatialMotion.fast.duration,
-  );
-  late Animation _animation = getAnimation();
-  bool hovered = false;
-  bool focused = false;
+  final _stateController = WidgetStatesController();
 
-  Animation getAnimation() {
-    return Tween<double>(
-      begin: widget.radius,
-      end: widget.pressedRadius,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: SpatialMotion.fast.curve,
-        reverseCurve: SpatialMotion.fast.curve.flipped,
-      ),
-    );
-  }
-
-  Future<void> animateTapUp() async {
-    if (_controller.value < 0.3) {
-      // Finish the animation at least to 30 %
-      await Future.delayed(
-        SpatialMotion.fast.duration * (0.3 - _controller.value),
-      );
-      if (!mounted) return;
+  void _updateState() {
+    if (mounted) {
+      setState(() {});
     }
-    // Then animate back
-    _controller.animateBack(0);
-  }
-
-  void animateTapDown() {
-    _controller.value = 0;
-    _controller.animateTo(1).then((value) => vibrate.medium());
-  }
-
-  void animateTapCancel() {
-    _controller.animateBack(0);
   }
 
   @override
-  void didUpdateWidget(covariant RawButtonM3E oldWidget) {
-    if (oldWidget.pressedRadius != widget.pressedRadius ||
-        oldWidget.radius != widget.radius) {
-      _animation = getAnimation();
-    }
+  void initState() {
+    _stateController.addListener(_updateState);
+
+    _stateController.update(.disabled, widget.onPressed == null);
+    _stateController.update(.selected, widget.selected);
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(RawButtonM3E oldWidget) {
+    _stateController.update(.disabled, widget.onPressed == null);
+    _stateController.update(.selected, widget.selected);
 
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _stateController.removeListener(_updateState);
+    _stateController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bgCol = widget.backgroundColor;
-    final fgCol = widget.foregroundColor;
-    final enabled = widget.onPressed != null;
+    final bgCol = widget.backgroundColor?.resolve(_stateController.value);
+    final fgCol = widget.foregroundColor?.resolve(_stateController.value);
 
     // Semantics fixed the input padding - if it wasnt here, taping the buttons before would trigger this one
     return Semantics(
+      focused: _stateController.value.contains(WidgetState.focused),
+      focusable: true,
+      enabled: widget.onPressed != null,
+      checked: _stateController.value.contains(WidgetState.selected),
+      button: true,
       child: _InputPadding(
         minSize: const Size(48, 48),
-        child: AnimatedBuilder(
-          animation: _animation,
+        child: TweenAnimationBuilder<BorderRadiusGeometry>(
+          duration: EffectsMotion.defaultMotion.duration,
+          curve: EffectsMotion.defaultMotion.curve,
+          tween: Tween<BorderRadiusGeometry>(
+            end:
+                widget.radius?.resolve(_stateController.value) ??
+                BorderRadius.circular(0),
+          ),
+          builder: (context, radius, child) {
+            return Stack(
+              fit: .passthrough,
+              clipBehavior: .none,
+              children: [
+                if (_stateController.value.contains(WidgetState.focused))
+                  Positioned.fill(
+                    top: -5,
+                    bottom: -5,
+                    left: -5,
+                    right: -5,
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: radius.add(.circular(5)),
+                          border: Border.all(
+                            color: context.col.secondary,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                Material(
+                  animationDuration: Duration.zero,
+                  borderRadius: radius,
+                  color: Colors.transparent,
+                  elevation:
+                      widget.elevation?.resolve(_stateController.value) ?? 0,
+                  child: InstantInkWell(
+                    stateLayerColor: fgCol,
+                    borderRadius: radius,
+                    statesController: _stateController,
+                    onTap: widget.onPressed,
+                    child: Material(
+                      textStyle: context.txt.labelLarge!.copyWith(
+                        color: fgCol,
+                        fontSize: widget.fontSize,
+                      ),
+                      color: bgCol,
+                      child: Container(
+                        decoration:
+                            widget.outlineColor != null &&
+                                widget.outlineWidth != null
+                            ? BoxDecoration(
+                                borderRadius: radius,
+                                border: Border.all(
+                                  color: widget.outlineColor!.resolve(
+                                    _stateController.value,
+                                  ),
+                                  width: widget.outlineWidth!.resolve(
+                                    _stateController.value,
+                                  ),
+                                ),
+                              )
+                            : null,
+                        height: widget.height,
+                        width: widget.width,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: widget.padding,
+                        ),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
           child: Row(
             mainAxisSize: .min,
             mainAxisAlignment: widget.alignment,
@@ -144,109 +192,10 @@ class _RawButtonM3EState extends State<RawButtonM3E>
                   child: widget.icon!,
                 ),
               if (widget.icon != null && widget.child != null)
-                SizedBox(width: widget.iconPadding),
+                SizedBox(width: widget.iconSpacing),
               if (widget.child != null) Flexible(child: widget.child!),
             ],
           ),
-          builder: (context, child) {
-            double addOffset = 0;
-            if (widget.shrinkAnimation &&
-                _animation.value > widget.height / 2) {
-              addOffset = _animation.value - widget.height / 2;
-            }
-
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: addOffset),
-              child: Stack(
-                fit: .passthrough,
-                clipBehavior: .none,
-                children: [
-                  if (focused)
-                    Positioned.fill(
-                      top: -5,
-                      bottom: -5,
-                      left: -5,
-                      right: -5,
-                      child: IgnorePointer(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              _animation.value + 6,
-                            ),
-                            border: Border.all(
-                              color: context.col.secondary,
-                              width: 3,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  Material(
-                    elevation: enabled && hovered
-                        ? widget.hoverElevation
-                        : widget.elevation,
-                    animationDuration: Duration.zero,
-                    color: bgCol,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(
-                        _animation.value,
-                      ),
-                      side:
-                          widget.outlineColor != null &&
-                              widget.outlineWidth != null
-                          ? BorderSide(
-                              color: widget.outlineColor!,
-                              width: widget.outlineWidth!,
-                            )
-                          : .none,
-                    ),
-                    clipBehavior: .antiAlias,
-                    textStyle: context.txt.labelLarge!.copyWith(
-                      color: fgCol,
-                      fontSize: widget.fontSize,
-                    ),
-                    child: InkWell(
-                      onFocusChange: (value) {
-                        setState(() {
-                          focused = value;
-                        });
-                      },
-                      onHover: (value) {
-                        setState(() {
-                          hovered = value;
-                        });
-                      },
-                      focusColor: fgCol.withAlpha(26),
-                      hoverColor: fgCol.withAlpha(20),
-                      highlightColor: fgCol.withAlpha(20),
-                      splashColor: fgCol.withAlpha(26),
-                      onTapDown: enabled ? (details) => animateTapDown() : null,
-                      onTapUp: enabled ? (details) => animateTapUp() : null,
-                      onTapCancel: enabled ? () => animateTapCancel() : null,
-                      onTap: () {
-                        if (widget.onPressed != null) {
-                          widget.onPressed!();
-                        }
-                      },
-                      child: SizedBox(
-                        height: widget.height,
-                        width: widget.width,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: (widget.padding - addOffset).clamp(
-                              0,
-                              double.infinity,
-                            ),
-                          ),
-                          child: child,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
         ),
       ),
     );

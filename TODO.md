@@ -6,6 +6,10 @@ bakalogin, strava login and firebase login are shared between debug and release 
 
 fix pull to refresh in calendar
 
+check correct material colors
+
+save recap cards
+
 # m3e
 tooltips
 buttongroup - refactor rawbutton to use shape instead of just double with radius and lerp between the two shapes
