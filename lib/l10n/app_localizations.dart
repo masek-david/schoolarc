@@ -2603,6 +2603,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' more than others.'**
   String get recapMostUsedSubjectEnd;
+
+  /// No description provided for @myName.
+  ///
+  /// In en, this message translates to:
+  /// **'My name'**
+  String get myName;
+
+  /// No description provided for @myNameDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How you want to be called'**
+  String get myNameDescription;
+
+  /// No description provided for @nameSetManuallyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Name set manually'**
+  String get nameSetManuallyTitle;
+
+  /// No description provided for @nameSetManuallyText.
+  ///
+  /// In en, this message translates to:
+  /// **'You have set your name to be {name}. Your name can also be fetched from Bakaláři. Set your name to be fetched from Bakaláři? This will override your current name.'**
+  String nameSetManuallyText(Object name);
+
+  /// No description provided for @nameFetchedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Name fetched'**
+  String get nameFetchedTitle;
+
+  /// No description provided for @nameFetchedText.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name has been fetched from Bakaláři. You can override it here.'**
+  String get nameFetchedText;
 }
 
 class _AppLocalizationsDelegate

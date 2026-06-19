@@ -5,6 +5,7 @@ import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/m3e/m3e_parameters.dart';
 import 'package:schoolarc/models/date/date.dart';
+import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/recap/pages/recap_count_page.dart';
@@ -61,11 +62,12 @@ class _RecapScreenState extends ConsumerState<RecapScreen> {
 
     final isDark = context.isDark;
 
+    final name = ref.watch(usernameProvider);
+
     final recapData = RecapData.generate(
       exams: exams,
       hws: hws,
-      // TODO
-      name: 'David',
+      name: name ?? '',
       year: '2025-26',
     );
 

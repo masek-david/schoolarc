@@ -326,6 +326,8 @@ class RecapSticker26 extends StatelessWidget {
               children: [
                 Text(
                   recapData.name,
+                  overflow: .ellipsis,
+                  maxLines: 1,
                   style: googleSansFlex(
                     color: col.primary,
                     size: 40,

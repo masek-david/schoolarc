@@ -23,7 +23,8 @@ class RecapSticker extends StatefulWidget {
 class _RecapStickerState extends State<RecapSticker> {
   late int colorIndex = _getPresetColorIndexFromCurrentTheme();
   var stickerPaint = GlobalKey();
-  late var recapData = widget.recapData;
+  late final recapData = widget.recapData;
+  late var name = recapData.name;
 
   /// returns one of the [presetColors], which is the closest to the primary color of the current theme
   int _getPresetColorIndexFromCurrentTheme() {
@@ -55,15 +56,26 @@ class _RecapStickerState extends State<RecapSticker> {
 
     final stickerWidget = switch (recapData.year) {
       '2025-26' => RecapSticker26(
-        recapData: recapData.copyWith(colorIndex: colorIndex),
+        recapData: recapData.copyWith(colorIndex: colorIndex, name: name),
       ),
       _ => const Text('Unsupported'),
     };
 
     return Column(
-      spacing: 16,
+      spacing: 12,
       children: [
         RepaintBoundary(key: stickerPaint, child: stickerWidget),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48),
+          child: TextFormField(
+            initialValue: recapData.name,
+            onChanged: (value) {
+              setState(() {
+                name = value;
+              });
+            },
+          ),
+        ),
         ColorPickerAction(
           onChanged: (_, index) {
             setState(() {

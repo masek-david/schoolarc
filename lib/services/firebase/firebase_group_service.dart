@@ -15,7 +15,7 @@ class FirebaseGroupService {
     if (groupId == null) {
       throw GroupException(.notMemberOfAnyGroup);
     }
-    // TODO this group doesnt exist how?
+    // todo this group doesnt exist how?
     // final groupSnapshot = await db.ref('groups/$groupId').get();
     // if (!groupSnapshot.exists) {
     //   leaveGroup();
@@ -171,7 +171,7 @@ class FirebaseGroupService {
       throw GroupException(.leaveOldGroup);
     }
 
-    // TODO check that group exists
+    // todo check that group exists
     // final group = await _db.ref('groups/$groupId').get();
     // if (!group.exists) {
     //   throw ServiceException('Could\'t find this group');

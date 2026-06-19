@@ -23,6 +23,7 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: AnimatedPage(
+        vibrate: true,
         children: [
           AnimatedItem(
             builder: (isShown) {

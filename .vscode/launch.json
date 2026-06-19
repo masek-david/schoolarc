@@ -44,6 +44,16 @@
             ]
         },
         {
+            "name": "Schoolarc (release) [prod]",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
+        },
+        {
             "name": "Schoolarc (release) web-port=8080",
             "request": "launch",
             "type": "dart",

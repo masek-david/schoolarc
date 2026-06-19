@@ -463,5 +463,11 @@
   "recapMostUsedPriorityEnd": " priority more than the others.",
   "recapWhichSubject": "Which subject was the most demanding?",
   "recapMostUsedSubjectStart": "You assigned the subject ",
-  "recapMostUsedSubjectEnd": " more than others."
+  "recapMostUsedSubjectEnd": " more than others.",
+  "myName": "My name",
+  "myNameDescription": "How you want to be called",
+  "nameSetManuallyTitle": "Name set manually",
+  "nameSetManuallyText": "You have set your name to be {name}. Your name can also be fetched from Bakaláři. Set your name to be fetched from Bakaláři? This will override your current name.",
+  "nameFetchedTitle": "Name fetched",
+  "nameFetchedText": "Your name has been fetched from Bakaláři. You can override it here."
 }

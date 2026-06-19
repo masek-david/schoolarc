@@ -4,6 +4,7 @@
 ### Changed
 - Search now sorts by date
 - Bakalari now doesnt show as logged out on token expiration
+- Added a name field to settings
 
 ### Fixed
 

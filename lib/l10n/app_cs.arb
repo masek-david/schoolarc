@@ -49,8 +49,8 @@
   "@no": {
     "description": "Represents the absence of number, or something like: 'No errors found'"
   },
-  "priority":"{priority, select, 0{Žádná} 1{Nízká} 2{Střední} 3{Vysoká} other{}}",
-  "priorityAccusative":"{priority, select, 0{Žádnou} 1{Nízkou} 2{Střední} 3{Vysokou} other{}}",
+  "priority": "{priority, select, 0{Žádná} 1{Nízká} 2{Střední} 3{Vysoká} other{}}",
+  "priorityAccusative": "{priority, select, 0{Žádnou} 1{Nízkou} 2{Střední} 3{Vysokou} other{}}",
   "importing": "Importování",
   "completed": "Dokončeno",
   "deadline": "Termín",
@@ -454,7 +454,7 @@
   "recapLetsSeeHowYouDid": "Pojďme se podívat, jak se vám dařilo:",
   "recapHardestDay": "Který den byl obvykle ten nejnáročnější?",
   "recapNotEnoughData": "Není dostatek dat k zobrazení :( Používejte aplikaci dál!",
-  "recapBusiestDayStart":"",
+  "recapBusiestDayStart": "",
   "recapBusiestDayEnd": " {weekday, select, 1{bylo} 2{bylo} 3{byla} 4{byl} 5{byl} 6{byla} 7{byla} other{neznámé}} v průměru váš nejrušnější den.",
   "recapThatsIt": "To je pro tento rok vše.",
   "recapEnjoySummer": "Užijte si letní prázdniny!",
@@ -463,5 +463,11 @@
   "recapMostUsedPriorityEnd": " prioritu jste přiřadili častěji než ostatní.",
   "recapWhichSubject": "Který předmět byl nejnáročnější?",
   "recapMostUsedSubjectStart": "Předmět ",
-  "recapMostUsedSubjectEnd": " jste přiřadili častěji než ostatní."
+  "recapMostUsedSubjectEnd": " jste přiřadili častěji než ostatní.",
+  "myName": "Moje jméno",
+  "myNameDescription": "Jak vám má být říkáno",
+  "nameSetManuallyTitle": "Jméno nastaveno ručně",
+  "nameSetManuallyText": "Nastavili jste si jméno na {name}. Vaše jméno lze také načíst z Bakalářů. Chcete jméno načítat z Bakalářů? Tím se přepíše vaše současné jméno.",
+  "nameFetchedTitle": "Jméno načteno",
+  "nameFetchedText": "Vaše jméno bylo načteno z Bakalářů. Zde ho můžete přepsat."
 }

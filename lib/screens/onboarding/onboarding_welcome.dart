@@ -62,6 +62,7 @@ class OnboardingWelcome extends StatelessWidget {
             ),
           ),
           AnimatedPage(
+            vibrate: true,
             spacing: 2,
             children: [
               AnimatedItem(

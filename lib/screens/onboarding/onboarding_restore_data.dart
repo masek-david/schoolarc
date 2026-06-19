@@ -21,6 +21,7 @@ class OnboardingRestoredata extends ConsumerWidget {
         ref.watch(examProvider).isNotEmpty) {
       return SafeArea(
         child: AnimatedPage(
+          vibrate: true,
           children: [
             AnimatedItem(
               builder: (isShown) {
@@ -50,6 +51,7 @@ class OnboardingRestoredata extends ConsumerWidget {
 
     return SafeArea(
       child: AnimatedPage(
+        vibrate: true,
         children: [
           AnimatedItem(
             builder: (isShown) {

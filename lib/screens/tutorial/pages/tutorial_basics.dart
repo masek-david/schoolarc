@@ -14,6 +14,7 @@ class TutorialBasics extends StatelessWidget {
     final loc = context.loc;
     
     return AnimatedPage(
+      vibrate: true,
       padding: const EdgeInsetsGeometry.all(16),
       spacing: 16,
       children: [

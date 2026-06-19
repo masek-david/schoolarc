@@ -57,7 +57,7 @@ class _SchemeVariantPickerActionState
                 preferBelow: false,
                 triggerMode: TooltipTriggerMode.manual,
                 key: keys[index],
-                // TODO check that the colors dont have space between them on release
+                // Note: on Windows (maybe somewhere else) the colors have space between them, this should be fine
                 child: RawButtonM3E(
                   selected: isSelected,
                   outlineWidth: null,

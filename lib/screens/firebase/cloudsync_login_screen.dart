@@ -5,6 +5,7 @@ import 'package:schoolarc/m3e/buttons/button_m3e.dart';
 import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
+import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_nickname_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/login_input_screen.dart';
@@ -464,6 +465,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             autofillHints: [AutofillHints.username],
           ),
           LoginField(
+            initialValue: ref.read(usernameProvider),
             name: context.loc.nickname,
             info: context.loc.nicknameInfo,
           ),

@@ -245,6 +245,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
         child: Column(
           mainAxisSize: .min,
           children: [
+            SizedBox(height: viewInsets.top),
             CancelSaveButton(onSave: onSave),
             Container(
               decoration: BoxDecoration(
@@ -255,7 +256,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet>
               ),
               padding: EdgeInsets.only(
                 bottom: viewInsets.bottom,
-                // TODO test
                 top: viewInsets.top + 12,
                 left: 12,
                 right: 12,

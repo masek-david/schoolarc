@@ -7,8 +7,6 @@ import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 
-// TODO look here
-
 class NewTaskDialogButton extends ConsumerStatefulWidget {
   const NewTaskDialogButton({super.key});
 

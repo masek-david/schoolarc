@@ -12,6 +12,8 @@ class IconButtonM3E extends StatelessWidget {
     this.size = .small,
     this.shape = .round,
     this.width = .defaultWidth,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : _colorStyle = .standard;
 
   const IconButtonM3E.filled({
@@ -21,6 +23,8 @@ class IconButtonM3E extends StatelessWidget {
     this.size = .small,
     this.shape = .round,
     this.width = .defaultWidth,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : _colorStyle = .filled;
 
   const IconButtonM3E.tonal({
@@ -30,6 +34,8 @@ class IconButtonM3E extends StatelessWidget {
     this.size = .small,
     this.shape = .round,
     this.width = .defaultWidth,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : _colorStyle = .tonal;
 
   const IconButtonM3E.outlined({
@@ -39,6 +45,8 @@ class IconButtonM3E extends StatelessWidget {
     this.size = .small,
     this.shape = .round,
     this.width = .defaultWidth,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : _colorStyle = .outlined;
 
   final void Function()? onPressed;
@@ -47,6 +55,9 @@ class IconButtonM3E extends StatelessWidget {
   final ButtonShape shape;
   final Widget? icon;
   final IconButtonColorStyle _colorStyle;
+
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +84,13 @@ class IconButtonM3E extends StatelessWidget {
           backgroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(26),
-              WidgetState.any: col.primary,
+              WidgetState.any: backgroundColor ?? col.primary,
             },
           ),
           foregroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(97),
-              WidgetState.any: col.onPrimary,
+              WidgetState.any: foregroundColor ?? col.onPrimary,
             },
           ),
           elevation: const WidgetStateProperty.fromMap({WidgetState.any: 0}),
@@ -98,19 +109,20 @@ class IconButtonM3E extends StatelessWidget {
           icon: icon,
           child: null,
         );
+
       case .tonal:
         return RawButtonM3E(
           onPressed: onPressed,
           backgroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(26),
-              WidgetState.any: col.secondaryContainer,
+              WidgetState.any: backgroundColor ?? col.secondaryContainer,
             },
           ),
           foregroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(97),
-              WidgetState.any: col.onSecondaryContainer,
+              WidgetState.any: foregroundColor ?? col.onSecondaryContainer,
             },
           ),
           elevation: const WidgetStateProperty.fromMap({WidgetState.any: 0}),
@@ -129,6 +141,7 @@ class IconButtonM3E extends StatelessWidget {
           icon: icon,
           child: null,
         );
+
       case .outlined:
         return RawButtonM3E(
           onPressed: onPressed,
@@ -140,7 +153,7 @@ class IconButtonM3E extends StatelessWidget {
           foregroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(97),
-              WidgetState.any: col.onSurfaceVariant,
+              WidgetState.any: foregroundColor ?? col.onSurfaceVariant,
             },
           ),
           elevation: const WidgetStateProperty.fromMap({WidgetState.any: 0}),
@@ -163,18 +176,19 @@ class IconButtonM3E extends StatelessWidget {
           icon: icon,
           child: null,
         );
+
       case .standard:
         return RawButtonM3E(
           onPressed: onPressed,
-          backgroundColor: const WidgetStateColor.fromMap(
+          backgroundColor: WidgetStateColor.fromMap(
             {
-              WidgetState.any: Colors.transparent,
+              WidgetState.any: backgroundColor ?? Colors.transparent,
             },
           ),
           foregroundColor: WidgetStateColor.fromMap(
             {
               WidgetState.disabled: col.onSurface.withAlpha(97),
-              WidgetState.any: col.onSurfaceVariant,
+              WidgetState.any: foregroundColor ?? col.onSurfaceVariant,
             },
           ),
           elevation: const WidgetStateProperty.fromMap({

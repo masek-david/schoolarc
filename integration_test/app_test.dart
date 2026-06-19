@@ -38,9 +38,6 @@ Future<void> navigateToCloudSync(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-// TODO rename file
-// TODO reset hive
-
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   // for android emulator, could be localhost for windows,...
@@ -50,6 +47,8 @@ void main() {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // also should reset hive?
 
     await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseDatabase.instance.useDatabaseEmulator(host, 9000);

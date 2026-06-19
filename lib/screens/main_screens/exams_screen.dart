@@ -1,9 +1,6 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/split_button.dart';
-import 'package:schoolarc/m3e/buttons/toggle_button_m3e.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -11,8 +8,10 @@ import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
+import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
+import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/exam_tile.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 
@@ -76,90 +75,90 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
         .where((element) => element.exam == null)
         .toList();
 
-    return Column(
-      spacing: 8,
-      children: [
-        Row(
-          spacing: 8,
-          children: [
-            ToggleIconButtonM3E(
-              selected: selected,
-              width: .defaultWidth,
-              size: .extraSmall,
-              onPressed: () {
-                setState(() {
-                  selected = !selected;
-                });
-              },
-              icon: const Icon(Icons.person_rounded),
-            ),
-            ToggleIconButtonM3E.filled(
-              selected: selected,
-              width: .defaultWidth,
-              size: .small,
-              onPressed: () {
-                setState(() {
-                  selected = !selected;
-                });
-              },
-              icon: const Icon(Icons.person_rounded),
-            ),
-            ToggleIconButtonM3E.tonal(
-              selected: selected,
-              width: .defaultWidth,
-              size: .medium,
-              onPressed: () {
-                setState(() {
-                  selected = !selected;
-                });
-              },
-              icon: const Icon(Icons.person_rounded),
-            ),
-            ToggleIconButtonM3E.outlined(
-              selected: selected,
-              width: .defaultWidth,
-              size: .large,
-              onPressed: () {
-                setState(() {
-                  selected = !selected;
-                });
-              },
-              icon: const Icon(Icons.person_rounded),
-            ),
-          ],
-        ),
-        ButtonM3E.elevated(
-          size: .extraSmall,
-          onPressed: () {},
-          icon: const Icon(Icons.person_rounded),
-          child: const Text('Confirm'),
-        ),
-        ButtonM3E.filled(
-          size: .small,
-          onPressed: () {},
-          icon: const Icon(Icons.person_rounded),
-          child: const Text('Confirm'),
-        ),
-        ButtonM3E.tonal(
-          size: .medium,
-          onPressed: () {},
-          icon: const Icon(Icons.person_rounded),
-          child: const Text('Confirm'),
-        ),
-        ButtonM3E.outlined(
-          size: .large,
-          onPressed: () {},
-          icon: const Icon(Icons.person_rounded),
-          child: const Text('Confirm'),
-        ),
-        ButtonM3E.text(
-          size: .extraLarge,
-          onPressed: () {},
-          icon: const Icon(Icons.person_rounded),
-          child: const Text('Confirm'),
-        ),
-      ],
-    );
+    // return Column(
+    //   spacing: 8,
+    //   children: [
+    //     Row(
+    //       spacing: 8,
+    //       children: [
+    //         ToggleIconButtonM3E(
+    //           selected: selected,
+    //           width: .defaultWidth,
+    //           size: .extraSmall,
+    //           onPressed: () {
+    //             setState(() {
+    //               selected = !selected;
+    //             });
+    //           },
+    //           icon: const Icon(Icons.person_rounded),
+    //         ),
+    //         ToggleIconButtonM3E.filled(
+    //           selected: selected,
+    //           width: .defaultWidth,
+    //           size: .small,
+    //           onPressed: () {
+    //             setState(() {
+    //               selected = !selected;
+    //             });
+    //           },
+    //           icon: const Icon(Icons.person_rounded),
+    //         ),
+    //         ToggleIconButtonM3E.tonal(
+    //           selected: selected,
+    //           width: .defaultWidth,
+    //           size: .medium,
+    //           onPressed: () {
+    //             setState(() {
+    //               selected = !selected;
+    //             });
+    //           },
+    //           icon: const Icon(Icons.person_rounded),
+    //         ),
+    //         ToggleIconButtonM3E.outlined(
+    //           selected: selected,
+    //           width: .defaultWidth,
+    //           size: .large,
+    //           onPressed: () {
+    //             setState(() {
+    //               selected = !selected;
+    //             });
+    //           },
+    //           icon: const Icon(Icons.person_rounded),
+    //         ),
+    //       ],
+    //     ),
+    //     ButtonM3E.elevated(
+    //       size: .extraSmall,
+    //       onPressed: () {},
+    //       icon: const Icon(Icons.person_rounded),
+    //       child: const Text('Confirm'),
+    //     ),
+    //     ButtonM3E.filled(
+    //       size: .small,
+    //       onPressed: () {},
+    //       icon: const Icon(Icons.person_rounded),
+    //       child: const Text('Confirm'),
+    //     ),
+    //     ButtonM3E.tonal(
+    //       size: .medium,
+    //       onPressed: () {},
+    //       icon: const Icon(Icons.person_rounded),
+    //       child: const Text('Confirm'),
+    //     ),
+    //     ButtonM3E.outlined(
+    //       size: .large,
+    //       onPressed: () {},
+    //       icon: const Icon(Icons.person_rounded),
+    //       child: const Text('Confirm'),
+    //     ),
+    //     ButtonM3E.text(
+    //       size: .extraLarge,
+    //       onPressed: () {},
+    //       icon: const Icon(Icons.person_rounded),
+    //       child: const Text('Confirm'),
+    //     ),
+    //   ],
+    // );
 
     return MediaQuery.removePadding(
       context: context,
@@ -205,22 +204,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
               child: itemList.length == 5
                   ? ListView(
                       children: [
-                        const SplitButton(
-                          size: .extraSmall,
-                        ),
-                        const SplitButton(
-                          size: .small,
-                        ),
-                        const SplitButton(
-                          size: .medium,
-                        ),
-                        const SplitButton(
-                          size: .large,
-                        ),
-                        const SplitButton(
-                          size: .extraLarge,
-                        ),
-                        // const Snappable(child: AnimatedShape()),
+                        const Snappable(child: AnimatedShape()),
                         _buildCompletedList(context, ref, completedExams),
                       ],
                     )

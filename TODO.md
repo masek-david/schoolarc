@@ -3,26 +3,30 @@ update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios timetable still refresh pulls
 bakalogin, strava login and firebase login are shared between debug and release on windows
-
+tests
+cant complete hw from widget
 fix pull to refresh in calendar
 
-check correct material colors
-
-save recap cards
+# BOTTOM SHEET
+FIX SCROLLABLE BOTTOM SHEET (new newtaskdialogbutton ??? )
+bottom sheet animations - stupidsimplesheet ??? and add motor ???
+bottom sheet - split button with option to save as the other type exam/hw
+  - ⬜ show on top if it is hw/exam
+  - ⬜ share with qr
+  - ⬜ prevent from accidental scroll closing ‼️
+  - ⬜ fix the scrolling
+  - ⬜ animation FAB morph to the sheet?
+  - ⬜ does everything need to be shown ??
 
 # m3e
+check correct material colors
 tooltips
-buttongroup - refactor rawbutton to use shape instead of just double with radius and lerp between the two shapes
+buttongroup
 buttondialogbutton
-check drawer button in m3.material.io
-
-bottom sheet animations - stupidsimplesheet ??? and add motor ???
-bottom sheet - button with option to save as the other type exam/hw
-toggle - logininputscreen
 settingtile shape animation
 calendartiles animation
-
-fabs - fab appear animation, fab hide text on scroll in calendar
+fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options
+navigation rail - just for medium+ displays, keep the navigation drawer for mobile (even though its deprecated)
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

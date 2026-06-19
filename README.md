@@ -8,13 +8,6 @@
     <img src="assets/readme_assets/banner.png" width="500" style="border-radius:12px">
 </div>
 
-<style>
-  @font-face { font-family: GoogleSansFlex; src: "assets/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf"; } 
-  h1 {
-     font-family: GoogleSansFlex
-  }
-</style>
-
 ## Features
 
 - Save homework and exams

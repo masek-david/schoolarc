@@ -1516,4 +1516,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recapMostUsedSubjectEnd => ' more than others.';
+
+  @override
+  String get myName => 'My name';
+
+  @override
+  String get myNameDescription => 'How you want to be called';
+
+  @override
+  String get nameSetManuallyTitle => 'Name set manually';
+
+  @override
+  String nameSetManuallyText(Object name) {
+    return 'You have set your name to be $name. Your name can also be fetched from Bakaláři. Set your name to be fetched from Bakaláři? This will override your current name.';
+  }
+
+  @override
+  String get nameFetchedTitle => 'Name fetched';
+
+  @override
+  String get nameFetchedText =>
+      'Your name has been fetched from Bakaláři. You can override it here.';
 }

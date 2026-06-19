@@ -22,7 +22,6 @@ class AnimatedPage extends StatefulWidget {
     this.duration = const Duration(milliseconds: 800),
     this.itemDelay = const Duration(milliseconds: 200),
     this.overlayButton,
-    // TODO check vibrate
     this.vibrate = false,
   });
 

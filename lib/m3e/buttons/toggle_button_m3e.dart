@@ -165,10 +165,11 @@ class ToggleIconButtonM3E extends StatelessWidget {
           padding: 0,
           fontSize: 0,
           outlineWidth: const WidgetStateProperty.fromMap({
+            WidgetState.selected: 0,
             WidgetState.any: 1,
           }),
           outlineColor: WidgetStateColor.fromMap({
-            // TODO verify in jetpack - if state selected, does outline stay?
+            WidgetState.selected: Colors.transparent,
             WidgetState.any: col.outlineVariant,
           }),
           icon: icon,

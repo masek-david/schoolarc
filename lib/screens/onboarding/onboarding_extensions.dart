@@ -28,6 +28,7 @@ class OnboardingExtensions extends ConsumerWidget {
 
     return SafeArea(
       child: AnimatedPage(
+        vibrate: true,
         children: [
           AnimatedItem(
             builder: (isShown) {

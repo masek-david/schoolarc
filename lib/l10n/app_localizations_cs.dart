@@ -1547,4 +1547,25 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get recapMostUsedSubjectEnd => ' jste přiřadili častěji než ostatní.';
+
+  @override
+  String get myName => 'Moje jméno';
+
+  @override
+  String get myNameDescription => 'Jak vám má být říkáno';
+
+  @override
+  String get nameSetManuallyTitle => 'Jméno nastaveno ručně';
+
+  @override
+  String nameSetManuallyText(Object name) {
+    return 'Nastavili jste si jméno na $name. Vaše jméno lze také načíst z Bakalářů. Chcete jméno načítat z Bakalářů? Tím se přepíše vaše současné jméno.';
+  }
+
+  @override
+  String get nameFetchedTitle => 'Jméno načteno';
+
+  @override
+  String get nameFetchedText =>
+      'Vaše jméno bylo načteno z Bakalářů. Zde ho můžete přepsat.';
 }

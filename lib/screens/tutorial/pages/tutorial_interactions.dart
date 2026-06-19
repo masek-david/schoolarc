@@ -47,6 +47,7 @@ class _TutorialInteractionsState extends State<TutorialInteractions>
   @override
   Widget build(BuildContext context) {
     return AnimatedPage(
+      vibrate: true,
       padding: const EdgeInsetsGeometry.all(16),
       spacing: 16,
       children: [

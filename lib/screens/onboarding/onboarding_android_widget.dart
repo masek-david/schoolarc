@@ -13,6 +13,7 @@ class OnboardingAndroidWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: AnimatedPage(
+        vibrate: true,
         spacing: 0,
         children: [
           AnimatedItem(

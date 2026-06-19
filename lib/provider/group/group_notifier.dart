@@ -15,7 +15,7 @@ class GroupNotifier extends AsyncNotifier<String?> {
 class GroupNameNotifier extends AsyncNotifier<String?> {
   @override
   FutureOr<String?> build() {
-    // TODO: implement build
+    // todo implement build
     throw UnimplementedError();
   }
 }

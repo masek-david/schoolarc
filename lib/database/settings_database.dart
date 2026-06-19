@@ -37,6 +37,7 @@ enum Setting {
   calendarShowArrows,
   mealsShowTodayUntil,
   userName,
+  userNameManuallySet,
   greetUsername,
   useMeals,
   allowStravaLogin,
@@ -170,6 +171,10 @@ class SettingsDatabase {
     Setting.userName: const SettingModel(
       defaultValue: null,
       key: 'userName',
+    ),
+    Setting.userNameManuallySet: const SettingModel(
+      defaultValue: false,
+      key: 'userNameManuallySet',
     ),
     Setting.greetUsername: const SettingModel(
       defaultValue: true,

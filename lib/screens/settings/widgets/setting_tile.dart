@@ -124,6 +124,40 @@ class SettingTile extends StatelessWidget {
     );
   }
 
+  // TODO test on mobile
+  static SettingTile withTextField({
+    required String title,
+    required String? value,
+    required void Function(String value) onSubmitted,
+    Widget? trailing,
+    String? subtitle,
+    bool enabled = true,
+    bool highlighted = false,
+    Widget? leading,
+    Color? iconColor,
+    EdgeInsetsGeometry? contentPadding,
+    bool isFirst = false,
+    bool isLast = false,
+    Key? key,
+  }) {
+    return SettingTile(
+      title: title,
+      subtitle: subtitle,
+      enabled: enabled,
+      highlighted: highlighted,
+      contentPadding: contentPadding,
+      leading: leading,
+      trailing: trailing,
+      newLineAction: TextFormField(
+        initialValue: value,
+        onFieldSubmitted: onSubmitted,
+      ),
+      isFirst: isFirst,
+      isLast: isLast,
+      key: key,
+    );
+  }
+
   static SettingTile withTimePicker({
     required String title,
     required TimeOfDay time,

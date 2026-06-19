@@ -43,6 +43,7 @@ class _TutorialSubjectsState extends State<TutorialSubjects> {
   @override
   Widget build(BuildContext context) {
     return AnimatedPage(
+      vibrate: true,
       padding: const EdgeInsetsGeometry.all(16),
       spacing: 16,
       children: [
