@@ -113,8 +113,8 @@ class _RecapStickerState extends State<RecapSticker> {
               ),
             );
           },
-          icon: const Icon(Icons.share_rounded),
-          child: Text(context.loc.share),
+          icon: const Icon(Icons.download_rounded),
+          child: Text(context.loc.save),
         ),
       ],
     );

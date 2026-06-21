@@ -169,6 +169,18 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
             return FloatingActionButton(
               tooltip: context.loc.addNewExam,
               onPressed: () async {
+                // Navigator.push(
+                //   context,
+                //   MyBottomSheetRoute(
+                //     builder: (context) => const NewTaskBottomSheet(
+                //       autoSetDate: true,
+                //       initialDate: null,
+                //       initialTaskId: null,
+                //       isHomework: false,
+                //     ),
+                //   ),
+                // );
+
                 showKeyboard();
                 vibrate.medium();
                 addNewExam(context);
