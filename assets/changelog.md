@@ -1,4 +1,15 @@
-## [2.2.5](2026-6-21;build63)
+## [2.](2026-;build)
+### Added
+- New dialog for creating homework and exams
+
+### Changed
+
+
+### Fixed
+
+---
+
+## [2.2.5](2026-06-21;build63)
 ### Added
 
 ### Changed

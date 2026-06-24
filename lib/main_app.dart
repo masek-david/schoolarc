@@ -57,7 +57,7 @@ class MainApp extends ConsumerStatefulWidget {
 
 class _MainAppState extends ConsumerState<MainApp> {
   late final AppLifecycleListener appStateListener;
-  late final StreamSubscription<Uri> appLinksSub;
+  late final StreamSubscription<Uri>? appLinksSub;
   bool showingOnboarding = false;
 
   void endOnboarding() {
@@ -182,24 +182,26 @@ class _MainAppState extends ConsumerState<MainApp> {
     super.initState();
 
     final appLinks = AppLinks();
-    appLinksSub = appLinks.uriLinkStream.listen((uri) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) {
-          try {
-            final recap = RecapData.decode(
-              Uri.decodeComponent(uri.query),
+    appLinksSub = kIsWeb
+        ? null
+        : appLinks.uriLinkStream.listen((uri) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (timeStamp) {
+                try {
+                  final recap = RecapData.decode(
+                    Uri.decodeComponent(uri.query),
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    '/recap-sticker',
+                    arguments: recap,
+                  );
+                } catch (e) {
+                  showErrorMessage(context, e.toString());
+                }
+              },
             );
-            Navigator.pushNamed(
-              context,
-              '/recap-sticker',
-              arguments: recap,
-            );
-          } catch (e) {
-            showErrorMessage(context, e.toString());
-          }
-        },
-      );
-    });
+          });
 
     final firstTimeOpeningApp = settings.firstTimeOpeningApp;
 
@@ -255,7 +257,7 @@ class _MainAppState extends ConsumerState<MainApp> {
   @override
   void dispose() {
     appStateListener.dispose();
-    appLinksSub.cancel();
+    appLinksSub?.cancel();
     super.dispose();
   }
 

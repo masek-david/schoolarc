@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
@@ -16,7 +18,6 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
-import 'package:schoolarc/widgets/buttons/cancel_save_button.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
@@ -94,6 +95,8 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
         ref.read(examDataProvider.notifier).update(task as ExamData);
       }
     }
+
+    Navigator.pop(context);
   }
 
   void setSubject(Subject? subject) {
@@ -108,6 +111,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
           pickedDate.value = newDate;
         }
       }
+      canPop = _getCanPop();
     });
     _subjectChipEnsureVisible(subject?.id);
   }
@@ -124,16 +128,17 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
     }
   }
 
+  /// Shows a date picker dialog
   void pickDate({bool keyboard = false}) async {
     final initial = pickedDate.value.toDateTimeLocal();
-    DateTime? newDate;
+    DateTime? newDateTime;
     if (keyboard) {
-      newDate = await showDialog<DateTime?>(
+      newDateTime = await showDialog<DateTime?>(
         context: context,
         builder: (context) => KeyboardDatePicker(initialDate: initial),
       );
     } else {
-      newDate = await showDatePicker(
+      newDateTime = await showDatePicker(
         context: context,
         locale: Locale(
           Localizations.localeOf(context).languageCode,
@@ -145,15 +150,17 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
       );
     }
 
-    if (newDate == null) return;
+    if (newDateTime == null) return;
+    final newDate = Date.fromDateTime(newDateTime.toLocal());
 
     setState(() {
       dateIsAutoSet.value = false;
-      pickedDate.value = Date.fromDateTime(newDate!.toLocal());
+      pickedDate.value = newDate;
+      canPop = _getCanPop();
     });
-    return;
   }
 
+  /// Shows a select subject dialog and sets the state
   void pickSubject(List<Subject> subjects) async {
     final newSubject = await showSelectSubject(
       context: context,
@@ -171,22 +178,31 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
       actions: [
         DialogActionButton(
           text: 'Cancel',
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
+          onPressed: () => Navigator.pop(context, false),
         ),
         DialogActionButton(
           isDestructiveAction: true,
-          text: 'Yes',
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
+          text: 'Discard',
+          onPressed: () => Navigator.pop(context, true),
         ),
       ],
     );
     if (popAllowed == true && mounted) {
       Navigator.pop(context);
     }
+  }
+
+  /// Returns true only if the current form is the same with the initial task
+  bool _getCanPop() {
+    if (nameController.value.text != initialTask.text) return false;
+    if (descriptionController.value.text != initialTask.description) {
+      return false;
+    }
+    if (pickedPriority.value != initialTask.priority) return false;
+    if (pickedSubjectId.value != initialTask.subjectId) return false;
+    if (pickedDate.value != initialTask.date) return false;
+    if (pickedDate.value != initialTask.date) return false;
+    return true;
   }
 
   @override
@@ -318,7 +334,68 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
             child: Column(
               mainAxisSize: .min,
               children: [
-                SafeArea(child: CancelSaveButton(onSave: onSave)),
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    // TODO button group
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        // TODO split button
+                        IconButtonM3E.tonal(
+                          size: .medium,
+                          width: .narrow,
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close_rounded),
+                        ),
+                        // TODO qr
+                        // IconButtonM3E.tonal(
+                        //   width: .narrow,
+                        //   size: .medium,
+                        //   onPressed: () {
+                        //     final task = initialTask.copyWith(
+                        //       subjectId: pickedSubjectId.value,
+                        //       text: nameController.value.text,
+                        //       description: descriptionController.value.text,
+                        //       date: pickedDate.value,
+                        //       priority: pickedPriority.value,
+                        //       timestamp: DateTime.now().toUtc(),
+                        //     );
+
+                        //     showMyDialog(
+                        //       context: context,
+                        //       title: 'Share with QR code',
+                        //       content: SizedBox(
+                        //         height: 160,
+                        //         child: PrettyQrView(
+                        //           decoration: PrettyQrDecoration(
+                        //             shape: PrettyQrSmoothSymbol(
+                        //               color: context.col.primary,
+                        //             ),
+                        //           ),
+                        //           qrImage: QrImage(
+                        //             QrCode.fromData(
+                        //               data: task.toHw().toFireJson().toString(),
+                        //               errorCorrectLevel: 2,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        //   icon: const Icon(Icons.qr_code),
+                        // ),
+                        const Spacer(),
+                        ButtonM3E.filled(
+                          size: .medium,
+                          onPressed: onSave,
+                          icon: const Icon(Icons.check_rounded),
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Container(
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
@@ -334,12 +411,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                     ),
                     color: context.col.surface,
                   ),
-                  padding: const EdgeInsets.only(
-                    bottom: 12,
-                    top: 12,
-                    left: 12,
-                    right: 12,
-                  ),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -351,7 +423,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                         chipKeys: subjectChipsKeys,
                       ),
                       const SizedBox(height: 10),
-                      // Add tip for the textfield
+                      // TODO Add tip for the textfield
                       Autocomplete<Subject>(
                         fieldViewBuilder:
                             (
@@ -379,6 +451,9 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                                 },
                                 onChanged: (value) {
                                   textEditingController.text = value;
+                                  setState(() {
+                                    canPop = _getCanPop();
+                                  });
                                 },
                                 onEditingComplete: () {},
                               );
@@ -410,6 +485,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                         onSelected: (value) {
                           setState(() {
                             pickedPriority.value = value;
+                            canPop = _getCanPop();
                           });
                         },
                       ),
@@ -449,6 +525,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                           ),
                         ),
                       ),
+                      // TODO button group
                       Row(
                         children: [
                           ChoiceChip(
@@ -460,6 +537,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                               vibrate.medium();
                               setState(() {
                                 pickedDate.value = Date.today();
+                                canPop = _getCanPop();
                               });
                             },
                           ),
@@ -473,6 +551,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                               vibrate.medium();
                               setState(() {
                                 pickedDate.value = Date.today().addDays(1);
+                                canPop = _getCanPop();
                               });
                             },
                           ),
@@ -488,6 +567,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                               vibrate.medium();
                               setState(() {
                                 pickedDate.value = Date.today().addDays(7);
+                                canPop = _getCanPop();
                               });
                             },
                           ),
@@ -496,6 +576,9 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                       const SizedBox(height: 8),
                       TextField(
                         controller: descriptionController.value,
+                        onChanged: (value) => setState(() {
+                          canPop = _getCanPop();
+                        }),
                         maxLines: null,
                         decoration: InputDecoration(
                           hintText: context.loc.description,

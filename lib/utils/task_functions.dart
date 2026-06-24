@@ -8,6 +8,8 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/add_bottom_sheet.dart';
+import 'package:schoolarc/widgets/dialogs/my_bottom_sheet_route.dart';
+import 'package:schoolarc/widgets/dialogs/new_task_bottom_sheet.dart';
 
 @pragma('vm:entry-point')
 Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
@@ -19,6 +21,14 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
       ? Date.fromPrimitiveInt(initialDateInt)
       : null;
 
+  return MyBottomSheetRoute(
+    builder: (context) => NewTaskBottomSheet(
+      initialTaskId: arguments['id'],
+      initialDate: initialDate,
+      isHomework: arguments['isHomework'],
+      autoSetDate: initialDate == null,
+    ),
+  );
   return ModalBottomSheetRoute(
     backgroundColor: Colors.transparent,
     builder: (context) => AddTaskBottomSheet(

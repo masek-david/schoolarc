@@ -7,6 +7,8 @@ tests
 cant complete hw from widget
 fix pull to refresh in calendar
 
+FILE PICKER DOESNT WORK ON WEB
+
 # BOTTOM SHEET
 FIX SCROLLABLE BOTTOM SHEET (new newtaskdialogbutton ??? )
 bottom sheet animations - stupidsimplesheet ??? and add motor ???
@@ -205,3 +207,5 @@ navigation rail - just for medium+ displays, keep the navigation drawer for mobi
     - ✅ name
 
 release - update pub, update pubspec version, update firebase realtimeDB versions, update changelog, github release - dont build for all abi - it would make build version wrong
+
+for web - flutter build web --pwa-strategy=none ; node web/generate_service_worker.js, then firebase deploy
