@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
@@ -34,7 +34,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showExport)
-          ButtonM3E.tonal(
+          M3EFilledButton.tonalIcon(
             icon: const Icon(Icons.file_upload_outlined),
             onPressed: () async {
               final json = export();
@@ -57,9 +57,9 @@ class ImportExportButtonsRow extends ConsumerWidget {
                 }
               }
             },
-            child: Text(context.loc.export),
+            label: Text(context.loc.export),
           ),
-        ButtonM3E.tonal(
+        M3EFilledButton.tonalIcon(
           icon: const Icon(Icons.file_download_outlined),
           onPressed: () async {
             try {
@@ -168,7 +168,7 @@ class ImportExportButtonsRow extends ConsumerWidget {
               }
             }
           },
-          child: Text(context.loc.import),
+          label: Text(context.loc.import),
         ),
       ],
     );

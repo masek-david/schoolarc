@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/screens/bakalari/baka_homeworks/baka_hw_add_bottom_sheet.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
@@ -18,7 +18,7 @@ class BakaHwTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () {
             showModalBottomSheet(
               context: context,

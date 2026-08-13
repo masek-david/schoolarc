@@ -25,6 +25,7 @@ enum Setting {
   tomorrowNotificationEnabled,
   tomorrowNotificationTime,
   tomorrowNotificationBeforeWeekend,
+  tomorrowNotificationIfEmpty,
   stopAskingForNotifications,
   stopPwaCloudSyncWarning,
   themeMode,
@@ -123,6 +124,10 @@ class SettingsDatabase {
     Setting.tomorrowNotificationBeforeWeekend: const SettingModel(
       defaultValue: false,
       key: 'tomorrowNotificationBeforeWeekend',
+    ),
+    Setting.tomorrowNotificationIfEmpty: const SettingModel(
+      defaultValue: false,
+      key: 'tomorrowNotificationIfEmpty',
     ),
     Setting.stopAskingForNotifications: const SettingModel(
       defaultValue: null,

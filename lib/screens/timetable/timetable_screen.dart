@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/timetable/new_lesson_times.dart';
@@ -38,7 +37,7 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
       appBar: AppBar(
         title: Text(context.loc.timetable),
         actions: [
-          IconButtonM3E(
+          M3EIconButton(
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -91,8 +90,8 @@ class _TimetableScreenState extends ConsumerState<TimetableScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             EmptyMessage(message: context.loc.noTimetableMessage),
-            ButtonM3E.filled(
-              size: .medium,
+            M3EFilledButton(
+              size: .md,
               onPressed: () =>
                   Navigator.of(context).restorablePushNamed('/bakalari'),
               child: Text(context.loc.bakalari),

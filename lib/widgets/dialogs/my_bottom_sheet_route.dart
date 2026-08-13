@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/m3e_parameters.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/widgets/dialogs/predictive_back_builder.dart';
 
 class MyBottomSheetRoute<T> extends PageRoute<T> {

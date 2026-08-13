@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
 
 // Source - https://stackoverflow.com/a
 // Posted by Rémi Rousselet, modified by community. See post 'Timeline' for change history

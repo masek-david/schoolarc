@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -316,7 +316,7 @@ class _MainAppState extends ConsumerState<MainApp> {
                             child: Badge(
                               alignment: Alignment(0.6, -0.6),
                               backgroundColor: Colors.red,
-                              child: IconButtonM3E(
+                              child: M3EIconButton(
                                 onPressed: openDrawer,
                                 icon: Icon(Icons.menu_rounded),
                               ),

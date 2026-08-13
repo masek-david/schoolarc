@@ -86,6 +86,7 @@ class NotificationSender {
     final bool beforeWeekend = settings.get(
       Setting.tomorrowNotificationBeforeWeekend,
     );
+    final bool sendIfEmpty = settings.get(Setting.tomorrowNotificationIfEmpty);
     final today = Date.today();
 
     final List<Date> days = [];
@@ -123,19 +124,30 @@ class NotificationSender {
 
     for (int i = 0; i < days.length; i++) {
       final day = days[i];
-      final aboutDay = day.addDays(1);
+      final forDay = day.addDays(1);
       final arrive = day.toDateTimeLocal().copyWith(
         hour: arriveTime.hour,
         minute: arriveTime.minute,
       );
 
+      final examsForDay = exams[forDay] ?? [];
+      final hwsForDay = hws[forDay] ?? [];
+      final missedForDay = hwsGetMissed(hwsInDb, missedBy: forDay);
+
+      if (examsForDay.isEmpty &&
+          hwsForDay.isEmpty &&
+          missedForDay.isEmpty &&
+          !sendIfEmpty && !sendNow) {
+        break;
+      }
+
       createNotification(
         loc: loc,
         id: i,
         arrive: sendNow ? null : arrive,
-        exams: exams[aboutDay] ?? [],
-        hws: hws[aboutDay] ?? [],
-        missed: hwsGetMissed(hwsInDb, missedBy: aboutDay),
+        exams: examsForDay,
+        hws: hwsForDay,
+        missed: missedForDay,
       );
     }
 
@@ -218,7 +230,7 @@ class NotificationSender {
         id: id,
         badge: 0,
         channelKey: tomorrowChannel,
-        title: loc.tomorrow,
+        title: body == '' ? loc.nothingPlannedForTomorrow : loc.tomorrow,
         summary: summary,
         body: body,
         autoDismissible: false,

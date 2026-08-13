@@ -218,6 +218,24 @@ abstract class AppLocalizations {
   /// **'Yesterday'**
   String get yesterday;
 
+  /// No description provided for @nextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get nextWeek;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get thisWeek;
+
+  /// No description provided for @previousWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous week'**
+  String get previousWeek;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -235,6 +253,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @saveAsHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as homework'**
+  String get saveAsHomework;
+
+  /// No description provided for @saveAsExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as an exam'**
+  String get saveAsExam;
+
+  /// No description provided for @shareByQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Share by QR'**
+  String get shareByQr;
+
+  /// No description provided for @scanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get scanQr;
+
+  /// No description provided for @newTaskTextFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write task, search for subjects,...'**
+  String get newTaskTextFieldHint;
 
   /// No description provided for @add.
   ///
@@ -427,6 +475,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing planned for {whenText}'**
   String nothingPlannedFor(Object whenText);
+
+  /// No description provided for @nothingPlannedForTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned for tomorrow'**
+  String get nothingPlannedForTomorrow;
 
   /// No description provided for @nothingPlanned.
   ///
@@ -1351,6 +1405,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If enabled, you will receive notifications even on Friday and Saturday'**
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle;
+
+  /// No description provided for @upcomingDayNotificationsSendIfEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications if empty'**
+  String get upcomingDayNotificationsSendIfEmpty;
+
+  /// No description provided for @upcomingDayNotificationsSendIfEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, you will receive notifications even when you don\'t have anything planned for tomorrow'**
+  String get upcomingDayNotificationsSendIfEmptySubtitle;
 
   /// No description provided for @addWidgetToHomescreen.
   ///

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
@@ -74,7 +74,7 @@ class TimetableCard extends ConsumerWidget {
             onPressed: () => refresh(ref, week),
             isLoading: isLoading,
           ),
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () {
             ref.read(actualTimetableDataProvider(week).notifier).refreshIfOld();
             Navigator.restorablePushNamed(

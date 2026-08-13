@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
@@ -8,8 +10,6 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 import 'package:schoolarc/widgets/tiles/meal_tile.dart';
 

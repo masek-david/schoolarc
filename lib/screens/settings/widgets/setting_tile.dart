@@ -124,11 +124,10 @@ class SettingTile extends StatelessWidget {
     );
   }
 
-  // TODO test on mobile
   static SettingTile withTextField({
     required String title,
     required String? value,
-    required void Function(String value) onSubmitted,
+    required TextEditingController controller,
     Widget? trailing,
     String? subtitle,
     bool enabled = true,
@@ -148,10 +147,7 @@ class SettingTile extends StatelessWidget {
       contentPadding: contentPadding,
       leading: leading,
       trailing: trailing,
-      newLineAction: TextFormField(
-        initialValue: value,
-        onFieldSubmitted: onSubmitted,
-      ),
+      newLineAction: TextField(controller: controller),
       isFirst: isFirst,
       isLast: isLast,
       key: key,
@@ -325,7 +321,12 @@ class SettingTile extends StatelessWidget {
                           Text(
                             subtitle!,
                             style: context.txt.bodyMedium!.copyWith(
-                              color: foregroundColor,
+                              color:
+                                  (foregroundColor ??
+                                          (highlighted
+                                              ? context.col.onPrimaryContainer
+                                              : context.col.onSurface))
+                                      .withAlpha(enabled ? 255 : 80),
                             ),
                           ),
                       ],

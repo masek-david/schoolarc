@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 Color colorFromString(String input, bool isDark) {
   final hash = input.codeUnits.fold(0, (prev, elem) => prev + elem);
@@ -58,7 +58,11 @@ class NicknameText extends StatelessWidget {
     } else if (user?.id == 'ELQJHNXQ3LRSSokMMZWubwRUJeR2') {
       text = user!.name;
 
-      textStyle = robotoSerif(color: col.onPrimaryContainer, weight: 600, size: 26);
+      textStyle = robotoSerif(
+        color: col.onPrimaryContainer,
+        weight: 600,
+        size: 26,
+      );
 
       avatar = ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(100),
@@ -120,8 +124,8 @@ class NicknameText extends StatelessWidget {
               children: [
                 Text(text, style: textStyle),
                 if (editNickname != null && !isLoading && loggedIn)
-                  IconButtonM3E(
-                    // TODO tooltip: context.loc.changeNickname,
+                  M3EIconButton(
+                    tooltip: context.loc.changeNickname,
                     onPressed: editNickname,
                     icon: const Icon(Icons.edit_rounded),
                   ),

@@ -1,9 +1,13 @@
-## [2.](2026-;build)
+## [2.3.0](2026-;build)
 ### Added
-- New dialog for creating homework and exams
+- New buttons following Material 3 Expressive guidelines
+- Updated dialog for creating homework and exams
+  - Prevent discarding changes by accident
+  - Option to share via QR code
+  - Option to save homework as exam and vice versa
 
 ### Changed
-
+- Notifications now won't arrive if they are empty (by default)
 
 ### Fixed
 

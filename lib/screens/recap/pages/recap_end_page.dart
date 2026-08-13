@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/m3e_parameters.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/screens/recap/sticker/recap_sticker.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
@@ -19,8 +19,8 @@ class RecapEndPage extends StatelessWidget {
     final curve = SpatialMotion.fast.curve;
 
     return AnimatedPage(
-      overlayButton: ButtonM3E.filled(
-        size: .large,
+      overlayButton: M3EFilledButton.icon(
+        size: .lg,
         onPressed: () {
           settings.save(
             Setting.recapShownForYear,
@@ -29,7 +29,7 @@ class RecapEndPage extends StatelessWidget {
           Navigator.pop(context);
         },
         icon: const Text('🏄'),
-        child: Text(context.loc.exit),
+        label: Text(context.loc.exit),
       ),
       duration: const Duration(milliseconds: 800),
       itemDelay: const Duration(milliseconds: 800),

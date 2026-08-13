@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -14,11 +14,34 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
-class StyleMotionPage extends ConsumerWidget {
+class StyleMotionPage extends ConsumerStatefulWidget {
   const StyleMotionPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StyleMotionPage> createState() => _StyleMotionPageState();
+}
+
+class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
+  late final nameController = TextEditingController(
+    text: ref.read(usernameProvider),
+  );
+  bool isFetchingName = false;
+
+  @override
+  void initState() {
+    nameController.addListener(
+      () {
+        ref
+            .read(usernameProvider.notifier)
+            .updateNameManually(nameController.text);
+      },
+    );
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final showMyName = ref.watch(greetUsernameProvider);
     final name = ref.watch(usernameProvider);
     final lunchTime = ref.watch(mealsShowTodayUntilProvider);
@@ -72,58 +95,82 @@ class StyleMotionPage extends ConsumerWidget {
           },
         ),
         SettingTile.withTextField(
-          // This means the widget will update when new name is set in the provider
-          key: ValueKey('UsernameTextField:$name'),
+          enabled: !isFetchingName,
           title: context.loc.myName,
           subtitle: context.loc.myNameDescription,
+          leading: isFetchingName
+              ? const SizedBox(height: 56, width: 48, child: M3ELoadingIndicator())
+              : null,
           value: name,
-          trailing: IconButtonM3E(
+          controller: nameController,
+          trailing: M3EIconButton(
+            enabled: !isFetchingName,
+            style: .tonal,
             onPressed: () {
-              if (ref.read(usernameProvider.notifier).manuallySet) {
-                showMyDialog(
-                  context: context,
-                  title:context.loc.nameSetManuallyTitle,
-                  text:context.loc.nameSetManuallyText(name ?? ''),
-                  actions: [
-                    DialogActionButton(
-                      text: context.loc.cancel,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    DialogActionButton(
-                      isDestructiveAction: true,
-                      text: context.loc.yes,
-                      onPressed: () {
-                        ref
-                            .read(usernameProvider.notifier)
-                            .disableNameManuallySet();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-              } else {
-                showMyDialog(
-                  context: context,
-                  title:context.loc.nameFetchedTitle,
-                  text:context.loc.nameFetchedText,
-                  actions: [
-                    DialogActionButton(
-                      text: context.loc.ok,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-              }
+              final manuallySet = ref
+                  .read(usernameProvider.notifier)
+                  .manuallySet;
+              // TODO only show this if the username CAN be loaded from bakalari and maybe instead of loading the name just show Loaded from bakalari: David. Set name to David? -> yes
+              showMyDialog(
+                context: context,
+                title: manuallySet
+                    ? context.loc.nameSetManuallyTitle
+                    : context.loc.nameFetchedTitle,
+                content: !manuallySet
+                    ? Text(context.loc.nameFetchedText)
+                    : Column(
+                        crossAxisAlignment: .start,
+                        mainAxisSize: .min,
+                        children: [
+                          Text('You have set your name to $name.'),
+                          const Divider(),
+                          const Text(
+                            'Your name can also be loaded from Bakalari. This will override your current name.',
+                          ),
+                          M3EFilledButton.tonal(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              setState(() {
+                                isFetchingName = true;
+                              });
+                              try {
+                                setState(() {
+                                  isFetchingName = true;
+                                });
+                                final fetchedName = await ref
+                                    .read(usernameProvider.notifier)
+                                    .disableNameManuallySet();
+                                if (!context.mounted) return;
+                                setState(() {
+                                  isFetchingName = false;
+                                });
+
+                                if (fetchedName != null) {
+                                  nameController.text = fetchedName;
+                                }
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                showErrorMessage(context, e);
+                                return;
+                              }
+                            },
+                            child: const Text('Load name from Bakalari'),
+                          ),
+                          const Divider(),
+                        ],
+                      ),
+                actions: [
+                  DialogActionButton(
+                    text: context.loc.ok,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
             },
             icon: const Icon(Icons.info_outline_rounded),
           ),
-          onSubmitted: (value) {
-            ref.read(usernameProvider.notifier).updateNameManually(value);
-          },
         ),
         SettingTile.withTimePicker(
           isLast: true,

@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "cz.masci.schoolarc"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

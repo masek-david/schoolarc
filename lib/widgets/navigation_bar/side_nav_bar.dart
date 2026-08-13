@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -25,7 +25,7 @@ class SideNavBar extends StatelessWidget {
       labelType: NavigationRailLabelType.all,
       groupAlignment: 0.0,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      leading: const IconButtonM3E(
+      leading: const M3EIconButton(
         onPressed: openDrawer,
         icon: Icon(Icons.menu_rounded),
       ),

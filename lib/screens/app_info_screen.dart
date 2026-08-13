@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/services/firebase/app_info_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class AppInfoScreen extends ConsumerWidget {
   const AppInfoScreen({super.key});
@@ -18,7 +18,7 @@ class AppInfoScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           if (ref.watch(devModeProvider))
-            IconButtonM3E(
+            M3EIconButton(
               onPressed: () {
                 ref.read(needsUpdateProvider.notifier).bypass();
               },

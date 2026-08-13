@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
+import 'package:schoolarc/m3e/expressive_loading/linear_wavy_progress_indicator.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
-import 'package:schoolarc/widgets/expressive_loading/linear_wavy_progress_indicator.dart';
 
 class MyBuilder extends MarkdownElementBuilder {
   @override

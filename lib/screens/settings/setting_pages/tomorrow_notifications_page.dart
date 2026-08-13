@@ -22,6 +22,7 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
   bool? areNotificationsAllowed;
   bool enabled = settings.get(Setting.tomorrowNotificationEnabled);
   bool beforeWeekend = settings.get(Setting.tomorrowNotificationBeforeWeekend);
+  bool sendIfEmpty = settings.get(Setting.tomorrowNotificationIfEmpty);
   TimeOfDay time = settings.get(Setting.tomorrowNotificationTime);
 
   @override
@@ -164,10 +165,21 @@ class _TomorrowNotificationsPageState extends State<TomorrowNotificationsPage> {
               });
             },
           ),
+          SettingTile.withSwitch(
+            title: context.loc.upcomingDayNotificationsSendIfEmpty,
+            subtitle: loc.upcomingDayNotificationsSendIfEmptySubtitle,
+            value: sendIfEmpty,
+            onChanged: (value) {
+              settings.save(Setting.tomorrowNotificationIfEmpty, value);
+              setState(() {
+                sendIfEmpty = value;
+              });
+            },
+          ),
           SettingTile(
             isLast: true,
             title: loc.sendNotificationNow,
-            enabled: areNotificationsAllowed == true,
+            enabled: areNotificationsAllowed == true && enabled,
             onTap: (context) =>
                 NotificationSender.scheduleUpcomingDayNotifications(
                   context,

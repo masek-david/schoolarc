@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -12,7 +12,6 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/dialogs/progress_dialog.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -125,13 +124,13 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
       heroTag: 'bakalari',
       title: context.loc.bakalari,
       actions: [
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () {
             ref.read(bakaLoginProvider.notifier).refreshLogin();
           },
           icon: const Icon(Icons.refresh_rounded),
         ),
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () => showMyDialog(
             context: context,
             title: context.loc.secureLogin,
@@ -211,7 +210,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       ),
                     ),
                     ExcludeFocus(
-                      child: IconButtonM3E(
+                      child: M3EIconButton(
                         onPressed: () {
                           setState(() {
                             obscureText = !obscureText;
@@ -270,9 +269,9 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
             ],
           ),
         if (!isLoggedIn)
-          ButtonM3E.filled(
+          M3EFilledButton.icon(
             icon: const Icon(Icons.login_rounded),
-            size: .medium,
+            size: .md,
             onPressed: !baka.isLoading && useBaka
                 ? () async {
                     vibrate.medium();
@@ -295,17 +294,17 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                     }
                   }
                 : null,
-            child: Text(context.loc.logIn),
+            label: Text(context.loc.logIn),
           ),
         if (isLoggedIn)
-          ButtonM3E.tonal(
+          M3EFilledButton.tonalIcon(
             onPressed: !isLoading ? askToImportTimetable : null,
             icon: const Icon(Icons.download_rounded),
-            child: Text(context.loc.importTimetable),
+            label: Text(context.loc.importTimetable),
           ),
         if (isLoggedIn) const Divider(),
         if (isLoggedIn)
-          ButtonM3E.elevated(
+          M3EElevatedButton.icon(
             icon: const Icon(Icons.logout_rounded),
             onPressed: baka.isLoading
                 ? null
@@ -320,7 +319,7 @@ class _BakalariScreenState extends ConsumerState<BakaLoginScreen> {
                       vibrate.error();
                     }
                   },
-            child: Text(context.loc.logOut),
+            label: Text(context.loc.logOut),
           ),
       ],
     );

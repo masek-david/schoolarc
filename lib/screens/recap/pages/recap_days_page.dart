@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
-import 'package:schoolarc/m3e/m3e_parameters.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -37,9 +37,9 @@ class RecapDaysPage extends StatelessWidget {
     return AnimatedPage(
       duration: const Duration(milliseconds: 800),
       itemDelay: const Duration(milliseconds: 800),
-      overlayButton: IconButtonM3E.tonal(
+      overlayButton: M3EFilledIconButton.tonal(
         width: .wide,
-        size: .large,
+        size: .lg,
         icon: const Icon(Icons.keyboard_arrow_right_rounded),
         onPressed: next,
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/raw_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class ColorPickerAction extends StatelessWidget {
@@ -53,38 +53,27 @@ class ColorPickerAction extends StatelessWidget {
               final foregroundColor = _foregroundColors[index];
               final size = 50.0;
 
-              return RawButtonM3E(
-                child: null,
-                selected: isSelected,
-                outlineWidth: null,
-                outlineColor: null,
-                iconSpacing: 0,
-                onPressed: () {
-                  vibrate.medium();
-                  onChanged(color, index);
+              return M3EToggleButton(
+                checkedIcon: const Icon(Icons.check_rounded),
+                onCheckedChange: (value) {
+                  if (value) {
+                    vibrate.medium();
+                    onChanged(color, index);
+                  }
                 },
-                backgroundColor: WidgetStateColor.fromMap({
-                  WidgetState.any: color,
-                }),
-                foregroundColor: WidgetStateColor.fromMap({
-                  WidgetState.any: foregroundColor,
-                }),
-                elevation: const WidgetStateProperty.fromMap({
-                  WidgetState.any: 1,
-                }),
-                width: size,
-                height: size,
-                iconSize: 40,
-                radius: WidgetStateProperty.fromMap({
-                  WidgetState.pressed: .circular(12),
-                  WidgetState.selected: .circular(16),
-                  WidgetState.any: .circular(size / 2),
-                }),
-                padding: 0,
-                fontSize: 0,
-                icon: isSelected
-                    ? const Icon(Icons.check_rounded)
-                    : const SizedBox.shrink(),
+                checked: isSelected,
+                size: M3EButtonSize.custom(
+                  width: size,
+                  height: size,
+                  iconSize: 40,
+                  hPadding: 0,
+                ),
+                icon: const SizedBox.shrink(),
+                decoration: M3EToggleButtonDecoration(
+                  pressedRadius: 4,
+                  foregroundColor: WidgetStatePropertyAll(foregroundColor),
+                  backgroundColor: WidgetStatePropertyAll(color),
+                ),
               );
             },
           ),

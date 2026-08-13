@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/error_button_styles.dart';
+import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 Future<T> showMyDialog<T>({
   required BuildContext context,
@@ -41,15 +43,19 @@ class DialogActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isDefaultAction) {
-      return ButtonM3E.filled(
+      return M3EFilledButton(
         onPressed: onPressed,
-        error: isDestructiveAction,
+        decoration: isDestructiveAction
+            ? ErrorButtonStyle.filled(context.col)
+            : null,
         child: Text(text),
       );
     }
-    return ButtonM3E.text(
+    return M3ETextButton(
       onPressed: onPressed,
-      error: isDestructiveAction,
+      decoration: isDestructiveAction
+          ? ErrorButtonStyle.text(context.col)
+          : null,
       child: Text(text),
     );
   }

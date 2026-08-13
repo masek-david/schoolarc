@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class LoadingIconButtonWithFuture extends StatefulWidget {
   const LoadingIconButtonWithFuture({
@@ -68,7 +68,7 @@ class LoadingIconButton extends StatelessWidget {
             color: context.col.secondaryContainer,
             size: 48,
           ),
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: onPressed,
           icon: Icon(icon),
         ),

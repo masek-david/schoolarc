@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 
@@ -51,9 +51,13 @@ class SettingsScaffold extends StatelessWidget {
               pinned: true,
               leading: Align(
                 alignment: .center,
-                child: IconButtonM3E(
+                child: M3EIconButton(
                   onPressed: () => Navigator.pop(context),
-                  backgroundColor: context.col.surfaceContainer,
+                  decoration: M3EButtonDecoration(
+                    backgroundColor: WidgetStatePropertyAll(
+                      context.col.surfaceContainer,
+                    ),
+                  ),
                   icon: const Icon(Icons.arrow_back_rounded),
                 ),
               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -83,11 +83,11 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
             builder: (isShown) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 32),
-                child: ButtonM3E.filled(
-                  size: .medium,
+                child: M3EFilledButton.icon(
+                  size: .md,
                   onPressed: privacyPolicyAgree ? widget.next : null,
                   icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                  child: Text(context.loc.continueAction),
+                  label: Text(context.loc.continueAction),
                 ),
               );
             },

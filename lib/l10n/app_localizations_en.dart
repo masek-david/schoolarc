@@ -129,6 +129,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yesterday => 'Yesterday';
 
   @override
+  String get nextWeek => 'Next week';
+
+  @override
+  String get thisWeek => 'This week';
+
+  @override
+  String get previousWeek => 'Previous week';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -136,6 +145,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get saveAsHomework => 'Save as homework';
+
+  @override
+  String get saveAsExam => 'Save as an exam';
+
+  @override
+  String get shareByQr => 'Share by QR';
+
+  @override
+  String get scanQr => 'Scan QR code';
+
+  @override
+  String get newTaskTextFieldHint => 'Write task, search for subjects,...';
 
   @override
   String get add => 'Add';
@@ -286,6 +310,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String nothingPlannedFor(Object whenText) {
     return 'Nothing planned for $whenText';
   }
+
+  @override
+  String get nothingPlannedForTomorrow => 'Nothing planned for tomorrow';
 
   @override
   String get nothingPlanned => 'Nothing planned';
@@ -775,6 +802,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
       'If enabled, you will receive notifications even on Friday and Saturday';
+
+  @override
+  String get upcomingDayNotificationsSendIfEmpty =>
+      'Receive notifications if empty';
+
+  @override
+  String get upcomingDayNotificationsSendIfEmptySubtitle =>
+      'If enabled, you will receive notifications even when you don\'t have anything planned for tomorrow';
 
   @override
   String get addWidgetToHomescreen => 'Add widget to home screen?';

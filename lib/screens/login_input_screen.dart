@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/toggle_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
@@ -83,8 +81,8 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: ButtonM3E.filled(
-                    size: .medium,
+                  child: M3EFilledButton(
+                    size: .md,
                     key: Key(widget.actionName),
                     onPressed: actionEnabled
                         ? () => widget.onSubmit(
@@ -129,7 +127,7 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                   ),
                   if (field.info != null)
                     ExcludeFocus(
-                      child: IconButtonM3E(
+                      child: M3EIconButton(
                         onPressed: () {
                           showMyDialog(
                             context: context,
@@ -148,16 +146,16 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                     ),
                   if (obscure != null)
                     ExcludeFocus(
-                      child: ToggleIconButtonM3E.outlined(
-                        selected: !obscure,
-                        onPressed: () {
+                      child: M3EIconToggleButton(
+                        style: .filled,
+                        checked: !obscure,
+                        onCheckedChange: (value) {
                           setState(() {
-                            obscures[index] = !obscure;
+                            obscures[index] = !value;
                           });
                         },
-                        icon: Icon(
-                          obscure ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        ),
+                        checkedIcon: const Icon(Icons.visibility_rounded),
+                        icon: const Icon(Icons.visibility_off_rounded),
                       ),
                     ),
                 ],

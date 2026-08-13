@@ -20,7 +20,7 @@ class UsernameNotifier extends Notifier<String?> {
         return db;
       }
 
-      updateNameFromBaka();
+      _updateNameFromBaka();
     } on Object {
       return null;
     }
@@ -35,7 +35,7 @@ class UsernameNotifier extends Notifier<String?> {
         if (settings.get(.userName) != '' ||
             settings.get(.userName) != null ||
             settings.get(.userNameManuallySet) == false) {
-          return updateNameFromBaka();
+          return _updateNameFromBaka();
         }
       });
     });
@@ -47,23 +47,26 @@ class UsernameNotifier extends Notifier<String?> {
     settings.save(Setting.userName, newName);
     settings.save(Setting.userNameManuallySet, true);
   }
-  
-  void disableNameManuallySet() {
+
+  /// Returns the newly loaded username
+  Future<String?> disableNameManuallySet() {
     manuallySet = false;
     settings.save(Setting.userNameManuallySet, false);
-    updateNameFromBaka();
+    return _updateNameFromBaka();
   }
 
-  Future<void> updateNameFromBaka() async {
+  Future<String?> _updateNameFromBaka() async {
     try {
       final isLoggedIn = await ref.read(bakaLoginProvider.future);
-      if (!isLoggedIn) return;
+      if (!isLoggedIn) return null;
 
       final name = await bakaService.getUsername();
       state = name;
       settings.save(Setting.userName, name);
+      return name;
     } on Object {
       // nothing
+      return null;
     }
   }
 }

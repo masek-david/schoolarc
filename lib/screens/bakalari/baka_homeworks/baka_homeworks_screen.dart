@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
@@ -10,7 +11,6 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
 class BakaHomeworksScreen extends ConsumerWidget {
@@ -63,7 +63,7 @@ class BakaHomeworksScreen extends ConsumerWidget {
             return ErrorTile(
               error: error,
               actions: [
-                IconButtonM3E(
+                M3EIconButton(
                   onPressed: ref.read(bakaHomeworksProvider.notifier).refresh,
                   icon: const Icon(Icons.refresh_rounded),
                 ),

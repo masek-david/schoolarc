@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/logs/log_model.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 
@@ -23,7 +23,7 @@ class _LogScreenState extends State<LogScreen> {
           widget.log.date.format(context),
         ),
         actions: [
-          IconButtonM3E(
+          M3EIconButton(
             onPressed: () {
               setState(() {
                 if (fontSize > 1) {
@@ -33,7 +33,7 @@ class _LogScreenState extends State<LogScreen> {
             },
             icon: const Icon(Icons.remove_rounded),
           ),
-          IconButtonM3E(
+          M3EIconButton(
             onPressed: () {
               setState(() {
                 fontSize++;

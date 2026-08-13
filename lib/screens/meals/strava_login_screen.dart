@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
@@ -11,7 +11,6 @@ import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/login_status_icon.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -75,13 +74,13 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
       heroTag: 'strava',
       title: loc.stravaCz,
       actions: [
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () {
             ref.read(stravaLoginProvider.notifier).refreshLogin();
           },
           icon: const Icon(Icons.refresh_rounded),
         ),
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () => showMyDialog(
             context: context,
             title: context.loc.secureLogin,
@@ -141,7 +140,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                   decoration: InputDecoration(labelText: loc.schoolCanteenId),
                 ),
               ),
-              IconButtonM3E(
+              M3EIconButton(
                 onPressed: () {
                   showMyDialog(
                     context: context,
@@ -198,7 +197,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         decoration: InputDecoration(labelText: loc.password),
                       ),
                     ),
-                    IconButtonM3E(
+                    M3EIconButton(
                       onPressed: () => setState(() {
                         obscure = !obscure;
                       }),
@@ -213,9 +212,9 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
             ),
           ),
         if (!loggedIn)
-          ButtonM3E.filled(
+          M3EFilledButton.icon(
             icon: const Icon(Icons.login_rounded),
-            size: .medium,
+            size: .md,
             onPressed: useMeals
                 ? () {
                     ref
@@ -236,10 +235,10 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                         });
                   }
                 : null,
-            child: Text(loc.logIn),
+            label: Text(loc.logIn),
           ),
         if (loggedIn)
-          ButtonM3E.elevated(
+          M3EElevatedButton.icon(
             onPressed: useMeals
                 ? () {
                     _canteenController.clear();
@@ -255,7 +254,7 @@ class _StravaLoginScreenState extends ConsumerState<StravaLoginScreen> {
                   }
                 : null,
             icon: const Icon(Icons.logout_rounded),
-            child: Text(loc.logOut),
+            label: Text(loc.logOut),
           ),
       ],
     );

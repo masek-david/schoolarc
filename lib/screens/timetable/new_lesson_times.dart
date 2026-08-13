@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
@@ -77,7 +77,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(loc.beginningTime),
-              ButtonM3E.text(
+              M3ETextButton(
                 child: Text(startTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(
@@ -96,7 +96,7 @@ class _NewLessonTimesState extends State<NewLessonTimes> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(loc.endingTime),
-              ButtonM3E.text(
+              M3ETextButton(
                 child: Text(endTime?.format(context) ?? loc.select),
                 onPressed: () {
                   showTimePicker(

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/timetable/widgets/floating_action_bar.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/widgets/lists/non_scrollable_refresh_indicator.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
@@ -21,8 +21,7 @@ class ActualTimetableScreen extends ConsumerStatefulWidget {
       _ActualTimetableScreenState();
 }
 
-class _ActualTimetableScreenState
-    extends ConsumerState<ActualTimetableScreen> {
+class _ActualTimetableScreenState extends ConsumerState<ActualTimetableScreen> {
   int week = getCurrentTimetableWeekIndex();
 
   @override
@@ -41,34 +40,46 @@ class _ActualTimetableScreenState
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionBar(
-        actions: [
-          FloatingActionBarAction(
-            icon: Icons.arrow_back_rounded,
-            onTap: () {
-              setState(() {
-                week -= 1;
-              });
-            },
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16),
+        child: M3EHorizontalFloatingToolbar(
+          expanded: true,
+          
+          content: Row(
+            children: [
+              M3EIconButton(
+                tooltip: context.loc.previousWeek,
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: () {
+                  setState(() {
+                    week -= 1;
+                  });
+                },
+              ),
+              M3EIconButton(
+                tooltip: context.loc.thisWeek,
+                width: .wide,
+                style: .filled,
+                icon: const Icon(Icons.home_rounded),
+                onPressed: () {
+                  setState(() {
+                    week = getCurrentTimetableWeekIndex();
+                  });
+                },
+              ),
+              M3EIconButton(
+                tooltip: context.loc.nextWeek,
+                icon: const Icon(Icons.arrow_forward_rounded),
+                onPressed: () {
+                  setState(() {
+                    week += 1;
+                  });
+                },
+              ),
+            ],
           ),
-          FloatingActionBarAction(
-            icon: Icons.home_rounded,
-            onTap: () {
-              setState(() {
-                week = getCurrentTimetableWeekIndex();
-              });
-            },
-          ),
-          FloatingActionBarAction(
-            icon: Icons.arrow_forward_rounded,
-            onTap: () {
-              setState(() {
-                week += 1;
-              });
-            },
-          ),
-        ],
+        ),
       ),
       body: NonScrollableRefreshIndicator(
         onRefresh: () async {
@@ -97,7 +108,7 @@ class _ActualTimetableScreenState
 
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 40),
+                padding: const EdgeInsets.only(bottom: 48),
                 child: SizedBox(
                   width: double.infinity,
                   child: TimetableView(

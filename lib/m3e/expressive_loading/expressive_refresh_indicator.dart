@@ -1,8 +1,8 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class ExpressiveRefreshIndicator extends StatelessWidget {
   const ExpressiveRefreshIndicator({

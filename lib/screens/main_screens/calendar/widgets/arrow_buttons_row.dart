@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class ArrowButtonsRow extends StatelessWidget {
@@ -32,9 +32,13 @@ class ArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButtonM3E.tonal(
+    return M3EFilledIconButton.tonal(
       onPressed: onPressed,
-      backgroundColor: context.col.surfaceContainerHighest.withAlpha(120),
+      decoration: M3EButtonDecoration(
+        backgroundColor: WidgetStatePropertyAll(
+          context.col.surfaceContainerHighest.withAlpha(120),
+        ),
+      ),
       icon: Icon(
         left
             ? Icons.keyboard_arrow_left_rounded

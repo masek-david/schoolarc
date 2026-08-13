@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
@@ -23,6 +23,9 @@ import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 
+// TODO when a dialog is opened over the sheet, the backgesture still animates the sheet, not the dialog
+
+// TODO test on big screen
 class NewTaskBottomSheet extends ConsumerStatefulWidget {
   const NewTaskBottomSheet({
     super.key,
@@ -71,7 +74,8 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
   /// The map is id of subject to its globalkey
   Map<String, GlobalKey> subjectChipsKeys = {};
 
-  void onSave() {
+  /// [saveAsOtherType] saves the homework as exam and vice versa
+  void onSave({bool saveAsOtherType = false}) {
     vibrate.heavy();
     final task = initialTask.copyWith(
       subjectId: pickedSubjectId.value,
@@ -82,7 +86,11 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
       timestamp: DateTime.now().toUtc(),
     );
 
-    if (widget.isHomework) {
+    final saveAsHomework = saveAsOtherType
+        ? !widget.isHomework
+        : widget.isHomework;
+
+    if (saveAsHomework) {
       if (task.id == '') {
         ref.read(hwDataProvider.notifier).create(task.toHw());
       } else {
@@ -192,6 +200,47 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
     }
   }
 
+  void showQr() {
+    final task = initialTask.copyWith(
+      subjectId: pickedSubjectId.value,
+      text: nameController.value.text,
+      description: descriptionController.value.text,
+      date: pickedDate.value,
+      priority: pickedPriority.value,
+      timestamp: DateTime.now().toUtc(),
+    );
+
+    showMyDialog(
+      context: context,
+      title: context.loc.scanQr,
+      actions: [
+        DialogActionButton(
+          text: context.loc.close,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+      content: SizedBox(
+        height: 160,
+        child: Center(
+          child: PrettyQrView(
+            decoration: PrettyQrDecoration(
+              shape: PrettyQrSmoothSymbol(
+                color: context.col.primary,
+              ),
+            ),
+            qrImage: QrImage(
+              QrCode.fromData(
+                // TODO tofirejson cant be used, we need the subject name not id
+                data: task.toHw().toFireJson().toString(),
+                errorCorrectLevel: 2,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Returns true only if the current form is the same with the initial task
   bool _getCanPop() {
     if (nameController.value.text != initialTask.text) return false;
@@ -248,6 +297,7 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
 
     final viewInsets = MediaQuery.of(context).viewInsets;
     final radii = MediaQuery.displayCornerRadiiOf(context);
+    final today = Date.today();
 
     return PopScope(
       canPop: canPop,
@@ -337,60 +387,41 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                 SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    // TODO button group
                     child: Row(
                       spacing: 8,
                       children: [
-                        // TODO split button
-                        IconButtonM3E.tonal(
-                          size: .medium,
-                          width: .narrow,
+                        M3EIconButton(
+                          style: .tonal,
+                          size: .md,
                           onPressed: () => Navigator.pop(context),
                           icon: const Icon(Icons.close_rounded),
                         ),
-                        // TODO qr
-                        // IconButtonM3E.tonal(
-                        //   width: .narrow,
-                        //   size: .medium,
-                        //   onPressed: () {
-                        //     final task = initialTask.copyWith(
-                        //       subjectId: pickedSubjectId.value,
-                        //       text: nameController.value.text,
-                        //       description: descriptionController.value.text,
-                        //       date: pickedDate.value,
-                        //       priority: pickedPriority.value,
-                        //       timestamp: DateTime.now().toUtc(),
-                        //     );
-
-                        //     showMyDialog(
-                        //       context: context,
-                        //       title: 'Share with QR code',
-                        //       content: SizedBox(
-                        //         height: 160,
-                        //         child: PrettyQrView(
-                        //           decoration: PrettyQrDecoration(
-                        //             shape: PrettyQrSmoothSymbol(
-                        //               color: context.col.primary,
-                        //             ),
-                        //           ),
-                        //           qrImage: QrImage(
-                        //             QrCode.fromData(
-                        //               data: task.toHw().toFireJson().toString(),
-                        //               errorCorrectLevel: 2,
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     );
-                        //   },
-                        //   icon: const Icon(Icons.qr_code),
-                        // ),
                         const Spacer(),
-                        ButtonM3E.filled(
-                          size: .medium,
+                        M3EFilledSplitButton(
+                          size: .md,
+                          leadingIcon: Icons.check_rounded,
+                          label: context.loc.save,
                           onPressed: onSave,
-                          icon: const Icon(Icons.check_rounded),
-                          child: const Text('Save'),
+                          onSelected: (value) {
+                            if (value == 'qr') showQr();
+                            if (value == 'saveAsOther') {
+                              onSave(saveAsOtherType: true);
+                            }
+                          },
+                          items: [
+                            M3ESplitButtonItem(
+                              value: 'saveAsOther',
+                              icon: Icons.save_as_rounded,
+                              label: widget.isHomework
+                                  ? context.loc.saveAsExam
+                                  : context.loc.saveAsHomework,
+                            ),
+                            M3ESplitButtonItem(
+                              value: 'qr',
+                              icon: Icons.qr_code_rounded,
+                              label: context.loc.shareByQr,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -423,7 +454,6 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                         chipKeys: subjectChipsKeys,
                       ),
                       const SizedBox(height: 10),
-                      // TODO Add tip for the textfield
                       Autocomplete<Subject>(
                         fieldViewBuilder:
                             (
@@ -433,9 +463,8 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                               onFieldSubmitted,
                             ) {
                               return TextField(
-                                decoration: const InputDecoration(
-                                  hintText:
-                                      'Write task, search for subjects,...',
+                                decoration: InputDecoration(
+                                  hintText: context.loc.newTaskTextFieldHint,
                                 ),
                                 controller: nameController.value,
                                 focusNode: focusNode,
@@ -480,6 +509,40 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                         },
                       ),
                       const SizedBox(height: 4),
+                      // M3EToggleButtonGroup(
+                      //   selectedIndex: pickedPriority.value,
+                      //   onSelectedIndexChanged: (value) => setState(() {
+                      //     if (value == null) return;
+                      //     pickedPriority.value = value;
+                      //   }),
+                      //   spacing: 2,
+                      //   actions: List.generate(
+                      //     4,
+                      //     (index) {
+                      //       final p = TaskPriority(index);
+
+                      //       return M3EToggleButtonGroupAction(
+                      //         icon: PriorityIcon(
+                      //           priority: index,
+                      //           color: pickedPriority.value == index
+                      //               ? p.getOnColor(context)
+                      //               : p.getOnSurfaceColor(context),
+                      //         ),
+                      //         decoration: M3EToggleButtonDecoration(
+                      //           foregroundColor: WidgetStateMapper({
+                      //             WidgetState.selected: p.getOnColor(context),
+                      //             WidgetState.any: p.getOnSurfaceColor(context),
+                      //           }),
+                      //           backgroundColor: WidgetStateMapper({
+                      //             WidgetState.selected: p.getColor(context),
+                      //             WidgetState.any: p.getSurfaceColor(context),
+                      //           }),
+                      //         ),
+                      //         label: Text(p.name(context)),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
                       PriorityPicker(
                         selectedPriority: pickedPriority.value,
                         onSelected: (value) {
@@ -501,75 +564,69 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                       InkWell(
                         onTap: pickDate,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 4,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
                               Expanded(
                                 child: Text(
                                   dateIsAutoSet.value
                                       ? '${context.loc.next} ${subjects.where((element) => element.id == pickedSubjectId.value).firstOrNull?.name}:'
                                       : context.loc.deadline,
-                                  style: const TextStyle(fontSize: 16),
+                                  style: context.txt.titleMedium,
                                 ),
                               ),
-                              Text(
-                                pickedDate.value.formatFromSettings(
-                                  context,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
                                 ),
-                                style: const TextStyle(fontSize: 16),
+                                child: Text(
+                                  pickedDate.value.formatFromSettings(
+                                    context,
+                                    formatPrefix: 'EEE ',
+                                  ),
+                                  style: context.txt.headlineMedium,
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      // TODO button group
-                      Row(
-                        children: [
-                          ChoiceChip(
+                      M3EToggleButtonGroup(
+                        size: .sm,
+                        style: .filled,
+                        selectedIndex: switch (pickedDate.value) {
+                          final d when d == today => 0,
+                          final d when d == today.addDays(1) => 1,
+                          final d when d == today.addDays(7) => 2,
+                          _ => null,
+                        },
+                        onSelectedIndexChanged: (value) {
+                          if (value == null) return;
+                          vibrate.medium();
+                          final daysToAdd = switch (value) {
+                            1 => 1,
+                            2 => 7,
+                            _ => 0,
+                          };
+
+                          setState(() {
+                            pickedDate.value = Date.today().addDays(daysToAdd);
+                            canPop = _getCanPop();
+                          });
+                        },
+                        actions: [
+                          M3EToggleButtonGroupAction(
                             label: Text(context.loc.today),
-                            selected: pickedDate.value.isSameDay(
-                              Date.today(),
-                            ),
-                            onSelected: (value) {
-                              vibrate.medium();
-                              setState(() {
-                                pickedDate.value = Date.today();
-                                canPop = _getCanPop();
-                              });
-                            },
                           ),
-                          const SizedBox(width: 8),
-                          ChoiceChip(
+                          M3EToggleButtonGroupAction(
                             label: Text(context.loc.tomorrow),
-                            selected: pickedDate.value.isSameDay(
-                              Date.today().addDays(1),
-                            ),
-                            onSelected: (value) {
-                              vibrate.medium();
-                              setState(() {
-                                pickedDate.value = Date.today().addDays(1);
-                                canPop = _getCanPop();
-                              });
-                            },
                           ),
-                          const SizedBox(width: 8),
-                          ChoiceChip(
+                          M3EToggleButtonGroupAction(
                             label: Text(
                               '${context.loc.next} ${DateFormat.EEEE(context.locale.languageCode).format(DateTime.now()).toLowerCase()}',
                             ),
-                            selected: pickedDate.value.isSameDay(
-                              Date.today().addDays(7),
-                            ),
-                            onSelected: (value) {
-                              vibrate.medium();
-                              setState(() {
-                                pickedDate.value = Date.today().addDays(7);
-                                canPop = _getCanPop();
-                              });
-                            },
                           ),
                         ],
                       ),

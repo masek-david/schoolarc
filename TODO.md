@@ -6,29 +6,20 @@ bakalogin, strava login and firebase login are shared between debug and release 
 tests
 cant complete hw from widget
 fix pull to refresh in calendar
+scan qr
 
 FILE PICKER DOESNT WORK ON WEB
 
-# BOTTOM SHEET
-FIX SCROLLABLE BOTTOM SHEET (new newtaskdialogbutton ??? )
-bottom sheet animations - stupidsimplesheet ??? and add motor ???
-bottom sheet - split button with option to save as the other type exam/hw
-  - ⬜ show on top if it is hw/exam
-  - ⬜ share with qr
-  - ⬜ prevent from accidental scroll closing ‼️
-  - ⬜ fix the scrolling
-  - ⬜ animation FAB morph to the sheet?
-  - ⬜ does everything need to be shown ??
-
-# m3e
-check correct material colors
-tooltips
-buttongroup
-buttondialogbutton
+# Material 3 Expressive
+Bigger screen navigation:
+    navigation rail - just for medium+ displays, keep the navigation drawer for mobile (even though its deprecated)
+    https://m3.material.io/foundations/layout/breakpoints/overview#e87f7493-263d-4361-bd43-9b36a17407bb
+check correct material colors - dynamic_color 1.9.0 should have fixed it, but doesnt look like it
+add tooltips to buttons
 settingtile shape animation
 calendartiles animation
-fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options
-navigation rail - just for medium+ displays, keep the navigation drawer for mobile (even though its deprecated)
+fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options - this should the user be able to change
+refreshindicator as native - use material_3p ?
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -54,6 +45,8 @@ navigation rail - just for medium+ displays, keep the navigation drawer for mobi
 - ✅ push info to the app from web + min required version
 - ✅ firebase verify email + forgot password for firebase
 - ⬜ error tracking, error screen/messages
+- ⬜ sync to my server
+- ⬜ other timetable, hw, ... providers
 
 # FEATURES
 
@@ -71,20 +64,16 @@ navigation rail - just for medium+ displays, keep the navigation drawer for mobi
 - ✅ add hide to found new homeworks
 - ✅ better calendar screen scroll - shrink calendar, make betterwi missed, fix jump when switching pages
 - ✅ scroll calendar vertically on big screens
+- ✅ expressive buttons
+- ✅ rethink addnewtask bottom sheet
+    - ✅ share with qr
+    - ✅ prevent from accidental scroll closing
+    - ✅ fix the scrolling
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
-- ⬜ rethink addnewtask bottom sheet
-    - ⬜ show on top if it is hw/exam
-    - ⬜ share with qr
-    - ⬜ prevent from accidental scroll closing ‼️
-    - ⬜ fix the scrolling
-    - ⬜ animation FAB morph to the sheet?
-    - ⬜ does everything need to be shown ??
 - ⬜ on weekend, show info about upcoming week
-- ⬜ custom icons - hws, exams, subjects
-- ⬜ expressive buttons
-- ⬜ better refresh indicator
-- ⬜ month calendar scroll on hover
+- ⬜ custom icons - hws, exams, subjects ‼️
+- ⬜ month calendar scroll on hover of dragged item
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 
@@ -105,11 +94,12 @@ navigation rail - just for medium+ displays, keep the navigation drawer for mobi
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
+- ✅ add option to not send notification when its empty
+- ✅ show at least something in empty notification
 - ⬜ when user makes changes to app data and the notification is still shown, update it
 - ⬜ edge case - when the app is opened before 18:00 the notification could be old when it is sent
-- ⬜ switch to local_notifications (awesome_notifications has some old code)
+- ⬜ switch to local_notifications ? (awesome_notifications has some old code)
 - ⬜ meals notifications (before meal?, remind to pick a week before?)
-- ⬜ show at least something in empty notification
 - ⬜ add to windows
 
 ## SHARING

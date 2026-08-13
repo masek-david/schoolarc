@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
-import 'package:schoolarc/widgets/expressive_loading/circular_wavy_progress_indicator.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_loading_indicator.dart';
 
 class ProgressDialog extends StatefulWidget {
   const ProgressDialog({
@@ -47,7 +46,7 @@ class ProgressDialogState extends State<ProgressDialog> {
         title: Center(child: Text(_text)),
         actions: kDebugMode
             ? [
-                ButtonM3E.outlined(
+                M3EOutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('pop(debug)'),
                 ),
@@ -60,10 +59,9 @@ class ProgressDialogState extends State<ProgressDialog> {
                 ? ExpressiveLoadingIndicator.big(
                     useHaptics: widget.useHaptics,
                   )
-                : CircularWavyProgressIndicator(
+                : M3ECircularProgressIndicator(
                     value: _progress / widget.goal,
                     size: 140,
-                    strokeWidth: 14,
                   ),
             if (widget.showProgressNumber) Text('$_progress / ${widget.goal}'),
           ],

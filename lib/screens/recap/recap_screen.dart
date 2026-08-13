@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
-import 'package:schoolarc/m3e/m3e_parameters.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
@@ -137,7 +136,7 @@ class _RecapScreenState extends ConsumerState<RecapScreen> {
             Align(
               alignment: .topLeft,
               child: SafeArea(
-                child: ButtonM3E.text(
+                child: M3ETextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(context.loc.exit),
                 ),
@@ -150,14 +149,14 @@ class _RecapScreenState extends ConsumerState<RecapScreen> {
                   child: Row(
                     mainAxisAlignment: .end,
                     children: [
-                      IconButtonM3E(
+                      M3EIconButton(
                         onPressed: () => _controller.previousPage(
                           duration: const Duration(microseconds: 1),
                           curve: Curves.linear,
                         ),
                         icon: const Icon(Icons.arrow_left_rounded),
                       ),
-                      IconButtonM3E(
+                      M3EIconButton(
                         onPressed: () => _controller.nextPage(
                           duration: const Duration(microseconds: 1),
                           curve: Curves.linear,

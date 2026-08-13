@@ -1,7 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/bakalari/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -89,7 +89,7 @@ class TimetableEntry {
                     Flexible(
                       child: Text(context.loc.subjectHasntBeenAdded),
                     ),
-                    ButtonM3E.filled(
+                    M3EFilledButton.icon(
                       onPressed: () async {
                         await ref
                             .read(subjectsProvider.notifier)
@@ -100,7 +100,7 @@ class TimetableEntry {
                         }
                       },
                       icon: const Icon(Icons.add_rounded),
-                      child: Text(context.loc.add),
+                      label: Text(context.loc.add),
                     ),
                   ],
                 ),

@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
@@ -12,7 +13,6 @@ import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/empty_message.dart';
-import 'package:schoolarc/widgets/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class SubjectsScreen extends ConsumerWidget {
@@ -56,7 +56,7 @@ class SubjectsScreen extends ConsumerWidget {
         title: Text(context.loc.subjects),
         actions: [
           if (kIsWeb && ref.watch(firebaseLoginProvider).value != null)
-            IconButtonM3E(
+            M3EIconButton(
               onPressed: () => onRefresh(context, ref),
               icon: const Icon(Icons.refresh_rounded),
             ),

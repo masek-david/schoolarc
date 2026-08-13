@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_android_widget.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_consent.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_end.dart';
@@ -109,11 +109,11 @@ class _OnboardingState extends State<Onboarding> {
           ),
           actions: kDebugMode
               ? [
-                  IconButtonM3E(
+                  M3EIconButton(
                     onPressed: () => next(by: -1),
                     icon: const Icon(Icons.arrow_back_rounded),
                   ),
-                  IconButtonM3E(
+                  M3EIconButton(
                     onPressed: () => next(),
                     icon: const Icon(Icons.arrow_forward_rounded),
                   ),

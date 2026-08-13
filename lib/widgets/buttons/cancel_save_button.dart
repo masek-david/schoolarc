@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class CancelSaveButton extends StatelessWidget {
@@ -19,8 +19,8 @@ class CancelSaveButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ButtonM3E.tonal(
-            size: .medium,
+          M3EFilledButton.tonalIcon(
+            size: .md,
             icon: const Icon(Icons.close_rounded),
             onPressed: () {
               if (onCancel != null) {
@@ -28,16 +28,16 @@ class CancelSaveButton extends StatelessWidget {
               }
               Navigator.pop(context);
             },
-            child: Text(context.loc.cancel),
+            label: Text(context.loc.cancel),
           ),
-          ButtonM3E.filled(
-            size: .medium,
+          M3EFilledButton.icon(
+            size: .md,
             onPressed: () {
               onSave();
               Navigator.maybePop(context);
             },
             icon: const Icon(Icons.check_rounded),
-            child: Text(context.loc.save),
+            label: Text(context.loc.save),
           ),
         ],
       ),

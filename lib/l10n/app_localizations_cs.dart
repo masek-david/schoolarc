@@ -135,6 +135,15 @@ class AppLocalizationsCs extends AppLocalizations {
   String get yesterday => 'Včera';
 
   @override
+  String get nextWeek => 'Příští týden';
+
+  @override
+  String get thisWeek => 'Tento týden';
+
+  @override
+  String get previousWeek => 'Minulý týden';
+
+  @override
   String get cancel => 'Zrušit';
 
   @override
@@ -142,6 +151,21 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get save => 'Uložit';
+
+  @override
+  String get saveAsHomework => 'Uložit jako úkol';
+
+  @override
+  String get saveAsExam => 'Uložit jako test';
+
+  @override
+  String get shareByQr => 'Sdílet pomocí QR';
+
+  @override
+  String get scanQr => 'Naskenujte QR kód';
+
+  @override
+  String get newTaskTextFieldHint => 'Napište úkol, vyhledejte předměty,...';
 
   @override
   String get add => 'Přidat';
@@ -294,6 +318,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String nothingPlannedFor(Object whenText) {
     return 'Na $whenText není nic naplánováno';
   }
+
+  @override
+  String get nothingPlannedForTomorrow => 'Na zítra není nic naplánováno';
 
   @override
   String get nothingPlanned => 'Nic není naplánováno';
@@ -726,7 +753,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get expressiveHapticsSub =>
-      'Některé elemetny uživatelského prostředí vibrují s animacemi';
+      'Některé elementy uživatelského prostředí vibrují s animacemi';
 
   @override
   String get themePageTitle => 'Motiv';
@@ -784,6 +811,14 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get upcomingDayNotificationsReceiveBeforeWeekendSubtitle =>
       'Pokud je zapnuto, budete dostávat oznámení i v pátek a v sobotu';
+
+  @override
+  String get upcomingDayNotificationsSendIfEmpty =>
+      'Dostávejte oznámení pokud je prázdné';
+
+  @override
+  String get upcomingDayNotificationsSendIfEmptySubtitle =>
+      'Pokud je zapnuto, budete dostávat oznámení i pokud na zítra nemáte nic naplánováno';
 
   @override
   String get addWidgetToHomescreen => 'Přidat widget na domovskou obrazovku?';

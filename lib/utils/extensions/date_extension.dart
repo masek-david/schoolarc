@@ -33,13 +33,16 @@ extension BetterDate on Date {
   String formatFromSettings(
     BuildContext context, {
     bool forceShowYear = false,
+    String formatPrefix = '',
   }) {
-    String languageCode = context.locale.languageCode;
+    final languageCode = context.locale.languageCode;
 
     String dateFormat = getFormatPattern(
       context,
       (year == Date.today().year && !forceShowYear),
     );
+
+    dateFormat = '$formatPrefix$dateFormat';
 
     return format(dateFormat, languageCode);
   }

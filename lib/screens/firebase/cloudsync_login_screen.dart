@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/error_button_styles.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/group_models.dart';
 import 'package:schoolarc/provider/bakalari/username_notifier.dart';
@@ -372,7 +372,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             autofillHints: [AutofillHints.password],
           ),
         ],
-        bottomChild: ButtonM3E.tonal(
+        bottomChild: M3EFilledButton.tonal(
           onPressed: () {
             resetPassword(context, ref);
           },
@@ -596,7 +596,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       heroTag: 'cloudsync',
       title: context.loc.cloudSync,
       actions: [
-        IconButtonM3E(
+        M3EIconButton(
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -637,37 +637,37 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             spacing: 12,
             children: [
               Expanded(
-                child: ButtonM3E.elevated(
+                child: M3EElevatedButton.icon(
                   onPressed: () => changeEmail(context, ref),
                   icon: const Icon(Icons.email_rounded),
-                  child: Text(context.loc.changeEmail),
+                  label: Text(context.loc.changeEmail),
                 ),
               ),
               Expanded(
-                child: ButtonM3E.elevated(
+                child: M3EElevatedButton.icon(
                   onPressed: () => changePassword(context, ref),
                   icon: const Icon(Icons.password_rounded),
-                  child: Text(context.loc.changePassword),
+                  label: Text(context.loc.changePassword),
                 ),
               ),
             ],
           ),
-          ButtonM3E.elevated(
+          M3EElevatedButton.icon(
             onPressed: () => logOut(context, ref),
             icon: const Icon(Icons.logout_rounded),
-            child: Text(context.loc.logOut),
+            label: Text(context.loc.logOut),
           ),
-          ButtonM3E.elevated(
+          M3EElevatedButton.icon(
             onPressed: () => getAllData(context, ref),
             icon: const Icon(Icons.download_rounded),
-            child: Text(context.loc.getAllData),
+            label: Text(context.loc.getAllData),
           ),
           const Divider(),
-          ButtonM3E.outlined(
-            error: true,
+          M3EOutlinedButton.icon(
+            decoration: ErrorButtonStyle.outlined(context.col),
             onPressed: () => deleteAllData(context, ref),
             icon: const Icon(Icons.delete_forever_rounded),
-            child: Text(context.loc.deleteAllData),
+            label: Text(context.loc.deleteAllData),
           ),
         ],
         if (!loggedIn)
@@ -675,21 +675,21 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             spacing: 8,
             children: [
               Expanded(
-                child: ButtonM3E.filled(
+                child: M3EFilledButton.icon(
                   shape: .square,
-                  size: .medium,
+                  size: .md,
                   onPressed: () => logIn(context, ref),
                   icon: const Icon(Icons.login_rounded),
-                  child: Text(context.loc.logIn),
+                  label: Text(context.loc.logIn),
                 ),
               ),
               Expanded(
-                child: ButtonM3E.tonal(
-                  size: .medium,
+                child: M3EFilledButton.tonalIcon(
+                  size: .md,
                   shape: .square,
                   onPressed: () => register(context, ref),
                   icon: const Icon(Icons.login_rounded),
-                  child: Text(context.loc.register),
+                  label: Text(context.loc.register),
                 ),
               ),
             ],

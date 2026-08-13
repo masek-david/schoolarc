@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/raw_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class MyDrawerButton extends StatelessWidget {
@@ -18,25 +18,30 @@ class MyDrawerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawButtonM3E(
-      iconSpacing: 12,
-      outlineWidth: null,
-      outlineColor: null,
-      alignment: .start,
-      icon: icon,
+    final col = context.col;
+
+    return TextButton(
       onPressed: onTap,
-      backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-      foregroundColor: WidgetStatePropertyAll(context.col.onSurfaceVariant),
-      elevation: const WidgetStatePropertyAll(0),
-      width: double.infinity,
-      height: 56,
-      iconSize: 24,
-      radius: WidgetStatePropertyAll(.circular(28)),
-      padding: 16,
-      fontSize: 14,
+      style: ButtonStyle(
+        splashFactory: NewInkSparkle.splashFactory,
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+        foregroundColor: WidgetStatePropertyAll(
+          col.onSurfaceVariant,
+        ),
+        iconSize: const WidgetStatePropertyAll(24),
+        iconColor: WidgetStatePropertyAll(col.onSurfaceVariant),
+        fixedSize: const WidgetStatePropertyAll(Size(double.infinity, 56)),
+        overlayColor: WidgetStatePropertyAll(
+          col.onSecondaryContainer.withValues(alpha: 0.1),
+        ),
+      ),
       child: Row(
         children: [
+          const SizedBox(width: 16),
+          icon,
+          const SizedBox(width: 12),
           Expanded(child: Text(text)),
+          if (showBadge) const SizedBox(width: 12),
           if (showBadge)
             Container(
               decoration: BoxDecoration(
@@ -46,6 +51,7 @@ class MyDrawerButton extends StatelessWidget {
               height: 8,
               width: 8,
             ),
+          const SizedBox(width: 24),
         ],
       ),
     );

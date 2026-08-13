@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/m3e/error_button_styles.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
@@ -146,24 +147,24 @@ class ErrorInfoUI {
 List<Widget> resolveErrorAction(BuildContext context, ErrorInfoUI info) {
   return [
     if (info.action == ExceptionActions.stravaLogin)
-      ButtonM3E.filled(
-        error: true,
+      M3EFilledButton(
+        decoration: ErrorButtonStyle.filled(context.col),
         onPressed: () {
           Navigator.restorablePushNamed(context, '/strava');
         },
         child: Text(context.loc.login),
       ),
     if (info.action == ExceptionActions.bakaLogin)
-      ButtonM3E.filled(
-        error: true,
+      M3EFilledButton(
+        decoration: ErrorButtonStyle.filled(context.col),
         onPressed: () {
           Navigator.restorablePushNamed(context, '/bakalari');
         },
         child: Text(context.loc.login),
       ),
     if (info.action == ExceptionActions.cloudsyncLogin)
-      ButtonM3E.filled(
-        error: true,
+      M3EFilledButton(
+        decoration: ErrorButtonStyle.filled(context.col),
         onPressed: () {
           Navigator.restorablePushNamed(context, '/cloudsync');
         },

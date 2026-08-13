@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/raw_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -57,14 +56,63 @@ class _SchemeVariantPickerActionState
                 preferBelow: false,
                 triggerMode: TooltipTriggerMode.manual,
                 key: keys[index],
-                // Note: on Windows (maybe somewhere else) the colors have space between them, this should be fine
-                child: RawButtonM3E(
-                  selected: isSelected,
-                  outlineWidth: null,
-                  outlineColor: null,
-                  iconSpacing: 0,
+                child: M3EButton(
+                  shape: isSelected ? .square : .round,
+                  decoration: M3EButtonDecoration(
+                    pressedRadius: 4,
+                    backgroundBuilder: (context, states, child) {
+                      return Stack(
+                        alignment: .center,
+                        children: [
+                          SizedBox(
+                            height: size,
+                            width: size,
+                            child: Align(
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: isDark
+                                          ? scheme.primary
+                                          : scheme.primaryContainer,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            color: isDark
+                                                ? scheme.secondary
+                                                : scheme.secondaryContainer,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            color: isDark
+                                                ? scheme.tertiary
+                                                : scheme.tertiaryContainer,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          isSelected
+                              ? Icon(
+                                  Icons.check_rounded,
+                                  size: 48,
+                                  shadows: kElevationToShadow[4],
+                                )
+                              : const SizedBox.shrink(),
+                        ],
+                      );
+                    },
+                  ),
                   onPressed: () {
-                    vibrate.medium();
                     vibrate.medium();
                     ref
                         .read(
@@ -73,70 +121,13 @@ class _SchemeVariantPickerActionState
                         .set(index);
                     keys[index].currentState?.ensureTooltipVisible();
                   },
-                  backgroundColor: const WidgetStateColor.fromMap({
-                    WidgetState.any: Colors.transparent,
-                  }),
-                  foregroundColor: WidgetStateColor.fromMap({
-                    WidgetState.any: context.col.onSurface,
-                  }),
-                  elevation: const WidgetStateProperty.fromMap({
-                    WidgetState.any: 1,
-                  }),
-                  width: size,
-                  height: size,
-                  iconSize: 40,
-                  radius: WidgetStateProperty.fromMap({
-                    WidgetState.pressed: .circular(12),
-                    WidgetState.selected: .circular(16),
-                    WidgetState.any: .circular(size / 2),
-                  }),
-                  padding: 0,
-                  fontSize: 0,
-                  icon: null,
-                  child: Stack(
-                    alignment: .center,
-                    children: [
-                      Align(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                color: isDark
-                                    ? scheme.primary
-                                    : scheme.primaryContainer,
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: isDark
-                                          ? scheme.secondary
-                                          : scheme.secondaryContainer,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      color: isDark
-                                          ? scheme.tertiary
-                                          : scheme.tertiaryContainer,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      isSelected
-                          ? Icon(
-                              Icons.check_rounded,
-                              size: 40,
-                              shadows: kElevationToShadow[4],
-                            )
-                          : const SizedBox.shrink(),
-                    ],
+                  onLongPress: () {
+                    keys[index].currentState?.ensureTooltipVisible();
+                  },
+                  size: M3EButtonSize.custom(
+                    hPadding: 0,
+                    height: size,
+                    width: size,
                   ),
                 ),
               );

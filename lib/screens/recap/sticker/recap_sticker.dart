@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/screens/recap/sticker/recap_sticker_26.dart';
 import 'package:schoolarc/screens/settings/widgets/color_picker_action.dart';
@@ -84,8 +84,8 @@ class _RecapStickerState extends State<RecapSticker> {
           },
           color: presetColors[colorIndex],
         ),
-        ButtonM3E.tonal(
-          size: .medium,
+        M3EFilledButton.tonalIcon(
+          size: .md,
           onPressed: () async {
             final RenderRepaintBoundary boundary =
                 stickerPaint.currentContext!.findRenderObject()!
@@ -114,7 +114,7 @@ class _RecapStickerState extends State<RecapSticker> {
             );
           },
           icon: const Icon(Icons.download_rounded),
-          child: Text(context.loc.save),
+          label: Text(context.loc.save),
         ),
       ],
     );

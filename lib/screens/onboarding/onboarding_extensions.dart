@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
@@ -51,7 +51,7 @@ class OnboardingExtensions extends ConsumerWidget {
                 leading: ref.watch(firebaseLoginProvider).value == null
                     ? null
                     : const Icon(Icons.check_circle_rounded, color: Colors.green),
-                newLineAction: ButtonM3E.tonal(
+                newLineAction: M3EFilledButton.tonal(
                   onPressed: () {
                     Navigator.restorablePushNamed(
                       context,
@@ -80,7 +80,7 @@ class OnboardingExtensions extends ConsumerWidget {
                       )
                     : null,
                 newLineAction: useBaka
-                    ? ButtonM3E.tonal(
+                    ? M3EFilledButton.tonal(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -115,7 +115,7 @@ class OnboardingExtensions extends ConsumerWidget {
                       )
                     : null,
                 newLineAction: useMeals
-                    ? ButtonM3E.tonal(
+                    ? M3EFilledButton.tonal(
                         onPressed: () {
                           Navigator.restorablePushNamed(context, '/strava');
                         },
@@ -129,11 +129,11 @@ class OnboardingExtensions extends ConsumerWidget {
             builder: (isShown) {
               return Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: ButtonM3E.filled(
-                  size: .medium,
+                child: M3EFilledButton.icon(
+                  size: .md,
                   onPressed: next,
                   icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                  child: Text(context.loc.continueAction),
+                  label: Text(context.loc.continueAction),
                 ),
               );
             },

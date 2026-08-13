@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
 import 'package:schoolarc/screens/timetable/select_subject.dart';
@@ -38,7 +37,7 @@ class SubjectPicker extends StatelessWidget {
       children: [
         WebRequestFocusBuilder(
           builder: (showKeyboard) {
-            return IconButtonM3E(
+            return M3EIconButton(
               onPressed: () {
                 showKeyboard();
                 searchSubject(context);
@@ -75,10 +74,10 @@ class SubjectPicker extends StatelessWidget {
                     );
                   },
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonalIcon(
                   icon: const Icon(Icons.add_rounded),
                   onPressed: () => addNewSubject(context),
-                  child: Text(context.loc.addNewSubject),
+                  label: Text(context.loc.addNewSubject),
                 ),
               ],
             ),

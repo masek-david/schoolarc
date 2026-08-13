@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/baka_homeworks_database.dart';
 import 'package:schoolarc/database/exam_database.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
@@ -9,8 +10,6 @@ import 'package:schoolarc/database/hw_database.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/database/subject_database.dart';
-import 'package:schoolarc/m3e/buttons/button_m3e.dart';
-import 'package:schoolarc/m3e/buttons/icon_button_m3e.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -33,71 +32,71 @@ class DbInfoScreen extends ConsumerWidget {
           children: [
             Wrap(
               children: [
-                IconButtonM3E.filled(
+                M3EFilledIconButton(
                   icon: const Icon(Icons.lock_rounded),
                   onPressed: () {},
-                  // size: .large,
+                  // size: .lg,
                 ),
                 const SizedBox(height: 8),
-                IconButtonM3E.tonal(
+                M3EFilledIconButton.tonal(
                   icon: const Icon(Icons.lock_rounded),
                   onPressed: () {},
-                  // size: .medium,
+                  // size: .md,
                 ),
                 const SizedBox(height: 4),
-                IconButtonM3E.outlined(
+                M3EOutlinedIconButton(
                   icon: const Icon(Icons.lock_rounded),
                   onPressed: () {},
-                  // size: .small,
+                  // size: .sm,
                 ),
-                IconButtonM3E(
+                M3EIconButton(
                   icon: const Icon(Icons.lock_rounded),
                   onPressed: () {},
-                  // size: .extraSmall,
+                  // size: .xs,
                 ),
               ],
             ),
-            ButtonM3E.elevated(
+            M3EElevatedButton.icon(
               icon: const Icon(Icons.lock_rounded),
               onPressed: () {},
-              size: .extraLarge,
-              child: const Text('Elevated'),
+              size: .xl,
+              label: const Text('Elevated'),
             ),
             const SizedBox(height: 8),
-            ButtonM3E.filled(
+            M3EFilledButton.icon(
               icon: const Icon(Icons.lock_rounded),
               onPressed: () {},
-              size: .large,
-              child: const Text('Filled'),
+              size: .lg,
+              label: const Text('Filled'),
             ),
             const SizedBox(height: 8),
-            ButtonM3E.tonal(
+            M3EFilledButton.tonalIcon(
               icon: const Icon(Icons.lock_rounded),
               onPressed: () {},
-              size: .medium,
-              child: const Text('Tonal'),
+              size: .md,
+              label: const Text('Tonal'),
             ),
             const SizedBox(height: 4),
-            ButtonM3E.outlined(
+            M3EOutlinedButton.icon(
               icon: const Icon(Icons.lock_rounded),
               onPressed: () {},
-              size: .small,
-              child: const Text('Outlined'),
+              size: .sm,
+              label: const Text('Outlined'),
             ),
-            ButtonM3E.text(
+            M3ETextButton.icon(
               icon: const Icon(Icons.lock_rounded),
               onPressed: () {},
-              size: .extraSmall,
-              child: const Text('Text'),
+              size: .xs,
+              label: const Text('Text'),
             ),
             const SizedBox(height: 50),
-            ButtonM3E.filled(
+            M3EFilledButton(
               onPressed: () {
                 settings.save(.onboardingProgress, 0);
               },
               child: const Text('Launch welcome screen on next open'),
             ),
-            ButtonM3E.tonal(
+            M3EFilledButton.tonal(
               onPressed: () {
                 throw Exception('Crash button pressed');
               },
@@ -112,7 +111,7 @@ class DbInfoScreen extends ConsumerWidget {
               ),
             ),
             if (kDebugMode)
-              ButtonM3E.tonal(
+              M3EFilledButton.tonalIcon(
                 onPressed: () {
                   HomeworksDatabase().deleteBoxFromDisk();
                   SubjectDatabase().deleteAllFromDisk();
@@ -121,10 +120,10 @@ class DbInfoScreen extends ConsumerWidget {
                   BakaHomeworksDatabase().deleteAllFromDisk();
                 },
                 icon: const Icon(Icons.delete_forever_rounded),
-                child: const Text('Delete all boxes from disk'),
+                label: const Text('Delete all boxes from disk'),
               ),
             if (kDebugMode)
-              ButtonM3E.filled(
+              M3EFilledButton.icon(
                 onPressed: () async {
                   SettingsDatabase().deleteAllFromDisk();
                   await Hive.openBox(settingsBox);
@@ -134,7 +133,7 @@ class DbInfoScreen extends ConsumerWidget {
                   SecureStorage.deleteAllFromDisk();
                 },
                 icon: const Icon(Icons.bug_report),
-                child: const Text(
+                label: const Text(
                   'Reset all settings and log out (run app as new, keep only hw, exam, subjects) ',
                 ),
               ),
@@ -145,47 +144,47 @@ class DbInfoScreen extends ConsumerWidget {
             Wrap(
               spacing: 4,
               children: [
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.light,
                   child: const Text('Light'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.medium,
                   child: const Text('Medium'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.heavy,
                   child: const Text('Heavy'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.success,
                   child: const Text('Success'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.warning,
                   child: const Text('Warning'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.error,
                   child: const Text('Error'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.rigid,
                   child: const Text('Rigid'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: () => vibrate.complete(true),
                   child: const Text('Complete'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.release,
                   child: const Text('Release'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: vibrate.releaseLong,
                   child: const Text('Release long'),
                 ),
-                ButtonM3E.tonal(
+                M3EFilledButton.tonal(
                   onPressed: () => vibrate.switchUI(true),
                   child: const Text('Switch'),
                 ),
@@ -197,7 +196,7 @@ class DbInfoScreen extends ConsumerWidget {
               spacing: 8,
               children: [
                 Expanded(
-                  child: ButtonM3E.filled(
+                  child: M3EFilledButton(
                     onPressed: () async {
                       try {
                         await SecureStorage.write(
@@ -218,7 +217,7 @@ class DbInfoScreen extends ConsumerWidget {
                   ),
                 ),
                 Expanded(
-                  child: ButtonM3E.filled(
+                  child: M3EFilledButton(
                     onPressed: () async {
                       final text = await SecureStorage.read('test');
                       if (context.mounted) {
@@ -232,7 +231,7 @@ class DbInfoScreen extends ConsumerWidget {
             ),
             const Divider(),
             const Text('FIREBASE'),
-            ButtonM3E.filled(
+            M3EFilledButton(
               onPressed: () async {
                 late List<HomeworkData>? fireHws;
                 try {
