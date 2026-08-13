@@ -23,9 +23,6 @@
   },
   "homepage": "https://github.com/masek-david/schoolarc#readme",
   "devDependencies": {
-    "workbox-build": "^7.4.0"
-  },
-  "overrides": {
-    "serialize-javascript": ">=7.0.5"
+    "workbox-build": "^7.4.1"
   }
 }
