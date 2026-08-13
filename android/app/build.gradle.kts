@@ -5,7 +5,7 @@ plugins {
     // END: FlutterFire Configuration
     // Compose [version]
     // this version matches your Kotlin version
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -59,11 +59,6 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
-}
-
-composeCompiler {
-    reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFiles.addAll(rootProject.layout.projectDirectory.file("stability_config.conf"))
 }
 
 dependencies {

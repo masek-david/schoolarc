@@ -9,6 +9,7 @@ fix pull to refresh in calendar
 scan qr
 
 FILE PICKER DOESNT WORK ON WEB
+try home widget builder for ios
 
 # Material 3 Expressive
 Bigger screen navigation:

@@ -10,7 +10,7 @@ import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/firebase_options.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
-import 'package:schoolarc/utils/globals.dart';
+import 'package:schoolarc/utils/globals.dart' as globals;
 import 'package:schoolarc/utils/licenses.dart';
 import 'package:schoolarc/utils/notifications/notification_sender.dart';
 import 'package:schoolarc/utils/vibrate.dart';
@@ -25,10 +25,10 @@ Future<void> main() async {
 
     text += details.context?.value.toString() ?? '';
 
-    logsService.save(text);
+    globals.logsService.save(text);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
-    logsService.save(
+    globals.logsService.save(
       'Platform Dispatcher Error: ${error.toString()}\n${stack.toString()}',
     );
     return true;
@@ -54,8 +54,8 @@ Future<void> main() async {
   ]);
   final version = (loadYaml(futureResult[0])['version'] as String).split('+');
 
-  appVersion = version[0];
-  appBuildNumber = int.parse(version[1]);
+  globals.appVersion = version[0];
+  globals.appBuildNumber = int.parse(version[1]);
   addLicenses();
 
   // gets rid of android bottom colored bar
