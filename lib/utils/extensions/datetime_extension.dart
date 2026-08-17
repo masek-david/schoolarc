@@ -29,7 +29,7 @@ extension BetterDateTime on DateTime {
     return DateFormat(
       settings.get(Setting.dateFormat),
       context.locale.languageCode,
-    ).format(this);
+    ).format(toLocal());
   }
 
   /// Returns the number of the week this datetime is part of

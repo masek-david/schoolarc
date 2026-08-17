@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/m3e/error_button_styles.dart';
 import 'package:schoolarc/models/exception_model.dart';
@@ -129,6 +130,9 @@ class ErrorInfoUI {
 
       case ApiException(:var apiError):
         text = apiError;
+
+      case PlatformException(:var message):
+        text = message ?? '';
 
       default:
         text = error.toString();

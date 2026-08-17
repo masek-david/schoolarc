@@ -1,15 +1,21 @@
 # FIX
+cant complete hw from widget
+scan qr
+settings cloud sync add description - backup, cross device,...
+
+fix pull to refresh in calendar
 update/start listening to firebase on app reopen ???
 should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 ? ios timetable still refresh pulls
 bakalogin, strava login and firebase login are shared between debug and release on windows
 tests
-cant complete hw from widget
-fix pull to refresh in calendar
-scan qr
+web can be only used with plus
+customize text theme ?
 
 FILE PICKER DOESNT WORK ON WEB
-try home widget builder for ios
+ios password field looses focus when password picker is opened
+ios ipad window manager over my buttons
+ios notifications dont have access
 
 # Material 3 Expressive
 Bigger screen navigation:
@@ -52,11 +58,11 @@ refreshindicator as native - use material_3p ?
 # FEATURES
 
 ## Schoolarc Plus v2.4.0
-- ⬜ 5 usd ?
+- ⬜ 0.99, 4.99, 9.99
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ google sign in
 - ⬜ ask for email verification
-- ⬜ sync, widgets ?, ...
+- ⬜ sync, widgets, amoled,  notifications, web access, custom icon (plus amber, custom colors?) (sharing)
 - ⬜ add to onboarding
 
 ## UI
@@ -78,11 +84,15 @@ refreshindicator as native - use material_3p ?
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 
+## Widgets
+- ⬜ iOS widgets - https://github.com/Coopydood/ultimate-macOS-KVM
+- ⬜ android main widget doesnt open calendar to its date
+- ⬜ timetable widgets
+
 ## OTHER
 - ✅ save only date for deadlines
 - ✅ rework exceptions - string should be just shown in ui, not from service
 - ✅ refactor to use date instead of datetime
-- ⬜ android main widget doesnt open calendar to its date
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject

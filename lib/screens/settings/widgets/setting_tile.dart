@@ -25,6 +25,7 @@ class SettingTile extends StatelessWidget {
     this.backgroundColor,
     this.hapticFeedback = true,
     this.betaTag = false,
+    this.iconSize,
   });
 
   final String title;
@@ -41,6 +42,7 @@ class SettingTile extends StatelessWidget {
   final String? heroTag;
   final Color? foregroundColor;
   final Color? backgroundColor;
+  final double? iconSize;
   final bool hapticFeedback;
   final bool betaTag;
 
@@ -55,12 +57,15 @@ class SettingTile extends StatelessWidget {
     bool enabled = true,
     bool highlighted = false,
     Widget? leading,
-    Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
     bool isFirst = false,
     bool isLast = false,
     Widget? newLineAction,
     String? heroTag,
+    double? iconSize,
+    Color? foregroundColor,
+    Color? backgroundColor,
+    bool betaTag = false,
     Key? key,
   }) {
     void change(bool newValue) {
@@ -86,6 +91,10 @@ class SettingTile extends StatelessWidget {
       key: key,
       heroTag: heroTag,
       hapticFeedback: false,
+      iconSize: iconSize,
+      foregroundColor: foregroundColor,
+      betaTag: betaTag,
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -97,10 +106,13 @@ class SettingTile extends StatelessWidget {
     bool enabled = true,
     bool highlighted = false,
     Widget? leading,
-    Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
     bool isFirst = false,
     bool isLast = false,
+    double? iconSize,
+    Color? foregroundColor,
+    Color? backgroundColor,
+    bool betaTag = false,
     Key? key,
   }) {
     return SettingTile(
@@ -120,6 +132,10 @@ class SettingTile extends StatelessWidget {
       ),
       isFirst: isFirst,
       isLast: isLast,
+      iconSize: iconSize,
+      foregroundColor: foregroundColor,
+      betaTag: betaTag,
+      backgroundColor: backgroundColor,
       key: key,
     );
   }
@@ -133,10 +149,13 @@ class SettingTile extends StatelessWidget {
     bool enabled = true,
     bool highlighted = false,
     Widget? leading,
-    Color? iconColor,
     EdgeInsetsGeometry? contentPadding,
     bool isFirst = false,
     bool isLast = false,
+    double? iconSize,
+    Color? foregroundColor,
+    Color? backgroundColor,
+    bool betaTag = false,
     Key? key,
   }) {
     return SettingTile(
@@ -150,6 +169,10 @@ class SettingTile extends StatelessWidget {
       newLineAction: TextField(controller: controller),
       isFirst: isFirst,
       isLast: isLast,
+      iconSize: iconSize,
+      foregroundColor: foregroundColor,
+      betaTag: betaTag,
+      backgroundColor: backgroundColor,
       key: key,
     );
   }
@@ -162,9 +185,13 @@ class SettingTile extends StatelessWidget {
     bool? enabled,
     bool? highlighted,
     Widget? leading,
-    Color? iconColor,
     bool isFirst = false,
     bool isLast = false,
+    double? iconSize,
+    Color? foregroundColor,
+    Color? backgroundColor,
+    bool betaTag = false,
+    Key? key,
   }) {
     return SettingTile(
       title: title,
@@ -192,6 +219,11 @@ class SettingTile extends StatelessWidget {
       ),
       isFirst: isFirst,
       isLast: isLast,
+      iconSize: iconSize,
+      foregroundColor: foregroundColor,
+      betaTag: betaTag,
+      backgroundColor: backgroundColor,
+      key: key,
     );
   }
 
@@ -257,7 +289,18 @@ class SettingTile extends StatelessWidget {
                     duration: animationDuration,
                     child: SizedBox(
                       width: leading == null ? 16 : 56,
-                      child: leading,
+                      child: leading == null
+                          ? null
+                          : IconTheme(
+                              data:
+                                  Theme.of(
+                                    context,
+                                  ).iconTheme.copyWith(
+                                    color: foregroundColor,
+                                    size: iconSize,
+                                  ),
+                              child: leading!,
+                            ),
                     ),
                   ),
                   Expanded(
