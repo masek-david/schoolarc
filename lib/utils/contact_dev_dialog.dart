@@ -100,7 +100,7 @@ Future<void> emailFeatureRequest(BuildContext context) async {
   try {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'mol.david498@gmail.com',
+      path: 'dev@masci.cz',
       query: encodeQueryParameters(<String, String>{
         'subject': 'Schoolarc feature request',
       }),
@@ -160,7 +160,7 @@ Future<void> emailBugReport(BuildContext context, {String? bug}) async {
 
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'mol.david498@gmail.com',
+      path: 'dev@masci.cz',
       query: encodeQueryParameters(<String, String>{
         'subject': 'Schoolarc bug report',
         'body': body,

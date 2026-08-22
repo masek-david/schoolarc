@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/baka_lesson_times.dart';
 import 'package:schoolarc/models/bakalari/baka_subject_model.dart';
@@ -55,6 +56,19 @@ class BakaService {
     return SecureStorage.read(SecureStorage.bakaRefreshTokenKey);
   }
 
+  // Demo values are used for mocking data and for play store testing
+  final _demoSchool = 'example';
+  final _demoUsername = 'user';
+  final _demoPassword = 'password';
+  final _demoRefreshToken = 'demo_refresh_token';
+  final _demoAccessToken = 'demo_refresh_token';
+
+  void _setDemoValues() {
+    _accessToken = _demoAccessToken;
+    _refreshToken = _demoRefreshToken;
+    tokenExpiration = DateTime.now().add(const Duration(minutes: 30));
+  }
+
   /// tries to log in from memory using saved refresh token
   Future<bool> refreshLogin() async {
     String schoolName = '';
@@ -63,6 +77,11 @@ class BakaService {
 
     if (schoolName == '' || _refreshToken == '') {
       throw AuthException(.loggedOut, exceptionAction: .bakaLogin);
+    }
+
+    if (schoolName == _demoSchool && _refreshToken == _demoRefreshToken) {
+      _setDemoValues();
+      return true;
     }
 
     final url = Uri(
@@ -88,18 +107,24 @@ class BakaService {
       throw ValidationException(.emptyField);
     }
 
-    school = school.trim();
+    if (school == _demoSchool &&
+        username == _demoUsername &&
+        password == _demoPassword) {
+      _setDemoValues();
+    } else {
+      school = school.trim();
 
-    final url = Uri(
-      scheme: 'https',
-      host: "$school.bakalari.cz",
-      path: "/api/login",
-    );
-    const head = {"Content-Type": "application/x-www-form-urlencoded"};
-    final body =
-        'client_id=ANDR&grant_type=password&username=$username&password=$password';
+      final url = Uri(
+        scheme: 'https',
+        host: "$school.bakalari.cz",
+        path: "/api/login",
+      );
+      const head = {"Content-Type": "application/x-www-form-urlencoded"};
+      final body =
+          'client_id=ANDR&grant_type=password&username=$username&password=$password';
 
-    await _callLogin(url, head, body);
+      await _callLogin(url, head, body);
+    }
 
     if (keepLoggedIn) {
       await SecureStorage.write(
@@ -186,6 +211,10 @@ class BakaService {
       path: "/api/3/user",
     );
 
+    if (schoolName == _demoSchool && _accessToken == _demoAccessToken) {
+      return 'Demo User';
+    }
+
     response = await http.get(
       url,
       headers: {
@@ -212,6 +241,24 @@ class BakaService {
       host: "$schoolName.bakalari.cz",
       path: "/api/3/timetable/permanent",
     );
+
+    if (schoolName == _demoSchool && _accessToken == _demoAccessToken) {
+      final demoSubjects = MockData.subjects.values;
+      final localSubject = ref.read(subjectsNonDeletedProvider);
+      for (final demoSubject in demoSubjects) {
+        if (!localSubject.containsKey(demoSubject.id)) {
+          await ref
+              .read(subjectsProvider.notifier)
+              .create(
+                demoSubject.convert(),
+                overrideId: demoSubject.id,
+              );
+        }
+      }
+
+      timetableDb.overrideTable(MockData.timetable.toEntity());
+      return;
+    }
 
     Response response;
     try {
@@ -308,6 +355,36 @@ class BakaService {
         'date': DateFormat('yyyy-MM-dd').format(date.toDateTimeLocal()),
       },
     );
+
+    if (schoolName == _demoSchool && _accessToken == _demoAccessToken) {
+      final table = MockData.actualTimetable;
+      return BakaTimetable(
+        lessonTimes: table.lessonTimes,
+        dates: table.dates!,
+        table: table.table
+            .map(
+              (e) => e.map(
+                (e) {
+                  if (e.subject == null) {
+                    return BakaTimetableEntry.empty();
+                  } else {
+                    return BakaTimetableEntry(
+                      change: e.change,
+                      teacher: e.teacher,
+                      room: e.room,
+                      bakaSubject: BakaSubject(
+                        id: e.subject!.id,
+                        name: e.subject!.name,
+                        shortcut: e.subject!.shortcut,
+                      ),
+                    );
+                  }
+                },
+              ).toList(),
+            )
+            .toList(),
+      );
+    }
 
     Response response;
     try {
@@ -544,6 +621,32 @@ class BakaService {
         'yyyy-MM-dd',
       ).format(DateTime.now().add(const Duration(days: 365))),
     });
+
+    if (schoolName == _demoSchool && _accessToken == _demoAccessToken) {
+      return MockData.hws
+          .map(
+            (key, hw) => MapEntry(
+              key,
+              BakaHomework(
+                isCompleted: hw.isCompleted,
+                id: key,
+                date: hw.date,
+                description: hw.description,
+                priority: TaskPriority(hw.priority),
+                subject: MockData.subjects[hw.subjectId],
+                text: hw.text,
+                alreadyAdded: bakaHwDb.isAdded(key),
+                alreadySeen: bakaHwDb.isAdded(key),
+                bakaId: key,
+                timestamp: hw.timestamp,
+                isDeleted: hw.isDeleted,
+                order: hw.order,
+              ),
+            ),
+          )
+          .values
+          .toList();
+    }
 
     Response response;
     try {

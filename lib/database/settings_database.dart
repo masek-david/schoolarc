@@ -53,7 +53,7 @@ enum Setting {
   onboardingProgress,
   requiredBuild,
   lastSeenMessage,
-  shareErrorLogs,
+  analyticsEnabled,
 }
 
 class SettingModel {
@@ -229,9 +229,9 @@ class SettingsDatabase {
       defaultValue: null,
       key: 'lastSeenMessage',
     ),
-    Setting.shareErrorLogs: const SettingModel(
+    Setting.analyticsEnabled: const SettingModel(
       defaultValue: false,
-      key: 'shareErrorLogs',
+      key: 'analyticsEnabled',
     ),
   };
   final _settingsBox = Hive.box(settingsBox);

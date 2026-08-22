@@ -9,7 +9,6 @@ import 'package:schoolarc/provider/bakalari/username_notifier.dart';
 import 'package:schoolarc/provider/firebase/firebase_nickname_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/login_input_screen.dart';
-import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/shared/nickname_text.dart';
@@ -308,7 +307,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
     pushScreen(
       context,
       LoginInputScreen(
-        actionName: context.loc.deleteAllData,
+        actionName: context.loc.deleteAccountAndData,
         fields: [
           LoginField(
             name: context.loc.password,
@@ -319,8 +318,8 @@ class CloudSyncLoginScreen extends ConsumerWidget {
         onSubmit: (fields) async {
           showMyDialog(
             context: context,
-            title: context.loc.deleteAllDataTitle,
-            content: Text(context.loc.deleteAllDataText),
+            title: context.loc.deleteAccountAndDataConfirm,
+            text: context.loc.deleteAccountAndDataConfirmText,
             actions: [
               DialogActionButton(
                 text: context.loc.cancel,
@@ -344,7 +343,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                     Navigator.pop(context);
                     showMessage(
                       context,
-                      context.loc.deletedAllData,
+                      context.loc.deletedAccountAndData,
                     );
                   }
                 },
@@ -353,6 +352,28 @@ class CloudSyncLoginScreen extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+
+  void deleteAllDataDialog(BuildContext context, WidgetRef ref) {
+    showMyDialog(
+      context: context,
+      title: 'Delete account & data',
+      text: 'To delete your account and all data, please log in first.',
+      actions: [
+        DialogActionButton(
+          text: context.loc.cancel,
+          onPressed: () => Navigator.pop(context),
+        ),
+        DialogActionButton(
+          isDefaultAction: true,
+          text: context.loc.login,
+          onPressed: () {
+            Navigator.pop(context);
+            logIn(context, ref);
+          },
+        ),
+      ],
     );
   }
 
@@ -500,7 +521,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                 themeExpressiveHapticsProvider,
               ),
               key: key,
-              initialText: context.loc.loggingIn,
+              initialText: context.loc.registering,
               showProgressNumber: false,
             ),
           );
@@ -597,12 +618,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
       title: context.loc.cloudSync,
       actions: [
         M3EIconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PrivacyPolicy(),
-            ),
-          ),
+          onPressed: () => Navigator.restorablePushNamed(context, '/privacy'),
           icon: const Icon(Icons.info_outline_rounded),
         ),
       ],
@@ -667,7 +683,7 @@ class CloudSyncLoginScreen extends ConsumerWidget {
             decoration: ErrorButtonStyle.outlined(context.col),
             onPressed: () => deleteAllData(context, ref),
             icon: const Icon(Icons.delete_forever_rounded),
-            label: Text(context.loc.deleteAllData),
+            label: Text(context.loc.deleteAccountAndData),
           ),
         ],
         if (!loggedIn)
@@ -684,15 +700,41 @@ class CloudSyncLoginScreen extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: M3EFilledButton.tonalIcon(
-                  size: .md,
-                  shape: .square,
-                  onPressed: () => register(context, ref),
-                  icon: const Icon(Icons.login_rounded),
-                  label: Text(context.loc.register),
+                child: GestureDetector(
+                  onTap: () {
+                    showMyDialog(
+                      context: context,
+                      title: context.loc.cantRegister,
+                      text: context.loc.cloudSyncInBeta,
+                      actions: [
+                        DialogActionButton(
+                          text: context.loc.ok,
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    );
+                  },
+                  child: M3EFilledButton.tonalIcon(
+                    enabled: false,
+                    size: .md,
+                    shape: .square,
+                    onPressed: () => register(context, ref),
+                    icon: const Icon(Icons.login_rounded),
+                    label: Text(context.loc.register),
+                  ),
                 ),
               ),
             ],
+          ),
+        if (!loggedIn) const SizedBox(height: 64),
+        if (!loggedIn)
+          M3EOutlinedButton.icon(
+            shape: .square,
+            size: .md,
+            decoration: ErrorButtonStyle.outlined(context.col),
+            onPressed: () => deleteAllDataDialog(context, ref),
+            icon: const Icon(Icons.delete_forever_rounded),
+            label: Text(context.loc.deleteAccountAndData),
           ),
       ],
     );

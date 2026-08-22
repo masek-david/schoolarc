@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/models/timetable/timetable_entity_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 
 class Timetable {
@@ -74,5 +75,20 @@ class Timetable {
     }
 
     return null;
+  }
+
+  TimeTableEntity toEntity() {
+    return TimeTableEntity(
+      lessonTimes,
+      table
+          .map(
+            (e) => e
+                .map(
+                  (e) => e.subject?.id,
+                )
+                .toList(),
+          )
+          .toList(),
+    );
   }
 }

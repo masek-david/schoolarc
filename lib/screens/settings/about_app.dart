@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/package_info.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
+import 'package:schoolarc/services/analytics_service.dart';
 import 'package:schoolarc/utils/color_mapper.dart';
 import 'package:schoolarc/utils/contact_dev_dialog.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
@@ -18,7 +18,7 @@ class AboutApp extends StatefulWidget {
 }
 
 class _AboutAppState extends State<AboutApp> {
-  bool shareLogs = settings.get(.shareErrorLogs);
+  bool shareLogs = settings.get(.analyticsEnabled);
 
   @override
   Widget build(BuildContext context) {
@@ -75,11 +75,16 @@ class _AboutAppState extends State<AboutApp> {
         ),
         SettingTile.withSwitch(
           leading: const Icon(Icons.bug_report_rounded),
-          title: context.loc.agreeSendCrashReports,
-          subtitle: context.loc.agreeSendCrashReportsSubtitle,
+          title: context.loc.agreeSendAnalytics,
+          subtitle: context.loc.agreeSendAnalyticsSubtitle,
           value: shareLogs,
           onChanged: (value) {
-            settings.save(.shareErrorLogs, value);
+            if (value) {
+              AnalyticsService.optIn();
+            } else {
+              AnalyticsService.optOut();
+            }
+            settings.save(.analyticsEnabled, value);
             setState(() {
               shareLogs = value;
             });
@@ -88,12 +93,8 @@ class _AboutAppState extends State<AboutApp> {
         SettingTile(
           title: context.loc.privacyPolicyTitle,
           leading: const Icon(Icons.privacy_tip_rounded),
-          onTap: (context) => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PrivacyPolicy(),
-            ),
-          ),
+          onTap: (context) =>
+              Navigator.restorablePushNamed(context, '/privacy'),
         ),
         SettingTile(
           isLast: true,

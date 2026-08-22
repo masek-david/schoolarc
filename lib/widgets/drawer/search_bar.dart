@@ -49,6 +49,8 @@ class MySearchBar extends ConsumerWidget {
 
     return SearchAnchor.bar(
       suggestionsBuilder: (context, controller) {
+        // DON'T SEND THE SEARCH CONTENT TO ANALYTICS
+
         final text = controller.value.text;
         if (text == '') return [];
         List<Widget> list = [];

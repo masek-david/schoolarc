@@ -1,8 +1,8 @@
 name: schoolarc
-description: "Simple app for students to take track of their homeworks and exams"
+description: "App for students to keep track of their homework and exams"
 publish_to: 'none'
 
-version: 2.2.5+63
+version: 2.2.6+65
 
 environment:
   sdk: '>=3.11.0 <4.0.0'
@@ -60,6 +60,7 @@ dependencies:
   share_plus: ^13.3.0
   app_links: ^7.2.1
   cbor: ^6.5.1
+  posthog_flutter: ^5.36.6
 
 dev_dependencies:
   flutter_test:

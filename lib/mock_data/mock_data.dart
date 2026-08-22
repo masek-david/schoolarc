@@ -22,7 +22,7 @@ class MockData {
   static final subjects = {
     '0': Subject(
       id: '0',
-      bakaId: null,
+      bakaId: '0',
       name: 'Mathematics',
       shortcut: 'Ma',
       order: 0,
@@ -31,7 +31,7 @@ class MockData {
     ),
     '1': Subject(
       id: '1',
-      bakaId: null,
+      bakaId: '1',
       name: 'Physics',
       shortcut: 'Ph',
       order: 1,
@@ -40,7 +40,7 @@ class MockData {
     ),
     '2': Subject(
       id: '2',
-      bakaId: null,
+      bakaId: '2',
       name: 'Chemistry',
       shortcut: 'Ch',
       order: 2,
@@ -49,7 +49,7 @@ class MockData {
     ),
     '3': Subject(
       id: '3',
-      bakaId: null,
+      bakaId: '3',
       name: 'Biology',
       shortcut: 'Bi',
       order: 3,
@@ -58,7 +58,7 @@ class MockData {
     ),
     '4': Subject(
       id: '4',
-      bakaId: null,
+      bakaId: '4',
       name: 'English',
       shortcut: 'En',
       order: 4,
@@ -67,7 +67,7 @@ class MockData {
     ),
     '5': Subject(
       id: '5',
-      bakaId: null,
+      bakaId: '5',
       name: 'History',
       shortcut: 'Hi',
       order: 5,
@@ -76,7 +76,7 @@ class MockData {
     ),
     '6': Subject(
       id: '6',
-      bakaId: null,
+      bakaId: '6',
       name: 'Geography',
       shortcut: 'Ge',
       order: 6,
@@ -85,7 +85,7 @@ class MockData {
     ),
     '7': Subject(
       id: '7',
-      bakaId: null,
+      bakaId: '7',
       name: 'Computer Science',
       shortcut: 'CS',
       order: 7,
@@ -94,7 +94,7 @@ class MockData {
     ),
     '8': Subject(
       id: '8',
-      bakaId: null,
+      bakaId: '8',
       name: 'Art',
       shortcut: 'Art',
       order: 8,
@@ -103,7 +103,7 @@ class MockData {
     ),
     '9': Subject(
       id: '9',
-      bakaId: null,
+      bakaId: '9',
       name: 'Physical Education',
       shortcut: 'PE',
       order: 9,
@@ -601,7 +601,7 @@ class MockData {
       List.filled(6, TimetableEntry.empty()),
     ],
   );
-  
+
   static final timetable = Timetable(
     dates: List.generate(
       5,
@@ -814,7 +814,11 @@ class MockData {
     ],
     _today.addDays(3): [
       Meal(type: 'Soup', name: 'Lentil soup'),
-      Meal(type: 'Meal 1', name: 'Roast pork with mashed potatoes and cabbage', selected: true),
+      Meal(
+        type: 'Meal 1',
+        name: 'Roast pork with mashed potatoes and cabbage',
+        selected: true,
+      ),
     ],
     _today.addDays(4): [
       Meal(type: 'Soup', name: 'Garlic potato soup'),

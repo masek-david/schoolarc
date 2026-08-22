@@ -3,6 +3,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/main_app.dart';
@@ -16,6 +17,7 @@ import 'package:schoolarc/screens/firebase/cloudsync_login_screen.dart';
 import 'package:schoolarc/screens/logs/logs_screen.dart';
 import 'package:schoolarc/screens/meals/meals_screen.dart';
 import 'package:schoolarc/screens/meals/strava_login_screen.dart';
+import 'package:schoolarc/screens/onboarding/privacy_policy.dart';
 import 'package:schoolarc/screens/recap/recap_screen.dart';
 import 'package:schoolarc/screens/recap/sticker/recap_sticker_screen.dart';
 import 'package:schoolarc/screens/recently_deleted_screen.dart';
@@ -169,6 +171,7 @@ class AppConfig extends ConsumerWidget {
 
             return MaterialApp(
               restorationScopeId: 'root',
+              navigatorObservers: [PosthogObserver()],
               navigatorKey: navigatorKey,
               title: 'Schoolarc',
               localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -246,6 +249,7 @@ class AppConfig extends ConsumerWidget {
                 '/changelog': (context) => const ChangelogScreen(),
                 '/tutorial': (context) => const Tutorial(),
                 '/recap-sticker': (context) => const RecapStickerScreen(),
+                '/privacy': (context) => const PrivacyPolicy(),
               },
             );
           },

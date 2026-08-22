@@ -24,6 +24,36 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/button_dialog.dart';
 
+@pragma("vm:entry-point")
+FutureOr<void> backgroundCallback(Uri? data) async {
+  if (data == null) return;
+  log('Widget callback: $data');
+  if (data.host == 'complete') {
+    // Completing homework - load current data from widget storage - because we dont have Hive in this isolate
+    final json = await HomeWidget.getWidgetData('tasks');
+    final id = data.queryParameters['id'];
+    final completed = bool.parse(data.queryParameters['complete']!);
+    // The dynamic should be a list of tasks
+    final Map<String, dynamic> test = jsonDecode(json);
+    log(test.runtimeType.toString());
+    test.forEach(
+      (key, list) {
+        final index = list.indexWhere((element) => element['id'] == id);
+        if (index != -1) {
+          // Update the completion and save the data to widget
+          list[index]['isCompleted'] = completed;
+        }
+      },
+    );
+    HomeWidgetService._saveAndUpdateMain(jsonEncode(test));
+    // Save the data to isolatedHive, so we can read it from any isolate
+    await IsolatedHive.initFlutter();
+    final box = await IsolatedHive.openBox('widgetCompletedTasks');
+    await box.put(id, completed);
+    await box.close();
+  }
+}
+
 class HomeWidgetService {
   static final isSupportedPlatform = !kIsWeb && Platform.isAndroid;
 
@@ -158,36 +188,6 @@ class HomeWidgetService {
       androidName: 'StravaWidgetReceiver',
       qualifiedAndroidName: 'cz.masci.schoolarc.StravaWidgetReceiver',
     );
-  }
-
-  @pragma("vm:entry-point")
-  static FutureOr<void> backgroundCallback(Uri? data) async {
-    if (data == null) return;
-    log('Widget callback: $data');
-    if (data.host == 'complete') {
-      // Completing homework - load current data from widget storage - because we dont have Hive in this isolate
-      final json = await HomeWidget.getWidgetData('tasks');
-      final id = data.queryParameters['id'];
-      final completed = bool.parse(data.queryParameters['complete']!);
-      // The dynamic should be a list of tasks
-      final Map<String, dynamic> test = jsonDecode(json);
-      log(test.runtimeType.toString());
-      test.forEach(
-        (key, list) {
-          final index = list.indexWhere((element) => element['id'] == id);
-          if (index != -1) {
-            // Update the completion and save the data to widget
-            list[index]['isCompleted'] = completed;
-          }
-        },
-      );
-      _saveAndUpdateMain(jsonEncode(test));
-      // Save the data to isolatedHive, so we can read it from any isolate
-      await IsolatedHive.initFlutter();
-      final box = await IsolatedHive.openBox('widgetCompletedTasks');
-      await box.put(id, completed);
-      await box.close();
-    }
   }
 
   // checks hws that were completed from the widget, and notifies the notifier

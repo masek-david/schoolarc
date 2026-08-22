@@ -3,6 +3,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
+import 'package:schoolarc/services/analytics_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 
@@ -16,7 +17,7 @@ class OnboardingConsent extends StatefulWidget {
 }
 
 class _OnboardingConsentState extends State<OnboardingConsent> {
-  bool shareLogs = settings.get(.shareErrorLogs);
+  bool shareLogs = settings.get(.analyticsEnabled);
   bool privacyPolicyAgree = false;
 
   @override
@@ -53,11 +54,16 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
             builder: (isShown) {
               return SettingTile.withSwitch(
                 isFirst: true,
-                title: context.loc.agreeSendCrashReports,
-                subtitle: context.loc.agreeSendCrashReportsSubtitle,
+                title: context.loc.agreeSendAnalytics,
+                subtitle: context.loc.agreeSendAnalyticsSubtitle,
                 value: shareLogs,
                 onChanged: (value) {
-                  settings.save(.shareErrorLogs, value);
+                  if (value) {
+                    AnalyticsService.optIn();
+                  } else {
+                    AnalyticsService.optOut();
+                  }
+                  settings.save(.analyticsEnabled, value);
                   setState(() {
                     shareLogs = value;
                   });

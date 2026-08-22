@@ -14,7 +14,7 @@ class PrivacyPolicy extends StatelessWidget {
       children: const [],
       child: Markdown(
         data: context.loc.privacyPolicy,
-        padding: const EdgeInsets.all(0),
+        padding: const EdgeInsets.only(bottom: 36),
       ),
     );
   }

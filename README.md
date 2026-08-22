@@ -20,8 +20,9 @@
     - View current timetable with changes
     - View and import current homeworks
 - Strava.cz integration (Czech canteen system)
-- Material You theme
+- Material 3 Expressive theme
 - Responsive design
+- Big screen support
   
 ## Screenshots
 
@@ -83,8 +84,8 @@ Other platforms may be supported in the future.
 ## Platforms
 Schoolarc can run on most platforms, however, it is optimized and tested mainly for use on Android and iOS. Some functions don't even work on other operating systems and on web data loss can occur.
 
-|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications | Homescreen Widget |
-| ------- | :-------------------: | :------: | :-------: | :-----------: | :---------------: |
+|         |  Cloud synchronization |  Bakaláři  |  Strava.cz |  Notifications  |  Homescreen Widget |
+| ------- | :--------------------: | :--------: | :--------: | :-------------: | :----------------: |
 | Android |           ✅           |    ✅     |     ✅     |       ✅       |         ✅         |
 | iOS     |           ✅           |    ✅     |     ✅     |       ✅       |         ❌         |
 | Web     |           ✅           |    ✅     |     ✅     |       ❌       |         ❌         |

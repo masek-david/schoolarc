@@ -104,6 +104,9 @@ class _LoginInputScreenState extends State<LoginInputScreen> {
                 children: [
                   Expanded(
                     child: TextField(
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
+                      },
                       key: Key(field.name),
                       autofocus: index == 0 && !kIsWeb,
                       onChanged: (value) {

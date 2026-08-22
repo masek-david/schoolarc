@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
@@ -132,6 +133,9 @@ class ErrorInfoUI {
         text = apiError;
 
       case PlatformException(:var message):
+        text = message ?? '';
+
+      case FirebaseAuthException(:var message):
         text = message ?? '';
 
       default:

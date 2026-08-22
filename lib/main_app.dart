@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
@@ -91,6 +92,8 @@ class _MainAppState extends ConsumerState<MainApp> {
 
   void switchPage({required int newScreenIndex}) {
     ref.read(homePageProvider.notifier).switchPage(newScreenIndex);
+
+    Posthog().screen(screenName: 'Home page: $newScreenIndex');
 
     // try refreshing data for homescreen
     if (newScreenIndex == 0) {
@@ -188,14 +191,16 @@ class _MainAppState extends ConsumerState<MainApp> {
             WidgetsBinding.instance.addPostFrameCallback(
               (timeStamp) {
                 try {
-                  final recap = RecapData.decode(
-                    Uri.decodeComponent(uri.query),
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    '/recap-sticker',
-                    arguments: recap,
-                  );
+                  final decoded = Uri.decodeComponent(uri.query);
+
+                  if (decoded.startsWith('sti')) {
+                    final recap = RecapData.decode(decoded);
+                    Navigator.pushNamed(
+                      context,
+                      '/recap-sticker',
+                      arguments: recap,
+                    );
+                  }
                 } catch (e) {
                   showErrorMessage(context, e.toString());
                 }

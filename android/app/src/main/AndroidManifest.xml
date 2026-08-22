@@ -38,6 +38,10 @@
             </intent-filter>
         </activity>
 
+        <!-- PostHog start -->
+        <meta-data android:name="com.posthog.posthog.AUTO_INIT" android:value="false" />
+        <!-- PostHog end -->
+
         <receiver
             android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"
             android:exported="true">

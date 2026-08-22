@@ -24,13 +24,18 @@ class TimeTableDatabase {
   }
 
   Timetable get timeTable {
-    if(MockData.useMock){
+    if (MockData.useMock) {
       return MockData.timetable;
     }
-    
+
     var subjects = subjectsDb.readDatabase();
 
     return _table.convert(subjects);
+  }
+
+  void overrideTable(TimeTableEntity table) {
+    _table = table;
+    _tableBox.put(tableKey, _table);
   }
 
   /// overwrites old table
@@ -43,8 +48,8 @@ class TimeTableDatabase {
     late int indexOfLessonInList = _table.lessonTimes.length;
     for (int i = 0; i < _table.lessonTimes.length; i++) {
       if (lesson.startTime.toDateTime().isBefore(
-            _table.lessonTimes[i].startTime.toDateTime(),
-          )) {
+        _table.lessonTimes[i].startTime.toDateTime(),
+      )) {
         indexOfLessonInList = i;
         break;
       }
@@ -73,8 +78,8 @@ class TimeTableDatabase {
     late int newIndex = _table.lessonTimes.length;
     for (int i = 0; i < _table.lessonTimes.length; i++) {
       if (newLessonTime.startTime.toDateTime().isBefore(
-            _table.lessonTimes[i].startTime.toDateTime(),
-          )) {
+        _table.lessonTimes[i].startTime.toDateTime(),
+      )) {
         newIndex = i;
         break;
       }
@@ -89,7 +94,7 @@ class TimeTableDatabase {
     _tableBox.put(tableKey, _table);
   }
 
-  void newLessonAt(int weekday, int lessonIndex, String subjectId) {
+  void newLessonAt(int weekday, int lessonIndex, String? subjectId) {
     _table = _tableBox.get(tableKey);
     _table.table[weekday][lessonIndex] = subjectId;
 

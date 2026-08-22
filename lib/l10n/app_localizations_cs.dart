@@ -616,6 +616,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get register => 'Registrovat se';
 
   @override
+  String get registering => 'Registrování';
+
+  @override
   String get loggingIn => 'Přihlašování';
 
   @override
@@ -1366,17 +1369,21 @@ class AppLocalizationsCs extends AppLocalizations {
   String get couldntLogIn => 'Přihlášení se nezdařilo';
 
   @override
-  String get deleteAllData => 'Smazat všechna data';
+  String get deleteAccountAndData => 'Smazat účet a data';
 
   @override
-  String get deletedAllData => 'Všechna data byla smazána.';
+  String get deletedAccountAndData => 'Účet a data byly smazány';
 
   @override
-  String get deleteAllDataTitle => 'Smazat všechna data?';
+  String get deleteAccountAndDataConfirm => 'Smazat účet a data?';
 
   @override
-  String get deleteAllDataText =>
-      'Smazání všech dat smaže vaší synchronizovanou zálohu a váš účet. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete všechna data smazat?';
+  String get deleteAccountAndDataConfirmText =>
+      'Smazání odstraní vaší synchronizovanou zálohu a smaže váš účet. Místní data zůstanou nedotknutá. Tato akce je nevratná. Opravdu chcete smazat svůj účet a všechna data?';
+
+  @override
+  String get deleteAccountAndDataLogInFirst =>
+      'Abyste mohli smazat svůj účet a všechna data, prosím přihlaste se.';
 
   @override
   String get getAllData => 'Stáhnout všechna data';
@@ -1404,7 +1411,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get privacyPolicy =>
-      'Datum účinnosti: 31. Března 2026\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\nAplikace Schoolarc je především offline, ale obsahuje i některé online funkce.\nVývojář není zodpovědný za žádné ztráty dat způsobené závadou zařízení, smazáním aplikace, softwarovou chybou, nebo neoprávněným přístupem.\n\n## Cloud Sync\n### Jaká data jsou shromažďována\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci.\n\n### Třetí strany\nCloud sync data jsou uložena na serverech v Evropské Unii (Belgii) pomocí Google Cloud Firebase.\n\n## Hlášení chyb\nPokud povolíte odesílání hlášení chyb, budou data odesílána pomocí Firebase Crashlytics za účelem identifikace a opravy chyb.\n\nShromažďovaná data mohou zahrnovat:\n- záznamy o pádech a stack trace\n- informace o zařízení (např. model a verze operačního systému)\n- verzi aplikace a kontext použití v době pádu\n- časové údaje a jedinečný identifikátor instalace\n- vlastní logy generované aplikací\n\nTato data jsou využívána výhradně k diagnostice a opravě chyb a ke zlepšení stability aplikace.';
+      'Datum účinnosti: 21. Srpna 2026\n\nVývojář: David Mašek\n\nKontakt: dev@masci.cz\n\nPoužíváním aplikace Schoolarc souhlasíte s těmito Zásadami ochrany osobních údajů. Tyto Zásady ochrany osobních údajů mohou být aktualizovány.\n\n## Sběr analytických dat\nPouze pokud zapnete sběr analytických dat, data o používání a chybách budou odeslány pomocí PostHog za účelem identifikace a opravy chyb a vylepšení funkcí aplikace.\n\nShromažďovaná data mohou obsahovat:\n- záznamy o chybách a stack trace\n- informace o zařízení (např. model a verze operačního systému)\n- verzi aplikace\n- informace o navigaci v aplikaci\n- interakce s uživatelským prostředí\n- časové údaje a jedinečný identifikátor instalace\n- vlastní logy generované aplikací\n\nAnalytická data shromážděná prostřednictvím služby PostHog jsou uchovávána v souladu s příslušnými zásadami uchovávání dat služby PostHog a nastavením uchovávání dat nakonfigurovaným pro Schoolarc. Analytická data jsou vymazána po uplynutí příslušné doby uchovávání nebo v případě, že je vymazání jinak požadováno či vyžadováno.\n\n### Třetí strany\nAnalytická data jsou uložena na serverech v Evropské Unii pomocí služby PostHog.\n\n## Cloud Sync\nCloud Sync je defaultně vypnutý. Shromažďovaná data se týkají pouze uživatelů se zapnutou funkcí Cloud sync.\n\n### Jaká data jsou shromažďována\n- Přezdívka - viditelná ostatním uživatelům\n- Emailová adresa – používá se pro přihlášení a přiřazení účtu\n- Předměty, testy, domácí úkoly –  synchronizovánu mezi vašimi zařízeními\n\nVaše data nejsou používána k reklamním ani marketingovým účelům. Cloud Sync data jsou uložen dokud nepožádáte jejich smazání.\n\n### Vaše práva\nMáte právo:\n- Požádat o kopii svých dat\n- Požádat o smazání svého účtu a všech dat\n\nObojí lze provést přímo v aplikaci nebo na adrese https://schoolarc.masci.cz/#/cloudsync.\n\n### Třetí strany\nCloud sync data jsou uložena na Google Cloud serverech v Evropské Unii (Belgii) pomocí Firebase Realtime Database.';
 
   @override
   String get privacyPolicyTitle => 'Zásady ochrany osobních údajů';
@@ -1510,12 +1517,11 @@ class AppLocalizationsCs extends AppLocalizations {
   String get share => 'Sdílet';
 
   @override
-  String get agreeSendCrashReports =>
-      'Souhlasím se zasíláním hlášení o chybách';
+  String get agreeSendAnalytics => 'Souhlasím se sběrem analytických dat';
 
   @override
-  String get agreeSendCrashReportsSubtitle =>
-      'Toto je volitelné, ale pomůže mi to opravit chyby :)';
+  String get agreeSendAnalyticsSubtitle =>
+      'Toto není povinné, ale pomůže mi to opravit chyby :)';
 
   @override
   String get agreeToPrivacyPolicy =>

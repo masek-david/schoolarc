@@ -7,9 +7,21 @@
   - Option to save homework as exam and vice versa
 
 ### Changed
+
+### Fixed
+
+---
+
+## [2.2.6](2026-8-21;build65)
+### Added
+- New buttons following Material 3 Expressive guidelines
+
+### Changed
 - Notifications now won't arrive if they are empty (by default)
 
 ### Fixed
+- Fixed error when opening app from widget
+- Completing homework from widget now works
 
 ---
 

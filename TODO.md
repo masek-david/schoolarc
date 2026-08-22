@@ -1,7 +1,13 @@
+# TESTING
+demo bakalari account: example, user, password
+tracking - creation of tasks, onboarding
+
 # FIX
-cant complete hw from widget
 scan qr
 settings cloud sync add description - backup, cross device,...
+do we NEED a tutorial ???
+new bottom sheet - test on other devices
+m3e icon button doesnt have 48 min width
 
 fix pull to refresh in calendar
 update/start listening to firebase on app reopen ???
@@ -11,6 +17,7 @@ bakalogin, strava login and firebase login are shared between debug and release 
 tests
 web can be only used with plus
 customize text theme ?
+refactor timetable class - dont have so many timetable classes - the default should provide rooms, teachers, changes
 
 FILE PICKER DOESNT WORK ON WEB
 ios password field looses focus when password picker is opened
@@ -53,17 +60,20 @@ refreshindicator as native - use material_3p ?
 - ✅ firebase verify email + forgot password for firebase
 - ⬜ error tracking, error screen/messages
 - ⬜ sync to my server
-- ⬜ other timetable, hw, ... providers
+- ⬜ new icon
+- ⬜ store assets - screenshots
+- ⬜ other timetable, hw, ... providers (other then bakalari)
 
 # FEATURES
 
-## Schoolarc Plus v2.4.0
+## Schoolarc Plus
 - ⬜ 0.99, 4.99, 9.99
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
-- ⬜ google sign in
+- ⬜ google sign in - update data safety in play console
 - ⬜ ask for email verification
 - ⬜ sync, widgets, amoled,  notifications, web access, custom icon (plus amber, custom colors?) (sharing)
 - ⬜ add to onboarding
+- ⬜ update play listing - data safety -> financial info -> purchase history ENABLE
 
 ## UI
 - ✅ settings use bigger headlines and scroll them
@@ -81,6 +91,7 @@ refreshindicator as native - use material_3p ?
 - ⬜ on weekend, show info about upcoming week
 - ⬜ custom icons - hws, exams, subjects ‼️
 - ⬜ month calendar scroll on hover of dragged item
+- ⬜ dont use so many text styles
 - ⬜ ? display tasks in timetable
 - ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
 
@@ -102,6 +113,7 @@ refreshindicator as native - use material_3p ?
 - ⬜ strava.cz stop saving the password
 - ⬜ translation - google sheets
 - ⬜ meals images - generate them using ai
+- ⬜ timetable - merge cells if they are after each other ?
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
@@ -145,7 +157,7 @@ refreshindicator as native - use material_3p ?
 - ⬜ ? remove slide to delete
 - ⬜ ? merge subjects with duplicate bakaId, show which one is more used (is it really needed?)
 - ⬜ You can plan how long you need to learn for test or complete a homework and when you want to do it
-- ⬜ Integration with device calendar
+- ⬜ Integration with device calendar - add in Data safety -> Calendar
 
 
 

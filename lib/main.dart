@@ -9,6 +9,7 @@ import 'package:schoolarc/app_config.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/firebase_options.dart';
 import 'package:schoolarc/models/exception_model.dart';
+import 'package:schoolarc/services/analytics_service.dart';
 import 'package:schoolarc/services/home_widget_service.dart';
 import 'package:schoolarc/utils/globals.dart' as globals;
 import 'package:schoolarc/utils/licenses.dart';
@@ -43,10 +44,9 @@ Future<void> main() async {
     Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
     Vibrate.create(),
     initializeDateFormatting(),
+    AnalyticsService.init(),
     if (HomeWidgetService.isSupportedPlatform)
-      HomeWidget.registerInteractivityCallback(
-        HomeWidgetService.backgroundCallback,
-      ),
+      HomeWidget.registerInteractivityCallback(backgroundCallback),
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top],
