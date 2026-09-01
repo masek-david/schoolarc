@@ -31,16 +31,21 @@ class SettingsScaffold extends StatelessWidget {
 
     return Scaffold(
       body: NestedScrollView(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child:
-                child ??
-                ListView(
-                  children: children,
-                ),
+        body: SafeArea(
+          // top is managed by the appbar, bottom should be scrollable -> can be seen through the navigation bar
+          top: false,
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child:
+                  child ??
+                  ListView(
+                    children: children,
+                  ),
+            ),
           ),
         ),
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -62,46 +67,49 @@ class SettingsScaffold extends StatelessWidget {
                 ),
               ),
               actions: actions,
-              flexibleSpace: LayoutBuilder(
-                builder: (context, constraints) {
-                  final t =
-                      (constraints.maxHeight -
-                          MediaQuery.paddingOf(context).top -
-                          kToolbarHeight) /
-                      (expandedHeight - kToolbarHeight);
+              flexibleSpace: SafeArea(
+                top: false,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final t =
+                        (constraints.maxHeight -
+                            MediaQuery.paddingOf(context).top -
+                            kToolbarHeight) /
+                        (expandedHeight - kToolbarHeight);
 
-                  // Interpolate padding between expanded and collapsed
-                  final leftPadding = lerpDouble(
-                    16,
-                    72,
-                    1 - t,
-                  )!.clamp(0, double.infinity);
+                    // Interpolate padding between expanded and collapsed
+                    final leftPadding = lerpDouble(
+                      16,
+                      72,
+                      1 - t,
+                    )!.clamp(0, double.infinity);
 
-                  return FlexibleSpaceBar(
-                    titlePadding: EdgeInsets.only(
-                      left: leftPadding.toDouble(),
-                      bottom: 14,
-                    ),
-                    expandedTitleScale: 1,
-                    title: Hero(
-                      tag: heroTag,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          title,
-                          // lerps between titleLarge (AppBar default) and displayMedium
-                          style: googleSansFlex(
-                            weight: lerpDouble(400, 700, t),
-                            size: lerpDouble(22, 45, t),
-                            width: lerpDouble(100, 131, t),
-                            letterSpacing: lerpDouble(0, -1.5, t),
-                            roundness: 100,
+                    return FlexibleSpaceBar(
+                      titlePadding: EdgeInsets.only(
+                        left: leftPadding.toDouble(),
+                        bottom: 14,
+                      ),
+                      expandedTitleScale: 1,
+                      title: Hero(
+                        tag: heroTag,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            title,
+                            // lerps between titleLarge (AppBar default) and displayMedium
+                            style: googleSansFlex(
+                              weight: lerpDouble(400, 700, t),
+                              size: lerpDouble(22, 45, t),
+                              width: lerpDouble(100, 131, t),
+                              letterSpacing: lerpDouble(0, -1.5, t),
+                              roundness: 100,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ];

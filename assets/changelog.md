@@ -7,8 +7,12 @@
   - Option to save homework as exam and vice versa
 
 ### Changed
+- Appbar is now transparent
 
 ### Fixed
+- Fix vocative form of long names in czech
+- Fix Android navigation bar not being transparent
+- Fix settings pages being behind the navigation bar in landscape
 
 ---
 

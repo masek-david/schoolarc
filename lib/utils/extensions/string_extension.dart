@@ -43,6 +43,7 @@ extension DiacriticsAwareString on String {
     final name = trim();
 
     if (name.isEmpty) return name;
+    if(name.split(' ').length > 1) return name;
 
     final lowerName = name.toLowerCase();
 

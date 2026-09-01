@@ -18,31 +18,49 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomMaterialIndicator(
+    final size = 48.0;
+
+    return CustomRefreshIndicator(
       onRefresh: () async {
         vibrate.release();
+        await Future.delayed(Durations.extralong4);
         await onRefresh();
       },
       onStateChanged: (change) {
-        if(change.newState.isArmed){
+        if (change.newState.isArmed) {
           vibrate.medium();
         }
       },
       notificationPredicate: enabled
           ? CustomRefreshIndicator.defaultScrollNotificationPredicate
           : (_) => false,
-      backgroundColor: context.col.primaryContainer,
-      indicatorSize: const Size(48, 48),
-      displacement: 20,
-      indicatorBuilder: (context, controller) {
-        return Padding(
-          padding: const EdgeInsets.all(1),
-          child: ExpressiveLoadingIndicator(
-            color: context.col.onPrimaryContainer,
-            progress: controller.state.isLoading
-                ? null
-                : controller.value,
-          ),
+      builder: (context, child, controller) {
+        final progress = Curves.decelerate.transform(controller.value / 1.5);
+        final scale = (controller.value * 2).clamp(0.0, 1.0);
+
+        return Stack(
+          alignment: .topCenter,
+          children: [
+            child,
+            Positioned(
+              top: 80 + progress * 80 - size,
+              child: Transform.scale(
+                scale: scale,
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: kElevationToShadow[8],
+                    color: context.col.primaryContainer,
+                    borderRadius: .circular(100),
+                  ),
+                  child: ExpressiveLoadingIndicator(
+                    size: size,
+                    color: context.col.onPrimaryContainer,
+                    progress: controller.state.isLoading ? null : progress,
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
       child: child,

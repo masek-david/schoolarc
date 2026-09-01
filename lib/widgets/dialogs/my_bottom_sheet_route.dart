@@ -82,13 +82,17 @@ class _BottomSheetViewState extends State<_BottomSheetView> {
     // TODO test on device not supporting predictive back
     return PredictiveBackGestureBuilder(
       transitionBuilder: (context, phase, startBackEvent, currentBackEvent, _, child) {
-        // it will be true when the dialog is shown - it will force the bottom sheet to cancel the animation
-        bool overrideGestureEnd = false;
+        late double progress;
 
+        // if there is some other overlay, dont show the pop progress
+        if (ModalRoute.of(context)?.isCurrent == false) {
+          progress = 0;
+        }
         // check if we are in a gesture which hasnt been already dismissed
-        if (_lastDismissedGesture != startBackEvent.hashCode) {
+        else if (_lastDismissedGesture != startBackEvent.hashCode) {
           // we are in a new gesture, so reset _last dismissed
           _lastDismissedGesture = null;
+          progress = currentBackEvent?.progress ?? 0;
 
           if (phase == .commit) {
             // commit, so set the _lastDismissed as this gesture and try popping
@@ -100,12 +104,14 @@ class _BottomSheetViewState extends State<_BottomSheetView> {
           // we use this to override the gesture end (only if the modalroute should pop)
           final canPop = ModalRoute.of(context)?.popDisposition == .pop;
 
+          // when the dialog is shown - it will force the bottom sheet to cancel the animation
           if (phase == .commit && !canPop) {
-            overrideGestureEnd = true;
+            progress = 0;
+          } else {
+            progress = currentBackEvent?.progress ?? 0;
           }
         }
 
-        final progress = currentBackEvent?.progress ?? 0;
         final scale = 0.9 + 0.1 * pow(1 - progress, 2);
 
         return Stack(
@@ -116,7 +122,7 @@ class _BottomSheetViewState extends State<_BottomSheetView> {
             ),
             Transform.scale(
               alignment: .bottomCenter,
-              scale: overrideGestureEnd ? 1 : scale,
+              scale: scale,
               child: AnimatedBuilder(
                 animation: widget.animation,
                 builder: (context, _) {

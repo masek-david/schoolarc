@@ -47,26 +47,12 @@ Future<void> main() async {
     AnalyticsService.init(),
     if (HomeWidgetService.isSupportedPlatform)
       HomeWidget.registerInteractivityCallback(backgroundCallback),
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-      overlays: [SystemUiOverlay.top],
-    ),
   ]);
   final version = (loadYaml(futureResult[0])['version'] as String).split('+');
 
   globals.appVersion = version[0];
   globals.appBuildNumber = int.parse(version[1]);
   addLicenses();
-
-  // gets rid of android bottom colored bar
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
 
   runApp(
     ProviderScope(

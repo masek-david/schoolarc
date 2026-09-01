@@ -9,7 +9,6 @@ import 'package:schoolarc/database/hive/hive_init.dart';
 /// and then create [SettingModel] in [SettingsDatabase] [_settings]
 ///
 /// To create a provider for this setting, define it inside settings_notifiers.dart
-
 enum Setting {
   themeUseDeviceColor,
   themeColorValue,
@@ -51,6 +50,7 @@ enum Setting {
 
   /// the index of the page that was last displayed, null if no page was displayed
   onboardingProgress,
+  onboardingIsNewUser,
   requiredBuild,
   lastSeenMessage,
   analyticsEnabled,
@@ -220,6 +220,10 @@ class SettingsDatabase {
     Setting.onboardingProgress: const SettingModel(
       defaultValue: null,
       key: 'onboardingProgress',
+    ),
+    Setting.onboardingIsNewUser: const SettingModel(
+      defaultValue: null,
+      key: 'onboardingIsNewUser',
     ),
     Setting.requiredBuild: const SettingModel(
       defaultValue: null,

@@ -299,6 +299,30 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
     final radii = MediaQuery.displayCornerRadiiOf(context);
     final today = Date.today();
 
+    // return PopScope(
+    //   canPop: canPop,
+    //   onPopInvokedWithResult: (didPop, result) {
+    //     if (didPop) return;
+    //     showPopDialog();
+    //   },
+    //   child: Material(
+    //     child: Container(
+    //       padding: viewInsets.add(const EdgeInsets.all(12)),
+    //       color: Colors.deepPurple,
+    //       child: TextField(
+    //         controller: descriptionController.value,
+    //         onChanged: (value) => setState(() {
+    //           canPop = _getCanPop();
+    //         }),
+    //         maxLines: null,
+    //         decoration: InputDecoration(
+    //           hintText: context.loc.description,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+
     return PopScope(
       canPop: canPop,
       onPopInvokedWithResult: (didPop, result) {
@@ -381,270 +405,281 @@ class _AddTaskBottomSheetState extends ConsumerState<NewTaskBottomSheet>
                 onInvoke: (intent) => pickSubject(subjects),
               ),
             },
-            child: Column(
-              mainAxisSize: .min,
-              children: [
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      spacing: 8,
-                      children: [
-                        M3EIconButton(
-                          style: .tonal,
-                          size: .md,
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close_rounded),
-                        ),
-                        const Spacer(),
-                        M3EFilledSplitButton(
-                          size: .md,
-                          leadingIcon: Icons.check_rounded,
-                          label: context.loc.save,
-                          onPressed: onSave,
-                          onSelected: (value) {
-                            if (value == 'qr') showQr();
-                            if (value == 'saveAsOther') {
-                              onSave(saveAsOtherType: true);
-                            }
-                          },
-                          items: [
-                            M3ESplitButtonItem(
-                              value: 'saveAsOther',
-                              icon: Icons.save_as_rounded,
-                              label: widget.isHomework
-                                  ? context.loc.saveAsExam
-                                  : context.loc.saveAsHomework,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0),
+                child: Column(
+                  mainAxisSize: .min,
+                  children: [
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          spacing: 8,
+                          children: [
+                            M3EIconButton(
+                              style: .tonal,
+                              size: .md,
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(Icons.close_rounded),
                             ),
-                            M3ESplitButtonItem(
-                              value: 'qr',
-                              icon: Icons.qr_code_rounded,
-                              label: context.loc.shareByQr,
+                            const Spacer(),
+                            M3EFilledSplitButton(
+                              size: .md,
+                              leadingIcon: Icons.check_rounded,
+                              label: context.loc.save,
+                              onPressed: onSave,
+                              onSelected: (value) {
+                                if (value == 'qr') showQr();
+                                if (value == 'saveAsOther') {
+                                  onSave(saveAsOtherType: true);
+                                }
+                              },
+                              items: [
+                                M3ESplitButtonItem(
+                                  value: 'saveAsOther',
+                                  icon: Icons.save_as_rounded,
+                                  label: widget.isHomework
+                                      ? context.loc.saveAsExam
+                                      : context.loc.saveAsHomework,
+                                ),
+                                M3ESplitButtonItem(
+                                  value: 'qr',
+                                  icon: Icons.qr_code_rounded,
+                                  label: context.loc.shareByQr,
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    borderRadius: .only(
-                      topLeft: const .circular(28),
-                      topRight: const .circular(28),
-                      bottomLeft: viewInsets.bottom == 0
-                          ? radii?.bottomLeft ?? const .circular(0)
-                          : const .circular(0),
-                      bottomRight: viewInsets.bottom == 0
-                          ? radii?.bottomRight ?? const .circular(0)
-                          : const .circular(0),
-                    ),
-                    color: context.col.surface,
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SubjectPicker(
-                        subjects: subjects,
-                        pickedSubjectId: pickedSubjectId.value,
-                        onSelected: setSubject,
-                        chipKeys: subjectChipsKeys,
-                      ),
-                      const SizedBox(height: 10),
-                      Autocomplete<Subject>(
-                        fieldViewBuilder:
-                            (
-                              context,
-                              textEditingController,
-                              focusNode,
-                              onFieldSubmitted,
-                            ) {
-                              return TextField(
-                                decoration: InputDecoration(
-                                  hintText: context.loc.newTaskTextFieldHint,
-                                ),
-                                controller: nameController.value,
-                                focusNode: focusNode,
-                                autofocus: true,
-                                maxLines: null,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (value) {
-                                  onFieldSubmitted();
-                                  if (nameController.value.text.isNotEmpty) {
-                                    Navigator.pop(context);
-                                    onSave();
-                                  }
-                                },
-                                onChanged: (value) {
-                                  textEditingController.text = value;
-                                  setState(() {
-                                    canPop = _getCanPop();
-                                  });
-                                },
-                                onEditingComplete: () {},
-                              );
-                            },
-                        onSelected: (subject) {
-                          nameController.value.text = '';
-                          setSubject(subject);
-                        },
-                        displayStringForOption: (subject) {
-                          return subject.name;
-                        },
-                        optionsBuilder: (textEditingValue) {
-                          if (textEditingValue.text == '' ||
-                              pickedSubjectId.value != null) {
-                            return const Iterable.empty();
-                          }
-                          return subjects.where(
-                            (subject) {
-                              return subject.containsText(
-                                textEditingValue.text,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 4),
-                      // M3EToggleButtonGroup(
-                      //   selectedIndex: pickedPriority.value,
-                      //   onSelectedIndexChanged: (value) => setState(() {
-                      //     if (value == null) return;
-                      //     pickedPriority.value = value;
-                      //   }),
-                      //   spacing: 2,
-                      //   actions: List.generate(
-                      //     4,
-                      //     (index) {
-                      //       final p = TaskPriority(index);
-
-                      //       return M3EToggleButtonGroupAction(
-                      //         icon: PriorityIcon(
-                      //           priority: index,
-                      //           color: pickedPriority.value == index
-                      //               ? p.getOnColor(context)
-                      //               : p.getOnSurfaceColor(context),
-                      //         ),
-                      //         decoration: M3EToggleButtonDecoration(
-                      //           foregroundColor: WidgetStateMapper({
-                      //             WidgetState.selected: p.getOnColor(context),
-                      //             WidgetState.any: p.getOnSurfaceColor(context),
-                      //           }),
-                      //           backgroundColor: WidgetStateMapper({
-                      //             WidgetState.selected: p.getColor(context),
-                      //             WidgetState.any: p.getSurfaceColor(context),
-                      //           }),
-                      //         ),
-                      //         label: Text(p.name(context)),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                      PriorityPicker(
-                        selectedPriority: pickedPriority.value,
-                        onSelected: (value) {
-                          setState(() {
-                            pickedPriority.value = value;
-                            canPop = _getCanPop();
-                          });
-                        },
-                      ),
-                      // SettingTile.withCheckbox(
-                      //   contentPadding: const EdgeInsets.all(0),
-                      //   title: 'Share',
-                      //   value: share.value,
-                      //   onChanged: (value) => setState(() {
-                      //     share.value = value;
-                      //   }),
-                      // ),
-                      const SizedBox(height: 8),
-                      InkWell(
-                        onTap: pickDate,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  dateIsAutoSet.value
-                                      ? '${context.loc.next} ${subjects.where((element) => element.id == pickedSubjectId.value).firstOrNull?.name}:'
-                                      : context.loc.deadline,
-                                  style: context.txt.titleMedium,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                child: Text(
-                                  pickedDate.value.formatFromSettings(
-                                    context,
-                                    formatPrefix: 'EEE ',
-                                  ),
-                                  style: context.txt.headlineMedium,
-                                ),
-                              ),
-                            ],
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 640),
+                      child: Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: .only(
+                            topLeft: const .circular(28),
+                            topRight: const .circular(28),
+                            bottomLeft: viewInsets.bottom == 0
+                                ? radii?.bottomLeft ?? const .circular(0)
+                                : const .circular(0),
+                            bottomRight: viewInsets.bottom == 0
+                                ? radii?.bottomRight ?? const .circular(0)
+                                : const .circular(0),
                           ),
+                          color: context.col.surface,
                         ),
-                      ),
-                      M3EToggleButtonGroup(
-                        size: .sm,
-                        style: .filled,
-                        selectedIndex: switch (pickedDate.value) {
-                          final d when d == today => 0,
-                          final d when d == today.addDays(1) => 1,
-                          final d when d == today.addDays(7) => 2,
-                          _ => null,
-                        },
-                        onSelectedIndexChanged: (value) {
-                          if (value == null) return;
-                          vibrate.medium();
-                          final daysToAdd = switch (value) {
-                            1 => 1,
-                            2 => 7,
-                            _ => 0,
-                          };
-
-                          setState(() {
-                            pickedDate.value = Date.today().addDays(daysToAdd);
-                            canPop = _getCanPop();
-                          });
-                        },
-                        actions: [
-                          M3EToggleButtonGroupAction(
-                            label: Text(context.loc.today),
-                          ),
-                          M3EToggleButtonGroupAction(
-                            label: Text(context.loc.tomorrow),
-                          ),
-                          M3EToggleButtonGroupAction(
-                            label: Text(
-                              '${context.loc.next} ${DateFormat.EEEE(context.locale.languageCode).format(DateTime.now()).toLowerCase()}',
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SubjectPicker(
+                              subjects: subjects,
+                              pickedSubjectId: pickedSubjectId.value,
+                              onSelected: setSubject,
+                              chipKeys: subjectChipsKeys,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: descriptionController.value,
-                        onChanged: (value) => setState(() {
-                          canPop = _getCanPop();
-                        }),
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          hintText: context.loc.description,
+                            const SizedBox(height: 10),
+                            Autocomplete<Subject>(
+                              fieldViewBuilder:
+                                  (
+                                    context,
+                                    textEditingController,
+                                    focusNode,
+                                    onFieldSubmitted,
+                                  ) {
+                                    return TextField(
+                                      decoration: InputDecoration(
+                                        hintText: context.loc.newTaskTextFieldHint,
+                                      ),
+                                      controller: nameController.value,
+                                      focusNode: focusNode,
+                                      autofocus: true,
+                                      maxLines: null,
+                                      textInputAction: TextInputAction.done,
+                                      onSubmitted: (value) {
+                                        onFieldSubmitted();
+                                        if (nameController.value.text.isNotEmpty) {
+                                          Navigator.pop(context);
+                                          onSave();
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                        textEditingController.text = value;
+                                        setState(() {
+                                          canPop = _getCanPop();
+                                        });
+                                      },
+                                      onEditingComplete: () {},
+                                    );
+                                  },
+                              onSelected: (subject) {
+                                nameController.value.text = '';
+                                setSubject(subject);
+                              },
+                              displayStringForOption: (subject) {
+                                return subject.name;
+                              },
+                              optionsBuilder: (textEditingValue) {
+                                if (textEditingValue.text == '' ||
+                                    pickedSubjectId.value != null) {
+                                  return const Iterable.empty();
+                                }
+                                return subjects.where(
+                                  (subject) {
+                                    return subject.containsText(
+                                      textEditingValue.text,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 4),
+                            // M3EToggleButtonGroup(
+                            //   selectedIndex: pickedPriority.value,
+                            //   onSelectedIndexChanged: (value) => setState(() {
+                            //     if (value == null) return;
+                            //     pickedPriority.value = value;
+                            //   }),
+                            //   spacing: 2,
+                            //   actions: List.generate(
+                            //     4,
+                            //     (index) {
+                            //       final p = TaskPriority(index);
+                      
+                            //       return M3EToggleButtonGroupAction(
+                            //         icon: PriorityIcon(
+                            //           priority: index,
+                            //           color: pickedPriority.value == index
+                            //               ? p.getOnColor(context)
+                            //               : p.getOnSurfaceColor(context),
+                            //         ),
+                            //         decoration: M3EToggleButtonDecoration(
+                            //           foregroundColor: WidgetStateMapper({
+                            //             WidgetState.selected: p.getOnColor(context),
+                            //             WidgetState.any: p.getOnSurfaceColor(context),
+                            //           }),
+                            //           backgroundColor: WidgetStateMapper({
+                            //             WidgetState.selected: p.getColor(context),
+                            //             WidgetState.any: p.getSurfaceColor(context),
+                            //           }),
+                            //         ),
+                            //         label: Text(p.name(context)),
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
+                            PriorityPicker(
+                              selectedPriority: pickedPriority.value,
+                              onSelected: (value) {
+                                setState(() {
+                                  pickedPriority.value = value;
+                                  canPop = _getCanPop();
+                                });
+                              },
+                            ),
+                            // SettingTile.withCheckbox(
+                            //   contentPadding: const EdgeInsets.all(0),
+                            //   title: 'Share',
+                            //   value: share.value,
+                            //   onChanged: (value) => setState(() {
+                            //     share.value = value;
+                            //   }),
+                            // ),
+                            const SizedBox(height: 8),
+                            InkWell(
+                              onTap: pickDate,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        dateIsAutoSet.value
+                                            ? '${context.loc.next} ${subjects.where((element) => element.id == pickedSubjectId.value).firstOrNull?.name}:'
+                                            : context.loc.deadline,
+                                        style: context.txt.titleMedium,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      child: Text(
+                                        pickedDate.value.formatFromSettings(
+                                          context,
+                                          formatPrefix: 'EEE ',
+                                        ),
+                                        style: context.txt.headlineMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            M3EToggleButtonGroup(
+                              size: .sm,
+                              style: .filled,
+                              selectedIndex: switch (pickedDate.value) {
+                                final d when d == today => 0,
+                                final d when d == today.addDays(1) => 1,
+                                final d when d == today.addDays(7) => 2,
+                                _ => null,
+                              },
+                              onSelectedIndexChanged: (value) {
+                                if (value == null) return;
+                                vibrate.medium();
+                                final daysToAdd = switch (value) {
+                                  1 => 1,
+                                  2 => 7,
+                                  _ => 0,
+                                };
+                      
+                                setState(() {
+                                  pickedDate.value = Date.today().addDays(
+                                    daysToAdd,
+                                  );
+                                  canPop = _getCanPop();
+                                });
+                              },
+                              actions: [
+                                M3EToggleButtonGroupAction(
+                                  label: Text(context.loc.today),
+                                ),
+                                M3EToggleButtonGroupAction(
+                                  label: Text(context.loc.tomorrow),
+                                ),
+                                M3EToggleButtonGroupAction(
+                                  label: Text(
+                                    '${context.loc.next} ${DateFormat.EEEE(context.locale.languageCode).format(DateTime.now()).toLowerCase()}',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: descriptionController.value,
+                              onChanged: (value) => setState(() {
+                                canPop = _getCanPop();
+                              }),
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                hintText: context.loc.description,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

@@ -1,5 +1,4 @@
 # TESTING
-demo bakalari account: example, user, password
 tracking - creation of tasks, onboarding
 
 # FIX
@@ -23,6 +22,9 @@ FILE PICKER DOESNT WORK ON WEB
 ios password field looses focus when password picker is opened
 ios ipad window manager over my buttons
 ios notifications dont have access
+
+timetable remove tile width option, hero anim
+calendar past days can have darker date text
 
 # Material 3 Expressive
 Bigger screen navigation:

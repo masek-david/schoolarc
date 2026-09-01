@@ -169,6 +169,7 @@ class PagesWidget extends ConsumerWidget {
                                   ExpressiveRefreshIndicator(
                                     onRefresh: () => refreshAll(context, ref),
                                     child: ListView(
+                                      padding: .zero,
                                       primary:
                                           pageController.page?.round() ==
                                           daySinceEpoch,

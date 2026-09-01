@@ -159,7 +159,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanQr => 'Scan QR code';
 
   @override
-  String get newTaskTextFieldHint => 'Write task, search for subjects,...';
+  String get newTaskTextFieldHint => 'Write task, search for subjects, ...';
 
   @override
   String get add => 'Add';

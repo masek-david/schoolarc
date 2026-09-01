@@ -165,7 +165,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get scanQr => 'Naskenujte QR kód';
 
   @override
-  String get newTaskTextFieldHint => 'Napište úkol, vyhledejte předměty,...';
+  String get newTaskTextFieldHint => 'Napište úkol, vyhledejte předměty, ...';
 
   @override
   String get add => 'Přidat';

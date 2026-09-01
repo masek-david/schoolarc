@@ -18,6 +18,8 @@ class WideScreenBorders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(!show) return Expanded(child: child);
+    
     double top = MediaQuery.paddingOf(context).top;
     double bottom = MediaQuery.paddingOf(context).bottom;
 

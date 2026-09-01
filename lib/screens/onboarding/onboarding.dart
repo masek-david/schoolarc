@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_android_widget.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_consent.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_end.dart';
@@ -28,7 +29,7 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   int pageIndex = settings.get(.onboardingProgress) ?? 0;
   bool transparent = false;
-  bool isNewUser = true;
+  bool isNewUser = settings.get(.onboardingIsNewUser) ?? true;
 
   @override
   void initState() {
@@ -37,7 +38,9 @@ class _OnboardingState extends State<Onboarding> {
     super.initState();
   }
 
+  /// Called when onboarding ends
   void makeTransparent() {
+    Posthog().capture(eventName: 'Onboarding complete');
     setState(() {
       transparent = true;
     });
@@ -49,6 +52,7 @@ class _OnboardingState extends State<Onboarding> {
       setState(() {
         pageIndex = newPageIndex;
       });
+      Posthog().screen(screenName: 'Onboarding ${pages[newPageIndex].toString()}');
       settings.save(.onboardingProgress, newPageIndex);
     }
   }
@@ -63,6 +67,7 @@ class _OnboardingState extends State<Onboarding> {
         );
       },
       returningUser: () {
+        settings.save(.onboardingIsNewUser, false);
         isNewUser = false;
         next();
       },
@@ -76,7 +81,7 @@ class _OnboardingState extends State<Onboarding> {
         }
       },
     ),
-    OnboardingRestoredata(next: next),
+    OnboardingRestoreData(next: next),
     OnboardingExtensions(next: next, isNewUser: isNewUser),
     if (NotificationSender.isCompatiblePlatform())
       OnboardingNotifications(next: next),

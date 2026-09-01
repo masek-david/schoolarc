@@ -5,6 +5,7 @@ import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_widget/home_widget.dart';
@@ -36,6 +37,7 @@ import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/drawer/my_drawer.dart';
 import 'package:schoolarc/widgets/firebase_overlay.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';
+import 'package:schoolarc/widgets/navigation_bar/navigation_rail_scaffold.dart';
 import 'package:schoolarc/widgets/navigation_bar/side_nav_bar.dart';
 import 'package:schoolarc/widgets/wide_screen_borders.dart';
 
@@ -304,75 +306,206 @@ class _MainAppState extends ConsumerState<MainApp> {
       },
     );
 
-    return Stack(
-      children: [
-        MyShortcuts(
-          child: Scaffold(
-            key: _scaffoldKey,
-            appBar: !isWide
-                ? AppBar(
-                    scrolledUnderElevation: 0,
-                    backgroundColor: context.col.surface,
-                    leading:
-                        (ref.watch(subjectsNonDeletedProvider).isEmpty ||
-                            timetableDb.timeTable.lessonTimes.isEmpty)
-                        ? const Align(
-                            alignment: .center,
-                            child: Badge(
-                              alignment: Alignment(0.6, -0.6),
-                              backgroundColor: Colors.red,
-                              child: M3EIconButton(
-                                onPressed: openDrawer,
-                                icon: Icon(Icons.menu_rounded),
-                              ),
-                            ),
-                          )
-                        : null,
-                  )
-                : null,
-            body: SlidableAutoCloseBehavior(
-              child: Row(
+    final loc = context.loc;
+
+    return NavigationRailScaffold(
+      onTap: switchPage,
+      pageIndex: page,
+      destinations: [
+        NavigationPrimaryDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: Text(loc.home),
+        ),
+        NavigationPrimaryDestination(
+          icon: const Icon(Icons.calendar_month_outlined),
+          selectedIcon: const Icon(Icons.calendar_month),
+          label: Text(loc.calendar),
+        ),
+        NavigationPrimaryDestination(
+          icon: const Icon(Icons.home_work_outlined),
+          selectedIcon: const Icon(Icons.home_work),
+          label: Text(loc.homework(2)),
+        ),
+        NavigationPrimaryDestination(
+          icon: const Icon(Icons.description_outlined),
+          selectedIcon: const Icon(Icons.description),
+          label: Text(loc.exams(2)),
+        ),
+        const NavigationHeader(label: Text('Other')), // TODO translate
+        NavigationSecondaryDestination(
+          label: Text(loc.subjects),
+          icon: const Icon(Icons.school_outlined),
+          showBadge: ref.watch(subjectsNonDeletedProvider).isEmpty,
+          onPressed: () {
+            Navigator.restorablePushNamed(context, '/subjects');
+          },
+        ),
+        NavigationSecondaryDestination(
+          label: Text(loc.permanentTimetable),
+          icon: const Icon(Icons.calendar_month_outlined),
+          showBadge: timetableDb.timeTable.lessonTimes.isEmpty,
+          onPressed: () {
+            Navigator.restorablePushNamed(context, '/timetable');
+          },
+        ),
+        NavigationSecondaryDestination(
+          label: Text(loc.hwFromBaka),
+          icon: const Icon(Icons.home_work_outlined),
+          onPressed: () {
+            ref.read(bakaHomeworksProvider.notifier).refreshIfOld();
+            Navigator.restorablePushNamed(
+              context,
+              '/bakalari-homeworks',
+            );
+          },
+        ),
+        NavigationSecondaryDestination(
+          label: Text(loc.recentlyDeleted),
+          icon: const Icon(Icons.delete_forever_outlined),
+          onPressed: () {
+            Navigator.restorablePushNamed(context, '/deleted');
+          },
+        ),
+        NavigationSecondaryDestination(
+          label: Text(loc.viewTutorial),
+          icon: const Icon(Icons.school_outlined),
+          onPressed: () {
+            Navigator.restorablePushNamed(context, '/tutorial');
+          },
+        ),
+        NavigationSecondaryDestination(
+          label: Text(loc.settings),
+          icon: const Icon(Icons.settings_outlined),
+          onPressed: () {
+            Navigator.restorablePushNamed(context, '/settings');
+          },
+        ),
+      ],
+      child: screens[page],
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        systemNavigationBarIconBrightness: context.isDark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+      child: Stack(
+        children: [
+          MyShortcuts(
+            child: Scaffold(
+              key: _scaffoldKey,
+              // extendBodyBehindAppBar: true,
+              onDrawerChanged: (isOpened) {
+                Posthog().capture(
+                  eventName: 'Drawer ${isOpened ? 'opened' : 'closed'}',
+                );
+              },
+              drawer: const MyDrawer(),
+              // appBar: !isWide
+              //     ? AppBar(
+              //         scrolledUnderElevation: 0,
+              //         backgroundColor: context.isDark
+              //             ? Colors.transparent
+              //             // Colors.transparent always results in black android status bar,
+              //             // so in light mode the background color of the appbar is transparent, but "black"
+              //             : const Color.fromARGB(0, 255, 255, 255),
+              //         leading: Align(
+              //           alignment: .center,
+              //           child: Badge(
+              //             alignment: const Alignment(0.4, -0.4),
+              //             isLabelVisible:
+              //                 ref.watch(subjectsNonDeletedProvider).isEmpty ||
+              //                 timetableDb.timeTable.lessonTimes.isEmpty,
+              //             backgroundColor: Colors.red,
+              //             child: M3EIconButton(
+              //               decoration: M3EButtonDecoration(
+              //                 backgroundColor: WidgetStatePropertyAll(
+              //                   context.col.surfaceContainer,
+              //                 ),
+              //               ),
+              //               onPressed: openDrawer,
+              //               icon: const Icon(Icons.menu_rounded),
+              //             ),
+              //           ),
+              //         ),
+              //       )
+              //     : null,
+              bottomNavigationBar: isWide
+                  ? null
+                  : BottomNavBar(onTap: switchPage, pageIndex: page),
+              body: Stack(
                 children: [
-                  if (isWide) SideNavBar(onTap: switchPage, pageIndex: page),
-                  WideScreenBorders(
-                    show: isWide,
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: miliseconds),
-                      switchInCurve: Curves.easeOutSine,
-                      transitionBuilder: (child, animation) {
-                        return AnimatedBuilder(
-                          animation: animation,
-                          builder: (context, child) {
-                            return Opacity(
-                              opacity: animation.value,
-                              child: child,
-                            );
-                          },
-                          child: child,
-                        );
-                      },
-                      child: screens[page],
+                  SlidableAutoCloseBehavior(
+                    child: Row(
+                      children: [
+                        if (isWide)
+                          SideNavBar(onTap: switchPage, pageIndex: page),
+                        WideScreenBorders(
+                          show: isWide,
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: miliseconds),
+                            switchInCurve: Curves.easeOutSine,
+                            transitionBuilder: (child, animation) {
+                              return AnimatedBuilder(
+                                animation: animation,
+                                builder: (context, child) {
+                                  return Opacity(
+                                    opacity: animation.value,
+                                    child: child,
+                                  );
+                                },
+                                child: child,
+                              );
+                            },
+                            child: screens[page],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  if (!isWide)
+                    SafeArea(
+                      child: Padding(
+                        padding: const .all(8),
+                        child: Align(
+                          alignment: .topLeft,
+                          child: Badge(
+                            alignment: const Alignment(0.4, -0.4),
+                            isLabelVisible:
+                                ref.watch(subjectsNonDeletedProvider).isEmpty ||
+                                timetableDb.timeTable.lessonTimes.isEmpty,
+                            backgroundColor: Colors.red,
+                            child: M3EIconButton(
+                              decoration: M3EButtonDecoration(
+                                elevation: const WidgetStatePropertyAll(4),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  context.col.surfaceContainer,
+                                ),
+                              ),
+                              onPressed: openDrawer,
+                              icon: const Icon(Icons.menu_open_rounded),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-            drawer: const MyDrawer(),
-            bottomNavigationBar: isWide
-                ? null
-                : BottomNavBar(onTap: switchPage, pageIndex: page),
           ),
-        ),
-        if (showingOnboarding) Onboarding(closeOnboarding: endOnboarding),
-        if (ref.watch(needsUpdateProvider)) const AppInfoScreen(),
-        if (ref.watch(debugShowFireOverlayProvider))
-          const Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: FirebaseOverlay(),
-          ),
-      ],
+          if (showingOnboarding) Onboarding(closeOnboarding: endOnboarding),
+          if (ref.watch(needsUpdateProvider)) const AppInfoScreen(),
+          if (ref.watch(debugShowFireOverlayProvider))
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: FirebaseOverlay(),
+            ),
+        ],
+      ),
     );
   }
 }

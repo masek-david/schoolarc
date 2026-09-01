@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @newTaskTextFieldHint.
   ///
   /// In en, this message translates to:
-  /// **'Write task, search for subjects,...'**
+  /// **'Write task, search for subjects, ...'**
   String get newTaskTextFieldHint;
 
   /// No description provided for @add.

@@ -178,7 +178,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
     final exams = ref.watch(examsDatesProvider);
 
     final isWide =
-        MediaQuery.of(context).size.width > _minimumColumnWidth * 2 + 28 + 84;
+        MediaQuery.sizeOf(context).width > _minimumColumnWidth * 2 + 28 + 84;
     final pagesWidget = buildPages(hws, exams, missedHws);
 
     return Shortcuts(
@@ -257,12 +257,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                               initialRatios = [0.5, 0.5];
                             }
                           }
-
+    
                           if (initialRatios.first + initialRatios.last >
                               1.001) {
                             initialRatios = [0.5, 0.5];
                           }
-
+    
                           return ResizableContainer(
                             controller: _resizeController,
                             direction: Axis.horizontal,
@@ -279,7 +279,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                                 ),
                                 child: ScrollableCalendar(
                                   controller: _monthCalendarController,
-                                  onExamTap: (exam) => editExam(context, exam),
+                                  onExamTap: (exam) =>
+                                      editExam(context, exam),
                                   homeworks: hws,
                                   exams: exams,
                                   selectedDate: _selectedDate.value,

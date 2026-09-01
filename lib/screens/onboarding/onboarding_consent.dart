@@ -6,6 +6,7 @@ import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/services/analytics_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingConsent extends StatefulWidget {
   const OnboardingConsent({super.key, required this.next});
@@ -39,14 +40,14 @@ class _OnboardingConsentState extends State<OnboardingConsent> {
           ),
           AnimatedItem(
             builder: (isShown) {
-              return Padding(
-                padding: const EdgeInsetsGeometry.only(bottom: 16),
-                child: Markdown(
-                  padding: const EdgeInsets.all(0),
-                  data: context.loc.privacyPolicy,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                ),
+              return Markdown(
+                onTapLink: (text, href, title) {
+                  if (href != null) launchUrl(Uri.parse(href));
+                },
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                data: context.loc.privacyPolicy,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
               );
             },
           ),

@@ -10,8 +10,8 @@ import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
-class OnboardingRestoredata extends ConsumerWidget {
-  const OnboardingRestoredata({super.key, required this.next});
+class OnboardingRestoreData extends ConsumerWidget {
+  const OnboardingRestoreData({super.key, required this.next});
 
   final void Function() next;
 
@@ -73,7 +73,10 @@ class OnboardingRestoredata extends ConsumerWidget {
                 subtitle: context.loc.cloudSyncSubtitle,
                 leading: ref.watch(firebaseLoginProvider).value == null
                     ? null
-                    : const Icon(Icons.check_circle_rounded, color: Colors.green),
+                    : const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.green,
+                      ),
                 onTap: (context) {
                   Navigator.push(
                     context,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
@@ -80,6 +81,15 @@ class _TutorialState extends State<Tutorial> {
         curve: Curves.easeInOut,
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Posthog().screen(screenName: 'Tutorial');
+    _controller.addListener(
+      () => Posthog().capture(eventName: 'Tutorial page ${_controller.page}'),
+    );
   }
 
   @override
