@@ -8,6 +8,7 @@
 
 ### Changed
 - Appbar is now transparent
+- Removed timetable settings, option to show 7 day week in timetable can now be found in Style & Motion page
 
 ### Fixed
 - Fix vocative form of long names in czech

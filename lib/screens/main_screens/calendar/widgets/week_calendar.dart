@@ -87,7 +87,7 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
             Column(
               children: [
                 Row(
-                  mainAxisAlignment: showArrows ? .spaceBetween : .center,
+                  mainAxisAlignment: .center,
                   children: [
                     if (showArrows)
                       ArrowButton(
@@ -99,25 +99,28 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
                           );
                         },
                       ),
-                    GestureDetector(
-                      onTap: () {
-                        final today = Date.today();
-                        final page = today.weekSinceEpoch;
-
-                        widget.controller.animateToPage(
-                          page,
-                          duration: scrollDuration,
-                          curve: scrollCurve,
-                        );
-
-                        widget.setSelectedDate(today);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          focusedDate.formatMonth(context),
-                          style: context.txt.headlineMedium,
-                          textAlign: .left,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GestureDetector(
+                        onTap: () {
+                          final today = Date.today();
+                          final page = today.weekSinceEpoch;
+                      
+                          widget.controller.animateToPage(
+                            page,
+                            duration: scrollDuration,
+                            curve: scrollCurve,
+                          );
+                      
+                          widget.setSelectedDate(today);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            focusedDate.formatMonth(context),
+                            style: context.txt.headlineMedium,
+                            textAlign: .left,
+                          ),
                         ),
                       ),
                     ),

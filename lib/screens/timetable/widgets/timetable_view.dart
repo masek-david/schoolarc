@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
@@ -16,22 +15,22 @@ class TimetableView extends StatelessWidget {
     super.key,
     required this.timeTable,
     required this.showWholeWeek,
-    required this.columnWidth,
     required this.onLessonTimesTapped,
     required this.onSubjectTapped,
     required this.contentWhenEmpty,
+    this.onCreatePeriod,
   });
 
   final Timetable? timeTable;
   final bool showWholeWeek;
-  final double columnWidth;
   final Widget contentWhenEmpty;
-  final void Function(LessonTimes lessonTimes, int lessonIndex)?
-  onLessonTimesTapped;
+  final void Function(int lessonIndex)? onCreatePeriod;
+  final void Function(int lessonIndex)? onLessonTimesTapped;
   final void Function(int weekday, int lessonIndex, TimetableEntry lesson)?
   onSubjectTapped;
 
-  static const dateColumnWidth = 40.0;
+  static const dateCellWidth = 40.0;
+  static const cellWidth = 80.0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +38,7 @@ class TimetableView extends StatelessWidget {
       return contentWhenEmpty;
     }
 
+    final bool startOnMonday = settings.get(Setting.weekStartsOnMonday);
     final table = timeTable!.table;
 
     return SingleChildScrollView(
@@ -47,40 +47,33 @@ class TimetableView extends StatelessWidget {
         padding: const EdgeInsets.only(
           left: 8,
           right: 8,
-          bottom: 36,
+          bottom: 8,
         ),
         child: Column(
           spacing: 4,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-            showWholeWeek ? table.length + 1 : table.length - 2 + 1,
-            (rowIndex) {
-              if (rowIndex == 0) {
-                return Row(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(
-                    timeTable!.lessonTimes.length + 1,
+          children: [
+            IntrinsicHeight(
+              child: Row(
+                spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: timeTable?.dates != null ? dateCellWidth : 0,
+                  ),
+
+                  ...List.generate(
+                    timeTable!.lessonTimes.length,
                     (columnIndex) {
-                      if (columnIndex == 0) {
-                        return SizedBox(
-                          width: timeTable?.dates != null ? dateColumnWidth : 0,
-                        );
-                      }
+                      final lessonTimes = timeTable!.lessonTimes[columnIndex];
 
-                      int lessonIndex = columnIndex - 1;
-                      final lessonTimes = timeTable!.lessonTimes[lessonIndex];
-
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        width: columnWidth,
+                      return SizedBox(
+                        width: cellWidth,
                         child: InkWell(
+                          borderRadius: .circular(4),
                           onTap: onLessonTimesTapped == null
                               ? null
-                              : () => onLessonTimesTapped!(
-                                  lessonTimes,
-                                  lessonIndex,
-                                ),
+                              : () => onLessonTimesTapped!(columnIndex),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,92 +97,118 @@ class TimetableView extends StatelessWidget {
                       );
                     },
                   ),
-                );
-              }
-              int weekday = rowIndex - 1;
-
-              if (!settings.get(Setting.weekStartsOnMonday)) {
-                weekday--;
-                if (weekday == -1) {
-                  weekday = 6;
+                  if (onCreatePeriod != null)
+                    Material(
+                      borderRadius: .circular(4),
+                      color: context.col.surfaceContainerHigh,
+                      clipBehavior: .antiAlias,
+                      child: InkWell(
+                        onTap: () => onCreatePeriod!.call(
+                          timeTable!.lessonTimes.length + 1,
+                        ),
+                        child: Container(
+                          width: cellWidth,
+                          alignment: .center,
+                          child: const Icon(Icons.add_rounded),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            ...List.generate(
+              showWholeWeek ? table.length : table.length - 2,
+              (rowIndex) {
+                int weekday = rowIndex;
+                if (!startOnMonday) {
+                  weekday--;
+                  if (weekday == -1) {
+                    weekday = 6;
+                  }
                 }
-              }
 
-              return Expanded(
-                child: Row(
-                  spacing: 4,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: List.generate(
-                    table[weekday].length + 1,
-                    (columnIndex) {
-                      final date = timeTable?.dates?[weekday];
-                      if (columnIndex == 0) {
-                        if (date == null) {
-                          return const SizedBox();
+                return Expanded(
+                  child: Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: List.generate(
+                      table[weekday].length + 1,
+                      (columnIndex) {
+                        final date = timeTable?.dates?[weekday];
+                        if (columnIndex == 0) {
+                          if (date == null) {
+                            return const SizedBox();
+                          }
+
+                          return SizedBox(
+                            width: dateCellWidth,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  date
+                                      .format(
+                                        'EEE',
+                                        context.locale.languageCode,
+                                      )
+                                      .capitalize(),
+                                  style: googleSansFlex(
+                                    width: 110,
+                                    weight: 600,
+                                  ),
+                                  textAlign: .center,
+                                ),
+                                Text(
+                                  date.formatFromSettings(context),
+                                  style: googleSansFlex(width: 45, size: 18),
+                                  textAlign: .center,
+                                ),
+                              ],
+                            ),
+                          );
                         }
 
-                        return SizedBox(
-                          width: dateColumnWidth,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                date
-                                    .format('EEE', context.locale.languageCode)
-                                    .capitalize(),
-                                style: googleSansFlex(width: 110, weight: 600),
-                                textAlign: .center,
-                              ),
-                              Text(
-                                date.formatFromSettings(context),
-                                style: googleSansFlex(width: 45, size: 18),
-                                textAlign: .center,
-                              ),
-                            ],
-                          ),
+                        int lessonIndex = columnIndex - 1;
+                        final lesson = table[weekday][lessonIndex];
+
+                        bool isHighlighted =
+                            timeTable!.lessonTimes[lessonIndex].isActive &&
+                            DateTime.now().weekday - 1 == weekday;
+
+                        if (isHighlighted &&
+                            date != null &&
+                            !date.isSameDay(Date.today())) {
+                          isHighlighted = false;
+                        }
+
+                        final isLeft = lessonIndex == 0;
+                        final isRight = lessonIndex == table[0].length - 1;
+                        final isTop = rowIndex == 0;
+                        final isBottom = rowIndex == (showWholeWeek ? 6 : 4);
+
+                        return TimetableTile(
+                          leftBottom: isLeft && isBottom,
+                          leftTop: isLeft && isTop,
+                          rightBottom: isRight && isBottom,
+                          rightTop: isRight && isTop,
+                          isHighlighted: isHighlighted,
+                          lesson: lesson,
+                          columnWidth: cellWidth,
+                          onTap: onSubjectTapped == null
+                              ? null
+                              : (_) => onSubjectTapped!(
+                                  weekday,
+                                  lessonIndex,
+                                  lesson,
+                                ),
                         );
-                      }
-
-                      int lessonIndex = columnIndex - 1;
-                      final lesson = table[weekday][lessonIndex];
-
-                      bool isHighlighted =
-                          timeTable!.lessonTimes[lessonIndex].isActive &&
-                          DateTime.now().weekday - 1 == weekday;
-
-                      if (isHighlighted &&
-                          date != null &&
-                          !date.isSameDay(Date.today())) {
-                        isHighlighted = false;
-                      }
-
-                      final isLeft = lessonIndex == 0;
-                      final isRight = lessonIndex == table[0].length - 1;
-                      final isTop = weekday == 0;
-                      final isBottom = weekday == (showWholeWeek ? 6 : 4);
-
-                      return TimetableTile(
-                        leftBottom: isLeft && isBottom,
-                        leftTop: isLeft && isTop,
-                        rightBottom: isRight && isBottom,
-                        rightTop: isRight && isTop,
-                        isHighlighted: isHighlighted,
-                        lesson: lesson,
-                        columnWidth: columnWidth,
-                        onTap: onSubjectTapped == null
-                            ? null
-                            : (_) => onSubjectTapped!(
-                                weekday,
-                                lessonIndex,
-                                lesson,
-                              ),
-                      );
-                    },
+                      },
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

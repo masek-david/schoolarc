@@ -315,6 +315,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                     )
                   : Column(
                       children: [
+                        SizedBox(height: MediaQuery.viewPaddingOf(context).top + 24),
                         WeekCalendar(
                           controller: _weekCalendarController,
                           selectedDate: _selectedDate.value,

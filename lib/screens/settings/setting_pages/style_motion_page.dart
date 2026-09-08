@@ -47,6 +47,7 @@ class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
     final lunchTime = ref.watch(mealsShowTodayUntilProvider);
     final showMissed = ref.watch(calendarShowMissedProvider);
     final showArrows = ref.watch(calendarShowArrowsProvider);
+    final showWholeWeek = ref.watch(timeTableShowWholeWeekProvider);
     final initialIsTomorrow = ref.watch(calendarInitialIsTomorrowProvider);
 
     final loc = context.loc;
@@ -99,7 +100,11 @@ class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
           title: context.loc.myName,
           subtitle: context.loc.myNameDescription,
           leading: isFetchingName
-              ? const SizedBox(height: 56, width: 48, child: M3ELoadingIndicator())
+              ? const SizedBox(
+                  height: 56,
+                  width: 48,
+                  child: M3ELoadingIndicator(),
+                )
               : null,
           value: name,
           controller: nameController,
@@ -218,6 +223,17 @@ class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
           value: showArrows,
           onChanged: (value) {
             ref.read(calendarShowArrowsProvider.notifier).set(value);
+          },
+        ),
+        SettingTextDivider(text: loc.timetable),
+        SettingTile.withSwitch(
+          isFirst: true,
+          isLast: true,
+          title: loc.show7DayWeek,
+          // subtitle: loc.showArrowsSubtitle,
+          value: showWholeWeek,
+          onChanged: (value) {
+            ref.read(timeTableShowWholeWeekProvider.notifier).set(value);
           },
         ),
       ],

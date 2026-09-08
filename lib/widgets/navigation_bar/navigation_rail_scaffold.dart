@@ -503,7 +503,7 @@ class _NavigationRailPrimaryButton extends StatelessWidget {
               child: Align(
                 heightFactor: effectsAnim.flipProgress,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
+                  padding: const EdgeInsets.fromLTRB(8, 4, 0, 4),
                   child: Center(
                     child: Opacity(
                       opacity: effectsAnim.flipProgress,

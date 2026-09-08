@@ -210,6 +210,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendar => 'Calendar';
 
   @override
+  String get other => 'Other';
+
+  @override
   String get personal => 'Personal';
 
   @override
@@ -575,7 +578,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noTimetableMessage =>
-      'You don\'t have any timetable. You can create time of lessons by tapping the plus button. Or, you can import your timetable from Bakaláři.';
+      'You don\'t have any timetable. You can create on by tapping the plus button. Or, you can import your timetable.';
 
   @override
   String get noHomework => 'No homework found';
@@ -1029,10 +1032,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteThisLesson => 'Delete this lesson';
 
   @override
-  String get beginningTime => 'Beginning time:';
+  String get beginningTime => 'When does your lesson start?';
 
   @override
-  String get endingTime => 'Ending time:';
+  String get endingTime => 'When does your lesson end?';
+
+  @override
+  String get periodEndsBeforeStartError =>
+      'Your lesson can\'t end before it starts';
 
   @override
   String get select => 'Select';

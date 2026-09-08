@@ -29,10 +29,13 @@ class EmptyMessage extends StatelessWidget {
               ),
               height: 200,
             ),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: googleSansFlex(width: 111, weight: 500, size: 16),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: googleSansFlex(width: 111, weight: 500, size: 16),
+              ),
             ),
           ],
         ),

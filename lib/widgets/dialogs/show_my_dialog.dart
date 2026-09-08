@@ -38,7 +38,7 @@ class DialogActionButton extends StatelessWidget {
   final String text;
   final bool isDefaultAction;
   final bool isDestructiveAction;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {

@@ -77,7 +77,7 @@ class HomeScreen extends ConsumerWidget {
           child: ListView(
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(8, isWide ? 24 : 0, 8, 24),
+                padding: EdgeInsets.fromLTRB(8, isWide ? 24 : 64, 8, 24),
                 child: const Overview(),
               ),
               if (isRecapDate() && !hasSeenRecap())
@@ -99,6 +99,7 @@ class HomeScreen extends ConsumerWidget {
                             dateToShow: timetableDateTime,
                             whenText: whenText,
                           ),
+                          const ListBottomSpacer(),
                         ],
                       ),
                     ),

@@ -93,112 +93,109 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
             );
           },
         ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-            listTileTheme: ListTileTheme.of(context).copyWith(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: ExpressiveRefreshIndicator(
-              enabled: ref.watch(firebaseLoginProvider).value == null
-                  ? false
-                  : true,
-              onRefresh: () async {
-                try {
-                  await ref.read(examDataProvider.notifier).syncAll();
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showErrorMessage(context, e);
-                  }
-                  return;
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ExpressiveRefreshIndicator(
+            enabled: ref.watch(firebaseLoginProvider).value == null
+                ? false
+                : true,
+            onRefresh: () async {
+              try {
+                await ref.read(examDataProvider.notifier).syncAll();
+              } on Object catch (e) {
+                if (context.mounted) {
+                  showErrorMessage(context, e);
                 }
-              },
-              child: itemList.length == 5
-                  ? ListView(
-                      children: [
-                        const Snappable(child: AnimatedShape()),
-                        _buildCompletedList(context, ref, completedExams),
-                      ],
-                    )
-                  : AnimatedReorderableListView(
-                      items: itemList,
-                      buildDefaultDragHandles: false,
-                      lockedItems: [
-                        _AnimatedReorderableListItem(priority: 3),
-                        _AnimatedReorderableListItem(priority: -1),
-                      ],
-                      nonDraggableItems: nonDraggableItems,
-                      onReorderStart: (p0) => vibrate.medium(),
-                      itemBuilder: (context, index) {
-                        final item = itemList[index];
+                return;
+              }
+            },
+            child: itemList.length == 5
+                ? ListView(
+                    children: [
+                      const Snappable(child: AnimatedShape()),
+                      _buildCompletedList(context, ref, completedExams),
+                    ],
+                  )
+                : AnimatedReorderableListView(
+                    padding: .only(
+                      top:
+                          MediaQuery.viewPaddingOf(context).top +
+                          (context.isWide ? 0 : 64),
+                    ),
+                    items: itemList,
+                    buildDefaultDragHandles: false,
+                    lockedItems: [
+                      _AnimatedReorderableListItem(priority: 3),
+                      _AnimatedReorderableListItem(priority: -1),
+                    ],
+                    nonDraggableItems: nonDraggableItems,
+                    onReorderStart: (p0) => vibrate.medium(),
+                    itemBuilder: (context, index) {
+                      final item = itemList[index];
 
-                        if (item.priority != null) {
-                          if (item.priority! == -1) {
-                            return _buildCompletedList(
-                              context,
-                              ref,
-                              completedExams,
-                            );
-                          }
-
-                          final priority = TaskPriority(item.priority!);
-                          return Padding(
-                            key: ValueKey('exam title: ${item.priority!}'),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: TitleWithCount(
-                              text: priority.name(context),
-                              textColor: priority.getColor(context),
-                            ),
+                      if (item.priority != null) {
+                        if (item.priority! == -1) {
+                          return _buildCompletedList(
+                            context,
+                            ref,
+                            completedExams,
                           );
                         }
 
-                        final exam = item.exam!;
+                        final priority = TaskPriority(item.priority!);
                         return Padding(
-                          // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
-                          // Multiple widgets use the same globalkey error
-                          key: ValueKey(
-                            'exam: ${exam.id} ${exam.stateReaddingVersion}',
+                          key: ValueKey('exam title: ${item.priority!}'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: ExamTile(
-                            exam: exam,
-                            onDelete: () => deleteExam(context, ref, exam),
-                            onEdit: () => editExam(context, exam),
-                            onConvert: () => convertExam(context, ref, exam),
+                          child: TitleWithCount(
+                            text: priority.name(context),
+                            textColor: priority.getColor(context),
                           ),
                         );
-                      },
-                      isSameItem: (a, b) => a.isSameAs(b),
-                      onReorder: (oldIndex, newIndex) {
-                        final item = itemList.removeAt(oldIndex);
+                      }
 
-                        final newPriority = itemList[newIndex - 1].getPriority;
+                      final exam = item.exam!;
+                      return Padding(
+                        // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                        // Multiple widgets use the same globalkey error
+                        key: ValueKey(
+                          'exam: ${exam.id} ${exam.stateReaddingVersion}',
+                        ),
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: ExamTile(
+                          exam: exam,
+                          onDelete: () => deleteExam(context, ref, exam),
+                          onEdit: () => editExam(context, exam),
+                          onConvert: () => convertExam(context, ref, exam),
+                        ),
+                      );
+                    },
+                    isSameItem: (a, b) => a.isSameAs(b),
+                    onReorder: (oldIndex, newIndex) {
+                      final item = itemList.removeAt(oldIndex);
 
-                        int newOrder = 0;
-                        for (int i = 0; i < newIndex; i++) {
-                          if (itemList[i].exam?.priority.index == newPriority) {
-                            newOrder++;
-                          }
+                      final newPriority = itemList[newIndex - 1].getPriority;
+
+                      int newOrder = 0;
+                      for (int i = 0; i < newIndex; i++) {
+                        if (itemList[i].exam?.priority.index == newPriority) {
+                          newOrder++;
                         }
+                      }
 
-                        if (item.exam != null) {
-                          ref
-                              .read(examDataProvider.notifier)
-                              .reorder(
-                                item.exam!.toData(),
-                                newOrder,
-                                newPriority,
-                              );
-                        }
-                      },
-                    ),
-            ),
+                      if (item.exam != null) {
+                        ref
+                            .read(examDataProvider.notifier)
+                            .reorder(
+                              item.exam!.toData(),
+                              newOrder,
+                              newPriority,
+                            );
+                      }
+                    },
+                  ),
           ),
         ),
       ),

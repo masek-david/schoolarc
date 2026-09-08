@@ -3,6 +3,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
@@ -62,7 +63,7 @@ class AppConfig extends ConsumerWidget {
         size: 57,
         roundness: 100,
         weight: 800,
-        width: 131,
+        width: 124,
         letterSpacing: -2,
       ),
       displayMedium: googleSansFlex(
@@ -182,6 +183,11 @@ class AppConfig extends ConsumerWidget {
                   ref.watch(devModeProvider) &&
                   ref.watch(debugShowPerformanceOverlayProvider),
               theme: ThemeData(
+                splashFactory: NewInkSparkle.splashFactory,
+                listTileTheme: const ListTileThemeData(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                ),
                 textTheme: getTextTheme(),
                 colorScheme: light,
                 sliderTheme: const SliderThemeData(year2023: false),
@@ -201,6 +207,11 @@ class AppConfig extends ConsumerWidget {
                 ),
               ),
               darkTheme: ThemeData(
+                splashFactory: NewInkSparkle.splashFactory,
+                listTileTheme: const ListTileThemeData(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                ),
                 textTheme: getTextTheme(),
                 colorScheme: dark,
                 sliderTheme: const SliderThemeData(year2023: false),

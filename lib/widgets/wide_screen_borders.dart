@@ -18,10 +18,12 @@ class WideScreenBorders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(!show) return Expanded(child: child);
-    
-    double top = MediaQuery.paddingOf(context).top;
-    double bottom = MediaQuery.paddingOf(context).bottom;
+    if (!show) return Expanded(child: child);
+
+    final padding = MediaQuery.viewPaddingOf(context);
+    double top = padding.top;
+    double bottom = padding.bottom;
+    double right = padding.right;
 
     if (kIsWeb) {
       web.window.localStorage.setItem(
@@ -48,16 +50,21 @@ class WideScreenBorders extends StatelessWidget {
     if (bottom == 0) {
       bottom = 16;
     }
+    if (right == 0) {
+      right = bottom;
+    }
 
     return Expanded(
       child: Container(
-        color: show ? Theme.of(context).colorScheme.surfaceContainer : null,
-        padding: show
-            ? EdgeInsets.only(top: top, bottom: bottom, right: bottom)
-            : null,
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        padding: EdgeInsets.only(top: top, bottom: bottom, right: right),
         child: ClipRRect(
-          borderRadius: show ? BorderRadius.circular(12) : BorderRadius.zero,
-          child: child,
+          borderRadius: .circular(12),
+          child: MediaQuery.removeViewPadding(
+            removeTop: true,
+            context: context,
+            child: child,
+          ),
         ),
       ),
     );

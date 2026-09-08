@@ -21,6 +21,9 @@ final calendarShowMissedProvider =
 final calendarShowArrowsProvider =
     settingProvider<bool>(Setting.calendarShowArrows);
 
+final timeTableShowWholeWeekProvider = 
+    settingProvider<bool>(Setting.timeTableShowWholeWeek);
+
 final themeDynamicSchemeVariantProvider =
     settingProvider<int>(Setting.themeDynamicSchemeVariantInt);
 final themeColorValueProvider = settingProvider<int>(Setting.themeColorValue);

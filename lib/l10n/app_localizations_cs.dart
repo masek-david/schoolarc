@@ -216,6 +216,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get calendar => 'Kalendář';
 
   @override
+  String get other => 'Ostatní';
+
+  @override
   String get personal => 'Osobní';
 
   @override
@@ -585,7 +588,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get noTimetableMessage =>
-      'Nemáte žádný rozvrh. Můžete vytvořit časy lekcí kliknutím na tlačítko plus, nebo můžete importovat rozvrh z Bakalářů.';
+      'Nemáte žádný rozvrh. Můžete ho vytvořit kliknutím na tlačítko plus, nebo můžete rozvrh importovat.';
 
   @override
   String get noHomework => 'Nebyly nalezeny žádné úkoly';
@@ -1044,10 +1047,14 @@ class AppLocalizationsCs extends AppLocalizations {
   String get deleteThisLesson => 'Smazat tuto hodinu';
 
   @override
-  String get beginningTime => 'Začátek:';
+  String get beginningTime => 'Kdy hodina začíná?';
 
   @override
-  String get endingTime => 'Konec:';
+  String get endingTime => 'Kdy hodina končí?';
+
+  @override
+  String get periodEndsBeforeStartError =>
+      'Hodina nemůže končit dříve než skončí';
 
   @override
   String get select => 'Vybrat';

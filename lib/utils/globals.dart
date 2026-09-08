@@ -44,6 +44,8 @@ late final int appBuildNumber;
 const timeoutDuration = Duration(seconds: 10);
 const millisecondsInDay = 86400000;
 
+const timetablePeriodNameMaxLength = 4;
+
 const scrollDuration = Duration(milliseconds: 250);
 const scrollCurve = Curves.decelerate;
 

@@ -380,6 +380,12 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendar;
 
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
   /// No description provided for @personal.
   ///
   /// In en, this message translates to:
@@ -989,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @noTimetableMessage.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have any timetable. You can create time of lessons by tapping the plus button. Or, you can import your timetable from Bakaláři.'**
+  /// **'You don\'t have any timetable. You can create on by tapping the plus button. Or, you can import your timetable.'**
   String get noTimetableMessage;
 
   /// No description provided for @noHomework.
@@ -1749,14 +1755,20 @@ abstract class AppLocalizations {
   /// No description provided for @beginningTime.
   ///
   /// In en, this message translates to:
-  /// **'Beginning time:'**
+  /// **'When does your lesson start?'**
   String get beginningTime;
 
   /// No description provided for @endingTime.
   ///
   /// In en, this message translates to:
-  /// **'Ending time:'**
+  /// **'When does your lesson end?'**
   String get endingTime;
+
+  /// No description provided for @periodEndsBeforeStartError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your lesson can\'t end before it starts'**
+  String get periodEndsBeforeStartError;
 
   /// No description provided for @select.
   ///

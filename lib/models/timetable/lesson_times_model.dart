@@ -17,6 +17,10 @@ class LessonTimes extends HiveObject {
         TimeOfDay.fromDateTime(DateTime.now()).isBefore(endTime);
   }
 
+  bool get isValid{
+    return startTime.isBefore(endTime);
+  }
+
   String toStringFormatted(BuildContext context) {
     return '${startTime.format(context)} - ${endTime.format(context)}';
   }

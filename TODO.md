@@ -17,6 +17,7 @@ tests
 web can be only used with plus
 customize text theme ?
 refactor timetable class - dont have so many timetable classes - the default should provide rooms, teachers, changes
+timetable provider
 
 FILE PICKER DOESNT WORK ON WEB
 ios password field looses focus when password picker is opened
@@ -36,6 +37,7 @@ settingtile shape animation
 calendartiles animation
 fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options - this should the user be able to change
 refreshindicator as native - use material_3p ?
+check text style - dont use so many text themes, enable the user to change it a little bit
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)

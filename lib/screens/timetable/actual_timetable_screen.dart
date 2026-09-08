@@ -45,7 +45,6 @@ class _ActualTimetableScreenState extends ConsumerState<ActualTimetableScreen> {
         padding: const EdgeInsets.all(16),
         child: M3EHorizontalFloatingToolbar(
           expanded: true,
-          
           content: Row(
             children: [
               M3EIconButton(
@@ -108,7 +107,7 @@ class _ActualTimetableScreenState extends ConsumerState<ActualTimetableScreen> {
 
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 48),
+                padding: const EdgeInsets.only(bottom: 80),
                 child: SizedBox(
                   width: double.infinity,
                   child: TimetableView(
@@ -117,7 +116,6 @@ class _ActualTimetableScreenState extends ConsumerState<ActualTimetableScreen> {
                     ),
                     timeTable: timetable,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
-                    columnWidth: settings.get(Setting.timeTableTileWidth),
                     onLessonTimesTapped: null,
                     onSubjectTapped: (weekday, lessonIndex, lesson) {
                       lesson.showLessonDialog(

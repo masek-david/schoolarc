@@ -30,6 +30,9 @@ enum Setting {
   themeMode,
   timeTableShowWholeWeek,
   timeTableTileWidth,
+
+  /// In minutes
+  timetablePeriodLastDuration,
   bakaKeepLoggedIn,
   calendarInitialIsTomorrow,
   calendarShowMissed,
@@ -148,6 +151,10 @@ class SettingsDatabase {
     Setting.timeTableTileWidth: const SettingModel(
       defaultValue: 80.0,
       key: 'ttTileWidth',
+    ),
+    Setting.timetablePeriodLastDuration: const SettingModel(
+      defaultValue: 45,
+      key: 'timetablePeriodLastDuration',
     ),
     Setting.bakaKeepLoggedIn: const SettingModel(
       defaultValue: true,

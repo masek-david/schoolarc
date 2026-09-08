@@ -54,57 +54,60 @@ class SelectSubjectDialog extends StatelessWidget {
           text: loc.cancel,
         ),
       ],
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Autocomplete<Subject>(
-            onSelected: (option) {
-              Navigator.pop(context, option);
-            },
-            fieldViewBuilder:
-                (context, textEditingController, focusNode, onFieldSubmitted) {
-                  return TextField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    autofocus: true,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (value) => onFieldSubmitted(),
-                    decoration: InputDecoration(hintText: loc.searchForSubject),
-                  );
-                },
-            displayStringForOption: (option) => option.name,
-            optionsBuilder: (textEditingValue) {
-              if (textEditingValue.text.isEmpty) {
-                return const Iterable<Subject>.empty();
-              }
-              return subjects.where(
-                (subject) => subject.containsText(textEditingValue.text),
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          if (showAllSubjects)
-            Flexible(
-              child: SizedBox(
-                width: double.maxFinite,
-                child: ListView.builder(
-                  itemCount: subjects.length,
-                  itemBuilder: (context, index) {
-                    final subject = subjects[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: SubjectTile(
-                        subject: subject,
-                        onTap: () => Navigator.pop(context, subject),
-                        onDelete: null,
-                      ),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Autocomplete<Subject>(
+              onSelected: (option) {
+                Navigator.pop(context, option);
+              },
+              fieldViewBuilder:
+                  (context, textEditingController, focusNode, onFieldSubmitted) {
+                    return TextField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (value) => onFieldSubmitted(),
+                      decoration: InputDecoration(hintText: loc.searchForSubject),
                     );
                   },
+              displayStringForOption: (option) => option.name,
+              optionsBuilder: (textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable<Subject>.empty();
+                }
+                return subjects.where(
+                  (subject) => subject.containsText(textEditingValue.text),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            if (showAllSubjects)
+              Flexible(
+                child: SizedBox(
+                  width: double.maxFinite,
+                  child: ListView.builder(
+                    itemCount: subjects.length,
+                    itemBuilder: (context, index) {
+                      final subject = subjects[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: SubjectTile(
+                          subject: subject,
+                          onTap: () => Navigator.pop(context, subject),
+                          onDelete: null,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

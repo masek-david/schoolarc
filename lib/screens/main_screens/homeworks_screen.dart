@@ -13,6 +13,7 @@ import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';
 import 'package:schoolarc/widgets/tiles/hw_tile.dart';
+import 'package:schoolarc/widgets/web_request_focus.dart';
 
 class _AnimatedReorderableListItem {
   _AnimatedReorderableListItem({this.hw, this.priority}) {
@@ -71,146 +72,135 @@ class HomeworksScreen extends ConsumerWidget {
       context: context,
       removeBottom: true,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          tooltip: context.loc.addNewHomework,
-          onPressed: () async {
-            vibrate.medium();
-            addNewHw(context);
-          },
-          child: const Icon(Icons.add_rounded),
-        ),
-        // floatingActionButton: WebRequestFocusBuilder(
-        //   builder: (showKeyboard) {
-        //     return FloatingActionButton(
-        //       tooltip: context.loc.addNewHomework,
-        //       onPressed: () async {
-        //         showKeyboard();
-        //         vibrate.medium();
-        //         addNewHw(context);
-        //       },
-        //       enableFeedback: true,
-        //       child: const Icon(Icons.add_rounded),
-        //     );
-        //   },
-        // ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-            listTileTheme: ListTileTheme.of(context).copyWith(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: ExpressiveRefreshIndicator(
-              enabled: ref.watch(firebaseLoginProvider).value == null
-                  ? false
-                  : true,
-              onRefresh: () async {
-                try {
-                  await ref.read(hwDataProvider.notifier).syncAll();
-                } on Object catch (e) {
-                  if (context.mounted) {
-                    showErrorMessage(context, e);
-                  }
-                  return;
-                }
+        floatingActionButton: WebRequestFocusBuilder(
+          builder: (showKeyboard) {
+            return FloatingActionButton(
+              tooltip: context.loc.addNewHomework,
+              onPressed: () async {
+                showKeyboard();
+                vibrate.medium();
+                addNewHw(context);
               },
-              child: itemList.length == 5
-                  ? ListView(
-                      children: [
-                        const Snappable(child: AnimatedShape()),
-                        _buildCompletedList(context, ref, completedHws),
-                      ],
-                    )
-                  : AnimatedReorderableListView(
-                      items: itemList,
-                      buildDefaultDragHandles: false,
-                      lockedItems: [
-                        _AnimatedReorderableListItem(priority: 3),
-                        _AnimatedReorderableListItem(priority: -1),
-                      ],
-                      nonDraggableItems: nonDraggableItems,
-                      onReorderStart: (p0) => vibrate.medium(),
-                      itemBuilder: (context, index) {
-                        final item = itemList[index];
+              enableFeedback: true,
+              child: const Icon(Icons.add_rounded),
+            );
+          },
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ExpressiveRefreshIndicator(
+            enabled: ref.watch(firebaseLoginProvider).value == null
+                ? false
+                : true,
+            onRefresh: () async {
+              try {
+                await ref.read(hwDataProvider.notifier).syncAll();
+              } on Object catch (e) {
+                if (context.mounted) {
+                  showErrorMessage(context, e);
+                }
+                return;
+              }
+            },
+            child: itemList.length == 5
+                ? ListView(
+                    children: [
+                      const Snappable(child: AnimatedShape()),
+                      _buildCompletedList(context, ref, completedHws),
+                    ],
+                  )
+                : AnimatedReorderableListView(
+                    padding: .only(
+                      top:
+                          MediaQuery.viewPaddingOf(context).top +
+                          (context.isWide ? 0 : 64),
+                    ),
+                    items: itemList,
+                    buildDefaultDragHandles: false,
+                    lockedItems: [
+                      _AnimatedReorderableListItem(priority: 3),
+                      _AnimatedReorderableListItem(priority: -1),
+                    ],
+                    nonDraggableItems: nonDraggableItems,
+                    onReorderStart: (p0) => vibrate.medium(),
+                    itemBuilder: (context, index) {
+                      final item = itemList[index];
 
-                        if (item.priority != null) {
-                          if (item.priority! == -1) {
-                            return _buildCompletedList(
-                              context,
-                              ref,
-                              completedHws,
-                            );
-                          }
-
-                          final priority = TaskPriority(item.priority!);
-
-                          return Padding(
-                            key: ValueKey('hw title: ${item.priority!}'),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: TitleWithCount(
-                              text: priority.name(context),
-                              textColor: priority.getColor(context),
-                            ),
+                      if (item.priority != null) {
+                        if (item.priority! == -1) {
+                          return _buildCompletedList(
+                            context,
+                            ref,
+                            completedHws,
                           );
                         }
 
-                        final hw = item.hw!;
+                        final priority = TaskPriority(item.priority!);
+
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          key: ValueKey(
-                            'hw: ${hw.id} ${hw.stateReaddingVersion}',
+                          key: ValueKey('hw title: ${item.priority!}'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          child: HwTile(
-                            // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
-                            // Multiple widgets use the same globalkey error
-                            hw: hw,
-                            onChangedCompletion: (value) {
-                              ref
-                                  .read(hwDataProvider.notifier)
-                                  .complete(hw.toData(), value);
-                            },
-                            onDelete: () => deleteHw(context, ref, hw),
-                            onEdit: () => editHw(context, hw),
-                            onConvert: () => convertHw(context, ref, hw),
+                          child: TitleWithCount(
+                            text: priority.name(context),
+                            textColor: priority.getColor(context),
                           ),
                         );
-                      },
-                      removeItemBuilder: (child, animation) {
-                        // we need custom remove item painter, to absorb pointer, the user mustnt
-                        // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
-                        return FadeTransition(
-                          opacity: animation,
-                          child: AbsorbPointer(child: child),
-                        );
-                      },
-                      isSameItem: (a, b) => a.isSameAs(b),
-                      onReorder: (oldIndex, newIndex) {
-                        final item = itemList.removeAt(oldIndex);
-                        if (item.hw == null) return;
+                      }
 
-                        final newPriority = itemList[newIndex - 1].getPriority;
-                        int newOrder = 0;
-                        for (int i = 0; i < newIndex; i++) {
-                          if (itemList[i].hw?.priority.index == newPriority) {
-                            newOrder++;
-                          }
+                      final hw = item.hw!;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        key: ValueKey(
+                          'hw: ${hw.id} ${hw.stateReaddingVersion}',
+                        ),
+                        child: HwTile(
+                          // stateReaddingVersion needs to be here, it changes when the task is re-added, so it doesnt trigger
+                          // Multiple widgets use the same globalkey error
+                          hw: hw,
+                          onChangedCompletion: (value) {
+                            ref
+                                .read(hwDataProvider.notifier)
+                                .complete(hw.toData(), value);
+                          },
+                          onDelete: () => deleteHw(context, ref, hw),
+                          onEdit: () => editHw(context, hw),
+                          onConvert: () => convertHw(context, ref, hw),
+                        ),
+                      );
+                    },
+                    removeItemBuilder: (child, animation) {
+                      // we need custom remove item painter, to absorb pointer, the user mustnt
+                      // add it back when its already animating, it could trigger Multiple widgets use the same globalkey error
+                      return FadeTransition(
+                        opacity: animation,
+                        child: AbsorbPointer(child: child),
+                      );
+                    },
+                    isSameItem: (a, b) => a.isSameAs(b),
+                    onReorder: (oldIndex, newIndex) {
+                      final item = itemList.removeAt(oldIndex);
+                      if (item.hw == null) return;
+
+                      final newPriority = itemList[newIndex - 1].getPriority;
+                      int newOrder = 0;
+                      for (int i = 0; i < newIndex; i++) {
+                        if (itemList[i].hw?.priority.index == newPriority) {
+                          newOrder++;
                         }
+                      }
 
-                        ref
-                            .read(hwDataProvider.notifier)
-                            .reorder(
-                              item.hw!.toData(),
-                              newOrder,
-                              newPriority,
-                            );
-                      },
-                    ),
-            ),
+                      ref
+                          .read(hwDataProvider.notifier)
+                          .reorder(
+                            item.hw!.toData(),
+                            newOrder,
+                            newPriority,
+                          );
+                    },
+                  ),
           ),
         ),
       ),
