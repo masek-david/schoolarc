@@ -122,148 +122,144 @@ class AppConfig extends ConsumerWidget {
     final locale = languageCode != null ? Locale(languageCode) : null;
 
     return DynamicColorBuilder(
-      builder:
-          (
-            ColorScheme? deviceLight,
-            ColorScheme? deviceDark,
-          ) {
-            var defaultLight = ColorScheme.fromSeed(
-              seedColor: defaultColor,
-              brightness: Brightness.light,
-              dynamicSchemeVariant:
-                  DynamicSchemeVariant.values[dynamicSchemeVariant],
-            );
-            var defaultDark = ColorScheme.fromSeed(
-              seedColor: defaultColor,
-              brightness: Brightness.dark,
-              dynamicSchemeVariant:
-                  DynamicSchemeVariant.values[dynamicSchemeVariant],
-            );
+      builder: (deviceLight, deviceDark) {
+        var defaultLight = ColorScheme.fromSeed(
+          seedColor: defaultColor,
+          brightness: Brightness.light,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
+        var defaultDark = ColorScheme.fromSeed(
+          seedColor: defaultColor,
+          brightness: Brightness.dark,
+          dynamicSchemeVariant:
+              DynamicSchemeVariant.values[dynamicSchemeVariant],
+        );
 
-            if (useDeviceColor) {
-              if (deviceLight != null && deviceDark != null) {
-                defaultLight = deviceLight;
-                defaultDark = deviceDark;
-              }
-            }
+        if (useDeviceColor) {
+          if (deviceLight != null && deviceDark != null) {
+            defaultLight = deviceLight;
+            defaultDark = deviceDark;
+          }
+        }
 
-            (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
-              defaultLight,
-              defaultDark,
-            );
+        (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
+          defaultLight,
+          defaultDark,
+        );
 
-            final light = schemes.$1;
-            final dark = schemes.$2.copyWith(
-              surface: useOled ? Colors.black : null,
-              surfaceContainer: useOled ? Colors.black : null,
-              surfaceContainerLow: useOled
-                  ? schemes.$2.surfaceContainerLow.darken(0.05)
-                  : null,
-              surfaceContainerHigh: useOled
-                  ? schemes.$2.surfaceContainerHigh.darken(0.05)
-                  : null,
-              surfaceContainerHighest: useOled
-                  ? schemes.$2.surfaceContainerHighest.darken(0.05)
-                  : null,
-              surfaceContainerLowest: useOled
-                  ? schemes.$2.surfaceContainerLowest.darken(0.02)
-                  : null,
-            );
+        final light = schemes.$1;
+        final dark = schemes.$2.copyWith(
+          surface: useOled ? Colors.black : null,
+          surfaceContainer: useOled ? Colors.black : null,
+          surfaceContainerLow: useOled
+              ? schemes.$2.surfaceContainerLow.darken(0.05)
+              : null,
+          surfaceContainerHigh: useOled
+              ? schemes.$2.surfaceContainerHigh.darken(0.05)
+              : null,
+          surfaceContainerHighest: useOled
+              ? schemes.$2.surfaceContainerHighest.darken(0.05)
+              : null,
+          surfaceContainerLowest: useOled
+              ? schemes.$2.surfaceContainerLowest.darken(0.02)
+              : null,
+        );
 
-            return MaterialApp(
-              restorationScopeId: 'root',
-              navigatorObservers: [PosthogObserver()],
-              navigatorKey: navigatorKey,
-              title: 'Schoolarc',
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: supportedLocales.keys,
-              locale: locale,
-              debugShowCheckedModeBanner: false,
-              showPerformanceOverlay:
-                  ref.watch(devModeProvider) &&
-                  ref.watch(debugShowPerformanceOverlayProvider),
-              theme: ThemeData(
-                splashFactory: NewInkSparkle.splashFactory,
-                listTileTheme: const ListTileThemeData(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-                textTheme: getTextTheme(),
-                colorScheme: light,
-                sliderTheme: const SliderThemeData(year2023: false),
-                materialTapTargetSize: MaterialTapTargetSize.padded,
-                visualDensity: VisualDensity.standard,
-                progressIndicatorTheme: const ProgressIndicatorThemeData(
-                  year2023: false,
-                ),
-                inputDecorationTheme: InputDecorationTheme(
-                  filled: true,
-                  contentPadding: const EdgeInsets.all(15),
-                  fillColor: light.surfaceContainer,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+        return MaterialApp(
+          restorationScopeId: 'root',
+          navigatorObservers: [PosthogObserver()],
+          navigatorKey: navigatorKey,
+          title: 'Schoolarc',
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: supportedLocales.keys,
+          locale: locale,
+          debugShowCheckedModeBanner: false,
+          showPerformanceOverlay:
+              ref.watch(devModeProvider) &&
+              ref.watch(debugShowPerformanceOverlayProvider),
+          theme: ThemeData(
+            splashFactory: NewInkSparkle.splashFactory,
+            listTileTheme: const ListTileThemeData(
+              dense: true,
+              visualDensity: VisualDensity.compact,
+            ),
+            textTheme: getTextTheme(),
+            colorScheme: light,
+            sliderTheme: const SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+              year2023: false,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              contentPadding: const EdgeInsets.all(15),
+              fillColor: light.surfaceContainer,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(10),
               ),
-              darkTheme: ThemeData(
-                splashFactory: NewInkSparkle.splashFactory,
-                listTileTheme: const ListTileThemeData(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-                textTheme: getTextTheme(),
-                colorScheme: dark,
-                sliderTheme: const SliderThemeData(year2023: false),
-                materialTapTargetSize: MaterialTapTargetSize.padded,
-                visualDensity: VisualDensity.standard,
-                inputDecorationTheme: InputDecorationTheme(
-                  filled: true,
-                  contentPadding: const EdgeInsets.all(15),
-                  fillColor: dark.surfaceContainer,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                progressIndicatorTheme: const ProgressIndicatorThemeData(
-                  year2023: false,
-                ),
+            ),
+          ),
+          darkTheme: ThemeData(
+            splashFactory: NewInkSparkle.splashFactory,
+            listTileTheme: const ListTileThemeData(
+              dense: true,
+              visualDensity: VisualDensity.compact,
+            ),
+            textTheme: getTextTheme(),
+            colorScheme: dark,
+            sliderTheme: const SliderThemeData(year2023: false),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              contentPadding: const EdgeInsets.all(15),
+              fillColor: dark.surfaceContainer,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(10),
               ),
-              themeMode: themeMode,
-              home: const MainApp(),
-              builder: (context, child) => TimeFormat(
-                child: child ?? const SizedBox.shrink(),
-              ),
-              routes: {
-                '/settings': (context) => const SettingsScreen(),
-                '/subjects': (context) => const SubjectsScreen(),
-                '/timetable': (context) => const TimetableScreen(),
-                '/timetable-actual': (context) => const ActualTimetableScreen(),
-                '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
-                '/deleted': (context) => const RecentlyDeletedScreen(),
-                '/database': (context) => const DbInfoScreen(),
-                '/group': (context) => const GroupScreen(),
-                '/meals': (context) => const MealsScreen(),
-                '/bakalari': (context) => const BakaLoginScreen(),
-                '/strava': (context) => const StravaLoginScreen(),
-                '/logs': (context) => const LogsScreen(),
-                '/recap': (context) => const RecapScreen(),
-                '/cloudsync': (context) => const CloudSyncLoginScreen(),
-                '/settings/theme': (context) => const ThemePage(),
-                '/settings/style': (context) => const StyleMotionPage(),
-                '/settings/notifications': (context) =>
-                    const TomorrowNotificationsPage(),
-                '/settings/localization': (context) => const LocalizationPage(),
-                '/settings/shortcuts': (context) => const ShortcutsPage(),
-                '/about': (context) => const AboutApp(),
-                '/changelog': (context) => const ChangelogScreen(),
-                '/tutorial': (context) => const Tutorial(),
-                '/recap-sticker': (context) => const RecapStickerScreen(),
-                '/privacy': (context) => const PrivacyPolicy(),
-              },
-            );
+            ),
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+              year2023: false,
+            ),
+          ),
+          themeMode: themeMode,
+          home: const MainApp(),
+          builder: (context, child) => TimeFormat(
+            child: child ?? const SizedBox.shrink(),
+          ),
+          routes: {
+            '/settings': (context) => const SettingsScreen(),
+            '/subjects': (context) => const SubjectsScreen(),
+            '/timetable': (context) => const TimetableScreen(),
+            '/timetable-actual': (context) => const ActualTimetableScreen(),
+            '/bakalari-homeworks': (context) => const BakaHomeworksScreen(),
+            '/deleted': (context) => const RecentlyDeletedScreen(),
+            '/database': (context) => const DbInfoScreen(),
+            '/group': (context) => const GroupScreen(),
+            '/meals': (context) => const MealsScreen(),
+            '/bakalari': (context) => const BakaLoginScreen(),
+            '/strava': (context) => const StravaLoginScreen(),
+            '/logs': (context) => const LogsScreen(),
+            '/recap': (context) => const RecapScreen(),
+            '/cloudsync': (context) => const CloudSyncLoginScreen(),
+            '/settings/theme': (context) => const ThemePage(),
+            '/settings/style': (context) => const StyleMotionPage(),
+            '/settings/notifications': (context) =>
+                const TomorrowNotificationsPage(),
+            '/settings/localization': (context) => const LocalizationPage(),
+            '/settings/shortcuts': (context) => const ShortcutsPage(),
+            '/about': (context) => const AboutApp(),
+            '/changelog': (context) => const ChangelogScreen(),
+            '/tutorial': (context) => const Tutorial(),
+            '/recap-sticker': (context) => const RecapStickerScreen(),
+            '/privacy': (context) => const PrivacyPolicy(),
           },
+        );
+      },
     );
   }
 }

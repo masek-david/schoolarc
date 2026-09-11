@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -40,11 +41,21 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
 
   Widget _buildScrollTarget(bool forward) {
     return HoldDragTarget(
+      cancelAction: cancelHintScroll,
       hoverStart: () => hintScroll(forward),
       heldAction: () => scroll(forward),
       builder: (context, candidateData, rejectedData) {
         return const SizedBox(width: 25, height: double.infinity);
       },
+    );
+  }
+
+  void cancelHintScroll() {
+    if (!mounted) return;
+    widget.controller.animateToPage(
+      widget.controller.page!.round(),
+      duration: SpatialMotion.defaultMotion.duration,
+      curve: SpatialMotion.defaultMotion.curve,
     );
   }
 
@@ -62,13 +73,13 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
     vibrate.medium();
     if (forward) {
       await widget.controller.nextPage(
-        duration: scrollDuration,
-        curve: scrollCurve,
+        duration: EffectsMotion.defaultMotion.duration,
+        curve: EffectsMotion.defaultMotion.curve,
       );
     } else {
       await widget.controller.previousPage(
-        duration: scrollDuration,
-        curve: scrollCurve,
+        duration: EffectsMotion.defaultMotion.duration,
+        curve: EffectsMotion.defaultMotion.curve,
       );
     }
   }
@@ -94,8 +105,8 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
                         left: true,
                         onPressed: () {
                           widget.controller.previousPage(
-                            duration: scrollDuration,
-                            curve: scrollCurve,
+                            duration: SpatialMotion.defaultMotion.duration,
+                            curve: SpatialMotion.defaultMotion.curve,
                           );
                         },
                       ),
@@ -105,13 +116,13 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
                         onTap: () {
                           final today = Date.today();
                           final page = today.weekSinceEpoch;
-                      
+
                           widget.controller.animateToPage(
                             page,
-                            duration: scrollDuration,
-                            curve: scrollCurve,
+                            duration: SpatialMotion.defaultMotion.duration,
+                            curve: SpatialMotion.defaultMotion.curve,
                           );
-                      
+
                           widget.setSelectedDate(today);
                         },
                         child: Padding(
@@ -128,8 +139,8 @@ class _WeekCalendarState extends ConsumerState<WeekCalendar> {
                       ArrowButton(
                         onPressed: () {
                           widget.controller.nextPage(
-                            duration: scrollDuration,
-                            curve: scrollCurve,
+                            duration: SpatialMotion.defaultMotion.duration,
+                            curve: SpatialMotion.defaultMotion.curve,
                           );
                         },
                       ),

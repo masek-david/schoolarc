@@ -71,6 +71,7 @@ class HomeScreen extends ConsumerWidget {
     return Container(
       color: context.col.surface,
       child: ExpressiveRefreshIndicator(
+        topOffset: 80,
         onRefresh: () => refreshAll(context, ref),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),

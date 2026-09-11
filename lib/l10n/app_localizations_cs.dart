@@ -613,6 +613,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get cloudSync => 'Cloud Sync';
 
   @override
+  String get cloudSyncSettingsSubtitle =>
+      'Synchronizace mezi zařízeními & zálohování';
+
+  @override
   String get useCloudSync => 'Používat Cloud Sync';
 
   @override

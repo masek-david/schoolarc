@@ -1040,6 +1040,12 @@ abstract class AppLocalizations {
   /// **'Cloud sync'**
   String get cloudSync;
 
+  /// No description provided for @cloudSyncSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cross device synchronization & backup'**
+  String get cloudSyncSettingsSubtitle;
+
   /// No description provided for @useCloudSync.
   ///
   /// In en, this message translates to:

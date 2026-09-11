@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -123,8 +124,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
       if (pageDiff.abs() <= 1) {
         _pageController.animateToPage(
           date.daysSinceEpoch,
-          duration: Durations.medium2,
-          curve: Curves.decelerate,
+          duration: SpatialMotion.defaultMotion.duration,
+          curve: SpatialMotion.defaultMotion.curve,
         );
       } else {
         _pageController.jumpToPage(date.daysSinceEpoch);
@@ -137,12 +138,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
           duration: Durations.medium2,
         );
       }
-      // _weekCalendarController.jumpTo(date.weekSinceEpoch.toDouble());
       if (_weekCalendarController.hasClients) {
         _weekCalendarController.animateToPage(
           date.weekSinceEpoch,
-          duration: Durations.medium2,
-          curve: Curves.decelerate,
+          duration: SpatialMotion.defaultMotion.duration,
+          curve: SpatialMotion.defaultMotion.curve,
         );
       }
     }
@@ -257,12 +257,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                               initialRatios = [0.5, 0.5];
                             }
                           }
-    
+
                           if (initialRatios.first + initialRatios.last >
                               1.001) {
                             initialRatios = [0.5, 0.5];
                           }
-    
+
                           return ResizableContainer(
                             controller: _resizeController,
                             direction: Axis.horizontal,
@@ -279,8 +279,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                                 ),
                                 child: ScrollableCalendar(
                                   controller: _monthCalendarController,
-                                  onExamTap: (exam) =>
-                                      editExam(context, exam),
+                                  onExamTap: (exam) => editExam(context, exam),
                                   homeworks: hws,
                                   exams: exams,
                                   selectedDate: _selectedDate.value,
@@ -315,7 +314,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen>
                     )
                   : Column(
                       children: [
-                        SizedBox(height: MediaQuery.viewPaddingOf(context).top + 24),
+                        SizedBox(
+                          height: MediaQuery.viewPaddingOf(context).top + 24,
+                        ),
                         WeekCalendar(
                           controller: _weekCalendarController,
                           selectedDate: _selectedDate.value,

@@ -1,43 +1,25 @@
-# TESTING
-tracking - creation of tasks, onboarding
-
 # FIX
-scan qr
-settings cloud sync add description - backup, cross device,...
-do we NEED a tutorial ???
-new bottom sheet - test on other devices
-m3e icon button doesnt have 48 min width
-
-fix pull to refresh in calendar
-update/start listening to firebase on app reopen ???
-should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
+keyboard shortcuts not working
+FILE PICKER DOESNT WORK ON WEB
+ios (and ios pwa!!) ipad window manager over my buttons
+ios password field looses focus when password picker is opened
+ios notifications dont have access
 ? ios timetable still refresh pulls
 bakalogin, strava login and firebase login are shared between debug and release on windows
-tests
-web can be only used with plus
-customize text theme ?
-refactor timetable class - dont have so many timetable classes - the default should provide rooms, teachers, changes
-timetable provider
 
-FILE PICKER DOESNT WORK ON WEB
-ios password field looses focus when password picker is opened
-ios ipad window manager over my buttons
-ios notifications dont have access
 
-timetable remove tile width option, hero anim
-calendar past days can have darker date text
+new bottom sheet - test on other devices
+do we NEED a tutorial ???
+
 
 # Material 3 Expressive
-Bigger screen navigation:
+- ⬜ Bigger screen navigation:
     navigation rail - just for medium+ displays, keep the navigation drawer for mobile (even though its deprecated)
     https://m3.material.io/foundations/layout/breakpoints/overview#e87f7493-263d-4361-bd43-9b36a17407bb
-check correct material colors - dynamic_color 1.9.0 should have fixed it, but doesnt look like it
-add tooltips to buttons
-settingtile shape animation
-calendartiles animation
-fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options - this should the user be able to change
-refreshindicator as native - use material_3p ?
-check text style - dont use so many text themes, enable the user to change it a little bit
+- ⬜ check correct material colors - dynamic_color 1.9.0 should have fixed it, but doesnt look like it
+- ⬜ add tooltips to buttons
+- ⬜ settingtile shape animation
+- ⬜ fabs - fab appear animation ???, fab hide text on scroll in calendar, remove the two fabs - expand for options - this should the user be able to change
 
 # RELEASE
 - ✅ info about app, credits (font, svgs)
@@ -62,11 +44,10 @@ check text style - dont use so many text themes, enable the user to change it a 
 - ✅ actual timetable notifier
 - ✅ push info to the app from web + min required version
 - ✅ firebase verify email + forgot password for firebase
-- ⬜ error tracking, error screen/messages
-- ⬜ sync to my server
-- ⬜ new icon
+- ✅ error tracking
+- ⬜ better accessible button for error reporting
+- ⬜ new icon ?
 - ⬜ store assets - screenshots
-- ⬜ other timetable, hw, ... providers (other then bakalari)
 
 # FEATURES
 
@@ -75,7 +56,7 @@ check text style - dont use so many text themes, enable the user to change it a 
 - ⬜ sync everything (hws, exams, subjects) properly ‼️
 - ⬜ google sign in - update data safety in play console
 - ⬜ ask for email verification
-- ⬜ sync, widgets, amoled,  notifications, web access, custom icon (plus amber, custom colors?) (sharing)
+- ⬜ sync, widgets, amoled, notifications, web access, custom icon (plus amber, custom colors?) (sharing)
 - ⬜ add to onboarding
 - ⬜ update play listing - data safety -> financial info -> purchase history ENABLE
 
@@ -93,11 +74,13 @@ check text style - dont use so many text themes, enable the user to change it a 
 - ⬜ ipad - change padding pro colored border (opening keyboard causes jitter)
 - ⬜ improve performance for completed tasks in hw and exam screens (might require custom animated reorderable list)
 - ⬜ on weekend, show info about upcoming week
-- ⬜ custom icons - hws, exams, subjects ‼️
+- ⬜ custom icons - hws, exams, subjects 
 - ⬜ month calendar scroll on hover of dragged item
-- ⬜ dont use so many text styles
+- ⬜ check text theme with m3e, dont use so many styles, let users pick?
 - ⬜ ? display tasks in timetable
-- ⬜ ? homescreen cards horizontal pull to refresh - wouldn't be clear
+- ⬜ timetable tile hero animation on view lesson details
+- ⬜ timetable - merge cells if they are after each other ?
+- ⬜ calendar big screen button to go to today
 
 ## Widgets
 - ⬜ iOS widgets - https://github.com/Coopydood/ultimate-macOS-KVM
@@ -108,16 +91,23 @@ check text style - dont use so many text themes, enable the user to change it a 
 - ✅ save only date for deadlines
 - ✅ rework exceptions - string should be just shown in ui, not from service
 - ✅ refactor to use date instead of datetime
+- ⬜ other school providers for timetable, hw (other then bakalari)
 - ⬜ create settings for initial task
     - ⬜ priority
     - ⬜ subject
     - ⬜ date
     - ⬜ auto set date to next appearance
-- ⬜ create offline timetable provider
 - ⬜ strava.cz stop saving the password
 - ⬜ translation - google sheets
-- ⬜ meals images - generate them using ai
-- ⬜ timetable - merge cells if they are after each other ?
+- ⬜ meals images - generate them using ai ?
+- ⬜ write tests
+- ⬜ scan qr - import task, load recap stickers
+- ⬜ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
+
+## Timetable
+- ⬜ timetable provider
+- ⬜ enable saving teacher, room
+- ⬜ the Timetable class should have TimetableChange field
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
@@ -191,6 +181,7 @@ check text style - dont use so many text themes, enable the user to change it a 
     - ✅ routing
     - ✅ addbottomsheet
     - ✅ calendar day
+- ❌ homescreen cards horizontal pull to refresh - wouldn't be clear
 
 # VERSION 2.0.0
 - ✅ change package name (cz.masci.schoolarc)

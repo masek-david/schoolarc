@@ -602,6 +602,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudSync => 'Cloud sync';
 
   @override
+  String get cloudSyncSettingsSubtitle =>
+      'Cross device synchronization & backup';
+
+  @override
   String get useCloudSync => 'Use cloud sync';
 
   @override

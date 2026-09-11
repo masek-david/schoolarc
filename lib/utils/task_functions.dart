@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -7,7 +8,7 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/widgets/dialogs/add_bottom_sheet.dart';
+import 'package:schoolarc/widgets/dialogs/new_task_bottom_sheet.dart';
 
 @pragma('vm:entry-point')
 Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
@@ -19,42 +20,21 @@ Route<void> bottomSheetRoute(BuildContext context, Object? arguments) {
       ? Date.fromPrimitiveInt(initialDateInt)
       : null;
 
-// TODO
-  // return MyBottomSheetRoute(
-  //   builder: (context) => NewTaskBottomSheet(
-  //     initialTaskId: arguments['id'],
-  //     initialDate: initialDate,
-  //     isHomework: arguments['isHomework'],
-  //     autoSetDate: initialDate == null,
-  //   ),
-  // );
-  
-  // return MyModalBottomSheetRoute(
-  //   backgroundColor: Colors.transparent,
-  //   builder: (context) => NewTaskBottomSheet(
-  //     initialTaskId: arguments['id'],
-  //     initialDate: initialDate,
-  //     isHomework: arguments['isHomework'],
-  //     autoSetDate: initialDate == null,
-  //   ),
-  //   isScrollControlled: true,
-  // );
-
   return ModalBottomSheetRoute(
     backgroundColor: Colors.transparent,
-    builder: (context) => AddTaskBottomSheet(
+    builder: (context) => NewTaskBottomSheet(
       initialTaskId: arguments['id'],
       initialDate: initialDate,
       isHomework: arguments['isHomework'],
       autoSetDate: initialDate == null,
     ),
     isScrollControlled: true,
-    isDismissible: false,
   );
-
 }
 
 void addNewHw(BuildContext context, {Date? initialDate}) {
+  Posthog().capture(eventName: 'Creating Homework');
+
   Navigator.restorablePush(
     context,
     bottomSheetRoute,
@@ -67,6 +47,8 @@ void addNewHw(BuildContext context, {Date? initialDate}) {
 }
 
 void editHw(BuildContext context, Homework hw) {
+  Posthog().capture(eventName: 'Editing Homework');
+
   Navigator.restorablePush(
     context,
     bottomSheetRoute,
@@ -104,6 +86,8 @@ void deleteHw(BuildContext context, WidgetRef ref, Homework hw) {
 }
 
 void addNewExam(BuildContext context, {Date? initialDate}) {
+  Posthog().capture(eventName: 'Creating Exam');
+
   Navigator.restorablePush(
     context,
     bottomSheetRoute,
@@ -116,6 +100,8 @@ void addNewExam(BuildContext context, {Date? initialDate}) {
 }
 
 void editExam(BuildContext context, Exam exam) {
+  Posthog().capture(eventName: 'Editing Exam');
+
   Navigator.restorablePush(
     context,
     bottomSheetRoute,

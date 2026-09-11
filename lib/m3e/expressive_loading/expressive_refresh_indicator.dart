@@ -9,12 +9,16 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
     super.key,
     required this.child,
     required this.onRefresh,
+    this.topOffset = 30,
     this.enabled = true,
+    this.notificationPredicate,
   });
 
   final Widget child;
   final bool enabled;
+  final double topOffset;
   final Future<void> Function() onRefresh;
+  final bool Function(ScrollNotification)? notificationPredicate;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,8 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
         }
       },
       notificationPredicate: enabled
-          ? CustomRefreshIndicator.defaultScrollNotificationPredicate
+          ? notificationPredicate ??
+                CustomRefreshIndicator.defaultScrollNotificationPredicate
           : (_) => false,
       builder: (context, child, controller) {
         final progress = Curves.decelerate.transform(controller.value / 1.5);
@@ -43,7 +48,7 @@ class ExpressiveRefreshIndicator extends StatelessWidget {
           children: [
             child,
             Positioned(
-              top: 80 + progress * 80 - size,
+              top: topOffset + progress * 80 - size,
               child: Transform.scale(
                 scale: scale,
                 child: Container(

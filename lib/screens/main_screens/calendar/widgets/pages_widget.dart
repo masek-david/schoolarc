@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
+import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_model.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
@@ -68,8 +69,11 @@ class PagesWidget extends ConsumerWidget {
               ),
             Expanded(
               child: ClipRect(
-                // There are two refresh indicators because this one works only before the seconds is assigned => just lazy fix
                 child: ExpressiveRefreshIndicator(
+                  notificationPredicate: (notification) {
+                    // depth 1 is for the pageview, that should be ignored
+                    return notification.depth == 0 || notification.depth == 2;
+                  },
                   onRefresh: () => refreshAll(context, ref),
                   child: NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -125,8 +129,8 @@ class PagesWidget extends ConsumerWidget {
                             vibrate.medium();
                             await pageController.animateToPage(
                               daySinceEpoch,
-                              duration: Durations.medium2,
-                              curve: Curves.decelerate,
+                              duration: SpatialMotion.defaultMotion.duration,
+                              curve: SpatialMotion.defaultMotion.curve,
                             );
                           },
                           onAcceptWithDetails: (details) async {
@@ -166,46 +170,45 @@ class PagesWidget extends ConsumerWidget {
                               ),
                               child: Stack(
                                 children: [
-                                  ExpressiveRefreshIndicator(
-                                    onRefresh: () => refreshAll(context, ref),
-                                    child: ListView(
-                                      padding: .zero,
-                                      primary:
-                                          pageController.page?.round() ==
-                                          daySinceEpoch,
-                                      children: [
-                                        ExamList(
-                                          examList: examListForDay,
-                                          onEdit: examOnEdit,
-                                          onDelete: examOnDelete,
-                                          onConvert: examOnConvert,
-                                          showDates: false,
-                                          draggable: true,
-                                          text: context.loc.examAbsence(
-                                            examListForDay.isEmpty.toString(),
-                                          ),
+                                  ListView(
+                                    padding: .zero,
+                                    primary:
+                                        pageController.page?.round() ==
+                                        daySinceEpoch,
+                                    children: [
+                                      ExamList(
+                                        examList: examListForDay,
+                                        onEdit: examOnEdit,
+                                        onDelete: examOnDelete,
+                                        onConvert: examOnConvert,
+                                        showDates: false,
+                                        draggable: true,
+                                        text: context.loc.examAbsence(
+                                          examListForDay.isEmpty.toString(),
                                         ),
-                                        HomeworkList(
-                                          hwList: hwListForDay,
-                                          onChangedCompletion:
-                                              hwOnChangedCompletion,
-                                          onDelete: hwOnDelete,
-                                          onEdit: hwOnEdit,
-                                          onConvert: hwOnConvert,
-                                          showDates: false,
-                                          draggable: true,
-                                          text: context.loc.homeworkAbsence(
-                                            hwListForDay.isEmpty.toString(),
-                                          ),
+                                      ),
+                                      HomeworkList(
+                                        hwList: hwListForDay,
+                                        onChangedCompletion:
+                                            hwOnChangedCompletion,
+                                        onDelete: hwOnDelete,
+                                        onEdit: hwOnEdit,
+                                        onConvert: hwOnConvert,
+                                        showDates: false,
+                                        draggable: true,
+                                        text: context.loc.homeworkAbsence(
+                                          hwListForDay.isEmpty.toString(),
                                         ),
-                                        const ListBottomSpacer(),
-                                        const ListBottomSpacer(),
-                                      ],
-                                    ),
+                                      ),
+                                      const ListBottomSpacer(),
+                                      const ListBottomSpacer(),
+                                    ],
                                   ),
                                   IgnorePointer(
                                     child: AnimatedContainer(
-                                      duration: Durations.short3,
+                                      duration:
+                                          EffectsMotion.defaultMotion.duration,
+                                      curve: EffectsMotion.defaultMotion.curve,
                                       width: double.infinity,
                                       height: double.infinity,
                                       decoration: BoxDecoration(
@@ -255,14 +258,14 @@ class PagesWidget extends ConsumerWidget {
             child: ArrowButtonsRow(
               onPressedLeft: () {
                 pageController.previousPage(
-                  duration: Durations.medium2,
-                  curve: Curves.easeInOut,
+                  duration: SpatialMotion.defaultMotion.duration,
+                  curve: SpatialMotion.defaultMotion.curve,
                 );
               },
               onPressedRight: () {
                 pageController.nextPage(
-                  duration: Durations.medium2,
-                  curve: Curves.easeInOut,
+                  duration: SpatialMotion.defaultMotion.duration,
+                  curve: SpatialMotion.defaultMotion.curve,
                 );
               },
             ),

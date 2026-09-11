@@ -34,7 +34,7 @@ class NotificationSender {
           onlyAlertOnce: true,
           channelGroupKey: tomorrowChannel,
           channelKey: tomorrowChannel,
-          channelName: loc.upcomingDayNotifications, // localized string
+          channelName: loc.upcomingDayNotifications,
           channelDescription: loc.upcomingDayChannelDescription,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,

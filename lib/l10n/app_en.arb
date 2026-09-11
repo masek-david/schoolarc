@@ -196,6 +196,7 @@
   "convertToHomework": "Convert to homework",
   "convertToExam": "Convert to exam",
   "cloudSync": "Cloud sync",
+  "cloudSyncSettingsSubtitle": "Cross device synchronization & backup",
   "useCloudSync": "Use cloud sync",
   "register": "Register",
   "registering": "Registering",

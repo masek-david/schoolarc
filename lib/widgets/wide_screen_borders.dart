@@ -61,6 +61,8 @@ class WideScreenBorders extends StatelessWidget {
         child: ClipRRect(
           borderRadius: .circular(12),
           child: MediaQuery.removeViewPadding(
+            removeRight: true,
+            removeBottom: true,
             removeTop: true,
             context: context,
             child: child,

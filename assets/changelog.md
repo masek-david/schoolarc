@@ -9,13 +9,15 @@
 ### Changed
 - Appbar is now transparent
 - Removed timetable settings, option to show 7 day week in timetable can now be found in Style & Motion page
+- Improved animations in calendar screen
 
 ### Fixed
 - Fix vocative form of long names in czech
 - Fix Android navigation bar not being transparent
 - Fix settings pages being behind the navigation bar in landscape
+- Fixed pull to refresh in calendar
 
----
+--- 
 
 ## [2.2.6](2026-8-21;build65)
 ### Added

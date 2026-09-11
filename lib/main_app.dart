@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -434,6 +435,23 @@ class _MainAppState extends ConsumerState<MainApp> {
                       ],
                     ),
                   ),
+                  if (!isWide)
+                    IgnorePointer(
+                      child: Container(
+                        width: .infinity,
+                        height: math.min(MediaQuery.paddingOf(context).top, 24),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              context.col.surface,
+                              context.col.surface.withAlpha(0),
+                            ],
+                            begin: .topCenter,
+                            end: .bottomCenter,
+                          ),
+                        ),
+                      ),
+                    ),
                   if (!isWide)
                     SafeArea(
                       child: Padding(

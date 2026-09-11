@@ -12,10 +12,12 @@ class HoldDragTarget extends StatefulWidget {
     required this.hoverStart,
     required this.builder,
     this.onAcceptWithDetails,
+    this.cancelAction,
   });
 
   final Future<void> Function() heldAction;
   final void Function() hoverStart;
+  final void Function()? cancelAction;
   final Widget Function(
     BuildContext context,
     List<Object?> candidateData,
@@ -63,6 +65,7 @@ class _HoldDragTargetState extends State<HoldDragTarget> {
       },
       onLeave: (data) {
         isHovering = false;
+        widget.cancelAction?.call();
         timer?.cancel();
       },
       onAcceptWithDetails: (details) {

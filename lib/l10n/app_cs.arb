@@ -196,6 +196,7 @@
   "convertToHomework": "Převést na úkol",
   "convertToExam": "Převést na test",
   "cloudSync": "Cloud Sync",
+  "cloudSyncSettingsSubtitle": "Synchronizace mezi zařízeními & zálohování",
   "useCloudSync": "Používat Cloud Sync",
   "register": "Registrovat se",
   "registering": "Registrování",

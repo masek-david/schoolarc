@@ -86,6 +86,7 @@ class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
           leading: const Icon(Icons.vibration_rounded),
         ),
         SettingTextDivider(text: loc.home),
+        // TODO i dont think we need this switch, just have the name clearable
         SettingTile.withSwitch(
           isFirst: true,
           title: loc.showMyName,
@@ -127,6 +128,7 @@ class _StyleMotionPageState extends ConsumerState<StyleMotionPage> {
                         crossAxisAlignment: .start,
                         mainAxisSize: .min,
                         children: [
+                          // TODO translate
                           Text('You have set your name to $name.'),
                           const Divider(),
                           const Text(
