@@ -70,6 +70,14 @@ class SettingModel {
 }
 
 class SettingsDatabase {
+  SettingsDatabase({this.testingMode = false})
+    : _settingsBox = testingMode ? null : Hive.box(settingsBox);
+
+  @visibleForTesting
+  final bool testingMode;
+
+  late final Box? _settingsBox;
+
   static final Map<Setting, SettingModel> _settings = {
     Setting.themeUseDeviceColor: const SettingModel(
       key: 'themeUseMaterial',
@@ -245,19 +253,18 @@ class SettingsDatabase {
       key: 'analyticsEnabled',
     ),
   };
-  final _settingsBox = Hive.box(settingsBox);
 
   dynamic get(Setting setting) {
     final SettingModel? settingModel = _settings[setting];
     if (settingModel == null) {
       throw 'No setting found for enum $setting';
     }
-    var value = _settingsBox.get(settingModel.key);
+    var value = _settingsBox?.get(settingModel.key);
     // value = null;
 
     if (value == null) {
       value = settingModel.defaultValue;
-      _settingsBox.put(settingModel.key, value);
+      _settingsBox?.put(settingModel.key, value);
     }
 
     return value;
@@ -265,17 +272,20 @@ class SettingsDatabase {
 
   void save(Setting setting, dynamic value) {
     final SettingModel? settingModel = _settings[setting];
+    if (testingMode) return;
     if (settingModel == null) {
       throw 'No setting found for enum $setting';
     }
 
-    _settingsBox.put(settingModel.key, value);
+    _settingsBox?.put(settingModel.key, value);
   }
 
   bool get firstTimeOpeningApp {
     const dbKey = 'firstTimeOpeningApp2.2.0';
 
-    if (_settingsBox.get(dbKey) != true) {
+    if (testingMode) return false;
+
+    if (_settingsBox!.get(dbKey) != true) {
       _settingsBox.put(dbKey, true);
       return true;
     } else {
@@ -284,6 +294,6 @@ class SettingsDatabase {
   }
 
   void deleteAllFromDisk() {
-    _settingsBox.deleteFromDisk();
+    _settingsBox?.deleteFromDisk();
   }
 }

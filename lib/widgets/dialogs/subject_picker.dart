@@ -56,7 +56,7 @@ class SubjectPicker extends StatelessWidget {
                   subjects.length,
                   (index) {
                     final subject = subjects[index];
-                    
+
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
@@ -79,6 +79,7 @@ class SubjectPicker extends StatelessWidget {
                   onPressed: () => addNewSubject(context),
                   label: Text(context.loc.addNewSubject),
                 ),
+                const SizedBox(width: 12),
               ],
             ),
           ),

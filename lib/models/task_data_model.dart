@@ -34,8 +34,9 @@ class TaskData {
     this.stateReaddingVersion = 0,
   });
 
-  TaskData.empty({Date? deadline})
-      : date = deadline ?? Date.today(),
+  /// This will create an initial [TaskData] which should have the main values edited before saving
+  TaskData.empty()
+      : date = Date.today(),
         text = '',
         isCompleted = false,
         priority = 0,

@@ -58,7 +58,7 @@ class HomeworkData extends TaskData {
 
   @override
   String toString() {
-    return 'homework: $text, $subjectId, pri: $priority order: $order, Hive, $id, completed: $isCompleted, deleted: $isDeleted';
+    return 'HomeworkData($id, $text, subjectId: $subjectId, priority: $priority, $date, $description${isCompleted ? ', COMPLETED' : ''}${isDeleted ? ', DELETED' : ''}, $timestamp, order: $order, state: $stateReaddingVersion${isBeingAnimated ? ', BEING ANIMATED' : ''}';
   }
 
   Map<String, dynamic> toJson() {

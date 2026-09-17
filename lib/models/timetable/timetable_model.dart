@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entity_model.dart';
 import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
@@ -56,8 +55,8 @@ class Timetable {
     return upcomingLessons;
   }
 
-  Date? nextDateForSubject(Subject subject) {
-    if (lessonTimes.isEmpty) {
+  Date? nextDateForSubject(String? subjectId) {
+    if (lessonTimes.isEmpty || subjectId == null) {
       return null;
     }
 
@@ -66,7 +65,7 @@ class Timetable {
     for (int i = date.weekday - 1; i < 100; i++) {
       date = date.addDays(1);
       var listOfSubjects = table[date.weekday - 1].where((element) {
-        bool contains = element.subject?.id == subject.id;
+        bool contains = element.subject?.id == subjectId;
         return contains;
       });
       if (listOfSubjects.isNotEmpty) {

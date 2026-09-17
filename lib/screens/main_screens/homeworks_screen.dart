@@ -1,6 +1,7 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/features/tasks/task_functions.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -8,7 +9,6 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/services/firebase/firebase_service.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/animated_shape.dart';
 import 'package:schoolarc/widgets/lists/title_with_count.dart';
 import 'package:schoolarc/widgets/snappable.dart';

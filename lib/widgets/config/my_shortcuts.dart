@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:schoolarc/features/tasks/task_functions.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
-import 'package:schoolarc/utils/task_functions.dart';
 
 class MyShortcuts extends StatelessWidget {
   const MyShortcuts({super.key, required this.child});

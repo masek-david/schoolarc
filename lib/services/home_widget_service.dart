@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/tasks/task_functions.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/main_app.dart';
 import 'package:schoolarc/models/date/date.dart';
@@ -21,7 +22,6 @@ import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/button_dialog.dart';
 
 @pragma("vm:entry-point")

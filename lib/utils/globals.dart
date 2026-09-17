@@ -30,7 +30,7 @@ var navigatorKey = GlobalKey<NavigatorState>();
 final homeworksDb = HomeworksDatabase();
 final examsDb = ExamDatabase();
 final subjectsDb = SubjectDatabase();
-final settings = SettingsDatabase();
+late final SettingsDatabase settings;
 final timetableDb = TimeTableDatabase();
 final bakaHwDb = BakaHomeworksDatabase();
 final stravaService = StravaService();

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:schoolarc/features/tasks/task_functions.dart';
 import 'package:schoolarc/screens/main_screens/exams_screen.dart';
 import 'package:schoolarc/screens/main_screens/homeworks_screen.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/task_functions.dart';
 import 'package:schoolarc/widgets/floating_tab_bar.dart';
 
 class PersonalScreen extends StatefulWidget {

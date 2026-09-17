@@ -18,6 +18,11 @@ class Vibrate {
     vibrate = Vibrate._(hasVibrator || kIsWeb);
   }
 
+  @visibleForTesting
+  static void createEmptyForTest() {
+    vibrate = Vibrate._(false);
+  }
+
   void _vibrate({required List<int> pattern, required List<int> intensities}) {
     if (kIsWeb) {
       final List<web_vibration.Vibration> list = [];

@@ -8,7 +8,6 @@ ios notifications dont have access
 bakalogin, strava login and firebase login are shared between debug and release on windows
 
 
-new bottom sheet - test on other devices
 do we NEED a tutorial ???
 
 

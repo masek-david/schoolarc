@@ -7,6 +7,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:schoolarc/app_config.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
+import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/firebase_options.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/services/analytics_service.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
 
   await initHive();
   WidgetsFlutterBinding.ensureInitialized();
+  globals.settings = SettingsDatabase();
 
   final futureResult = await Future.wait<dynamic>([
     rootBundle.loadString('pubspec.yaml'),
