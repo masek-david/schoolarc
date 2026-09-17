@@ -52,6 +52,7 @@ import com.materialkolor.blend.Blend
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
+import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.actionStartActivity
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -83,6 +84,14 @@ class MainWidget : GlanceAppWidget() {
         provideContent {
             GlanceTheme {
                 GlanceContent(currentState())
+            }
+        }
+    }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        provideContent {
+            GlanceTheme {
+                GlanceContent(HomeWidgetGlanceState(HomeWidgetPlugin.getData(context)))
             }
         }
     }

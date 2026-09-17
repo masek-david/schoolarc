@@ -29,7 +29,7 @@ do we NEED a tutorial ???
     - ✅ add from widget
     - ✅ cant complete homework from widget
         - ✅ just save info about completed hw, dont spawn it using isolate?
-        - ✅ rework with isolatedHive??
+        - ✅ rework with isolatedHive??     
 - ✅ tutorial
     - ✅ offer import from bakalari
     - ✅ offer import from json

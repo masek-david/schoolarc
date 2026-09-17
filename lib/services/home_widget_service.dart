@@ -139,6 +139,14 @@ class HomeWidgetService {
       androidName: 'MainWidgetReceiver',
       qualifiedAndroidName: 'cz.masci.schoolarc.MainWidgetReceiver',
     );
+    await updateMainWidgetPreview();
+  }
+
+  static Future<void> updateMainWidgetPreview() async {
+    await HomeWidget.updateWidgetPreview(
+      androidName: 'MainWidgetReceiver',
+      qualifiedAndroidName: 'cz.masci.schoolarc.MainWidgetReceiver',
+    );
   }
 
   static Future<void> widgetSaveLocalizationStrings(
@@ -163,7 +171,7 @@ class HomeWidgetService {
     );
   }
 
-  static void updateMealsWidget(Map<Date, List<Meal>> meals) {
+  static Future<void> updateMealsWidget(Map<Date, List<Meal>> meals) async{
     if (!isSupportedPlatform) return;
     Map<String, dynamic> json = {};
     final today = Date.today();
@@ -183,8 +191,16 @@ class HomeWidgetService {
         }
       },
     );
-    HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
-    HomeWidget.updateWidget(
+    await HomeWidget.saveWidgetData<String>('meals', jsonEncode(json));
+    await HomeWidget.updateWidget(
+      androidName: 'StravaWidgetReceiver',
+      qualifiedAndroidName: 'cz.masci.schoolarc.StravaWidgetReceiver',
+    );
+    await updateMealsWidgetPreview();
+  }
+
+  static Future<void> updateMealsWidgetPreview() async {
+    await HomeWidget.updateWidgetPreview(
       androidName: 'StravaWidgetReceiver',
       qualifiedAndroidName: 'cz.masci.schoolarc.StravaWidgetReceiver',
     );

@@ -5,6 +5,7 @@
   - Prevent discarding changes by accident
   - Option to share via QR code
   - Option to save homework as exam and vice versa
+- Added preview for widgets on Android 15+
 
 ### Changed
 - Appbar is now transparent

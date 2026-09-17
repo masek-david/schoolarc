@@ -4,7 +4,6 @@ import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import Meal
 import MealDay
-import Task
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -36,6 +35,7 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.actionStartActivity
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -50,6 +50,14 @@ class StravaWidget : GlanceAppWidget() {
         provideContent {
             GlanceTheme {
                 GlanceContent(context, currentState())
+            }
+        }
+    }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        provideContent {
+            GlanceTheme {
+                GlanceContent(context, HomeWidgetGlanceState(HomeWidgetPlugin.getData(context)))
             }
         }
     }
