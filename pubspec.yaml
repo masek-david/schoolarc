@@ -14,7 +14,7 @@ dependencies:
   hive_ce: ^2.20.0
   hive_ce_flutter: ^2.3.4
   flutter_slidable: ^4.0.3
-  dynamic_color: ^1.9.0 #  2.0.0. to 2.1.0 completely broken
+  dynamic_color: 1.9.0 #  2.0.0. to 2.1.0 completely broken
   intl: ^0.20.2
   table_calendar: ^3.2.1
   flutter_localizations:
@@ -28,7 +28,7 @@ dependencies:
   smooth_page_indicator: ^3.0.0
   flutter_resizable_container: ^4.2.0
   firebase_core: ^4.15.0
-  firebase_auth: 6.6.1
+  firebase_auth: 6.6.1 # doesnt build i think
   firebase_database: ^12.6.0
   riverpod: ^3.4.2
   flutter_riverpod: ^3.4.2

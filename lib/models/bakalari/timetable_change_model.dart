@@ -4,6 +4,7 @@ enum ChangeType {
   removed,
   roomChanged,
   substitution,
+  other,
 }
 
 ChangeType getChangeType(String changeType) {
@@ -18,9 +19,9 @@ ChangeType getChangeType(String changeType) {
       return ChangeType.roomChanged;
     case 'Substitution':
       return ChangeType.substitution;
+    default:
+      return ChangeType.other;
   }
-
-  throw 'Not a valid changetype: $changeType';
 }
 
 class BakaChange {

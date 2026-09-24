@@ -20,6 +20,7 @@
 - Fix settings pages being behind the navigation bar in landscape
 - Fixed pull to refresh in calendar
 - Fixed file picker on web
+- Fixed bakalari not loading when timetable contained some changes
 
 --- 
 
