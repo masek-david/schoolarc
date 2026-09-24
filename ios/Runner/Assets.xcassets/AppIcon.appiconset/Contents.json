@@ -61,12 +61,6 @@
             "filename": "Icon-App-76x76@2x.png"
         },
         {
-            "idiom": "iphone",
-            "size": "1024x1024",
-            "scale": "1x",
-            "filename": "Icon-App-1024x1024@1x.png"
-        },
-        {
             "idiom": "ipad",
             "size": "20x20",
             "scale": "1x",
@@ -119,12 +113,6 @@
             "size": "83.5x83.5",
             "scale": "2x",
             "filename": "Icon-App-83.5x83.5@2x.png"
-        },
-        {
-            "idiom": "ipad",
-            "size": "1024x1024",
-            "scale": "1x",
-            "filename": "Icon-App-1024x1024@1x.png"
         },
         {
             "size": "1024x1024",

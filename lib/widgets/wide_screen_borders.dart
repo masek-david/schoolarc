@@ -35,12 +35,16 @@ class WideScreenBorders extends StatelessWidget {
         context.col.surface.toHexString(),
       );
       web.window.localStorage.setItem(
-        'primaryFixedDim',
-        context.col.primaryFixedDim.toHexString(),
+        'primary',
+        context.col.primary.toHexString(),
       );
       web.window.localStorage.setItem(
-        'secondary',
-        context.col.secondary.toHexString(),
+        'secondaryContainer',
+        context.col.secondaryContainer.toHexString(),
+      );
+      web.window.localStorage.setItem(
+        'tertiaryContainer',
+        context.col.tertiaryContainer.toHexString(),
       );
     }
 

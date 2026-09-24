@@ -16,10 +16,6 @@
         <item name="android:windowBackground">?android:colorBackground</item>
         <!-- Makes the bar transparent at the Android level -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
-
-        <!-- CRITICAL: Tells Android 10+ to stop injecting the grey contrast shadow -->
-        <item name="android:enforceNavigationBarContrast">false</item> 
-
         <!-- Ensures the window allows drawing behind the system bars -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>

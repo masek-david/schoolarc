@@ -4,8 +4,8 @@
         <!-- Show a splash screen on the activity. Automatically removed when
              the Flutter engine draws its first frame -->
         <item name="android:windowBackground">@drawable/launch_background</item>
-        <item name="android:windowSplashScreenBackground">@color/material_dynamic_primary0</item>
+        <item name="android:windowSplashScreenBackground">@color/material_dynamic_primary10</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_anim</item>
-        <item name="android:windowSplashScreenAnimationDuration">800</item>
+        <item name="android:windowSplashScreenAnimationDuration">600</item>
     </style>
 </resources>

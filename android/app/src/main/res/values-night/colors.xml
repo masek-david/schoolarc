@@ -1,4 +1,5 @@
 <resources>
-    <color name="icon_circle">@color/material_dynamic_primary60</color>
-    <color name="icon_pen">@color/material_dynamic_primary90</color>
+    <color name="primary">@color/material_dynamic_primary80</color>
+    <color name="secondary_container">@color/material_dynamic_secondary30</color>
+    <color name="tertiary_container">@color/material_dynamic_tertiary30</color>
 </resources>

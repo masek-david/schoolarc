@@ -1,24 +1,32 @@
-#logoLine {
-  stroke-dasharray: 1025;
-  stroke-dashoffset: 1025;
-  animation: drawLine 800ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+svg {
+  overflow: visible;
 }
 
-@keyframes drawLine {
-  to {
-    stroke-dashoffset: 2050;
-  }
-}
-
-#logoPen {
-  transform: translate(100px, -100px);
+#bottomShape {
+  transform: translate(0, -60px);
   opacity: 0;
-  animation: slideIn 800ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation:
+    slideIn 400ms cubic-bezier(0.333, 1.667, 0.667, 1) forwards,
+    appear 200ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  animation-delay: 200ms;
+}
+
+#topShape {
+  transform: translate(0, -80px);
+  opacity: 0;
+  animation:
+    slideIn 500ms cubic-bezier(0.333, 1.667, 0.667, 1) forwards,
+    appear 200ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 
 @keyframes slideIn {
   to {
-    transform: translateX(0);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes appear {
+  to {
     opacity: 1;
   }
 }

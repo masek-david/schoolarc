@@ -69,11 +69,11 @@ class ImportExportButtonsRow extends ConsumerWidget {
                 allowedExtensions: ['json'],
               );
 
-              File file = File(pickedFile.first.path!);
-              Uint8List bytes;
+              late final Uint8List bytes;
               if (kIsWeb) {
                 bytes = await pickedFile.first.readAsBytes();
               } else {
+                final file = File(pickedFile.first.path!);
                 bytes = await file.readAsBytes();
               }
               final imported = import(jsonString: utf8.decode(bytes));

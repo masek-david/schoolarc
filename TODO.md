@@ -1,14 +1,16 @@
 # FIX
-keyboard shortcuts not working
-FILE PICKER DOESNT WORK ON WEB
+keyboard shortcuts not working (works on win, web)
+
+ios pwa keyboard not opening on ios 27
 ios (and ios pwa!!) ipad window manager over my buttons
 ios password field looses focus when password picker is opened
 ios notifications dont have access
-? ios timetable still refresh pulls
-bakalogin, strava login and firebase login are shared between debug and release on windows
-
+ios timetable still refresh pulls ?
+windows bakalogin, strava login and firebase login are shared between debug and release
 
 do we NEED a tutorial ???
+
+add tags to readme (playstore, obtainium, github...)
 
 
 # Material 3 Expressive
@@ -45,8 +47,8 @@ do we NEED a tutorial ???
 - ✅ firebase verify email + forgot password for firebase
 - ✅ error tracking
 - ⬜ better accessible button for error reporting
-- ⬜ new icon ?
-- ⬜ store assets - screenshots
+- ✅ new icon
+- ⬜ store assets, github page - screenshots
 
 # FEATURES
 

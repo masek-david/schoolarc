@@ -11,6 +11,7 @@ import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class MockData {
+  // TODO remove
   static const useMock = false;
 
   // Note: this should be a monday

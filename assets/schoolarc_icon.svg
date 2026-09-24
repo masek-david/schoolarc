@@ -1,22 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Created with Vectornator (http://vectornator.io/) -->
-<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 512 512" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
-<defs/>
-<g id="Layer-4" vectornator:layerName="Layer 4"/>
-<g id="Layer-3" vectornator:layerName="Layer 3">
-<path d="M472.932 256.56C472.932 376.301 375.863 473.371 256.121 473.371C136.38 473.371 39.3105 376.301 39.3105 256.56C39.3105 136.819 136.38 39.7492 256.121 39.7492" fill="none" opacity="1" stroke="#7f9dc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="75.9409" vectornator:layerName="Oval 1"/>
-<g opacity="1" vectornator:layerName="Group 1">
-<path d="M287.176 178.169L334.672 225.664L361.942 198.394L375.332 185.004L445.105 115.231C453.108 107.228 453.108 94.2602 445.105 86.2576L426.583 67.7353C418.58 59.7327 405.612 59.7327 397.61 67.7353L327.837 137.509L314.446 150.899L287.176 178.169Z" fill="#d9e2ff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Curve 2"/>
-<path d="M241.854 223.49L274.114 191.231L321.616 238.732L289.356 270.992L241.854 223.49Z" fill="#d9e2ff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Rectangle 3"/>
-<path d="M172.474 257.693C165.916 264.251 161.313 272.002 158.524 280.228L158.477 280.228L132.28 356.906L137.365 364.091L167.225 334.232C167.232 334.24 167.242 334.246 167.248 334.255L193.049 308.454C190.134 301.142 191.608 292.493 197.528 286.573C205.461 278.64 218.335 278.64 226.268 286.573C234.2 294.506 234.2 307.38 226.268 315.313C220.355 321.225 211.716 322.715 204.409 319.815L178.609 345.616C178.618 345.622 178.624 345.632 178.632 345.639L148.773 375.498L155.958 380.584L232.659 354.41L232.613 354.317C240.841 351.527 248.588 346.926 255.147 340.367C277.972 317.542 277.972 280.518 255.147 257.693C232.322 234.868 195.299 234.868 172.474 257.693Z" fill="#d9e2ff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Curve 1"/>
-</g>
-</g>
-<clipPath id="ArtboardFrame">
-<rect height="512" width="512" x="0" y="0"/>
-</clipPath>
-<g clip-path="url(#ArtboardFrame)" id="Layer-2" vectornator:layerName="Layer 2" visibility="hidden">
-<path d="M2.84217e-14 256C2.84217e-14 114.615 114.615 0 256 0C397.385 0 512 114.615 512 256C512 397.385 397.385 512 256 512C114.615 512 2.84217e-14 397.385 2.84217e-14 256Z" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="butt" stroke-linejoin="round" stroke-width="3.0012" vectornator:layerName="Oval 1"/>
-<path d="M28.3868 256C28.3868 130.293 130.293 28.3868 256 28.3868C381.707 28.3868 483.613 130.293 483.613 256C483.613 381.707 381.707 483.613 256 483.613C130.293 483.613 28.3868 381.707 28.3868 256Z" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="butt" stroke-linejoin="round" stroke-width="0.1" vectornator:layerName="Oval 2"/>
-</g>
+<svg width="432" height="432" viewBox="0 0 432 432" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M215.998 162.929C266.54 162.929 311.32 187.587 338.972 225.527C342.878 230.886 344.674 237.444 344.674 244.076V384.56C344.674 411.198 316.162 428.124 292.777 415.369L232.803 382.656C222.328 376.942 209.668 376.943 199.194 382.656L139.22 415.369C115.835 428.124 87.3215 411.198 87.3215 384.56L87.3224 244.075C87.3225 237.442 89.1187 230.884 93.025 225.525C120.677 187.585 165.457 162.929 215.998 162.929Z" fill="#C5E1FC"/>
+<path d="M216 0C290.124 0 355.803 36.1595 396.36 91.8013C402.089 99.6621 404.724 109.281 404.724 119.008V325.057C404.723 364.125 362.905 388.949 328.606 370.241L240.646 322.263C225.284 313.883 206.716 313.883 191.354 322.263L103.394 370.241C69.0953 388.949 27.2773 364.124 27.2773 325.056V119.007C27.2773 109.279 29.912 99.6601 35.6417 91.7992C76.1981 36.1585 141.876 1.24093e-05 216 0Z" fill="#A4A6F8"/>
+<path d="M216 0C290.124 0 355.803 36.1595 396.36 91.8013C402.089 99.6621 404.724 109.281 404.724 119.008V325.057C404.723 364.125 362.905 388.949 328.606 370.241L240.646 322.263C225.284 313.883 206.716 313.883 191.354 322.263L103.394 370.241C69.0953 388.949 27.2773 364.124 27.2773 325.056V119.007C27.2773 109.279 29.912 99.6601 35.6417 91.7992C76.1981 36.1585 141.876 1.24093e-05 216 0Z" fill="url(#paint0_linear_200_350)"/>
+<path d="M216 0C290.124 0 355.803 36.1595 396.36 91.8013C402.089 99.6621 404.724 109.281 404.724 119.008V325.057C404.723 364.125 362.905 388.949 328.606 370.241L240.646 322.263C225.284 313.883 206.716 313.883 191.354 322.263L103.394 370.241C69.0953 388.949 27.2773 364.124 27.2773 325.056V119.007C27.2773 109.279 29.912 99.6601 35.6417 91.7992C76.1981 36.1585 141.876 1.24093e-05 216 0Z" fill="url(#paint1_linear_200_350)"/>
+<defs>
+<linearGradient id="paint0_linear_200_350" x1="216" y1="0" x2="216" y2="376.599" gradientUnits="userSpaceOnUse">
+<stop offset="0.418269" stop-color="#5185F7"/>
+<stop offset="1" stop-color="#5185F7" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_200_350" x1="27.2773" y1="188.299" x2="404.724" y2="188.299" gradientUnits="userSpaceOnUse">
+<stop stop-color="#5185F7"/>
+<stop offset="0.171389" stop-color="#5185F7" stop-opacity="0"/>
+<stop offset="0.832095" stop-color="#5185F7" stop-opacity="0"/>
+<stop offset="1" stop-color="#5185F7"/>
+</linearGradient>
+</defs>
 </svg>

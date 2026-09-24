@@ -1,7 +1,7 @@
 <h1 align="center">Schoolarc</h1>
 
 <h4 align="center">
-    App to help students manage their homeworks and exams, simply in one app.
+    App for students to manage their homeworks and exams, simply in one app.
 </h4>
 
 <div align="center">
@@ -14,7 +14,7 @@
     - Priorities (🔴🟠🟢🔵)
     - Assign subjects
 - Calendar view
-- Save and view timetable
+- Create and view timetable
 - Bakaláři integration (Czech school system)
     - Import timetable, subjects
     - View current timetable with changes

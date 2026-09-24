@@ -83,7 +83,6 @@ flutter:
     - assets/book.svg
     - assets/pen.svg
     - assets/confetti.svg
-    - assets/schoolarc_logo.svg
     - assets/schoolarc_icon.svg
     - assets/images/android_notification_light.webp
     - assets/images/android_notification_dark.webp

@@ -22,6 +22,8 @@ class _AboutAppState extends State<AboutApp> {
 
   @override
   Widget build(BuildContext context) {
+    final col = context.col;
+
     return SettingsScaffold(
       heroTag: 'about',
       title: context.loc.aboutApp,
@@ -29,13 +31,12 @@ class _AboutAppState extends State<AboutApp> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: SvgPicture.asset(
-            'assets/schoolarc_logo.svg',
+            'assets/schoolarc_icon.svg',
             height: 100,
             colorMapper: LogoColorMapper(
-              isDark: Theme.of(context).brightness == Brightness.dark,
-              primaryFixedDimColor: context.col.primaryFixedDim.toARGB32(),
-              secondaryColor: context.col.secondary.toARGB32(),
-              useThemeColors: false,
+              primary: col.primary.toARGB32(),
+              secondaryContainer: col.secondaryContainer.toARGB32(),
+              tertiaryContainer: col.tertiaryContainer.toARGB32(),
             ),
           ),
         ),
@@ -107,12 +108,6 @@ class _AboutAppState extends State<AboutApp> {
               child: SvgPicture.asset(
                 'assets/schoolarc_icon.svg',
                 height: 80,
-                colorMapper: LogoColorMapper(
-                  isDark: Theme.of(context).brightness == Brightness.dark,
-                  primaryFixedDimColor: context.col.primaryFixedDim.toARGB32(),
-                  secondaryColor: context.col.secondary.toARGB32(),
-                  useThemeColors: false,
-                ),
               ),
             ),
             applicationVersion: appVersion,

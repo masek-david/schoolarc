@@ -44,12 +44,13 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
     );
 
     return Dialog(
+      constraints: const BoxConstraints(maxWidth: 480),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 16,
+          spacing: 8,
           children: [
             Text(
               DateFormat('d.M.y').format(date),
@@ -69,8 +70,7 @@ class _KeyboardDatePickerState extends State<KeyboardDatePicker> {
                 Navigator.pop(context, date);
               },
             ),
-            Text(context.loc.useDateFormat),
-            Text(context.loc.asDividerUse),
+            Text('${context.loc.useDateFormat} ${context.loc.asDividerUse}'),
             TableCalendar(
               calendarStyle: .new(
                 cellMargin: const EdgeInsets.all(2),

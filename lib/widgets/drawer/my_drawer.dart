@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/recap/recap.dart';
 import 'package:schoolarc/screens/recap/recap_button.dart';
-import 'package:schoolarc/utils/color_mapper.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/drawer/drawer_button.dart';
@@ -40,23 +38,7 @@ class MyDrawer extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    SizedBox(height: padding.top),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 20, 0, 20),
-                      child: SizedBox(
-                        height: 100,
-                        child: SvgPicture.asset(
-                          'assets/schoolarc_logo.svg',
-                          colorMapper: LogoColorMapper(
-                            isDark:
-                                Theme.of(context).brightness == Brightness.dark,
-                            primaryFixedDimColor: context.col.primaryFixedDim
-                                .toARGB32(),
-                            secondaryColor: context.col.secondary.toARGB32(),
-                          ),
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: padding.top + 16),
                     const Padding(
                       padding: EdgeInsets.only(left: 8, bottom: 8, right: 8),
                       child: MySearchBar(),

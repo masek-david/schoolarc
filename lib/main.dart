@@ -56,6 +56,9 @@ Future<void> main() async {
   globals.appBuildNumber = int.parse(version[1]);
   addLicenses();
 
+  // TODO remove
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   runApp(
     ProviderScope(
       child: const AppConfig(),

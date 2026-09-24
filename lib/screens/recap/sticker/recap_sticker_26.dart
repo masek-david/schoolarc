@@ -228,9 +228,9 @@ class RecapSticker26 extends StatelessWidget {
                 child: SvgPicture.asset(
                   'assets/schoolarc_icon.svg',
                   colorMapper: LogoColorMapper(
-                    isDark: Theme.of(context).brightness == Brightness.dark,
-                    primaryFixedDimColor: col.primaryFixedDim.toARGB32(),
-                    secondaryColor: col.secondary.toARGB32(),
+                    primary: col.primary.toARGB32(),
+                    secondaryContainer: col.secondaryContainer.toARGB32(),
+                    tertiaryContainer: col.tertiaryContainer.toARGB32(),
                   ),
                 ),
               ),
