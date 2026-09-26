@@ -1,8 +1,8 @@
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_model.dart';
 import 'package:schoolarc/models/bakalari/baka_timetable_entry_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class BakaTimetable {
   BakaTimetable({
@@ -11,7 +11,7 @@ class BakaTimetable {
     required this.table,
   });
 
-  final List<LessonTimes> lessonTimes;
+  final List<Period> lessonTimes;
   final List<Date> dates;
   final List<List<BakaTimetableEntry>> table;
 
@@ -32,7 +32,7 @@ class BakaTimetable {
 
     return Timetable(
       table: newTable,
-      lessonTimes: lessonTimes,
+      periods: lessonTimes,
       dates: dates,
     );
   }

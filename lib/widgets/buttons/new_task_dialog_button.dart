@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/features/subjects/presentation/subject_picker.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
-import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 
 class NewTaskDialogButton extends ConsumerStatefulWidget {

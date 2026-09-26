@@ -10,14 +10,17 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolarc/database/secure_storage.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_change_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_entity_model.dart';
+import 'package:schoolarc/features/timetable/domain/teacher_model.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_entity_model.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/bakalari/baka_hw_model.dart';
 import 'package:schoolarc/models/bakalari/baka_lesson_times.dart';
 import 'package:schoolarc/models/bakalari/baka_subject_model.dart';
 import 'package:schoolarc/models/bakalari/baka_timetable_entry_model.dart';
 import 'package:schoolarc/models/bakalari/baka_timetable_model.dart';
-import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/models/priority_model.dart';
@@ -256,7 +259,9 @@ class BakaService {
         }
       }
 
-      timetableDb.overrideTable(MockData.timetable.toEntity());
+      ref
+          .read(timetableDataProvider.notifier)
+          .overriderTimetable(MockData.timetable.toEntity());
       return;
     }
 
@@ -295,12 +300,10 @@ class BakaService {
       throw ApiException(parsedJson["Message"]);
     }
 
-    var lessonsJson = parsedJson['Hours'] as List<dynamic>;
-    final lessons = _getLessons(lessonsJson);
-    timetableDb.createTable(
-      lessons.map((lessonTimes) {
-        return lessonTimes.toLessonTimes();
-      }).toList(),
+    var periodsJson = parsedJson['Hours'] as List<dynamic>;
+    final periods = _getPeriods(periodsJson);
+    final timetable = TimetableEntity.fromPeriods(
+      periods: periods.map((e) => e.toPeriod()).toList(),
     );
 
     var subjectsJson = parsedJson['Subjects'] as List<dynamic>;
@@ -309,6 +312,25 @@ class BakaService {
       createIfMissing: true,
       ref: ref,
     );
+
+    // TEACHERS
+    final teachersJson = parsedJson['Teachers'] as List<dynamic>;
+    Map<String, Teacher> teachersMap = {};
+    for (final teacherJson in teachersJson) {
+      final teacher = Teacher(
+        name: teacherJson['Name'],
+        shortcut: teacherJson['Abbrev'],
+      );
+
+      teachersMap.addAll({teacherJson['Id']: teacher});
+    }
+
+    // ROOMS
+    final roomsJson = parsedJson['Rooms'] as List<dynamic>;
+    Map<String, String> roomsMap = {};
+    for (final roomJson in roomsJson) {
+      roomsMap.addAll({roomJson['Id']: roomJson['Abbrev']});
+    }
 
     var daysJson = parsedJson['Days'] as List<dynamic>;
     for (int weekday = 0; weekday < daysJson.length; weekday++) {
@@ -320,17 +342,28 @@ class BakaService {
       ) {
         var subjectJson = dayJson['Atoms'][lessonIndex];
 
-        String subjectIdBaka = subjectJson['SubjectId'];
-        String subjectId = bakaIdToSubjectIndex[subjectIdBaka]!.id;
-        int hourId = subjectJson['HourId'];
+        final String subjectIdBaka = subjectJson['SubjectId'];
+        final subjectId = bakaIdToSubjectIndex[subjectIdBaka]!.id;
+        final int hourId = subjectJson['HourId'];
+        final String? teacherId = subjectJson['TeacherId'];
+        final String? roomId = subjectJson['RoomId'];
 
-        timetableDb.newLessonAt(
-          weekday,
-          lessons.indexWhere((lesson) => lesson.id == hourId),
-          subjectId,
+        final room = roomsMap[roomId];
+        final teacher = teachersMap[teacherId];
+
+        final finalLessonIndex = periods.indexWhere(
+          (lesson) => lesson.id == hourId,
+        );
+
+        timetable.table[weekday][finalLessonIndex] = LessonEntity(
+          subjectId: subjectId,
+          teacher: teacher,
+          room: room,
         );
       }
     }
+
+    ref.read(timetableDataProvider.notifier).overriderTimetable(timetable);
   }
 
   /// gets the actual timetable for provided week
@@ -359,7 +392,7 @@ class BakaService {
     if (schoolName == _demoSchool && _accessToken == _demoAccessToken) {
       final table = MockData.actualTimetable;
       return BakaTimetable(
-        lessonTimes: table.lessonTimes,
+        lessonTimes: table.periods,
         dates: table.dates!,
         table: table.table
             .map(
@@ -423,11 +456,11 @@ class BakaService {
     }
 
     var lessonsJson = parsedJson['Hours'] as List<dynamic>;
-    final lessons = _getLessons(lessonsJson);
+    final lessons = _getPeriods(lessonsJson);
 
     final lessonTimes = lessons
         .map(
-          (lessonTime) => lessonTime.toLessonTimes(),
+          (lessonTime) => lessonTime.toPeriod(),
         )
         .toList();
     final dates = date.allDaysInThisWeek(
@@ -491,10 +524,10 @@ class BakaService {
         int hourId = subjectJson['HourId'];
         final changeJson = subjectJson['Change'];
 
-        BakaChange? change;
+        LessonChange? change;
         if (changeJson != null) {
-          change = BakaChange(
-            type: getChangeType(changeJson['ChangeType']),
+          change = LessonChange(
+            type: _getChangeType(changeJson['ChangeType']),
             description: changeJson['Description'],
             name: changeJson['TypeName'],
             shortcut: changeJson['TypeAbbrev'],
@@ -576,7 +609,7 @@ class BakaService {
     return bakaSubjectIdToSubject;
   }
 
-  List<BakaLessonTimes> _getLessons(List<dynamic> lessonsJson) {
+  List<BakaLessonTimes> _getPeriods(List<dynamic> lessonsJson) {
     List<BakaLessonTimes> lessons = [];
     for (var lessonJson in lessonsJson) {
       final int id = lessonJson['Id'];
@@ -608,6 +641,23 @@ class BakaService {
     }
 
     return lessons;
+  }
+
+  LessonChangeType _getChangeType(String changeType) {
+    switch (changeType) {
+      case 'Canceled':
+        return .canceled;
+      case 'Added':
+        return .added;
+      case 'Removed':
+        return .removed;
+      case 'RoomChanged':
+        return .roomChanged;
+      case 'Substitution':
+        return .substitution;
+      default:
+        return .other;
+    }
   }
 
   Future<List<BakaHomework>> getHomeworks() async {

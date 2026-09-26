@@ -168,7 +168,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                           exam: exam,
                           onDelete: () => deleteExam(context, ref, exam),
                           onEdit: () => editExam(context, exam),
-                          onConvert: () => convertExam(context, ref, exam),
+                          onConvert: () => convertExam(ref, exam),
                         ),
                       );
                     },
@@ -226,7 +226,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                 exam: exam,
                 onDelete: () => deleteExam(context, ref, exam),
                 onEdit: () => editExam(context, exam),
-                onConvert: () => convertExam(context, ref, exam),
+                onConvert: () => convertExam(ref, exam),
               ),
             );
           },

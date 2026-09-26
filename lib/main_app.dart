@@ -13,10 +13,14 @@ import 'package:home_widget/home_widget.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/qr_sharing/data/qr_task_parsing.dart';
+import 'package:schoolarc/features/qr_sharing/presentation/qr_import_dialog.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/home_page_notifier.dart';
+import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_meals_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
@@ -201,6 +205,27 @@ class _MainAppState extends ConsumerState<MainApp> {
                       context,
                       '/recap-sticker',
                       arguments: recap,
+                    );
+                  }
+                  if (decoded.startsWith('sh')) {
+                    final task = QrParse.fromQr(
+                      decoded,
+                      ref.read(subjectsSortedProvider),
+                    );
+                    showQrImportDialog(
+                      context,
+                      task,
+                      (isHomework) {
+                        if (isHomework) {
+                          ref
+                              .read(hwDataProvider.notifier)
+                              .create(task.toHwData());
+                        } else {
+                          ref
+                              .read(examDataProvider.notifier)
+                              .create(task.toExamData());
+                        }
+                      },
                     );
                   }
                 } catch (e) {
@@ -479,7 +504,7 @@ class _MainAppState extends ConsumerState<MainApp> {
                             alignment: const Alignment(0.4, -0.4),
                             isLabelVisible:
                                 ref.watch(subjectsNonDeletedProvider).isEmpty ||
-                                timetableDb.timeTable.lessonTimes.isEmpty,
+                                ref.watch(timetableProvider).periods.isEmpty,
                             backgroundColor: Colors.red,
                             child: M3EIconButton(
                               decoration: M3EButtonDecoration(

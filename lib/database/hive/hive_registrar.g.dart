@@ -11,10 +11,12 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(DateAdapter());
     registerAdapter(ExamEntityAdapter());
     registerAdapter(HomeworkEntityAdapter());
-    registerAdapter(LessonTimesAdapter());
+    registerAdapter(LessonEntityAdapter());
     registerAdapter(LogAdapter());
+    registerAdapter(PeriodAdapter());
     registerAdapter(SubjectEntityAdapter());
-    registerAdapter(TimeTableEntityAdapter());
+    registerAdapter(TeacherAdapter());
+    registerAdapter(TimetableEntityAdapter());
   }
 }
 
@@ -23,9 +25,11 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(DateAdapter());
     registerAdapter(ExamEntityAdapter());
     registerAdapter(HomeworkEntityAdapter());
-    registerAdapter(LessonTimesAdapter());
+    registerAdapter(LessonEntityAdapter());
     registerAdapter(LogAdapter());
+    registerAdapter(PeriodAdapter());
     registerAdapter(SubjectEntityAdapter());
-    registerAdapter(TimeTableEntityAdapter());
+    registerAdapter(TeacherAdapter());
+    registerAdapter(TimetableEntityAdapter());
   }
 }

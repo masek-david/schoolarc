@@ -159,6 +159,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get saveAsExam => 'Uložit jako test';
 
   @override
+  String get discardEditQ => 'Zahodit úpravy?';
+
+  @override
+  String get discard => 'Zahodit';
+
+  @override
   String get shareByQr => 'Sdílet pomocí QR';
 
   @override

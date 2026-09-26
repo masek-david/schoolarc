@@ -7,14 +7,12 @@ import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 Future<Subject?> showSelectSubject({
   required BuildContext context,
   required List<Subject> subjects,
-  Function? delete,
 }) {
   return showDialog<Subject?>(
     context: context,
     builder: (context) {
       return SelectSubjectDialog(
         subjects: subjects,
-        delete: delete,
       );
     },
   );
@@ -24,13 +22,9 @@ class SelectSubjectDialog extends StatelessWidget {
   const SelectSubjectDialog({
     super.key,
     required this.subjects,
-    this.delete,
-    this.showAllSubjects = true,
   });
 
   final List<Subject> subjects;
-  final Function? delete;
-  final bool showAllSubjects;
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +34,6 @@ class SelectSubjectDialog extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
       title: Text(loc.selectSubject),
       actions: [
-        if (delete != null)
-          DialogActionButton(
-            isDestructiveAction: true,
-            onPressed: () {
-              delete!();
-              Navigator.pop(context);
-            },
-            text: loc.setToEmpty,
-          ),
         DialogActionButton(
           onPressed: () => Navigator.pop(context),
           text: loc.cancel,
@@ -65,14 +50,22 @@ class SelectSubjectDialog extends StatelessWidget {
                 Navigator.pop(context, option);
               },
               fieldViewBuilder:
-                  (context, textEditingController, focusNode, onFieldSubmitted) {
+                  (
+                    context,
+                    textEditingController,
+                    focusNode,
+                    onFieldSubmitted,
+                  ) {
                     return TextField(
+                      key: const Key('search'),
                       controller: textEditingController,
                       focusNode: focusNode,
                       autofocus: true,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (value) => onFieldSubmitted(),
-                      decoration: InputDecoration(hintText: loc.searchForSubject),
+                      decoration: InputDecoration(
+                        hintText: loc.searchForSubject,
+                      ),
                     );
                   },
               displayStringForOption: (option) => option.name,
@@ -86,26 +79,25 @@ class SelectSubjectDialog extends StatelessWidget {
               },
             ),
             const SizedBox(height: 8),
-            if (showAllSubjects)
-              Flexible(
-                child: SizedBox(
-                  width: double.maxFinite,
-                  child: ListView.builder(
-                    itemCount: subjects.length,
-                    itemBuilder: (context, index) {
-                      final subject = subjects[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: SubjectTile(
-                          subject: subject,
-                          onTap: () => Navigator.pop(context, subject),
-                          onDelete: null,
-                        ),
-                      );
-                    },
-                  ),
+            Flexible(
+              child: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  itemCount: subjects.length,
+                  itemBuilder: (context, index) {
+                    final subject = subjects[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: SubjectTile(
+                        subject: subject,
+                        onTap: () => Navigator.pop(context, subject),
+                        onDelete: null,
+                      ),
+                    );
+                  },
                 ),
               ),
+            ),
           ],
         ),
       ),

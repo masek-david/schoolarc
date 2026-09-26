@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/provider/bakalari/baka_homeworks_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
 import 'package:schoolarc/screens/recap/recap.dart';
@@ -54,7 +55,7 @@ class MyDrawer extends ConsumerWidget {
                     MyDrawerButton(
                       text: loc.permanentTimetable,
                       icon: const Icon(Icons.calendar_month_rounded),
-                      showBadge: timetableDb.timeTable.lessonTimes.isEmpty,
+                      showBadge: ref.watch(timetableProvider).periods.isEmpty,
                       onTap: () {
                         Navigator.restorablePushNamed(context, '/timetable');
                       },

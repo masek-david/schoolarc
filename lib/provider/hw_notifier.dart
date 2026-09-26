@@ -397,9 +397,9 @@ class HwNotifier extends Notifier<Map<String, HomeworkData>> {
   }
 
   /// deletes this homework and creates new exam
-  void convert(HomeworkData hw) {
-    _permanentDelete([hw]);
-    ref.read(examDataProvider.notifier).create(hw.toExam());
+  Future<void> convert(HomeworkData hw) async{
+    await _permanentDelete([hw]);
+    await ref.read(examDataProvider.notifier).create(hw.toExam());
   }
 
   Future<void> completeById(String id, bool nowIsCompleted) async {

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/timetable/presentation/lesson_dialog.dart';
+import 'package:schoolarc/features/timetable/presentation/timetable_view.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
-import 'package:schoolarc/screens/timetable/widgets/timetable_view.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
@@ -116,11 +117,13 @@ class _ActualTimetableScreenState extends ConsumerState<ActualTimetableScreen> {
                     ),
                     timeTable: timetable,
                     showWholeWeek: settings.get(Setting.timeTableShowWholeWeek),
-                    onLessonTimesTapped: null,
-                    onSubjectTapped: (weekday, lessonIndex, lesson) {
-                      lesson.showLessonDialog(
-                        context,
-                        ref,
+                    onPeriodTapped: null,
+                    onLessonTapped: (weekday, lessonIndex, lesson) {
+                      showLessonDialog(
+                        context: context,
+                        ref: ref,
+                        lesson: lesson,
+                        period: timetable.periods[lessonIndex],
                       );
                     },
                   ),

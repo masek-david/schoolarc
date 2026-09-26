@@ -7,7 +7,7 @@ import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 const String subjectBox = 'subjectBox';
 const String hwBox = 'hwBox';
 const String examBox = 'examBox';
-const String tableBox = 'timeTableBox';
+const String timetableBox = 'timetableBox';
 const String bakaAddedHw = 'bakaAddedHw';
 const String bakaSeenHw = 'bakaSeenHw';
 const String settingsBox = 'settings';
@@ -31,7 +31,7 @@ Future<void> initHive() async {
     Hive.openBox(subjectBox),
     Hive.openBox(hwBox),
     Hive.openBox(examBox),
-    Hive.openBox(tableBox),
+    Hive.openBox(timetableBox),
     Hive.openBox(bakaAddedHw),
     Hive.openBox(bakaSeenHw),
     Hive.openBox(settingsBox),

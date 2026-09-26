@@ -167,7 +167,7 @@ class HomeworksScreen extends ConsumerWidget {
                           },
                           onDelete: () => deleteHw(context, ref, hw),
                           onEdit: () => editHw(context, hw),
-                          onConvert: () => convertHw(context, ref, hw),
+                          onConvert: () => convertHw(ref, hw),
                         ),
                       );
                     },
@@ -236,7 +236,7 @@ class HomeworksScreen extends ConsumerWidget {
                 },
                 onDelete: () => deleteHw(context, ref, hw),
                 onEdit: () => editHw(context, hw),
-                onConvert: () => convertHw(context, ref, hw),
+                onConvert: () => convertHw(ref, hw),
               ),
             );
           },

@@ -67,6 +67,8 @@
   "save": "Save",
   "saveAsHomework": "Save as homework",
   "saveAsExam": "Save as an exam",
+  "discardEditQ": "Discard edit?",
+  "discard": "Discard",
   "shareByQr": "Share by QR",
   "scanQr": "Scan QR code",
   "newTaskTextFieldHint": "Write task, search for subjects, ...",

@@ -153,6 +153,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveAsExam => 'Save as an exam';
 
   @override
+  String get discardEditQ => 'Discard edit?';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
   String get shareByQr => 'Share by QR';
 
   @override

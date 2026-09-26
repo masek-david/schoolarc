@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/database/settings_database.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_model.dart';
+import 'package:schoolarc/features/timetable/presentation/lesson_dialog.dart';
+import 'package:schoolarc/features/timetable/presentation/timetable_tile.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/provider/bakalari/current_timetable_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
-import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/datetime_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
@@ -17,7 +19,7 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/ago_text.dart';
 import 'package:schoolarc/widgets/buttons/loading_icon_button.dart';
 
-bool _isLessonsEmpty(List<(LessonTimes, TimetableEntry)> lessons) {
+bool _isLessonsEmpty(List<(Period, Lesson)> lessons) {
   bool isEmpty = true;
   for (var value in lessons) {
     if (!value.$2.isEmpty) {
@@ -51,7 +53,7 @@ class TimetableCard extends ConsumerWidget {
     final error = current.error;
     final data = current.value;
 
-    final defaultTimetable = timetableDb.timeTable;
+    final defaultTimetable = ref.watch(timetableProvider);
     Timetable timetable = defaultTimetable;
     if (useBaka && data != null && error == null) {
       timetable = data;
@@ -132,10 +134,11 @@ class TimetableCard extends ConsumerWidget {
                             columnWidth: settings.get(
                               Setting.timeTableTileWidth,
                             ),
-                            onTap: (lesson) => lesson?.showLessonDialog(
-                              context,
-                              ref,
-                              lessonTimes: entry.$1,
+                            onTap: (lesson) => showLessonDialog(
+                              context: context,
+                              ref: ref,
+                              lesson: entry.$2,
+                              period: entry.$1,
                             ),
                             leftBottom: index == 0,
                             leftTop: index == 0,

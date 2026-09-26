@@ -7,6 +7,7 @@
   - Option to save homework as exam and vice versa
 - Added preview for widgets on Android 15+
 - New Schoolarc icon
+- You can now save and view rooms and teachers in permanent timetable
 
 ### Changed
 - Appbar is now transparent

@@ -16,10 +16,7 @@ class LogAdapter extends TypeAdapter<Log> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Log(
-      log: fields[0] as String,
-      date: fields[1] as DateTime,
-    );
+    return Log(log: fields[0] as String, date: fields[1] as DateTime);
   }
 
   @override
@@ -39,46 +36,6 @@ class LogAdapter extends TypeAdapter<Log> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LogAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class LessonTimesAdapter extends TypeAdapter<LessonTimes> {
-  @override
-  final typeId = 8;
-
-  @override
-  LessonTimes read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return LessonTimes(
-      startTime: fields[1] as TimeOfDay,
-      endTime: fields[2] as TimeOfDay,
-      name: fields[0] == null ? '' : fields[0] as String,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, LessonTimes obj) {
-    writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.startTime)
-      ..writeByte(2)
-      ..write(obj.endTime);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LessonTimesAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -267,28 +224,70 @@ class SubjectEntityAdapter extends TypeAdapter<SubjectEntity> {
           typeId == other.typeId;
 }
 
-class TimeTableEntityAdapter extends TypeAdapter<TimeTableEntity> {
+class PeriodAdapter extends TypeAdapter<Period> {
   @override
-  final typeId = 12;
+  final typeId = 13;
 
   @override
-  TimeTableEntity read(BinaryReader reader) {
+  Period read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return TimeTableEntity(
-      (fields[0] as List?)?.cast<LessonTimes>(),
-      (fields[1] as List?)?.map((e) => (e as List).cast<String?>()).toList(),
+    return Period(
+      startTime: fields[0] as TimeOfDay,
+      endTime: fields[1] as TimeOfDay,
+      name: fields[2] == null ? '' : fields[2] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, TimeTableEntity obj) {
+  void write(BinaryWriter writer, Period obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.startTime)
+      ..writeByte(1)
+      ..write(obj.endTime)
+      ..writeByte(2)
+      ..write(obj.name);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PeriodAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class TimetableEntityAdapter extends TypeAdapter<TimetableEntity> {
+  @override
+  final typeId = 14;
+
+  @override
+  TimetableEntity read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return TimetableEntity(
+      periods: (fields[0] as List).cast<Period>(),
+      table: (fields[1] as List)
+          .map((e) => (e as List).cast<LessonEntity>())
+          .toList(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, TimetableEntity obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.lessonTimes)
+      ..write(obj.periods)
       ..writeByte(1)
       ..write(obj.table);
   }
@@ -299,7 +298,81 @@ class TimeTableEntityAdapter extends TypeAdapter<TimeTableEntity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TimeTableEntityAdapter &&
+      other is TimetableEntityAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class LessonEntityAdapter extends TypeAdapter<LessonEntity> {
+  @override
+  final typeId = 15;
+
+  @override
+  LessonEntity read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return LessonEntity(
+      subjectId: fields[0] as String?,
+      teacher: fields[1] as Teacher?,
+      room: fields[2] as String?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, LessonEntity obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.subjectId)
+      ..writeByte(1)
+      ..write(obj.teacher)
+      ..writeByte(2)
+      ..write(obj.room);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LessonEntityAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class TeacherAdapter extends TypeAdapter<Teacher> {
+  @override
+  final typeId = 16;
+
+  @override
+  Teacher read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Teacher(name: fields[0] as String, shortcut: fields[1] as String);
+  }
+
+  @override
+  void write(BinaryWriter writer, Teacher obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.shortcut);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TeacherAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

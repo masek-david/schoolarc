@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/timeofday_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
@@ -9,9 +9,9 @@ import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 import 'package:schoolarc/widgets/tiles/error_tile.dart';
 
-/// Create new / edit a [LessonTimes] class
+/// Create new / edit a [Period] class
 ///
-/// Returns a [LessonTimes] by popping
+/// Returns a [Period] by popping
 class EditPeriodDialog extends StatefulWidget {
   const EditPeriodDialog({
     super.key,
@@ -27,10 +27,10 @@ class EditPeriodDialog extends StatefulWidget {
   /// Default selected end time
   final TimeOfDay? initialEndTime;
 
-  /// Default selected name of the [LessonTimes]
+  /// Default selected name of the [Period]
   final String? initialName;
 
-  /// If provided, will show a button to delete this [LessonTimes]
+  /// If provided, will show a button to delete this [Period]
   final void Function()? delete;
 
   @override
@@ -44,17 +44,17 @@ class _EditPeriodDialogState extends State<EditPeriodDialog> {
 
   /// This is the duration of the last period the user has added
   ///
-  /// When the user is creating a new [LessonTimes], the [endTime] will
+  /// When the user is creating a new [Period], the [endTime] will
   /// be chosen automatically by adding [lastUsedPeriodDuration] to the [startTime]
   final Duration lastUsedPeriodDuration = Duration(
     minutes: settings.get(.timetablePeriodLastDuration),
   );
 
-  LessonTimes? createPeriod() {
+  Period? createPeriod() {
     if (startTime == null) return null;
     if (endTime == null) return null;
 
-    return LessonTimes(
+    return Period(
       startTime: startTime!,
       endTime: endTime!,
       name: nameController.text,
@@ -97,6 +97,12 @@ class _EditPeriodDialogState extends State<EditPeriodDialog> {
 
     return AlertDialog(
       actions: [
+        DialogActionButton(
+          text: loc.cancel,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         if (widget.delete != null)
           DialogActionButton(
             isDestructiveAction: true,

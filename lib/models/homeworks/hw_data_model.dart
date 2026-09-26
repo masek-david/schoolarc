@@ -39,6 +39,7 @@ class HomeworkData extends TaskData {
     );
   }
 
+  @override
   Homework convert(Subject? subject) {
     return Homework(
       isDeleted: isDeleted,
@@ -103,9 +104,7 @@ class HomeworkData extends TaskData {
       'n': text,
       if (description != '') 'i': description,
       if (subjectId != null) 's': subjectId,
-      // TODO fire (can be updated after you are 100% sure every version can parse it) and after you are sure that every date in firebase uses this format - which could require manual refactor
-      // 'd': date.toPrimitiveInt(),
-      'd': date.toDateTimeUTC().millisecondsSinceEpoch,
+      'd': date.toPrimitiveInt(),
       if (priority != 0) 'p': priority,
       if (order != 0) 'o': order,
       if (!isCompleted) 'c': isCompleted,
@@ -118,7 +117,8 @@ class HomeworkData extends TaskData {
     late Date date;
     if (json['d'] > 920250101) {
       date = Date.fromDateTime(
-          DateTime.fromMillisecondsSinceEpoch(json['d']).toLocal());
+        DateTime.fromMillisecondsSinceEpoch(json['d']).toLocal(),
+      );
     } else {
       date = Date.fromPrimitiveInt(json['d']);
     }
@@ -145,19 +145,20 @@ class HomeworkData extends TaskData {
   }
 
   @override
-  HomeworkData copyWith(
-      {Object? subjectId = noChange,
-      String? text,
-      Date? date,
-      bool? isCompleted,
-      int? priority,
-      String? id,
-      String? description,
-      DateTime? timestamp,
-      bool? isDeleted,
-      double? order,
-      int? stateReaddingVersion,
-      bool? isBeingAnimated}) {
+  HomeworkData copyWith({
+    Object? subjectId = noChange,
+    String? text,
+    Date? date,
+    bool? isCompleted,
+    int? priority,
+    String? id,
+    String? description,
+    DateTime? timestamp,
+    bool? isDeleted,
+    double? order,
+    int? stateReaddingVersion,
+    bool? isBeingAnimated,
+  }) {
     return HomeworkData(
       subjectId: subjectId == noChange ? this.subjectId : subjectId as String?,
       text: text ?? this.text,

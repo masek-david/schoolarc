@@ -1,5 +1,5 @@
 # FIX
-keyboard shortcuts not working (works on win, web)
+keyboard shortcuts not working (works on win, web) -> test on android
 
 ios pwa keyboard not opening on ios 27
 ios (and ios pwa!!) ipad window manager over my buttons
@@ -46,8 +46,9 @@ add tags to readme (playstore, obtainium, github...)
 - ✅ push info to the app from web + min required version
 - ✅ firebase verify email + forgot password for firebase
 - ✅ error tracking
-- ⬜ better accessible button for error reporting
 - ✅ new icon
+- ✅ qr sharing
+- ⬜ better accessible button for error reporting
 - ⬜ store assets, github page - screenshots
 
 # FEATURES
@@ -79,8 +80,8 @@ add tags to readme (playstore, obtainium, github...)
 - ⬜ month calendar scroll on hover of dragged item
 - ⬜ check text theme with m3e, dont use so many styles, let users pick?
 - ⬜ ? display tasks in timetable
-- ⬜ timetable tile hero animation on view lesson details
-- ⬜ timetable - merge cells if they are after each other ?
+- ⬜ ? timetable tile hero animation on view lesson details
+- ⬜ ? timetable - merge cells if they are after each other ?
 - ⬜ calendar big screen button to go to today
 
 ## Widgets
@@ -104,11 +105,6 @@ add tags to readme (playstore, obtainium, github...)
 - ⬜ write tests
 - ⬜ scan qr - import task, load recap stickers
 - ⬜ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
-
-## Timetable
-- ⬜ timetable provider
-- ⬜ enable saving teacher, room
-- ⬜ the Timetable class should have TimetableChange field
 
 ## NOTIFICATIONS:
 - ✅ turn off notifications for weekend
@@ -214,6 +210,11 @@ add tags to readme (playstore, obtainium, github...)
     - ✅ homeworks
         - ✅ fix the frequency when is app searching for baka homeworks
     - ✅ name
+  
+## Timetable
+- ✅ timetable provider
+- ✅ enable saving teacher, room
+- ✅ the Timetable class should have TimetableChange field
 
 release - update pub, update pubspec version, update firebase realtimeDB versions, update changelog, github release - dont build for all abi - it would make build version wrong
 

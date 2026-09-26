@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/subjects/presentation/subject_picker.dart';
 import 'package:schoolarc/features/tasks/presentation/edit_task_bottom_sheet.dart';
 import 'package:schoolarc/features/tasks/presentation/edit_task_state.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/date/date.dart';
@@ -15,37 +16,16 @@ import 'package:schoolarc/models/task_data_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/vibrate.dart';
-import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 
-class HwNotiferMock extends Notifier<Map<String, HomeworkData>>
-    with Mock
-    implements HwNotifier {}
-
-class ExamNotiferMock extends Notifier<Map<String, ExamData>>
-    with Mock
-    implements ExamNotifier {}
+import '../../../helpers/mock_notifiers.dart';
 
 void main() {
-  late Date today;
-  late Date tomorrow;
-  late Date nextWeek;
+  late Date today = Date.today();
+  late Date tomorrow = today.addDays(1);
+  late Date nextWeek = today.addDays(7);
   late HwNotiferMock hwNotifier;
   late ExamNotiferMock examNotifier;
-
-  setUpAll(() {
-    Vibrate.createEmptyForTest();
-    registerFallbackValue(TaskData.empty().toHw());
-    registerFallbackValue(TaskData.empty().toExam());
-
-    settings = SettingsDatabase(testingMode: true);
-
-    today = Date.today();
-    tomorrow = today.addDays(1);
-    nextWeek = today.addDays(7);
-  });
 
   setUp(() {
     hwNotifier = HwNotiferMock();
@@ -64,6 +44,7 @@ void main() {
         subjectsSortedProvider.overrideWithValue(
           MockData.subjects.values.toList(),
         ),
+        timetableProvider.overrideWithValue(MockData.timetable),
       ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

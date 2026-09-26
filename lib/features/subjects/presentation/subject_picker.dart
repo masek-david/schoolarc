@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:schoolarc/features/subjects/presentation/select_subject_dialog.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/new_subject_dialog.dart';
-import 'package:schoolarc/screens/timetable/select_subject.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/widgets/web_request_focus.dart';
 
@@ -28,7 +28,9 @@ class SubjectPicker extends StatelessWidget {
       subjects: subjects,
     );
 
-    onSelected(newSubject);
+    if (newSubject != null) {
+      onSelected(newSubject);
+    }
   }
 
   @override

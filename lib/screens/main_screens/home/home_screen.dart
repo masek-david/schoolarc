@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/features/tasks/task_functions.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/screens/main_screens/home/widgets/card_with_title.dart';
@@ -23,7 +24,7 @@ import 'package:schoolarc/widgets/tiles/hw_tile.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  bool isLessonsEmpty(List<(LessonTimes, TimetableEntry)> lessons) {
+  bool isLessonsEmpty(List<(Period, Lesson)> lessons) {
     bool isEmpty = true;
     for (var value in lessons) {
       if (!value.$2.isEmpty) {
@@ -39,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
     final missedHw = ref.watch(hwMissedProvider);
     final exams = ref.watch(examsDatesProvider);
 
-    final defaultTimeTable = timetableDb.timeTable;
+    final defaultTimeTable = ref.watch(timetableProvider);
     var upcomingLessons = defaultTimeTable.getUpcomingLessons(DateTime.now());
 
     final hwToday = hws[Date.today()] ?? [];
@@ -127,17 +128,11 @@ class HomeScreen extends ConsumerWidget {
                                       hw: hw,
                                       showDate: false,
                                       onChangedCompletion: (value) =>
-                                          completeHw(
-                                            context,
-                                            ref,
-                                            hw,
-                                            value,
-                                          ),
+                                          completeHw(ref, hw, value),
                                       onDelete: () =>
                                           deleteHw(context, ref, hw),
                                       onEdit: () => editHw(context, hw),
-                                      onConvert: () =>
-                                          convertHw(context, ref, hw),
+                                      onConvert: () => convertHw(ref, hw),
                                     ),
                                   )
                                   .toList(),
@@ -165,11 +160,7 @@ class HomeScreen extends ConsumerWidget {
                                           onDelete: () =>
                                               deleteExam(context, ref, e),
                                           onEdit: () => editExam(context, e),
-                                          onConvert: () => convertExam(
-                                            context,
-                                            ref,
-                                            e,
-                                          ),
+                                          onConvert: () => convertExam(ref, e),
                                         ),
                                       ),
                                       ...hwToday.map(
@@ -177,17 +168,11 @@ class HomeScreen extends ConsumerWidget {
                                           hw: hw,
                                           showDate: false,
                                           onChangedCompletion: (value) =>
-                                              completeHw(
-                                                context,
-                                                ref,
-                                                hw,
-                                                value,
-                                              ),
+                                              completeHw(ref, hw, value),
                                           onDelete: () =>
                                               deleteHw(context, ref, hw),
                                           onEdit: () => editHw(context, hw),
-                                          onConvert: () =>
-                                              convertHw(context, ref, hw),
+                                          onConvert: () => convertHw(ref, hw),
                                         ),
                                       ),
                                     ],
@@ -215,11 +200,7 @@ class HomeScreen extends ConsumerWidget {
                                           onDelete: () =>
                                               deleteExam(context, ref, e),
                                           onEdit: () => editExam(context, e),
-                                          onConvert: () => convertExam(
-                                            context,
-                                            ref,
-                                            e,
-                                          ),
+                                          onConvert: () => convertExam(ref, e),
                                         ),
                                       ),
                                       ...hwTomorrow.map(
@@ -227,17 +208,11 @@ class HomeScreen extends ConsumerWidget {
                                           hw: hw,
                                           showDate: false,
                                           onChangedCompletion: (value) =>
-                                              completeHw(
-                                                context,
-                                                ref,
-                                                hw,
-                                                value,
-                                              ),
+                                              completeHw(ref, hw, value),
                                           onDelete: () =>
                                               deleteHw(context, ref, hw),
                                           onEdit: () => editHw(context, hw),
-                                          onConvert: () =>
-                                              convertHw(context, ref, hw),
+                                          onConvert: () => convertHw(ref, hw),
                                         ),
                                       ),
                                     ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
 
 class BakaLessonTimes {
   final TimeOfDay startTime;
@@ -14,8 +14,8 @@ class BakaLessonTimes {
     required this.id,
   });
 
-  LessonTimes toLessonTimes() {
-    return LessonTimes(
+  Period toPeriod() {
+    return Period(
       startTime: startTime,
       endTime: endTime,
       name: name,

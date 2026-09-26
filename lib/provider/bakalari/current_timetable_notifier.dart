@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_model.dart';
 import 'package:schoolarc/mock_data/mock_data.dart';
 import 'package:schoolarc/models/bakalari/baka_timetable_model.dart';
 import 'package:schoolarc/models/exception_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';

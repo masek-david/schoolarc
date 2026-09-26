@@ -133,7 +133,7 @@ class RecapData {
   }
 
   static const years = {'sti0': '2025-26'};
-  static const stiVersion = {'sti0': '2025-26'};
+  static const stiVersion = {'2025-26': 'sti0'};
 
   factory RecapData.decode(String input) {
     // "sti0=h2VEYXZpZAQYqhhsg4JkxIxqbBgsgmJNYRglgmJGeRgahxguGCsYKxg3GEoHCoQYTRgzGGAYNg=="

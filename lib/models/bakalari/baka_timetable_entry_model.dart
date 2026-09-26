@@ -1,8 +1,8 @@
+import 'package:schoolarc/features/timetable/domain/lesson_change_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
+import 'package:schoolarc/features/timetable/domain/teacher_model.dart';
 import 'package:schoolarc/models/bakalari/baka_subject_model.dart';
-import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
 
 class BakaTimetableEntry {
   BakaTimetableEntry({
@@ -18,14 +18,14 @@ class BakaTimetableEntry {
       room = null,
       teacher = null;
 
-  final BakaChange? change;
+  final LessonChange? change;
   final Teacher? teacher;
   final String? room;
   final BakaSubject? bakaSubject;
 
   /// Converts to TimetableEntry, assigns existing subject from subjects (which is map of bakaId:Subject),
   /// if there is no correct subject, creates new, that can be later saved
-  TimetableEntry toTimetableEntry(Map<String, Subject> subjects) {
+  Lesson toTimetableEntry(Map<String, Subject> subjects) {
     late final Subject? finalSubject;
 
     if (bakaSubject == null) {
@@ -44,7 +44,7 @@ class BakaTimetableEntry {
           );
     }
 
-    return TimetableEntry(
+    return Lesson(
       change: change,
       room: room,
       teacher: teacher,

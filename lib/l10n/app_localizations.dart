@@ -266,6 +266,18 @@ abstract class AppLocalizations {
   /// **'Save as an exam'**
   String get saveAsExam;
 
+  /// No description provided for @discardEditQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard edit?'**
+  String get discardEditQ;
+
+  /// No description provided for @discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discard;
+
   /// No description provided for @shareByQr.
   ///
   /// In en, this message translates to:

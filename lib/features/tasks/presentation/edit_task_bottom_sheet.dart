@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:schoolarc/features/qr_sharing/presentation/qr_share_dialog.dart';
+import 'package:schoolarc/features/subjects/presentation/select_subject_dialog.dart';
+import 'package:schoolarc/features/subjects/presentation/subject_picker.dart';
 import 'package:schoolarc/features/tasks/presentation/edit_task_state.dart';
+import 'package:schoolarc/features/timetable/providers/timetable_notifier.dart';
 import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
@@ -13,13 +16,10 @@ import 'package:schoolarc/provider/exam_notifier.dart';
 import 'package:schoolarc/provider/hw_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/subject_notifier.dart';
-import 'package:schoolarc/screens/timetable/select_subject.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/utils/intent/intents.dart';
-import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
-import 'package:schoolarc/widgets/dialogs/subject_picker.dart';
 import 'package:schoolarc/widgets/keyboard_date_picker/keyboard_date_picker.dart';
 import 'package:schoolarc/widgets/priority_picker.dart';
 
@@ -31,13 +31,12 @@ class EditTaskBottomSheet extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<EditTaskBottomSheet> createState() =>
-      _AddTaskBottomSheetState();
+      _EditTaskBottomSheetState();
 }
 
-class _AddTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
+class _EditTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
   late final state = widget.state;
-  final _timetable = timetableDb.timeTable;
-  // final _timetable = MockData.timetable; // TODO mock timetable for testing
+  late final _timetable = ref.watch(timetableProvider);
 
   /// The date for the next day of occurance of the currently selected date
   late Date? nextSubjectDate = _timetable.nextDateForSubject(state.subjectId);
@@ -102,7 +101,9 @@ class _AddTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
       subjects: subjects,
     );
 
-    setSubject(newSubject);
+    if (newSubject != null) {
+      setSubject(newSubject);
+    }
   }
 
   /// Scroll the subject chips to ensure the subject with the provided id is visible
@@ -156,38 +157,10 @@ class _AddTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
     setDate(newDate);
   }
 
-  void showQr() {
+  void showQr(Subject? subject) {
     final task = state.createTask();
 
-    showMyDialog(
-      context: context,
-      title: context.loc.scanQr,
-      actions: [
-        DialogActionButton(
-          text: context.loc.close,
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-      content: SizedBox(
-        height: 160,
-        child: Center(
-          child: PrettyQrView(
-            decoration: PrettyQrDecoration(
-              shape: PrettyQrSmoothSymbol(
-                color: context.col.primary,
-              ),
-            ),
-            qrImage: QrImage(
-              QrCode.fromData(
-                // TODO tofirejson cant be used, we need the subject name not id and we need the link to open schoolarc app too
-                data: task.toHw().toFireJson().toString(),
-                errorCorrectLevel: 2,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    showQrShareDialog(context, task.convert(subject), state.isHomework);
   }
 
   @override
@@ -324,7 +297,16 @@ class _AddTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
                                 label: loc.save,
                                 onPressed: onSave,
                                 onSelected: (value) {
-                                  if (value == 'qr') showQr();
+                                  if (value == 'qr') {
+                                    showQr(
+                                      subjects
+                                          .where(
+                                            (element) =>
+                                                element.id == state.subjectId,
+                                          )
+                                          .firstOrNull,
+                                    );
+                                  }
                                   if (value == 'saveAsOther') {
                                     onSave(saveAsOtherType: true);
                                   }
@@ -552,7 +534,8 @@ class _AddTaskBottomSheetState extends ConsumerState<EditTaskBottomSheet> {
                                       _ => null,
                                     },
                                     onSelectedIndexChanged: (value) {
-                                      if (value == null) { // the already chosen date has been tapped -> the user HAS picked a date -> disable autoset
+                                      if (value == null) {
+                                        // the already chosen date has been tapped -> the user HAS picked a date -> disable autoset
                                         setState(() {
                                           state.autoSetDateToNextSubjectDate =
                                               false;

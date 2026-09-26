@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:schoolarc/models/bakalari/teacher_model.dart';
-import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_change_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
+import 'package:schoolarc/features/timetable/domain/period_model.dart';
+import 'package:schoolarc/features/timetable/domain/teacher_model.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_model.dart';
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_entity_model.dart';
 import 'package:schoolarc/models/homeworks/hw_entity_model.dart';
 import 'package:schoolarc/models/meal_model.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
-import 'package:schoolarc/models/timetable/lesson_times_model.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
 
 class MockData {
   static const useMock = false;
@@ -153,15 +153,6 @@ class MockData {
   }
 
   static final hws = {
-    '4': _createHw(
-      'Essay outline',
-      false,
-      '4',
-      firstDate.addDays(0),
-      true,
-      2,
-      4,
-    ),
     '0': _createHw(
       'Linear equations worksheet',
       false,
@@ -188,6 +179,15 @@ class MockData {
       false,
       0,
       2,
+    ),
+    '4': _createHw(
+      'Essay outline',
+      false,
+      '4',
+      firstDate.addDays(0),
+      true,
+      2,
+      4,
     ),
     '3': _createHw(
       'Plant cell diagram',
@@ -410,33 +410,33 @@ class MockData {
       5,
       (index) => _today.addDays(index),
     ),
-    lessonTimes: [
-      LessonTimes(
+    periods: [
+      Period(
         name: '1',
         startTime: const TimeOfDay(hour: 8, minute: 0),
         endTime: const TimeOfDay(hour: 8, minute: 45),
       ),
-      LessonTimes(
+      Period(
         name: '2',
         startTime: const TimeOfDay(hour: 8, minute: 50),
         endTime: const TimeOfDay(hour: 9, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '3',
         startTime: const TimeOfDay(hour: 9, minute: 50),
         endTime: const TimeOfDay(hour: 10, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '4',
         startTime: const TimeOfDay(hour: 10, minute: 50),
         endTime: const TimeOfDay(hour: 11, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '5',
         startTime: const TimeOfDay(hour: 11, minute: 40),
         endTime: const TimeOfDay(hour: 12, minute: 25),
       ),
-      LessonTimes(
+      Period(
         name: '6',
         startTime: const TimeOfDay(hour: 12, minute: 30),
         endTime: const TimeOfDay(hour: 13, minute: 15),
@@ -445,160 +445,160 @@ class MockData {
     table: [
       // Monday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['1'],
           room: '102',
-          change: BakaChange(type: .substitution, description: ''),
+          change: LessonChange(type: .substitution, description: ''),
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: null,
           room: null,
-          change: BakaChange(type: .removed, description: 'Cancelled'),
+          change: LessonChange(type: .removed, description: 'Cancelled'),
           teacher: null,
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // Tuesday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['9'],
           room: 'Gym',
-          change: BakaChange(type: .added, description: 'Substitute teacher'),
+          change: LessonChange(type: .added, description: 'Substitute teacher'),
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['9'],
           room: 'Gym',
-          change: BakaChange(type: .added, description: 'Substitute teacher'),
+          change: LessonChange(type: .added, description: 'Substitute teacher'),
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
         ),
       ],
       // Wednesday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
-          change: BakaChange(type: .added, description: ''),
+          change: LessonChange(type: .added, description: ''),
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // Thursday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['3'],
           room: '104',
-          change: BakaChange(type: .added, description: 'Group work'),
+          change: LessonChange(type: .added, description: 'Group work'),
           teacher: Teacher(name: 'Mrs. White', shortcut: 'W'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimetableEntry.empty(),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
+        const Lesson.empty(),
       ],
       // Friday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
-          change: BakaChange(type: .removed, description: 'Teacher absent'),
+          change: LessonChange(type: .removed, description: 'Teacher absent'),
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // saturday
-      List.filled(6, TimetableEntry.empty()),
+      List.filled(6, const Lesson.empty()),
       // sunday
-      List.filled(6, TimetableEntry.empty()),
+      List.filled(6, const Lesson.empty()),
     ],
   );
 
@@ -607,33 +607,33 @@ class MockData {
       5,
       (index) => _today.addDays(index),
     ),
-    lessonTimes: [
-      LessonTimes(
+    periods: [
+      Period(
         name: '1',
         startTime: const TimeOfDay(hour: 8, minute: 0),
         endTime: const TimeOfDay(hour: 8, minute: 45),
       ),
-      LessonTimes(
+      Period(
         name: '2',
         startTime: const TimeOfDay(hour: 8, minute: 50),
         endTime: const TimeOfDay(hour: 9, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '3',
         startTime: const TimeOfDay(hour: 9, minute: 50),
         endTime: const TimeOfDay(hour: 10, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '4',
         startTime: const TimeOfDay(hour: 10, minute: 50),
         endTime: const TimeOfDay(hour: 11, minute: 35),
       ),
-      LessonTimes(
+      Period(
         name: '5',
         startTime: const TimeOfDay(hour: 11, minute: 40),
         endTime: const TimeOfDay(hour: 12, minute: 25),
       ),
-      LessonTimes(
+      Period(
         name: '6',
         startTime: const TimeOfDay(hour: 12, minute: 30),
         endTime: const TimeOfDay(hour: 13, minute: 15),
@@ -642,61 +642,61 @@ class MockData {
     table: [
       // Monday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: null,
           room: null,
           teacher: null,
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // Tuesday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['9'],
           room: 'Gym',
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['9'],
           room: 'Gym',
           teacher: Teacher(name: 'Mr. Cyan', shortcut: 'C'),
@@ -704,91 +704,91 @@ class MockData {
       ],
       // Wednesday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // Thursday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['1'],
           room: '102',
           teacher: Teacher(name: 'Ms. Jones', shortcut: 'J'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['3'],
           room: '104',
           teacher: Teacher(name: 'Mrs. White', shortcut: 'W'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['5'],
           room: '201',
           teacher: Teacher(name: 'Ms. Black', shortcut: 'Bl'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['7'],
           room: '203',
           teacher: Teacher(name: 'Mrs. Violet', shortcut: 'V'),
         ),
-        TimetableEntry.empty(),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
+        const Lesson.empty(),
       ],
       // Friday
       [
-        TimetableEntry(
+        Lesson(
           subject: subjects['0'],
           room: '101',
           teacher: Teacher(name: 'Mr. Smith', shortcut: 'S'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['2'],
           room: '103',
           teacher: Teacher(name: 'Dr. Brown', shortcut: 'B'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['4'],
           room: '105',
           teacher: Teacher(name: 'Mr. Green', shortcut: 'G'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['6'],
           room: '202',
           teacher: Teacher(name: 'Mr. Grey', shortcut: 'Gr'),
         ),
-        TimetableEntry(
+        Lesson(
           subject: subjects['8'],
           room: '204',
           teacher: Teacher(name: 'Ms. Indigo', shortcut: 'I'),
         ),
-        TimetableEntry.empty(),
+        const Lesson.empty(),
       ],
       // saturday
-      List.filled(6, TimetableEntry.empty()),
+      List.filled(6, const Lesson.empty()),
       // sunday
-      List.filled(6, TimetableEntry.empty()),
+      List.filled(6, const Lesson.empty()),
     ],
   );
 

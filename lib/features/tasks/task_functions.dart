@@ -13,8 +13,6 @@ import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/dialogs/show_my_dialog.dart';
 
-// This file doesnt have tests
-
 Future<void> _showEditTaskBottomSheet(
   BuildContext context,
   EditTaskState state,
@@ -48,15 +46,15 @@ Future<bool> _showShouldDiscardDialog(BuildContext context) {
   return showMyDialog(
     dismissible: false,
     context: context,
-    title: 'Discard edit?',
+    title: context.loc.discardEditQ,
     actions: [
       DialogActionButton(
-        text: 'Cancel',
+        text: context.loc.cancel,
         onPressed: () => Navigator.pop(context, false),
       ),
       DialogActionButton(
         isDestructiveAction: true,
-        text: 'Discard',
+        text: context.loc.discard,
         onPressed: () => Navigator.pop(context, true),
       ),
     ],
@@ -87,11 +85,11 @@ void editHw(BuildContext context, Homework hw) {
   _showEditTaskBottomSheet(context, state);
 }
 
-void convertHw(BuildContext context, WidgetRef ref, Homework hw) {
+void convertHw(WidgetRef ref, Homework hw) {
   ref.read(hwDataProvider.notifier).convert(hw.toData());
 }
 
-void completeHw(BuildContext context, WidgetRef ref, Homework hw, bool value) {
+void completeHw(WidgetRef ref, Homework hw, bool value) {
   ref.read(hwDataProvider.notifier).complete(hw.toData(), value);
 }
 
@@ -136,7 +134,7 @@ void editExam(BuildContext context, Exam exam) {
   _showEditTaskBottomSheet(context, state);
 }
 
-void convertExam(BuildContext context, WidgetRef ref, Exam exam) {
+void convertExam(WidgetRef ref, Exam exam) {
   ref.read(examDataProvider.notifier).convert(exam.toData());
 }
 

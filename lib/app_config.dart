@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:schoolarc/features/timetable/presentation/actual_timetable_screen.dart';
+import 'package:schoolarc/features/timetable/presentation/timetable_screen.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
 import 'package:schoolarc/l10n/my_localization.dart';
 import 'package:schoolarc/main_app.dart';
@@ -31,8 +33,6 @@ import 'package:schoolarc/screens/settings/setting_pages/tomorrow_notifications_
 import 'package:schoolarc/screens/settings/settings_screen.dart';
 import 'package:schoolarc/screens/shared/group_screen.dart';
 import 'package:schoolarc/screens/subjects/subjects_screen.dart';
-import 'package:schoolarc/screens/timetable/actual_timetable_screen.dart';
-import 'package:schoolarc/screens/timetable/timetable_screen.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';

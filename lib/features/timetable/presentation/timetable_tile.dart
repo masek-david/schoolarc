@@ -1,7 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolarc/models/bakalari/timetable_change_model.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_change_model.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 
@@ -18,14 +18,14 @@ class TimetableTile extends StatelessWidget {
     this.rightBottom = false,
   });
 
-  final TimetableEntry? lesson;
+  final Lesson? lesson;
   final double columnWidth;
   final bool isHighlighted;
   final bool leftTop;
   final bool rightTop;
   final bool leftBottom;
   final bool rightBottom;
-  final void Function(TimetableEntry? lesson)? onTap;
+  final void Function(Lesson? lesson)? onTap;
 
   BorderRadiusGeometry getBorderRadius({double subtract = 0}) {
     return BorderRadius.only(
@@ -98,7 +98,7 @@ class TimetableTile extends StatelessWidget {
                 //     settings.get(Setting.debugMode))
                 //   Text('baka: ${lesson?.subject?.bakaId}'),
                 const Spacer(flex: 10),
-                if (lesson?.change?.type == ChangeType.canceled)
+                if (lesson?.change?.type == LessonChangeType.canceled)
                   Text(
                     lesson?.change?.shortcut ?? '',
                     style: googleSansFlex(width: 120, color: foregroundCol),

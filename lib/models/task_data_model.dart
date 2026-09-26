@@ -1,6 +1,9 @@
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/exams/exam_data_model.dart';
 import 'package:schoolarc/models/homeworks/hw_data_model.dart';
+import 'package:schoolarc/models/priority_model.dart';
+import 'package:schoolarc/models/subjects/subject_model.dart';
+import 'package:schoolarc/models/task_model.dart';
 import 'package:schoolarc/utils/globals.dart';
 
 class TaskData {
@@ -36,17 +39,17 @@ class TaskData {
 
   /// This will create an initial [TaskData] which should have the main values edited before saving
   TaskData.empty()
-      : date = Date.today(),
-        text = '',
-        isCompleted = false,
-        priority = 0,
-        id = '',
-        isDeleted = false,
-        order = 0,
-        description = '',
-        subjectId = null,
-        timestamp = DateTime.now().toUtc(),
-        stateReaddingVersion = 0;
+    : date = Date.today(),
+      text = '',
+      isCompleted = false,
+      priority = 0,
+      id = '',
+      isDeleted = false,
+      order = 0,
+      description = '',
+      subjectId = null,
+      timestamp = DateTime.now().toUtc(),
+      stateReaddingVersion = 0;
 
   HomeworkData toHw() {
     return HomeworkData(
@@ -78,6 +81,22 @@ class TaskData {
       description: description,
       timestamp: timestamp,
       order: order,
+    );
+  }
+
+  Task convert(Subject? subject) {
+    return Task(
+      id: id,
+      timestamp: timestamp,
+      isDeleted: isDeleted,
+      subject: subject,
+      text: text,
+      date: date,
+      isCompleted: isCompleted,
+      priority: TaskPriority(priority),
+      description: description,
+      order: order,
+      stateReaddingVersion: stateReaddingVersion,
     );
   }
 

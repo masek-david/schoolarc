@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
+import 'package:schoolarc/features/timetable/domain/timetable_model.dart';
+import 'package:schoolarc/features/timetable/presentation/timetable_tile.dart';
 import 'package:schoolarc/models/date/date.dart';
-import 'package:schoolarc/models/timetable/timetable_entry_model.dart';
-import 'package:schoolarc/models/timetable/timetable_model.dart';
-import 'package:schoolarc/screens/timetable/widgets/timetable_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/date_extension.dart';
 import 'package:schoolarc/utils/extensions/string_extension.dart';
@@ -15,8 +15,8 @@ class TimetableView extends StatelessWidget {
     super.key,
     required this.timeTable,
     required this.showWholeWeek,
-    required this.onLessonTimesTapped,
-    required this.onSubjectTapped,
+    required this.onPeriodTapped,
+    required this.onLessonTapped,
     required this.contentWhenEmpty,
     this.onCreatePeriod,
   });
@@ -24,17 +24,17 @@ class TimetableView extends StatelessWidget {
   final Timetable? timeTable;
   final bool showWholeWeek;
   final Widget contentWhenEmpty;
-  final void Function(int lessonIndex)? onCreatePeriod;
-  final void Function(int lessonIndex)? onLessonTimesTapped;
-  final void Function(int weekday, int lessonIndex, TimetableEntry lesson)?
-  onSubjectTapped;
+  final void Function()? onCreatePeriod;
+  final void Function(int lessonIndex)? onPeriodTapped;
+  final void Function(int weekday, int lessonIndex, Lesson lesson)?
+  onLessonTapped;
 
   static const dateCellWidth = 40.0;
   static const cellWidth = 80.0;
 
   @override
   Widget build(BuildContext context) {
-    if (timeTable == null || timeTable!.lessonTimes.isEmpty) {
+    if (timeTable == null || timeTable!.periods.isEmpty) {
       return contentWhenEmpty;
     }
 
@@ -63,17 +63,17 @@ class TimetableView extends StatelessWidget {
                   ),
 
                   ...List.generate(
-                    timeTable!.lessonTimes.length,
+                    timeTable!.periods.length,
                     (columnIndex) {
-                      final lessonTimes = timeTable!.lessonTimes[columnIndex];
+                      final lessonTimes = timeTable!.periods[columnIndex];
 
                       return SizedBox(
                         width: cellWidth,
                         child: InkWell(
                           borderRadius: .circular(4),
-                          onTap: onLessonTimesTapped == null
+                          onTap: onPeriodTapped == null
                               ? null
-                              : () => onLessonTimesTapped!(columnIndex),
+                              : () => onPeriodTapped!(columnIndex),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,9 +103,7 @@ class TimetableView extends StatelessWidget {
                       color: context.col.surfaceContainerHigh,
                       clipBehavior: .antiAlias,
                       child: InkWell(
-                        onTap: () => onCreatePeriod!.call(
-                          timeTable!.lessonTimes.length + 1,
-                        ),
+                        onTap: () => onCreatePeriod!.call(),
                         child: Container(
                           width: cellWidth,
                           alignment: .center,
@@ -172,7 +170,7 @@ class TimetableView extends StatelessWidget {
                         final lesson = table[weekday][lessonIndex];
 
                         bool isHighlighted =
-                            timeTable!.lessonTimes[lessonIndex].isActive &&
+                            timeTable!.periods[lessonIndex].isActive &&
                             DateTime.now().weekday - 1 == weekday;
 
                         if (isHighlighted &&
@@ -194,9 +192,9 @@ class TimetableView extends StatelessWidget {
                           isHighlighted: isHighlighted,
                           lesson: lesson,
                           columnWidth: cellWidth,
-                          onTap: onSubjectTapped == null
+                          onTap: onLessonTapped == null
                               ? null
-                              : (_) => onSubjectTapped!(
+                              : (_) => onLessonTapped!(
                                   weekday,
                                   lessonIndex,
                                   lesson,

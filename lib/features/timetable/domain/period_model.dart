@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hive_ce/hive.dart';
 
-class LessonTimes extends HiveObject {
+class Period {
   late TimeOfDay startTime;
   late TimeOfDay endTime;
   String name;
 
-  LessonTimes({
+  Period({
     required this.startTime,
     required this.endTime,
     this.name = '',

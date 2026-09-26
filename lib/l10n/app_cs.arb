@@ -74,6 +74,8 @@
   "added": "Přidáno",
   "addedHomework": "Úkol přidán",
   "addedExam": "Test přidán",
+  "discardEditQ": "Zahodit úpravy?",
+  "discard": "Zahodit",
   "close": "Zavřít",
   "undo": "Zpět",
   "ok": "Ok",
