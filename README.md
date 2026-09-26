@@ -12,9 +12,10 @@
     <a href="https://github.com/masek-david/schoolarc/releases/tag/Release">
         <img src="assets/readme_assets/github.png" width="200" alt="GitHub">
     </a>
-    <a href="obtainium://add/https://github.com/masek-david/schoolarc/releases">
+    <!-- github cant open obtainium -->
+    <!-- <a href="obtainium://add/https://github.com/masek-david/schoolarc/releases">
         <img src="assets/readme_assets/obtainium.png" width="200" alt="Obtainium">
-    </a>
+    </a> -->
     <a href="https://play.google.com/store/apps/details?id=cz.masci.schoolarc">
         <img src="assets/readme_assets/googleplay.png" width="200" alt="Google Play">
     </a>
@@ -37,64 +38,64 @@
 - Big screen support
 
 <div align="center">
-    <img src="assets/readme_assets/mobile_assets/store_asset_1.png" width="200" style="border-radius:16px">
-    <img src="assets/readme_assets/mobile_assets/store_asset_2.png" width="200" style="border-radius:16px">
-    <img src="assets/readme_assets/mobile_assets/store_asset_3.png" width="200" style="border-radius:16px">
-    <img src="assets/readme_assets/mobile_assets/store_asset_4.png" width="200" style="border-radius:16px">
-    <img src="assets/readme_assets/mobile_assets/store_asset_5.png" width="200" style="border-radius:16px">
-    <img src="assets/readme_assets/mobile_assets/store_asset_6.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_1.png" width="180" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_2.png" width="180" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_3.png" width="180" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_4.png" width="180" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_5.png" width="180" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_6.png" width="180" style="border-radius:16px">
 </div>
         
 ## Screenshots
 
-<details open>
+<details>
     <summary>Dark mode screenshots</summary>
         <div align="center">
-            <img src="assets/readme_assets/mobile/home_dark.png" width="250" style="border-radius:36px">
-            <img src="assets/readme_assets/mobile/calendar_dark.png" width="250" style="border-radius:36px">
-            <img src="assets/readme_assets/mobile/create_dark.png" width="250" style="border-radius:36px">
-            <img src="assets/readme_assets/mobile/timetable_dark.png" width="250" style="border-radius:36px">
-            <img src="assets/readme_assets/mobile/meals_dark.png" width="250" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/home_dark.png" width="180" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/calendar_dark.png" width="180" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/create_dark.png" width="180" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/timetable_dark.png" width="180" style="border-radius:36px">
+            <img src="assets/readme_assets/mobile/meals_dark.png" width="180" style="border-radius:36px">
         </div>
 </details>
 
 <details>
     <summary>Light mode screenshots</summary>
     <div align="center">
-        <img src="assets/readme_assets/mobile/home_light.png" width="250" style="border-radius:36px">
-        <img src="assets/readme_assets/mobile/calendar_light.png" width="250" style="border-radius:36px">
-        <img src="assets/readme_assets/mobile/create_light.png" width="250" style="border-radius:36px">
-        <img src="assets/readme_assets/mobile/timetable_light.png" width="250" style="border-radius:36px">
-        <img src="assets/readme_assets/mobile/meals_light.png" width="250" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/home_light.png" width="180" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/calendar_light.png" width="180" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/create_light.png" width="180" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/timetable_light.png" width="180" style="border-radius:36px">
+        <img src="assets/readme_assets/mobile/meals_light.png" width="180" style="border-radius:36px">
     </div>
 </details>
 
 <details>
     <summary>Dark mode desktop screenshots</summary>
     <div align="center">
-        <img src="assets/readme_assets/desktop/home_dark.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/calendar_dark.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/create_dark.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/timetable_dark.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/meals_dark.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/home_dark.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/calendar_dark.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/create_dark.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/timetable_dark.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/meals_dark.png" width="380" style="border-radius:8px">
     </div>
 </details>
 
 <details>
     <summary>Light mode desktop screenshots</summary>
     <div align="center">
-        <img src="assets/readme_assets/desktop/home_light.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/calendar_light.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/create_light.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/timetable_light.png" width="500" style="border-radius:8px">
-        <img src="assets/readme_assets/desktop/meals_light.png" width="500" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/home_light.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/calendar_light.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/create_light.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/timetable_light.png" width="380" style="border-radius:8px">
+        <img src="assets/readme_assets/desktop/meals_light.png" width="380" style="border-radius:8px">
     </div>
 </details>
 
 ## Download
 
 ### Android
-Download the apk from [releases](https://github.com/masek-david/schoolarc/releases/latest), or import to [Obtanium](obtainium://add/https://github.com/masek-david/schoolarc).
+Download from [Google Play](https://play.google.com/store/apps/details?id=cz.masci.schoolarc), download the apk from [releases](https://github.com/masek-david/schoolarc/releases/latest), or import to [Obtanium](obtainium://add/https://github.com/masek-david/schoolarc).
 
 ### iOS
 While Schoolarc can run on iOS, releasing and signing .ipa files requires paid developer account. Unsigned .ipa files will be added later, however, they have to be sideloaded. 
