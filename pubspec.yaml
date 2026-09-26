@@ -2,7 +2,7 @@ name: schoolarc
 description: "App for students to keep track of their homework and exams"
 publish_to: 'none'
 
-version: 2.2.6+66
+version: 2.3.0+67
 
 environment:
   sdk: '>=3.11.0 <4.0.0'

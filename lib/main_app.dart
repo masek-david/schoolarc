@@ -410,9 +410,13 @@ class _MainAppState extends ConsumerState<MainApp> {
     //   child: screens[page],
     // );
 
+    final isDark = context.isDark;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarIconBrightness: context.isDark
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarIconBrightness: isDark
             ? Brightness.light
             : Brightness.dark,
       ),

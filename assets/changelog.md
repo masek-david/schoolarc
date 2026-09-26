@@ -1,4 +1,4 @@
-## [2.3.0](2026-;build)
+## [2.3.0](2026-09-26;build67)
 ### Added
 - New buttons following Material 3 Expressive guidelines
 - Updated dialog for creating homework and exams
@@ -18,6 +18,7 @@
 ### Fixed
 - Fix vocative form of long names in czech
 - Fix Android navigation bar not being transparent
+- Fix Android top bar icons being always light
 - Fix settings pages being behind the navigation bar in landscape
 - Fixed pull to refresh in calendar
 - Fixed file picker on web

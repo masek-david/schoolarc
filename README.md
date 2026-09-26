@@ -8,6 +8,18 @@
     <img src="assets/readme_assets/banner.png" width="500" style="border-radius:12px">
 </div>
 
+<div style="display: flex; justify-content: center; gap: 16px;">
+    <a href="https://github.com/masek-david/schoolarc/releases/tag/Release">
+        <img src="assets/readme_assets/github.png" width="200" alt="GitHub">
+    </a>
+    <a href="obtainium://add/https://github.com/masek-david/schoolarc/releases">
+        <img src="assets/readme_assets/obtainium.png" width="200" alt="Obtainium">
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=cz.masci.schoolarc">
+        <img src="assets/readme_assets/googleplay.png" width="200" alt="Google Play">
+    </a>
+</div>
+
 ## Features
 
 - Save homework and exams
@@ -23,7 +35,16 @@
 - Material 3 Expressive theme
 - Responsive design
 - Big screen support
-  
+
+<div align="center">
+    <img src="assets/readme_assets/mobile_assets/store_asset_1.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_2.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_3.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_4.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_5.png" width="200" style="border-radius:16px">
+    <img src="assets/readme_assets/mobile_assets/store_asset_6.png" width="200" style="border-radius:16px">
+</div>
+        
 ## Screenshots
 
 <details open>
@@ -84,8 +105,8 @@ Other platforms may be supported in the future.
 ## Platforms
 Schoolarc can run on most platforms, however, it is optimized and tested mainly for use on Android and iOS. Some functions don't even work on other operating systems and on web data loss can occur.
 
-|         |  Cloud synchronization |  Bakaláři  |  Strava.cz |  Notifications  |  Homescreen Widget |
-| ------- | :--------------------: | :--------: | :--------: | :-------------: | :----------------: |
+|         | Cloud synchronization | Bakaláři | Strava.cz | Notifications | Homescreen Widget |
+| ------- | :-------------------: | :------: | :-------: | :-----------: | :---------------: |
 | Android |           ✅           |    ✅     |     ✅     |       ✅       |         ✅         |
 | iOS     |           ✅           |    ✅     |     ✅     |       ✅       |         ❌         |
 | Web     |           ✅           |    ✅     |     ✅     |       ❌       |         ❌         |

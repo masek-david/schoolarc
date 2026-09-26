@@ -7,7 +7,7 @@ import 'package:schoolarc/database/hive/hive_registrar.g.dart';
 const String subjectBox = 'subjectBox';
 const String hwBox = 'hwBox';
 const String examBox = 'examBox';
-const String timetableBox = 'timetableBox';
+const String timetableBox = 'timetableBoxV1';
 const String bakaAddedHw = 'bakaAddedHw';
 const String bakaSeenHw = 'bakaSeenHw';
 const String settingsBox = 'settings';

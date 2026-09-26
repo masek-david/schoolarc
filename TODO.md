@@ -7,11 +7,11 @@ ios password field looses focus when password picker is opened
 ios notifications dont have access
 ios timetable still refresh pulls ?
 windows bakalogin, strava login and firebase login are shared between debug and release
+keyboard enter doesnt select subject nor save when editing
+
+tablet assets
 
 do we NEED a tutorial ???
-
-add tags to readme (playstore, obtainium, github...)
-
 
 # Material 3 Expressive
 - ⬜ Bigger screen navigation:
@@ -48,8 +48,8 @@ add tags to readme (playstore, obtainium, github...)
 - ✅ error tracking
 - ✅ new icon
 - ✅ qr sharing
+- ✅ store assets, github page - screenshots
 - ⬜ better accessible button for error reporting
-- ⬜ store assets, github page - screenshots
 
 # FEATURES
 
