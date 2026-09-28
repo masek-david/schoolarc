@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:schoolarc/app_config.dart';
 import 'package:schoolarc/database/hive/hive_init.dart';
 import 'package:schoolarc/database/settings_database.dart';
+import 'package:schoolarc/features/plus/plus.dart';
 import 'package:schoolarc/firebase_options.dart';
 import 'package:schoolarc/models/exception_model.dart';
 import 'package:schoolarc/services/analytics_service.dart';
@@ -45,6 +46,7 @@ Future<void> main() async {
     NotificationSender.initNotifications(),
     Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
     Vibrate.create(),
+    initRevenueCat(),
     initializeDateFormatting(),
     AnalyticsService.init(),
     if (HomeWidgetService.isSupportedPlatform)

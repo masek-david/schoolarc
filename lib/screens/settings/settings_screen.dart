@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolarc/features/plus/plus.dart';
 import 'package:schoolarc/provider/bakalari/baka_login_notifier.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/provider/strava/strava_login_notifier.dart';
@@ -31,6 +32,15 @@ class SettingsScreen extends ConsumerWidget {
       heroTag: 'settings',
       title: loc.settings,
       children: [
+        SettingTile(
+          highlighted: true,
+          iconSize: 32,
+          leading: const Icon(Icons.add_rounded),
+          title:ref.watch(schoolarcPlusProvider) == true ? 'Thank you for buying Schoolarc Plus':'Get Schoolarc Plus',
+          backgroundColor: PlusTheme.bg(context.col),
+          foregroundColor: PlusTheme.fg(context.col),
+          onTap: (context) => Navigator.restorablePushNamed(context, '/plus'),
+        ),
         SettingTile(
           heroTag: 'theme',
           isFirst: true,

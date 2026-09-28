@@ -61,6 +61,7 @@ dependencies:
   app_links: ^7.2.1
   cbor: ^6.5.1
   posthog_flutter: ^5.44.1
+  purchases_flutter: ^10.13.2
 
 dev_dependencies:
   flutter_test:
