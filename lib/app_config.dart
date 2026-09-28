@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:schoolarc/features/plus/presentation/plus_screen.dart';
 import 'package:schoolarc/features/timetable/presentation/actual_timetable_screen.dart';
 import 'package:schoolarc/features/timetable/presentation/timetable_screen.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
@@ -257,6 +258,7 @@ class AppConfig extends ConsumerWidget {
             '/tutorial': (context) => const Tutorial(),
             '/recap-sticker': (context) => const RecapStickerScreen(),
             '/privacy': (context) => const PrivacyPolicy(),
+            '/plus':(context) => const PlusScreen(),
           },
         );
       },
