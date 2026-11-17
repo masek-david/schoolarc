@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/utils/globals.dart';
 import 'package:schoolarc/widgets/navigation_bar/bottom_nav_bar.dart';

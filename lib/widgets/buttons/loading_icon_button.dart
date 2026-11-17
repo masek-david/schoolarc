@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

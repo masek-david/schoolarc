@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Used to bypass keyboard restriction on web, mainly on ios
 class WebRequestFocusBuilder extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_color_utilities/hct/hct.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 

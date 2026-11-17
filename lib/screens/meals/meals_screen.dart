@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_refresh_indicator.dart';

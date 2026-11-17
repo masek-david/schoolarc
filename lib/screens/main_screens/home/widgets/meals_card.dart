@@ -1,5 +1,5 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/models/date/date.dart';

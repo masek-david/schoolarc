@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/m3e/m3e_motion_curves.dart';

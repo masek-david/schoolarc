@@ -1,7 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
@@ -271,7 +270,8 @@ class SettingTile extends StatelessWidget {
                 ? context.col.primaryContainer
                 : context.col.surfaceContainerLowest),
         child: InkWell(
-          splashFactory: NewInkSparkle.splashFactory,
+          // TODO splash
+          // splashFactory: NewInkSparkle.splashFactory,
           onTap: enabled && onTap != null
               ? () {
                   if (hapticFeedback) {

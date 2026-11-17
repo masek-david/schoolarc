@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:m3_expressive_shapes/m3_expressive_shapes.dart';
+import 'package:material_ui/material_ui.dart' hide MaterialShapes;// TODO try shapes from material_ui
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/utils/globals.dart';
 

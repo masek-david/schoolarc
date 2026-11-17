@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/features/timetable/domain/period_model.dart';
 import 'package:schoolarc/models/exception_model.dart';

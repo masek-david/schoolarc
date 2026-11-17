@@ -10,6 +10,8 @@ windows bakalogin, strava login and firebase login are shared between debug and 
 keyboard enter doesnt select subject nor save when editing
 
 tablet assets
+themeextensions
+
 
 do we NEED a tutorial ???
 
@@ -93,6 +95,7 @@ do we NEED a tutorial ???
 - ✅ save only date for deadlines
 - ✅ rework exceptions - string should be just shown in ui, not from service
 - ✅ refactor to use date instead of datetime
+- ✅ scan qr - import task, load recap stickers
 - ⬜ other school providers for timetable, hw (other then bakalari)
 - ⬜ create settings for initial task
     - ⬜ priority
@@ -103,7 +106,7 @@ do we NEED a tutorial ???
 - ⬜ translation - google sheets
 - ⬜ meals images - generate them using ai ?
 - ⬜ write tests
-- ⬜ scan qr - import task, load recap stickers
+- ⬜ ctrl f to find
 - ⬜ should hw, exam and subject notifiers listen to firebaseLoginNotifier ???
 
 ## NOTIFICATIONS:

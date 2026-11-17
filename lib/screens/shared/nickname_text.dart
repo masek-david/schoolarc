@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 import 'package:schoolarc/m3e/expressive_loading/expressive_loading_indicator.dart';

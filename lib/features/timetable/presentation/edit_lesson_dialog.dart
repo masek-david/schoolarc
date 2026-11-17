@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/features/subjects/presentation/subject_picker.dart';
 import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
 import 'package:schoolarc/features/timetable/domain/teacher_model.dart';

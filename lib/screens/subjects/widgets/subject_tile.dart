@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:schoolarc/database/settings_database.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';

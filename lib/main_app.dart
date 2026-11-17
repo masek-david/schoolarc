@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -199,15 +199,16 @@ class _MainAppState extends ConsumerState<MainApp> {
                 try {
                   final decoded = Uri.decodeComponent(uri.query);
 
-                  if (decoded.startsWith('sti')) {
+                  if (decoded == 'actual_timetable') { // TODO test link on android
+                    Navigator.pushNamed(context, '/timetable-actual');
+                  } else if (decoded.startsWith('sti')) {
                     final recap = RecapData.decode(decoded);
                     Navigator.pushNamed(
                       context,
                       '/recap-sticker',
                       arguments: recap,
                     );
-                  }
-                  if (decoded.startsWith('sh')) {
+                  } else if (decoded.startsWith('sh')) {
                     final task = QrParse.fromQr(
                       decoded,
                       ref.read(subjectsSortedProvider),

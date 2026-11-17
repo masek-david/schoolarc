@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _myCurve = Cubic(.46, -0.51, .37, -0.51);
 

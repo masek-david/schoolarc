@@ -50,22 +50,11 @@ class HomeworkEntityAdapter extends TypeAdapter<HomeworkEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-
-    // Manual date migration code beginning
-    final date = fields[3];
-    Date finalDate;
-    if (date is DateTime) {
-      finalDate = Date.fromDateTime(date.toLocal());
-    } else {
-      finalDate = date as Date;
-    }
-    // Manual date migration code end
-
     return HomeworkEntity(
       text: fields[0] as String,
       description: fields[1] == null ? '' : fields[1] as String,
       subjectId: fields[2] as String?,
-      date: finalDate,
+      date: fields[3] as Date,
       priority: (fields[4] as num).toInt(),
       order: (fields[5] as num).toDouble(),
       isCompleted: fields[6] as bool,
@@ -119,23 +108,12 @@ class ExamEntityAdapter extends TypeAdapter<ExamEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-
-    // Manual date migration code beginning
-    final date = fields[2];
-    Date finalDate;
-    if (date is DateTime) {
-      finalDate = Date.fromDateTime(date.toLocal());
-    } else {
-      finalDate = date as Date;
-    }
-    // Manual date migration code end
-
     return ExamEntity(
       isDeleted: fields[6] as bool,
       subjectId: fields[0] as String?,
       text: fields[1] as String,
       description: fields[4] == null ? '' : fields[4] as String,
-      date: finalDate,
+      date: fields[2] as Date,
       priority: (fields[3] as num).toInt(),
       timestamp: fields[5] as DateTime,
       order: (fields[7] as num).toDouble(),
@@ -373,6 +351,43 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TeacherAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class TimeOfDayAdapter extends TypeAdapter<TimeOfDay> {
+  @override
+  final typeId = 17;
+
+  @override
+  TimeOfDay read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return TimeOfDay(
+      hour: (fields[0] as num).toInt(),
+      minute: (fields[1] as num).toInt(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, TimeOfDay obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.hour)
+      ..writeByte(1)
+      ..write(obj.minute);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimeOfDayAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

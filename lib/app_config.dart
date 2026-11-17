@@ -1,11 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:schoolarc/features/plus/presentation/plus_screen.dart';
 import 'package:schoolarc/features/timetable/presentation/actual_timetable_screen.dart';
 import 'package:schoolarc/features/timetable/presentation/timetable_screen.dart';
 import 'package:schoolarc/l10n/app_localizations.dart';
@@ -38,7 +36,6 @@ import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/color_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';
 import 'package:schoolarc/utils/globals.dart';
-import 'package:schoolarc/utils/theme_generate.dart';
 import 'package:schoolarc/widgets/config/time_format.dart';
 
 /// defines theme
@@ -121,51 +118,43 @@ class AppConfig extends ConsumerWidget {
     final useDeviceColor = ref.watch(themeUseDeviceColorProvider);
     final languageCode = ref.watch(languageCodeProvider);
     final locale = languageCode != null ? Locale(languageCode) : null;
+    final deviceContrast = MediaQuery.highContrastOf(context);
+    final appThemeLight = ColorScheme.fromSeed(
+      seedColor: defaultColor,
+      brightness: Brightness.light,
+      contrastLevel: deviceContrast ? 1 : 0,
+      dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
+    );
+    final appThemeDark = ColorScheme.fromSeed(
+      seedColor: defaultColor,
+      brightness: Brightness.dark,
+      contrastLevel: deviceContrast ? 1 : 0,
+      dynamicSchemeVariant: DynamicSchemeVariant.values[dynamicSchemeVariant],
+    );
 
     return DynamicColorBuilder(
       builder: (deviceLight, deviceDark) {
-        var defaultLight = ColorScheme.fromSeed(
-          seedColor: defaultColor,
-          brightness: Brightness.light,
-          dynamicSchemeVariant:
-              DynamicSchemeVariant.values[dynamicSchemeVariant],
-        );
-        var defaultDark = ColorScheme.fromSeed(
-          seedColor: defaultColor,
-          brightness: Brightness.dark,
-          dynamicSchemeVariant:
-              DynamicSchemeVariant.values[dynamicSchemeVariant],
-        );
-
-        if (useDeviceColor) {
-          if (deviceLight != null && deviceDark != null) {
-            defaultLight = deviceLight;
-            defaultDark = deviceDark;
-          }
+        late ColorScheme light, dark;
+        if (useDeviceColor && deviceLight != null && deviceDark != null) {
+          light = deviceLight;
+          dark = deviceDark;
+        } else {
+          light = appThemeLight;
+          dark = appThemeDark;
         }
 
-        (ColorScheme, ColorScheme) schemes = generateDynamicColourSchemes(
-          defaultLight,
-          defaultDark,
-        );
+        if (useOled) {
+          dark = dark.copyWith(
+            surface: Colors.black,
+            surfaceContainer: Colors.black,
+            surfaceContainerLow: dark.surfaceContainerLow.darken(0.05),
+            surfaceContainerHigh: dark.surfaceContainerHigh.darken(0.05),
+            surfaceContainerHighest: dark.surfaceContainerHighest.darken(0.05),
+            surfaceContainerLowest: dark.surfaceContainerLowest.darken(0.02),
+          );
+        }
 
-        final light = schemes.$1;
-        final dark = schemes.$2.copyWith(
-          surface: useOled ? Colors.black : null,
-          surfaceContainer: useOled ? Colors.black : null,
-          surfaceContainerLow: useOled
-              ? schemes.$2.surfaceContainerLow.darken(0.05)
-              : null,
-          surfaceContainerHigh: useOled
-              ? schemes.$2.surfaceContainerHigh.darken(0.05)
-              : null,
-          surfaceContainerHighest: useOled
-              ? schemes.$2.surfaceContainerHighest.darken(0.05)
-              : null,
-          surfaceContainerLowest: useOled
-              ? schemes.$2.surfaceContainerLowest.darken(0.02)
-              : null,
-        );
+        // dark = ColorScheme.fromSeed(seedColor: Colors.green);
 
         return MaterialApp(
           restorationScopeId: 'root',
@@ -180,7 +169,8 @@ class AppConfig extends ConsumerWidget {
               ref.watch(devModeProvider) &&
               ref.watch(debugShowPerformanceOverlayProvider),
           theme: ThemeData(
-            splashFactory: NewInkSparkle.splashFactory,
+            // TODO splash
+            // splashFactory: NewInkSparkle.splashFactory,
             listTileTheme: const ListTileThemeData(
               dense: true,
               visualDensity: VisualDensity.compact,
@@ -204,7 +194,8 @@ class AppConfig extends ConsumerWidget {
             ),
           ),
           darkTheme: ThemeData(
-            splashFactory: NewInkSparkle.splashFactory,
+            // TODO splash
+            // splashFactory: NewInkSparkle.splashFactory,
             listTileTheme: const ListTileThemeData(
               dense: true,
               visualDensity: VisualDensity.compact,
@@ -258,7 +249,6 @@ class AppConfig extends ConsumerWidget {
             '/tutorial': (context) => const Tutorial(),
             '/recap-sticker': (context) => const RecapStickerScreen(),
             '/privacy': (context) => const PrivacyPolicy(),
-            '/plus':(context) => const PlusScreen(),
           },
         );
       },

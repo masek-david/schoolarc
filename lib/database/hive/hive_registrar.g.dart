@@ -16,6 +16,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(PeriodAdapter());
     registerAdapter(SubjectEntityAdapter());
     registerAdapter(TeacherAdapter());
+    registerAdapter(TimeOfDayAdapter());
     registerAdapter(TimetableEntityAdapter());
   }
 }
@@ -30,6 +31,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(PeriodAdapter());
     registerAdapter(SubjectEntityAdapter());
     registerAdapter(TeacherAdapter());
+    registerAdapter(TimeOfDayAdapter());
     registerAdapter(TimetableEntityAdapter());
   }
 }
