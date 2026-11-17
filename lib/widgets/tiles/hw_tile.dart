@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
+import 'package:material_ui/material_ui.dart' hide RoundedPolygon, MaterialShapes; // TODO try shapes from material_ui
 import 'package:schoolarc/models/date/date.dart';
 import 'package:schoolarc/models/homeworks/hw_model.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

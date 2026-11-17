@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:schoolarc/screens/onboarding/onboarding_android_widget.dart';

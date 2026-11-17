@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/screens/tutorial/animated_page.dart';
 import 'package:schoolarc/screens/tutorial/tutorial.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

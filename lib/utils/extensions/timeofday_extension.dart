@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension BetterTimeOfDay on TimeOfDay {
   /// formats the whole time to int, eg. 16:45 would be 1645, must be valid timeofday (hours 0 - 23, minutes 0 - 59)

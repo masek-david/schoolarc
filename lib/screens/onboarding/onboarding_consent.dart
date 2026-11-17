@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:schoolarc/screens/settings/widgets/setting_tile.dart';

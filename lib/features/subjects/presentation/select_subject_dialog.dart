@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/models/subjects/subject_model.dart';
 import 'package:schoolarc/screens/subjects/widgets/subject_tile.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';

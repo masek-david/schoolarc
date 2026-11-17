@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:material_ui/material_ui.dart' hide MaterialShapes;// TODO try shapes from material_ui
 import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/models/priority_model.dart';
 import 'package:schoolarc/screens/recap/recap.dart';

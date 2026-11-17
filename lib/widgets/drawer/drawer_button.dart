@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 
 class MyDrawerButton extends StatelessWidget {
@@ -23,7 +22,8 @@ class MyDrawerButton extends StatelessWidget {
     return TextButton(
       onPressed: onTap,
       style: ButtonStyle(
-        splashFactory: NewInkSparkle.splashFactory,
+        // TODO splash
+        // splashFactory: NewInkSparkle.splashFactory,
         padding: const WidgetStatePropertyAll(EdgeInsets.zero),
         foregroundColor: WidgetStatePropertyAll(
           col.onSurfaceVariant,

@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
+import 'package:material_ui/material_ui.dart' hide MaterialShapes;// TODO try shapes from material_ui
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/fonts.dart';

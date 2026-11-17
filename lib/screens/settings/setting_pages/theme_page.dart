@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schoolarc/features/plus/plus.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/provider/settings_notifiers.dart';
 import 'package:schoolarc/screens/settings/settings_scaffold.dart';
 import 'package:schoolarc/screens/settings/widgets/color_picker_action.dart';
@@ -44,7 +43,6 @@ class ThemePage extends ConsumerWidget {
         ),
         if (context.isDark)
           SettingTile.withSwitch(
-            enabled: ref.watch(schoolarcPlusProvider) == true,
             title: loc.themeOLEDTitle,
             subtitle: loc.themeOLEDSubtitle,
             value: themeUseOled,

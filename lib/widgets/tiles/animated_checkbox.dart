@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:m3_expressive_shapes/rounded_polygon_border.dart';
 import 'package:m3_expressive_shapes/shapes/_shapes.dart';
 import 'package:m3_expressive_shapes/shapes/material_shapes.dart';
+import 'package:material_ui/material_ui.dart' hide RoundedPolygon, MaterialShapes; // TODO try shapes from material_ui
 import 'package:schoolarc/models/priority_model.dart';
 
 class AnimatedCheckbox extends StatelessWidget {

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/features/tasks/task_functions.dart';
 import 'package:schoolarc/features/timetable/domain/lesson_model.dart';
 import 'package:schoolarc/features/timetable/domain/period_model.dart';

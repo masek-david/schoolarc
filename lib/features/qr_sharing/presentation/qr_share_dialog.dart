@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:schoolarc/features/qr_sharing/data/qr_task_parsing.dart';

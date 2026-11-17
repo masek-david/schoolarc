@@ -2,10 +2,9 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
-import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/m3e/m3e_motion_curves.dart';
 import 'package:schoolarc/utils/extensions/context_extension.dart';
 import 'package:schoolarc/utils/extensions/double_extension.dart';
@@ -335,7 +334,8 @@ class _NavigationRailExpandButton extends StatelessWidget {
       isLabelVisible: showBadge,
       child: IconButton(
         style: const ButtonStyle(
-          splashFactory: NewInkSparkle.splashFactory,
+          // TODO splash
+          // splashFactory: NewInkSparkle.splashFactory, 
         ),
         onPressed: onPressed,
         icon: Transform.rotate(
@@ -444,7 +444,8 @@ class _NavigationRailPrimaryButton extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: .circular(100),
-                  splashFactory: NewInkSparkle.splashFactory,
+                  // TODO splash
+                  // splashFactory: NewInkSparkle.splashFactory,
                   onTap: onTap,
                   child: Padding(
                     padding: const .symmetric(
@@ -566,7 +567,8 @@ class _NavigationRailSecondaryButton extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: .circular(100),
-                  splashFactory: NewInkSparkle.splashFactory,
+                  // TODO splash
+                  // splashFactory: NewInkSparkle.splashFactory,
                   onTap: effectsAnim == 0 ? null : destination.onPressed,
                   child: Padding(
                     padding: const .symmetric(

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:schoolarc/features/timetable/domain/lesson_entity_model.dart';
 import 'package:schoolarc/features/timetable/domain/period_model.dart';
 import 'package:schoolarc/features/timetable/domain/teacher_model.dart';
@@ -21,6 +21,7 @@ part 'hive_adapters.g.dart';
   AdapterSpec<TimetableEntity>(),
   AdapterSpec<LessonEntity>(),
   AdapterSpec<Teacher>(),
+  AdapterSpec<TimeOfDay>()
 ])
 // Annotations must be on some element
 // ignore: unused_element
